@@ -1,0 +1,145 @@
+/* A CSS Framework by Mike Stenhouse of Content with Style */
+
+/* SITE SPECIFIC LAYOUT */
+    body {
+        margin: 0;
+        padding: 0;
+                      
+        text-align: center;
+    }
+    div#page {
+        width: 800px;
+        
+        margin:  0 auto; 
+        padding: 0;
+
+        border-style: none; /*none/dotted*/
+        border-width: 1px;
+        text-align: center;
+
+        color: white;
+        background-color: black ;
+    }
+    
+    /* HEADER */
+        div#header {
+            margin: 0 0 0 0;
+            padding: 0px 0px;
+            border-style: none; /*none/dotted*/
+            border-width: 1px;
+            color: white;
+            background-image: url("../images/header.png.gif");
+            background-repeat: no-repeat;
+            text-align: center;
+        }
+        div#logo {
+            float: left;
+	    width:800px;
+            height: 120px;
+	    margin:0px auto;
+            padding: 0px 0px 0px 0px;
+            border-style: none; /*none/dotted*/
+            border-width: 1px;
+            text-align: center;
+        }
+
+        div#login {
+            clear: both;
+            text-align: left;
+            margin: 1px;
+            padding: 0px 0px 0 0; /* top, right, bottom, left */
+            border-style: none; /*none/dotted*/
+            font-size: 10px;
+        }
+    /* END HEADER */
+    
+    
+    /* CONTENT */
+        div#content {
+            border-style: none; /*none/dotted*/
+            border-width: 1px;
+        }
+        
+        /* MAIN */
+        /* for understanding browsers */
+        div#main {
+            border-style: none; /*none/dotted*/
+            border-width: 1px;
+            /**/
+            background-image: url("../images/death-star.jpg");
+            background-position: top left;
+            background-repeat: no-repeat;
+            /**/
+            min-height: 600px; /* not recognized by IE7 */
+        }
+        /* for Internet Explorer */
+        /*\*/
+        * html div#main {
+            height: 600px;
+        }
+        /**/
+
+                /* END MAIN */
+        
+        /* SUB */
+        div#sub {
+                
+        }
+        /* END SUB */
+        
+    /* END CONTENT */
+    
+    
+    /* FOOTER */
+        div#footer {
+            color: white;
+            background-color: black;
+        }
+        div#footer p {
+            font-size: 0.8em;
+            
+            margin: 0;
+            padding: 15px;
+        }
+    /* END FOOTER */
+/* END LAYOUT */
+
+
+
+
+/* UL.SUBNAV */
+    ul.subnav {
+        margin: 0;
+        padding: 0;
+        
+        font-size: 1em;
+        list-style: none;
+    }
+    ul.subnav li {
+        margin: 0 0 1em 0;
+        padding: 0;
+        list-style: none;
+    }
+    ul.subnav li a,
+    ul.subnav li a:link,
+    ul.subnav li a:visited,
+    ul.subnav li a:active {
+        text-decoration: none;
+        font-weight: bold;
+        color: black;
+    }
+    ul.subnav li a:hover {
+        color: red;
+    }
+    ul.subnav li strong {
+        padding: 0 0 0 12px;
+        background: url("../images/subnav-highlight.gif") left top no-repeat transparent;
+    }
+    ul.subnav li strong a,
+    ul.subnav li strong a:link,
+    ul.subnav li strong a:visited,
+    ul.subnav li strong a:active {
+        color: white;
+        background-color: black;
+    }
+/* END UL.SUBNAV */
