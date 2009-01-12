@@ -9,7 +9,7 @@ include("include/pagination.php");
 <div id="main">
 
 <?php
-   global $database;
+   global $sql;
 
    /* Event Name */
    $event_id = $_GET['eventid'];
@@ -22,7 +22,7 @@ include("include/pagination.php");
    $q = "SELECT count(*) "
        ." FROM ".TBL_MATCHS
        ." WHERE (".TBL_MATCHS.".Event = '$event_id')";
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $totalPages = mysql_result($result, 0);
       
    $q = "SELECT ".TBL_EVENTS.".*, "
@@ -32,7 +32,7 @@ include("include/pagination.php");
        ." WHERE (".TBL_EVENTS.".eventid = '$event_id')"
        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";       
 
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
    $egame = mysql_result($result,0 , TBL_GAMES.".Name");
    echo "<h1>$ename</h1>";
@@ -42,7 +42,7 @@ include("include/pagination.php");
    $q = "SELECT COUNT(*) as NbrMatchs"
        ." FROM ".TBL_MATCHS
        ." WHERE (Event = '$event_id')";
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $row = mysql_fetch_array($result);     
    $nbrmatchs = $row['NbrMatchs'];     
    echo"<div class=\"news\">";
@@ -58,7 +58,7 @@ include("include/pagination.php");
        ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
        ." LIMIT $start, $rowsPerPage";
  
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
 
    if ($num_rows>0)
@@ -89,7 +89,7 @@ include("include/pagination.php");
                ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
              ." ORDER BY ".TBL_SCORES.".Player_Rank";
 
-         $result2 = $database->query($q2);
+         $result2 = $sql->db_Query($q2);
          $num_rows2 = mysql_numrows($result2);
          $pnickname = '';
          $players = '';

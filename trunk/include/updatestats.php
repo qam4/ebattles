@@ -12,7 +12,7 @@
        ." FROM ".TBL_STATSCATEGORIES
        ." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
  
-   $result_1 = $database->query($q_1);
+   $result_1 = $sql->db_Query($q_1);
    $num_rows = mysql_numrows($result_1);
 
 
@@ -140,7 +140,7 @@ if ($etype == "Team Ladder")
        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
          ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)";
  
-   $result_1 = $database->query($q_1);
+   $result_1 = $sql->db_Query($q_1);
    $num_rows = mysql_numrows($result_1);
    
    $players_rated = 0;
@@ -177,7 +177,7 @@ if ($etype == "Team Ladder")
          ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
          ." AND (".TBL_PLAYERS.".Name = '$pname')";
       
-      $result_2 = $database->query($q_2);
+      $result_2 = $sql->db_Query($q_2);
       $num_rows_2 = mysql_numrows($result_2);
 
       $players = '';
@@ -203,7 +203,7 @@ if ($etype == "Team Ladder")
                   ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
                   ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)";
       
-            $result_3 = $database->query($q_3);
+            $result_3 = $sql->db_Query($q_3);
             $num_rows_3 = mysql_numrows($result_3);
             for($k=0; $k<$num_rows_3; $k++)
             {
@@ -389,7 +389,7 @@ if ($etype == "Team Ladder")
       $OverallScore[$i] = $ELO_final_score[$i] + $games_played_final_score[$i] + $victory_ratio_final_score[$i] + $victory_percent_final_score[$i] + $unique_opponents_final_score[$i] + $opponentsELO_final_score[$i] + $streaks_final_score[$i];
       
       $q_3 = "UPDATE ".TBL_PLAYERS." SET OverallScore = $OverallScore[$i] WHERE (Name = '$name[$i]') AND (Event = '$event_id')";
-      $result_3 = $database->query($q_3);
+      $result_3 = $sql->db_Query($q_3);
    }
 
    // Calculate Rank
@@ -399,7 +399,7 @@ if ($etype == "Team Ladder")
        ." WHERE (Event = '$event_id')"
        ." ORDER BY ".TBL_PLAYERS.".OverallScore DESC, ".TBL_PLAYERS.".GamesPlayed DESC, ".TBL_PLAYERS.".ELORanking DESC";
  
-   $result_1 = $database->query($q_1);
+   $result_1 = $sql->db_Query($q_1);
    $num_rows = mysql_numrows($result_1);
    
    $ranknumber = 1;
@@ -412,13 +412,13 @@ if ($etype == "Team Ladder")
       $index = array_search($pname,$name);      
 
       $q_2 = "UPDATE ".TBL_PLAYERS." SET Rank = $ranknumber WHERE (Name = '$pname') AND (Event = '$event_id')";
-      $result_2 = $database->query($q_2);
+      $result_2 = $sql->db_Query($q_2);
       
       $new_rankdelta = $prank - $ranknumber;
       if (($new_rankdelta != 0)&&($prank!=0)&&($OverallScore[$index]!=0))
       {
         $q_2 = "UPDATE ".TBL_PLAYERS." SET RankDelta = $new_rankdelta WHERE (Name = '$pname') AND (Event = '$event_id')";
-        $result_2 = $database->query($q_2);
+        $result_2 = $sql->db_Query($q_2);
         $prankdelta = $new_rankdelta;
       }
 
@@ -445,7 +445,7 @@ if ($etype == "Team Ladder")
                ." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
                ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
          
-         $result_2 = $database->query($q_2);
+         $result_2 = $sql->db_Query($q_2);
          $num_rows_2 = mysql_numrows($result_2);
       	 if ($num_rows_2 == 1)
       	 {

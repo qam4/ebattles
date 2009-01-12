@@ -8,17 +8,17 @@ include("include/session.php");
 /*
 function deleteDivisions($clan_id)
 {
-      global $database;
+      global $sql;
       $q3 = "DELETE FROM ".TBL_DIVISIONS
           ." WHERE (".TBL_EVENTMODS.".Clan = '$clan_id')";
-      $result3 = $database->query($q3);
+      $result3 = $sql->db_Query($q3);
 }
 function deleteClan($clan_id)
 {
-      global $database;
+      global $sql;
       $q3 = "DELETE FROM ".TBL_CLANS
           ." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
-      $result3 = $database->query($q3);
+      $result3 = $sql->db_Query($q3);
 }
 */
 /*
@@ -30,7 +30,7 @@ function deleteClan($clan_id)
       $q2 = "DELETE FROM ".TBL_DIVISIONS
          ." WHERE (".TBL_DIVISIONS.".Clan = '$clan_id')"  
          ."   AND (".TBL_DIVISIONS.".Game = '$div_game')";   
-      $result2 = $database->query($q2);
+      $result2 = $sql->db_Query($q2);
 
       echo "-- clandeletemod --<br />";
       header("Location: clanmanage.php?clanid=$clan_id");
@@ -46,13 +46,13 @@ function deleteClan($clan_id)
           ." FROM ".TBL_DIVISIONS
           ." WHERE (".TBL_DIVISIONS.".Clan = '$clan_id')"  
           ."   AND (".TBL_DIVISIONS.".Game  = '$div_game')";   
-      $result2 = $database->query($q2);
+      $result2 = $sql->db_Query($q2);
       $num_rows_2 = mysql_numrows($result2);
       if ($num_rows_2==0)
       {
          $q2 = "INSERT INTO ".TBL_DIVISIONS."(Clan,Game,Captain)"
             ." VALUES ('$clan_id','$div_game','$clan_owner')";   
-         $result2 = $database->query($q2);
+         $result2 = $sql->db_Query($q2);
       }
       //echo "-- clanadddiv --<br />";
       header("Location: clanmanage.php?clanid=$clan_id");
@@ -67,14 +67,14 @@ function deleteClan($clan_id)
       if ($new_clanname != '')
       {
             $q2 = "UPDATE ".TBL_CLANS." SET Name = '$new_clanname' WHERE (ClanID = '$clan_id')";
-            $result2 = $database->query($q2);
+            $result2 = $sql->db_Query($q2);
       }
       /* Clan Tag */
       $new_clantag = htmlspecialchars($_POST['clantag']);
       if ($new_clantag != '')
       {
             $q2 = "UPDATE ".TBL_CLANS." SET Tag = '$new_clantag' WHERE (ClanID = '$clan_id')";
-            $result2 = $database->query($q2);
+            $result2 = $sql->db_Query($q2);
       }
       //echo "-- clansettingssave --<br />";
       header("Location: clanmanage.php?clanid=$clan_id");
@@ -86,7 +86,7 @@ function deleteClan($clan_id)
 
       /* Clan Owner */
       $q2 = "UPDATE ".TBL_CLANS." SET Owner = '$clan_owner' WHERE (ClanID = '$clan_id')";
-      $result2 = $database->query($q2);
+      $result2 = $sql->db_Query($q2);
       
       //echo "-- clanchangeowner --<br />";
       header("Location: clans.php");
@@ -99,7 +99,7 @@ function deleteClan($clan_id)
 
       /* Division Captain */
       $q2 = "UPDATE ".TBL_DIVISIONS." SET Captain = '$div_captain' WHERE (DivisionID = '$clan_div')";
-      $result2 = $database->query($q2);
+      $result2 = $sql->db_Query($q2);
       
       //echo "-- clanchangedivcaptain --<br />";
       header("Location: clanmanage.php?clanid=$clan_id");
@@ -123,7 +123,7 @@ function deleteClan($clan_id)
      {
         $q2 = "DELETE FROM ".TBL_MEMBERS
              ." WHERE (".TBL_MEMBERS.".MemberID = '$del_ids[$i]')";   
-        $result2 = $database->query($q2);
+        $result2 = $sql->db_Query($q2);
      }
       //echo "-- kick --<br />";
       header("Location: clanmanage.php?clanid=$clan_id");

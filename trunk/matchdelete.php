@@ -38,7 +38,7 @@ include("include/main.php");
                 ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                 ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
                 ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)";
-        $result = $database->query($q);
+        $result = $sql->db_Query($q);
         $num_rows = mysql_numrows($result);
 
         $max_score = 0;
@@ -69,24 +69,24 @@ include("include/main.php");
             echo "Player $pName, new ELO:$pELO<br />"; 
 
             $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result2 = $database->query($q);
+            $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result2 = $database->query($q);
+            $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result2 = $database->query($q);
+            $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result2 = $database->query($q);
+            $result2 = $sql->db_Query($q);
             
             // fmarc- Can not change "streak" information here :(
             
             // Delete Score
             $q = "DELETE FROM ".TBL_SCORES." WHERE (ScoreID = '$scoreid')";
-            $result2 = $database->query($q);
+            $result2 = $sql->db_Query($q);
             
         } 
 
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-        $result = $database->query($q);
+        $result = $sql->db_Query($q);
         
         echo "<br />Match deleted<br />";
         echo "<br />Back to [<a href=\"eventinfo.php?eventid=$event_id\">Event</a>]<br />";

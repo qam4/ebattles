@@ -50,7 +50,7 @@ class Session
     * update the active visitors tables.
     */
    function startSession(){
-      global $database;  //The database connection
+      global $sql;  //The database connection
       session_start();   //Tell PHP to start the session
 
       /* Determine if user is logged in */
@@ -66,16 +66,16 @@ class Session
          $this->timezone_offset = $_SESSION['timezone_offset'] = 0;
          $this->username = $_SESSION['username'] = GUEST_NAME;
          $this->userlevel = GUEST_LEVEL;
-         $database->addActiveGuest($_SERVER['REMOTE_ADDR'], $this->time);
+         $sql->addActiveGuest($_SERVER['REMOTE_ADDR'], $this->time);
       }
       /* Update users last active timestamp */
       else{
-         $database->addActiveUser($this->username, $this->time);
+         $sql->addActiveUser($this->username, $this->time);
       }
       
       /* Remove inactive visitors from database */
-      $database->removeInactiveUsers();
-      $database->removeInactiveGuests();
+      $sql->removeInactiveUsers();
+      $sql->removeInactiveGuests();
       
       /* Set referrer page */
       if(isset($_SESSION['url'])){
@@ -96,7 +96,7 @@ class Session
     * authenticity. Returns true if the user has logged in.
     */
    function checkLogin(){
-      global $database;  //The database connection
+      global $sql;  //The database connection
       /* Check if user has been remembered */
       if(isset($_COOKIE['cookname']) && isset($_COOKIE['cookid']) && isset($_COOKIE['cooktzo'])){
          $this->username = $_SESSION['username'] = $_COOKIE['cookname'];
@@ -108,7 +108,7 @@ class Session
       if(isset($_SESSION['username']) && isset($_SESSION['userid']) &&
          $_SESSION['username'] != GUEST_NAME){
          /* Confirm that username and userid are valid */
-         if($database->confirmUserID($_SESSION['username'], $_SESSION['userid']) != 0){
+         if($sql->confirmUserID($_SESSION['username'], $_SESSION['userid']) != 0){
             /* Variables are incorrect, user not logged in */
             unset($_SESSION['username']);
             unset($_SESSION['userid']);
@@ -117,7 +117,7 @@ class Session
          }
 
          /* User is logged in, set class variables */
-         $this->userinfo  = $database->getUserInfo($_SESSION['username']);
+         $this->userinfo  = $sql->getUserInfo($_SESSION['username']);
          $this->username  = $this->userinfo['username'];
          $this->userid    = $this->userinfo['userid'];
          $this->userlevel = $this->userinfo['userlevel'];
@@ -137,7 +137,7 @@ class Session
     * Effectively logging in the user if all goes well.
     */
    function login($subuser, $subpass, $subtzo, $subremember){
-      global $database, $form;  //The database and form object
+      global $sql, $form;  //The database and form object
 
       /* Username error checking */
       $field = "user";  //Use field name for username
@@ -164,7 +164,7 @@ class Session
 
       /* Checks that username is in database and password is correct */
       $subuser = stripslashes($subuser);
-      $result = $database->confirmUserPass($subuser, md5($subpass));
+      $result = $sql->confirmUserPass($subuser, md5($subpass));
 
       /* Check error codes */
       if($result == 1){
@@ -182,15 +182,15 @@ class Session
       }
 
       /* Username and password correct, register session variables */
-      $this->userinfo  = $database->getUserInfo($subuser);
+      $this->userinfo  = $sql->getUserInfo($subuser);
       $this->username  = $_SESSION['username'] = $this->userinfo['username'];
       $this->userid    = $_SESSION['userid']   = $this->generateRandID();
       $this->userlevel = $this->userinfo['userlevel'];
       
       /* Insert userid into database and update active users table */
-      $database->updateUserField($this->username, "userid", $this->userid);
-      $database->addActiveUser($this->username, $this->time);
-      $database->removeActiveGuest($_SERVER['REMOTE_ADDR']);
+      $sql->updateUserField($this->username, "userid", $this->userid);
+      $sql->addActiveUser($this->username, $this->time);
+      $sql->removeActiveGuest($_SERVER['REMOTE_ADDR']);
 
       /* TimeZone variable */
       $this->timezone_offset  =  $_SESSION['timezone_offset'] = 3600 * $subtzo;	// offset to GMT time is seconds
@@ -219,7 +219,7 @@ class Session
     * unsets session variables and demotes his user level to guest.
     */
    function logout(){
-      global $database;  //The database connection
+      global $sql;  //The database connection
       /**
        * Delete cookies - the time must be in the past,
        * so just negate what you added when creating the
@@ -243,8 +243,8 @@ class Session
        * Remove from active users table and add to
        * active guests tables.
        */
-      $database->removeActiveUser($this->username);
-      $database->addActiveGuest($_SERVER['REMOTE_ADDR'], $this->time);
+      $sql->removeActiveUser($this->username);
+      $sql->addActiveGuest($_SERVER['REMOTE_ADDR'], $this->time);
       
       /* Set user level to guest */
       $this->username  = GUEST_NAME;
@@ -259,7 +259,7 @@ class Session
     * returns 0. Returns 2 if registration failed.
     */
    function register($subuser, $subpass, $subemail){
-      global $database, $form, $mailer;  //The database, form and mailer object
+      global $sql, $form, $mailer;  //The database, form and mailer object
       
       /* Username error checking */
       $field = "user";  //Use field name for username
@@ -284,11 +284,11 @@ class Session
             $form->setError($field, "* Username reserved word");
          }
          /* Check if username is already in use */
-         else if($database->usernameTaken($subuser)){
+         else if($sql->usernameTaken($subuser)){
             $form->setError($field, "* Username already in use");
          }
          /* Check if username is banned */
-         else if($database->usernameBanned($subuser)){
+         else if($sql->usernameBanned($subuser)){
             $form->setError($field, "* Username banned");
          }
       }
@@ -338,7 +338,7 @@ class Session
       }
       /* No errors, add the new account to the */
       else{
-         if($database->addNewUser($subuser, md5($subpass), $subemail)){
+         if($sql->addNewUser($subuser, md5($subpass), $subemail)){
             if(EMAIL_WELCOME){
                $mailer->sendWelcome($subuser,$subemail,$subpass);
             }
@@ -357,7 +357,7 @@ class Session
     * automatically.
     */
    function editAccount($subcurpass, $subnewpass, $subemail, $subnickname){
-      global $database, $form;  //The database and form object
+      global $sql, $form;  //The database and form object
       /* New password entered */
       if($subnewpass){
          /* Current Password error checking */
@@ -373,7 +373,7 @@ class Session
                $form->setError($field, "* Current Password incorrect");
             }
             /* Password entered is incorrect */
-            if($database->confirmUserPass($this->username,md5($subcurpass)) != 0){
+            if($sql->confirmUserPass($this->username,md5($subcurpass)) != 0){
                $form->setError($field, "* Current Password incorrect");
             }
          }
@@ -420,17 +420,17 @@ class Session
       
       /* Update password since there were no errors */
       if($subcurpass && $subnewpass){
-         $database->updateUserField($this->username,"password",md5($subnewpass));
+         $sql->updateUserField($this->username,"password",md5($subnewpass));
       }
       
       /* Change Email */
       if($subemail){
-         $database->updateUserField($this->username,"email",$subemail);
+         $sql->updateUserField($this->username,"email",$subemail);
       }
       
       /* Change Nickname */
       if($subnickname){
-         $database->updateUserField($this->username,"nickname",$subnickname);
+         $sql->updateUserField($this->username,"nickname",$subnickname);
       }
       /* Success! */
       return true;

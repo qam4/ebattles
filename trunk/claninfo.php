@@ -23,7 +23,7 @@ include("include/main.php");
      $div_id = $_GET['division'];
 	 $q = " INSERT INTO ".TBL_MEMBERS."(Division,Name,timestamp)
 	        VALUES ($div_id,'$session->username',$time)";
-         $database->query($q);
+         $sql->db_Query($q);
          header("Location: claninfo.php?clanid=$clan_id");
    }
    ob_end_flush();
@@ -35,7 +35,7 @@ include("include/main.php");
        ." WHERE (".TBL_CLANS.".ClanID = '$clan_id')"
          ." AND (".TBL_USERS.".username = ".TBL_CLANS.".Owner)";
  
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
 
    $clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
@@ -67,7 +67,7 @@ include("include/main.php");
          ." AND (".TBL_USERS.".username = ".TBL_DIVISIONS.".Captain)"
          ." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
  
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
    for($i=0; $i<$num_rows; $i++)
    {
@@ -87,7 +87,7 @@ include("include/main.php");
             ." FROM ".TBL_MEMBERS
             ." WHERE (".TBL_MEMBERS.".Division = '$div_id')"
               ." AND (".TBL_MEMBERS.".Name = '$session->username')";
-         $result_2 = $database->query($q_2);
+         $result_2 = $sql->db_Query($q_2);
          if(!$result_2 || (mysql_numrows($result_2) < 1))
          {
             echo "
@@ -117,7 +117,7 @@ include("include/main.php");
            ." AND (".TBL_USERS.".username = ".TBL_MEMBERS.".Name)"
            ." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
 
-      $result_2 = $database->query($q_2);
+      $result_2 = $sql->db_Query($q_2);
       if(!$result_2 || (mysql_numrows($result_2) < 1))
       {
          echo "<p>No members</p>";

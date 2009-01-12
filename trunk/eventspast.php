@@ -12,7 +12,7 @@ include("include/pagination.php");
  * a nicely formatted html table.
  */
 function displayPastEvents(){
-   global $database;
+   global $sql;
    global $session;
 
    // how many rows to show per page
@@ -26,7 +26,7 @@ function displayPastEvents(){
    $q = "SELECT ".TBL_GAMES.".*"
        ." FROM ".TBL_GAMES
        ." ORDER BY Name";
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
    echo "<form name=\"myform\" action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
@@ -36,7 +36,7 @@ function displayPastEvents(){
    echo "<select name=\"gameid\">\n";
    echo "<option value=\"All\">All</option>\n";
    for($i=0; $i<$num_rows; $i++){
-      $gname  = mysql_result($result,$i,TBL_GAMES.".name");
+      $gname  = mysql_result($result,$i, TBL_GAMES.".name");
       $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
       echo "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
    }
@@ -60,7 +60,7 @@ function displayPastEvents(){
          ." FROM ".TBL_EVENTS
          ." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
          ."       AND (".TBL_EVENTS.".End_timestamp < $time)) ";
-     $result = $database->query($q);
+     $result = $sql->db_Query($q);
      $totalPages = mysql_result($result, 0);
 
      $q = "SELECT ".TBL_EVENTS.".*, "
@@ -79,7 +79,7 @@ function displayPastEvents(){
          ." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
          ."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
          ."   AND (".TBL_EVENTS.".Game = ".$_POST['gameid'].")";
-     $result = $database->query($q);
+     $result = $sql->db_Query($q);
      $totalPages = mysql_result($result, 0);
 
      $q = "SELECT ".TBL_EVENTS.".*, "
@@ -92,7 +92,7 @@ function displayPastEvents(){
          ."   AND (".TBL_EVENTS.".Game = ".$_POST['gameid'].")"
          ." LIMIT $start, $rowsPerPage";
    }
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
    if(!$result || ($num_rows < 0)){
@@ -108,8 +108,8 @@ function displayPastEvents(){
    echo "<table class=\"type1\">\n";
    echo "<tr><td class=\"type1Header\"><b>Event</b></td><td colspan=\"2\" class=\"type1Header\"><b>Game</b></td><td class=\"type1Header\"><b>Type</b></td><td class=\"type1Header\"><b>Start</b></td><td class=\"type1Header\"><b>End</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\"><b>Games</b></td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
-      $gname  = mysql_result($result,$i,TBL_GAMES.".name");
-      $gicon  = mysql_result($result,$i,TBL_GAMES.".Icon");
+      $gname  = mysql_result($result,$i, TBL_GAMES.".name");
+      $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
       $eid  = mysql_result($result,$i, TBL_EVENTS.".eventid");
       $ename  = mysql_result($result,$i, TBL_EVENTS.".name");
       $etype = mysql_result($result,$i, TBL_EVENTS.".type");
@@ -138,14 +138,14 @@ function displayPastEvents(){
       $q_2 = "SELECT COUNT(*) as NbrPlayers"
           ." FROM ".TBL_PLAYERS
           ." WHERE (Event = '$eid')";
-      $result_2 = $database->query($q_2);
+      $result_2 = $sql->db_Query($q_2);
       $row = mysql_fetch_array($result_2);     
       $nbrplayers = $row['NbrPlayers'];     
       /* Nbr matches */
       $q_2 = "SELECT COUNT(*) as NbrMatches"
           ." FROM ".TBL_MATCHS
           ." WHERE (Event = '$eid')";
-      $result_2 = $database->query($q_2);
+      $result_2 = $sql->db_Query($q_2);
       $row = mysql_fetch_array($result_2);     
       $nbrmatches = $row['NbrMatches'];     
 

@@ -17,7 +17,7 @@ include("include/pagination.php");
 $req_user = trim($_GET['user']);
 if(!$req_user || strlen($req_user) == 0 ||
    !eregi("^([0-9a-z])+$", $req_user) ||
-   !$database->usernameTaken($req_user)){
+   !$sql->usernameTaken($req_user)){
    die("Username not registered");
 }
 
@@ -43,7 +43,7 @@ else{
 <?php
 echo "<p>";
 /* Display requested user information */
-$req_user_info = $database->getUserInfo($req_user);
+$req_user_info = $sql->getUserInfo($req_user);
 
 /* Username */
 echo "<b>Username: ".$req_user_info['username']."</b><br />";
@@ -88,7 +88,7 @@ $q = " SELECT *"
     ."   AND (".TBL_PLAYERS.".Event = ".TBL_EVENTS.".EventID)"
     ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
     
-$result = $database->query($q);
+$result = $sql->db_Query($q);
 $num_rows = mysql_numrows($result);
  
 if ($num_rows>0)
@@ -156,7 +156,7 @@ $q = " SELECT *"
     ." WHERE (".TBL_EVENTS.".Owner = '$req_user')"
     ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
     
-$result = $database->query($q);
+$result = $sql->db_Query($q);
 $num_rows = mysql_numrows($result);
  
 if ($num_rows>0)
@@ -212,7 +212,7 @@ $q = " SELECT *"
     ."   AND (".TBL_EVENTMODS.".Event = ".TBL_EVENTS.".EventID)"
     ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
     
-$result = $database->query($q);
+$result = $sql->db_Query($q);
 $num_rows = mysql_numrows($result);
  
 if ($num_rows>0)
@@ -292,7 +292,7 @@ $q = "SELECT ".TBL_CLANS.".*, "
      ." AND (".TBL_USERS.".username = '$req_user')"
      ." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
     
-$result = $database->query($q);
+$result = $sql->db_Query($q);
 $num_rows = mysql_numrows($result);
  
 if ($num_rows>0)
@@ -348,7 +348,7 @@ $q = "SELECT ".TBL_CLANS.".*, "
    ." WHERE (".TBL_CLANS.".Owner = ".TBL_USERS.".username)"
      ." AND (".TBL_USERS.".username = '$req_user')";
     
-$result = $database->query($q);
+$result = $sql->db_Query($q);
 $num_rows = mysql_numrows($result);
  
 if ($num_rows>0)
@@ -403,7 +403,7 @@ $q = "SELECT ".TBL_CLANS.".*, "
      ." AND (".TBL_GAMES.".GameId = ".TBL_DIVISIONS.".Game)"
      ." AND (".TBL_DIVISIONS.".Captain = '$req_user')";
     
-$result = $database->query($q);
+$result = $sql->db_Query($q);
 $num_rows = mysql_numrows($result);
  
 if ($num_rows>0)
@@ -472,7 +472,7 @@ echo "</div>";
     ." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
       ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
       ." AND (".TBL_PLAYERS.".Name = '$req_user')";
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $totalPages = mysql_result($result, 0);
 
    $q = "SELECT DISTINCT ".TBL_MATCHS.".*, "
@@ -488,7 +488,7 @@ echo "</div>";
     ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
     ." LIMIT $start, $rowsPerPage";
  
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
 
    if ($num_rows>0)
@@ -513,7 +513,7 @@ echo "</div>";
              ." WHERE (".TBL_EVENTS.".eventid = '$mEvent')"
              ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";       
          
-         $result2 = $database->query($q2);
+         $result2 = $sql->db_Query($q2);
          $ename = mysql_result($result2,0 , TBL_EVENTS.".Name");
          $egame = mysql_result($result2,0 , TBL_GAMES.".Name");
 
@@ -531,7 +531,7 @@ echo "</div>";
                ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
              ." ORDER BY ".TBL_SCORES.".Player_Rank";
 
-         $result2 = $database->query($q2);
+         $result2 = $sql->db_Query($q2);
          $num_rows2 = mysql_numrows($result2);
          $pnickname = '';
          $players = '';

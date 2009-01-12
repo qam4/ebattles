@@ -82,7 +82,7 @@ function get_formatted_timediff($then, $now = false)
 <script type="text/javascript" src="./js/tabpane.js"></script>
 
 <?php
-   global $database;
+   global $sql;
 
    $time = GMT_time();
    
@@ -100,7 +100,7 @@ function get_formatted_timediff($then, $now = false)
    $q = "SELECT ".TBL_EVENTS.".*"
         ." FROM ".TBL_EVENTS
         ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";  
-    $result = $database->query($q);
+    $result = $sql->db_Query($q);
     $eELOdefault = mysql_result($result, 0, TBL_EVENTS.".ELO_default");
     $epassword = mysql_result($result, 0, TBL_EVENTS.".Password");
 
@@ -110,9 +110,9 @@ function get_formatted_timediff($then, $now = false)
       
 	    $q = " INSERT INTO ".TBL_PLAYERS."(Event,Name,ELORanking)
 	           VALUES ($event_id,'$session->username',$eELOdefault)";
-            $database->query($q);
+            $sql->db_Query($q);
             $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-            $result = $database->query($q4);
+            $result = $sql->db_Query($q4);
             header("Location: eventinfo.php?eventid=$event_id");
       }
    }
@@ -120,25 +120,25 @@ function get_formatted_timediff($then, $now = false)
          $q = " DELETE FROM ".TBL_PLAYERS
              ." WHERE (Event = '$event_id')"
              ."   AND (Name = '$session->username')";
-         $database->query($q);
+         $sql->db_Query($q);
          $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-         $result = $database->query($q4);
+         $result = $sql->db_Query($q4);
          header("Location: eventinfo.php?eventid=$event_id");
    }
    if(isset($_GET['teamjoinevent'])){
          $div_id = $_GET['division'];
 	 $q = " INSERT INTO ".TBL_TEAMS."(Event,Division)
 	        VALUES ($event_id,$div_id)";
-         $database->query($q);
+         $sql->db_Query($q);
          $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-         $result = $database->query($q4);
+         $result = $sql->db_Query($q4);
          header("Location: eventinfo.php?eventid=$event_id");
    }
    if(isset($_GET['jointeamevent'])){
          $team_id = $_GET['team'];
 	 $q = " INSERT INTO ".TBL_PLAYERS."(Event,Name,Team,ELORanking)
 	        VALUES ($event_id,'$session->username',$team_id,$eELOdefault)";
-         $database->query($q);
+         $sql->db_Query($q);
          header("Location: eventinfo.php?eventid=$event_id");
    }
    ob_end_flush();
@@ -153,7 +153,7 @@ function get_formatted_timediff($then, $now = false)
        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"      
        ."   AND (".TBL_USERS.".username = ".TBL_EVENTS.".Owner)";   
 
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
    $egame = mysql_result($result,0 , TBL_GAMES.".Name");
    $egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
@@ -222,11 +222,11 @@ function get_formatted_timediff($then, $now = false)
    {
    	$new_nextupdate = $time + EVENTS_UDATE_DELAY;
    	$q = "UPDATE ".TBL_EVENTS." SET NextUpdate_timestamp = $new_nextupdate WHERE (EventID = '$event_id')";
-        $result = $database->query($q);
+        $result = $sql->db_Query($q);
    	$enextupdate = $new_nextupdate;
 
    	$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 0 WHERE (EventID = '$event_id')";
-        $result = $database->query($q);
+        $result = $sql->db_Query($q);
     	$eischanged = 0;
   	
         include("include/updatestats.php");  
@@ -257,7 +257,7 @@ function get_formatted_timediff($then, $now = false)
                ." AND (".TBL_USERS.".username = '$session->username')"
                ." AND (".TBL_DIVISIONS.".Captain = '$session->username')";
 
-         $result = $database->query($q);
+         $result = $sql->db_Query($q);
          $num_rows = mysql_numrows($result);
          if($num_rows > 0)
          {
@@ -271,7 +271,7 @@ function get_formatted_timediff($then, $now = false)
                   ." FROM ".TBL_TEAMS
                   ." WHERE (".TBL_TEAMS.".Event = '$event_id')"
                     ." AND (".TBL_TEAMS.".Division = '$div_id')";
-                   $result_2 = $database->query($q_2);
+                   $result_2 = $sql->db_Query($q_2);
                    $num_rows_2 = mysql_numrows($result_2);
               
               if( $num_rows_2 == 0)
@@ -301,7 +301,7 @@ function get_formatted_timediff($then, $now = false)
              ." WHERE (Event = '$event_id')"
              ."   AND (Name = '$session->username')";
        
-         $result = $database->query($q);
+         $result = $sql->db_Query($q);
          if(!$result || (mysql_numrows($result) < 1))
          {
             if ($etype == "Team Ladder")
@@ -325,7 +325,7 @@ function get_formatted_timediff($then, $now = false)
                      ." AND (".TBL_MEMBERS.".Name = '$session->username')";
             
  
-               $result_2 = $database->query($q_2);
+               $result_2 = $sql->db_Query($q_2);
                $num_rows_2 = mysql_numrows($result_2);
                if(!$result_2 || ( $num_rows_2 < 1))
                {
@@ -348,7 +348,7 @@ function get_formatted_timediff($then, $now = false)
                            ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
                            ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
                            ." AND (".TBL_TEAMS.".Event = '$event_id')";                  
-                     $result_3 = $database->query($q_3);
+                     $result_3 = $sql->db_Query($q_3);
                      if(!$result_3 || (mysql_numrows($result_3) < 1))
                      {
                          echo "Your team $clan_name has not signed up to this event.<br />";
@@ -437,7 +437,7 @@ function get_formatted_timediff($then, $now = false)
                 .TBL_USERS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
        ."   AND (".TBL_USERS.".username = ".TBL_EVENTMODS.".Name)";   
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
    echo "Moderators:<br />";
    for($i=0; $i<$num_rows; $i++){
@@ -477,7 +477,7 @@ function get_formatted_timediff($then, $now = false)
       $q = "SELECT COUNT(*) as NbrTeams"
           ." FROM ".TBL_TEAMS
           ." WHERE (Event = '$event_id')";
-      $result = $database->query($q);
+      $result = $sql->db_Query($q);
       $row = mysql_fetch_array($result);     
       $nbrteams = $row['NbrTeams'];     
       echo"<div class=\"news\">";
@@ -502,7 +502,7 @@ function get_formatted_timediff($then, $now = false)
    $q = "SELECT COUNT(*) as NbrPlayers"
        ." FROM ".TBL_PLAYERS
        ." WHERE (Event = '$event_id')";
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $row = mysql_fetch_array($result);     
    $nbrplayers = $row['NbrPlayers'];     
    $totalPages = $nbrplayers;
@@ -521,7 +521,7 @@ function get_formatted_timediff($then, $now = false)
        ." WHERE (Event = '$event_id')"
        ."   AND (Name = '$session->username')";
  
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $can_report = 0;
    $can_report_quickloss = 0;
    if(!$result || (mysql_numrows($result) < 1))
@@ -558,7 +558,7 @@ function get_formatted_timediff($then, $now = false)
        ." FROM ".TBL_EVENTMODS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
        ."   AND (".TBL_EVENTMODS.".Name = '$session->username')";   
-   $result_2 = $database->query($q_2);
+   $result_2 = $sql->db_Query($q_2);
    $num_rows_2 = mysql_numrows($result_2);
    if ($num_rows_2>0) $can_report = 1;
    
@@ -627,7 +627,7 @@ function get_formatted_timediff($then, $now = false)
    $q = "SELECT COUNT(*) as NbrMatches"
        ." FROM ".TBL_MATCHS
        ." WHERE (Event = '$event_id')";
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $row = mysql_fetch_array($result);     
    $nbrmatches = $row['NbrMatches'];
    echo"<p>";
@@ -645,7 +645,7 @@ function get_formatted_timediff($then, $now = false)
        ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
        ." LIMIT 0, $rowsPerPage";
  
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
 
    if ($num_rows>0)
@@ -677,7 +677,7 @@ function get_formatted_timediff($then, $now = false)
                ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
              ." ORDER BY ".TBL_SCORES.".Player_Rank";
 
-         $result2 = $database->query($q2);
+         $result2 = $sql->db_Query($q2);
          $num_rows2 = mysql_numrows($result2);
          $pnickname = '';
          $players = '';

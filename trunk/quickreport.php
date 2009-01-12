@@ -32,7 +32,7 @@ include("include/main.php");
             ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
           ." ORDER BY ".TBL_USERS.".nickname";
       
-      $result = $database->query($q);
+      $result = $sql->db_Query($q);
       $num_rows = mysql_numrows($result);
 ?>
 <div class="news">

@@ -7,49 +7,40 @@
  * the login script.
  *
  */
- 
-/**
- * Database Constants - these constants are required
- * in order for there to be a successful connection
- * to the MySQL database. Make sure the information is
- * correct.
- */
-
-
-/*
-define("DB_SERVER", "mysql3.freehostia.com");
-define("DB_USER", "fremar9_test");
-define("DB_PASS", "gmax76");
-define("DB_NAME", "fremar9_test");
-*/
-
-define("DB_SERVER", "localhost");
-define("DB_USER", "root");
-define("DB_PASS", "");
-define("DB_NAME", "fremar9_test");
 
 /**
  * Database Table Constants - these constants
  * hold the names of all the database tables used
  * in the script.
  */
-define("TBL_PREFIX", "battle_");
-define("TBL_USERS", TBL_PREFIX."users");
-define("TBL_ACTIVE_USERS",  TBL_PREFIX."active_users");
-define("TBL_ACTIVE_GUESTS", TBL_PREFIX."active_guests");
-define("TBL_BANNED_USERS",  TBL_PREFIX."banned_users");
-define("TBL_GAMES",  TBL_PREFIX."Games");
-define("TBL_EVENTS",  TBL_PREFIX."Events");
-define("TBL_EVENTMODS",  TBL_PREFIX."EventModerators");
-define("TBL_TEAMS",  TBL_PREFIX."Teams");
-define("TBL_MATCHS",  TBL_PREFIX."Matchs");
-define("TBL_PLAYERS",  TBL_PREFIX."Players");
-define("TBL_SCORES",  TBL_PREFIX."Scores");
-define("TBL_CLANS",  TBL_PREFIX."Clans");
-define("TBL_DIVISIONS",  TBL_PREFIX."Divisions");
-define("TBL_MEMBERS",  TBL_PREFIX."Members");
-define("TBL_STATSCATEGORIES",  TBL_PREFIX."StatsCategories");
-define("TBL_PMS",  TBL_PREFIX."PMs");
+define("TBL_PREFIX", "ebattles_");
+
+define("TBL_USERS_SHORT",           "user");
+define("TBL_EVENTS_SHORT",          TBL_PREFIX."Events");
+define("TBL_EVENTMODS_SHORT",       TBL_PREFIX."EventModerators");
+define("TBL_TEAMS_SHORT",           TBL_PREFIX."Teams");
+define("TBL_MATCHS_SHORT",          TBL_PREFIX."Matchs");
+define("TBL_PLAYERS_SHORT",         TBL_PREFIX."Players");
+define("TBL_SCORES_SHORT",          TBL_PREFIX."Scores");
+define("TBL_CLANS_SHORT",           TBL_PREFIX."Clans");
+define("TBL_DIVISIONS_SHORT",       TBL_PREFIX."Divisions");
+define("TBL_MEMBERS_SHORT",         TBL_PREFIX."Members");
+define("TBL_STATSCATEGORIES_SHORT", TBL_PREFIX."StatsCategories");
+define("TBL_GAMES_SHORT",           TBL_PREFIX."Games");
+
+define("TBL_USERS",           MPREFIX."user");
+define("TBL_EVENTS",          MPREFIX.TBL_EVENTS_SHORT);
+define("TBL_EVENTMODS",       MPREFIX.TBL_EVENTMODS_SHORT);
+define("TBL_TEAMS",           MPREFIX.TBL_TEAMS_SHORT);
+define("TBL_MATCHS",          MPREFIX.TBL_MATCHS_SHORT);
+define("TBL_PLAYERS",         MPREFIX.TBL_PLAYERS_SHORT);
+define("TBL_SCORES",          MPREFIX.TBL_SCORES_SHORT);
+define("TBL_CLANS",           MPREFIX.TBL_CLANS_SHORT);
+define("TBL_DIVISIONS",       MPREFIX.TBL_DIVISIONS_SHORT);
+define("TBL_MEMBERS",         MPREFIX.TBL_MEMBERS_SHORT);
+define("TBL_STATSCATEGORIES", MPREFIX.TBL_STATSCATEGORIES_SHORT);
+define("TBL_GAMES",           MPREFIX.TBL_GAMES_SHORT);
+
 /**
  * Special Names and Level Constants - the admin
  * page will only be accessible to the user with
@@ -102,16 +93,8 @@ define("EMAIL_FROM_ADDR", "frederic.marchais@gmail.com");
 define("EMAIL_PASSWORD", "gmax76");
 define("EMAIL_WELCOME", true);
 
-/**
- * This constant forces all users to have
- * lowercase usernames, capital letters are
- * converted automatically.
- */
-define("ALL_LOWERCASE", false);
-
 define("LADDER_DIR","");
 define("EVENTS_UDATE_DELAY", 60*60);  // Minimum delay between 2 updates in seconds
                                        // Set to negative value to disable the delayed updates
-
 
 ?>

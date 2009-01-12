@@ -12,7 +12,7 @@ include("include/pagination.php");
  * a nicely formatted html table.
  */
 function displayClans(){
-   global $database;
+   global $sql;
 
    /* set pagination variables */
    $rowsPerPage = 5;
@@ -21,7 +21,7 @@ function displayClans(){
 
    $q = "SELECT count(*) "
        ." FROM ".TBL_CLANS;
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $totalPages = mysql_result($result, 0);
    
    $q = "SELECT ".TBL_CLANS.".*"
@@ -29,7 +29,7 @@ function displayClans(){
        ." ORDER BY Name"
        ." LIMIT $start, $rowsPerPage";
        
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
    if(!$result || ($num_rows < 0)){
@@ -44,8 +44,8 @@ function displayClans(){
    echo "<table class=\"type1\">\n";
    echo "<tr><td class=\"type1Header\"><b>Team</b></td><td class=\"type1Header\"><b>Tag</b></td><td class=\"type1Header\"><b>Owner</b></td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
-      $clanid  = mysql_result($result,$i,TBL_CLANS.".clanid");
-      $cname  = mysql_result($result,$i,TBL_CLANS.".name");
+      $clanid  = mysql_result($result,$i, TBL_CLANS.".clanid");
+      $cname  = mysql_result($result,$i, TBL_CLANS.".name");
       $ctag  = mysql_result($result,$i, TBL_CLANS.".tag");
       $cowner  = mysql_result($result,$i, TBL_CLANS.".owner");
       
