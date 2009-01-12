@@ -5,7 +5,7 @@ if(!defined('TBL_ACTIVE_USERS')) {
 
 $q = "SELECT username FROM ".TBL_ACTIVE_USERS
     ." ORDER BY timestamp DESC,username";
-$result = $database->query($q);
+$result = $sql->db_Query($q);
 /* Error occurred, return given name by default */
 $num_rows = mysql_numrows($result);
 if(!$result || ($num_rows < 0)){
@@ -15,7 +15,7 @@ else if($num_rows > 0){
    /* Display active users, with link to their info */
    echo "<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"3\">\n";
    echo "<tr><td><font color=\"white\" size=\"1\">\n";
-   echo "$database->num_active_users Member(s): ";
+   echo "$sql->num_active_users Member(s): ";
    for($i=0; $i<$num_rows; $i++){
       $uname = mysql_result($result,$i,"username");
 

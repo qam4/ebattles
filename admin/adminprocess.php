@@ -51,7 +51,7 @@ class AdminProcess
     * request.
     */
    function procUpdateLevel(){
-      global $session, $database, $form;
+      global $session, $sql, $form;
       /* Username error checking */
       $subuser = $this->checkUsername("upduser");
       
@@ -63,7 +63,7 @@ class AdminProcess
       }
       /* Update user level */
       else{
-         $database->updateUserField($subuser, "userlevel", (int)$_POST['updlevel']);
+         $sql->updateUserField($subuser, "userlevel", (int)$_POST['updlevel']);
          header("Location: ".$session->referrer);
       }
    }
@@ -73,7 +73,7 @@ class AdminProcess
     * the user is deleted from the database.
     */
    function procDeleteUser(){
-      global $session, $database, $form;
+      global $session, $sql, $form;
       /* Username error checking */
       $subuser = $this->checkUsername("deluser");
       
@@ -86,7 +86,7 @@ class AdminProcess
       /* Delete user from database */
       else{
          $q = "DELETE FROM ".TBL_USERS." WHERE username = '$subuser'";
-         $database->query($q);
+         $sql->db_Query($q);
          header("Location: ".$session->referrer);
       }
    }
@@ -98,11 +98,11 @@ class AdminProcess
     * gone by that the user has not logged in.
     */
    function procDeleteInactive(){
-      global $session, $database;
+      global $session, $sql;
       $inact_time = $session->time - $_POST['inactdays']*24*60*60;
       $q = "DELETE FROM ".TBL_USERS." WHERE timestamp < $inact_time "
           ."AND userlevel != ".ADMIN_LEVEL;
-      $database->query($q);
+      $sql->db_Query($q);
       header("Location: ".$session->referrer);
    }
    
@@ -113,7 +113,7 @@ class AdminProcess
     * it to the banned users table.
     */
    function procBanUser(){
-      global $session, $database, $form;
+      global $session, $sql, $form;
       /* Username error checking */
       $subuser = $this->checkUsername("banuser");
       
@@ -126,10 +126,10 @@ class AdminProcess
       /* Ban user from member system */
       else{
          $q = "DELETE FROM ".TBL_USERS." WHERE username = '$subuser'";
-         $database->query($q);
+         $sql->db_Query($q);
 
          $q = "INSERT INTO ".TBL_BANNED_USERS." VALUES ('$subuser', $session->time)";
-         $database->query($q);
+         $sql->db_Query($q);
          header("Location: ".$session->referrer);
       }
    }
@@ -140,7 +140,7 @@ class AdminProcess
     * enables someone to register with that username again.
     */
    function procDeleteBannedUser(){
-      global $session, $database, $form;
+      global $session, $sql, $form;
       /* Username error checking */
       $subuser = $this->checkUsername("delbanuser", true);
       
@@ -153,7 +153,7 @@ class AdminProcess
       /* Delete user from database */
       else{
          $q = "DELETE FROM ".TBL_BANNED_USERS." WHERE username = '$subuser'";
-         $database->query($q);
+         $sql->db_Query($q);
          header("Location: ".$session->referrer);
       }
    }
@@ -164,7 +164,7 @@ class AdminProcess
     * it adds the appropritate error to the form.
     */
    function checkUsername($uname, $ban=false){
-      global $database, $form;
+      global $sql, $form;
       /* Username error checking */
       $subuser = $_POST[$uname];
       $field = $uname;  //Use field name for username
@@ -176,7 +176,7 @@ class AdminProcess
          $subuser = stripslashes($subuser);
          if(strlen($subuser) < 5 || strlen($subuser) > 30 ||
             !eregi("^([0-9a-z])+$", $subuser) ||
-            (!$ban && !$database->usernameTaken($subuser))){
+            (!$ban && !$sql->usernameTaken($subuser))){
             $form->setError($field, "* Username does not exist<br />");
          }
       }

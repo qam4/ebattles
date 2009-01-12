@@ -10,9 +10,9 @@
 		 * with link to their user information.
 		 */
 		echo "<table align=\"center\"><tr><td align=\"center\"><br />";
-		echo "<b>Member Total:</b> ".$database->getNumMembers()."<br />";
-		echo "There are $database->num_active_users registered members and ";
-		echo "$database->num_active_guests guests viewing the site.<br /><br />";
+		echo "<b>Member Total:</b> ".$sql->getNumMembers()."<br />";
+		echo "There are $sql->num_active_users registered members and ";
+		echo "$sql->num_active_guests guests viewing the site.<br /><br />";
 		
 		include("include/view_active.php");
 		?>

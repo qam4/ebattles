@@ -57,7 +57,7 @@ if ($opponentsELO_maxpoints > 0)
          ." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
          ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"; 
  
-   $result_1 = $database->query($q_1);
+   $result_1 = $sql->db_Query($q_1);
    $num_rows = mysql_numrows($result_1);
    $nbrteams = $num_rows;
    $teams_rated = 0;
@@ -96,7 +96,7 @@ if ($opponentsELO_maxpoints > 0)
                ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
                  ." AND (".TBL_PLAYERS.".Team = '$tid')";
  
-      $result_2 = $database->query($q_2);
+      $result_2 = $sql->db_Query($q_2);
       $num_rows_2 = mysql_numrows($result_2);
       $tPlayers = $num_rows_2;     
       $tnbrplayers_rated = 0;     
@@ -135,7 +135,7 @@ if ($opponentsELO_maxpoints > 0)
                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
                ." AND (".TBL_PLAYERS.".Name = '$pname')";
             
-            $result_3 = $database->query($q_3);
+            $result_3 = $sql->db_Query($q_3);
             $num_rows_3 = mysql_numrows($result_3);
             
             $players = '';
@@ -159,7 +159,7 @@ if ($opponentsELO_maxpoints > 0)
                         ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
                         ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)";
             
-                  $result_4 = $database->query($q_4);
+                  $result_4 = $sql->db_Query($q_4);
                   $num_rows_4 = mysql_numrows($result_4);
                   for($l=0; $l<$num_rows_4; $l++)
                   {
@@ -350,13 +350,13 @@ if ($opponentsELO_maxpoints > 0)
       $OverallScore[$i] = $ELO_final_score[$i] + $games_played_final_score[$i] + $victory_ratio_final_score[$i] + $victory_percent_final_score[$i] + $unique_opponents_final_score[$i] + $opponentsELO_final_score[$i];
       
       $q_3 = "UPDATE ".TBL_TEAMS." SET ELORanking = $tELO WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
-      $result_3 = $database->query($q_3);
+      $result_3 = $sql->db_Query($q_3);
       $q_3 = "UPDATE ".TBL_TEAMS." SET Win = $twin WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
-      $result_3 = $database->query($q_3);
+      $result_3 = $sql->db_Query($q_3);
       $q_3 = "UPDATE ".TBL_TEAMS." SET Loss = $tloss WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
-      $result_3 = $database->query($q_3);
+      $result_3 = $sql->db_Query($q_3);
       $q_3 = "UPDATE ".TBL_TEAMS." SET OverallScore = $OverallScore[$i] WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
-      $result_3 = $database->query($q_3);
+      $result_3 = $sql->db_Query($q_3);
    }
 
    // Calculate Rank
@@ -366,7 +366,7 @@ if ($opponentsELO_maxpoints > 0)
        ." WHERE (Event = '$event_id')"
        ." ORDER BY ".TBL_TEAMS.".OverallScore DESC, ".TBL_TEAMS.".ELORanking DESC";
  
-   $result_1 = $database->query($q_1);
+   $result_1 = $sql->db_Query($q_1);
    $num_rows = mysql_numrows($result_1);
    
    $ranknumber = 1;
@@ -375,7 +375,7 @@ if ($opponentsELO_maxpoints > 0)
       $tid = mysql_result($result_1,$i, TBL_TEAMS.".TeamID");
                      
       $q_2 = "UPDATE ".TBL_TEAMS." SET Rank = $ranknumber WHERE (TeamID = '$tid') AND (Event = '$event_id')";
-      $result_2 = $database->query($q_2);
+      $result_2 = $sql->db_Query($q_2);
       
       $index = array_search($tid,$id);      
             
@@ -383,7 +383,7 @@ if ($opponentsELO_maxpoints > 0)
           ." FROM ".TBL_PLAYERS
           ." WHERE (".TBL_PLAYERS.".Team = '$tid')"
             ." AND (".TBL_PLAYERS.".Name = '$session->username')";
-      $result_2 = $database->query($q_2);
+      $result_2 = $sql->db_Query($q_2);
       $num_rows_2 = mysql_numrows($result_2);
       if($num_rows_2 > 0)
       {

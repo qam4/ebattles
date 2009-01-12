@@ -75,7 +75,7 @@ require_once './include/ELO.php';
        ." FROM ".TBL_EVENTS
        ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
    
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
    $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
    $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
@@ -88,7 +88,7 @@ require_once './include/ELO.php';
          ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
        ." ORDER BY ".TBL_USERS.".nickname";
  
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
 
    $players_nickname[0] = '-- select --';
@@ -195,7 +195,7 @@ if (isset($_POST['submit']))
         $q = 
         "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments)
         VALUES ($event_id,'$reported_by',$time, '$comments')";
-        $result = $database->query($q);
+        $result = $sql->db_Query($q);
         
         $last_id = mysql_insert_id();
         $match_id = $last_id;
@@ -214,7 +214,7 @@ if (isset($_POST['submit']))
            ." WHERE (".TBL_USERS.".username = '$pname')"
              ." AND (".TBL_PLAYERS.".Name = ".TBL_USERS.".username)"
              ." AND (".TBL_PLAYERS.".Event = '$event_id')";
-           $result = $database->query($q);
+           $result = $sql->db_Query($q);
            $row = mysql_fetch_array($result);     
            $pnickname = $row['nickname'];
            $pID = $row['PlayerID'];  
@@ -231,7 +231,7 @@ if (isset($_POST['submit']))
            "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_Score,Player_Rank)
             VALUES ($last_id,$pID,$pteam,$deltaELO,$nbr_teams-$prank,$prank)
             ";
-           $result = $database->query($q);
+           $result = $sql->db_Query($q);
            
     	   echo 'Player #'.$i.': '.$pnickname.' ('.$pname.') (id:'.$pID.')';
     	   echo ' in team '.$pteam;
@@ -261,7 +261,7 @@ if (isset($_POST['submit']))
                       ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
                       ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
                       ." AND (".TBL_SCORES.".Player_MatchTeam = '$i')"; 
-               $resultA = $database->query($q);
+               $resultA = $sql->db_Query($q);
                $NbrPlayersTeamA = mysql_numrows($resultA);
                $teamA_Score= mysql_result($resultA,0, TBL_SCORES.".Player_Score");
                $teamA_ELO=0;
@@ -284,7 +284,7 @@ if (isset($_POST['submit']))
                        ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
                        ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
                        ." AND (".TBL_SCORES.".Player_MatchTeam = '$j')"; 
-               $resultB = $database->query($q);
+               $resultB = $sql->db_Query($q);
                $NbrPlayersTeamB = mysql_numrows($resultB);
                $teamB_Score= mysql_result($resultB,0, TBL_SCORES.".Player_Score");
                $teamB_ELO=0;
@@ -309,7 +309,7 @@ if (isset($_POST['submit']))
                   $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO"
                       ." WHERE (MatchID = '$match_id')"
                         ." AND (Player = '$pID')";
-                  $result = $database->query($q);
+                  $result = $sql->db_Query($q);
    	       }      	
                for ($k=0;$k<$NbrPlayersTeamB;$k++)
                {
@@ -319,7 +319,7 @@ if (isset($_POST['submit']))
                   $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO"
                       ." WHERE (MatchID = '$match_id')"
                         ." AND (Player = '$pID')";
-                  $result = $database->query($q);
+                  $result = $sql->db_Query($q);
    	       }      	
             }
         }
@@ -339,7 +339,7 @@ if (isset($_POST['submit']))
                 ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                 ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
                 ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)";
-        $result = $database->query($q);
+        $result = $sql->db_Query($q);
         $num_rows = mysql_numrows($result);
         for($i=0;$i<$num_rows;$i++)
         {
@@ -363,13 +363,13 @@ if (isset($_POST['submit']))
             echo "Player $pName, new ELO:$pELO<br />"; 
 
             $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result2 = $database->query($q);
+            $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result2 = $database->query($q);
+            $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result2 = $database->query($q);
+            $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result2 = $database->query($q);
+            $result2 = $sql->db_Query($q);
 
             $gain = 2*$pscore - $nbr_teams +1;
             if ($gain * $pStreak > 0)
@@ -386,15 +386,15 @@ if (isset($_POST['submit']))
             if ($pStreak > $pStreak_Best) $pStreak_Best = $pStreak; 
             if ($pStreak < $pStreak_Worst) $pStreak_Worst = $pStreak; 
             $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $pStreak WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result3 = $database->query($q3);
+            $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pStreak_Best WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result3 = $database->query($q3);
+            $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $pStreak_Worst WHERE (Name = '$pName') AND (Event = '$event_id')";
-            $result3 = $database->query($q3);
+            $result3 = $sql->db_Query($q3);
         } 
         
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-        $result = $database->query($q);
+        $result = $sql->db_Query($q);
 
         echo "<p>";
         echo "<br />Back to [<a href=\"eventinfo.php?eventid=$event_id\">Event</a>]<br />";

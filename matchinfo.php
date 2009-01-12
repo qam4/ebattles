@@ -25,7 +25,7 @@ include("include/main.php");
        ." WHERE (".TBL_EVENTS.".eventid = '$event_id')"
        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";       
 
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
    $egame = mysql_result($result,0 , TBL_GAMES.".Name");
    $eowner = mysql_result($result,0 , TBL_EVENTS.".Owner");
@@ -50,7 +50,7 @@ include("include/main.php");
          ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
        ." ORDER BY ".TBL_SCORES.".Player_Rank";
  
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
    echo"<div class=\"news\">";
    echo "<h2>Match (#$match_id)</h2><br />";
@@ -82,7 +82,7 @@ include("include/main.php");
        ." FROM ".TBL_EVENTMODS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
        ."   AND (".TBL_EVENTMODS.".Name = '$session->username')";   
-   $result_2 = $database->query($q_2);
+   $result_2 = $sql->db_Query($q_2);
    $num_rows_2 = mysql_numrows($result_2);
    
    $can_delete = 0;

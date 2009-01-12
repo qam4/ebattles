@@ -17,7 +17,7 @@ else
 
    $q2 = "INSERT INTO ".TBL_CLANS."(Name,Tag,Owner)"
        ." VALUES ('$username team', '$username', '$username')";   
-   $result2 = $database->query($q2);
+   $result2 = $sql->db_Query($q2);
    $last_id = mysql_insert_id();
 
    header("Location: clanmanage.php?clanid=".$last_id);

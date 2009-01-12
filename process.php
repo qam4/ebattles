@@ -129,7 +129,7 @@ class Process
     * emailed to the address the user gave on sign up.
     */
    function procForgotPass(){
-      global $database, $session, $mailer, $form;
+      global $sql, $session, $mailer, $form;
       /* Username error checking */
       $subuser = $_POST['user'];
       $field = "user";  //Use field name for username
@@ -141,7 +141,7 @@ class Process
          $subuser = stripslashes($subuser);
          if(strlen($subuser) < 5 || strlen($subuser) > 30 ||
             !eregi("^([0-9a-z])+$", $subuser) ||
-            (!$database->usernameTaken($subuser))){
+            (!$sql->usernameTaken($subuser))){
             $form->setError($field, "*");
          }
       }
@@ -157,13 +157,13 @@ class Process
          $newpass = $session->generateRandStr(8);
          
          /* Get email of user */
-         $usrinf = $database->getUserInfo($subuser);
+         $usrinf = $sql->getUserInfo($subuser);
          $email  = $usrinf['email'];
          
          /* Attempt to send the email with new password */
          if($mailer->sendNewPass($subuser,$email,$newpass)){
             /* Email sent, update database */
-            $database->updateUserField($subuser, "password", md5($newpass));
+            $sql->updateUserField($subuser, "password", md5($newpass));
             $_SESSION['forgotpass'] = true;
          }
          /* Email failure, do not change password */

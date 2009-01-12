@@ -19,7 +19,7 @@ include("include/pagination.php");
  * a nicely formatted html table.
  */
 function displayUsers(){
-   global $database;
+   global $sql;
    global $session;
    
    if (!isset($_GET['orderby'])) $_GET['orderby'] = "username";
@@ -38,14 +38,14 @@ function displayUsers(){
 
    $q = "SELECT count(*)"
        ."FROM ".TBL_USERS;
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $totalPages = mysql_result($result, 0);
    
    $q = "SELECT username,nickname,userlevel,email,joined_timestamp,timestamp"
        ." FROM ".TBL_USERS." ORDER BY $orderby $sort"
        ." LIMIT $start, $rowsPerPage";
        
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
    if(!$result || ($num_rows < 0)){
@@ -102,10 +102,10 @@ if ($_GET['orderby'] == "timestamp")
  */
 function displayBannedUsers(){
    global $session;
-   global $database;
+   global $sql;
    $q = "SELECT username,timestamp "
        ."FROM ".TBL_BANNED_USERS." ORDER BY username";
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
    if(!$result || ($num_rows < 0)){

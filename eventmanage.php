@@ -49,7 +49,7 @@ function clearEndDate(frm)
        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"      
        ."   AND (".TBL_USERS.".username = ".TBL_EVENTS.".Owner)";   
 
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
    $epassword = mysql_result($result,0 , TBL_EVENTS.".Password");
    $egame = mysql_result($result,0 , TBL_GAMES.".Name");
@@ -87,7 +87,7 @@ function clearEndDate(frm)
        ." FROM ".TBL_STATSCATEGORIES
        ." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
  
-   $result_1 = $database->query($q_1);
+   $result_1 = $sql->db_Query($q_1);
    $num_rows = mysql_numrows($result_1);
 
    $rating_max=0;
@@ -176,7 +176,7 @@ function clearEndDate(frm)
                 .TBL_USERS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
        ."   AND (".TBL_USERS.".username = ".TBL_EVENTMODS.".Name)";   
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
    echo "Moderators:<br />";
    if ($num_rows>0)
@@ -201,15 +201,15 @@ function clearEndDate(frm)
    echo "<form name=\"eventaddmodsform\" action=\"eventprocess.php?eventid=$event_id\" method=\"post\">";
    $q = "SELECT ".TBL_USERS.".*"
        ." FROM ".TBL_USERS;
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
    echo "<table>";
    echo "<tr>";
    echo "<td><select name=\"mod\">\n";
    for($i=0; $i<$num_rows; $i++){
-      $uname  = mysql_result($result,$i,TBL_USERS.".username");
-      $unickname  = mysql_result($result,$i,TBL_USERS.".nickname");
+      $uname  = mysql_result($result,$i, TBL_USERS.".username");
+      $unickname  = mysql_result($result,$i, TBL_USERS.".nickname");
          echo "<option value=\"$uname\">$unickname ($uname)</option>\n";
    }
    echo "</select>\n";
@@ -255,14 +255,14 @@ function clearEndDate(frm)
    $q = "SELECT ".TBL_GAMES.".*"
        ." FROM ".TBL_GAMES
        ." ORDER BY Name";
-   $result = $database->query($q);
+   $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
    echo "<tr><td>\n";
    echo "<b>Game:</b></td>\n";
    echo "<td><select name=\"eventgame\">\n";
    for($i=0; $i<$num_rows; $i++){
-      $gname  = mysql_result($result,$i,TBL_GAMES.".name");
+      $gname  = mysql_result($result,$i, TBL_GAMES.".name");
       $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
       if ($egame == $gname)
       {

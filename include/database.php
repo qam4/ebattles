@@ -279,12 +279,12 @@ class MySQLDB
     * returns the result, which may be false, true or a
     * resource identifier.
     */
-   function query($query){
+   function db_Query($query){
       return mysql_query($query, $this->connection);
    }
 };
 
 /* Create database connection */
-$database = new MySQLDB;
+$sql = new MySQLDB;
 
 ?>
