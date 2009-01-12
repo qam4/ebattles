@@ -134,14 +134,14 @@ include_once(e_PLUGIN."ebattles/include/main.php");
           echo "<tr><td class=\"type1Header\"><b>Name</b></td><td class=\"type1Header\"><b>Status</b></td><td class=\"type1Header\"><b>Joined</b></td></tr>\n";
           for($j=0; $j<$num_rows_2; $j++)
           {
-             $mname  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+             $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
              $mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
              $mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
              $mjoined_local = $mjoined + $session->timezone_offset;
              $date = date("d M Y",$mjoined_local);
           
              echo "<tr>\n";
-             echo "<td class=\"type1Body\"><b><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mname\">$mname</a></b></td><td class=\"type1Body\">Member</td><td class=\"type1Body\">$date</td></tr>";
+             echo "<td class=\"type1Body\"><b><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mid\">$mname</a></b></td><td class=\"type1Body\">Member</td><td class=\"type1Body\">$date</td></tr>";
           
           }
           echo "</table>\n";
