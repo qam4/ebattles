@@ -5,7 +5,8 @@
  *
  */
 ob_start();
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 ?>
 <div id="main">
 <script type="text/javascript" src="./js/slider.js"></script>
@@ -47,7 +48,7 @@ function clearEndDate(frm)
                 .TBL_USERS
        ." WHERE (".TBL_EVENTS.".eventid = '$event_id')"
        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"      
-       ."   AND (".TBL_USERS.".username = ".TBL_EVENTS.".Owner)";   
+       ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTS.".Owner)";   
 
    $result = $sql->db_Query($q);
    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
@@ -57,7 +58,7 @@ function clearEndDate(frm)
    $egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
    $eowner = mysql_result($result,0 , TBL_EVENTS.".Owner");
-   $eownernickname = mysql_result($result,0 , TBL_USERS.".nickname");
+   $eownername = mysql_result($result,0 , TBL_USERS.".user_name");
    $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
    $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
    $erules = mysql_result($result,0 , TBL_EVENTS.".Rules");
@@ -140,12 +141,12 @@ function clearEndDate(frm)
             $rating_max += $streaks_maxpoints;
          }
    }
-   echo "<h1><a href=\"eventinfo.php?eventid=$event_id\">$ename</a> ($etype)</h1>";
-   echo "<h2><img src=\"images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
+   echo "<h1><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">$ename</a> ($etype)</h1>";
+   echo "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
 
    $can_manage = 0;
    if ($session->isAdmin()) $can_manage = 1;
-   if ($session->username==$eowner) $can_manage = 1;
+   if ({USER_ID}==$eowner) $can_manage = 1;
    if ($can_manage == 0)
    {
       header("Location: index.php");
@@ -167,7 +168,7 @@ function clearEndDate(frm)
 
 <?php
    echo "<p>";
-   echo"Owner: <a href=\"userinfo.php?user=$eowner\">$eownernickname</a><br />";
+   echo"Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$eowner\">$eownername</a><br />";
    echo"</p>";
 
    $q = "SELECT ".TBL_EVENTMODS.".*, "
@@ -175,7 +176,7 @@ function clearEndDate(frm)
        ." FROM ".TBL_EVENTMODS.", "
                 .TBL_USERS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-       ."   AND (".TBL_USERS.".username = ".TBL_EVENTMODS.".Name)";   
+       ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".Name)";   
    $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
    echo "Moderators:<br />";
@@ -184,12 +185,12 @@ function clearEndDate(frm)
       echo "<table>";
       for($i=0; $i<$num_rows; $i++){
          echo"<tr>";
-         $modname  = mysql_result($result,$i, TBL_EVENTMODS.".Name");
-         $modnickname  = mysql_result($result,$i, TBL_USERS.".nickname");
-         echo "<form action=\"eventprocess.php?eventid=$event_id\" method=\"post\">";
-         echo "<td><a href=\"userinfo.php?user=$modname\">$modnickname</a></td>";
+         $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
+         $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
+         echo "<form action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+         echo "<td><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modid\">$modname</a></td>";
          echo "<td>";
-         echo "<input type=\"hidden\" name=\"eventmod\" value=\"$modname\"></input>";
+         echo "<input type=\"hidden\" name=\"eventmod\" value=\"$modid\"></input>";
          echo "<input type=\"hidden\" name=\"eventdeletemod\" value=\"1\"></input>";
          echo "<input type=\"submit\" value=\"Remove Moderator\" onclick=\"return confirm('Are you sure you want to remove this moderator?');\"></input>";
          echo "</form>";
@@ -198,7 +199,7 @@ function clearEndDate(frm)
       }
       echo "</table>";
    }
-   echo "<form name=\"eventaddmodsform\" action=\"eventprocess.php?eventid=$event_id\" method=\"post\">";
+   echo "<form name=\"eventaddmodsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
    $q = "SELECT ".TBL_USERS.".*"
        ." FROM ".TBL_USERS;
    $result = $sql->db_Query($q);
@@ -208,9 +209,9 @@ function clearEndDate(frm)
    echo "<tr>";
    echo "<td><select name=\"mod\">\n";
    for($i=0; $i<$num_rows; $i++){
-      $uname  = mysql_result($result,$i, TBL_USERS.".username");
-      $unickname  = mysql_result($result,$i, TBL_USERS.".nickname");
-         echo "<option value=\"$uname\">$unickname ($uname)</option>\n";
+      $uid  = mysql_result($result,$i, TBL_USERS.".user_id");
+      $uname  = mysql_result($result,$i, TBL_USERS.".user_name");
+         echo "<option value=\"$uname\">$uname ($uid)</option>\n";
    }
    echo "</select>\n";
    echo "</td>\n";
@@ -231,7 +232,9 @@ function clearEndDate(frm)
 <h2 class="tab">Event Settings</h2>
 <br /><br />
 
-<form name="eventsettingsform" action="eventprocess.php?eventid=<?php echo "$event_id";?>" method="post">
+<?php 
+echo "<form name=\"eventsettingsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+?>
 
 <table border="0" cellspacing="0" cellpadding="3">
 <!-- Event Name -->
@@ -391,7 +394,9 @@ else
 <div class="tab-page">
 <h2 class="tab">Event Rules</h2>
 <br /><br />
-<form name="eventrulesform" action="eventprocess.php?eventid=<?php echo "$event_id";?>" method="post">
+<?php 
+echo "<form name=\"eventrulesform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+?>
 
 <table border="0" cellspacing="0" cellpadding="3">
 <!-- Rules -->
@@ -421,7 +426,11 @@ else
 <br /><br />
 <div class="news">
 <h2>Reset Event</h2>
-<form name="eventresetform" action="eventprocess.php?eventid=<?php echo "$event_id";?>" method="post">
+<?php 
+/* fm -- why 2 eventresetforms her!!!? */
+
+echo "<form name=\"eventresetform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+?>
 <h3>Reset Players/Teams.</h3>
 - Reset Players and Teams Statistics (Rank, Score, ELO, Games Played, Wins, Losses),<br />
 - Delete all Matches.
@@ -435,7 +444,9 @@ else
 </table>
 </form>
 
-<form name="eventresetform" action="eventprocess.php?eventid=<?php echo "$event_id";?>" method="post">
+<?php 
+echo "<form name=\"eventresetform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+?>
 <h3>Reset Event.</h3>
 - Delete all Players and Teams.<br />
 - Delete all Matches.
@@ -452,7 +463,9 @@ else
 <br /><br />
 <div class="news">
 <h2>Delete Event</h2>
-<form name="eventdeleteform" action="eventprocess.php?eventid=<?php echo "$event_id";?>" method="post">
+<?php 
+echo "<form name=\"eventdeleteform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+?>
 - Delete Event.<br />
 <table border="0" cellspacing="0" cellpadding="3">
 <tr>
@@ -470,7 +483,9 @@ else
 <div class="tab-page">
 <h2 class="tab">Event Stats</h2>
 <br /><br />
-<form name="eventstatsform" action="eventprocess.php?eventid=<?php echo "$event_id";?>" method="post">
+<?php 
+echo "<form name=\"eventstatsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+?>
 <table cellpadding="2" border="0">
 <tr>
 <td >
@@ -756,5 +771,5 @@ setupAllTabs();
 //]]>
 </script>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

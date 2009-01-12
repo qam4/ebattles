@@ -8,7 +8,8 @@
  * password, they must first confirm their current password.
  *
  */
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 
 ?>
 <div id="main">
@@ -47,7 +48,7 @@ include("include/main.php");
        ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
          ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
          ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-         ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
+         ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
        ." ORDER BY ".TBL_SCORES.".Player_Rank";
  
    $result = $sql->db_Query($q);
@@ -58,13 +59,13 @@ include("include/main.php");
    if ($num_rows>0)
    {
       $reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
-      $reported_by_nickname  = mysql_result($result,0, TBL_USERS.".nickname");
+      $reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
       $comments  = mysql_result($result,0, TBL_MATCHS.".Comments");
       $time_reported  = mysql_result($result,0, TBL_MATCHS.".TimeReported");
       $time_reported_local = $time_reported + $session->timezone_offset;
       $date = date("d M Y, h:i:s A",$time_reported_local);
       
-      echo "Match reported by <a href=\"userinfo.php?user=$reported_by\">$reported_by_nickname</a> ($date)<br />";
+      echo "Match reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$reported_by\">$reported_by_name</a> ($date)<br />";
    }
    else
    {
@@ -81,12 +82,12 @@ include("include/main.php");
    $q_2 = "SELECT ".TBL_EVENTMODS.".*"
        ." FROM ".TBL_EVENTMODS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-       ."   AND (".TBL_EVENTMODS.".Name = '$session->username')";   
+       ."   AND (".TBL_EVENTMODS.".Name = '{USER_ID}')";   
    $result_2 = $sql->db_Query($q_2);
    $num_rows_2 = mysql_numrows($result_2);
    
    $can_delete = 0;
-   if (  ($session->username==$reported_by)
+   if (  ({USER_ID}==$reported_by)
        &&(  ($eend==0)
           ||(  ($eend>=$time)
              &&($estart<=$time)
@@ -95,12 +96,12 @@ include("include/main.php");
       )
      $can_delete = 1;
    if ($session->isAdmin())  $can_delete = 1;
-   if ($session->username==$eowner)  $can_delete = 1;
+   if ({USER_ID}==$eowner)  $can_delete = 1;
    if ($num_rows_2>0)  $can_delete = 1;
    
    if($can_delete != 0)
    {
-      echo "<form action=\"matchdelete.php?eventid=$event_id\" method=\"post\">";
+      echo "<form action=\"".e_PLUGIN."ebattles/matchdelete.php?eventid=$event_id\" method=\"post\">";
       echo "<input type=\"hidden\" name=\"matchid\" value=\"$match_id\"></input>";
       echo "<input type=\"submit\" name=\"deletematch\" value=\"Delete this match\"></input>";
       echo "</form>";
@@ -112,16 +113,16 @@ include("include/main.php");
    echo "<tr><td class=\"type1Header\"><b>Rank</b></td><td class=\"type1Header\"><b>Team</b></td><td class=\"type1Header\"><b>Player</b></td><td class=\"type1Header\"><b>Score</b></td><td class=\"type1Header\"><b>ELO</b></td></tr>\n";
    for($i=0; $i<$num_rows; $i++)
    {
-      $pname  = mysql_result($result,$i, TBL_USERS.".username");
-      $pnickname  = mysql_result($result,$i, TBL_USERS.".nickname");
+      $pid  = mysql_result($result,$i, TBL_USERS.".user_id");
+      $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
       $prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
       $pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
       $pdeltaELO  = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
       $pscore  = mysql_result($result,$i, TBL_SCORES.".Player_Score");
 
-      //echo "Rank #$prank - $pnickname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
+      //echo "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
       echo "<tr>\n";
-      echo "<td class=\"type1Body\"><b>$prank</b></td><td class=\"type1Body\">$pMatchTeam</td><td class=\"type1Body\"><a class=\"type1\" href=\"userinfo.php?user=$pname\">$pnickname</a></td><td class=\"type1Body\">$pscore</td><td class=\"type1Body\">$pdeltaELO</td></tr>";
+      echo "<td class=\"type1Body\"><b>$prank</b></td><td class=\"type1Body\">$pMatchTeam</td><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a></td><td class=\"type1Body\">$pscore</td><td class=\"type1Body\">$pdeltaELO</td></tr>";
 
    }
    echo "</table><br />\n";
@@ -133,10 +134,10 @@ include("include/main.php");
    echo "</div>";
 
    echo "<p>";
-   echo "<br />Back to [<a href=\"eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+   echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
    echo "</p>";
 ?>
 </div>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

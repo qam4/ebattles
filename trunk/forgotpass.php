@@ -14,7 +14,8 @@
  * your website.
  *
  */
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 ?>
 <div id="main">
 <?php
@@ -31,7 +32,7 @@ if(isset($_SESSION['forgotpass'])){
       echo "<h1>New Password Generated</h1>";
       echo "<p>Your new password has been generated "
           ."and sent to the email <br />associated with your account.</p>"
-          ."<p><a href=\"index.php\">Main</a>.</p>";
+          ."<p><a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>.</p>";
    }
    /**
     * Email could not be sent, therefore password was not
@@ -41,7 +42,7 @@ if(isset($_SESSION['forgotpass'])){
       echo "<h1>New Password Failure</h1>";
       echo "<p>There was an error sending you the "
           ."email with the new password,<br /> so your password has not been changed.</p>"
-          ."<p><a href=\"index.php\">Main</a>.</p>";
+          ."<p><a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>.</p>";
    }
        
    unset($_SESSION['forgotpass']);
@@ -69,8 +70,9 @@ associated with your account, all you have to do is enter your
 username.
 </p>
 
-<?php echo $form->error("user"); ?>
-<form action="process.php" method="post">
+<?php echo $form->error("user"); 
+echo "<form action=\"".e_PLUGIN."ebattles/process.php\" method=\"post\">";
+?>
 <b>Username:</b> <input type="text" name="user" maxlength="30" value="<?php echo $form->value("user"); ?>"></input>
 <input type="hidden" name="subforgot" value="1"></input>
 <input type="submit" value="Get New Password"></input>
@@ -82,5 +84,5 @@ username.
 ?>
 </div>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

@@ -8,7 +8,8 @@
  * password, they must first confirm their current password.
  *
  */
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 
 ?>
 <div id="main">
@@ -20,7 +21,7 @@ include("include/main.php");
    if (!isset($_POST['quicklossreport']))
    {
       echo "<br />You are not authorized to report a quick loss.<br />";
-      echo "<br />Back to [<a href=\"eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+      echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
    }
    else
    {
@@ -29,8 +30,8 @@ include("include/main.php");
           ." FROM ".TBL_PLAYERS.", "
                    .TBL_USERS
           ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-            ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
-          ." ORDER BY ".TBL_USERS.".nickname";
+            ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
+          ." ORDER BY ".TBL_USERS.".user_name";
       
       $result = $sql->db_Query($q);
       $num_rows = mysql_numrows($result);
@@ -38,19 +39,21 @@ include("include/main.php");
 <div class="news">
 <h2>Quick Report</h2>
 <table>
-<form action="matchprocess.php" method="post">
+<?php   
+echo "<form action=\"".e_PLUGIN."ebattles/matchprocess.php\" method=\"post\">";
+?>
 <tr>
   <td>
     Player:
     <select name="Player">
 <?php   
     for($i=0; $i<$num_rows; $i++){
-      $pname  = mysql_result($result,$i, TBL_USERS.".username");
+      $pid  = mysql_result($result,$i, TBL_USERS.".user_id");
       $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-      $pnickname  = mysql_result($result,$i, TBL_USERS.".nickname");
-      if($pname != $session->username)
+      $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+      if($pid != {USER_ID})
       { 
-      	echo "<option value=\"$pname\">#$prank - $pnickname</option>";
+      	echo "<option value=\"$pname\">#$prank - $pname</option>";
       }
      }
 ?>
@@ -60,7 +63,7 @@ include("include/main.php");
 <tr>
   <td>
 <?php   
-    $reported_by = $session->username;
+    $reported_by = {USER_ID};
     echo "<input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>";
     echo "<input type=\"hidden\" name=\"reported_by\" value=\"$reported_by\"></input>";
 ?>
@@ -74,5 +77,5 @@ include("include/main.php");
 </div>
 <?php
    }
-   include("include/footer.php");
+   include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

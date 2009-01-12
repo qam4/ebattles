@@ -4,8 +4,9 @@
  *
  */
 
-include("include/main.php");
-include("include/pagination.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
+include_once(e_PLUGIN."ebattles/include/pagination.php");
 
 /**
  * displayEvents - Displays the events database table in
@@ -29,7 +30,7 @@ function displayPastEvents(){
    $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
-   echo "<form name=\"myform\" action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
+   echo "<form name=\"myform\" action=\"".e_PLUGIN."ebattles/".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
    echo "<table>\n";
    echo "<tr><td>\n";
    echo "Games:<br />\n";
@@ -154,7 +155,7 @@ function displayPastEvents(){
          ||($eend<=$time)
         )
       {
-        echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body\"><img src=\"images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body\">$gname</td><td class=\"type1Body\">$etype</td><td class=\"type1Body\">$date_start</td><td class=\"type1Body\">$date_end</td><td class=\"type1Body\">$nbrplayers</td><td class=\"type1Body\">$nbrmatches</td></tr>\n";
+        echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body\">$gname</td><td class=\"type1Body\">$etype</td><td class=\"type1Body\">$date_start</td><td class=\"type1Body\">$date_end</td><td class=\"type1Body\">$nbrplayers</td><td class=\"type1Body\">$nbrmatches</td></tr>\n";
       }
    }
    echo "</table><br />\n";
@@ -190,5 +191,5 @@ Back to [<a href="./index.php">Main Page</a>]
 </div>
 
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

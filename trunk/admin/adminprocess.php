@@ -7,7 +7,7 @@
  * member system adjustments.
  *
  */
-include("../include/session.php");
+include(e_PLUGIN."ebattles/include/session.php");
 
 class AdminProcess
 {

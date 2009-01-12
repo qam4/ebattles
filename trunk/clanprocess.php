@@ -3,7 +3,7 @@
  *ClanProcess.php
  * 
  */
-include("include/session.php");
+include_once(e_PLUGIN."ebattles/include/session.php");
 
 /*
 function deleteDivisions($clan_id)

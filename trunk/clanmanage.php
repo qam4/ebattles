@@ -9,7 +9,8 @@
  *
  */
 ob_start();
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 
 ?>
 <div id="main">
@@ -24,21 +25,21 @@ include("include/main.php");
        ." FROM ".TBL_CLANS.", "
                 .TBL_USERS
        ." WHERE (".TBL_CLANS.".ClanID = '$clan_id')"
-         ." AND (".TBL_USERS.".username = ".TBL_CLANS.".Owner)";
+         ." AND (".TBL_USERS.".user_id = ".TBL_CLANS.".Owner)";
  
    $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
 
    $clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
    $clan_owner  = mysql_result($result,0, TBL_CLANS.".Owner");
-   $clan_owner_nickname   = mysql_result($result,0, TBL_USERS.".nickname");
+   $clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
    $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
 
-   echo "<h1><a href=\"claninfo.php?clanid=$clan_id\">$clan_name</a> ($clan_tag)</h1>";   
+   echo "<h1><a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan_id\">$clan_name</a> ($clan_tag)</h1>";   
 
    $can_manage = 0;
    if ($session->isAdmin()) $can_manage = 1;
-   if ($session->username==$clan_owner) $can_manage = 1;
+   if ({USER_ID}==$clan_owner) $can_manage = 1;
    if ($can_manage == 0)
    {
       header("Location: index.php");
@@ -57,7 +58,7 @@ include("include/main.php");
 <br /><br />
 
 <?php
-   echo "<p><b>Owner:</b> <a href=\"userinfo.php?user=$clan_owner\">$clan_owner_nickname</a></p>";
+   echo "<p><b>Owner:</b> <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a></p>";
 
    $q_2 = "SELECT ".TBL_USERS.".*"
       ." FROM ".TBL_USERS;
@@ -66,22 +67,22 @@ include("include/main.php");
    $row = mysql_fetch_array($result_2);     
    $num_rows_2 = mysql_numrows($result_2);
    
-   echo "<form action=\"clanprocess.php?clanid=$clan_id\" method=\"post\">";
+   echo "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
    echo "<table>";
    echo "<tr>";
    echo "<td><select name=\"clanowner\">\n";
    for($j=0; $j<$num_rows_2; $j++)
    {
-      $uname  = mysql_result($result_2,$j, TBL_USERS.".username");
-      $unickname  = mysql_result($result_2,$j, TBL_USERS.".nickname");
+      $uid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+      $uname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
 
-      if ($clan_owner == $uname)
+      if ($clan_owner == $uid)
       {
-         echo "<option value=\"$uname\" selected=\"selected\">$unickname ($uname)</option>\n";
+         echo "<option value=\"$uid\" selected=\"selected\">$uname ($uid)</option>\n";
       }
       else
       {
-         echo "<option value=\"$uname\">$unickname ($uname)</option>\n";
+         echo "<option value=\"$uid\">$uname ($uid)</option>\n";
       }
    }
    echo "</select>\n";
@@ -94,8 +95,8 @@ include("include/main.php");
    echo "</table>";
    echo "</form>";
    echo "<br />";
+   echo "<form name=\"clansettingsform\" action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
 ?>
-<form name="clansettingsform" action="clanprocess.php?clanid=<?php echo "$clan_id";?>" method="post">
 <table border="0" cellspacing="0" cellpadding="3">
 <!-- Clan Name -->
 <tr>
@@ -127,7 +128,7 @@ include("include/main.php");
 <h2 class="tab">Clan Divisions</h2>
 <br /><br />
 <?php
-   echo "<form name=\"clanadddivform\" action=\"clanprocess.php?clanid=$clan_id\" method=\"post\">";
+   echo "<form name=\"clanadddivform\" action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
    $q = "SELECT ".TBL_GAMES.".*"
        ." FROM ".TBL_GAMES
        ." ORDER BY Name";
@@ -165,7 +166,7 @@ include("include/main.php");
                 .TBL_GAMES
        ." WHERE (".TBL_CLANS.".ClanID = '$clan_id')"
          ." AND (".TBL_DIVISIONS.".Clan = ".TBL_CLANS.".ClanID)"
-         ." AND (".TBL_USERS.".username = ".TBL_DIVISIONS.".Captain)"
+         ." AND (".TBL_USERS.".user_id = ".TBL_DIVISIONS.".Captain)"
          ." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
  
    $result = $sql->db_Query($q);
@@ -176,11 +177,11 @@ include("include/main.php");
       $gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
       $div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
       $div_captain  = mysql_result($result,$i, TBL_DIVISIONS.".Captain");
-      $div_captain_nickname  = mysql_result($result,$i, TBL_USERS.".nickname");
+      $div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
       echo"<div class=\"news\">";
-      echo "<h2><img src=\"images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</h2><br />";
-      echo "<p>Captain: <a href=\"userinfo.php?user=$div_captain\">$div_captain_nickname</a></p>";
+      echo "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</h2><br />";
+      echo "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
 
       $q_2 = "SELECT ".TBL_CLANS.".*, "
                    .TBL_DIVISIONS.".*, "
@@ -196,7 +197,7 @@ include("include/main.php");
            ." AND (".TBL_DIVISIONS.".Clan = ".TBL_CLANS.".ClanID)"
            ." AND (".TBL_DIVISIONS.".DivisionID = '$div_id')"
            ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-           ." AND (".TBL_USERS.".username = ".TBL_MEMBERS.".Name)"
+           ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".Name)"
            ." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
 
       $result_2 = $sql->db_Query($q_2);
@@ -209,22 +210,22 @@ include("include/main.php");
           $row = mysql_fetch_array($result_2);     
           $num_rows_2 = mysql_numrows($result_2);
      
-          echo "<form action=\"clanprocess.php?clanid=$clan_id\" method=\"post\">";
+          echo "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
           echo "<table>";
           echo "<tr>";
           echo "<td><select name=\"divcaptain\">\n";
           for($j=0; $j<$num_rows_2; $j++)
           {
-             $mname  = mysql_result($result_2,$j, TBL_USERS.".username");
-             $mnickname  = mysql_result($result_2,$j, TBL_USERS.".nickname");
+             $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+             $mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
 
-             if ($div_captain == $mname)
+             if ($div_captain == $mid)
              {
-                echo "<option value=\"$mname\" selected=\"selected\">$mnickname</option>\n";
+                echo "<option value=\"$mid\" selected=\"selected\">$mname</option>\n";
              }
              else
              {
-                echo "<option value=\"$mname\">$mnickname</option>\n";
+                echo "<option value=\"$mid\">$mname</option>\n";
              }
           }
           echo "</select>\n";
@@ -240,20 +241,20 @@ include("include/main.php");
 
           echo "<p>$num_rows_2 member(s)</p>";
 
-          echo "<form action=\"clanprocess.php?clanid=$clan_id\" method=\"post\">";
+          echo "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
           echo "<table class=\"type1\">\n";
           echo "<tr><td class=\"type1Header\"><b>Name</b></td><td class=\"type1Header\"><b>Status</b></td><td class=\"type1Header\"><b>Joined</b></td><td class=\"type1Header\"><b>Kick</b></td></tr>\n";
           for($j=0; $j<$num_rows_2; $j++)
           {
              $mid  = mysql_result($result_2,$j, TBL_MEMBERS.".MemberID");
-             $mname  = mysql_result($result_2,$j, TBL_USERS.".username");
-             $mnickname  = mysql_result($result_2,$j, TBL_USERS.".nickname");
+             $muid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+             $mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
              $mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
              $mjoined_local = $mjoined + $session->timezone_offset;
              $date  = date("d M Y",$mjoined_local);
           
              echo "<tr>\n";
-             echo "<td class=\"type1Body\"><b><a class=\"type1\" href=\"userinfo.php?user=$mname\">$mnickname</a></b></td><td class=\"type1Body\">Member</td><td class=\"type1Body\">$date</td>";
+             echo "<td class=\"type1Body\"><b><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$muid\">$mname</a></b></td><td class=\"type1Body\">Member</td><td class=\"type1Body\">$date</td>";
 
              // Checkbox to select which member to kick
              echo "<td class=\"type1Body\"><input type=\"checkbox\" name=\"del[]\" value=\"$mid\" /></td>\n";
@@ -275,7 +276,7 @@ include("include/main.php");
    echo"</div>";     
    echo"</div>";     
    echo "<p>";
-   echo "<br />Back to [<a href=\"clans.php\">Teams</a>]<br />";
+   echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/clans.php\">Teams</a>]<br />";
    echo "</p>";
 
 }
@@ -290,5 +291,5 @@ setupAllTabs();
 //]]>
 </script>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

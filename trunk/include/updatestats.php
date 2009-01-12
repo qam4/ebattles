@@ -3,7 +3,7 @@
  * updatestats.php
  * 
  */
-/* include("./include/session.php"); */
+/* include_once(e_PLUGIN."ebattles/include/session.php"); */
  
    $file = 'cache/sql_cache_event_'.$event_id.'.txt'; 
 
@@ -138,7 +138,7 @@ if ($etype == "Team Ladder")
        ." FROM ".TBL_PLAYERS.", "
                 .TBL_USERS
        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-         ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)";
+         ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)";
  
    $result_1 = $sql->db_Query($q_1);
    $num_rows = mysql_numrows($result_1);
@@ -147,8 +147,8 @@ if ($etype == "Team Ladder")
    for($i=0; $i<$num_rows; $i++)
    {
       // For each player
-      $pname  = mysql_result($result_1,$i, TBL_USERS.".username");
-      $pnickname  = mysql_result($result_1,$i, TBL_USERS.".nickname");
+      $pid  = mysql_result($result_1,$i, TBL_USERS.".user_id");
+      $pname  = mysql_result($result_1,$i, TBL_USERS.".user_name");
       $pteam = mysql_result($result_1,$i, TBL_PLAYERS.".Team");
       $pgames_played = mysql_result($result_1,$i, TBL_PLAYERS.".GamesPlayed");
       $pELO = mysql_result($result_1,$i, TBL_PLAYERS.".ELORanking");
@@ -201,16 +201,16 @@ if ($etype == "Team Ladder")
                 ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
                   ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                   ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                  ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)";
+                  ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)";
       
             $result_3 = $sql->db_Query($q_3);
             $num_rows_3 = mysql_numrows($result_3);
             for($k=0; $k<$num_rows_3; $k++)
             {
-               $uname  = mysql_result($result_3,$k, TBL_USERS.".username");
+               $uid  = mysql_result($result_3,$k, TBL_USERS.".user_id");
                $uplayermatchteam  = mysql_result($result_3,$k, TBL_SCORES.".Player_MatchTeam");
                $uELO  = mysql_result($result_3,$k, TBL_PLAYERS.".ELORanking");
-               $players[] = "$uname";
+               $players[] = "$uid";
                
                if ($uplayermatchteam != $mplayermatchteam)
                {
@@ -237,8 +237,8 @@ if ($etype == "Team Ladder")
       }
 
       // For display
+      $id[]  = $pid;
       $name[]  = $pname;
-      $nickname[]  = $pnickname;
       $team[] = $pteam;
       $games_played[] = $pgames_played;
       $ELO[] = $pELO;
@@ -388,7 +388,7 @@ if ($etype == "Team Ladder")
       
       $OverallScore[$i] = $ELO_final_score[$i] + $games_played_final_score[$i] + $victory_ratio_final_score[$i] + $victory_percent_final_score[$i] + $unique_opponents_final_score[$i] + $opponentsELO_final_score[$i] + $streaks_final_score[$i];
       
-      $q_3 = "UPDATE ".TBL_PLAYERS." SET OverallScore = $OverallScore[$i] WHERE (Name = '$name[$i]') AND (Event = '$event_id')";
+      $q_3 = "UPDATE ".TBL_PLAYERS." SET OverallScore = $OverallScore[$i] WHERE (Name = '$id[$i]') AND (Event = '$event_id')";
       $result_3 = $sql->db_Query($q_3);
    }
 
@@ -409,7 +409,7 @@ if ($etype == "Team Ladder")
       $prank = mysql_result($result_1,$i, TBL_PLAYERS.".Rank");                     
       $prankdelta = mysql_result($result_1,$i, TBL_PLAYERS.".RankDelta");                     
 
-      $index = array_search($pname,$name);      
+      $index = array_search($pname,$id);      
 
       $q_2 = "UPDATE ".TBL_PLAYERS." SET Rank = $ranknumber WHERE (Name = '$pname') AND (Event = '$event_id')";
       $result_2 = $sql->db_Query($q_2);
@@ -425,11 +425,11 @@ if ($etype == "Team Ladder")
       $prankdelta_string = "";
       if ($prankdelta>0)
       { 
-        $prankdelta_string = "<img src=\"images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\">";
+        $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\">";
       }
       else if ($prankdelta<0)
       { 
-        $prankdelta_string = "<img src=\"images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\">";
+        $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\">";
       }        
       
       $pclan = '';
@@ -455,7 +455,7 @@ if ($etype == "Team Ladder")
       }
 
       
-      if(strcmp($session->username,$pname) == 0)
+      if(strcmp({USER_ID},$pname) == 0)
       {
          $stats_row = array
          (
@@ -471,7 +471,7 @@ if ($etype == "Team Ladder")
       }
       
       $stats_row[] = "<b>$ranknumber</b> $prankdelta_string";
-      $stats_row[] = "<a class=\"type1\" href=\"userinfo.php?user=$name[$index]\"><b>$nickname[$index]</b></a>";
+      $stats_row[] = "<a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$id[$index]\"><b>$name[$index]</b></a>";
       $stats_row[] = number_format ($OverallScore[$index],2);
 if ($ELO_maxpoints > 0)
 {
@@ -515,7 +515,7 @@ if ($etype == "Team Ladder")
 
 /*   
 // debug print array
-include("./include/show_array.php");
+include_once(e_PLUGIN."ebattles/include/show_array.php");
 echo "<br />";
 html_show_table($stats, $num_rows+1, 7);
 echo "<br />";

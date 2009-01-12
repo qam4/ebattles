@@ -4,9 +4,10 @@
  *
  */
 ob_start();
-include("include/main.php");
-include("include/pagination.php");
-include("./include/show_array.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
+include_once(e_PLUGIN."ebattles/include/pagination.php");
+include_once(e_PLUGIN."ebattles/include/show_array.php");
 
 define('INT_SECOND', 1);
 define('INT_MINUTE', 60);
@@ -109,7 +110,7 @@ function get_formatted_timediff($then, $now = false)
       {
       
 	    $q = " INSERT INTO ".TBL_PLAYERS."(Event,Name,ELORanking)
-	           VALUES ($event_id,'$session->username',$eELOdefault)";
+	           VALUES ($event_id,'{USER_ID}',$eELOdefault)";
             $sql->db_Query($q);
             $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
             $result = $sql->db_Query($q4);
@@ -119,7 +120,7 @@ function get_formatted_timediff($then, $now = false)
    if(isset($_GET['quitevent'])){
          $q = " DELETE FROM ".TBL_PLAYERS
              ." WHERE (Event = '$event_id')"
-             ."   AND (Name = '$session->username')";
+             ."   AND (Name = '{USER_ID}')";
          $sql->db_Query($q);
          $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
          $result = $sql->db_Query($q4);
@@ -137,7 +138,7 @@ function get_formatted_timediff($then, $now = false)
    if(isset($_GET['jointeamevent'])){
          $team_id = $_GET['team'];
 	 $q = " INSERT INTO ".TBL_PLAYERS."(Event,Name,Team,ELORanking)
-	        VALUES ($event_id,'$session->username',$team_id,$eELOdefault)";
+	        VALUES ($event_id,'{USER_ID}',$team_id,$eELOdefault)";
          $sql->db_Query($q);
          header("Location: eventinfo.php?eventid=$event_id");
    }
@@ -151,7 +152,7 @@ function get_formatted_timediff($then, $now = false)
                 .TBL_USERS
        ." WHERE (".TBL_EVENTS.".eventid = '$event_id')"
        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"      
-       ."   AND (".TBL_USERS.".username = ".TBL_EVENTS.".Owner)";   
+       ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTS.".Owner)";   
 
    $result = $sql->db_Query($q);
    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
@@ -160,7 +161,7 @@ function get_formatted_timediff($then, $now = false)
    $egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
    $eowner = mysql_result($result,0 , TBL_EVENTS.".Owner");
-   $eownernickname = mysql_result($result,0 , TBL_USERS.".nickname");
+   $eownername = mysql_result($result,0 , TBL_USERS.".user_name");
    $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
    $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
    $erules = mysql_result($result,0 , TBL_EVENTS.".Rules");
@@ -213,7 +214,7 @@ function get_formatted_timediff($then, $now = false)
    }
 
    echo "<h1>$ename ($etype)</h1>";
-   echo "<h2><img src=\"images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
+   echo "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
    //echo "<br />";
  
 
@@ -229,7 +230,7 @@ function get_formatted_timediff($then, $now = false)
         $result = $sql->db_Query($q);
     	$eischanged = 0;
   	
-        include("include/updatestats.php");  
+        include_once(e_PLUGIN."ebattles/include/updatestats.php");  
    }
 
    echo"<div class=\"tab-pane\" id=\"tab-pane-1\">";
@@ -254,8 +255,8 @@ function get_formatted_timediff($then, $now = false)
              ." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
                ." AND (".TBL_GAMES.".GameID = '$egameid')"
                ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-               ." AND (".TBL_USERS.".username = '$session->username')"
-               ." AND (".TBL_DIVISIONS.".Captain = '$session->username')";
+               ." AND (".TBL_USERS.".user_id = '{USER_ID}')"
+               ." AND (".TBL_DIVISIONS.".Captain = '{USER_ID}')";
 
          $result = $sql->db_Query($q);
          $num_rows = mysql_numrows($result);
@@ -279,7 +280,7 @@ function get_formatted_timediff($then, $now = false)
                  echo "Your are the captain of $div_name.";
                  echo "<br />";
                  echo "
-                 <form style=\"float:left\" action=\"eventinfo.php\" method=\"get\">
+                 <form style=\"float:left\" action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
                      <input type=\"hidden\" name=\"division\" value=\"$div_id\"></input>
                      <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                      <input type=\"hidden\" name=\"teamjoinevent\" value=\"1\"></input>
@@ -299,7 +300,7 @@ function get_formatted_timediff($then, $now = false)
          $q = "SELECT *"
              ." FROM ".TBL_PLAYERS
              ." WHERE (Event = '$event_id')"
-             ."   AND (Name = '$session->username')";
+             ."   AND (Name = '{USER_ID}')";
        
          $result = $sql->db_Query($q);
          if(!$result || (mysql_numrows($result) < 1))
@@ -320,9 +321,9 @@ function get_formatted_timediff($then, $now = false)
                    ." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
                      ." AND (".TBL_GAMES.".GameID = '$egameid')"
                      ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-                     ." AND (".TBL_USERS.".username = '$session->username')"
+                     ." AND (".TBL_USERS.".user_id = '{USER_ID}')"
                      ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-                     ." AND (".TBL_MEMBERS.".Name = '$session->username')";
+                     ." AND (".TBL_MEMBERS.".Name = '{USER_ID}')";
             
  
                $result_2 = $sql->db_Query($q_2);
@@ -360,7 +361,7 @@ function get_formatted_timediff($then, $now = false)
                          echo "Your team $clan_name has signed up to this event.";
                          echo "<br />";
                          echo "
-                         <form style=\"float:left\" action=\"eventinfo.php\" method=\"get\">
+                         <form style=\"float:left\" action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
                              <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                              <input type=\"hidden\" name=\"team\" value=\"$team_id\"></input>
                              <input type=\"hidden\" name=\"jointeamevent\" value=\"1\"></input>
@@ -378,7 +379,7 @@ function get_formatted_timediff($then, $now = false)
                {
                   echo "Event Password:";
                   echo "
-                  <form action=\"eventinfo.php\" method=\"get\">
+                  <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
                       <input type=\"password\" title=\"Enter the password\" name=\"joinEventPassword\"></input>
                       <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                       <input type=\"hidden\" name=\"joinevent\" value=\"1\"></input>
@@ -389,7 +390,7 @@ function get_formatted_timediff($then, $now = false)
                else
                {
                   echo "
-                  <form action=\"eventinfo.php\" method=\"get\">
+                  <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
                       <input type=\"hidden\" name=\"joinEventPassword\" value=\"\"></input>
                       <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                       <input type=\"hidden\" name=\"joinevent\" value=\"1\"></input>
@@ -404,7 +405,7 @@ function get_formatted_timediff($then, $now = false)
             /* 
             // Removed "quit button", because this erases the player from database.
                 echo "
-                <form action=\"eventinfo.php\" method=\"get\">
+                <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
                     <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                     <input type=\"hidden\" name=\"quitevent\" value=\"1\"></input>
                     <input type=\"submit\" value=\"Quit Event\"></input>
@@ -421,13 +422,13 @@ function get_formatted_timediff($then, $now = false)
       
    echo "<hr />";
    echo "<p>";
-   echo"Owner: <a href=\"userinfo.php?user=$eowner\">$eownernickname</a><br />";
+   echo"Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$eowner\">$eownername</a><br />";
 
    $can_manage = 0;
    if ($session->isAdmin()) $can_manage = 1;
-   if ($session->username==$eowner) $can_manage = 1;
+   if ({USER_ID}==$eowner) $can_manage = 1;
    if ($can_manage == 1)
-     echo"<a href=\"eventmanage.php?eventid=$event_id\">Manage event</a><br />";
+     echo"<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$event_id\">Manage event</a><br />";
    echo"</p>";
 
    echo "<p>";
@@ -436,14 +437,14 @@ function get_formatted_timediff($then, $now = false)
        ." FROM ".TBL_EVENTMODS.", "
                 .TBL_USERS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-       ."   AND (".TBL_USERS.".username = ".TBL_EVENTMODS.".Name)";   
+       ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".Name)";   
    $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
    echo "Moderators:<br />";
    for($i=0; $i<$num_rows; $i++){
       $modname  = mysql_result($result,$i, TBL_EVENTMODS.".Name");
-      $modnickname  = mysql_result($result,$i, TBL_USERS.".nickname");
-      echo "- <a href=\"userinfo.php?user=$modname\">$modnickname</a><br />";
+      $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
+      echo "- <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modname\">$modname</a><br />";
    }
    echo"</p>";
    echo "<p>Starts: $date_start<br />Ends: $date_end</p>";
@@ -470,7 +471,7 @@ function get_formatted_timediff($then, $now = false)
       /* Update Stats */
       if ($eneedupdate == 1)
       {
-        include("include/updateteamstats.php");  
+        include_once(e_PLUGIN."ebattles/include/updateteamstats.php");  
       }
        
       /* Nbr Teams */
@@ -519,7 +520,7 @@ function get_formatted_timediff($then, $now = false)
    $q = "SELECT *"
        ." FROM ".TBL_PLAYERS
        ." WHERE (Event = '$event_id')"
-       ."   AND (Name = '$session->username')";
+       ."   AND (Name = '{USER_ID}')";
  
    $result = $sql->db_Query($q);
    $can_report = 0;
@@ -533,7 +534,7 @@ function get_formatted_timediff($then, $now = false)
       
       $link_page = ceil($prank/$rowsPerPage);
       echo "<p>";
-      echo "<a href=\"$self?eventid=$event_id&amp;pg=$link_page\">Show My Position #$prank</a><br />";    
+      echo "<a href=\"".e_PLUGIN."ebattles/$self?eventid=$event_id&amp;pg=$link_page\">Show My Position #$prank</a><br />";    
       echo "</p>";
       $time = GMT_time();
       // Is the event started, and not ended
@@ -552,12 +553,12 @@ function get_formatted_timediff($then, $now = false)
    // Is the user admin?
    if ($session->isAdmin()) $can_report = 1;
    // Is the user event owner?
-   if ($session->username==$eowner) $can_report = 1;
+   if ({USER_ID}==$eowner) $can_report = 1;
    // Is the user a moderator?
    $q_2 = "SELECT ".TBL_EVENTMODS.".*"
        ." FROM ".TBL_EVENTMODS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-       ."   AND (".TBL_EVENTMODS.".Name = '$session->username')";   
+       ."   AND (".TBL_EVENTMODS.".Name = '{USER_ID}')";   
    $result_2 = $sql->db_Query($q_2);
    $num_rows_2 = mysql_numrows($result_2);
    if ($num_rows_2>0) $can_report = 1;
@@ -575,7 +576,7 @@ function get_formatted_timediff($then, $now = false)
       if($can_report_quickloss != 0)
       {
          echo "<td>";
-         echo "<form action=\"quickreport.php?eventid=$event_id\" method=\"post\">";
+         echo "<form action=\"".e_PLUGIN."ebattles/quickreport.php?eventid=$event_id\" method=\"post\">";
          echo "<input type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"></input>";
          echo "</form>";
          echo "</td>";
@@ -583,7 +584,7 @@ function get_formatted_timediff($then, $now = false)
       if($can_report != 0)
       {
          echo "<td>";
-         echo "<form action=\"matchreport.php?eventid=$event_id\" method=\"post\">";
+         echo "<form action=\"".e_PLUGIN."ebattles/matchreport.php?eventid=$event_id\" method=\"post\">";
          echo "<input type=\"submit\" name=\"matchreport\" value=\"Match Report\"></input>";
          echo "</form>";
          echo "</td>";
@@ -641,7 +642,7 @@ function get_formatted_timediff($then, $now = false)
        ." FROM ".TBL_MATCHS.", "
                 .TBL_USERS
        ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
-         ." AND (".TBL_USERS.".username = ".TBL_MATCHS.".ReportedBy)"
+         ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
        ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
        ." LIMIT 0, $rowsPerPage";
  
@@ -657,7 +658,7 @@ function get_formatted_timediff($then, $now = false)
       {
          $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
          $mReportedBy  = mysql_result($result,$i, TBL_MATCHS.".ReportedBy");
-         $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".nickname");
+         $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
          $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
          $mTime_local = $mTime + $session->timezone_offset;
          //$date = date("d M Y, h:i:s A",$mTime);
@@ -674,29 +675,29 @@ function get_formatted_timediff($then, $now = false)
              ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-               ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
+               ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
              ." ORDER BY ".TBL_SCORES.".Player_Rank";
 
          $result2 = $sql->db_Query($q2);
          $num_rows2 = mysql_numrows($result2);
-         $pnickname = '';
+         $pname = '';
          $players = '';
          for($j=0; $j<$num_rows2; $j++)
          {
-            $pnickname  = mysql_result($result2,$j, TBL_USERS.".nickname");
-            $pname  = mysql_result($result2,$j, TBL_USERS.".username");
+            $pid  = mysql_result($result2,$j, TBL_USERS.".user_name");
+            $pname  = mysql_result($result2,$j, TBL_USERS.".user_id");
             if ($j==0)
-              $players = "<a class=\"type1\" href=\"userinfo.php?user=$pname\">$pnickname</a>";
+              $players = "<a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             else
-              $players = $players.", <a class=\"type1\" href=\"userinfo.php?user=$pname\">$pnickname</a>";
+              $players = $players.", <a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
          }
 
          echo "<tr>\n";
-         echo "<td class=\"type1Body\"><b>$mID</b> <a class=\"type1\" href=\"matchinfo.php?eventid=$event_id&amp;matchid=$mID\">(Show details)</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"type1Body\">$players</td><td class=\"type1Body\">$date</td></tr>";
+         echo "<td class=\"type1Body\"><b>$mID</b> <a class=\"type1\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">(Show details)</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"type1Body\">$players</td><td class=\"type1Body\">$date</td></tr>";
       }
       echo "</table><br />\n"; 
    }
-   echo "[<a href=\"eventmatchs.php?eventid=$event_id\">Show all Matches</a>]";
+   echo "[<a href=\"".e_PLUGIN."ebattles/eventmatchs.php?eventid=$event_id\">Show all Matches</a>]";
  
    echo "<br />";
    echo"</div>";
@@ -704,7 +705,7 @@ function get_formatted_timediff($then, $now = false)
 
 /* Link back to main */
 echo "<p>";
-echo "<br />Back to [<a href=\"index.php\">Main</a>]<br />";
+echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>]<br />";
 echo "</p>";
 
 ?>
@@ -719,5 +720,5 @@ setupAllTabs();
 </script>
 
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

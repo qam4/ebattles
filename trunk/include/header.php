@@ -12,7 +12,7 @@
 	</div> <!-- end branding -->
     
 	<div id="login">
-		<?php include("login.php");?>
+		<?php include(e_PLUGIN."ebattles/include/login.php");?>
 	</div><!-- end search -->
     	
 </div><!-- end header -->

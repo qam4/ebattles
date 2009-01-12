@@ -1,59 +1,12 @@
-<?php include("menu.php"); ?>
-
-<?php
-	include 'config_db.php';
-	include 'connect_db.php';
+<?php 
+  include(e_PLUGIN."ebattles/db_admin/menu.php"); 
+	include(e_PLUGIN."ebattles/db_admin/config_db.php"); 
+	include(e_PLUGIN."ebattles/db_admin/connect_db.php"); 
 	mysql_select_db($db_name, $con) or die ('Error, no Database');
 
 	$time = GMT_time();
 	// Insert users
 /*
-	$sql = 
-	"INSERT INTO ".TBL_USERS."(username,password,nickname,userlevel,email,timestamp)
-	 VALUES ('qam4', '1f9d7abd569ff2d02ce0c678bdd17229', 'DS_qam4', 9,'frederic_marchais@hotmail.com', $time)
-	";
-	mysql_query($sql,$con) or die ('Error, adding user 1<br />'. mysql_error());
-	$sql = 
-	"INSERT INTO ".TBL_USERS."(username,password,nickname,userlevel,email,timestamp)
-	 VALUES ('test', '".md5('test')."', 'test', 1,'test@hotmail.com', $time)
-	 ";
-	mysql_query($sql,$con) or die ('Error, adding user 2<br />'. mysql_error());
-	$sql = 
-	"INSERT INTO ".TBL_USERS."(username,password,nickname,userlevel,email,timestamp)
-	 VALUES ('test1', '".md5('test')."', 'test1', 1,'test@hotmail.com', $time)
-	 ";
-	mysql_query($sql,$con) or die ('Error, adding user 2<br />'. mysql_error());
-	$sql = 
-	"INSERT INTO ".TBL_USERS."(username,password,nickname,userlevel,email,timestamp)
-	 VALUES ('test2', '".md5('test')."', 'test2', 1,'test@hotmail.com', $time)
-	 ";
-	mysql_query($sql,$con) or die ('Error, adding user 3<br />'. mysql_error());
-	$sql = 
-	"INSERT INTO ".TBL_USERS."(username,password,nickname,userlevel,email,timestamp)
-	 VALUES ('test3', '".md5('test')."', 'test3', 1,'test@hotmail.com', $time)
-	 ";
-	mysql_query($sql,$con) or die ('Error, adding user 4<br />'. mysql_error());
-	$sql = 
-	"INSERT INTO ".TBL_USERS."(username,password,nickname,userlevel,email,timestamp)
-	 VALUES ('test4', '".md5('test')."', 'test4', 1,'test@hotmail.com', $time)
-	 ";
-	mysql_query($sql,$con) or die ('Error, adding user 5<br />'. mysql_error());
-	$sql = 
-	"INSERT INTO ".TBL_USERS."(username,password,nickname,userlevel,email,timestamp)
-	 VALUES ('test5', '".md5('test')."', 'test5', 1,'test@hotmail.com', $time)
-	 ";
-	mysql_query($sql,$con) or die ('Error, adding user 5<br />'. mysql_error());
-	echo "Added users<br />";
-
-	for ($i=1;$i<=1000; $i++)
-	{
-	   $sql = 
-	   "INSERT INTO ".TBL_USERS."(username,password,nickname,userlevel,email,timestamp)
-	    VALUES ('Player".$i."', '1f9d7abd569ff2d02ce0c678bdd17229', 'Player".$i."', 1,'test@hotmail.com', $time)
-	   ";
-	   mysql_query($sql,$con) or die ('Error, adding user<br />'. mysql_error());
-	}
-
 	// Insert Games
 	if($file_handle = fopen("../images/games_icons/Games List.csv", "r"))
 	{
@@ -338,17 +291,6 @@
 	mysql_query($sql,$con) or die ('Error, adding score<br />'. mysql_error());
 	echo "Added Scores<br />";
 
-
-	$sql = 
-	"INSERT INTO ".TBL_PMS."(to_id, from_id, time_sent, subject, message)
-	 VALUES 
-	 ('qam4', 'test', '2006-02-14 02:34:22', 'Happy Valentines Day!', 'Just wanted to wish you a happy heart day!'),
-	 ('qam4', 'test1', '2006-04-01 08:59:45', 'April Fools!', 'You better keep an eye on your back all day long!!!'),
-	 ('test', 'qam4', '2006-02-14 10:14:52', 'Back at ya', 'Thanks for the note... happy valentines yourself ;-)'),
-	 ('qam4', 'test2', '2005-12-25 22:01:19', 'Merry Christmas!', '...and a Happy New Year, too!'),
-	 ('qam4', 'test3', '2006-09-18 16:48:02', 'Happy B-Day', 'It is your birthday, right???')";
-	mysql_query($sql,$con) or die ('Error, adding PMs<br />'. mysql_error());
-	echo "Added PMs<br />";
 */
 
 ?>

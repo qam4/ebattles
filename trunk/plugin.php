@@ -75,9 +75,9 @@ $eplug_tables = array(
 	ELO_default int DEFAULT 1000,
 	ELO_K int DEFAULT 50,
 	ELO_M int DEFAULT 100,
-	Owner varchar(30),
+	Owner int(10) unsigned NOT NULL,
 	INDEX (Owner),
-	FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_name),
+	FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id),
 	Rules text NOT NULL,
 	Description text NOT NULL,
 	NextUpdate_timestamp int(11) unsigned not null,
@@ -90,9 +90,9 @@ $eplug_tables = array(
 	Event int NOT NULL,
 	INDEX (Event),
 	FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
-	Name varchar(30),
+	Name int(10) unsigned NOT NULL,
 	INDEX (Name),
-	FOREIGN KEY (Name) REFERENCES ".TBL_USERS." (user_name),
+	FOREIGN KEY (Name) REFERENCES ".TBL_USERS." (user_id),
 	Level int DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_CLANS."
@@ -101,9 +101,9 @@ $eplug_tables = array(
 	PRIMARY KEY(ClanID),
 	Name varchar(30),
 	Tag varchar(30),
-	Owner varchar(30),
+	Owner int(10) unsigned NOT NULL,
 	INDEX (Owner),
-	FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_name)
+	FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id)
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_DIVISIONS."
 (
@@ -115,9 +115,9 @@ $eplug_tables = array(
 	Game int NOT NULL,
 	INDEX (Game),
 	FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
-	Captain varchar(30),
+	Captain int(10) unsigned NOT NULL,
 	INDEX (Captain),
-	FOREIGN KEY (Captain) REFERENCES ".TBL_USERS." (user_name)
+	FOREIGN KEY (Captain) REFERENCES ".TBL_USERS." (user_id)
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_MEMBERS."
 (
@@ -126,9 +126,9 @@ $eplug_tables = array(
 	Division int NOT NULL,
 	INDEX (Division),
 	FOREIGN KEY (Division) REFERENCES ".TBL_DIVISIONS." (DivisionID),
-	Name varchar(30),
+	Name int(10) unsigned NOT NULL,
 	INDEX (Name),
-	FOREIGN KEY (Name) REFERENCES ".TBL_USERS." (user_name),
+	FOREIGN KEY (Name) REFERENCES ".TBL_USERS." (user_id),
 	timestamp int(11) unsigned not null
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_TEAMS."
@@ -154,9 +154,9 @@ $eplug_tables = array(
 	Event int NOT NULL,
 	INDEX (Event),
 	FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
-	ReportedBy varchar(30),
+	ReportedBy int(10) unsigned NOT NULL,
 	INDEX (ReportedBy),
-	FOREIGN KEY (ReportedBy) REFERENCES ".TBL_USERS." (user_name), 
+	FOREIGN KEY (ReportedBy) REFERENCES ".TBL_USERS." (user_id), 
 	TimeReported int(11) unsigned not null,
 	Comments text NOT NULL
 ) TYPE = MyISAM;",
@@ -167,9 +167,9 @@ $eplug_tables = array(
 	Event int NOT NULL,
 	INDEX (Event),
 	FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
-	Name varchar(30),
+	Name int(10) unsigned NOT NULL,
 	INDEX (Name),
-	FOREIGN KEY (Name) REFERENCES ".TBL_USERS." (user_name),
+	FOREIGN KEY (Name) REFERENCES ".TBL_USERS." (user_id),
 	Team int NOT NULL,
 	INDEX (Team),
 	FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID), 

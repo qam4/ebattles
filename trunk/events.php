@@ -4,8 +4,9 @@
  *
  */
 
-include("include/main.php");
-include("include/pagination.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
+include_once(e_PLUGIN."ebattles/include/pagination.php");
 
 /**
  * displayEvents - Displays the events database table in
@@ -31,7 +32,7 @@ function displayCurrentEvents(){
    $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
-   echo "<form name=\"myform\" action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
+   echo "<form name=\"myform\" action=\"".e_PLUGIN."ebattles/".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
    echo "<table>\n";
    echo "<tr><td>\n";
    echo "Games:<br />\n";
@@ -155,7 +156,7 @@ function displayCurrentEvents(){
          ||($eend>=$time)
         )
       {
-        echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"eventinfo.php?eventid=$eid\"><b>$ename</b></a></td><td class=\"type1Body\"><img src=\"images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body\">$gname</td><td class=\"type1Body\">$etype</td><td class=\"type1Body\">$date_start</td><td class=\"type1Body\">$date_end</td><td class=\"type1Body\">$nbrplayers</td><td class=\"type1Body\">$nbrmatches</td></tr>\n";
+        echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\"><b>$ename</b></a></td><td class=\"type1Body\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body\">$gname</td><td class=\"type1Body\">$etype</td><td class=\"type1Body\">$date_start</td><td class=\"type1Body\">$date_end</td><td class=\"type1Body\">$nbrplayers</td><td class=\"type1Body\">$nbrmatches</td></tr>\n";
       }
    }
    echo "</table><br />\n";
@@ -180,7 +181,7 @@ function displayRecentEvents(){
    $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
-   echo "<form name=\"myform\" action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
+   echo "<form name=\"myform\" action=\"".e_PLUGIN."ebattles/".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
    echo "<table>\n";
    echo "<tr><td>\n";
    echo "Games:<br />\n";
@@ -289,13 +290,13 @@ function displayRecentEvents(){
          &&($eend<$time)
          )
       {
-        echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"eventinfo.php?eventid=$eid\"><b>$ename</b></a></td><td class=\"type1Body\"><img src=\"images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body\">$gname</td><td class=\"type1Body\">$etype</td><td class=\"type1Body\">$date_start</td><td class=\"type1Body\">$date_end</td><td class=\"type1Body\">$nbrplayers</td><td class=\"type1Body\">$nbrmatches</td></tr>\n";
+        echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\"><b>$ename</b></a></td><td class=\"type1Body\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body\">$gname</td><td class=\"type1Body\">$etype</td><td class=\"type1Body\">$date_start</td><td class=\"type1Body\">$date_end</td><td class=\"type1Body\">$nbrplayers</td><td class=\"type1Body\">$nbrmatches</td></tr>\n";
       }
    }
    echo "</table><br />\n";
 
    echo "<p>";
-   echo "[<a href=\"eventspast.php\">Show all past events</a>]";
+   echo "[<a href=\"".e_PLUGIN."ebattles/eventspast.php\">Show all past events</a>]";
    echo "</p>";
 
 }?>
@@ -314,8 +315,8 @@ function displayRecentEvents(){
 <?php
 if($session->logged_in)
 {
-     echo "<form action=\"eventcreate.php\" method=\"post\">";
-     echo "<input type=\"hidden\" name=\"userid\" value=\"$session->username\"></input>";
+     echo "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
+     echo "<input type=\"hidden\" name=\"userid\" value=\"{USER_ID}\"></input>";
      echo "<input type=\"submit\" name=\"createevent\" value=\"Create new Event\"></input>";
      echo "</form>";
 }
@@ -360,5 +361,5 @@ setupAllTabs();
 </script>
 
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

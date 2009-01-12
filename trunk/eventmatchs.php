@@ -3,8 +3,9 @@
  * EventMatchs.php
  *
  */
-include("include/main.php");
-include("include/pagination.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
+include_once(e_PLUGIN."ebattles/include/pagination.php");
 ?>
 <div id="main">
 
@@ -54,7 +55,7 @@ include("include/pagination.php");
        ." FROM ".TBL_MATCHS.", "
                 .TBL_USERS
        ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
-         ." AND (".TBL_USERS.".username = ".TBL_MATCHS.".ReportedBy)"
+         ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
        ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
        ." LIMIT $start, $rowsPerPage";
  
@@ -69,7 +70,7 @@ include("include/pagination.php");
       for($i=0; $i<$num_rows; $i++){
          $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
          $mReportedBy  = mysql_result($result,$i, TBL_MATCHS.".ReportedBy");
-         $mReportedByNickname  = mysql_result($result,$i, TBL_USERS.".nickname");
+         $mReportedByNickname  = mysql_result($result,$i, TBL_USERS.".user_name");
          $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
          $mTime_local = $mTime + $session->timezone_offset;
          //$date = date("d M Y, h:i:s A",$mTime);
@@ -86,25 +87,25 @@ include("include/pagination.php");
              ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-               ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
+               ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
              ." ORDER BY ".TBL_SCORES.".Player_Rank";
 
          $result2 = $sql->db_Query($q2);
          $num_rows2 = mysql_numrows($result2);
-         $pnickname = '';
+         $pname = '';
          $players = '';
          for($j=0; $j<$num_rows2; $j++)
          {
-            $pnickname  = mysql_result($result2,$j, TBL_USERS.".nickname");
-            $pname  = mysql_result($result2,$j, TBL_USERS.".username");
+            $pid  = mysql_result($result2,$j, TBL_USERS.".user_id");
+            $pname  = mysql_result($result2,$j, TBL_USERS.".user_name");
             if ($j==0)
-              $players = "<a class=\"type1\" href=\"userinfo.php?user=$pname\">$pnickname</a>";
+              $players = "<a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             else
-              $players = $players.", <a class=\"type1\" href=\"userinfo.php?user=$pname\">$pnickname</a>";
+              $players = $players.", <a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
          }
 
          echo "<tr>\n";
-         echo "<td class=\"type1Body\"><b>$mID</b> <a class=\"type1\" href=\"matchinfo.php?eventid=$event_id&matchid=$mID\">(Show details)</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"userinfo.php?user=$mReportedBy\">$mReportedByNickname</a></td><td class=\"type1Body\">$players</td><td class=\"type1Body\">$date</td></tr>";
+         echo "<td class=\"type1Body\"><b>$mID</b> <a class=\"type1\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&matchid=$mID\">(Show details)</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickname</a></td><td class=\"type1Body\">$players</td><td class=\"type1Body\">$date</td></tr>";
 
       
    }
@@ -120,11 +121,11 @@ include("include/pagination.php");
    echo "</div>";
 /* Link back to main */
 echo "<p>";
-echo "<br />Back to [<a href=\"eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
 echo "</p>";
 
 ?>
 </div>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

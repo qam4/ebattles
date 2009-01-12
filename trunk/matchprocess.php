@@ -3,8 +3,8 @@
  *MatchProcess.php
  * 
  */
-include("./include/session.php");
-require_once './include/ELO.php';
+include_once(e_PLUGIN."ebattles/include/session.php");
+require_once e_PLUGIN.'ebattles/include/ELO.php';
 global $sql;
 
    if(isset($_POST['qrsubmitloss']))

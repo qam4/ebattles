@@ -4,8 +4,9 @@
  *
  */
 
-include("include/main.php");
-include("include/pagination.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
+include_once(e_PLUGIN."ebattles/include/pagination.php");
 
 /**
  * displayClans - Displays the Clans database table in
@@ -49,7 +50,7 @@ function displayClans(){
       $ctag  = mysql_result($result,$i, TBL_CLANS.".tag");
       $cowner  = mysql_result($result,$i, TBL_CLANS.".owner");
       
-      echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"claninfo.php?clanid=$clanid\">$cname</a></td><td class=\"type1Body\">$ctag</td><td class=\"type1Body\">$cowner</td></tr>\n";
+      echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clanid\">$cname</a></td><td class=\"type1Body\">$ctag</td><td class=\"type1Body\">$cowner</td></tr>\n";
    }
    echo "</table><br />\n";
 
@@ -68,8 +69,8 @@ function displayClans(){
 <?php
 if($session->logged_in)
 {
-   echo "<form action=\"clancreate.php\" method=\"post\">";
-   echo "<input type=\"hidden\" name=\"userid\" value=\"$session->username\"></input>";
+   echo "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
+   echo "<input type=\"hidden\" name=\"userid\" value=\"{USER_ID}\"></input>";
    echo "<input type=\"submit\" name=\"createteam\" value=\"Create new Team\"></input>";
    echo "</form>";
    echo "<br>";
@@ -91,5 +92,5 @@ Back to [<a href="./index.php">Main Page</a>]
 
 </div>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

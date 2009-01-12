@@ -3,9 +3,27 @@
  * Main.php
  *
  */
-include("./include/session.php");
-?>
 
+// this generates all the HTML up to the start of the main section
+//e107_require_once(HEADERF);
+
+include(e_PLUGIN."ebattles/include/constants.php");
+include(e_PLUGIN."ebattles/include/time.php");
+/*
+include(e_PLUGIN."ebattles/include/database.php");
+include(e_PLUGIN."ebattles/include/mailer.php");
+include(e_PLUGIN."ebattles/include/form.php");
+include(e_PLUGIN."ebattles/include/debug_lib.php");
+include_once(e_PLUGIN."ebattles/include/session.php");
+*/
+
+function GMT_time() {
+$gm_time = time() - date('Z', time());
+return $gm_time;
+}
+
+/**/
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	
@@ -21,14 +39,6 @@ include("./include/session.php");
         @import url("css/tools.css");
         @import url("css/typo.css");
         @import url("css/forms.css");
-        /* swap layout stylesheet: 
-        	layout-navtop-localleft.css
-		layout-navtop-subright.css
-		layout-navtop-3col.css
-		layout-navtop-1col.css
-		layout-navleft-1col.css
-		layout-navleft-2col.css
-	*/
         @import url("css/layout-navleft-1col.css");
         @import url("css/layout.css");
         @import url("css/tab.css");
@@ -63,8 +73,8 @@ include("./include/session.php");
     
     <div id="page">
     
-    <?php include("./include/header.php");?>
+    <?php include(e_PLUGIN."ebattles/include/header.php");?>
 
         <div id="content" class="clearfix">
         
-            <?php include("./menu.php");?>
+            <?php include(e_PLUGIN."ebattles/include/menu.php");?>

@@ -4,19 +4,20 @@
  * 
  */
 ob_start();
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 
 if (!isset($_POST['createevent']))
 {
      echo "<br />You are not authorized to create an event.<br />";
-     echo "<br />Back to [<a href=\"index.php\">Main</a>]<br />";
+     echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>]<br />";
 }
 else
 {
-   $username = $_POST['userid'];
+   $userid = $_POST['userid'];
 
    $q2 = "INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Description)"
-       ." VALUES ('$username event', '', '1', 'One Player Ladder','$username', 'Put a description for your event here')";   
+       ." VALUES ('$userid event', '', '1', 'One Player Ladder','$userid', 'Put a description for your event here')";   
    $result2 = $sql->db_Query($q2);
    $last_id = mysql_insert_id();
    $q2 = 

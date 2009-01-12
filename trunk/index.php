@@ -3,7 +3,8 @@
  * index.php
  *
  */
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 ?>
 
             <div id="main">
@@ -81,7 +82,7 @@ include("include/main.php");
             </div><!-- end main -->
 
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>
     
     

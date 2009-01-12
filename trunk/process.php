@@ -8,7 +8,7 @@
  * way. Also handles the logout procedure.
  *
  */
-include("include/session.php");
+include_once(e_PLUGIN."ebattles/include/session.php");
 
 class Process
 {
@@ -183,7 +183,7 @@ class Process
    function procEditAccount(){
       global $session, $form;
       /* Account edit attempt */
-      $retval = $session->editAccount($_POST['curpass'], $_POST['newpass'], $_POST['email'], $_POST['nickname']);
+      $retval = $session->editAccount($_POST['curpass'], $_POST['newpass'], $_POST['email'], $_POST['name']);
 
       /* Account edit successful */
       if($retval){

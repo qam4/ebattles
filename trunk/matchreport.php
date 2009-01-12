@@ -9,8 +9,9 @@
  *
  */
 ob_start();
-include("include/main.php");
-require_once './include/ELO.php';
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
+require_once e_PLUGIN.'ebattles/include/ELO.php';
 
 ?>
 <div id="main">
@@ -85,20 +86,20 @@ require_once './include/ELO.php';
        ." FROM ".TBL_PLAYERS.", "
                 .TBL_USERS
        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-         ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
-       ." ORDER BY ".TBL_USERS.".nickname";
+         ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
+       ." ORDER BY ".TBL_USERS.".user_name";
  
    $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
 
-   $players_nickname[0] = '-- select --';
+   $players_id[0] = '-- select --';
    $players_name[0] = '-- select --';
    for($i=0; $i<$num_rows; $i++){
-      $pname  = mysql_result($result,$i, TBL_USERS.".username");
+      $pid  = mysql_result($result,$i, TBL_USERS.".user_id");
       $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-      $pnickname  = mysql_result($result,$i, TBL_USERS.".nickname");
+      $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
       //$j = $i+1;
-      $players_nickname[$i+1] = $pnickname;
+      $players_id[$i+1] = $pid;
       $players_name[$i+1] = $pname;
    }
 ?>
@@ -118,7 +119,7 @@ print ($date);
 <?php
 
 // assuming we saved the above function in "functions.php", let's make sure it's available
-require_once 'matchreport_functions.php';
+require_once e_PLUGIN.'ebattles/matchreport_functions.php';
 
 // has the form been submitted?
 if (isset($_POST['submit']))
@@ -170,7 +171,7 @@ if (isset($_POST['submit']))
 
     if (!empty($error_str)) {
         // show form again
-        user_form($players_name, $players_nickname, $event_id);
+        user_form($players_id, $players_name, $event_id);
         // errors have occured, halt execution and show form again.
         echo '<p style="color:red">There were errors in the information you entered, they are listed below:';
         echo '<ul style="color:red">'.$error_str.'</ul></p>';
@@ -203,20 +204,20 @@ if (isset($_POST['submit']))
         // Create Scores ------------------------------------------        
         for($i=1;$i<=$nbr_players;$i++)
         {
-    	   $pname = $_POST['player'.$i];
+    	   $pid = $_POST['player'.$i];
     	   $pteam = str_replace("Team #","",$_POST['team'.$i]);
     	   
            $q = 
-           "SELECT ".TBL_USERS.".nickname, "
+           "SELECT ".TBL_USERS.".user_name, "
                     .TBL_PLAYERS.".*"
            ." FROM ".TBL_USERS.", "
                     .TBL_PLAYERS
-           ." WHERE (".TBL_USERS.".username = '$pname')"
-             ." AND (".TBL_PLAYERS.".Name = ".TBL_USERS.".username)"
+           ." WHERE (".TBL_USERS.".user_id = '$pid')"
+             ." AND (".TBL_PLAYERS.".Name = ".TBL_USERS.".user_id)"
              ." AND (".TBL_PLAYERS.".Event = '$event_id')";
            $result = $sql->db_Query($q);
            $row = mysql_fetch_array($result);     
-           $pnickname = $row['nickname'];
+           $pname = $row['user_name'];
            $pID = $row['PlayerID'];  
     	   
            for($j=1;$j<=$nbr_teams;$j++)
@@ -233,7 +234,7 @@ if (isset($_POST['submit']))
             ";
            $result = $sql->db_Query($q);
            
-    	   echo 'Player #'.$i.': '.$pnickname.' ('.$pname.') (id:'.$pID.')';
+    	   echo 'Player #'.$i.': '.$pname.' ('.$pname.') (id:'.$pID.')';
     	   echo ' in team '.$pteam;
     	   echo '<br />'; 
     	   /**/
@@ -259,7 +260,7 @@ if (isset($_POST['submit']))
                     ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
                       ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                       ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                      ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
+                      ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
                       ." AND (".TBL_SCORES.".Player_MatchTeam = '$i')"; 
                $resultA = $sql->db_Query($q);
                $NbrPlayersTeamA = mysql_numrows($resultA);
@@ -282,7 +283,7 @@ if (isset($_POST['submit']))
                      ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
                        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                        ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                       ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
+                       ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
                        ." AND (".TBL_SCORES.".Player_MatchTeam = '$j')"; 
                $resultB = $sql->db_Query($q);
                $NbrPlayersTeamB = mysql_numrows($resultB);
@@ -338,7 +339,7 @@ if (isset($_POST['submit']))
               ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
                 ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                 ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)";
+                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)";
         $result = $sql->db_Query($q);
         $num_rows = mysql_numrows($result);
         for($i=0;$i<$num_rows;$i++)
@@ -346,7 +347,8 @@ if (isset($_POST['submit']))
             $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
             $pscore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
             $pID= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-            $pName= mysql_result($result,$i, TBL_USERS.".username");
+            $puid= mysql_result($result,$i, TBL_USERS.".user_id");
+            $pName= mysql_result($result,$i, TBL_USERS.".user_name");
             $pELO= mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
             $pGamesPlayed= mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
             $pWins= mysql_result($result,$i, TBL_PLAYERS.".Win");
@@ -362,13 +364,13 @@ if (isset($_POST['submit']))
             
             echo "Player $pName, new ELO:$pELO<br />"; 
 
-            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
 
             $gain = 2*$pscore - $nbr_teams +1;
@@ -385,11 +387,11 @@ if (isset($_POST['submit']))
             
             if ($pStreak > $pStreak_Best) $pStreak_Best = $pStreak; 
             if ($pStreak < $pStreak_Worst) $pStreak_Worst = $pStreak; 
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $pStreak WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $pStreak WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pStreak_Best WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pStreak_Best WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $pStreak_Worst WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $pStreak_Worst WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result3 = $sql->db_Query($q3);
         } 
         
@@ -397,7 +399,7 @@ if (isset($_POST['submit']))
         $result = $sql->db_Query($q);
 
         echo "<p>";
-        echo "<br />Back to [<a href=\"eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+        echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
         echo "</p>";
         
         header("Location: eventinfo.php?eventid=$event_id");
@@ -409,17 +411,17 @@ if (isset($_POST['submit']))
    if (!isset($_POST['matchreport']))
    {
       echo "p>You are not authorized to report a match.</p>";
-      echo "<p>Back to [<a href=\"eventinfo.php?eventid=$event_id\">Event</a>]</p>";
+      echo "<p>Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]</p>";
    }
    else if (!$session->logged_in)
    {
       echo "<p>You are not logged in.</p>";
-      echo "<p>Back to [<a href=\"eventinfo.php?eventid=$event_id\">Event</a>]</p>";
+      echo "<p>Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]</p>";
    }
    else
    {
        // the form has not been submitted, let's show it
-       user_form($players_name, $players_nickname, $event_id);
+       user_form($players_id, $players_name, $event_id);
    }
 }
 
@@ -427,5 +429,5 @@ if (isset($_POST['submit']))
 </div>
 </div>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

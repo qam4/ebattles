@@ -3,7 +3,8 @@
  * Login_Error.php
  *
  */
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 ?>
 <div id="main">
 <?php
@@ -31,5 +32,5 @@ echo $form->error("pass");
 </div>
 </div>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>
