@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Main.php
  *
@@ -21,9 +21,18 @@ function GMT_time() {
 $gm_time = time() - date('Z', time());
 return $gm_time;
 }
-
-/**/
 ?>
+
+<style type="text/css" media="screen">
+        @import url("common/lists.css");
+        @import url("css/tables.css");
+        @import url("css/tab.css");
+</style>
+
+
+<?php
+/*
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	
@@ -78,3 +87,5 @@ return $gm_time;
         <div id="content" class="clearfix">
         
             <?php include(e_PLUGIN."ebattles/include/menu.php");?>
+*/
+?>

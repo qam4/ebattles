@@ -12,7 +12,7 @@
          <li class="last"><a href="contact.html">Contact</a></li>
 -->
 <?php
-if($session->logged_in)
+if(check_class(e_UC_MEMBER))
 {
 ?>
          <li><strong>User</strong></li>

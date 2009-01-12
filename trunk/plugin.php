@@ -11,10 +11,11 @@ global $PLUGINS_DIRECTORY;
 $lan_file = e_PLUGIN."ebattles/languages/".e_LANGUAGE.".php";
 include_once(file_exists($lan_file) ? $lan_file : e_PLUGIN."ebattles/languages/English.php");
 include_once(e_PLUGIN."ebattles/include/constants.php");
+include(e_PLUGIN."ebattles/include/revision.php");
 
 // Plugin info -------------------------------------------------------------------------------------------------------
 $eplug_name = 'EBATTLES_L1';
-$eplug_version = "0.1";
+$eplug_version = "$majorRevision.$minorRevision.$svnRevision";
 $eplug_author = "Frederic Marchais (qam4)";
 $eplug_logo = "";
 $eplug_url = "http://ebattles.freehostia.com";

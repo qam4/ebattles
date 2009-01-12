@@ -18,7 +18,7 @@
 		</td></tr>
 		</table>
 	<p>
-	&copy; Copyright 2007 <a href="mailto:<?php echo EMAIL_FROM_ADDR."\">".ADMIN_NAME."</a> - eBattles v$majorRevision.$minorRevision (rev $svnRevision)";?>
+	&copy; Copyright 2007 <a href="mailto:<?php echo EMAIL_FROM_ADDR."\">".ADMIN_NAME."</a> - eBattles v$majorRevision.$minorRevision (svn rev $svnRevision)";?>
 	<br />
 	<?php
 	// Insert at the end of your document

@@ -30,7 +30,7 @@ if(strcmp({USER_ID},$req_user) == 0){
 else{
    echo "<h1>User Info</h1>";
 
-   if($session->logged_in)
+   if(check_class(e_UC_MEMBER))
    {
      echo "<p><a href=\"".e_PLUGIN."ebattles/pm.php?action=send&amp;to=$req_user\">Send a Message</a></p>\n";
    }

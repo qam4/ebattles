@@ -22,8 +22,8 @@ string variables */
   $last = '<a href="'.$_SERVER['PHP_SELF'].$query_str.$pages.'">&#187;</a>';
    
   /* display opening navigation */
-  echo '<p align="center">';
-  echo ($pg > 1) ? "$first : $prev :" : '&#171; : &#139; :';
+  $output = '<p align="center">';
+  $output .= ($pg > 1) ? "$first : $prev :" : '&#171; : &#139; :';
   
   /* limit the number of page links displayed */
   $begin = $pg - 4;
@@ -33,11 +33,13 @@ string variables */
   while($end > $pages)
     $end--;
   for($i=$begin; $i<=$end; $i++)
-    echo ($i == $pg) ? ' ['.$i.'] ' : ' <a href="'.
+    $output .= ($i == $pg) ? ' ['.$i.'] ' : ' <a href="'.
       $_SERVER['PHP_SELF'].$query_str.$i.'">'.$i.'</a> ';
     
   /* display ending navigation */
-  echo ($pg < $pages) ? ": $next : $last" : ': &#155; : &#187;';
-  echo '</p>';
+  $output .= ($pg < $pages) ? ": $next : $last" : ': &#155; : &#187;';
+  $output .= '</p>';
+  
+  return $output;
 }
 ?>

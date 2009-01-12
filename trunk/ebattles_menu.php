@@ -11,6 +11,7 @@ include_once(file_exists($lan_file) ? $lan_file : e_PLUGIN."ebattles/languages/E
  $text  = '<a href="'.$events_link.'">';
  $text .= EBATTLES_MENU_L1;
  $text .= '</a>';
+ $text .= '<br><a href="'.e_PLUGIN."ebattles/db_admin/insert_data.php".'">Insert Data</a>';
 
  $ns->tablerender($ebattles_title,$text);
 ?>

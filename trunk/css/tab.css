@@ -57,29 +57,7 @@
         border-width: 1px;
         padding: 3px;
 
-        /* Mozilla ignores crazy MS image filters, so it will skip the following */
-/* Using this with IE7 on remote site causes items in tabs to be unaccessible 
-        filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src='../images/transparent.png');
-*/
-/* tests
-	background:		ThreeDHighlight;
-        background-color: black;
-        filter:alpha(opacity=80);
-        -moz-opacity:.80;
-        opacity:.80;
-*/
 }
-/* for Internet Explorer */
-/*\*/
-* html .dynamic-tab-pane-control .tab-page {
-        height: 550px;
-}
-/**/
-
-.dynamic-tab-pane-control .tab-page[class] {
-        background-image:url(../images/transparent.png);
-}
-
 
 .dynamic-tab-pane-control .tab-row {
 	z-index:		1;
