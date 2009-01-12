@@ -7,7 +7,8 @@
  * can't register another name.
  *
  */
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 ?>
 <div id="main">
 
@@ -17,8 +18,8 @@ include("include/main.php");
  */
 if($session->logged_in){
    echo "<h1>Registered</h1>";
-   echo "<p>We're sorry <b>$session->username</b>, but you've already registered. "
-       ."<a href=\"index.php\">Main</a>.</p>";
+   echo "<p>We're sorry <b>{USER_ID}</b>, but you've already registered. "
+       ."<a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>.</p>";
 }
 /**
  * The user has submitted the registration form and the
@@ -29,7 +30,7 @@ else if(isset($_SESSION['regsuccess'])){
    if($_SESSION['regsuccess']){
       echo "<h1>Registered!</h1>";
       echo "<p>Thank you <b>".$_SESSION['reguname']."</b>, your information has been added to the database, "
-          ."you may now <a href=\"index.php\">log in</a>.</p>";
+          ."you may now <a href=\"".e_PLUGIN."ebattles/index.php\">log in</a>.</p>";
    }
    /* Registration failed */
    else{
@@ -55,8 +56,8 @@ else{
 if($form->num_errors > 0){
    echo "<td><font size=\"2\" color=\"#ff0000\">".$form->num_errors." error(s) found</font></td>";
 }
+echo "<form action=\"".e_PLUGIN."ebattles/process.php\" method=\"post\">";
 ?>
-<form action="process.php" method="post">
 <table border="0" cellspacing="0" cellpadding="3">
 <tr><td>Username:</td><td><input type="text" name="user" maxlength="30" value="<?php echo $form->value("user"); ?>"></input></td><td><?php echo $form->error("user"); ?></td></tr>
 <tr><td>Password:</td><td><input type="password" name="pass" maxlength="30" value="<?php echo $form->value("pass"); ?>"></input></td><td><?php echo $form->error("pass"); ?></td></tr>
@@ -74,5 +75,5 @@ if($form->num_errors > 0){
 ?>
 </div>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

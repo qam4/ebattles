@@ -1,10 +1,10 @@
 <?php
 // function to output form and hold previously entered values.
 
-function user_form($players_name, $players_nickname, $eventid) {
+function user_form($players_id, $players_name, $eventid) {
     global $session;
 
-    $reported_by = $session->username;
+    $reported_by = {USER_ID};
     $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
     $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
     if(isset($_POST['elm1'])) {
@@ -16,7 +16,7 @@ function user_form($players_name, $players_nickname, $eventid) {
     }
 
     //$players = array('-- select --', 'fred', 'fab', 'nico', 'test', 'test', 'test', 'test', 'test', 'test', 'test', 'test');
-    $max_nbr_players = count($players_name)-1;
+    $max_nbr_players = count($players_id)-1;
     // if vars aren't set, set them as empty.
     // (prevents "notice" errors showing for those who have them enabled)
     if (!isset($_POST['nbr_players'])) $_POST['nbr_players'] = 2;
@@ -43,7 +43,7 @@ function user_form($players_name, $players_nickname, $eventid) {
 
     for($i=1;$i<=$nbr_players;$i++)
     {
-        if (!isset($_POST['player'.$i])) $_POST['player'.$i] = $players_name[0];
+        if (!isset($_POST['player'.$i])) $_POST['player'.$i] = $players_id[0];
         //debug - echo "Player #".$i.": ".$_POST['player'.$i]."<br />";
     }
 
@@ -134,9 +134,9 @@ function user_form($players_name, $players_nickname, $eventid) {
        echo '<td><select name="player'.$i.'">';
        for($j=1;$j <= $max_nbr_players+1;$j++)
        {
-          echo '<option value="'.$players_name[($j-1)].'"';
-          if (strtolower($_POST['player'.$i]) == strtolower($players_name[($j-1)])) echo ' selected="selected"';
-          echo '>'.$players_nickname[($j-1)].'</option>';
+          echo '<option value="'.$players_id[($j-1)].'"';
+          if (strtolower($_POST['player'.$i]) == strtolower($players_id[($j-1)])) echo ' selected="selected"';
+          echo '>'.$players_name[($j-1)].'</option>';
        }
        echo '</select></td>';
 

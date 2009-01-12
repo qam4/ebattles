@@ -2,7 +2,7 @@
 
 <div id="footer" class="clearfix">
 		<?php
-		include("include/revision.php");
+		include_once(e_PLUGIN."ebattles/include/revision.php");
 		/**
 		 * Just a little page footer, tells how many registered members
 		 * there are, how many users currently logged in and viewing site,
@@ -14,7 +14,6 @@
 		echo "There are $sql->num_active_users registered members and ";
 		echo "$sql->num_active_guests guests viewing the site.<br /><br />";
 		
-		include("include/view_active.php");
 		?>
 		</td></tr>
 		</table>
@@ -28,8 +27,6 @@
         echo "This page was generated in $generation_time seconds";
 	?>
 	</p>
-
-<a href='http://www.autositemap.com/'><img border='0' src='./autositemap/autositemap.php' alt='Google Sitemap Generator'></a>
 
 </div><!-- end footer -->
 </div><!-- end page -->

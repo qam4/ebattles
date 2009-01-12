@@ -8,7 +8,8 @@
  * password, they must first confirm their current password.
  *
  */
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 
 ?>
 <div id="main">
@@ -20,7 +21,7 @@ include("include/main.php");
    if (!isset($_POST['deletematch']))
    {
         echo "<br />You are not authorized to delete this match.<br />";
-        echo "<br />Back to [<a href=\"eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+        echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
    }
    else
    {
@@ -37,7 +38,7 @@ include("include/main.php");
               ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
                 ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                 ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)";
+                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)";
         $result = $sql->db_Query($q);
         $num_rows = mysql_numrows($result);
 
@@ -54,7 +55,8 @@ include("include/main.php");
             $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
             $pscore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
             $pID= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-            $pName= mysql_result($result,$i, TBL_USERS.".username");
+            $puid= mysql_result($result,$i, TBL_USERS.".user_id");
+            $pname= mysql_result($result,$i, TBL_USERS.".user_name");
             $pELO= mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
             $pGamesPlayed= mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
             $pWins= mysql_result($result,$i, TBL_PLAYERS.".Win");
@@ -66,15 +68,15 @@ include("include/main.php");
             $pWins = $pWins - $pscore;
             $pGamesPlayed -= 1;
             
-            echo "Player $pName, new ELO:$pELO<br />"; 
+            echo "Player $pname, new ELO:$pELO<br />"; 
 
-            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (Name = '$pName') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
             
             // fmarc- Can not change "streak" information here :(
@@ -89,12 +91,12 @@ include("include/main.php");
         $result = $sql->db_Query($q);
         
         echo "<br />Match deleted<br />";
-        echo "<br />Back to [<a href=\"eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+        echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
    }
 
 ?>
 </div>
 </div>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

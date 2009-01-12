@@ -1,5 +1,4 @@
 <?php
-require_once("pm_functions.php"); // include the functions we just wrote
 
 if($session->logged_in)
 {
@@ -13,14 +12,14 @@ if($session->logged_in)
    $myUnreadMessagesCount = getUnreadMessagesCount();
 
    echo "$date.<br />";
-   echo "<p>Welcome <b>$session->username</b>, ";
+   echo "<p>Welcome <b>{USER_ID}</b>, ";
    if ($myUnreadMessagesCount>1)
    {
-      echo "you have <a href=\"pm.php\">$myUnreadMessagesCount</a> new messages.<br />";
+      echo "you have <a href=\"".e_PLUGIN."ebattles/pm.php\">$myUnreadMessagesCount</a> new messages.<br />";
    }
    else
    {
-      echo "you have <a href=\"pm.php\">$myUnreadMessagesCount</a> new message.<br />";
+      echo "you have <a href=\"".e_PLUGIN."ebattles/pm.php\">$myUnreadMessagesCount</a> new message.<br />";
    }
    echo "</p>";
 }
@@ -45,7 +44,9 @@ else
     </script>
 
 
-   <form action="process.php" method="post">
+<?php
+echo "<form action=\"".e_PLUGIN."ebattles/process.php\" method=\"post\">";
+?>
       <table border="0" cellspacing="0" cellpadding="3">
       <tr>
           <td>

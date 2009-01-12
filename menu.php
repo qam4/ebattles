@@ -17,15 +17,15 @@ if($session->logged_in)
 ?>
          <li><strong>User</strong></li>
 <?php
-         echo "<li><a href=\"userinfo.php?user=$session->username\">My Account</a></li>";
-         echo "<li><a href=\"useredit.php\">Edit Account</a></li>";
-         /* echo "<li><a href=\"pm.php\">My PMs</a></li>"; */
+         echo "<li><a href=\"".e_PLUGIN."ebattles/userinfo.php?user={USER_ID}\">My Account</a></li>";
+         echo "<li><a href=\"".e_PLUGIN."ebattles/useredit.php\">Edit Account</a></li>";
+         /* echo "<li><a href=\"".e_PLUGIN."ebattles/pm.php\">My PMs</a></li>"; */
          if($session->isAdmin())
          {
-             echo "<li><a href=\"admin.php\">Admin Center</a></li>";
-             echo "<li><a href=\"db_admin/index.php\">Admin Database</a></li>";
+             echo "<li><a href=\"".e_PLUGIN."ebattles/admin.php\">Admin Center</a></li>";
+             echo "<li><a href=\"".e_PLUGIN."ebattles/db_admin/index.php\">Admin Database</a></li>";
          }
-         echo "<li class=\"last\"><a href=\"process.php\">Logout</a></li>";
+         echo "<li class=\"last\"><a href=\"".e_PLUGIN."ebattles/process.php\">Logout</a></li>";
 }
 ?>         
          

@@ -8,7 +8,8 @@
  * password, they must first confirm their current password.
  *
  */
-include("include/main.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 ?>
 <div id="main">
 <div class="news">
@@ -21,8 +22,8 @@ if(isset($_SESSION['useredit'])){
    unset($_SESSION['useredit']);
    
    echo "<h1>User Account Edit Success!</h1>";
-   echo "<p><b>$session->username</b>, your account has been successfully updated. "
-       ."<a href=\"index.php\">Main</a>.</p>";
+   echo "<p><b>{USER_ID}</b>, your account has been successfully updated. "
+       ."<a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>.</p>";
 }
 else{
 ?>
@@ -36,13 +37,13 @@ else{
  */
 if($session->logged_in){
 ?>
-<h1>User Account Edit : <?php echo $session->username; ?></h1>
+<h1>User Account Edit : <?php echo {USER_ID}; ?></h1>
 <?php
 if($form->num_errors > 0){
    echo "<td><font size=\"2\" color=\"#ff0000\">".$form->num_errors." error(s) found</font></td>";
 }
+echo "<form action=\"".e_PLUGIN."ebattles/process.php\" method=\"post\">";
 ?>
-<form action="process.php" method="post">
 <table border="0" cellspacing="0" cellpadding="3">
 <tr>
 <td>Current Password:</td>
@@ -68,12 +69,12 @@ if($form->value("email") == ""){
 ?>"></input>
 </td>
 <td>Nickname:</td>
-<td><input type="text" name="nickname" maxlength="50" value="
+<td><input type="text" name="name" maxlength="50" value="
 <?php
-if($form->value("nickname") == ""){
-   echo $session->userinfo['nickname'];
+if($form->value("name") == ""){
+   echo $session->userinfo['name'];
 }else{
-   echo $form->value("nickname");
+   echo $form->value("name");
 }
 ?>"></input>
 </td>
@@ -93,5 +94,5 @@ if($form->value("nickname") == ""){
 </div>
 </div>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

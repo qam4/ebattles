@@ -1,6 +1,7 @@
 <?php
    // always include the class2.php file - this is the main e107 file
    require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 
    // this generates all the HTML up to the start of the main section
    e107_require_once(HEADERF);

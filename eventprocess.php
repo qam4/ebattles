@@ -3,7 +3,7 @@
  *EventProcess.php
  * 
  */
-include("include/session.php");
+include_once(e_PLUGIN."ebattles/include/session.php");
 
 function resetPlayers($event_id)
 {
@@ -137,7 +137,7 @@ function deleteEvent($event_id)
    
    $can_manage = 0;
    if ($session->isAdmin()) $can_manage = 1;
-   if ($session->username==$eowner) $can_manage = 1;
+   if ({USER_ID}==$eowner) $can_manage = 1;
    if ($can_manage == 0)
    {
       header("Location: index.php");

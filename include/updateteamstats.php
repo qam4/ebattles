@@ -4,7 +4,7 @@
  * 
  */
  
-/* include("./include/session.php"); */
+/* include_once(e_PLUGIN."ebattles/include/session.php"); */
 
    $file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt'; 
 
@@ -157,16 +157,16 @@ if ($opponentsELO_maxpoints > 0)
                       ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
                         ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                         ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                        ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)";
+                        ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)";
             
                   $result_4 = $sql->db_Query($q_4);
                   $num_rows_4 = mysql_numrows($result_4);
                   for($l=0; $l<$num_rows_4; $l++)
                   {
-                     $uname  = mysql_result($result_4,$l, TBL_USERS.".username");
+                     $uid  = mysql_result($result_4,$l, TBL_USERS.".user_id");
                      $uplayermatchteam  = mysql_result($result_4,$l, TBL_SCORES.".Player_MatchTeam");
                      $uELO  = mysql_result($result_4,$l, TBL_PLAYERS.".ELORanking");
-                     $players[] = "$uname";
+                     $players[] = "$uid";
                      
                      if ($uplayermatchteam != $mplayermatchteam)
                      {
@@ -382,7 +382,7 @@ if ($opponentsELO_maxpoints > 0)
       $q_2 = "SELECT *"
           ." FROM ".TBL_PLAYERS
           ." WHERE (".TBL_PLAYERS.".Team = '$tid')"
-            ." AND (".TBL_PLAYERS.".Name = '$session->username')";
+            ." AND (".TBL_PLAYERS.".Name = '{USER_ID}')";
       $result_2 = $sql->db_Query($q_2);
       $num_rows_2 = mysql_numrows($result_2);
       if($num_rows_2 > 0)
@@ -401,7 +401,7 @@ if ($opponentsELO_maxpoints > 0)
       }
       
       $stats_row[] = "<b>$ranknumber</b>";
-      $stats_row[] = "<a class=\"type1\" href=\"claninfo.php?clanid=$clan[$index]\"><b>$name[$index]</b></a>";
+      $stats_row[] = "<a class=\"type1\" href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan[$index]\"><b>$name[$index]</b></a>";
       $stats_row[] = "$nbr_players[$index]";
       $stats_row[] = number_format ($OverallScore[$index],2);
 if ($ELO_maxpoints > 0)
@@ -438,7 +438,7 @@ if ($opponentsELO_maxpoints > 0)
 
 /*   
 // debug print array
-include("./include/show_array.php");
+include_once(e_PLUGIN."ebattles/include/show_array.php");
 echo "<br />";
 html_show_table($stats, $num_rows+1, 7);
 echo "<br />";

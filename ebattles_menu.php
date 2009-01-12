@@ -10,7 +10,6 @@ include_once(file_exists($lan_file) ? $lan_file : e_PLUGIN."ebattles/languages/E
 
  $text  = '<a href="'.$events_link.'">';
  $text .= EBATTLES_MENU_L1;
- $text .= "{EBATTLES_MENU_L1}";
  $text .= '</a>';
 
  $ns->tablerender($ebattles_title,$text);

@@ -6,12 +6,12 @@
  * track of logged in users and also guests.
  *
  */
-include("constants.php");
-include("time.php");
-include("database.php");
-include("mailer.php");
-include("form.php");
-/*fm- include("debug_lib.php");*/
+include(e_PLUGIN."ebattles/include/constants.php");
+include(e_PLUGIN."ebattles/include/time.php");
+include(e_PLUGIN."ebattles/include/database.php");
+include(e_PLUGIN."ebattles/include/mailer.php");
+include(e_PLUGIN."ebattles/include/form.php");
+/*fm- include(e_PLUGIN."ebattles/include/debug_lib.php");*/
 
 function GMT_time() {
 $gm_time = time() - date('Z', time());
@@ -356,7 +356,7 @@ class Session
     * format, the change is made. All other fields are changed
     * automatically.
     */
-   function editAccount($subcurpass, $subnewpass, $subemail, $subnickname){
+   function editAccount($subcurpass, $subnewpass, $subemail, $subname){
       global $sql, $form;  //The database and form object
       /* New password entered */
       if($subnewpass){
@@ -410,8 +410,8 @@ class Session
          $subemail = stripslashes($subemail);
       }
       
-      $field = "nickname";  //Use field name for nickname
-      $subnickname = stripslashes($subnickname);
+      $field = "name";  //Use field name for name
+      $subname = stripslashes($subname);
 
      /* Errors exist, have user correct them */
       if($form->num_errors > 0){
@@ -429,8 +429,8 @@ class Session
       }
       
       /* Change Nickname */
-      if($subnickname){
-         $sql->updateUserField($this->username,"nickname",$subnickname);
+      if($subname){
+         $sql->updateUserField($this->username,"name",$subname);
       }
       /* Success! */
       return true;

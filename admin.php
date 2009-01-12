@@ -11,8 +11,9 @@
  */
 
 ob_start();
-include("include/main.php");
-include("include/pagination.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
+include_once(e_PLUGIN."ebattles/include/pagination.php");
 
 /**
  * displayUsers - Displays the users database table in
@@ -41,7 +42,7 @@ function displayUsers(){
    $result = $sql->db_Query($q);
    $totalPages = mysql_result($result, 0);
    
-   $q = "SELECT username,nickname,userlevel,email,joined_timestamp,timestamp"
+   $q = "SELECT username,name,userlevel,email,joined_timestamp,timestamp"
        ." FROM ".TBL_USERS." ORDER BY $orderby $sort"
        ." LIMIT $start, $rowsPerPage";
        
@@ -60,17 +61,17 @@ function displayUsers(){
    echo "<table class=\"type1\">\n";
 
    echo "<tr>";
-   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"admin.php?orderby=username&sort=$sort\"><b>Username</b></a></td>";
-   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"admin.php?orderby=nickname&sort=$sort\"><b>Nickname</b></a></td>";
-   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"admin.php?orderby=userlevel&sort=$sort\"><b>Level</b></a></td>";
-   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"admin.php?orderby=email&sort=$sort\"><b>Email</b></a></td>";
-   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"admin.php?orderby=joined_timestamp&sort=$sort\"><b>Joined</b></a></td>";
-   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"admin.php?orderby=timestamp&sort=$sort\"><b>Last Active</b></a></td>";
+   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/admin.php?orderby=username&sort=$sort\"><b>Username</b></a></td>";
+   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/admin.php?orderby=name&sort=$sort\"><b>Nickname</b></a></td>";
+   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/admin.php?orderby=userlevel&sort=$sort\"><b>Level</b></a></td>";
+   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/admin.php?orderby=email&sort=$sort\"><b>Email</b></a></td>";
+   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/admin.php?orderby=joined_timestamp&sort=$sort\"><b>Joined</b></a></td>";
+   echo "<td class=\"type1Header\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/admin.php?orderby=timestamp&sort=$sort\"><b>Last Active</b></a></td>";
    echo "</tr>\n";
 
 /*
 if ($_GET['orderby'] == "username")
-if ($_GET['orderby'] == "nickname")
+if ($_GET['orderby'] == "name")
 if ($_GET['orderby'] == "userlevel")
 if ($_GET['orderby'] == "email")
 if ($_GET['orderby'] == "joined_timestamp")
@@ -79,7 +80,7 @@ if ($_GET['orderby'] == "timestamp")
 
    for($i=0; $i<$num_rows; $i++){
       $uname  = mysql_result($result,$i,"username");
-      $unickname  = mysql_result($result,$i,"nickname");
+      $uname  = mysql_result($result,$i,"name");
       $ulevel = mysql_result($result,$i,"userlevel");
       $email  = mysql_result($result,$i,"email");
       $time_joined   = mysql_result($result,$i,"joined_timestamp");
@@ -90,7 +91,7 @@ if ($_GET['orderby'] == "timestamp")
       $time_local = $time + $session->timezone_offset;
       
       $date = date("d M Y, h:i:s A",$time_local);
-      echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"userinfo.php?user=$uname\"><b>$uname</b></a></td><td class=\"type1Body\">$unickname</td><td class=\"type1Body\">$ulevel</td><td class=\"type1Body\">$email</td><td class=\"type1Body\">$date_joined</td><td class=\"type1Body\">$date</td></tr>\n";
+      echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$uname\"><b>$uname</b></a></td><td class=\"type1Body\">$uname</td><td class=\"type1Body\">$ulevel</td><td class=\"type1Body\">$email</td><td class=\"type1Body\">$date_joined</td><td class=\"type1Body\">$date</td></tr>\n";
    }
    echo "</table><br />\n";
    paginate($rowsPerPage, $pg, $totalPages);
@@ -147,7 +148,7 @@ else{
 <div id="main">
 <h1>Admin Center</h1>
 
-<font size="1">Logged in as <b><?php echo $session->username; ?></b></font><br /><br />
+<font size="1">Logged in as <b><?php echo {USER_ID}; ?></b></font><br /><br />
 [<a href="./db_admin/index.php">Database admin</a>]<br /><br />
 
 
@@ -181,8 +182,9 @@ displayUsers();
 ?>
 <div class="news">
 <h2>Update User Level</h2>
-<?php echo $form->error("upduser"); ?>
-<form action="admin/adminprocess.php" method="post">
+<?php echo $form->error("upduser");
+echo "<form action=\"".e_PLUGIN."ebattles/admin/adminprocess.php\" method=\"post\">";
+?>
 <table>
 <tr>
 <td>
@@ -215,8 +217,9 @@ Level:<br />
 ?>
 <div class="news">
 <h2>Delete User</h2>
-<?php echo $form->error("deluser"); ?>
-<form action="admin/adminprocess.php" method="post">
+<?php echo $form->error("deluser");
+echo "<form action=\"".e_PLUGIN."ebattles/admin/adminprocess.php\" method=\"post\">";
+?>
 Username:<br />
 <input type="text" name="deluser" maxlength="30" value="<?php echo $form->value("deluser"); ?>"></input>
 <input type="hidden" name="subdeluser" value="1"></input>
@@ -236,8 +239,9 @@ Username:<br />
 This will delete all users (not administrators), who have not logged in to the site<br />
 within a certain time period. You specify the days spent inactive.<br />
 </p>
-
-<form action="admin/adminprocess.php" method="post">
+<?php
+echo "<form action=\"".e_PLUGIN."ebattles/admin/adminprocess.php\" method=\"post\">";
+?>
 <table>
 <tr><td>
 Days:<br />
@@ -268,8 +272,9 @@ Days:<br />
 ?>
 <div class="news">
 <h2>Ban User</h2>
-<?php echo $form->error("banuser"); ?>
-<form action="admin/adminprocess.php" method="post">
+<?php echo $form->error("banuser");
+echo "<form action=\"".e_PLUGIN."ebattles/admin/adminprocess.php\" method=\"post\">";
+?>
 Username:<br />
 <input type="text" name="banuser" maxlength="30" value="<?php echo $form->value("banuser"); ?>"></input>
 <input type="hidden" name="subbanuser" value="1"></input>
@@ -298,8 +303,9 @@ displayBannedUsers();
 ?>
 <div class="news">
 <h2>Delete Banned User</h2>
-<?php echo $form->error("delbanuser"); ?>
-<form action="admin/adminprocess.php" method="post">
+<?php echo $form->error("delbanuser"); 
+echo "<form action=\"".e_PLUGIN."ebattles/admin/adminprocess.php\" method=\"post\">";
+?>
 Username:<br />
 <input type="text" name="delbanuser" maxlength="30" value="<?php echo $form->value("delbanuser"); ?>"></input>
 <input type="hidden" name="subdelbanned" value="1"></input>
@@ -313,5 +319,5 @@ Username:<br />
 }
 ?>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

@@ -6,8 +6,9 @@
  * with a link added for them to edit the information.
  *
  */
-include("include/main.php");
-include("include/pagination.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
+include_once(e_PLUGIN."ebattles/include/pagination.php");
 ?>
 <div id="main">
 <script type="text/javascript" src="./js/tabpane.js"></script>
@@ -22,7 +23,7 @@ if(!$req_user || strlen($req_user) == 0 ||
 }
 
 /* Logged in user viewing own account */
-if(strcmp($session->username,$req_user) == 0){
+if(strcmp({USER_ID},$req_user) == 0){
    echo "<h1>My Account</h1>";
 }
 /* Visitor not viewing own account */
@@ -31,7 +32,7 @@ else{
 
    if($session->logged_in)
    {
-     echo "<p><a href=\"pm.php?action=send&amp;to=$req_user\">Send a Message</a></p>\n";
+     echo "<p><a href=\"".e_PLUGIN."ebattles/pm.php?action=send&amp;to=$req_user\">Send a Message</a></p>\n";
    }
 }
 
@@ -48,7 +49,7 @@ $req_user_info = $sql->getUserInfo($req_user);
 /* Username */
 echo "<b>Username: ".$req_user_info['username']."</b><br />";
 /* Username */
-echo "<b>Nickname: ".$req_user_info['nickname']."</b><br />";
+echo "<b>Nickname: ".$req_user_info['name']."</b><br />";
 
 /**
  * Note: when you add your own fields to the users table
@@ -62,8 +63,8 @@ echo "<b>Nickname: ".$req_user_info['nickname']."</b><br />";
  * $req_user_info['location']; (for any user)
  */
 /* If logged in user viewing own account, give link to edit */
-if(strcmp($session->username,$req_user) == 0){
-   echo "<br /><a href=\"useredit.php\">Edit Account Information</a><br />";
+if(strcmp({USER_ID},$req_user) == 0){
+   echo "<br /><a href=\"".e_PLUGIN."ebattles/useredit.php\">Edit Account Information</a><br />";
 }
 echo "</p>";
 echo "</div>";
@@ -73,8 +74,8 @@ echo "</div>";
 <div class="tab-page">
 <h2 class="tab">Events</h2>
 <?php
-if(strcmp($session->username,$req_user) == 0){
-   echo "<form action=\"eventcreate.php\" method=\"post\">";
+if(strcmp({USER_ID},$req_user) == 0){
+   echo "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
    echo "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
    echo "<input type=\"submit\" name=\"createevent\" value=\"Create new Event\"></input>";
    echo "</form>";
@@ -121,8 +122,8 @@ if ($num_rows>0)
        $pwinloss  = mysql_result($result,$i, TBL_PLAYERS.".Win")."/".mysql_result($result,$i, TBL_PLAYERS.".Loss");
        echo "<tr>";
        echo "<td>";
-       echo "<a href=\"eventinfo.php?eventid=$eid\">$ename</a><br />";
-       echo "<img src=\"images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
+       echo "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
+       echo "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
        echo "</td>";
        echo "<td>";
        echo "$prank";
@@ -134,9 +135,9 @@ if ($num_rows>0)
        if($eowner == $req_user)
        {
          echo "Owner";
-         if ($eowner == $session->username)
+         if ($eowner == {USER_ID})
          {
-         	 echo " (<a href=\"eventmanage.php?eventid=$eid\">Manage</a>)";
+         	 echo " (<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$eid\">Manage</a>)";
          }
        }
        else
@@ -181,16 +182,16 @@ if ($num_rows>0)
        $eowner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
        echo "<tr>";
        echo "<td>";
-       echo "<a href=\"eventinfo.php?eventid=$eid\">$ename</a><br />";
-       echo "<img src=\"images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
+       echo "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
+       echo "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
        echo "</td>";
        echo "<td>";
        if($eowner == $req_user)
        {
          echo "Owner";
-         if ($eowner == $session->username)
+         if ($eowner == {USER_ID})
          {
-         	 echo " (<a href=\"eventmanage.php?eventid=$eid\">Manage</a>)";
+         	 echo " (<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$eid\">Manage</a>)";
          }
        }
        else
@@ -237,16 +238,16 @@ if ($num_rows>0)
        $eowner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
        echo "<tr>";
        echo "<td>";
-       echo "<a href=\"eventinfo.php?eventid=$eid\">$ename</a><br />";
-       echo "<img src=\"images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
+       echo "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
+       echo "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
        echo "</td>";
        echo "<td>";
        if($eowner == $req_user)
        {
          echo "Owner";
-         if ($eowner == $session->username)
+         if ($eowner == {USER_ID})
          {
-         	 echo " (<a href=\"eventmanage.php?eventid=$eid\">Manage</a>)";
+         	 echo " (<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$eid\">Manage</a>)";
          }
        }
        else
@@ -268,8 +269,8 @@ echo "<br /><br />";
 <h2 class="tab">Teams membership</h2>
 <?php
 
-if(strcmp($session->username,$req_user) == 0){
-   echo "<form action=\"clancreate.php\" method=\"post\">";
+if(strcmp({USER_ID},$req_user) == 0){
+   echo "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
    echo "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
    echo "<input type=\"submit\" name=\"createteam\" value=\"Create new Team\"></input>";
    echo "</form>";
@@ -288,8 +289,8 @@ $q = "SELECT ".TBL_CLANS.".*, "
             .TBL_GAMES
    ." WHERE (".TBL_DIVISIONS.".Clan = ".TBL_CLANS.".ClanID)"
      ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-     ." AND (".TBL_MEMBERS.".Name = ".TBL_USERS.".username)"
-     ." AND (".TBL_USERS.".username = '$req_user')"
+     ." AND (".TBL_MEMBERS.".Name = ".TBL_USERS.".user_id)"
+     ." AND (".TBL_USERS.".user_id = '$req_user')"
      ." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
     
 $result = $sql->db_Query($q);
@@ -316,16 +317,16 @@ if ($num_rows>0)
        $cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
        echo "<tr>";
        echo "<td>";
-       echo "<a href=\"claninfo.php?clanid=$cid\">$cname</a><br />";
-       echo "<img src=\"images/games_icons/$dgameicon\" alt=\"$egameicon\"></img> $dgame";
+       echo "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$cid\">$cname</a><br />";
+       echo "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$dgameicon\" alt=\"$egameicon\"></img> $dgame";
        echo "</td>";
        echo "<td>";
        if($cowner == $req_user)
        {
          echo "Owner";
-         if ($cowner == $session->username)
+         if ($cowner == {USER_ID})
          {
-         	 echo " (<a href=\"clanmanage.php?clanid=$cid\">Manage</a>)";
+         	 echo " (<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$cid\">Manage</a>)";
          }
        }
        else
@@ -345,8 +346,8 @@ $q = "SELECT ".TBL_CLANS.".*, "
              .TBL_USERS.".*"
    ." FROM ".TBL_CLANS.", "
             .TBL_USERS
-   ." WHERE (".TBL_CLANS.".Owner = ".TBL_USERS.".username)"
-     ." AND (".TBL_USERS.".username = '$req_user')";
+   ." WHERE (".TBL_CLANS.".Owner = ".TBL_USERS.".user_id)"
+     ." AND (".TBL_USERS.".user_id = '$req_user')";
     
 $result = $sql->db_Query($q);
 $num_rows = mysql_numrows($result);
@@ -370,15 +371,15 @@ if ($num_rows>0)
        $cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
        echo "<tr>";
        echo "<td>";
-       echo "<a href=\"claninfo.php?clanid=$cid\">$cname</a><br />";
+       echo "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$cid\">$cname</a><br />";
        echo "</td>";
        echo "<td>";
        if($cowner == $req_user)
        {
          echo "Owner";
-         if ($cowner == $session->username)
+         if ($cowner == {USER_ID})
          {
-         	 echo " (<a href=\"clanmanage.php?clanid=$cid\">Manage</a>)";
+         	 echo " (<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$cid\">Manage</a>)";
          }
        }
        else
@@ -429,16 +430,16 @@ if ($num_rows>0)
 
        echo "<tr>";
        echo "<td>";
-       echo "<a href=\"claninfo.php?clanid=$cid\">$cname</a><br />";
-       echo "<img src=\"images/games_icons/$dgameicon\" alt=\"$egameicon\"></img> $dgame";
+       echo "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$cid\">$cname</a><br />";
+       echo "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$dgameicon\" alt=\"$egameicon\"></img> $dgame";
        echo "</td>";
        echo "<td>";
        if($cowner == $req_user)
        {
          echo "Owner";
-         if ($cowner == $session->username)
+         if ($cowner == {USER_ID})
          {
-         	 echo " (<a href=\"clanmanage.php?clanid=$cid\">Manage</a>)";
+         	 echo " (<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$cid\">Manage</a>)";
          }
        }
        else
@@ -484,7 +485,7 @@ echo "</div>";
     ." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
       ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
       ." AND (".TBL_PLAYERS.".Name = '$req_user')"
-      ." AND (".TBL_MATCHS.".ReportedBy = ".TBL_USERS.".username)"
+      ." AND (".TBL_MATCHS.".ReportedBy = ".TBL_USERS.".user_id)"
     ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
     ." LIMIT $start, $rowsPerPage";
  
@@ -499,7 +500,7 @@ echo "</div>";
       for($i=0; $i<$num_rows; $i++){
          $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
          $mReportedBy  = mysql_result($result,$i, TBL_MATCHS.".ReportedBy");
-         $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".nickname");
+         $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
          $mEvent  = mysql_result($result,$i, TBL_MATCHS.".Event");
          $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
          //$date = date("d M Y, h:i:s A",$mTime);
@@ -528,25 +529,25 @@ echo "</div>";
              ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-               ." AND (".TBL_USERS.".username = ".TBL_PLAYERS.".Name)"
+               ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
              ." ORDER BY ".TBL_SCORES.".Player_Rank";
 
          $result2 = $sql->db_Query($q2);
          $num_rows2 = mysql_numrows($result2);
-         $pnickname = '';
+         $pname = '';
          $players = '';
          for($j=0; $j<$num_rows2; $j++)
          {
-            $pnickname  = mysql_result($result2,$j, TBL_USERS.".nickname");
-            $pname  = mysql_result($result2,$j, TBL_USERS.".username");
+            $pid  = mysql_result($result2,$j, TBL_USERS.".user_id");
+            $pname  = mysql_result($result2,$j, TBL_USERS.".user_name");
             if ($j==0)
-              $players = "<a class=\"type1\" href=\"userinfo.php?user=$pname\">$pnickname</a>";
+              $players = "<a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             else
-              $players = $players.", <a class=\"type1\" href=\"userinfo.php?user=$pname\">$pnickname</a>";
+              $players = $players.", <a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
          }
 
          echo "<tr>\n";
-         echo "<td class=\"type1Body\"><b>$mID</b> <a class=\"type1\" href=\"matchinfo.php?eventid=$mEvent&amp;matchid=$mID\">(Show details)</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"eventinfo.php?eventid=$mEvent\">$ename</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"type1Body\">$players</td><td class=\"type1Body\">$date</td></tr>";
+         echo "<td class=\"type1Body\"><b>$mID</b> <a class=\"type1\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEvent&amp;matchid=$mID\">(Show details)</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEvent\">$ename</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"type1Body\">$players</td><td class=\"type1Body\">$date</td></tr>";
 
       
    }
@@ -560,7 +561,7 @@ echo "</div>";
 echo "</div>";
 /* Link back to main */
 echo "<p>";
-echo "<br />Back to [<a href=\"index.php\">Main</a>]<br />";
+echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>]<br />";
 echo "</p>";
 
 ?>
@@ -573,5 +574,5 @@ setupAllTabs();
 //]]>
 </script>
 <?php
-include("include/footer.php");
+include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>
