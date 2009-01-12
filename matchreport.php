@@ -413,7 +413,7 @@ if (isset($_POST['submit']))
       echo "p>You are not authorized to report a match.</p>";
       echo "<p>Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]</p>";
    }
-   else if (!$session->logged_in)
+   else if (!check_class(e_UC_MEMBER))
    {
       echo "<p>You are not logged in.</p>";
       echo "<p>Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]</p>";

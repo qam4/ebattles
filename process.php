@@ -37,7 +37,7 @@ class Process
        * is if he wants to logout, which means user is
        * logged in currently.
        */
-      else if($session->logged_in){
+      else if(check_class(e_UC_MEMBER)){
          $this->procLogout();
       }
       /**

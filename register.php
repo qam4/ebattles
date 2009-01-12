@@ -16,7 +16,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 /**
  * The user is already logged in, not allowed to register.
  */
-if($session->logged_in){
+if(check_class(e_UC_MEMBER)){
    echo "<h1>Registered</h1>";
    echo "<p>We're sorry <b>{USER_ID}</b>, but you've already registered. "
        ."<a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>.</p>";

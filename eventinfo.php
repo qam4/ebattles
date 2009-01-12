@@ -239,7 +239,7 @@ function get_formatted_timediff($then, $now = false)
    echo"<h2 class=\"tab\">Event Info</h2>";
    echo"<br /><br />";
 
-   if($session->logged_in)
+   if(check_class(e_UC_MEMBER))
    {
       /* Join/Quit Event */
       if ($etype == "Team Ladder")

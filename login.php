@@ -1,6 +1,6 @@
 <?php
 
-if($session->logged_in)
+if(check_class(e_UC_MEMBER))
 {
 /* echo "debug - Logged in"; *?
    /**

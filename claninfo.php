@@ -82,7 +82,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
       echo "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</h2><br />";
       echo "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
 
-      if($session->logged_in)
+      if(check_class(e_UC_MEMBER))
       {
          $q_2 = "SELECT ".TBL_MEMBERS.".*"
             ." FROM ".TBL_MEMBERS

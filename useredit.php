@@ -35,7 +35,7 @@ else{
  * account information, with the current email address
  * already in the field.
  */
-if($session->logged_in){
+if(check_class(e_UC_MEMBER)){
 ?>
 <h1>User Account Edit : <?php echo {USER_ID}; ?></h1>
 <?php

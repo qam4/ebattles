@@ -67,7 +67,7 @@ function displayClans(){
 <div class="news">
 <h2>Teams</h2>
 <?php
-if($session->logged_in)
+if(check_class(e_UC_MEMBER))
 {
    echo "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
    echo "<input type=\"hidden\" name=\"userid\" value=\"{USER_ID}\"></input>";
