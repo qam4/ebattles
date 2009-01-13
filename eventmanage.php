@@ -13,12 +13,12 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 <script type="text/javascript" src="./js/tabpane.js"></script>
 
 <!-- main calendar program -->
-<script type="text/javascript" src="calendar.js"></script>
+<script type="text/javascript" src="./js/calendar/calendar.js"></script>
 <!-- language for the calendar -->
-<script type="text/javascript" src="lang/calendar-en.js"></script>
+<script type="text/javascript" src="./js/calendar/lang/calendar-en.js"></script>
 <!-- the following script defines the Calendar.setup helper function, which makes
      adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript" src="calendar-setup.js"></script>
+<script type="text/javascript" src="./js/calendar/calendar-setup.js"></script>
 <script type="text/javascript">
 <!--//
 function clearStartDate(frm)
@@ -313,7 +313,7 @@ else
    <input type="text" name="startdate" id="f_date_start"  value="<?php echo $date_start?>" readonly="readonly" />
   </td>
   <td>
-     <img src="img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="Date selector"
+     <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="Date selector"
       onmouseover="this.style.background='red';" onmouseout="this.style.background=''" />
   </td>
   <td>
@@ -345,7 +345,7 @@ else
    <input type="text" name="enddate" id="f_date_end"  value="<?php echo $date_end?>" readonly="readonly" />
   </td>
   <td>
-     <img src="img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="Date selector"
+     <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="Date selector"
       onmouseover="this.style.background='red';" onmouseout="this.style.background=''" />
   </td>
   <td>

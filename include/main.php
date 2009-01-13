@@ -54,9 +54,9 @@ return $gm_time;
     </style>
 
     <!-- calendar stylesheet -->
-    <link rel="stylesheet" type="text/css" media="all" href="calendar-blue.css" title="win2k-cold-1" />
+    <link rel="stylesheet" type="text/css" media="all" href="./js/calendar/calendar-blue.css" title="win2k-cold-1" />
 
-    <script language="javascript" type="text/javascript" src="./tiny_mce/tiny_mce.js"></script>
+    <script language="javascript" type="text/javascript" src="./js/tiny_mce/tiny_mce.js"></script>
     <script language="javascript" type="text/javascript">
     tinyMCE.init({
 	mode : "textareas",
