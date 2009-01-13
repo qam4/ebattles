@@ -65,14 +65,14 @@ include_once(e_PLUGIN."ebattles/include/pagination.php");
    if ($num_rows>0)
    {
       /* Display table contents */
-      echo "<table class=\"type1\">\n";
+      echo "<table class=\"type1Border\">\n";
       echo "<tr><td class=\"type1Header\" style=\"width:120px\"><b>Match ID</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Reported By</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Date</b></td></tr>\n";
       for($i=0; $i<$num_rows; $i++){
          $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
          $mReportedBy  = mysql_result($result,$i, TBL_MATCHS.".ReportedBy");
          $mReportedByNickname  = mysql_result($result,$i, TBL_USERS.".user_name");
          $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-         $mTime_local = $mTime + $session->timezone_offset;
+         $mTime_local = $mTime + GMT_TIMEOFFSET;
          //$date = date("d M Y, h:i:s A",$mTime);
          $date = date("d M Y",$mTime_local);
 
@@ -99,13 +99,13 @@ include_once(e_PLUGIN."ebattles/include/pagination.php");
             $pid  = mysql_result($result2,$j, TBL_USERS.".user_id");
             $pname  = mysql_result($result2,$j, TBL_USERS.".user_name");
             if ($j==0)
-              $players = "<a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
+              $players = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             else
-              $players = $players.", <a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
+              $players = $players.", <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
          }
 
          echo "<tr>\n";
-         echo "<td class=\"type1Body\"><b>$mID</b> <a class=\"type1\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&matchid=$mID\">(Show details)</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickname</a></td><td class=\"type1Body\">$players</td><td class=\"type1Body\">$date</td></tr>";
+         echo "<td class=\"type1Body2\"><b>$mID</b> <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&matchid=$mID\">(Show details)</a></td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickname</a></td><td class=\"type1Body2\">$players</td><td class=\"type1Body2\">$date</td></tr>";
 
       
    }

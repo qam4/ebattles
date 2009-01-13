@@ -3,7 +3,6 @@
  * EventInfo.php
  *
  */
-ob_start();
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 include_once(e_PLUGIN."ebattles/include/pagination.php");
@@ -76,19 +75,27 @@ function get_formatted_timediff($then, $now = false)
    
     return $str;
 }
+/*******************************************************************
+********************************************************************/
+require_once(HEADERF);
 
-?>
-<div id="main">
-
+$text = '
 <script type="text/javascript" src="./js/tabpane.js"></script>
+';
 
-<?php
-   global $sql;
+global $sql;
 
-   $time = GMT_time();
-   
-   /* Event Name */
-   $event_id = $_GET['eventid'];
+$time = GMT_time();
+
+/* Event Name */
+$event_id = $_GET['eventid'];
+
+if (!$event_id)
+{
+   $text .= "<br />Error.<br />";
+}
+else
+{
    $self = $_SERVER['PHP_SELF'];
    $file = 'cache/sql_cache_event_'.$event_id.'.txt'; 
    $file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt'; 
@@ -110,7 +117,7 @@ function get_formatted_timediff($then, $now = false)
       {
       
 	    $q = " INSERT INTO ".TBL_PLAYERS."(Event,Name,ELORanking)
-	           VALUES ($event_id,'{USER_ID}',$eELOdefault)";
+	           VALUES ($event_id,".USERID.",$eELOdefault)";
             $sql->db_Query($q);
             $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
             $result = $sql->db_Query($q4);
@@ -120,7 +127,7 @@ function get_formatted_timediff($then, $now = false)
    if(isset($_GET['quitevent'])){
          $q = " DELETE FROM ".TBL_PLAYERS
              ." WHERE (Event = '$event_id')"
-             ."   AND (Name = '{USER_ID}')";
+             ."   AND (Name = ".USERID.")";
          $sql->db_Query($q);
          $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
          $result = $sql->db_Query($q4);
@@ -138,11 +145,10 @@ function get_formatted_timediff($then, $now = false)
    if(isset($_GET['jointeamevent'])){
          $team_id = $_GET['team'];
 	 $q = " INSERT INTO ".TBL_PLAYERS."(Event,Name,Team,ELORanking)
-	        VALUES ($event_id,'{USER_ID}',$team_id,$eELOdefault)";
+	        VALUES ($event_id,".USERID.",$team_id,$eELOdefault)";
          $sql->db_Query($q);
          header("Location: eventinfo.php?eventid=$event_id");
    }
-   ob_end_flush();
    
    $q = "SELECT ".TBL_EVENTS.".*, "
                  .TBL_GAMES.".*, "
@@ -182,7 +188,7 @@ function get_formatted_timediff($then, $now = false)
    
    if($estart!=0) 
    {
-     $estart_local = $estart + $session->timezone_offset;
+     $estart_local = $estart + GMT_TIMEOFFSET;
      $date_start = date("d M Y, h:i A",$estart_local);
    }
    else
@@ -191,7 +197,7 @@ function get_formatted_timediff($then, $now = false)
    }
    if($eend!=0) 
    {
-     $eend_local = $eend + $session->timezone_offset;
+     $eend_local = $eend + GMT_TIMEOFFSET;
      $date_end = date("d M Y, h:i A",$eend_local);
    }
    else
@@ -213,9 +219,8 @@ function get_formatted_timediff($then, $now = false)
       $time_comment = 'Event ends in '.get_formatted_timediff($time, $eend);
    }
 
-   echo "<h1>$ename ($etype)</h1>";
-   echo "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
-   //echo "<br />";
+   $text .= "<h1>$ename ($etype)</h1>";
+   $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
  
 
    /* Update Stats */
@@ -233,11 +238,11 @@ function get_formatted_timediff($then, $now = false)
         include_once(e_PLUGIN."ebattles/include/updatestats.php");  
    }
 
-   echo"<div class=\"tab-pane\" id=\"tab-pane-1\">";
+   $text .="<div class=\"tab-pane\" id=\"tab-pane-1\">";
 
-   echo"<div class=\"tab-page\">";
-   echo"<h2 class=\"tab\">Event Info</h2>";
-   echo"<br /><br />";
+   $text .="<div class=\"tab-page\">";
+   $text .="<div class=\"tab\">Event Info</div>";
+   $text .="<br />";
 
    if(check_class(e_UC_MEMBER))
    {
@@ -255,8 +260,8 @@ function get_formatted_timediff($then, $now = false)
              ." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
                ." AND (".TBL_GAMES.".GameID = '$egameid')"
                ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-               ." AND (".TBL_USERS.".user_id = '{USER_ID}')"
-               ." AND (".TBL_DIVISIONS.".Captain = '{USER_ID}')";
+               ." AND (".TBL_USERS.".user_id = ".USERID.")"
+               ." AND (".TBL_DIVISIONS.".Captain = ".USERID.")";
 
          $result = $sql->db_Query($q);
          $num_rows = mysql_numrows($result);
@@ -277,17 +282,17 @@ function get_formatted_timediff($then, $now = false)
               
               if( $num_rows_2 == 0)
               {
-                 echo "Your are the captain of $div_name.";
-                 echo "<br />";
-                 echo "
+                 $text .= "Your are the captain of $div_name.";
+                 $text .= "<br />";
+                 $text .= "
                  <form style=\"float:left\" action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
                      <input type=\"hidden\" name=\"division\" value=\"$div_id\"></input>
                      <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                      <input type=\"hidden\" name=\"teamjoinevent\" value=\"1\"></input>
                      <input type=\"submit\" value=\"Team Join Event\"></input>
                  ";
-                 echo '</form>';
-                 echo "<br /><br /><br />";
+                 $text .= '</form>';
+                 $text .= "<br />";
               }
               else
               {
@@ -296,142 +301,143 @@ function get_formatted_timediff($then, $now = false)
          }
       }
 
-         // Is the user already signed up for this event?
-         $q = "SELECT *"
-             ." FROM ".TBL_PLAYERS
-             ." WHERE (Event = '$event_id')"
-             ."   AND (Name = '{USER_ID}')";
-       
-         $result = $sql->db_Query($q);
-         if(!$result || (mysql_numrows($result) < 1))
+      // Is the user already signed up for this event?
+      $q = "SELECT *"
+          ." FROM ".TBL_PLAYERS
+          ." WHERE (Event = '$event_id')"
+          ."   AND (Name = ".USERID.")";
+      
+      $result = $sql->db_Query($q);
+      if(!$result || (mysql_numrows($result) < 1))
+      {
+         if ($etype == "Team Ladder")
          {
-            if ($etype == "Team Ladder")
-            {
-               // Is user a member of a division for that game?
-               $q_2 = "SELECT ".TBL_CLANS.".*, "
-                             .TBL_MEMBERS.".*, "
-                             .TBL_DIVISIONS.".*, "
-                             .TBL_GAMES.".*, "
-                             .TBL_USERS.".*"
-                   ." FROM ".TBL_CLANS.", "
-                            .TBL_MEMBERS.", "
-                            .TBL_DIVISIONS.", "
-                            .TBL_GAMES.", "
-                            .TBL_USERS
-                   ." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
-                     ." AND (".TBL_GAMES.".GameID = '$egameid')"
-                     ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-                     ." AND (".TBL_USERS.".user_id = '{USER_ID}')"
-                     ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-                     ." AND (".TBL_MEMBERS.".Name = '{USER_ID}')";
-            
+            // Is user a member of a division for that game?
+            $q_2 = "SELECT ".TBL_CLANS.".*, "
+                          .TBL_MEMBERS.".*, "
+                          .TBL_DIVISIONS.".*, "
+                          .TBL_GAMES.".*, "
+                          .TBL_USERS.".*"
+                ." FROM ".TBL_CLANS.", "
+                         .TBL_MEMBERS.", "
+                         .TBL_DIVISIONS.", "
+                         .TBL_GAMES.", "
+                         .TBL_USERS
+                ." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
+                  ." AND (".TBL_GAMES.".GameID = '$egameid')"
+                  ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+                  ." AND (".TBL_USERS.".user_id = ".USERID.")"
+                  ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+                  ." AND (".TBL_MEMBERS.".Name = ".USERID.")";
+         
  
-               $result_2 = $sql->db_Query($q_2);
-               $num_rows_2 = mysql_numrows($result_2);
-               if(!$result_2 || ( $num_rows_2 < 1))
-               {
-               	  echo "You are not a member of any team for this game.<br />";
-               }
-               else
-               {
-                  for($i=0;$i < $num_rows_2;$i++)
-                  {
-                     $clan_name  = mysql_result($result_2,$i , TBL_CLANS.".Name");
-                     $div_id  = mysql_result($result_2,$i , TBL_DIVISIONS.".DivisionID");
-                     
-                     $q_3 = "SELECT ".TBL_CLANS.".*, "
-                                   .TBL_TEAMS.".*, "
-                                   .TBL_DIVISIONS.".*"
-                         ." FROM ".TBL_CLANS.", "
-                                  .TBL_TEAMS.", "
-                                  .TBL_DIVISIONS
-                         ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
-                           ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-                           ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-                           ." AND (".TBL_TEAMS.".Event = '$event_id')";                  
-                     $result_3 = $sql->db_Query($q_3);
-                     if(!$result_3 || (mysql_numrows($result_3) < 1))
-                     {
-                         echo "Your team $clan_name has not signed up to this event.<br />";
-                         echo "Please contact your captain.<br /><br />";               	  
-                     }
-                     else
-                     {
-                         $team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-                         echo "Your team $clan_name has signed up to this event.";
-                         echo "<br />";
-                         echo "
-                         <form style=\"float:left\" action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
-                             <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
-                             <input type=\"hidden\" name=\"team\" value=\"$team_id\"></input>
-                             <input type=\"hidden\" name=\"jointeamevent\" value=\"1\"></input>
-                             <input type=\"submit\" value=\"Join Event\"></input>
-                         </form>
-                         ";
-                         echo "<br /><br /><br />";
-                     }
-                  }
-               }
+            $result_2 = $sql->db_Query($q_2);
+            $num_rows_2 = mysql_numrows($result_2);
+            if(!$result_2 || ( $num_rows_2 < 1))
+            {
+            	  $text .= "You are not a member of any team for this game.<br />";
             }
             else
             {
-               if ($epassword != "")
+               for($i=0;$i < $num_rows_2;$i++)
                {
-                  echo "Event Password:";
-                  echo "
-                  <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
-                      <input type=\"password\" title=\"Enter the password\" name=\"joinEventPassword\"></input>
-                      <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
-                      <input type=\"hidden\" name=\"joinevent\" value=\"1\"></input>
-                      <input type=\"submit\" value=\"Join Event\"></input>
-                  </form>
-                  ";
+                  $clan_name  = mysql_result($result_2,$i , TBL_CLANS.".Name");
+                  $div_id  = mysql_result($result_2,$i , TBL_DIVISIONS.".DivisionID");
+                  
+                  $q_3 = "SELECT ".TBL_CLANS.".*, "
+                                .TBL_TEAMS.".*, "
+                                .TBL_DIVISIONS.".*"
+                      ." FROM ".TBL_CLANS.", "
+                               .TBL_TEAMS.", "
+                               .TBL_DIVISIONS
+                      ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+                        ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+                        ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+                        ." AND (".TBL_TEAMS.".Event = '$event_id')";                  
+                  $result_3 = $sql->db_Query($q_3);
+                  if(!$result_3 || (mysql_numrows($result_3) < 1))
+                  {
+                      $text .= "Your team $clan_name has not signed up to this event.<br />";
+                      $text .= "Please contact your captain.<br /><br />";               	  
+                  }
+                  else
+                  {
+                      $team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
+                      $text .= "Your team $clan_name has signed up to this event.";
+                      $text .= "<br />";
+                      $text .= "
+                      <form style=\"float:left\" action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
+                          <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
+                          <input type=\"hidden\" name=\"team\" value=\"$team_id\"></input>
+                          <input type=\"hidden\" name=\"jointeamevent\" value=\"1\"></input>
+                          <input type=\"submit\" value=\"Join Event\"></input>
+                      </form>
+                      ";
+                      $text .= "<br /><br /><br />";
+                  }
                }
-               else
-               {
-                  echo "
-                  <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
-                      <input type=\"hidden\" name=\"joinEventPassword\" value=\"\"></input>
-                      <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
-                      <input type=\"hidden\" name=\"joinevent\" value=\"1\"></input>
-                      <input type=\"submit\" value=\"Join Event\"></input>
-                  </form>
-                  ";
-               }            }
+            }
          }
          else
          {
-            echo "You are signed up for this event.<br />";
-            /* 
-            // Removed "quit button", because this erases the player from database.
-                echo "
-                <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
-                    <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
-                    <input type=\"hidden\" name=\"quitevent\" value=\"1\"></input>
-                    <input type=\"submit\" value=\"Quit Event\"></input>
-                </form>
-                ";     
-            */
-         }   
+            if ($epassword != "")
+            {
+               $text .= "Event Password:";
+               $text .= "
+               <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
+                   <input type=\"password\" title=\"Enter the password\" name=\"joinEventPassword\"></input>
+                   <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
+                   <input type=\"hidden\" name=\"joinevent\" value=\"1\"></input>
+                   <input type=\"submit\" value=\"Join Event\"></input>
+               </form>
+               ";
+            }
+            else
+            {
+               $text .= "
+               <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
+                   <input type=\"hidden\" name=\"joinEventPassword\" value=\"\"></input>
+                   <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
+                   <input type=\"hidden\" name=\"joinevent\" value=\"1\"></input>
+                   <input type=\"submit\" value=\"Join Event\"></input>
+               </form>
+               ";
+            }            
+         }
+      }
+      else
+      {
+         $text .= "You are signed up for this event.<br />";
+         /* 
+         // Removed "quit button", because this erases the player from database.
+             $text .= "
+             <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
+                 <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
+                 <input type=\"hidden\" name=\"quitevent\" value=\"1\"></input>
+                 <input type=\"submit\" value=\"Quit Event\"></input>
+             </form>
+             ";     
+         */
+      }   
       
    }
    else
    {   	
-      echo "Please log in to participate to this event.<br />";
+      $text .= "Please log in to participate to this event.<br />";
    }
       
-   echo "<hr />";
-   echo "<p>";
-   echo"Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$eowner\">$eownername</a><br />";
+   $text .= "<hr />";
+   $text .= "<p>";
+   $text .="Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$eowner\">$eownername</a><br />";
 
    $can_manage = 0;
-   if ($session->isAdmin()) $can_manage = 1;
-   if ({USER_ID}==$eowner) $can_manage = 1;
+   if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
+   if (USERID==$eowner) $can_manage = 1;
    if ($can_manage == 1)
-     echo"<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$event_id\">Manage event</a><br />";
-   echo"</p>";
+     $text .="<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$event_id\">Manage event</a><br />";
+   $text .="</p>";
 
-   echo "<p>";
+   $text .= "<p>";
    $q = "SELECT ".TBL_EVENTMODS.".*, "
                  .TBL_USERS.".*"
        ." FROM ".TBL_EVENTMODS.", "
@@ -440,31 +446,30 @@ function get_formatted_timediff($then, $now = false)
        ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".Name)";   
    $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
-   echo "Moderators:<br />";
+   $text .= "Moderators:<br />";
    for($i=0; $i<$num_rows; $i++){
       $modname  = mysql_result($result,$i, TBL_EVENTMODS.".Name");
       $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
-      echo "- <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modname\">$modname</a><br />";
+      $text .= "- <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modname\">$modname</a><br />";
    }
-   echo"</p>";
-   echo "<p>Starts: $date_start<br />Ends: $date_end</p>";
-   echo "<p>$time_comment</p>";
-   echo "<p>Description: $edescription</p>";
-   echo "<p>Rules: $erules</p>";
+   $text .="</p>";
+   $text .= "<p>Starts: $date_start<br />Ends: $date_end</p>";
+   $text .= "<p>$time_comment</p>";
+   $text .= "<p>Description: $edescription</p>";
+   $text .= "<p>Rules: $erules</p>";
 
-   echo"</div>";
+   $text .="</div>";
 
-   echo"<div class=\"tab-page\">";
-   echo"<h2 class=\"tab\">Standings for this Ladder</h2>";
-   echo"<br /><br />";
+   $text .="<div class=\"tab-page\">";
+   $text .="<div class=\"tab\">Standings for this Ladder</div>";
+   $text .="<br />";
 
-   $enextupdate_local = $enextupdate + $session->timezone_offset;
+   $enextupdate_local = $enextupdate + GMT_TIMEOFFSET;
    $date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
    if (($time < $enextupdate) && ($eischanged == 1))
    {
-     echo"Next Update: $date_nextupdate<br />";
+     $text .="Next Update: $date_nextupdate<br />";
    }
-   echo"<br />";
 
    if ($etype == "Team Ladder")
    {
@@ -481,23 +486,21 @@ function get_formatted_timediff($then, $now = false)
       $result = $sql->db_Query($q);
       $row = mysql_fetch_array($result);     
       $nbrteams = $row['NbrTeams'];     
-      echo"<div class=\"news\">";
-      echo"<h2>Teams Standings</h2>";
-      echo"<p>";
-      echo"$nbrteams teams<br />";
-      echo"Minimum $eminteamgames team matches to rank.";
-      echo"</p>";
+      $text .="<div class=\"news\">";
+      $text .="<h2>Teams Standings</h2>";
+      $text .="<p>";
+      $text .="$nbrteams teams<br />";
+      $text .="Minimum $eminteamgames team matches to rank.";
+      $text .="</p>";
 
       $stats = unserialize(implode('',file($file_team))); 
       // debug print array
       $num_columns = count($stats[0]) - 1;
       $nbr_rows = count($stats);
-      html_show_table($stats, $nbr_rows, $num_columns);
+      $text .= html_show_table($stats, $nbr_rows, $num_columns);
 
-      echo "</div>";
+      $text .= "</div>";
    }
-   echo "<br />";
-
 
    /* Nbr players */
    $q = "SELECT COUNT(*) as NbrPlayers"
@@ -508,19 +511,19 @@ function get_formatted_timediff($then, $now = false)
    $nbrplayers = $row['NbrPlayers'];     
    $totalPages = $nbrplayers;
 
-   echo"<div class=\"news\">";
-   echo"<h2>Players Standings</h2>";
+   $text .="<div class=\"news\">";
+   $text .="<h2>Players Standings</h2>";
 
-   echo"<p>";
-   echo"$nbrplayers players<br />";
-   echo"Minimum $emingames matches to rank.<br />";
-   echo"</p>";
+   $text .="<p>";
+   $text .="$nbrplayers players<br />";
+   $text .="Minimum $emingames matches to rank.<br />";
+   $text .="</p>";
 
    /* My Position */
    $q = "SELECT *"
        ." FROM ".TBL_PLAYERS
        ." WHERE (Event = '$event_id')"
-       ."   AND (Name = '{USER_ID}')";
+       ."   AND (Name = ".USERID.")";
  
    $result = $sql->db_Query($q);
    $can_report = 0;
@@ -533,9 +536,9 @@ function get_formatted_timediff($then, $now = false)
       $prank = $row['Rank'];
       
       $link_page = ceil($prank/$rowsPerPage);
-      echo "<p>";
-      echo "<a href=\"".e_PLUGIN."ebattles/$self?eventid=$event_id&amp;pg=$link_page\">Show My Position #$prank</a><br />";    
-      echo "</p>";
+      $text .= "<p>";
+      $text .= "<a href=\"$self?eventid=$event_id&amp;pg=$link_page\">Show My Position #$prank</a><br />";    
+      $text .= "</p>";
       $time = GMT_time();
       // Is the event started, and not ended
       if (  ($eend == 0)
@@ -551,14 +554,14 @@ function get_formatted_timediff($then, $now = false)
    }
       
    // Is the user admin?
-   if ($session->isAdmin()) $can_report = 1;
+   if (check_class(e_UC_MAINADMIN)) $can_report = 1;
    // Is the user event owner?
-   if ({USER_ID}==$eowner) $can_report = 1;
+   if (USERID==$eowner) $can_report = 1;
    // Is the user a moderator?
    $q_2 = "SELECT ".TBL_EVENTMODS.".*"
        ." FROM ".TBL_EVENTMODS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-       ."   AND (".TBL_EVENTMODS.".Name = '{USER_ID}')";   
+       ."   AND (".TBL_EVENTMODS.".Name = ".USERID.")";   
    $result_2 = $sql->db_Query($q_2);
    $num_rows_2 = mysql_numrows($result_2);
    if ($num_rows_2>0) $can_report = 1;
@@ -571,28 +574,28 @@ function get_formatted_timediff($then, $now = false)
 
    if(($can_report_quickloss != 0)||($can_report != 0))
    {
-      echo "<table>";
-      echo "<tr>";
+      $text .= "<table>";
+      $text .= "<tr>";
       if($can_report_quickloss != 0)
       {
-         echo "<td>";
-         echo "<form action=\"".e_PLUGIN."ebattles/quickreport.php?eventid=$event_id\" method=\"post\">";
-         echo "<input type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"></input>";
-         echo "</form>";
-         echo "</td>";
+         $text .= "<td>";
+         $text .= "<form action=\"".e_PLUGIN."ebattles/quickreport.php?eventid=$event_id\" method=\"post\">";
+         $text .= "<input type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"></input>";
+         $text .= "</form>";
+         $text .= "</td>";
       }
       if($can_report != 0)
       {
-         echo "<td>";
-         echo "<form action=\"".e_PLUGIN."ebattles/matchreport.php?eventid=$event_id\" method=\"post\">";
-         echo "<input type=\"submit\" name=\"matchreport\" value=\"Match Report\"></input>";
-         echo "</form>";
-         echo "</td>";
+         $text .= "<td>";
+         $text .= "<form action=\"".e_PLUGIN."ebattles/matchreport.php?eventid=$event_id\" method=\"post\">";
+         $text .= "<input type=\"submit\" name=\"matchreport\" value=\"Match Report\"></input>";
+         $text .= "</form>";
+         $text .= "</td>";
       }
-      echo "</tr>";
-      echo "</table>";
+      $text .= "</tr>";
+      $text .= "</table>";
    }
-   echo "<br />";
+   $text .= "<br />";
 
    $stats = unserialize(implode('',file($file))); 
    $num_columns = count($stats[0]) - 1;
@@ -609,21 +612,21 @@ function get_formatted_timediff($then, $now = false)
        $nbr_rows ++;
      }
    }
-   html_show_table($stats_paginate, $nbr_rows, $num_columns);
+   $text .= html_show_table($stats_paginate, $nbr_rows, $num_columns);
    
-   echo "<br />";
+   $text .= "<br />";
 
    // print the navigation link
-   paginate($rowsPerPage, $pg, $totalPages);
-   echo "<br />";
-   echo"</div>";
-   echo"</div>";
-   echo "<br />";
+   $text .= paginate($rowsPerPage, $pg, $totalPages);
+   $text .= "<br />";
+   $text .="</div>";
+   $text .="</div>";
+   $text .= "<br />";
 
 
-   echo"<div class=\"tab-page\">";
-   echo"<h2 class=\"tab\">Latest Matches</h2>";
-   echo"<br /><br />";
+   $text .="<div class=\"tab-page\">";
+   $text .="<div class=\"tab\">Latest Matches</div>";
+   $text .="<br /><br />";
 
    $q = "SELECT COUNT(*) as NbrMatches"
        ." FROM ".TBL_MATCHS
@@ -631,9 +634,9 @@ function get_formatted_timediff($then, $now = false)
    $result = $sql->db_Query($q);
    $row = mysql_fetch_array($result);     
    $nbrmatches = $row['NbrMatches'];
-   echo"<p>";
-   echo"$nbrmatches matches played<br />";
-   echo"</p>";
+   $text .="<p>";
+   $text .="$nbrmatches matches played<br />";
+   $text .="</p>";
 
    $rowsPerPage = 5;
    /* Stats/Results */
@@ -652,15 +655,15 @@ function get_formatted_timediff($then, $now = false)
    if ($num_rows>0)
    {
       /* Display table contents */
-      echo "<table class=\"type1\">\n";
-      echo "<tr><td class=\"type1Header\" style=\"width:120px\"><b>Match ID</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Reported By</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Date</b></td></tr>\n";
+      $text .= "<table class=\"type1Border\">\n";
+      $text .= "<tr><td class=\"type1Header\" style=\"width:120px\"><b>Match ID</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Reported By</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Date</b></td></tr>\n";
       for($i=0; $i<$num_rows; $i++)
       {
          $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
          $mReportedBy  = mysql_result($result,$i, TBL_MATCHS.".ReportedBy");
          $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
          $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-         $mTime_local = $mTime + $session->timezone_offset;
+         $mTime_local = $mTime + GMT_TIMEOFFSET;
          //$date = date("d M Y, h:i:s A",$mTime);
          $date = date("d M Y",$mTime_local);
 
@@ -687,38 +690,34 @@ function get_formatted_timediff($then, $now = false)
             $pid  = mysql_result($result2,$j, TBL_USERS.".user_name");
             $pname  = mysql_result($result2,$j, TBL_USERS.".user_id");
             if ($j==0)
-              $players = "<a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
+              $players = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             else
-              $players = $players.", <a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
+              $players = $players.", <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
          }
 
-         echo "<tr>\n";
-         echo "<td class=\"type1Body\"><b>$mID</b> <a class=\"type1\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">(Show details)</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"type1Body\">$players</td><td class=\"type1Body\">$date</td></tr>";
+         $text .= "<tr>\n";
+         $text .= "<td class=\"type1Body2\"><b>$mID</b> <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">(Show details)</a></td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"type1Body2\">$players</td><td class=\"type1Body2\">$date</td></tr>";
       }
-      echo "</table><br />\n"; 
+      $text .= "</table><br />\n"; 
    }
-   echo "[<a href=\"".e_PLUGIN."ebattles/eventmatchs.php?eventid=$event_id\">Show all Matches</a>]";
+   $text .= "[<a href=\"".e_PLUGIN."ebattles/eventmatchs.php?eventid=$event_id\">Show all Matches</a>]";
  
-   echo "<br />";
-   echo"</div>";
-   echo"</div>";
+   $text .= "<br />";
+   $text .="</div>";
+   $text .="</div>";
 
-/* Link back to main */
-echo "<p>";
-echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>]<br />";
-echo "</p>";
+   $text .= '
+   </div>
+   
+   <script type="$text/javascript">
+   //<![CDATA[
+   setupAllTabs();
+   //]]>
+   </script>
+   ';
+}
 
-?>
-</div>
-
-<script type="text/javascript">
-//<![CDATA[
-
-setupAllTabs();
-
-//]]>
-</script>
-
-<?php
-include_once(e_PLUGIN."ebattles/include/footer.php");
+$ns->tablerender('Event Information', $text);
+require_once(FOOTERF);
+exit;
 ?>

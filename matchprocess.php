@@ -1,9 +1,11 @@
 <?php
 /**
- *MatchProcess.php
+ * MatchProcess.php
+ * Quick match report process
  * 
  */
-include_once(e_PLUGIN."ebattles/include/session.php");
+require_once("../../class2.php");
+require_once e_PLUGIN.'ebattles/include/main.php';
 require_once e_PLUGIN.'ebattles/include/ELO.php';
 global $sql;
 

@@ -42,7 +42,7 @@ function displayClans(){
       return;
    }
    /* Display table contents */
-   echo "<table class=\"type1\">\n";
+   echo "<table class=\"type1Border\">\n";
    echo "<tr><td class=\"type1Header\"><b>Team</b></td><td class=\"type1Header\"><b>Tag</b></td><td class=\"type1Header\"><b>Owner</b></td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
       $clanid  = mysql_result($result,$i, TBL_CLANS.".clanid");
@@ -50,7 +50,7 @@ function displayClans(){
       $ctag  = mysql_result($result,$i, TBL_CLANS.".tag");
       $cowner  = mysql_result($result,$i, TBL_CLANS.".owner");
       
-      echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clanid\">$cname</a></td><td class=\"type1Body\">$ctag</td><td class=\"type1Body\">$cowner</td></tr>\n";
+      echo "<tr><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clanid\">$cname</a></td><td class=\"type1Body2\">$ctag</td><td class=\"type1Body2\">$cowner</td></tr>\n";
    }
    echo "</table><br />\n";
 
@@ -70,7 +70,7 @@ function displayClans(){
 if(check_class(e_UC_MEMBER))
 {
    echo "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
-   echo "<input type=\"hidden\" name=\"userid\" value=\"{USER_ID}\"></input>";
+   echo "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"></input>";
    echo "<input type=\"submit\" name=\"createteam\" value=\"Create new Team\"></input>";
    echo "</form>";
    echo "<br>";

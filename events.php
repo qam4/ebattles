@@ -151,8 +151,8 @@ function displayCurrentEvents(){
    }
    
    /* Display table contents */
-   $text .= "<table class=\"fborder\">\n";
-   $text .= "<tr><td class=\"fcaption\">Event</td><td colspan=\"2\" class=\"fcaption\">Game</td><td class=\"fcaption\">Type</td><td class=\"fcaption\">Start</td><td class=\"fcaption\">End</td><td class=\"fcaption\">Players</td><td class=\"fcaption\">Games</td></tr>\n";
+   $text .= "<table class=\"type1Border\">\n";
+   $text .= "<tr><td class=\"type1Header\">Event</td><td colspan=\"2\" class=\"type1Header\">Game</td><td class=\"type1Header\">Type</td><td class=\"type1Header\">Start</td><td class=\"type1Header\">End</td><td class=\"type1Header\">Players</td><td class=\"type1Header\">Games</td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
       $gname  = mysql_result($result,$i, TBL_GAMES.".name");
       $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -163,7 +163,7 @@ function displayCurrentEvents(){
       $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
       if($estart!=0) 
       {
-        $estart_local = $estart + $session->timezone_offset;
+        $estart_local = $estart + GMT_TIMEOFFSET;
         $date_start = date("d M Y",$estart_local);
       }
       else
@@ -172,7 +172,7 @@ function displayCurrentEvents(){
       }
       if($eend!=0) 
       {
-        $eend_local = $eend + $session->timezone_offset;
+        $eend_local = $eend + GMT_TIMEOFFSET;
         $date_end = date("d M Y",$eend_local);
       }
       else
@@ -200,17 +200,18 @@ function displayCurrentEvents(){
          ||($eend>=$time)
         )
       {
-        $text .= "<tr><td class=\"forumheader2\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
+        $text .= "<tr><td class=\"type1Body1\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body2\">$gname</td><td class=\"type1Body2\">$etype</td><td class=\"type1Body2\">$date_start</td><td class=\"type1Body2\">$date_end</td><td class=\"type1Body2\">$nbrplayers</td><td class=\"type1Body2\">$nbrmatches</td></tr>\n";
       }
    }
    $text .= "</table><br />\n";
    // print the navigation link
    $text .= paginate($rowsPerPage, $pg, $totalPages);
-
+   
    if(check_class(e_UC_MEMBER))
    {
        $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
-       $text .= "<input type=\"hidden\" name=\"userid\" value=\"{USER_ID}\"></input>";
+       $text .= "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"></input>";
+       $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"></input>";
        $text .= "<input type=\"submit\" name=\"createevent\" value=\"Create new Event\"></input>";
        $text .= "</form>";
    }
@@ -296,8 +297,8 @@ function displayRecentEvents(){
       return;
    }
    /* Display table contents */
-   $text .= "<table class=\"fborder\">\n";
-   $text .= "<tr><td class=\"fcaption\">Event</td><td colspan=\"2\" class=\"fcaption\">Game</td><td class=\"fcaption\">Type</td><td class=\"fcaption\">Start</td><td class=\"fcaption\">End</td><td class=\"fcaption\">Players</td><td class=\"fcaption\">Games</td></tr>\n";
+   $text .= "<table class=\"type1Border\">\n";
+   $text .= "<tr><td class=\"type1Header\">Event</td><td colspan=\"2\" class=\"type1Header\">Game</td><td class=\"type1Header\">Type</td><td class=\"type1Header\">Start</td><td class=\"type1Header\">End</td><td class=\"type1Header\">Players</td><td class=\"type1Header\">Games</td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
       $gname  = mysql_result($result,$i, TBL_GAMES.".name");
       $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -308,7 +309,7 @@ function displayRecentEvents(){
       $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
       if($estart!=0) 
       {
-        $estart_local = $estart + $session->timezone_offset;
+        $estart_local = $estart + GMT_TIMEOFFSET;
         $date_start = date("d M Y",$estart_local);
       }
       else
@@ -317,7 +318,7 @@ function displayRecentEvents(){
       }
       if($eend!=0) 
       {
-        $eend_local = $eend + $session->timezone_offset;
+        $eend_local = $eend + GMT_TIMEOFFSET;
         $date_end = date("d M Y",$eend_local);
       }
       else
@@ -345,7 +346,7 @@ function displayRecentEvents(){
          &&($eend<$time)
          )
       {
-        $text .= "<tr><td class=\"forumheader2\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
+        $text .= "<tr><td class=\"type1Body1\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body2\">$gname</td><td class=\"type1Body2\">$etype</td><td class=\"type1Body2\">$date_start</td><td class=\"type1Body2\">$date_end</td><td class=\"type1Body2\">$nbrplayers</td><td class=\"type1Body2\">$nbrmatches</td></tr>\n";
       }
    }
    $text .= "</table><br />\n";

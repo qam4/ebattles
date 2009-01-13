@@ -3,21 +3,22 @@
  *EventProcess.php
  * 
  */
-ob_start();
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
+require_once(HEADERF);
+$text = '';
 
 if (!isset($_POST['createevent']))
 {
-     echo "<br />You are not authorized to create an event.<br />";
-     echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>]<br />";
+   $text .= "<br />You are not authorized to create an event.<br />";
 }
 else
 {
    $userid = $_POST['userid'];
+   $username = $_POST['username'];
 
    $q2 = "INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Description)"
-       ." VALUES ('$userid event', '', '1', 'One Player Ladder','$userid', 'Put a description for your event here')";   
+       ." VALUES ('Event', '', '1', 'One Player Ladder','$userid', 'Put a description for your event here')";   
    $result2 = $sql->db_Query($q2);
    $last_id = mysql_insert_id();
    $q2 = 
@@ -49,7 +50,14 @@ else
     VALUES ('$last_id', 'Streaks')";
    $result2 = $sql->db_Query($q2);
 
+   $q2 = "UPDATE ".TBL_EVENTS." SET Name = 'Event $last_id - $username' WHERE (EventID = '$last_id')";
+   $result2 = $sql->db_Query($q2);
+
    header("Location: eventmanage.php?eventid=".$last_id);
-   // could use: printf("<script>location.href='eventmanage.php?eventid=$last_id'</script>");
+   exit;
 }
-ob_end_flush();
+
+$ns->tablerender('Events', $text);
+require_once(FOOTERF);
+exit;
+?>

@@ -22,7 +22,7 @@ if(isset($_SESSION['useredit'])){
    unset($_SESSION['useredit']);
    
    echo "<h1>User Account Edit Success!</h1>";
-   echo "<p><b>{USER_ID}</b>, your account has been successfully updated. "
+   echo "<p><b>".USERNAME."</b>, your account has been successfully updated. "
        ."<a href=\"".e_PLUGIN."ebattles/index.php\">Main</a>.</p>";
 }
 else{
@@ -37,7 +37,7 @@ else{
  */
 if(check_class(e_UC_MEMBER)){
 ?>
-<h1>User Account Edit : <?php echo {USER_ID}; ?></h1>
+<h1>User Account Edit : <?php echo USERNAME; ?></h1>
 <?php
 if($form->num_errors > 0){
    echo "<td><font size=\"2\" color=\"#ff0000\">".$form->num_errors." error(s) found</font></td>";
