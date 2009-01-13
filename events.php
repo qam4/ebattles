@@ -20,7 +20,7 @@ $text = '
 $text .= '
 <div class="tab-pane" id="tab-pane-2">
 <div class="tab-page">
-<h2 class="tab">Current Events</h2>
+<div class="tab">Current Events</div>
 ';
 displayCurrentEvents();
 $text .= '</div>';
@@ -30,7 +30,7 @@ $text .= '</div>';
  */
 $text .= '
 <div class="tab-page">
-<h2 class="tab">Recent Events</h2>
+<div class="tab">Recent Events</div>
 ';
 displayRecentEvents();
 $text .= '
@@ -62,19 +62,6 @@ function displayCurrentEvents(){
    global $text;
 
    $time = GMT_time();
-
-   if(check_class(e_UC_MEMBER))
-   {
-       $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
-       $text .= "<input type=\"hidden\" name=\"userid\" value=\"{USER_ID}\"></input>";
-       $text .= "<input type=\"submit\" name=\"createevent\" value=\"Create new Event\"></input>";
-       $text .= "</form>";
-   }
-   else
-   {
-       $text .= "Log in to create new events.";
-   }
-
 
    // how many rows to show per page
    $rowsPerPage = 20;
@@ -111,7 +98,6 @@ function displayCurrentEvents(){
    $text .= "</tr>\n";
    $text .= "</table>\n";
    $text .= "</form>\n";
-   $text .= "<br />\n";
    $text .= "<br />\n";
    
    if ($_POST['gameid'] == "All")
@@ -166,7 +152,7 @@ function displayCurrentEvents(){
    
    /* Display table contents */
    $text .= "<table class=\"fborder\">\n";
-   $text .= "<tr><td class=\"fcaption\"><b>Event</b></td><td colspan=\"2\" class=\"fcaption\"><b>Game</b></td><td class=\"fcaption\"><b>Type</b></td><td class=\"fcaption\"><b>Start</b></td><td class=\"fcaption\"><b>End</b></td><td class=\"fcaption\"><b>Players</b></td><td class=\"fcaption\"><b>Games</b></td></tr>\n";
+   $text .= "<tr><td class=\"fcaption\">Event</td><td colspan=\"2\" class=\"fcaption\">Game</td><td class=\"fcaption\">Type</td><td class=\"fcaption\">Start</td><td class=\"fcaption\">End</td><td class=\"fcaption\">Players</td><td class=\"fcaption\">Games</td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
       $gname  = mysql_result($result,$i, TBL_GAMES.".name");
       $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -214,13 +200,24 @@ function displayCurrentEvents(){
          ||($eend>=$time)
         )
       {
-        $text .= "<tr><td class=\"forumheader2\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\"><b>$ename</b></a></td><td class=\"forumheader2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader2\">$gname</td><td class=\"forumheader2\">$etype</td><td class=\"forumheader2\">$date_start</td><td class=\"forumheader2\">$date_end</td><td class=\"forumheader2\">$nbrplayers</td><td class=\"forumheader2\">$nbrmatches</td></tr>\n";
+        $text .= "<tr><td class=\"forumheader2\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
       }
    }
    $text .= "</table><br />\n";
    // print the navigation link
    $text .= paginate($rowsPerPage, $pg, $totalPages);
 
+   if(check_class(e_UC_MEMBER))
+   {
+       $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
+       $text .= "<input type=\"hidden\" name=\"userid\" value=\"{USER_ID}\"></input>";
+       $text .= "<input type=\"submit\" name=\"createevent\" value=\"Create new Event\"></input>";
+       $text .= "</form>";
+   }
+   else
+   {
+       $text .= "Log in to create new events.";
+   }
 }
 
 function displayRecentEvents(){
@@ -262,7 +259,6 @@ function displayRecentEvents(){
    $text .= "</table>\n";
    $text .= "</form>\n";
    $text .= "<br />\n";
-   $text .= "<br />\n";
    
    if ($_POST['gameid'] == "All")
    {
@@ -301,7 +297,7 @@ function displayRecentEvents(){
    }
    /* Display table contents */
    $text .= "<table class=\"fborder\">\n";
-   $text .= "<tr><td class=\"fcaption\"><b>Event</b></td><td colspan=\"2\" class=\"fcaption\"><b>Game</b></td><td class=\"fcaption\"><b>Type</b></td><td class=\"fcaption\"><b>Start</b></td><td class=\"fcaption\"><b>End</b></td><td class=\"fcaption\"><b>Players</b></td><td class=\"fcaption\"><b>Games</b></td></tr>\n";
+   $text .= "<tr><td class=\"fcaption\">Event</td><td colspan=\"2\" class=\"fcaption\">Game</td><td class=\"fcaption\">Type</td><td class=\"fcaption\">Start</td><td class=\"fcaption\">End</td><td class=\"fcaption\">Players</td><td class=\"fcaption\">Games</td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
       $gname  = mysql_result($result,$i, TBL_GAMES.".name");
       $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -349,7 +345,7 @@ function displayRecentEvents(){
          &&($eend<$time)
          )
       {
-        $text .= "<tr><td class=\"forumheader2\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\"><b>$ename</b></a></td><td class=\"forumheader2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader2\">$gname</td><td class=\"forumheader2\">$etype</td><td class=\"forumheader2\">$date_start</td><td class=\"forumheader2\">$date_end</td><td class=\"forumheader2\">$nbrplayers</td><td class=\"forumheader2\">$nbrmatches</td></tr>\n";
+        $text .= "<tr><td class=\"forumheader2\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
       }
    }
    $text .= "</table><br />\n";

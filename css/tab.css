@@ -32,7 +32,6 @@
 }
 
 .dynamic-tab-pane-control .tab-row .tab a {
-	font-size: .6em;
 	color:				WindowText;
 	text-decoration:	none;
 	cursor:				default;
@@ -48,14 +47,11 @@
 	z-index:		2;
 	position:		relative;
 	top:			-2px;
-	font-size:		1em;
 	padding:		10px;
 	
-        min-height: 550px; /* not recognized by IE7 */
-
-        border-style: solid;
-        border-width: 1px;
-        padding: 3px;
+    border-style: solid;
+    border-width: 1px;
+    padding: 3px;
 
 }
 
