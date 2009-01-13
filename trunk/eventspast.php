@@ -106,7 +106,7 @@ function displayPastEvents(){
    }
    
    /* Display table contents */
-   echo "<table class=\"type1\">\n";
+   echo "<table class=\"type1Border\">\n";
    echo "<tr><td class=\"type1Header\"><b>Event</b></td><td colspan=\"2\" class=\"type1Header\"><b>Game</b></td><td class=\"type1Header\"><b>Type</b></td><td class=\"type1Header\"><b>Start</b></td><td class=\"type1Header\"><b>End</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\"><b>Games</b></td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
       $gname  = mysql_result($result,$i, TBL_GAMES.".name");
@@ -118,7 +118,7 @@ function displayPastEvents(){
       $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
       if($estart!=0) 
       {
-        $estart_local = $estart + $session->timezone_offset;
+        $estart_local = $estart + GMT_TIMEOFFSET;
         $date_start = date("d M Y",$estart_local);
       }
       else
@@ -127,7 +127,7 @@ function displayPastEvents(){
       }
       if($eend!=0) 
       {
-        $eend_local = $eend + $session->timezone_offset;
+        $eend_local = $eend + GMT_TIMEOFFSET;
         $date_end = date("d M Y",$eend_local);
       }
       else
@@ -155,7 +155,7 @@ function displayPastEvents(){
          ||($eend<=$time)
         )
       {
-        echo "<tr><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body\">$gname</td><td class=\"type1Body\">$etype</td><td class=\"type1Body\">$date_start</td><td class=\"type1Body\">$date_end</td><td class=\"type1Body\">$nbrplayers</td><td class=\"type1Body\">$nbrmatches</td></tr>\n";
+        echo "<tr><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body2\">$gname</td><td class=\"type1Body2\">$etype</td><td class=\"type1Body2\">$date_start</td><td class=\"type1Body2\">$date_end</td><td class=\"type1Body2\">$nbrplayers</td><td class=\"type1Body2\">$nbrmatches</td></tr>\n";
       }
    }
    echo "</table><br />\n";

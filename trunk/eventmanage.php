@@ -67,7 +67,7 @@ function clearEndDate(frm)
    $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
    if($estart!=0) 
    {
-     $estart_local = $estart + $session->timezone_offset;
+     $estart_local = $estart + GMT_TIMEOFFSET;
      $date_start = date("m/d/Y h:i A",$estart_local);
    }
    else
@@ -76,7 +76,7 @@ function clearEndDate(frm)
    }
    if($eend!=0) 
    {
-     $eend_local = $eend + $session->timezone_offset;
+     $eend_local = $eend + GMT_TIMEOFFSET;
      $date_end = date("m/d/Y h:i A",$eend_local);
    }
    else
@@ -145,8 +145,8 @@ function clearEndDate(frm)
    echo "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
 
    $can_manage = 0;
-   if ($session->isAdmin()) $can_manage = 1;
-   if ({USER_ID}==$eowner) $can_manage = 1;
+   if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
+   if (USERID==$eowner) $can_manage = 1;
    if ($can_manage == 0)
    {
       header("Location: index.php");

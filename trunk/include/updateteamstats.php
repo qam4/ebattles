@@ -382,7 +382,7 @@ if ($opponentsELO_maxpoints > 0)
       $q_2 = "SELECT *"
           ." FROM ".TBL_PLAYERS
           ." WHERE (".TBL_PLAYERS.".Team = '$tid')"
-            ." AND (".TBL_PLAYERS.".Name = '{USER_ID}')";
+            ." AND (".TBL_PLAYERS.".Name = ".USERID.")";
       $result_2 = $sql->db_Query($q_2);
       $num_rows_2 = mysql_numrows($result_2);
       if($num_rows_2 > 0)
@@ -401,7 +401,7 @@ if ($opponentsELO_maxpoints > 0)
       }
       
       $stats_row[] = "<b>$ranknumber</b>";
-      $stats_row[] = "<a class=\"type1\" href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan[$index]\"><b>$name[$index]</b></a>";
+      $stats_row[] = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan[$index]\"><b>$name[$index]</b></a>";
       $stats_row[] = "$nbr_players[$index]";
       $stats_row[] = number_format ($OverallScore[$index],2);
 if ($ELO_maxpoints > 0)

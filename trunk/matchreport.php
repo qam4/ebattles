@@ -108,7 +108,7 @@ require_once e_PLUGIN.'ebattles/include/ELO.php';
 <br />
 <?php
 $time = GMT_time();
-$time_local = $time + $session->timezone_offset;
+$time_local = $time + GMT_TIMEOFFSET;
 $date = Date("d M Y, h:i:s A", $time_local);
 print ($date); 
 ?>

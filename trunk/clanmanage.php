@@ -38,8 +38,8 @@ include_once(e_PLUGIN."ebattles/include/main.php");
    echo "<h1><a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan_id\">$clan_name</a> ($clan_tag)</h1>";   
 
    $can_manage = 0;
-   if ($session->isAdmin()) $can_manage = 1;
-   if ({USER_ID}==$clan_owner) $can_manage = 1;
+   if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
+   if (USERID==$clan_owner) $can_manage = 1;
    if ($can_manage == 0)
    {
       header("Location: index.php");
@@ -242,7 +242,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
           echo "<p>$num_rows_2 member(s)</p>";
 
           echo "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
-          echo "<table class=\"type1\">\n";
+          echo "<table class=\"type1Border\">\n";
           echo "<tr><td class=\"type1Header\"><b>Name</b></td><td class=\"type1Header\"><b>Status</b></td><td class=\"type1Header\"><b>Joined</b></td><td class=\"type1Header\"><b>Kick</b></td></tr>\n";
           for($j=0; $j<$num_rows_2; $j++)
           {
@@ -250,14 +250,14 @@ include_once(e_PLUGIN."ebattles/include/main.php");
              $muid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
              $mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
              $mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
-             $mjoined_local = $mjoined + $session->timezone_offset;
+             $mjoined_local = $mjoined + GMT_TIMEOFFSET;
              $date  = date("d M Y",$mjoined_local);
           
              echo "<tr>\n";
-             echo "<td class=\"type1Body\"><b><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$muid\">$mname</a></b></td><td class=\"type1Body\">Member</td><td class=\"type1Body\">$date</td>";
+             echo "<td class=\"type1Body2\"><b><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$muid\">$mname</a></b></td><td class=\"type1Body2\">Member</td><td class=\"type1Body2\">$date</td>";
 
              // Checkbox to select which member to kick
-             echo "<td class=\"type1Body\"><input type=\"checkbox\" name=\"del[]\" value=\"$mid\" /></td>\n";
+             echo "<td class=\"type1Body2\"><input type=\"checkbox\" name=\"del[]\" value=\"$mid\" /></td>\n";
              echo "</tr>";
           }
           echo "<tr>";

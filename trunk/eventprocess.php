@@ -136,8 +136,8 @@ function deleteEvent($event_id)
    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
    
    $can_manage = 0;
-   if ($session->isAdmin()) $can_manage = 1;
-   if ({USER_ID}==$eowner) $can_manage = 1;
+   if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
+   if (USERID==$eowner) $can_manage = 1;
    if ($can_manage == 0)
    {
       header("Location: index.php");
@@ -234,7 +234,7 @@ function deleteEvent($event_id)
          if ($new_eventstartdate != '')
          {
          	$new_eventstart_local = strtotime($new_eventstartdate);
-         	$new_eventstart = $new_eventstart_local - $session->timezone_offset;	// Convert to GMT time
+         	$new_eventstart = $new_eventstart_local - GMT_TIMEOFFSET;	// Convert to GMT time
          }
          else
          {
@@ -249,7 +249,7 @@ function deleteEvent($event_id)
          if ($new_eventenddate != '')
          {
          	$new_eventend_local = strtotime($new_eventenddate);
-         	$new_eventend = $new_eventend_local - $session->timezone_offset;	// Convert to GMT time
+         	$new_eventend = $new_eventend_local - GMT_TIMEOFFSET;	// Convert to GMT time
          }
          else
          {

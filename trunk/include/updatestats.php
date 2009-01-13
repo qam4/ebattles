@@ -455,7 +455,7 @@ if ($etype == "Team Ladder")
       }
 
       
-      if(strcmp({USER_ID},$pname) == 0)
+      if(strcmp(USERID,$pname) == 0)
       {
          $stats_row = array
          (
@@ -471,7 +471,7 @@ if ($etype == "Team Ladder")
       }
       
       $stats_row[] = "<b>$ranknumber</b> $prankdelta_string";
-      $stats_row[] = "<a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$id[$index]\"><b>$name[$index]</b></a>";
+      $stats_row[] = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$id[$index]\"><b>$name[$index]</b></a>";
       $stats_row[] = number_format ($OverallScore[$index],2);
 if ($ELO_maxpoints > 0)
 {

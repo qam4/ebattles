@@ -23,7 +23,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
    	 $time = GMT_time();
      $div_id = $_GET['division'];
 	 $q = " INSERT INTO ".TBL_MEMBERS."(Division,Name,timestamp)
-	        VALUES ($div_id,'{USER_ID}',$time)";
+	        VALUES ($div_id,USERID,$time)";
          $sql->db_Query($q);
          header("Location: claninfo.php?clanid=$clan_id");
    }
@@ -49,8 +49,8 @@ include_once(e_PLUGIN."ebattles/include/main.php");
    
    echo"<p>";
    $can_manage = 0;
-   if ($session->isAdmin()) $can_manage = 1;
-   if ({USER_ID}==$clan_owner) $can_manage = 1;
+   if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
+   if (USERID==$clan_owner) $can_manage = 1;
    if ($can_manage == 1)
      echo"<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$clan_id\">Manage Team</a><br />";
    echo"</p>";
@@ -87,7 +87,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
          $q_2 = "SELECT ".TBL_MEMBERS.".*"
             ." FROM ".TBL_MEMBERS
             ." WHERE (".TBL_MEMBERS.".Division = '$div_id')"
-              ." AND (".TBL_MEMBERS.".Name = '{USER_ID}')";
+              ." AND (".TBL_MEMBERS.".Name = ".USERID.")";
          $result_2 = $sql->db_Query($q_2);
          if(!$result_2 || (mysql_numrows($result_2) < 1))
          {
@@ -130,18 +130,18 @@ include_once(e_PLUGIN."ebattles/include/main.php");
      
           echo "<p>$num_rows_2 member(s)</p>";
 
-          echo "<table class=\"type1\">\n";
+          echo "<table class=\"type1Border\">\n";
           echo "<tr><td class=\"type1Header\"><b>Name</b></td><td class=\"type1Header\"><b>Status</b></td><td class=\"type1Header\"><b>Joined</b></td></tr>\n";
           for($j=0; $j<$num_rows_2; $j++)
           {
              $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
              $mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
              $mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
-             $mjoined_local = $mjoined + $session->timezone_offset;
+             $mjoined_local = $mjoined + GMT_TIMEOFFSET;
              $date = date("d M Y",$mjoined_local);
           
              echo "<tr>\n";
-             echo "<td class=\"type1Body\"><b><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mid\">$mname</a></b></td><td class=\"type1Body\">Member</td><td class=\"type1Body\">$date</td></tr>";
+             echo "<td class=\"type1Body2\"><b><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mid\">$mname</a></b></td><td class=\"type1Body2\">Member</td><td class=\"type1Body2\">$date</td></tr>";
           
           }
           echo "</table>\n";

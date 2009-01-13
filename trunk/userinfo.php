@@ -23,7 +23,7 @@ if(!$req_user || strlen($req_user) == 0 ||
 }
 
 /* Logged in user viewing own account */
-if(strcmp({USER_ID},$req_user) == 0){
+if(strcmp(USERID,$req_user) == 0){
    echo "<h1>My Account</h1>";
 }
 /* Visitor not viewing own account */
@@ -63,7 +63,7 @@ echo "<b>Nickname: ".$req_user_info['name']."</b><br />";
  * $req_user_info['location']; (for any user)
  */
 /* If logged in user viewing own account, give link to edit */
-if(strcmp({USER_ID},$req_user) == 0){
+if(strcmp(USERID,$req_user) == 0){
    echo "<br /><a href=\"".e_PLUGIN."ebattles/useredit.php\">Edit Account Information</a><br />";
 }
 echo "</p>";
@@ -74,7 +74,7 @@ echo "</div>";
 <div class="tab-page">
 <h2 class="tab">Events</h2>
 <?php
-if(strcmp({USER_ID},$req_user) == 0){
+if(strcmp(USERID,$req_user) == 0){
    echo "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
    echo "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
    echo "<input type=\"submit\" name=\"createevent\" value=\"Create new Event\"></input>";
@@ -135,7 +135,7 @@ if ($num_rows>0)
        if($eowner == $req_user)
        {
          echo "Owner";
-         if ($eowner == {USER_ID})
+         if ($eowner == USERID)
          {
          	 echo " (<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$eid\">Manage</a>)";
          }
@@ -189,7 +189,7 @@ if ($num_rows>0)
        if($eowner == $req_user)
        {
          echo "Owner";
-         if ($eowner == {USER_ID})
+         if ($eowner == USERID)
          {
          	 echo " (<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$eid\">Manage</a>)";
          }
@@ -245,7 +245,7 @@ if ($num_rows>0)
        if($eowner == $req_user)
        {
          echo "Owner";
-         if ($eowner == {USER_ID})
+         if ($eowner == USERID)
          {
          	 echo " (<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$eid\">Manage</a>)";
          }
@@ -269,7 +269,7 @@ echo "<br /><br />";
 <h2 class="tab">Teams membership</h2>
 <?php
 
-if(strcmp({USER_ID},$req_user) == 0){
+if(strcmp(USERID,$req_user) == 0){
    echo "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
    echo "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
    echo "<input type=\"submit\" name=\"createteam\" value=\"Create new Team\"></input>";
@@ -324,7 +324,7 @@ if ($num_rows>0)
        if($cowner == $req_user)
        {
          echo "Owner";
-         if ($cowner == {USER_ID})
+         if ($cowner == USERID)
          {
          	 echo " (<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$cid\">Manage</a>)";
          }
@@ -377,7 +377,7 @@ if ($num_rows>0)
        if($cowner == $req_user)
        {
          echo "Owner";
-         if ($cowner == {USER_ID})
+         if ($cowner == USERID)
          {
          	 echo " (<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$cid\">Manage</a>)";
          }
@@ -437,7 +437,7 @@ if ($num_rows>0)
        if($cowner == $req_user)
        {
          echo "Owner";
-         if ($cowner == {USER_ID})
+         if ($cowner == USERID)
          {
          	 echo " (<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$cid\">Manage</a>)";
          }
@@ -495,7 +495,7 @@ echo "</div>";
    if ($num_rows>0)
    {
       /* Display table contents */
-      echo "<table class=\"type1\">\n";
+      echo "<table class=\"type1Border\">\n";
       echo "<tr><td class=\"type1Header\" style=\"width:120px\"><b>Match ID</b></td><td class=\"type1Header\"><b>Event</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Reported By</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Date</b></td></tr>\n";
       for($i=0; $i<$num_rows; $i++){
          $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
@@ -504,7 +504,7 @@ echo "</div>";
          $mEvent  = mysql_result($result,$i, TBL_MATCHS.".Event");
          $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
          //$date = date("d M Y, h:i:s A",$mTime);
-         $mTime_local = $mTime + $session->timezone_offset;
+         $mTime_local = $mTime + GMT_TIMEOFFSET;
          $date = date("d M Y",$mTime_local);
 
          $q2 = "SELECT ".TBL_EVENTS.".*, "
@@ -541,13 +541,13 @@ echo "</div>";
             $pid  = mysql_result($result2,$j, TBL_USERS.".user_id");
             $pname  = mysql_result($result2,$j, TBL_USERS.".user_name");
             if ($j==0)
-              $players = "<a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
+              $players = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             else
-              $players = $players.", <a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
+              $players = $players.", <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
          }
 
          echo "<tr>\n";
-         echo "<td class=\"type1Body\"><b>$mID</b> <a class=\"type1\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEvent&amp;matchid=$mID\">(Show details)</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEvent\">$ename</a></td><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"type1Body\">$players</td><td class=\"type1Body\">$date</td></tr>";
+         echo "<td class=\"type1Body2\"><b>$mID</b> <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEvent&amp;matchid=$mID\">(Show details)</a></td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEvent\">$ename</a></td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"type1Body2\">$players</td><td class=\"type1Body2\">$date</td></tr>";
 
       
    }

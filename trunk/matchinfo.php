@@ -62,7 +62,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
       $reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
       $comments  = mysql_result($result,0, TBL_MATCHS.".Comments");
       $time_reported  = mysql_result($result,0, TBL_MATCHS.".TimeReported");
-      $time_reported_local = $time_reported + $session->timezone_offset;
+      $time_reported_local = $time_reported + GMT_TIMEOFFSET;
       $date = date("d M Y, h:i:s A",$time_reported_local);
       
       echo "Match reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$reported_by\">$reported_by_name</a> ($date)<br />";
@@ -82,12 +82,12 @@ include_once(e_PLUGIN."ebattles/include/main.php");
    $q_2 = "SELECT ".TBL_EVENTMODS.".*"
        ." FROM ".TBL_EVENTMODS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-       ."   AND (".TBL_EVENTMODS.".Name = '{USER_ID}')";   
+       ."   AND (".TBL_EVENTMODS.".Name = ".USERID.")";   
    $result_2 = $sql->db_Query($q_2);
    $num_rows_2 = mysql_numrows($result_2);
    
    $can_delete = 0;
-   if (  ({USER_ID}==$reported_by)
+   if (  (USERID==$reported_by)
        &&(  ($eend==0)
           ||(  ($eend>=$time)
              &&($estart<=$time)
@@ -95,8 +95,8 @@ include_once(e_PLUGIN."ebattles/include/main.php");
          )
       )
      $can_delete = 1;
-   if ($session->isAdmin())  $can_delete = 1;
-   if ({USER_ID}==$eowner)  $can_delete = 1;
+   if (check_class(e_UC_MAINADMIN))  $can_delete = 1;
+   if (USERID==$eowner)  $can_delete = 1;
    if ($num_rows_2>0)  $can_delete = 1;
    
    if($can_delete != 0)
@@ -109,7 +109,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
    
    echo "<br />";
    
-   echo "<table class=\"type1\">\n";
+   echo "<table class=\"type1Border\">\n";
    echo "<tr><td class=\"type1Header\"><b>Rank</b></td><td class=\"type1Header\"><b>Team</b></td><td class=\"type1Header\"><b>Player</b></td><td class=\"type1Header\"><b>Score</b></td><td class=\"type1Header\"><b>ELO</b></td></tr>\n";
    for($i=0; $i<$num_rows; $i++)
    {
@@ -122,7 +122,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 
       //echo "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
       echo "<tr>\n";
-      echo "<td class=\"type1Body\"><b>$prank</b></td><td class=\"type1Body\">$pMatchTeam</td><td class=\"type1Body\"><a class=\"type1\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a></td><td class=\"type1Body\">$pscore</td><td class=\"type1Body\">$pdeltaELO</td></tr>";
+      echo "<td class=\"type1Body2\"><b>$prank</b></td><td class=\"type1Body2\">$pMatchTeam</td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a></td><td class=\"type1Body2\">$pscore</td><td class=\"type1Body2\">$pdeltaELO</td></tr>";
 
    }
    echo "</table><br />\n";

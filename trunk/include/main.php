@@ -8,14 +8,22 @@
 //e107_require_once(HEADERF);
 
 include(e_PLUGIN."ebattles/include/constants.php");
-include(e_PLUGIN."ebattles/include/time.php");
 /*
+include(e_PLUGIN."ebattles/include/time.php");
 include(e_PLUGIN."ebattles/include/database.php");
 include(e_PLUGIN."ebattles/include/mailer.php");
 include(e_PLUGIN."ebattles/include/form.php");
 include(e_PLUGIN."ebattles/include/debug_lib.php");
 include_once(e_PLUGIN."ebattles/include/session.php");
 */
+
+/*
+GMT_TIMEOFFSET = client - gmt
+  = (client - server) + (server - gmt)
+  = TIMEOFFSET (from e107) + date("z")
+*/
+$gmt_timezone_offset = TIMEOFFSET + date("Z");
+define("GMT_TIMEOFFSET", $gmt_timezone_offset);
 
 function GMT_time() {
 $gm_time = time() - date('Z', time());
