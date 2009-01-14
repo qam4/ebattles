@@ -64,7 +64,7 @@ function displayCurrentEvents(){
    $time = GMT_time();
 
    // how many rows to show per page
-   $rowsPerPage = 20;
+   $rowsPerPage = 5;
    $pg = (isset($_REQUEST['pg']) && ctype_digit($_REQUEST['pg'])) ? $_REQUEST['pg'] : 1;
    $start = $rowsPerPage * $pg - $rowsPerPage;
 
@@ -77,7 +77,7 @@ function displayCurrentEvents(){
    $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
-   $text .= "<form name=\"myform\" action=\"".e_PLUGIN."ebattles/".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
+   $text .= "<form name=\"myform\" action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
    $text .= "<table>\n";
    $text .= "<tr><td>\n";
    $text .= "Games:<br />\n";
@@ -146,7 +146,7 @@ function displayCurrentEvents(){
       return;
    }
    if($num_rows == 0){
-      $text .= "Database table empty";
+      $text .= "No events";
       return;
    }
    
@@ -229,7 +229,7 @@ function displayRecentEvents(){
    $time = GMT_time();
 
    // how many rows to show per page
-   $rowsPerPage = 20;
+   $rowsPerPage = 5;
    if (!isset($_POST['gameid'])) $_POST['gameid'] = "All";
    
    $q = "SELECT ".TBL_GAMES.".*"
@@ -238,7 +238,7 @@ function displayRecentEvents(){
    $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
-   $text .= "<form name=\"myform\" action=\"".e_PLUGIN."ebattles/".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
+   $text .= "<form name=\"myform\" action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
    $text .= "<table>\n";
    $text .= "<tr><td>\n";
    $text .= "Games:<br />\n";
@@ -293,7 +293,7 @@ function displayRecentEvents(){
       return;
    }
    if($num_rows == 0){
-      $text .= "Database table empty";
+      $text .= "No events";
       return;
    }
    /* Display table contents */
