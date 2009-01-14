@@ -310,7 +310,6 @@ else
                           <input class=\"button\" type=\"submit\" value=\"Join Event\"></input>
                       </form>
                       ";
-                      $text .= "<br /><br /><br />";
                   }
                }
             }
@@ -363,10 +362,8 @@ else
       $text .= "Please log in to participate to this event.<br />";
    }
       
-   $text .= "<hr />";
    $text .= "<p>";
    $text .="Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$eowner\">$eownername</a><br />";
-
    $can_manage = 0;
    if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
    if (USERID==$eowner) $can_manage = 1;
@@ -390,6 +387,7 @@ else
       $text .= "- <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modname\">$modname</a><br />";
    }
    $text .="</p>";
+   
    $text .= "<p>Starts: $date_start<br />Ends: $date_end</p>";
    $text .= "<p>$time_comment</p>";
    $text .= "<p>Description: $edescription</p>";

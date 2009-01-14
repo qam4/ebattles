@@ -10,18 +10,28 @@
  */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
+include_once(e_PLUGIN."ebattles/include/pagination.php");
+/*******************************************************************
+********************************************************************/
+require_once(HEADERF);
 
-?>
-<div id="main">
-<div class="news">
+$text = '';
 
-<?php
-   $event_id = $_GET['eventid'];
-        
+global $sql;
+
+/* Event Name */
+$event_id = $_GET['eventid'];
+
+if (!$event_id)
+{
+   $text .= "<br />Error.<br />";
+}
+else
+{        
    if (!isset($_POST['deletematch']))
    {
-        echo "<br />You are not authorized to delete this match.<br />";
-        echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+        $text .= "<br />You are not authorized to delete this match.<br />";
+        $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
    }
    else
    {
@@ -68,7 +78,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
             $pWins = $pWins - $pscore;
             $pGamesPlayed -= 1;
             
-            echo "Player $pname, new ELO:$pELO<br />"; 
+            $text .= "Player $pname, new ELO:$pELO<br />"; 
 
             $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
@@ -90,13 +100,11 @@ include_once(e_PLUGIN."ebattles/include/main.php");
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q);
         
-        echo "<br />Match deleted<br />";
-        echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+        $text .= "<br />Match deleted<br />";
+        $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
    }
-
-?>
-</div>
-</div>
-<?php
-include_once(e_PLUGIN."ebattles/include/footer.php");
+}
+$ns->tablerender('Event Match Delete', $text);
+require_once(FOOTERF);
+exit;
 ?>

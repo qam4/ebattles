@@ -32,7 +32,7 @@ return $gm_time;
 ?>
 
 <style type="text/css" media="screen">
-        @import url("common/lists.css");
+        @import url("js/tool-man/lists.css");
         @import url("css/tables.css");
         @import url("css/tab.css");
         @import url("js/calendar/calendar-blue.css");

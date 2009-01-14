@@ -6,15 +6,23 @@
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 include_once(e_PLUGIN."ebattles/include/pagination.php");
-?>
-<div id="main">
+/*******************************************************************
+********************************************************************/
+require_once(HEADERF);
 
-<?php
-   global $sql;
+$text = '';
 
-   /* Event Name */
-   $event_id = $_GET['eventid'];
+global $sql;
 
+/* Event Name */
+$event_id = $_GET['eventid'];
+
+if (!$event_id)
+{
+   $text .= "<br />Error.<br />";
+}
+else
+{
    /* set pagination variables */
    $rowsPerPage = 20;
    $pg = (isset($_REQUEST['pg']) && ctype_digit($_REQUEST['pg'])) ? $_REQUEST['pg'] : 1;
@@ -36,9 +44,9 @@ include_once(e_PLUGIN."ebattles/include/pagination.php");
    $result = $sql->db_Query($q);
    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
    $egame = mysql_result($result,0 , TBL_GAMES.".Name");
-   echo "<h1>$ename</h1>";
-   echo "<h2>$egame</h2>";
-   echo "<br />";
+   $text .= "<h1>$ename</h1>";
+   $text .= "<h2>$egame</h2>";
+   $text .= "<br />";
 
    $q = "SELECT COUNT(*) as NbrMatchs"
        ." FROM ".TBL_MATCHS
@@ -46,9 +54,9 @@ include_once(e_PLUGIN."ebattles/include/pagination.php");
    $result = $sql->db_Query($q);
    $row = mysql_fetch_array($result);     
    $nbrmatchs = $row['NbrMatchs'];     
-   echo"<div class=\"news\">";
-   echo"<h2>Matches for this Ladder ($nbrmatchs)</h2><br />";
-   echo "<p>";
+   $text .="<div class=\"news\">";
+   $text .="<h2>Matches for this Ladder ($nbrmatchs)</h2><br />";
+   $text .= "<p>";
    /* Stats/Results */
    $q = "SELECT ".TBL_MATCHS.".*, "
                  .TBL_USERS.".*"
@@ -65,8 +73,8 @@ include_once(e_PLUGIN."ebattles/include/pagination.php");
    if ($num_rows>0)
    {
       /* Display table contents */
-      echo "<table class=\"type1Border\">\n";
-      echo "<tr><td class=\"type1Header\" style=\"width:120px\"><b>Match ID</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Reported By</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Date</b></td></tr>\n";
+      $text .= "<table class=\"type1Border\">\n";
+      $text .= "<tr><td class=\"type1Header\" style=\"width:120px\"><b>Match ID</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Reported By</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Date</b></td></tr>\n";
       for($i=0; $i<$num_rows; $i++){
          $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
          $mReportedBy  = mysql_result($result,$i, TBL_MATCHS.".ReportedBy");
@@ -104,28 +112,23 @@ include_once(e_PLUGIN."ebattles/include/pagination.php");
               $players = $players.", <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
          }
 
-         echo "<tr>\n";
-         echo "<td class=\"type1Body2\"><b>$mID</b> <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&matchid=$mID\">(Show details)</a></td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickname</a></td><td class=\"type1Body2\">$players</td><td class=\"type1Body2\">$date</td></tr>";
+         $text .= "<tr>\n";
+         $text .= "<td class=\"type1Body2\"><b>$mID</b> <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&matchid=$mID\">(Show details)</a></td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickname</a></td><td class=\"type1Body2\">$players</td><td class=\"type1Body2\">$date</td></tr>";
 
       
    }
-      echo "</table><br />\n"; 
+      $text .= "</table><br />\n"; 
    }
  
 
 
    paginate($rowsPerPage, $pg, $totalPages);
 
-   echo "<br />";
-   echo "<p>";
-   echo "</div>";
-/* Link back to main */
-echo "<p>";
-echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
-echo "</p>";
-
-?>
-</div>
-<?php
-include_once(e_PLUGIN."ebattles/include/footer.php");
+   $text .= "<br />";
+   $text .= "<p>";
+   $text .= "</div>";
+}
+$ns->tablerender('Event Matches', $text);
+require_once(FOOTERF);
+exit;
 ?>
