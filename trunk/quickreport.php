@@ -72,7 +72,7 @@ else
    
    $text .= '
        <input type="hidden" name="qrsubmitloss" value="1"></input>
-       <input type="submit" value="Submit Loss"></input>
+       <input class="button" type="submit" value="Submit Loss"></input>
      </td>
    </tr>
    </form>

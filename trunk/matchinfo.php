@@ -103,7 +103,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
    {
       echo "<form action=\"".e_PLUGIN."ebattles/matchdelete.php?eventid=$event_id\" method=\"post\">";
       echo "<input type=\"hidden\" name=\"matchid\" value=\"$match_id\"></input>";
-      echo "<input type=\"submit\" name=\"deletematch\" value=\"Delete this match\"></input>";
+      echo "<input class=\"button\" type=\"submit\" name=\"deletematch\" value=\"Delete this match\"></input>";
       echo "</form>";
    }
    

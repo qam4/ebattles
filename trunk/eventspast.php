@@ -58,7 +58,7 @@ function displayPastEvents(){
    $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
-   $text .= "<form name=\"myform\" action=\"".e_PLUGIN."ebattles/".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
+   $text .= "<form name=\"myform\" action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
    $text .= "<table>\n";
    $text .= "<tr><td>\n";
    $text .= "Games:<br />\n";

@@ -181,7 +181,6 @@ else
 
    $text .="<div class=\"tab-page\">";
    $text .="<div class=\"tab\">Event Info</div>";
-   $text .="<br />";
 
    if(check_class(e_UC_MEMBER))
    {
@@ -228,10 +227,9 @@ else
                      <input type=\"hidden\" name=\"division\" value=\"$div_id\"></input>
                      <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                      <input type=\"hidden\" name=\"teamjoinevent\" value=\"1\"></input>
-                     <input type=\"submit\" value=\"Team Join Event\"></input>
+                     <input class=\"button\" type=\"submit\" value=\"Team Join Event\"></input>
                  ";
                  $text .= '</form>';
-                 $text .= "<br />";
               }
               else
               {
@@ -309,7 +307,7 @@ else
                           <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                           <input type=\"hidden\" name=\"team\" value=\"$team_id\"></input>
                           <input type=\"hidden\" name=\"jointeamevent\" value=\"1\"></input>
-                          <input type=\"submit\" value=\"Join Event\"></input>
+                          <input class=\"button\" type=\"submit\" value=\"Join Event\"></input>
                       </form>
                       ";
                       $text .= "<br /><br /><br />";
@@ -327,7 +325,7 @@ else
                    <input type=\"password\" title=\"Enter the password\" name=\"joinEventPassword\"></input>
                    <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                    <input type=\"hidden\" name=\"joinevent\" value=\"1\"></input>
-                   <input type=\"submit\" value=\"Join Event\"></input>
+                   <input class=\"button\" type=\"submit\" value=\"Join Event\"></input>
                </form>
                ";
             }
@@ -338,7 +336,7 @@ else
                    <input type=\"hidden\" name=\"joinEventPassword\" value=\"\"></input>
                    <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                    <input type=\"hidden\" name=\"joinevent\" value=\"1\"></input>
-                   <input type=\"submit\" value=\"Join Event\"></input>
+                   <input class=\"button\" type=\"submit\" value=\"Join Event\"></input>
                </form>
                ";
             }            
@@ -353,7 +351,7 @@ else
              <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
                  <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                  <input type=\"hidden\" name=\"quitevent\" value=\"1\"></input>
-                 <input type=\"submit\" value=\"Quit Event\"></input>
+                 <input class=\"button\" type=\"submit\" value=\"Quit Event\"></input>
              </form>
              ";     
          */

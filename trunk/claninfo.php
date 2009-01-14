@@ -96,7 +96,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
                 <input type=\"hidden\" name=\"clanid\" value=\"$clan_id\"></input>
                 <input type=\"hidden\" name=\"division\" value=\"$div_id\"></input>
                 <input type=\"hidden\" name=\"joindivision\" value=\"1\"></input>
-                <input type=\"submit\" value=\"Join Division\"></input>
+                <input class=\"button\" type=\"submit\" value=\"Join Division\"></input>
             </form>";
          }
       }
