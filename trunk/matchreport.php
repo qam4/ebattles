@@ -8,13 +8,14 @@
  * password, they must first confirm their current password.
  *
  */
-ob_start();
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 require_once e_PLUGIN.'ebattles/include/ELO.php';
+/*******************************************************************
+********************************************************************/
+require_once(HEADERF);
 
-?>
-<div id="main">
+$text = '
     <script language="JavaScript" type="text/javascript" src="./js/tool-man/core.js"></script>
     <script language="JavaScript" type="text/javascript" src="./js/tool-man/events.js"></script>
     <script language="JavaScript" type="text/javascript" src="./js/tool-man/css.js"></script>
@@ -23,12 +24,14 @@ require_once e_PLUGIN.'ebattles/include/ELO.php';
     <script language="JavaScript" type="text/javascript" src="./js/tool-man/dragsort.js"></script>
     <script language="JavaScript" type="text/javascript" src="./js/tool-man/cookies.js"></script>
     <script language="JavaScript" type="text/javascript">
+';
+$text .= "
     <!--
         var dragsort = ToolMan.dragsort()
         var junkdrawer = ToolMan.junkdrawer()
         window.onload = function() {
-            junkdrawer.restoreListOrder("matchresultlist")
-            dragsort.makeListSortable(document.getElementById("matchresultlist"),
+            junkdrawer.restoreListOrder('matchresultlist')
+            dragsort.makeListSortable(document.getElementById('matchresultlist'),
             		verticalOnly, saveOrder)
         }
         
@@ -44,31 +47,37 @@ require_once e_PLUGIN.'ebattles/include/ELO.php';
         function saveOrder(item) {
         	var group = item.toolManDragGroup
         	var list = group.element.parentNode
-        	var id = list.getAttribute("id")
+        	var id = list.getAttribute('id')
         	if (id == null) return
         	group.register('dragend', function() {
-        		ToolMan.cookies().set("list-" + id, 
+        		ToolMan.cookies().set('list-' + id, 
         				junkdrawer.serializeList(list), 365)
         	})
         }
     
     //-->
+";
+$text .= '
     </script>
     <script language="javascript">
+';
+$text .= "
     <!--
         function get_ranks(nbr_ranks)
         {
             for(i=1;i<=nbr_ranks;i++)
             {
-                var rank = document.getElementsByName("rank"+i);
+                var rank = document.getElementsByName('rank'+i);
                 rank[0].value = junkdrawer.inspectItem('matchresultlist', (i-1))
-            //    alert("rank"+i);
+            //    alert('rank'+i);
             }       
         }
     //-->
+";
+$text .= '
     </script>
+';
     
-<?php
    /* Event Name */
    $event_id = $_GET['eventid'];
 
@@ -102,22 +111,18 @@ require_once e_PLUGIN.'ebattles/include/ELO.php';
       $players_id[$i+1] = $pid;
       $players_name[$i+1] = $pname;
    }
-?>
+
+$text .= '
 <div class="news">
 <h2>Match Report</h2>
 <br />
-<?php
-$time = GMT_time();
-$time_local = $time + GMT_TIMEOFFSET;
-$date = Date("d M Y, h:i:s A", $time_local);
-print ($date); 
-?>
+';
+$text .= '
 <br />
 <br />
 <br />
 <br />
-<?php
-
+';
 // assuming we saved the above function in "functions.php", let's make sure it's available
 require_once e_PLUGIN.'ebattles/matchreport_functions.php';
 
@@ -129,7 +134,7 @@ if (isset($_POST['submit']))
     $error_str = ''; // initialise $error_str as empty
 
     $reported_by = $_POST['reported_by'];
-    echo "reported by: $reported_by<br />";
+    $text .= "reported by: $reported_by<br />";
 
     $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
     $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
@@ -173,23 +178,23 @@ if (isset($_POST['submit']))
         // show form again
         user_form($players_id, $players_name, $event_id);
         // errors have occured, halt execution and show form again.
-        echo '<p style="color:red">There were errors in the information you entered, they are listed below:';
-        echo '<ul style="color:red">'.$error_str.'</ul></p>';
+        $text .= '<p style="color:red">There were errors in the information you entered, they are listed below:';
+        $text .= '<ul style="color:red">'.$error_str.'</ul></p>';
         exit; // die
     }
     else
     {
-    	//echo "OK<br />";
+    	//$text .= "OK<br />";
         $nbr_players = $_POST['nbr_players'];
 
         for($i=1;$i<=$nbr_teams;$i++)
         {
-           echo 'Rank #'.$i.': '.$_POST['rank'.$i]; 
-    	   echo '<br />';        	
+           $text .= 'Rank #'.$i.': '.$_POST['rank'.$i]; 
+    	   $text .= '<br />';        	
         }
-    	echo '--------------------<br />'; 
+    	$text .= '--------------------<br />'; 
                
-	echo 'Comments: '.$comments.'<br />';
+	$text .= 'Comments: '.$comments.'<br />';
 
         // Create Match ------------------------------------------
         $time = GMT_time();
@@ -234,20 +239,20 @@ if (isset($_POST['submit']))
             ";
            $result = $sql->db_Query($q);
            
-    	   echo 'Player #'.$i.': '.$pname.' ('.$pname.') (id:'.$pID.')';
-    	   echo ' in team '.$pteam;
-    	   echo '<br />'; 
+    	   $text .= 'Player #'.$i.': '.$pname.' ('.$pname.') (id:'.$pID.')';
+    	   $text .= ' in team '.$pteam;
+    	   $text .= '<br />'; 
     	   /**/
         }
-    	echo '--------------------<br />'; 
+    	$text .= '--------------------<br />'; 
         
         for($i=1;$i<=$nbr_teams-1;$i++)
         {
            for($j=($i+1);$j<=$nbr_teams;$j++)
            {
-               echo "Team $i vs. Team $j<br />";
+               $text .= "Team $i vs. Team $j<br />";
                
-               echo "event: $event_id<br />";
+               $text .= "event: $event_id<br />";
                
                $q = "SELECT ".TBL_MATCHS.".*, "
                              .TBL_SCORES.".*, "
@@ -270,7 +275,7 @@ if (isset($_POST['submit']))
                {
                   $teamA_ELO += mysql_result($resultA,$k, TBL_PLAYERS.".ELORanking");
                }
-               echo "Team $i ELO: $teamA_ELO, score: $teamA_Score<br />";
+               $text .= "Team $i ELO: $teamA_ELO, score: $teamA_Score<br />";
  
                $q = "SELECT ".TBL_MATCHS.".*, "
                             .TBL_SCORES.".*, "
@@ -293,13 +298,13 @@ if (isset($_POST['submit']))
                {
                   $teamB_ELO += mysql_result($resultB,$k, TBL_PLAYERS.".ELORanking");
                }
-               echo "Team $j ELO: $teamB_ELO, score: $teamB_Score<br />";
+               $text .= "Team $j ELO: $teamB_ELO, score: $teamB_Score<br />";
 
                // New ELO ------------------------------------------        
                $M=min($NbrPlayersTeamA,$NbrPlayersTeamB)*$eELO_M;      // Span
                $K=$eELO_K;	// Max adjustment per game
                $deltaELO = ELO($M, $K, $teamA_ELO, $teamB_ELO, $teamA_Score, $teamB_Score);
-               echo "deltaELO: $deltaELO<br />";
+               $text .= "deltaELO: $deltaELO<br />";
 
                // Update Scores ------------------------------------------        
                for ($k=0;$k<$NbrPlayersTeamA;$k++)
@@ -324,8 +329,8 @@ if (isset($_POST['submit']))
    	       }      	
             }
         }
-    	echo '<br />';        	
-    	echo '<br />';
+    	$text .= '<br />';        	
+    	$text .= '<br />';
     	
     	// Update Players with scores
         $q = "SELECT ".TBL_MATCHS.".*, "
@@ -362,7 +367,7 @@ if (isset($_POST['submit']))
             $pLosses = $pLosses + $nbr_teams - $pscore - 1;
             $pWins = $pWins + $pscore;
             
-            echo "Player $pName, new ELO:$pELO<br />"; 
+            $text .= "Player $pName, new ELO:$pELO<br />"; 
 
             $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (Name = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
@@ -398,25 +403,24 @@ if (isset($_POST['submit']))
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q);
 
-        echo "<p>";
-        echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
-        echo "</p>";
+        $text .= "<p>";
+        $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+        $text .= "</p>";
         
         header("Location: eventinfo.php?eventid=$event_id");
-        ob_end_flush();
     }
     // if we get here, all data checks were okay, process information as you wish.
 } else {
 
    if (!isset($_POST['matchreport']))
    {
-      echo "p>You are not authorized to report a match.</p>";
-      echo "<p>Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]</p>";
+      $text .= "p>You are not authorized to report a match.</p>";
+      $text .= "<p>Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]</p>";
    }
    else if (!check_class(e_UC_MEMBER))
    {
-      echo "<p>You are not logged in.</p>";
-      echo "<p>Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]</p>";
+      $text .= "<p>You are not logged in.</p>";
+      $text .= "<p>Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]</p>";
    }
    else
    {
@@ -425,9 +429,11 @@ if (isset($_POST['submit']))
    }
 }
 
-?>
+$text .= '
 </div>
-</div>
-<?php
-include_once(e_PLUGIN."ebattles/include/footer.php");
+';
+
+$ns->tablerender('Match Report', $text);
+require_once(FOOTERF);
+exit;
 ?>

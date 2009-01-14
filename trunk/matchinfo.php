@@ -10,15 +10,24 @@
  */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
+/*******************************************************************
+********************************************************************/
+require_once(HEADERF);
 
-?>
-<div id="main">
+$text = '';
 
-<?php
-   /* Event Name */
-   $event_id = $_GET['eventid'];
-   $match_id = $_GET['matchid'];
+global $sql;
 
+/* Event Name */
+$event_id = $_GET['eventid'];
+$match_id = $_GET['matchid'];
+
+if (!$event_id)
+{
+   $text .= "<br />Error.<br />";
+}
+else
+{
    $q = "SELECT ".TBL_EVENTS.".*, "
                  .TBL_GAMES.".*"
        ." FROM ".TBL_EVENTS.", "
@@ -33,8 +42,8 @@ include_once(e_PLUGIN."ebattles/include/main.php");
    $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
    $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
    
-   echo "<h1>$ename</h1>";
-   echo "<h2>$egame</h2>";
+   $text .= "<h1>$ename</h1>";
+   $text .= "<h2>$egame</h2>";
    
 
    $q = "SELECT ".TBL_MATCHS.".*, "
@@ -53,8 +62,8 @@ include_once(e_PLUGIN."ebattles/include/main.php");
  
    $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
-   echo"<div class=\"news\">";
-   echo "<h2>Match (#$match_id)</h2><br />";
+   $text .="<div class=\"news\">";
+   $text .= "<h2>Match (#$match_id)</h2><br />";
 
    if ($num_rows>0)
    {
@@ -65,7 +74,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
       $time_reported_local = $time_reported + GMT_TIMEOFFSET;
       $date = date("d M Y, h:i:s A",$time_reported_local);
       
-      echo "Match reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$reported_by\">$reported_by_name</a> ($date)<br />";
+      $text .= "Match reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$reported_by\">$reported_by_name</a> ($date)<br />";
    }
    else
    {
@@ -101,16 +110,16 @@ include_once(e_PLUGIN."ebattles/include/main.php");
    
    if($can_delete != 0)
    {
-      echo "<form action=\"".e_PLUGIN."ebattles/matchdelete.php?eventid=$event_id\" method=\"post\">";
-      echo "<input type=\"hidden\" name=\"matchid\" value=\"$match_id\"></input>";
-      echo "<input class=\"button\" type=\"submit\" name=\"deletematch\" value=\"Delete this match\"></input>";
-      echo "</form>";
+      $text .= "<form action=\"".e_PLUGIN."ebattles/matchdelete.php?eventid=$event_id\" method=\"post\">";
+      $text .= "<input type=\"hidden\" name=\"matchid\" value=\"$match_id\"></input>";
+      $text .= "<input class=\"button\" type=\"submit\" name=\"deletematch\" value=\"Delete this match\"></input>";
+      $text .= "</form>";
    }
    
-   echo "<br />";
+   $text .= "<br />";
    
-   echo "<table class=\"type1Border\">\n";
-   echo "<tr><td class=\"type1Header\"><b>Rank</b></td><td class=\"type1Header\"><b>Team</b></td><td class=\"type1Header\"><b>Player</b></td><td class=\"type1Header\"><b>Score</b></td><td class=\"type1Header\"><b>ELO</b></td></tr>\n";
+   $text .= "<table class=\"type1Border\">\n";
+   $text .= "<tr><td class=\"type1Header\"><b>Rank</b></td><td class=\"type1Header\"><b>Team</b></td><td class=\"type1Header\"><b>Player</b></td><td class=\"type1Header\"><b>Score</b></td><td class=\"type1Header\"><b>ELO</b></td></tr>\n";
    for($i=0; $i<$num_rows; $i++)
    {
       $pid  = mysql_result($result,$i, TBL_USERS.".user_id");
@@ -120,24 +129,24 @@ include_once(e_PLUGIN."ebattles/include/main.php");
       $pdeltaELO  = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
       $pscore  = mysql_result($result,$i, TBL_SCORES.".Player_Score");
 
-      //echo "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
-      echo "<tr>\n";
-      echo "<td class=\"type1Body2\"><b>$prank</b></td><td class=\"type1Body2\">$pMatchTeam</td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a></td><td class=\"type1Body2\">$pscore</td><td class=\"type1Body2\">$pdeltaELO</td></tr>";
+      //$text .= "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
+      $text .= "<tr>\n";
+      $text .= "<td class=\"type1Body2\"><b>$prank</b></td><td class=\"type1Body2\">$pMatchTeam</td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a></td><td class=\"type1Body2\">$pscore</td><td class=\"type1Body2\">$pdeltaELO</td></tr>";
 
    }
-   echo "</table><br />\n";
+   $text .= "</table><br />\n";
    
-   echo "<p>";
-   echo "Comments:<br />\n";
-   echo "$comments<br />\n";
-   echo "</p>";
-   echo "</div>";
+   $text .= "<p>";
+   $text .= "Comments:<br />\n";
+   $text .= "$comments<br />\n";
+   $text .= "</p>";
+   $text .= "</div>";
 
-   echo "<p>";
-   echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
-   echo "</p>";
-?>
-</div>
-<?php
-include_once(e_PLUGIN."ebattles/include/footer.php");
+   $text .= "<p>";
+   $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+   $text .= "</p>";
+}
+$ns->tablerender('Event Matches', $text);
+require_once(FOOTERF);
+exit;
 ?>

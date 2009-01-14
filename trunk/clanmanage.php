@@ -118,7 +118,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 <!-- Save Button -->
 <p align="center">
     <input type="hidden" name="clansettingssave" value="1"></input>
-    <input type="submit" value="Save"></input>
+    <input class="button" type="submit" value="Save"></input>
 </p>
 </form>
 

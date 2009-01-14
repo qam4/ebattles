@@ -82,7 +82,7 @@ if($form->value("name") == ""){
 </tr>
 <tr><td colspan="2" align="right">
 <input type="hidden" name="subedit" value="1"></input>
-<input type="submit" value="Edit Account"></input></td></tr>
+<input class="button" type="submit" value="Edit Account"></input></td></tr>
 <tr><td colspan="2" align="left"></td></tr>
 </table>
 </form>
