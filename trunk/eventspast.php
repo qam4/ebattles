@@ -8,13 +8,41 @@ require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 include_once(e_PLUGIN."ebattles/include/pagination.php");
 
+/*******************************************************************
+********************************************************************/
+require_once(HEADERF);
+
+$text = '';
+
+$text .='
+<script type="text/javascript" src="./js/tabpane.js"></script>
+
+<div class="news">
+';
+
+/**
+ * Display Users Table
+ */
+displayPastEvents();
+
+$text .='
+</div>
+';
+
+$ns->tablerender('Past Events', $text);
+require_once(FOOTERF);
+exit;
+
+/***************************************************************************************
+ Functions
+***************************************************************************************/
 /**
  * displayEvents - Displays the events database table in
  * a nicely formatted html table.
  */
 function displayPastEvents(){
    global $sql;
-   global $session;
+   global $text;
 
    // how many rows to show per page
    $rowsPerPage = 20;
@@ -30,29 +58,29 @@ function displayPastEvents(){
    $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
-   echo "<form name=\"myform\" action=\"".e_PLUGIN."ebattles/".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
-   echo "<table>\n";
-   echo "<tr><td>\n";
-   echo "Games:<br />\n";
-   echo "<select name=\"gameid\">\n";
-   echo "<option value=\"All\">All</option>\n";
+   $text .= "<form name=\"myform\" action=\"".e_PLUGIN."ebattles/".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
+   $text .= "<table>\n";
+   $text .= "<tr><td>\n";
+   $text .= "Games:<br />\n";
+   $text .= "<select name=\"gameid\">\n";
+   $text .= "<option value=\"All\">All</option>\n";
    for($i=0; $i<$num_rows; $i++){
       $gname  = mysql_result($result,$i, TBL_GAMES.".name");
       $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
-      echo "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
+      $text .= "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
    }
-   echo "</select>\n";
-   echo "</td>\n";
-   echo "<td>\n";
-   echo "<br />\n";
-   echo "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"></input>\n";
-   echo "<input type=\"submit\" value=\"Filter\"></input>\n";
-   echo "</td>\n";
-   echo "</tr>\n";
-   echo "</table>\n";
-   echo "</form>\n";
-   echo "<br />\n";
-   echo "<br />\n";
+   $text .= "</select>\n";
+   $text .= "</td>\n";
+   $text .= "<td>\n";
+   $text .= "<br />\n";
+   $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"></input>\n";
+   $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"></input>\n";
+   $text .= "</td>\n";
+   $text .= "</tr>\n";
+   $text .= "</table>\n";
+   $text .= "</form>\n";
+   $text .= "<br />\n";
+   $text .= "<br />\n";
    
    $time = GMT_time();
    if ($_POST['gameid'] == "All")
@@ -97,17 +125,17 @@ function displayPastEvents(){
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
    if(!$result || ($num_rows < 0)){
-      echo "Error displaying info";
+      $text .= "Error displaying info";
       return;
    }
    if($num_rows == 0){
-      echo "Database table empty";
+      $text .= "Database table empty";
       return;
    }
    
    /* Display table contents */
-   echo "<table class=\"type1Border\">\n";
-   echo "<tr><td class=\"type1Header\"><b>Event</b></td><td colspan=\"2\" class=\"type1Header\"><b>Game</b></td><td class=\"type1Header\"><b>Type</b></td><td class=\"type1Header\"><b>Start</b></td><td class=\"type1Header\"><b>End</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\"><b>Games</b></td></tr>\n";
+   $text .= "<table class=\"type1Border\">\n";
+   $text .= "<tr><td class=\"type1Header\"><b>Event</b></td><td colspan=\"2\" class=\"type1Header\"><b>Game</b></td><td class=\"type1Header\"><b>Type</b></td><td class=\"type1Header\"><b>Start</b></td><td class=\"type1Header\"><b>End</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\"><b>Games</b></td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
       $gname  = mysql_result($result,$i, TBL_GAMES.".name");
       $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -155,41 +183,13 @@ function displayPastEvents(){
          ||($eend<=$time)
         )
       {
-        echo "<tr><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body2\">$gname</td><td class=\"type1Body2\">$etype</td><td class=\"type1Body2\">$date_start</td><td class=\"type1Body2\">$date_end</td><td class=\"type1Body2\">$nbrplayers</td><td class=\"type1Body2\">$nbrmatches</td></tr>\n";
+        $text .= "<tr><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body2\">$gname</td><td class=\"type1Body2\">$etype</td><td class=\"type1Body2\">$date_start</td><td class=\"type1Body2\">$date_end</td><td class=\"type1Body2\">$nbrplayers</td><td class=\"type1Body2\">$nbrmatches</td></tr>\n";
       }
    }
-   echo "</table><br />\n";
+   $text .= "</table><br />\n";
    // print the navigation link
-   paginate($rowsPerPage, $pg, $totalPages);
+   $text .= paginate($rowsPerPage, $pg, $totalPages);
 
 }
 
-?>
-
-
-
-<div id="main">
-<script type="text/javascript" src="./js/tabpane.js"></script>
-
-<h1>Past Events</h1>
-
-<div class="news">
-<?php
-/**
- * Display Users Table
- */
-?>
-<?php
-displayPastEvents();
-?>
-</div>
-
-<p>
-Back to [<a href="./index.php">Main Page</a>]
-</p>
-
-</div>
-
-<?php
-include_once(e_PLUGIN."ebattles/include/footer.php");
 ?>

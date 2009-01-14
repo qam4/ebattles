@@ -35,6 +35,7 @@ return $gm_time;
         @import url("common/lists.css");
         @import url("css/tables.css");
         @import url("css/tab.css");
+        @import url("js/calendar/calendar-blue.css");
 </style>
 
 

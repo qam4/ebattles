@@ -77,7 +77,7 @@ echo "</div>";
 if(strcmp(USERID,$req_user) == 0){
    echo "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
    echo "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
-   echo "<input type=\"submit\" name=\"createevent\" value=\"Create new Event\"></input>";
+   echo "<input class=\"button\" type=\"submit\" name=\"createevent\" value=\"Create new event\"></input>";
    echo "</form>";
 }
 echo "<h2>Player</h2>";
@@ -272,7 +272,7 @@ echo "<br /><br />";
 if(strcmp(USERID,$req_user) == 0){
    echo "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
    echo "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
-   echo "<input type=\"submit\" name=\"createteam\" value=\"Create new Team\"></input>";
+   echo "<input class=\"button\" type=\"submit\" name=\"createteam\" value=\"Create new team\"></input>";
    echo "</form>";
 }
 

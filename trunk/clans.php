@@ -71,7 +71,7 @@ if(check_class(e_UC_MEMBER))
 {
    echo "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
    echo "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"></input>";
-   echo "<input type=\"submit\" name=\"createteam\" value=\"Create new Team\"></input>";
+   echo "<input class=\"button\" type=\"submit\" name=\"createteam\" value=\"Create new team\"></input>";
    echo "</form>";
    echo "<br>";
 }

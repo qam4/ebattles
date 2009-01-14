@@ -93,7 +93,7 @@ function displayCurrentEvents(){
    $text .= "<td>\n";
    $text .= "<br />\n";
    $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"></input>\n";
-   $text .= "<input type=\"submit\" value=\"Filter\"></input>\n";
+   $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"></input>\n";
    $text .= "</td>\n";
    $text .= "</tr>\n";
    $text .= "</table>\n";
@@ -212,7 +212,7 @@ function displayCurrentEvents(){
        $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
        $text .= "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"></input>";
        $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"></input>";
-       $text .= "<input type=\"submit\" name=\"createevent\" value=\"Create new Event\"></input>";
+       $text .= "<input class=\"button\" type=\"submit\" name=\"createevent\" value=\"Create new event\"></input>";
        $text .= "</form>";
    }
    else
@@ -254,7 +254,7 @@ function displayRecentEvents(){
    $text .= "<td>\n";
    $text .= "<br />\n";
    $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"></input>\n";
-   $text .= "<input type=\"submit\" value=\"Filter\"></input>\n";
+   $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"></input>\n";
    $text .= "</td>\n";
    $text .= "</tr>\n";
    $text .= "</table>\n";

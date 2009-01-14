@@ -1,17 +1,20 @@
 td.type1Header
 { 
+   font-family: Verdana;
+   font-size: 11px;
    border-bottom: 2px solid #6699CC;
    border-left: 1px solid #6699CC;
    background-color: #BEC8D1; 
    text-align: left;
    text-indent: 5px;
    font-family: Verdana;
-   font-size: 1em;
    color: #404040; 
 }
 
 td.type1Body1
 { 
+   font-family: Verdana;
+   font-size: 10px;
    border-bottom: 1px solid #9CF;
    border-top: 0px;
    border-left: 1px solid #9CF;
@@ -22,6 +25,8 @@ td.type1Body1
 }
 td.type1Body2
 { 
+   font-family: Verdana;
+   font-size: 10px;
    border-bottom: 1px solid #9CF;
    border-top: 0px;
    border-left: 1px solid #9CF;
@@ -33,6 +38,8 @@ td.type1Body2
 
 td.type1Highlight
 {
+   font-family: Verdana;
+   font-size: 10px;
    border-bottom: 1px solid #9CF;
    border-top: 0px;
    border-left: 1px solid #9CF;
@@ -52,10 +59,11 @@ table.type1Border
 { 
    text-align: center;
    font-family: Verdana;
-   font-size: 0.8em;
+   font-size: 11px;
    color: #404040;
    background-color: #fafafa;
    border: 1px #6699CC solid;
    border-collapse: collapse;
    border-spacing: 0px;
+   width: 95%;
 }

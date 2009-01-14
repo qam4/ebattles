@@ -14,67 +14,6 @@ define('INT_HOUR', 3600);
 define('INT_DAY', 86400);
 define('INT_WEEK', 604800);
 
-function get_formatted_timediff($then, $now = false)
-{
-    $now      = (!$now) ? time() : $now;
-    $timediff = ($now - $then);
-    $weeks    = (int) intval($timediff / INT_WEEK);
-    $timediff = (int) intval($timediff - (INT_WEEK * $weeks));
-    $days     = (int) intval($timediff / INT_DAY);
-    $timediff = (int) intval($timediff - (INT_DAY * $days));
-    $hours    = (int) intval($timediff / INT_HOUR);
-    $timediff = (int) intval($timediff - (INT_HOUR * $hours));
-    $mins     = (int) intval($timediff / INT_MINUTE);
-    $timediff = (int) intval($timediff - (INT_MINUTE * $mins));
-    $sec      = (int) intval($timediff / INT_SECOND);
-    $timediff = (int) intval($timediff - ($sec * INT_SECOND));
-
-    $str = '';
-    if ( $weeks )
-    {
-        $str .= intval($weeks);
-        $str .= ($weeks > 1) ? ' weeks' : ' week';
-    }
-
-    if ( $days )
-    {
-        $str .= ($str) ? ', ' : '';
-        $str .= intval($days);
-        $str .= ($days > 1) ? ' days' : ' day';
-    }
-
-    if ( $hours )
-    {
-        $str .= ($str) ? ', ' : '';
-        $str .= intval($hours);
-        $str .= ($hours > 1) ? ' hours' : ' hour';
-    }
-
-    if ( $mins )
-    {
-        $str .= ($str) ? ', ' : '';
-        $str .= intval($mins);
-        $str .= ($mins > 1) ? ' minutes' : ' minute';
-    }
-
-    if ( $sec )
-    {
-        $str .= ($str) ? ', ' : '';
-        $str .= intval($sec);
-        $str .= ($sec > 1) ? ' seconds' : ' second';
-    }
-   
-    if ( !$weeks && !$days && !$hours && !$mins && !$sec )
-    {
-        $str .= '0 seconds';
-    }
-    else
-    {
-        $str .= '';
-    }
-   
-    return $str;
-}
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
@@ -462,7 +401,6 @@ else
 
    $text .="<div class=\"tab-page\">";
    $text .="<div class=\"tab\">Standings for this Ladder</div>";
-   $text .="<br />";
 
    $enextupdate_local = $enextupdate + GMT_TIMEOFFSET;
    $date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
@@ -580,7 +518,7 @@ else
       {
          $text .= "<td>";
          $text .= "<form action=\"".e_PLUGIN."ebattles/quickreport.php?eventid=$event_id\" method=\"post\">";
-         $text .= "<input type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"></input>";
+         $text .= "<input class=\"button\" type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"></input>";
          $text .= "</form>";
          $text .= "</td>";
       }
@@ -588,7 +526,7 @@ else
       {
          $text .= "<td>";
          $text .= "<form action=\"".e_PLUGIN."ebattles/matchreport.php?eventid=$event_id\" method=\"post\">";
-         $text .= "<input type=\"submit\" name=\"matchreport\" value=\"Match Report\"></input>";
+         $text .= "<input class=\"button\" type=\"submit\" name=\"matchreport\" value=\"Match Report\"></input>";
          $text .= "</form>";
          $text .= "</td>";
       }
@@ -621,12 +559,9 @@ else
    $text .= "<br />";
    $text .="</div>";
    $text .="</div>";
-   $text .= "<br />";
-
 
    $text .="<div class=\"tab-page\">";
    $text .="<div class=\"tab\">Latest Matches</div>";
-   $text .="<br /><br />";
 
    $q = "SELECT COUNT(*) as NbrMatches"
        ." FROM ".TBL_MATCHS
@@ -720,4 +655,69 @@ else
 $ns->tablerender('Event Information', $text);
 require_once(FOOTERF);
 exit;
+
+/***************************************************************************************
+ Functions
+***************************************************************************************/
+function get_formatted_timediff($then, $now = false)
+{
+    $now      = (!$now) ? time() : $now;
+    $timediff = ($now - $then);
+    $weeks    = (int) intval($timediff / INT_WEEK);
+    $timediff = (int) intval($timediff - (INT_WEEK * $weeks));
+    $days     = (int) intval($timediff / INT_DAY);
+    $timediff = (int) intval($timediff - (INT_DAY * $days));
+    $hours    = (int) intval($timediff / INT_HOUR);
+    $timediff = (int) intval($timediff - (INT_HOUR * $hours));
+    $mins     = (int) intval($timediff / INT_MINUTE);
+    $timediff = (int) intval($timediff - (INT_MINUTE * $mins));
+    $sec      = (int) intval($timediff / INT_SECOND);
+    $timediff = (int) intval($timediff - ($sec * INT_SECOND));
+
+    $str = '';
+    if ( $weeks )
+    {
+        $str .= intval($weeks);
+        $str .= ($weeks > 1) ? ' weeks' : ' week';
+    }
+
+    if ( $days )
+    {
+        $str .= ($str) ? ', ' : '';
+        $str .= intval($days);
+        $str .= ($days > 1) ? ' days' : ' day';
+    }
+
+    if ( $hours )
+    {
+        $str .= ($str) ? ', ' : '';
+        $str .= intval($hours);
+        $str .= ($hours > 1) ? ' hours' : ' hour';
+    }
+
+    if ( $mins )
+    {
+        $str .= ($str) ? ', ' : '';
+        $str .= intval($mins);
+        $str .= ($mins > 1) ? ' minutes' : ' minute';
+    }
+
+    if ( $sec )
+    {
+        $str .= ($str) ? ', ' : '';
+        $str .= intval($sec);
+        $str .= ($sec > 1) ? ' seconds' : ' second';
+    }
+   
+    if ( !$weeks && !$days && !$hours && !$mins && !$sec )
+    {
+        $str .= '0 seconds';
+    }
+    else
+    {
+        $str .= '';
+    }
+   
+    return $str;
+}
 ?>
