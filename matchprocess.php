@@ -146,7 +146,7 @@ global $sql;
    else
    {
       // should not be here -> redirect
-      header("Location: index.php");
+      header("Location: events.php");
    }
 
 ?>

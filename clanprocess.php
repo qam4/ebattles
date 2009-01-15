@@ -3,7 +3,8 @@
  *ClanProcess.php
  * 
  */
-include_once(e_PLUGIN."ebattles/include/session.php");
+require_once("../../class2.php");
+include_once(e_PLUGIN."ebattles/include/main.php");
 
 /*
 function deleteDivisions($clan_id)
@@ -130,6 +131,6 @@ function deleteClan($clan_id)
    }    
 
    //echo "-- test clan process --<br />";
-   header("Location: index.php");
+   //header("Location: events.php");
 
 ?>

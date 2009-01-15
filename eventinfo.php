@@ -221,15 +221,15 @@ else
               if( $num_rows_2 == 0)
               {
                  $text .= "Your are the captain of $div_name.";
-                 $text .= "<br />";
                  $text .= "
-                 <form style=\"float:left\" action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
+                 <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
                      <input type=\"hidden\" name=\"division\" value=\"$div_id\"></input>
                      <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                      <input type=\"hidden\" name=\"teamjoinevent\" value=\"1\"></input>
                      <input class=\"button\" type=\"submit\" value=\"Team Join Event\"></input>
                  ";
                  $text .= '</form>';
+                 $text .= "<br />";
               }
               else
               {
@@ -618,8 +618,8 @@ else
          $players = '';
          for($j=0; $j<$num_rows2; $j++)
          {
-            $pid  = mysql_result($result2,$j, TBL_USERS.".user_name");
-            $pname  = mysql_result($result2,$j, TBL_USERS.".user_id");
+            $pid  = mysql_result($result2,$j, TBL_USERS.".user_id");
+            $pname  = mysql_result($result2,$j, TBL_USERS.".user_name");
             if ($j==0)
               $players = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             else

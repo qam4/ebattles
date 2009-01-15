@@ -122,7 +122,7 @@ else
  
 
 
-   paginate($rowsPerPage, $pg, $totalPages);
+   $text .= paginate($rowsPerPage, $pg, $totalPages);
 
    $text .= "<br />";
    $text .= "<p>";

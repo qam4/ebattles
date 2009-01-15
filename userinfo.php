@@ -272,6 +272,7 @@ echo "<br /><br />";
 if(strcmp(USERID,$req_user) == 0){
    echo "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
    echo "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
+   $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"></input>";
    echo "<input class=\"button\" type=\"submit\" name=\"createteam\" value=\"Create new team\"></input>";
    echo "</form>";
 }
@@ -554,7 +555,7 @@ echo "</div>";
       echo "</table><br />\n"; 
    }
  
-   paginate($rowsPerPage, $pg, $totalPages);
+   $text .= paginate($rowsPerPage, $pg, $totalPages);
 
 echo "</div>";
 
