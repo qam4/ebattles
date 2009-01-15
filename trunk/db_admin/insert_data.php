@@ -269,7 +269,7 @@ require_once(HEADERF);
 	}
 	$text .= "Added Games<br />";
 
-$ns->tablerender('Insert data caption', $text, 'Insert data');
+$ns->tablerender('Insert data', $text);
 require_once(FOOTERF);
 exit;
 ?>

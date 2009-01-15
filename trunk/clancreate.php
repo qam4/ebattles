@@ -26,7 +26,7 @@ else
    $result2 = $sql->db_Query($q2);
    header("Location: clanmanage.php?clanid=".$last_id);
 }
-$ns->tablerender('Events', $text);
+$ns->tablerender('Create Team', $text);
 require_once(FOOTERF);
 exit;
 ?>

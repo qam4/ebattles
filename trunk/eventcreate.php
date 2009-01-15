@@ -57,7 +57,7 @@ else
    exit;
 }
 
-$ns->tablerender('Events', $text);
+$ns->tablerender('Create Event', $text);
 require_once(FOOTERF);
 exit;
 ?>
