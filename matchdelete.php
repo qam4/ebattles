@@ -104,7 +104,7 @@ else
         $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
    }
 }
-$ns->tablerender('Event Match Delete', $text);
+$ns->tablerender('Match Delete', $text);
 require_once(FOOTERF);
 exit;
 ?>

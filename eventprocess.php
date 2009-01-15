@@ -291,7 +291,7 @@ else
       }
    }  
 }
-$ns->tablerender('Manage Event', $text);
+$ns->tablerender('Process Event', $text);
 require_once(FOOTERF);
 exit;
 
