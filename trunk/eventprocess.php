@@ -30,7 +30,7 @@ else
    if (USERID==$eowner) $can_manage = 1;
    if ($can_manage == 0)
    {
-      header("Location: index.php");
+      $text .= "<br />Error.<br />";
    }
    else{
       

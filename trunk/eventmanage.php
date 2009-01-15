@@ -177,8 +177,7 @@ else
    if (USERID==$eowner) $can_manage = 1;
    if ($can_manage == 0)
    {
-      header("Location: index.php");
-      exit;
+      $text .= "<br />Error.<br />";
    }
    else
    {

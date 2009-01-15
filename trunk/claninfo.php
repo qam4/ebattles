@@ -8,26 +8,32 @@
  * password, they must first confirm their current password.
  *
  */
-ob_start();
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 
-?>
-<div id="main">
+/*******************************************************************
+********************************************************************/
+require_once(HEADERF);
+$text = '';
 
-<?php
-   /* Clan Name */
-   $clan_id = $_GET['clanid'];
+/* Clan Name */
+$clan_id = $_GET['clanid'];
 
-   if(isset($_GET['joindivision'])){
+if (!$clan_id)
+{
+   $text .= "<br />Error.<br />";
+}
+else
+{
+   if(isset($_GET['joindivision']))
+   {
    	 $time = GMT_time();
      $div_id = $_GET['division'];
-	 $q = " INSERT INTO ".TBL_MEMBERS."(Division,Name,timestamp)
+	   $q = " INSERT INTO ".TBL_MEMBERS."(Division,Name,timestamp)
 	        VALUES ($div_id,USERID,$time)";
          $sql->db_Query($q);
          header("Location: claninfo.php?clanid=$clan_id");
    }
-   ob_end_flush();
 
    $q = "SELECT ".TBL_CLANS.".*, "
                  .TBL_USERS.".*"
@@ -44,16 +50,16 @@ include_once(e_PLUGIN."ebattles/include/main.php");
    $clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
    $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
 
-   echo "<h1>$clan_name ($clan_tag)</h1>";
-   echo "<p>Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a></p><br />";
+   $text .= "<h1>$clan_name ($clan_tag)</h1>";
+   $text .= "<p>Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a></p><br />";
    
-   echo"<p>";
+   $text .="<p>";
    $can_manage = 0;
    if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
    if (USERID==$clan_owner) $can_manage = 1;
    if ($can_manage == 1)
-     echo"<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$clan_id\">Manage Team</a><br />";
-   echo"</p>";
+     $text .="<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$clan_id\">Manage Team</a><br />";
+   $text .="</p>";
 
    $q = "SELECT ".TBL_CLANS.".*, "
                  .TBL_DIVISIONS.".*, "
@@ -78,9 +84,9 @@ include_once(e_PLUGIN."ebattles/include/main.php");
       $div_captain  = mysql_result($result,$i, TBL_DIVISIONS.".Captain");
       $div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
-      echo"<div class=\"news\">";
-      echo "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</h2><br />";
-      echo "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
+      $text .="<div class=\"news\">";
+      $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</h2>";
+      $text .= "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
 
       if(check_class(e_UC_MEMBER))
       {
@@ -91,7 +97,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
          $result_2 = $sql->db_Query($q_2);
          if(!$result_2 || (mysql_numrows($result_2) < 1))
          {
-            echo "
+            $text .= "
             <form action=\"".e_PLUGIN."ebattles/claninfo.php\" method=\"get\">
                 <input type=\"hidden\" name=\"clanid\" value=\"$clan_id\"></input>
                 <input type=\"hidden\" name=\"division\" value=\"$div_id\"></input>
@@ -121,17 +127,17 @@ include_once(e_PLUGIN."ebattles/include/main.php");
       $result_2 = $sql->db_Query($q_2);
       if(!$result_2 || (mysql_numrows($result_2) < 1))
       {
-         echo "<p>No members</p>";
+         $text .= "<p>No members</p>";
       }
       else
       {
           $row = mysql_fetch_array($result_2);     
           $num_rows_2 = mysql_numrows($result_2);
      
-          echo "<p>$num_rows_2 member(s)</p>";
+          $text .= "<p>$num_rows_2 member(s)</p>";
 
-          echo "<table class=\"type1Border\">\n";
-          echo "<tr><td class=\"type1Header\"><b>Name</b></td><td class=\"type1Header\"><b>Status</b></td><td class=\"type1Header\"><b>Joined</b></td></tr>\n";
+          $text .= "<table class=\"type1Border\">\n";
+          $text .= "<tr><td class=\"type1Header\"><b>Name</b></td><td class=\"type1Header\"><b>Status</b></td><td class=\"type1Header\"><b>Joined</b></td></tr>\n";
           for($j=0; $j<$num_rows_2; $j++)
           {
              $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
@@ -140,20 +146,21 @@ include_once(e_PLUGIN."ebattles/include/main.php");
              $mjoined_local = $mjoined + GMT_TIMEOFFSET;
              $date = date("d M Y",$mjoined_local);
           
-             echo "<tr>\n";
-             echo "<td class=\"type1Body2\"><b><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mid\">$mname</a></b></td><td class=\"type1Body2\">Member</td><td class=\"type1Body2\">$date</td></tr>";
+             $text .= "<tr>\n";
+             $text .= "<td class=\"type1Body2\"><b><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mid\">$mname</a></b></td><td class=\"type1Body2\">Member</td><td class=\"type1Body2\">$date</td></tr>";
           
           }
-          echo "</table>\n";
+          $text .= "</table>\n";
       }
-      echo"</div>";
-      echo "<br />";
+      $text .="</div>";
+      $text .= "<br />";
    }
-   echo "<p>";
-   echo "<br />Back to [<a href=\"".e_PLUGIN."ebattles/clans.php\">Teams</a>]<br />";
-   echo "</p>";
-?>
-</div>
-<?php
-include_once(e_PLUGIN."ebattles/include/footer.php");
+   $text .= "<p>";
+   $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/clans.php\">Teams</a>]<br />";
+   $text .= "</p>";
+}
+
+$ns->tablerender('Team Information', $text);
+require_once(FOOTERF);
+exit;
 ?>
