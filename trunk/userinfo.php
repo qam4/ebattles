@@ -20,7 +20,8 @@ $req_user = $_GET['user'];
 
 if (!$req_user)
 {
-   $text .= "<br />Error.<br />";
+	   header("Location: ./events.php"); // should be users.php which does not exist yet
+	   exit();
 }
 else
 {
@@ -28,12 +29,18 @@ else
    
    /* Logged in user viewing own account */
    if(strcmp(USERID,$req_user) == 0){
-      $text .= "<h1>My Account</h1>";
    }
    /* Visitor not viewing own account */
    else{
    }
    
+   $q2 = "SELECT ".TBL_USERS.".*"
+       ." FROM ".TBL_USERS
+       ." WHERE (".TBL_USERS.".user_id = $req_user)";  
+   $result2 = $sql->db_Query($q2);
+   $uid  = mysql_result($result2,0, TBL_USERS.".user_id");
+   $uname  = mysql_result($result2,0, TBL_USERS.".user_name");   
+
    $text .= '
    <div class="tab-pane" id="tab-pane-5">
    
@@ -42,6 +49,9 @@ else
    ';
    
    $text .= "<p>";
+   $text .= "User Profile: <a href='".e_BASE."user.php?id.$req_user'>$uname</a>";
+   $text .= "</p>";
+
    /* Display requested user information */
    //$req_user_info = $sql->getUserInfo($req_user);
    
@@ -64,7 +74,7 @@ else
       $text .= "</form>";
    }
    $text .= "<h2>Player</h2>";
-   $text .= "List of all the events this user plays in";
+   $text .= "Events in which this user plays";
    $q = " SELECT *"
        ." FROM ".TBL_PLAYERS.", "
                 .TBL_EVENTS.", "
@@ -135,7 +145,7 @@ else
    }
    
    $text .= "<h2>Owner</h2>";
-   $text .= "List of all the events this user owns";
+   $text .= "Events this user owns";
    $q = " SELECT *"
        ." FROM ".TBL_EVENTS.", "
                 .TBL_GAMES
@@ -190,7 +200,7 @@ else
    }
    
    $text .= "<h2>Moderator</h2>";
-   $text .= "List of all the events this user moderates";
+   $text .= "Events this user moderates";
    $q = " SELECT *"
        ." FROM ".TBL_EVENTMODS.", "
                 .TBL_EVENTS.", "

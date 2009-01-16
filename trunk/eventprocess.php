@@ -14,7 +14,8 @@ $text = '';
 $event_id = $_GET['eventid'];
 if (!$event_id)
 {
-   $text .= "<br />Error.<br />";
+	   header("Location: ./events.php");
+	   exit();
 }
 else
 {
@@ -30,7 +31,8 @@ else
    if (USERID==$eowner) $can_manage = 1;
    if ($can_manage == 0)
    {
-      $text .= "<br />Error.<br />";
+	   header("Location: ./eventinfo.php?eventid=$event_id");
+	   exit();
    }
    else{
       

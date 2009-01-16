@@ -64,7 +64,8 @@ $self = $_SERVER['PHP_SELF'];
 
 if (!$event_id)
 {
-   $text .= "<br />Error.<br />";
+	   header("Location: ./events.php");
+	   exit();
 }
 else
 {
@@ -177,7 +178,8 @@ else
    if (USERID==$eowner) $can_manage = 1;
    if ($can_manage == 0)
    {
-      $text .= "<br />Error.<br />";
+	   header("Location: ./eventinfo.php?eventid=$event_id");
+	   exit();
    }
    else
    {
@@ -455,18 +457,20 @@ else
       $text .= "<form name=\"eventrulesform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       
       $text .= '
-      <table>
+      <table class="fborder">
+      <tbody>
       ';
       //<!-- Rules -->
       $text .= '
       <tr>
-        <td><b>Rules</b></td>
-        <td>
+        <td class="forumheader3"><b>Rules</b></td>
+        <td class="forumheader3">
       ';
       $text .= '<textarea id="eventrules" name="eventrules" cols="70" rows="20">'.$erules.'</textarea>';
       $text .= '
         </td>
       </tr>
+      </tbody>
       </table>
       
       <br /><br />
@@ -486,65 +490,57 @@ else
       $text .='
       <div class="tab-page">
       <div class="tab">Event Reset</div>
-      <div class="news">
-      <h2>Reset Event</h2>
+      <table class="fborder">
+      <tbody>
+        <tr>
       ';
-      /* fm -- why 2 eventresetforms her!!!? */
-      $text .= "<form name=\"eventresetform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
-      
+      $text .= "<form name=\"scoreresetform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-      <h3>Reset Players/Teams.</h3>
-      - Reset Players and Teams Statistics (Rank, Score, ELO, Games Played, Wins, Losses),<br />
-      - Delete all Matches.
-      <table>
-      <tr>
-          <td>
+          <td class="forumheader3"><b>Reset Players/Teams.</b><br>
+          - Reset Players and Teams Statistics (Rank, Score, ELO, Games Played, Wins, Losses)<br />
+          - Delete all Matches
+          </td>
+          <td class="forumheader3">
              <input type="hidden" name="eventresetscores" value="1"></input>
       ';
       $text .= "<input class=\"button\" type=\"submit\" value=\"Reset Scores\" onclick=\"return confirm('Are you sure you want to delete this event scores?');\"></input>";
       $text .= '
           </td>
-      </tr>
-      </table>
-      </form>
+        </form>
+        </tr>
+        <tr>
       ';
       $text .= "<form name=\"eventresetform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-      <h3>Reset Event.</h3>
-      - Delete all Players and Teams.<br />
-      - Delete all Matches.
-      <table>
-      <tr>
-          <td>
+          <td class="forumheader3"><b>Reset Event.</b><br>
+          - Delete all Players and Teams.<br />
+          - Delete all Matches.
+          </td>
+          <td class="forumheader3">
              <input type="hidden" name="eventresetevent" value="1"></input>
       ';
       $text .= "<input class=\"button\" type=\"submit\" value=\"Reset Event\" onclick=\"return confirm('Are you sure you want to reset this event?');\"></input>";
       $text .= '
           </td>
-      </tr>
-      </table>
-      </form>
-      </div>
-      <br /><br />
-      <div class="news">
-      <h2>Delete Event</h2>
+        </form>
+        </tr>
+        <tr>
       ';
       $text .= "<form name=\"eventdeleteform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-      - Delete Event.<br />
-      <table>
-      <tr>
-          <td>
+          <td class="forumheader3"><b>Delete Event.</b><br>
+          - Delete Event.<br />
+          </td>
+          <td class="forumheader3">
              <input type="hidden" name="eventdelete" value="1"></input>
       ';
       $text .= "<input class=\"button\" type=\"submit\" value=\"Delete Event\" onclick=\"return confirm('Are you sure you want to delete this event?');\"></input>";
       $text .= '
-          </td>
-      </tr>
+           </td>
+        </form>
+        </tr>
+      </tbody>
       </table>
-      </form>
-      
-      </div>
       </div>
       ';
       //***************************************************************************************
@@ -554,17 +550,15 @@ else
       ';
       $text .= "<form name=\"eventstatsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-      <table>
+      <table class="fborder">
       <tr>
-      <td >
+      <td class="forumheader3">
       Number of Matches to Rank:
       </td>
-      <td>
+      <td class="forumheader3">
       <input name="sliderValue0" id="sliderValue0" type="text" size="3" onchange="A_SLIDERS[0].f_setValue(this.value)"></input>
       </td>
-      </tr>
-      <tr>
-      <td>
+      <td class="forumheader3">
       <script type="text/javascript">
       ';
       $text .= "
@@ -603,15 +597,13 @@ else
       {
       $text .= '
          <tr>
-         <td >
+         <td class="forumheader3">
          Number of Team Matches to Rank:
          </td>
-         <td>
+         <td class="forumheader3">
          <input name="sliderValue1" id="sliderValue1" type="text" size="3" onchange="A_SLIDERS[1].f_setValue(this.value)"></input>
          </td>
-         </tr>
-         <tr>
-         <td>
+         <td class="forumheader3">
          <script type="text/javascript">
       ';
       $text .= "
@@ -634,15 +626,13 @@ else
       }   
       $text .= '
          <tr>
-         <td >
+         <td class="forumheader3">
          ELO Max:
          </td>
-         <td>
+         <td class="forumheader3">
          <input name="sliderValue2" id="sliderValue2" type="text" size="3" onchange="A_SLIDERS[2].f_setValue(this.value)"></input>
          </td>
-         </tr>
-         <tr>
-         <td>
+         <td class="forumheader3">
          <script type="text/javascript">
       ';
       $text .= "
@@ -663,15 +653,13 @@ else
          </tr>
          
          <tr>
-         <td >
+         <td class="forumheader3">
          Games Played Max:
          </td>
-         <td>
+         <td class="forumheader3">
          <input name="sliderValue3" id="sliderValue3" type="text" size="3" onchange="A_SLIDERS[3].f_setValue(this.value)"></input>
          </td>
-         </tr>
-         <tr>
-         <td>
+         <td class="forumheader3">
          <script type="text/javascript">
       ';
       $text .= "
@@ -692,15 +680,13 @@ else
          </tr>
          
          <tr>
-         <td >
+         <td class="forumheader3">
          Victory Ratio Max:
          </td>
-         <td>
+         <td class="forumheader3">
          <input name="sliderValue4" id="sliderValue4" type="text" size="3" onchange="A_SLIDERS[4].f_setValue(this.value)"></input>
          </td>
-         </tr>
-         <tr>
-         <td>
+         <td class="forumheader3">
          <script type="text/javascript">
       ';
       $text .= "
@@ -721,15 +707,13 @@ else
          </tr>
          
          <tr>
-         <td >
+         <td class="forumheader3">
          Victory Percent Max:
          </td>
-         <td>
+         <td class="forumheader3">
          <input name="sliderValue5" id="sliderValue5" type="text" size="3" onchange="A_SLIDERS[5].f_setValue(this.value)"></input>
          </td>
-         </tr>
-         <tr>
-         <td>
+         <td class="forumheader3">
          <script type="text/javascript">
       ';
       $text .= "
@@ -750,15 +734,13 @@ else
          </tr>
          
          <tr>
-         <td >
+         <td class="forumheader3">
          Unique Opponents Max:
          </td>
-         <td>
+         <td class="forumheader3">
          <input name="sliderValue6" id="sliderValue6" type="text" size="3" onchange="A_SLIDERS[6].f_setValue(this.value)"></input>
          </td>
-         </tr>
-         <tr>
-         <td>
+         <td class="forumheader3">
          <script type="text/javascript">
       ';
       $text .= "
@@ -779,15 +761,13 @@ else
          </tr>
          
          <tr>
-         <td >
+         <td class="forumheader3">
          Opponents Avg ELO:
          </td>
-         <td>
+         <td class="forumheader3">
          <input name="sliderValue7" id="sliderValue7" type="text" size="3" onchange="A_SLIDERS[7].f_setValue(this.value)"></input>
          </td>
-         </tr>
-         <tr>
-         <td>
+         <td class="forumheader3">
          <script type="text/javascript">
       ';
       $text .= "
@@ -808,15 +788,13 @@ else
          </tr>
          
          <tr>
-         <td >
+         <td class="forumheader3">
          Streaks:
          </td>
-         <td>
+         <td class="forumheader3">
          <input name="sliderValue8" id="sliderValue8" type="text" size="3" onchange="A_SLIDERS[8].f_setValue(this.value)"></input>
          </td>
-         </tr>
-         <tr>
-         <td>
+         <td class="forumheader3">
          <script type="text/javascript">
       ';
       $text .= "
@@ -837,10 +815,10 @@ else
          </tr>
          
          <tr>
-         <td>
+         <td class="forumheader3">
          Ranking Max:
          </td>
-         <td>
+         <td class="forumheader3" colspan="2">
       ';
          
       $text .= $rating_max;
