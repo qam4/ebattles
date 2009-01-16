@@ -175,7 +175,7 @@ if ($etype == "Team Ladder")
        ." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
          ." AND (".TBL_MATCHS.".Event = '$event_id')"
          ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-         ." AND (".TBL_PLAYERS.".Name = '$pname')";
+         ." AND (".TBL_PLAYERS.".Name = '$pid')";
       
       $result_2 = $sql->db_Query($q_2);
       $num_rows_2 = mysql_numrows($result_2);

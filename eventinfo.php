@@ -182,6 +182,7 @@ else
    $text .="<div class=\"tab-page\">";
    $text .="<div class=\"tab\">Event Info</div>";
 
+   $text .= "<p>";
    if(check_class(e_UC_MEMBER))
    {
       /* Join/Quit Event */
@@ -205,6 +206,7 @@ else
          $num_rows = mysql_numrows($result);
          if($num_rows > 0)
          {
+           $text .= "<table>";
            for($i=0;$i < $num_rows;$i++)
            {
               $div_name  = mysql_result($result,$i, TBL_CLANS.".Name");
@@ -218,10 +220,11 @@ else
                    $result_2 = $sql->db_Query($q_2);
                    $num_rows_2 = mysql_numrows($result_2);
               
+              $text .= "<tr>";
               if( $num_rows_2 == 0)
               {
-                 $text .= "Your are the captain of $div_name.";
-                 $text .= "
+                 $text .= "<td>Your are the captain of $div_name.</td>";
+                 $text .= "<td>
                  <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
                      <input type=\"hidden\" name=\"division\" value=\"$div_id\"></input>
                      <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
@@ -229,12 +232,15 @@ else
                      <input class=\"button\" type=\"submit\" value=\"Team Join Event\"></input>
                  ";
                  $text .= '</form>';
-                 $text .= "<br />";
+                 $text .= "</td>";
               }
               else
               {
+                 $text .= "<td>Your team $div_name is signed up for this event.</td>";
               }
+              $text .= "</tr>";
            }
+           $text .= "</table>";
          }
       }
 
@@ -300,8 +306,7 @@ else
                   else
                   {
                       $team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-                      $text .= "Your team $clan_name has signed up to this event.";
-                      $text .= "<br />";
+                      $text .= "Your team $clan_name has signed up to this event.<br />";
                       $text .= "
                       <form style=\"float:left\" action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
                           <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
@@ -355,12 +360,12 @@ else
              ";     
          */
       }   
-      
    }
    else
    {   	
       $text .= "Please log in to participate to this event.<br />";
    }
+   $text .= "</p>";      
       
    $text .= "<p>";
    $text .="Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$eowner\">$eownername</a><br />";
