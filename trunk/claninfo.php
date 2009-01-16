@@ -30,7 +30,7 @@ else
    	 $time = GMT_time();
      $div_id = $_GET['division'];
 	   $q = " INSERT INTO ".TBL_MEMBERS."(Division,Name,timestamp)
-	        VALUES ($div_id,USERID,$time)";
+	        VALUES ($div_id,".USERID.",$time)";
          $sql->db_Query($q);
          header("Location: claninfo.php?clanid=$clan_id");
    }

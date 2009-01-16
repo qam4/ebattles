@@ -181,6 +181,7 @@ else
    }
    else
    {
+      //***************************************************************************************
       $text .='
       <div class="tab-pane" id="tab-pane-3">
       
@@ -188,9 +189,17 @@ else
       <div class="tab">Event Summary</div>
       ';
 
-      $text .= "<p>";
-      $text .="Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$eowner\">$eownername</a><br />";
-      $text .="</p>";
+      $text .= '
+        <table class="fborder">
+        <tbody>
+          <tr>
+      ';
+      $text .= '<td class="forumheader3">Owner</td>';
+      $text .= '<td class="forumheader3">';
+      $text .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$eowner\">$eownername</a></td>";
+      $text .= '
+          </tr>
+      ';
       
       $q = "SELECT ".TBL_EVENTMODS.".*, "
                     .TBL_USERS.".*"
@@ -200,7 +209,11 @@ else
           ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".Name)";   
       $result = $sql->db_Query($q);
       $num_rows = mysql_numrows($result);
-      $text .= "Moderators:<br />";
+      $text .= '
+          <tr>
+      ';
+      $text .= '<td class="forumheader3">Moderators</td>';
+      $text .= '<td class="forumheader3">';
       if ($num_rows>0)
       {
          $text .= "<table>";
@@ -226,24 +239,35 @@ else
       $result = $sql->db_Query($q);
       /* Error occurred, return given name by default */
       $num_rows = mysql_numrows($result);
-      $text .= "<table>";
-      $text .= "<tr>";
-      $text .= "<td><select name=\"mod\">\n";
+      $text .= '
+                <table>
+                  <tr>
+                    <td>
+                      <select name="mod">
+      ';
       for($i=0; $i<$num_rows; $i++){
          $uid  = mysql_result($result,$i, TBL_USERS.".user_id");
          $uname  = mysql_result($result,$i, TBL_USERS.".user_name");
-            $text .= "<option value=\"$uname\">$uname ($uid)</option>\n";
+            $text .= "<option value=\"$uid\">$uname</option>\n";
       }
-      $text .= "</select>\n";
-      $text .= "</td>\n";
-      $text .= "<td>";
-      $text .= "<input type=\"hidden\" name=\"eventaddmod\"></input>";
-      $text .= "<input class=\"button\" type=\"submit\" value=\"Add Moderator\"></input>";
-      $text .= "</td>";
-      $text .= "</tr>";
-      $text .= "</table>";
-      $text .= "</form>";
-      $text .= "</div>";
+      $text .= '
+                      </select>
+                    </td>
+                    <td>
+                      <input type="hidden" name="eventaddmod"></input>
+                      <input class="button" type="submit" value="Add Moderator"></input>
+                    </td>
+                  </tr>
+                </table>
+                </form>
+      ';
+      $text .= '
+            </td>
+          </tr>
+        </tbody>
+        </table>
+        </div>
+      ';
       
       //***************************************************************************************
       $text .= '
@@ -252,13 +276,14 @@ else
       ';
       $text .= "<form name=\"eventsettingsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-      <table border="0" cellspacing="0" cellpadding="3">
+      <table class="fborder">
+      <tbody">
       ';
       //<!-- Event Name -->
       $text .= '
       <tr>
-        <td><b>Name:</b></td>
-        <td>
+        <td class="forumheader3"><b>Name</b></td>
+        <td class="forumheader3">
           <input type="text" size="40" name="eventname" value="'.$ename.'"></input>
         </td>
       </tr>
@@ -267,8 +292,8 @@ else
       //<!-- Event Password -->
       $text .= '
       <tr>
-        <td><b>Join Event Password:</b></td>
-        <td>
+        <td class="forumheader3"><b>Join Event Password</b></td>
+        <td class="forumheader3">
           <input type="text" size="40" name="eventpassword" value="'.$epassword.'"></input>
         </td>
       </tr>
@@ -281,9 +306,9 @@ else
       $result = $sql->db_Query($q);
       /* Error occurred, return given name by default */
       $num_rows = mysql_numrows($result);
-      $text .= "<tr><td>\n";
-      $text .= "<b>Game:</b></td>\n";
-      $text .= "<td><select name=\"eventgame\">\n";
+      $text .= '<tr>';
+      $text .= '<td class="forumheader3"><b>Game</b></td>';
+      $text .= '<td class="forumheader3"><select name="eventgame">';
       for($i=0; $i<$num_rows; $i++){
          $gname  = mysql_result($result,$i, TBL_GAMES.".name");
          $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -296,14 +321,14 @@ else
             $text .= "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
          }
       }
-      $text .= "</select>\n";
-      $text .= "</td></tr>\n";
+      $text .= '</select>';
+      $text .= '</td></tr>';
       
       //<!-- Type -->
       $text .= '
       <tr>
-        <td><b>Type:</b></td>
-        <td>
+        <td class="forumheader3"><b>Type</b></td>
+        <td class="forumheader3">
       ';
          if ($etype == "Team Ladder")
          {
@@ -323,24 +348,24 @@ else
       //<!-- Start Date -->
       $text .= '
       <tr>
-        <td><b>Start Date:</b></td>
-        <td>
-      <table cellspacing="0" cellpadding="0" style="border-collapse: collapse">
-      <tr>
-        <td>
-         <input type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" />
-        </td>
-        <td>
-           <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="Date selector"
-      ';
+        <td class="forumheader3"><b>Start Date</b></td>
+        <td class="forumheader3">
+          <table>
+            <tr>
+              <td>
+               <input type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" />
+              </td>
+              <td>
+                 <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="Date selector"
+            ';
       $text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
       $text .= '
-        </td>
-        <td>
-          <input class="button" type="button" value="Reset" onclick="clearStartDate(this.form);"></input>
-        </td>
-      </tr>
-      </table>
+              </td>
+              <td>
+                <input class="button" type="button" value="Reset" onclick="clearStartDate(this.form);"></input>
+              </td>
+            </tr>
+          </table>
       ';
       $text .= '
       <script type="text/javascript">
@@ -360,9 +385,9 @@ else
       //<!-- End Date -->
       $text .= '
       <tr>
-        <td><b>End Date:</b></td>
-        <td>
-      <table cellspacing="0" cellpadding="0" style="border-collapse: collapse">
+        <td class="forumheader3"><b>End Date</b></td>
+        <td class="forumheader3">
+      <table>
       <tr>
         <td>
          <input type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" />
@@ -397,13 +422,14 @@ else
       //<!-- Description -->
       $text .= '
       <tr>
-        <td><b>Descrition:</b></td>
-        <td>
+        <td class="forumheader3"><b>Description</b></td>
+        <td class="forumheader3">
       ';
       $text .= '<textarea id="eventdescription" name="eventdescription" cols="70" rows="20">'.$edescription.'</textarea>';
       $text .= '
         </td>
       </tr>
+      </tbody">
       </table>
       ';
       
@@ -429,12 +455,12 @@ else
       $text .= "<form name=\"eventrulesform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       
       $text .= '
-      <table border="0" cellspacing="0" cellpadding="3">
+      <table>
       ';
       //<!-- Rules -->
       $text .= '
       <tr>
-        <td><b>Rules:</b></td>
+        <td><b>Rules</b></td>
         <td>
       ';
       $text .= '<textarea id="eventrules" name="eventrules" cols="70" rows="20">'.$erules.'</textarea>';
@@ -470,7 +496,7 @@ else
       <h3>Reset Players/Teams.</h3>
       - Reset Players and Teams Statistics (Rank, Score, ELO, Games Played, Wins, Losses),<br />
       - Delete all Matches.
-      <table border="0" cellspacing="0" cellpadding="3">
+      <table>
       <tr>
           <td>
              <input type="hidden" name="eventresetscores" value="1"></input>
@@ -487,7 +513,7 @@ else
       <h3>Reset Event.</h3>
       - Delete all Players and Teams.<br />
       - Delete all Matches.
-      <table border="0" cellspacing="0" cellpadding="3">
+      <table>
       <tr>
           <td>
              <input type="hidden" name="eventresetevent" value="1"></input>
@@ -506,7 +532,7 @@ else
       $text .= "<form name=\"eventdeleteform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
       - Delete Event.<br />
-      <table border="0" cellspacing="0" cellpadding="3">
+      <table>
       <tr>
           <td>
              <input type="hidden" name="eventdelete" value="1"></input>
@@ -528,7 +554,7 @@ else
       ';
       $text .= "<form name=\"eventstatsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-      <table cellpadding="2" border="0">
+      <table>
       <tr>
       <td >
       Number of Matches to Rank:
