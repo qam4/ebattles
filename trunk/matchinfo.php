@@ -68,7 +68,7 @@ else
 
    if ($num_rows>0)
    {
-      $reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
+      $reported_by  = mysql_result($result,0, TBL_USERS.".user_id");
       $reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
       $comments  = mysql_result($result,0, TBL_MATCHS.".Comments");
       $time_reported  = mysql_result($result,0, TBL_MATCHS.".TimeReported");

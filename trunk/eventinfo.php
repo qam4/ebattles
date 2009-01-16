@@ -106,7 +106,7 @@ else
    $egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
    $egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-   $eowner = mysql_result($result,0 , TBL_EVENTS.".Owner");
+   $eowner = mysql_result($result,0 , TBL_USERS.".user_id");
    $eownername = mysql_result($result,0 , TBL_USERS.".user_name");
    $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
    $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
@@ -388,9 +388,9 @@ else
    $num_rows = mysql_numrows($result);
    $text .= "Moderators:<br />";
    for($i=0; $i<$num_rows; $i++){
-      $modname  = mysql_result($result,$i, TBL_EVENTMODS.".Name");
+      $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
       $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
-      $text .= "- <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modname\">$modname</a><br />";
+      $text .= "- <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modid\">$modname</a><br />";
    }
    $text .="</p>";
    
@@ -597,7 +597,7 @@ else
       for($i=0; $i<$num_rows; $i++)
       {
          $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-         $mReportedBy  = mysql_result($result,$i, TBL_MATCHS.".ReportedBy");
+         $mReportedBy  = mysql_result($result,$i, TBL_USERS.".user_id");
          $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
          $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
          $mTime_local = $mTime + GMT_TIMEOFFSET;
