@@ -31,7 +31,8 @@ $event_id = $_GET['eventid'];
 
 if (!$event_id)
 {
-   $text .= "<br />Error.<br />";
+	   header("Location: ./events.php");
+	   exit();
 }
 else
 {
@@ -373,7 +374,7 @@ else
    if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
    if (USERID==$eowner) $can_manage = 1;
    if ($can_manage == 1)
-     $text .="<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$event_id\">Manage event</a><br />";
+     $text .="<a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$event_id\">Click here to Manage event</a><br />";
    $text .="</p>";
 
    $text .= "<p>";

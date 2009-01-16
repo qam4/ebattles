@@ -24,7 +24,8 @@ $match_id = $_GET['matchid'];
 
 if (!$event_id)
 {
-   $text .= "<br />Error.<br />";
+	   header("Location: ./events.php");
+	   exit();
 }
 else
 {

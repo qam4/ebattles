@@ -14,17 +14,24 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
-$text = '';
+$text .='<script type="text/javascript" src="./js/tabpane.js"></script>';
 
 /* Clan Name */
 $clan_id = $_GET['clanid'];
 
 if (!$clan_id)
 {
-   $text .= "<br />Error.<br />";
+	 header("Location: ./clans.php");
+	 exit();
 }
 else
 {
+   $text .= '
+      <div class="tab-pane" id="tab-pane-6">
+      
+      <div class="tab-page">
+      <div class="tab">Clan Summary</div>
+   ';
    if(isset($_GET['joindivision']))
    {
    	 $time = GMT_time();
@@ -51,15 +58,19 @@ else
    $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
 
    $text .= "<h1>$clan_name ($clan_tag)</h1>";
-   $text .= "<p>Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a></p><br />";
-   
-   $text .="<p>";
+   $text .= "<p>Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a><br />";
    $can_manage = 0;
    if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
    if (USERID==$clan_owner) $can_manage = 1;
    if ($can_manage == 1)
-     $text .="<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$clan_id\">Manage Team</a><br />";
+     $text .="<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$clan_id\">Click here to Manage Team</a><br />";
    $text .="</p>";
+   $text .="</div>";
+   
+   $text .= '
+      <div class="tab-page">
+      <div class="tab">Clan Divisions</div>
+   ';
 
    $q = "SELECT ".TBL_CLANS.".*, "
                  .TBL_DIVISIONS.".*, "
@@ -155,6 +166,7 @@ else
       $text .="</div>";
       $text .= "<br />";
    }
+   $text .="</div>";
    $text .= "<p>";
    $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/clans.php\">Teams</a>]<br />";
    $text .= "</p>";

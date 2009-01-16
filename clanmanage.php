@@ -21,7 +21,8 @@ $clan_id = $_GET['clanid'];
 
 if (!$clan_id)
 {
-   $text .= "<br />Error.<br />";
+	 header("Location: ./clans.php");
+	 exit();
 }
 else
 {
@@ -49,7 +50,8 @@ else
    if (USERID==$clan_owner) $can_manage = 1;
    if ($can_manage == 0)
    {
-      $text .= "<br />Error.<br />";
+	   header("Location: ./claninfo.php?clanid=$clan_id");
+	   exit();
    }
    else
    { 	
@@ -60,7 +62,12 @@ else
          <div class="tab">Clan Summary</div>
       ';
       
-      $text .= "<p><b>Owner:</b> <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a></p>";
+      $text .= '<table class="fborder">';
+      $text .= '<tbody>';
+      $text .= '<tr>';
+      $text .= '<td class="forumheader3"><b>Owner</b><br>';
+      $text .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a>";
+      $text .= '</td>';
       
       $q_2 = "SELECT ".TBL_USERS.".*"
          ." FROM ".TBL_USERS;
@@ -70,9 +77,10 @@ else
       $num_rows_2 = mysql_numrows($result_2);
       
       $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
-      $text .= "<table>";
-      $text .= "<tr>";
-      $text .= "<td><select name=\"clanowner\">\n";
+      $text .= '<td class="forumheader3">';
+      $text .= '<table>';
+      $text .= '<tr>';
+      $text .= '<td><select name="clanowner">';
       for($j=0; $j<$num_rows_2; $j++)
       {
          $uid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
@@ -80,45 +88,45 @@ else
       
          if ($clan_owner == $uid)
          {
-            $text .= "<option value=\"$uid\" selected=\"selected\">$uname ($uid)</option>\n";
+            $text .= "<option value=\"$uid\" selected=\"selected\">$uname</option>\n";
          }
          else
          {
-            $text .= "<option value=\"$uid\">$uname ($uid)</option>\n";
+            $text .= "<option value=\"$uid\">$uname</option>\n";
          }
       }
-      $text .= "</select>\n";
-      $text .= "</td>\n";
-      $text .= "<td>";
-      $text .= "<input type=\"hidden\" name=\"clanchangeowner\"></input>";
-      $text .= "<input class=\"button\" type=\"submit\" value=\"Change Owner\"></input>";
-      $text .= "</td>";
-      $text .= "</tr>";
-      $text .= "</table>";
-      $text .= "</form>";
-      $text .= "<br />";
+      $text .= '</select>';
+      $text .= '</td>';
+      $text .= '<td>';
+      $text .= '<input type="hidden" name="clanchangeowner"></input>';
+      $text .= '<input class="button" type="submit" value="Change Owner"></input>';
+      $text .= '</td>';
+      $text .= '</tr>';
+      $text .= '</table>';
+      $text .= '</form>';
+      $text .= '</td>';
+      
+      $text .= '<tr>';
       $text .= "<form name=\"clansettingsform\" action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
 
       $text .= '
-         <table border="0" cellspacing="0" cellpadding="3">
-         <!-- Clan Name -->
-         <tr>
-           <td><b>Name:</b></td>
-           <td>
+           <td class="forumheader3"><b>Name</b></td>
+           <td class="forumheader3">
              <input type="text" size="40" name="clanname" value="'.$clan_name.'"></input>
            </td>
          </tr>
          
          <!-- Clan Tag -->
          <tr>
-           <td><b>Tag:</b></td>
-           <td>
+           <td class="forumheader3"><b>Tag</b></td>
+           <td class="forumheader3">
              <input type="text" size="40" name="clantag" value="'.$clan_tag.'"></input>
            </td>
          </tr>
-         
+         </tbody>
          </table>
          <!-- Save Button -->
+         <br />
          <p align="center">
              <input type="hidden" name="clansettingssave" value="1"></input>
              <input class="button" type="submit" value="Save"></input>
@@ -133,32 +141,33 @@ else
          <div class="tab">Clan Divisions</div>
       ';
 
-      $text .= "<form name=\"clanadddivform\" action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
+      $text .= '<table class="fborder">';
+      $text .= '<tbody>';
+
       $q = "SELECT ".TBL_GAMES.".*"
           ." FROM ".TBL_GAMES
           ." ORDER BY Name";
       $result = $sql->db_Query($q);
       /* Error occurred, return given name by default */
       $num_rows = mysql_numrows($result);
-      $text .= "<table>";
-      $text .= "<tr>";
-      $text .= "<td><select name=\"divgame\">\n";
+      $text .= "<form name=\"clanadddivform\" action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
+      $text .= '<tr>';
+      $text .= '<td class="forumheader3">';
+      $text .= 'Create a division for each game your team plays in';
+      $text .= '</td>';
+      $text .= '<td class="forumheader3"><select name="divgame">';
       for($i=0; $i<$num_rows; $i++){
          $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
          $gid  = mysql_result($result,$i, TBL_GAMES.".GameId");
          $text .= "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
       }
-      $text .= "</select>\n";
-      $text .= "</td>\n";
-      $text .= "<td>";
-      $text .= "<input type=\"hidden\" name=\"clanadddiv\"></input>";
-      $text .= "<input type=\"hidden\" name=\"clanowner\" value=\"$clan_owner\"></input>";
-      $text .= "<input class=\"button\" type=\"submit\" value=\"Add Division\"></input>";
-      $text .= "</td>";
-      $text .= "</tr>";
-      $text .= "</table>";
-      $text .= "</form>";
-      $text .= "<br />";
+      $text .= '</select>';
+      $text .= '<input type="hidden" name="clanadddiv"></input>';
+      $text .= '<input type="hidden" name="clanowner" value="'.$clan_owner.'"></input>';
+      $text .= '<input class="button" type="submit" value="Add Division"></input>';
+      $text .= '</td>';
+      $text .= '</tr>';
+      $text .= '</form>';
       
       $q = "SELECT ".TBL_CLANS.".*, "
                     .TBL_DIVISIONS.".*, "
@@ -183,10 +192,11 @@ else
          $div_captain  = mysql_result($result,$i, TBL_DIVISIONS.".Captain");
          $div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
       
-         $text .="<div class=\"news\">";
-         $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</h2>";
-         $text .= "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
-      
+         $text .= '<tr>';
+         $text .= '<td class="forumheader3">';
+         $text .= "<b><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</b><br>";
+         $text .= "Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a>";
+         $text .= '</td>';
          $q_2 = "SELECT ".TBL_CLANS.".*, "
                       .TBL_DIVISIONS.".*, "
                       .TBL_MEMBERS.".*, "
@@ -207,17 +217,18 @@ else
          $result_2 = $sql->db_Query($q_2);
          if(!$result_2 || (mysql_numrows($result_2) < 1))
          {
-            $text .= "<p>No members</p>";
+            $text .= 'No members';
          }
          else
          {
              $row = mysql_fetch_array($result_2);     
              $num_rows_2 = mysql_numrows($result_2);
         
+             $text .= '<td class="forumheader3">';
              $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
-             $text .= "<table>";
-             $text .= "<tr>";
-             $text .= "<td><select name=\"divcaptain\">\n";
+             $text .= '<table>';
+             $text .= '<tr>';
+             $text .= '<td><select name="divcaptain">';
              for($j=0; $j<$num_rows_2; $j++)
              {
                 $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
@@ -232,19 +243,21 @@ else
                    $text .= "<option value=\"$mid\">$mname</option>\n";
                 }
              }
-             $text .= "</select>\n";
-             $text .= "</td>\n";
-             $text .= "<td>";
-             $text .= "<input type=\"hidden\" name=\"clandiv\" value=\"$div_id\"></input>";
-             $text .= "<input type=\"hidden\" name=\"clanchangedivcaptain\"></input>";
-             $text .= "<input class=\"button\" type=\"submit\" value=\"Change Captain\"></input>";
-             $text .= "</td>";
-             $text .= "</tr>";
-             $text .= "</table>";
-             $text .= "</form>";
-      
-             $text .= "<p>$num_rows_2 member(s)</p>";
-      
+             $text .= '</select>';
+             $text .= '</td>';
+             $text .= '<td>';
+             $text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"></input>';
+             $text .= '<input type="hidden" name="clanchangedivcaptain"></input>';
+             $text .= '<input class="button" type="submit" value="Change Captain"></input>';
+             $text .= '</td>';
+             $text .= '</tr>';
+             $text .= '</table>';
+             $text .= '</form>';
+             $text .= '</td>';
+
+             $text .= '<tr>';
+             $text .= '<td class="forumheader3">'.$num_rows_2.' member(s)</td>';
+             $text .= '<td class="forumheader3">';
              $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
              $text .= "<table class=\"type1Border\">\n";
              $text .= "<tr><td class=\"type1Header\"><b>Name</b></td><td class=\"type1Header\"><b>Status</b></td><td class=\"type1Header\"><b>Joined</b></td><td class=\"type1Header\"><b>Kick</b></td></tr>\n";
@@ -271,17 +284,18 @@ else
              $text .= "</tr>";
              $text .= "</table>\n";
              $text .= "</form>";
+             $text .= '</td>';
+             $text .= '</tr>';
          }
-         $text .="</div>";
-         $text .= "<br />";
       }
+      $text .= '</tbody>';
+      $text .= '</table>';
       
-      
-      $text .="</div>";     
-      $text .="</div>";     
-      $text .= "<p>";
+      $text .= '</div>';     
+      $text .= '</div>';     
+      $text .= '<p>';
       $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/clans.php\">Teams</a>]<br />";
-      $text .= "</p>";
+      $text .= '</p>';
    }
 
    $text .= '
