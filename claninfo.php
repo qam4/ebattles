@@ -53,7 +53,7 @@ else
    $num_rows = mysql_numrows($result);
 
    $clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
-   $clan_owner  = mysql_result($result,0, TBL_CLANS.".Owner");
+   $clan_owner  = mysql_result($result,0, TBL_USERS.".user_id");
    $clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
    $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
 
@@ -92,7 +92,7 @@ else
       $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
       $gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
       $div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
-      $div_captain  = mysql_result($result,$i, TBL_DIVISIONS.".Captain");
+      $div_captain  = mysql_result($result,$i, TBL_USERS.".user_id");
       $div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
       $text .="<div class=\"news\">";
