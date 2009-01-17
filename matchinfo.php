@@ -58,7 +58,7 @@ else
        ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
          ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
          ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-         ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
+         ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
        ." ORDER BY ".TBL_SCORES.".Player_Rank";
  
    $result = $sql->db_Query($q);
@@ -92,7 +92,7 @@ else
    $q_2 = "SELECT ".TBL_EVENTMODS.".*"
        ." FROM ".TBL_EVENTMODS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-       ."   AND (".TBL_EVENTMODS.".Name = ".USERID.")";   
+       ."   AND (".TBL_EVENTMODS.".User = ".USERID.")";   
    $result_2 = $sql->db_Query($q_2);
    $num_rows_2 = mysql_numrows($result_2);
    

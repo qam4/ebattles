@@ -44,7 +44,7 @@ else
          $eventmod = $_POST['eventmod'];
          $q2 = "DELETE FROM ".TBL_EVENTMODS
             ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-            ."   AND (".TBL_EVENTMODS.".Name = '$eventmod')";   
+            ."   AND (".TBL_EVENTMODS.".User = '$eventmod')";   
          $result2 = $sql->db_Query($q2);
       
          //echo "-- eventdeletemod --<br />";
@@ -59,7 +59,7 @@ else
          $q2 = "SELECT ".TBL_EVENTMODS.".*"
              ." FROM ".TBL_EVENTMODS
              ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-             ."   AND (".TBL_EVENTMODS.".Name = '$eventmod')";   
+             ."   AND (".TBL_EVENTMODS.".User = '$eventmod')";   
          $result2 = $sql->db_Query($q2);
          $num_rows_2 = mysql_numrows($result2);
          if ($num_rows_2==0)

@@ -91,9 +91,9 @@ $eplug_tables = array(
 	Event int NOT NULL,
 	INDEX (Event),
 	FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
-	Name int(10) unsigned NOT NULL,
-	INDEX (Name),
-	FOREIGN KEY (Name) REFERENCES ".TBL_USERS." (user_id),
+	User int(10) unsigned NOT NULL,
+	INDEX (User),
+	FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
 	Level int DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_CLANS."
@@ -127,9 +127,9 @@ $eplug_tables = array(
 	Division int NOT NULL,
 	INDEX (Division),
 	FOREIGN KEY (Division) REFERENCES ".TBL_DIVISIONS." (DivisionID),
-	Name int(10) unsigned NOT NULL,
-	INDEX (Name),
-	FOREIGN KEY (Name) REFERENCES ".TBL_USERS." (user_id),
+	User int(10) unsigned NOT NULL,
+	INDEX (User),
+	FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
 	timestamp int(11) unsigned not null
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_TEAMS."
@@ -168,9 +168,9 @@ $eplug_tables = array(
 	Event int NOT NULL,
 	INDEX (Event),
 	FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
-	Name int(10) unsigned NOT NULL,
-	INDEX (Name),
-	FOREIGN KEY (Name) REFERENCES ".TBL_USERS." (user_id),
+	User int(10) unsigned NOT NULL,
+	INDEX (User),
+	FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
 	Team int NOT NULL,
 	INDEX (Team),
 	FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID), 
@@ -214,8 +214,8 @@ $eplug_tables = array(
 "CREATE TABLE ".TBL_GAMES."
 (
 	GameID int NOT NULL AUTO_INCREMENT, 
-	Name varchar(63),
 	PRIMARY KEY(GameID),
+	Name varchar(63),
 	Icon varchar(63)
 ) TYPE = MyISAM;"
 );

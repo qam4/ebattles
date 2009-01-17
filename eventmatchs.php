@@ -96,7 +96,7 @@ else
              ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-               ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
+               ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
              ." ORDER BY ".TBL_SCORES.".Player_Rank";
 
          $result2 = $sql->db_Query($q2);

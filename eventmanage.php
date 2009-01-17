@@ -208,7 +208,7 @@ else
           ." FROM ".TBL_EVENTMODS.", "
                    .TBL_USERS
           ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-          ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".Name)";   
+          ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".User)";   
       $result = $sql->db_Query($q);
       $num_rows = mysql_numrows($result);
       $text .= '

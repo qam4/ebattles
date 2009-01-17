@@ -211,7 +211,7 @@ else
               ." AND (".TBL_DIVISIONS.".Clan = ".TBL_CLANS.".ClanID)"
               ." AND (".TBL_DIVISIONS.".DivisionID = '$div_id')"
               ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-              ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".Name)"
+              ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)"
               ." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
       
          $result_2 = $sql->db_Query($q_2);

@@ -56,7 +56,7 @@ else
       if ($_GET['joinEventPassword'] == $epassword)
       {
       
-	    $q = " INSERT INTO ".TBL_PLAYERS."(Event,Name,ELORanking)
+	    $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,ELORanking)
 	           VALUES ($event_id,".USERID.",$eELOdefault)";
             $sql->db_Query($q);
             $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
@@ -67,7 +67,7 @@ else
    if(isset($_GET['quitevent'])){
          $q = " DELETE FROM ".TBL_PLAYERS
              ." WHERE (Event = '$event_id')"
-             ."   AND (Name = ".USERID.")";
+             ."   AND (User = ".USERID.")";
          $sql->db_Query($q);
          $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
          $result = $sql->db_Query($q4);
@@ -84,7 +84,7 @@ else
    }
    if(isset($_GET['jointeamevent'])){
          $team_id = $_GET['team'];
-	 $q = " INSERT INTO ".TBL_PLAYERS."(Event,Name,Team,ELORanking)
+	 $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking)
 	        VALUES ($event_id,".USERID.",$team_id,$eELOdefault)";
          $sql->db_Query($q);
          header("Location: eventinfo.php?eventid=$event_id");
@@ -249,7 +249,7 @@ else
       $q = "SELECT *"
           ." FROM ".TBL_PLAYERS
           ." WHERE (Event = '$event_id')"
-          ."   AND (Name = ".USERID.")";
+          ."   AND (User = ".USERID.")";
       
       $result = $sql->db_Query($q);
       if(!$result || (mysql_numrows($result) < 1))
@@ -272,7 +272,7 @@ else
                   ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
                   ." AND (".TBL_USERS.".user_id = ".USERID.")"
                   ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-                  ." AND (".TBL_MEMBERS.".Name = ".USERID.")";
+                  ." AND (".TBL_MEMBERS.".User = ".USERID.")";
          
  
             $result_2 = $sql->db_Query($q_2);
@@ -383,7 +383,7 @@ else
        ." FROM ".TBL_EVENTMODS.", "
                 .TBL_USERS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-       ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".Name)";   
+       ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".User)";   
    $result = $sql->db_Query($q);
    $num_rows = mysql_numrows($result);
    $text .= "Moderators:<br />";
@@ -463,7 +463,7 @@ else
    $q = "SELECT *"
        ." FROM ".TBL_PLAYERS
        ." WHERE (Event = '$event_id')"
-       ."   AND (Name = ".USERID.")";
+       ."   AND (User = ".USERID.")";
  
    $result = $sql->db_Query($q);
    $can_report = 0;
@@ -501,7 +501,7 @@ else
    $q_2 = "SELECT ".TBL_EVENTMODS.".*"
        ." FROM ".TBL_EVENTMODS
        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"  
-       ."   AND (".TBL_EVENTMODS.".Name = ".USERID.")";   
+       ."   AND (".TBL_EVENTMODS.".User = ".USERID.")";   
    $result_2 = $sql->db_Query($q_2);
    $num_rows_2 = mysql_numrows($result_2);
    if ($num_rows_2>0) $can_report = 1;
@@ -615,7 +615,7 @@ else
              ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-               ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
+               ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
              ." ORDER BY ".TBL_SCORES.".Player_Rank";
 
          $result2 = $sql->db_Query($q2);

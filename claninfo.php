@@ -36,7 +36,7 @@ else
    {
    	 $time = GMT_time();
      $div_id = $_GET['division'];
-	   $q = " INSERT INTO ".TBL_MEMBERS."(Division,Name,timestamp)
+	   $q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
 	        VALUES ($div_id,".USERID.",$time)";
          $sql->db_Query($q);
          header("Location: claninfo.php?clanid=$clan_id");
@@ -104,7 +104,7 @@ else
          $q_2 = "SELECT ".TBL_MEMBERS.".*"
             ." FROM ".TBL_MEMBERS
             ." WHERE (".TBL_MEMBERS.".Division = '$div_id')"
-              ." AND (".TBL_MEMBERS.".Name = ".USERID.")";
+              ." AND (".TBL_MEMBERS.".User = ".USERID.")";
          $result_2 = $sql->db_Query($q_2);
          if(!$result_2 || (mysql_numrows($result_2) < 1))
          {
@@ -132,7 +132,7 @@ else
            ." AND (".TBL_DIVISIONS.".Clan = ".TBL_CLANS.".ClanID)"
            ." AND (".TBL_DIVISIONS.".DivisionID = '$div_id')"
            ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-           ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".Name)"
+           ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)"
            ." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
 
       $result_2 = $sql->db_Query($q_2);

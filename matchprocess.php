@@ -24,11 +24,11 @@ global $sql;
       $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
       $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
 
-      $plooserName = $reported_by;
+      $plooserUser = $reported_by;
       $q = "SELECT *"
           ." FROM ".TBL_PLAYERS
           ." WHERE (Event = '$event_id')"
-          ."   AND (Name = '$plooserName')";
+          ."   AND (User = '$plooserUser')";
       $result = $sql->db_Query($q);
       $row = mysql_fetch_array($result);     
       $plooserID = $row['PlayerID'];
@@ -39,11 +39,11 @@ global $sql;
       $plooserStreak_Best = $row['Streak_Best'];     
       $plooserStreak_Worst = $row['Streak_Worst'];     
 
-      $pwinnerName = $_POST['Player'];
+      $pwinnerUser = $_POST['Player'];
       $q = "SELECT *"
           ." FROM ".TBL_PLAYERS
           ." WHERE (Event = '$event_id')"
-          ."   AND (Name = '$pwinnerName')";
+          ."   AND (User = '$pwinnerUser')";
       $result = $sql->db_Query($q);
       $row = mysql_fetch_array($result);     
       $pwinnerID = $row['PlayerID'];
@@ -62,18 +62,18 @@ global $sql;
       $pwinnerELO = $pwinnerELO + $deltaELO;
 
       // Update players data ------------------------------------------        
-      $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $plooserELO WHERE (Name = '$plooserName') AND (Event = '$event_id')";
+      $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $plooserELO WHERE (User = '$plooserUser') AND (Event = '$event_id')";
       $result = $sql->db_Query($q);
-      $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pwinnerELO WHERE (Name = '$pwinnerName') AND (Event = '$event_id')";
+      $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pwinnerELO WHERE (User = '$pwinnerUser') AND (Event = '$event_id')";
       $result = $sql->db_Query($q);
 
       $plooserGames += 1;
       $pwinnerGames += 1;
       $plooserLosses += 1;
       $pwinnerWins += 1;
-      $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $plooserGames WHERE (Name = '$plooserName') AND (Event = '$event_id')";
+      $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $plooserGames WHERE (User = '$plooserUser') AND (Event = '$event_id')";
       $result = $sql->db_Query($q);
-      $q = "UPDATE ".TBL_PLAYERS." SET Loss = $plooserLosses WHERE (Name = '$plooserName') AND (Event = '$event_id')";
+      $q = "UPDATE ".TBL_PLAYERS." SET Loss = $plooserLosses WHERE (User = '$plooserUser') AND (Event = '$event_id')";
       $result = $sql->db_Query($q);
       if ($plooserStreak > 0)
       {
@@ -84,14 +84,14 @@ global $sql;
       	$plooserStreak -= 1;
       }
       if ($plooserStreak < $plooserStreak_Worst) $plooserStreak_Worst = $plooserStreak; 
-      $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $plooserStreak WHERE (Name = '$plooserName') AND (Event = '$event_id')";
+      $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $plooserStreak WHERE (User = '$plooserUser') AND (Event = '$event_id')";
       $result3 = $sql->db_Query($q3);
-      $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $plooserStreak_Worst WHERE (Name = '$plooserName') AND (Event = '$event_id')";
+      $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $plooserStreak_Worst WHERE (User = '$plooserUser') AND (Event = '$event_id')";
       $result3 = $sql->db_Query($q3);      
       
-      $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pwinnerGames WHERE (Name = '$pwinnerName') AND (Event = '$event_id')";
+      $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pwinnerGames WHERE (User = '$pwinnerUser') AND (Event = '$event_id')";
       $result = $sql->db_Query($q);
-      $q = "UPDATE ".TBL_PLAYERS." SET Win = $pwinnerWins WHERE (Name = '$pwinnerName') AND (Event = '$event_id')";
+      $q = "UPDATE ".TBL_PLAYERS." SET Win = $pwinnerWins WHERE (User = '$pwinnerUser') AND (Event = '$event_id')";
       $result = $sql->db_Query($q);
       if ($pwinnerStreak < 0)
       {
@@ -102,9 +102,9 @@ global $sql;
       	$pwinnerStreak += 1;
       }
       if ($pwinnerStreak > $pwinnerStreak_Best) $pwinnerStreak_Best = $pwinnerStreak; 
-      $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $pwinnerStreak WHERE (Name = '$pwinnerName') AND (Event = '$event_id')";
+      $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $pwinnerStreak WHERE (User = '$pwinnerUser') AND (Event = '$event_id')";
       $result3 = $sql->db_Query($q3);
-      $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pwinnerStreak_Best WHERE (Name = '$pwinnerName') AND (Event = '$event_id')";
+      $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pwinnerStreak_Best WHERE (User = '$pwinnerUser') AND (Event = '$event_id')";
       $result3 = $sql->db_Query($q3);      
 
       // Update Teams data ------------------------------------------        
