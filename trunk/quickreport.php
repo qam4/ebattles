@@ -27,7 +27,7 @@ else
        ." FROM ".TBL_PLAYERS.", "
                 .TBL_USERS
        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-         ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
+         ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
        ." ORDER BY ".TBL_USERS.".user_name";
    
    $result = $sql->db_Query($q);

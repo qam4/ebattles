@@ -116,7 +116,7 @@ if ($opponentsELO_maxpoints > 0)
       {
          for($j=0; $j<$tPlayers; $j++)
          {
-            $pname = mysql_result($result_2,$j, TBL_PLAYERS.".Name");
+            $puid = mysql_result($result_2,$j, TBL_PLAYERS.".User");
             $pgames_played = mysql_result($result_2,$j, TBL_PLAYERS.".GamesPlayed");
             $pELO = mysql_result($result_2,$j, TBL_PLAYERS.".ELORanking");
             $pwin = mysql_result($result_2,$j, TBL_PLAYERS.".Win");
@@ -133,7 +133,7 @@ if ($opponentsELO_maxpoints > 0)
              ." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                ." AND (".TBL_MATCHS.".Event = '$event_id')"
                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-               ." AND (".TBL_PLAYERS.".Name = '$pname')";
+               ." AND (".TBL_PLAYERS.".User = '$puid')";
             
             $result_3 = $sql->db_Query($q_3);
             $num_rows_3 = mysql_numrows($result_3);
@@ -157,7 +157,7 @@ if ($opponentsELO_maxpoints > 0)
                       ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
                         ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                         ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                        ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)";
+                        ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
             
                   $result_4 = $sql->db_Query($q_4);
                   $num_rows_4 = mysql_numrows($result_4);
@@ -180,7 +180,7 @@ if ($opponentsELO_maxpoints > 0)
             if (count($players)>1)
             {
                $punique_opponents = count(array_unique($players)) - 1;
-               //echo "<br />$pname Unique Opponents: $unique_opponents<br />";
+               //echo "<br />$puid Unique Opponents: $unique_opponents<br />";
             }
             else
             {
@@ -382,7 +382,7 @@ if ($opponentsELO_maxpoints > 0)
       $q_2 = "SELECT *"
           ." FROM ".TBL_PLAYERS
           ." WHERE (".TBL_PLAYERS.".Team = '$tid')"
-            ." AND (".TBL_PLAYERS.".Name = ".USERID.")";
+            ." AND (".TBL_PLAYERS.".User = ".USERID.")";
       $result_2 = $sql->db_Query($q_2);
       $num_rows_2 = mysql_numrows($result_2);
       if($num_rows_2 > 0)

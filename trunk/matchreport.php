@@ -95,7 +95,7 @@ $text .= '
        ." FROM ".TBL_PLAYERS.", "
                 .TBL_USERS
        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-         ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
+         ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
        ." ORDER BY ".TBL_USERS.".user_name";
  
    $result = $sql->db_Query($q);
@@ -218,7 +218,7 @@ if (isset($_POST['submit']))
            ." FROM ".TBL_USERS.", "
                     .TBL_PLAYERS
            ." WHERE (".TBL_USERS.".user_id = '$pid')"
-             ." AND (".TBL_PLAYERS.".Name = ".TBL_USERS.".user_id)"
+             ." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
              ." AND (".TBL_PLAYERS.".Event = '$event_id')";
            $result = $sql->db_Query($q);
            $row = mysql_fetch_array($result);     
@@ -265,7 +265,7 @@ if (isset($_POST['submit']))
                     ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
                       ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                       ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                      ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
+                      ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
                       ." AND (".TBL_SCORES.".Player_MatchTeam = '$i')"; 
                $resultA = $sql->db_Query($q);
                $NbrPlayersTeamA = mysql_numrows($resultA);
@@ -288,7 +288,7 @@ if (isset($_POST['submit']))
                      ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
                        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                        ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                       ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
+                       ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
                        ." AND (".TBL_SCORES.".Player_MatchTeam = '$j')"; 
                $resultB = $sql->db_Query($q);
                $NbrPlayersTeamB = mysql_numrows($resultB);
@@ -344,7 +344,7 @@ if (isset($_POST['submit']))
               ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
                 ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                 ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)";
+                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
         $result = $sql->db_Query($q);
         $num_rows = mysql_numrows($result);
         for($i=0;$i<$num_rows;$i++)
@@ -369,13 +369,13 @@ if (isset($_POST['submit']))
             
             $text .= "Player $pName, new ELO:$pELO<br />"; 
 
-            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
 
             $gain = 2*$pscore - $nbr_teams +1;
@@ -392,11 +392,11 @@ if (isset($_POST['submit']))
             
             if ($pStreak > $pStreak_Best) $pStreak_Best = $pStreak; 
             if ($pStreak < $pStreak_Worst) $pStreak_Worst = $pStreak; 
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $pStreak WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $pStreak WHERE (User = '$puid') AND (Event = '$event_id')";
             $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pStreak_Best WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pStreak_Best WHERE (User = '$puid') AND (Event = '$event_id')";
             $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $pStreak_Worst WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $pStreak_Worst WHERE (User = '$puid') AND (Event = '$event_id')";
             $result3 = $sql->db_Query($q3);
         } 
         

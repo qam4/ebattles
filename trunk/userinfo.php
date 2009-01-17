@@ -79,7 +79,7 @@ else
        ." FROM ".TBL_PLAYERS.", "
                 .TBL_EVENTS.", "
                 .TBL_GAMES
-       ." WHERE (".TBL_PLAYERS.".Name = '$req_user')"
+       ." WHERE (".TBL_PLAYERS.".User = '$req_user')"
        ."   AND (".TBL_PLAYERS.".Event = ".TBL_EVENTS.".EventID)"
        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
        
@@ -205,7 +205,7 @@ else
        ." FROM ".TBL_EVENTMODS.", "
                 .TBL_EVENTS.", "
                 .TBL_GAMES
-       ." WHERE (".TBL_EVENTMODS.".Name = '$req_user')"
+       ." WHERE (".TBL_EVENTMODS.".User = '$req_user')"
        ."   AND (".TBL_EVENTMODS.".Event = ".TBL_EVENTS.".EventID)"
        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
        
@@ -286,7 +286,7 @@ else
                .TBL_GAMES
       ." WHERE (".TBL_DIVISIONS.".Clan = ".TBL_CLANS.".ClanID)"
         ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-        ." AND (".TBL_MEMBERS.".Name = ".TBL_USERS.".user_id)"
+        ." AND (".TBL_MEMBERS.".User = ".TBL_USERS.".user_id)"
         ." AND (".TBL_USERS.".user_id = '$req_user')"
         ." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
        
@@ -468,7 +468,7 @@ else
                 .TBL_PLAYERS
        ." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
          ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-         ." AND (".TBL_PLAYERS.".Name = '$req_user')";
+         ." AND (".TBL_PLAYERS.".User = '$req_user')";
       $result = $sql->db_Query($q);
       $totalPages = mysql_result($result, 0);
    
@@ -480,7 +480,7 @@ else
                 .TBL_PLAYERS
        ." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
          ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-         ." AND (".TBL_PLAYERS.".Name = '$req_user')"
+         ." AND (".TBL_PLAYERS.".User = '$req_user')"
          ." AND (".TBL_MATCHS.".ReportedBy = ".TBL_USERS.".user_id)"
        ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
        ." LIMIT $start, $rowsPerPage";
@@ -525,7 +525,7 @@ else
                 ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
                   ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                   ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                  ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)"
+                  ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
                 ." ORDER BY ".TBL_SCORES.".Player_Rank";
    
             $result2 = $sql->db_Query($q2);

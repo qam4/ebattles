@@ -49,7 +49,7 @@ else
               ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
                 ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                 ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".Name)";
+                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
         $result = $sql->db_Query($q);
         $num_rows = mysql_numrows($result);
 
@@ -81,13 +81,13 @@ else
             
             $text .= "Player $pname, new ELO:$pELO<br />"; 
 
-            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (Name = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
             
             // fmarc- Can not change "streak" information here :(
