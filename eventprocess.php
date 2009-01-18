@@ -64,7 +64,7 @@ else
          $num_rows_2 = mysql_numrows($result2);
          if ($num_rows_2==0)
          {
-            $q2 = "INSERT INTO ".TBL_EVENTMODS."(Event,Name,Level)"
+            $q2 = "INSERT INTO ".TBL_EVENTMODS."(Event,User,Level)"
                ." VALUES ('$event_id','$eventmod',1)";   
             $result2 = $sql->db_Query($q2);
          }

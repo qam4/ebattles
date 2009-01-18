@@ -17,6 +17,14 @@ ul.boxy li {
 	border: 1px solid #ccc;
 	background-color: #eee;
 }
+ul.boxy2 {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+ul.boxy2 li {
+	padding: 4px 4px;
+}
 .clickable a {
 	display: block;
 	text-decoration: none;

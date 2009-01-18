@@ -114,15 +114,8 @@ $text .= '
 
 $text .= '
 <div class="news">
-<h2>Match Report</h2>
-<br />
 ';
-$text .= '
-<br />
-<br />
-<br />
-<br />
-';
+
 // assuming we saved the above function in "functions.php", let's make sure it's available
 require_once e_PLUGIN.'ebattles/matchreport_functions.php';
 
@@ -133,8 +126,8 @@ if (isset($_POST['submit']))
     // perform data checks.
     $error_str = ''; // initialise $error_str as empty
 
-    $reported_by = $_POST['reported_by'];
-    $text .= "reported by: $reported_by<br />";
+    //$reported_by = $_POST['reported_by'];
+    //$text .= "reported by: $reported_by<br />";
 
     $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
     $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
@@ -180,7 +173,6 @@ if (isset($_POST['submit']))
         // errors have occured, halt execution and show form again.
         $text .= '<p style="color:red">There were errors in the information you entered, they are listed below:';
         $text .= '<ul style="color:red">'.$error_str.'</ul></p>';
-        exit; // die
     }
     else
     {
@@ -414,7 +406,7 @@ if (isset($_POST['submit']))
 
    if (!isset($_POST['matchreport']))
    {
-      $text .= "p>You are not authorized to report a match.</p>";
+      $text .= "<p>You are not authorized to report a match.</p>";
       $text .= "<p>Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]</p>";
    }
    else if (!check_class(e_UC_MEMBER))
