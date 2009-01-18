@@ -31,7 +31,7 @@ else
     <div class="tab-pane" id="tab-pane-6">
 
     <div class="tab-page">
-    <div class="tab">Clan Summary</div>
+    <div class="tab">Team Summary</div>
     ';
     if(isset($_GET['joindivision']))
     {
