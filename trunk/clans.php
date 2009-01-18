@@ -10,9 +10,12 @@ include_once(e_PLUGIN."ebattles/include/pagination.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
-$text = '
-<h1>Teams</h1>
-';
+$text = '';
+
+/**
+ * Display Clans Table
+ */
+displayClans();
 
 if(check_class(e_UC_MEMBER))
 {
@@ -23,13 +26,8 @@ if(check_class(e_UC_MEMBER))
    $text .= "</form>";
    $text .= "<br>";
 }
-/**
- * Display Clans Table
- */
-displayClans();
 
-
-$ns->tablerender('Teams Information', $text);
+$ns->tablerender('Teams', $text);
 require_once(FOOTERF);
 exit;
 
@@ -73,20 +71,18 @@ function displayClans(){
    }
    /* Display table contents */
    $text .= "<table class=\"type1Border\">\n";
-   $text .= "<tr><td class=\"type1Header\"><b>Team</b></td><td class=\"type1Header\"><b>Tag</b></td><td class=\"type1Header\"><b>Owner</b></td></tr>\n";
+   $text .= "<tr><td class=\"type1Header\"><b>Team</b></td><td class=\"type1Header\"><b>Tag</b></td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
       $clanid  = mysql_result($result,$i, TBL_CLANS.".clanid");
       $cname  = mysql_result($result,$i, TBL_CLANS.".name");
       $ctag  = mysql_result($result,$i, TBL_CLANS.".tag");
       $cowner  = mysql_result($result,$i, TBL_CLANS.".owner");
       
-      $text .= "<tr><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clanid\">$cname</a></td><td class=\"type1Body2\">$ctag</td><td class=\"type1Body2\">$cowner</td></tr>\n";
+      $text .= "<tr><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clanid\">$cname</a></td><td class=\"type1Body2\">$ctag</td></tr>\n";
    }
    $text .= "</table><br />\n";
 
    $text .= paginate($rowsPerPage, $pg, $totalPages);
-   $text .= "<br />";
-   
 }
 ?>
 

@@ -59,7 +59,7 @@ else
          <div class="tab-pane" id="tab-pane-4">
          
          <div class="tab-page">
-         <div class="tab">Clan Summary</div>
+         <div class="tab">Team Summary</div>
       ';
       
       $text .= '<table class="fborder">';
@@ -138,7 +138,7 @@ else
 
       $text .= '
          <div class="tab-page">
-         <div class="tab">Clan Divisions</div>
+         <div class="tab">Team Divisions</div>
       ';
 
       $text .= '<table class="fborder">';
@@ -217,7 +217,7 @@ else
          $result_2 = $sql->db_Query($q_2);
          if(!$result_2 || (mysql_numrows($result_2) < 1))
          {
-            $text .= 'No members';
+            $text .= '<td class="forumheader3">No members</td>';
          }
          else
          {

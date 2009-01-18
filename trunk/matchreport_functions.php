@@ -72,11 +72,12 @@ function user_form($players_id, $players_name, $eventid) {
     
     // TABLE - Player/Teams Add/Remove
     //----------------------------------
-    $text .= '<table id="matchresult" >';    
+    $text .= 'Select the number of players and teams:';    
+    $text .= '<table class="fborder" id="matchresult" >';    
     $text .= '<tr><input type="hidden" name="matchreport" value="1"></tr>';
     // Players
-    $text .= '<tr><td colspan="1">Nbr Players: '.$nbr_players.'</td>';
-    $text .= '<td colspan="1"><input type="hidden" name="nbr_players" value="'.$_POST['nbr_players'].'">';
+    $text .= '<tr><td class="forumheader3">Number of Players:</td><td class="forumheader3">'.$nbr_players.'</td>';
+    $text .= '<td class="forumheader3"><input type="hidden" name="nbr_players" value="'.$_POST['nbr_players'].'">';
     // Add Player
     if ($nbr_players < $max_nbr_players)
     {
@@ -89,16 +90,16 @@ function user_form($players_id, $players_name, $eventid) {
     // Remove Player
     if ($nbr_players>2)
     {
-       $text .= '<td colspan="1"><input class="button" type="submit" value="Remove Player" name="removePlayer"></td>';
+       $text .= '<td class="forumheader3"><input class="button" type="submit" value="Remove Player" name="removePlayer"></td>';
     }
     else
     {
-       $text .= '<td colspan="1"><input class="button" type="submit" value="Remove Player" name="removePlayer" DISABLED></td>';
+       $text .= '<td class="forumheader3"><input class="button" type="submit" value="Remove Player" name="removePlayer" DISABLED></td>';
     }
     
     // Teams
-    $text .= '<tr><td colspan="1">Nbr Teams: '.$nbr_teams.'</td>';
-    $text .= '<td colspan="1"><input type="hidden" name="nbr_teams" value="'.$_POST['nbr_teams'].'">';
+    $text .= '<tr><td class="forumheader3">Number of Teams:</td><td class="forumheader3">'.$nbr_teams.'</td>';
+    $text .= '<td class="forumheader3"><input type="hidden" name="nbr_teams" value="'.$_POST['nbr_teams'].'">';
     // Add Team
     if ($nbr_teams<$nbr_players)
     {
@@ -111,26 +112,27 @@ function user_form($players_id, $players_name, $eventid) {
     // Remove Team
     if ($nbr_teams>2)
     {
-       $text .= '<td colspan="1"><input class="button" type="submit" value="Remove Team" name="removeTeam"></td>';
+       $text .= '<td class="forumheader3"><input class="button" type="submit" value="Remove Team" name="removeTeam"></td>';
     }
     else
     {
-       $text .= '<td colspan="1"><input class="button" type="submit" value="Remove Team" name="removeTeam" DISABLED></td>';
+       $text .= '<td class="forumheader3"><input class="button" type="submit" value="Remove Team" name="removeTeam" DISABLED></td>';
     }
     $text .= "</tr>";
     $text .= '</table>';
 
     //$text .= '<p><input class="inspector" type="button" value="Inspect" onclick="junkdrawer.inspectListOrder(\'matchresultlist\')"/></p>';
-    $text .= "<br /><br /><br />";
+    $text .= "<br />";
    
     // TABLE - Players/Teams Selection
     //----------------------------------
-    $text .= '<table id="matchresult" style="float:left;" >';
+    $text .= 'Select the players and their respective team:';    
+    $text .= '<table class="fborder" id="matchresult">';
     for($i=1;$i<=$nbr_players;$i++)
     {
-       $text .= '<tr><td>Player #'.$i.':</td>';
+       $text .= '<tr><td class="forumheader3">Player #'.$i.':</td>';
        
-       $text .= '<td><select name="player'.$i.'">';
+       $text .= '<td class="forumheader3"><select name="player'.$i.'">';
        for($j=1;$j <= $max_nbr_players+1;$j++)
        {
           $text .= '<option value="'.$players_id[($j-1)].'"';
@@ -139,7 +141,7 @@ function user_form($players_id, $players_name, $eventid) {
        }
        $text .= '</select></td>';
 
-       $text .= '<td><select name="team'.$i.'">';
+       $text .= '<td class="forumheader3"><select name="team'.$i.'">';
        for($j=1;$j<=$nbr_teams;$j++)
        {
           $text .= '<option value="Team #'.$j.'"';
@@ -154,32 +156,29 @@ function user_form($players_id, $players_name, $eventid) {
        $text .= '<input type="hidden" name="rank'.$i.'" value="0">';
     }
     $text .= '</table>';
-
-    // TABLE - Teams Ranks
-    //---------------------
-    $text .= '<table id="matchresult" style="float:left;">';
-    for($i=1;$i<=$nbr_teams;$i++)
-    {
-       $text .= '<tr><td>Rank #'.$i.':</td>';
-       $text .= '</tr>';
-    }    
-    $text .= '</table>';
+    $text .= "<br />";
 
     // TABLE - Teams Rank Selection
     //----------------------------------
-    $text .= '<table id="matchresult" style="float:left;">';
-    $text .= '<td>';
-    $text .= '<ul id="matchresultlist" class="boxy">';
-           for($j=1;$j<=$nbr_teams;$j++)
-           {
+    $text .= 'Select the rank of each team by dragging each team in front of its rank:';    
+    $text .= '<table class="fborder" id="matchresult">';
+    $text .= '<tr>';
+    $text .= '<td class="forumheader3"><ul id="matchresultranklist" class="boxy2">';
+    for($i=1;$i<=$nbr_teams;$i++)
+    {
+       $text .= '<li>Rank #'.$i.':</li>';
+    }    
+    $text .= '</ul></td>';
+    $text .= '<td class="forumheader3"><ul id="matchresultlist" class="boxy">';
+    for($j=1;$j<=$nbr_teams;$j++)
+    {
     $text .= '<li>Team #'.$j.'</li>';
     }
-    $text .= '</ul>';
-    $text .= '</td>';
+    $text .= '</ul></td>';
+    $text .= '</tr>';
     $text .= '</table>';
 
-    $text .= '<br style="clear:both;">';
-    $text .= '<br /><br />';
+    $text .= '<br />';
     $text .= '<p class="centered">';
     $text .= 'Your comments<br />';
     $text .= '<textarea id="elm1" name="elm1" cols="70" rows="20">'.$sContent.'</textarea>';

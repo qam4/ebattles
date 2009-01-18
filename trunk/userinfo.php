@@ -273,7 +273,7 @@ else
    }
    
    $text .= "<h2>Member</h2>";
-   $text .= "List of all the teams this user is member of";
+   $text .= "$uname is member of the following divisions";
    $q = "SELECT ".TBL_CLANS.".*, "
                 .TBL_DIVISIONS.".*, "
                 .TBL_MEMBERS.".*, "
@@ -298,7 +298,7 @@ else
       $text .= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
           $text .= "<tr>";
           $text .= "<td>";
-          $text .= "Name";
+          $text .= "Division";
           $text .= "</td>";
           $text .= "<td>";
           $text .= "Status";
@@ -338,7 +338,7 @@ else
    }
    
    $text .= "<h2>Owner</h2>";
-   $text .= "List of all the teams this user owns";
+   $text .= "$uname is owner of the following teams";
    $q = "SELECT ".TBL_CLANS.".*, "
                 .TBL_USERS.".*"
       ." FROM ".TBL_CLANS.", "
@@ -354,7 +354,7 @@ else
       $text .= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
           $text .= "<tr>";
           $text .= "<td>";
-          $text .= "Name";
+          $text .= "Team";
           $text .= "</td>";
           $text .= "<td>";
           $text .= "Status";
@@ -391,7 +391,7 @@ else
    }
    
    $text .= "<h2>Captain</h2>";
-   $text .= "List of all the divisions this user is the captain of";
+   $text .= "$uname is captain of the following divisions";
    $q = "SELECT ".TBL_CLANS.".*, "
                 .TBL_DIVISIONS.".*, "
                 .TBL_GAMES.".*"
@@ -410,7 +410,7 @@ else
       $text .= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
           $text .= "<tr>";
           $text .= "<td>";
-          $text .= "Name";
+          $text .= "Division";
           $text .= "</td>";
           $text .= "<td>";
           $text .= "Status";
