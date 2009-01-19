@@ -493,10 +493,9 @@ else
     $result = $sql->db_Query($q);
     $can_report = 0;
     $can_report_quickloss = 0;
-    if(!$result || (mysql_numrows($result) < 1))
-    {}
-    else
+    if(mysql_numrows($result) == 1)
     {
+        // Show link to my position
         $row = mysql_fetch_array($result);
         $prank = $row['Rank'];
 
