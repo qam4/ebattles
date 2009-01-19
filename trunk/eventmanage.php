@@ -56,7 +56,7 @@ function clearEndDate(frm)
 	plugin_insertdate_timeFormat : "%H:%M:%S",
 	extended_valid_elements : "a[name|href|target|title|onclick],img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name],hr[class|width|size|noshade],font[face|size|color|style],span[class|align|style]"
    });
-    </script>
+</script>
 ';
 
 $event_id = $_GET['eventid'];

@@ -205,11 +205,11 @@ require_once(HEADERF);
 	// Insert Teams in Events
 	$query = 
 	"INSERT INTO ".TBL_TEAMS."(Event,Division)
-	 VALUES (2,6)";
+	 VALUES (2,4)";
 	$sql->db_Query($query) or die ('Error, adding team 1<br />'. mysql_error());
 	$query = 
 	"INSERT INTO ".TBL_TEAMS."(Event,Division)
-	VALUES (2,8)";
+	VALUES (2,6)";
 	$sql->db_Query($query) or die ('Error, adding team 2<br />'. mysql_error());
 	$text .= "Added Teams<br />";
 
