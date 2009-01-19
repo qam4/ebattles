@@ -103,9 +103,11 @@ $result = $sql->db_Query($q);
 $num_rows = mysql_numrows($result);
 
 $players_id[0] = '-- select --';
+$players_uid[0] = '-- select --';
 $players_name[0] = '-- select --';
 for($i=0; $i<$num_rows; $i++){
-    $pid  = mysql_result($result,$i, TBL_USERS.".user_id");
+    $pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+    $puid  = mysql_result($result,$i, TBL_USERS.".user_id");
     $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
     $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
     $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
@@ -123,7 +125,6 @@ for($i=0; $i<$num_rows; $i++){
         ." WHERE (".TBL_TEAMS.".TeamID = '$pteam')"
         ." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
         ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-
         $result_2 = $sql->db_Query($q_2);
         $num_rows_2 = mysql_numrows($result_2);
         if ($num_rows_2 == 1)
@@ -133,6 +134,7 @@ for($i=0; $i<$num_rows; $i++){
         }
     }
     $players_id[$i+1] = $pid;
+    $players_uid[$i+1] = $puid;
     $players_name[$i+1] = $pclantag.$pname;
 }
 
@@ -161,12 +163,37 @@ if (isset($_POST['submit']))
     $nbr_teams = $_POST['nbr_teams'];
     for($i=1;$i<=$nbr_players;$i++)
     {
-        if ($_POST['player'.$i] == $players_name[0])
+        $pid = $_POST['player'.$i];
+        $q =
+        "SELECT ".TBL_USERS.".*, "
+        .TBL_PLAYERS.".*"
+        ." FROM ".TBL_USERS.", "
+        .TBL_PLAYERS
+        ." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
+        ."   AND (".TBL_PLAYERS.".User     = ".TBL_USERS.".user_id)";
+        $result = $sql->db_Query($q);
+        $row = mysql_fetch_array($result);
+        $puid = $row['user_id'];
+
+        if ($pid == $players_name[0])
         $error_str .= '<li>Player #'.$i.' not selected</li>';
 
         for($j=$i+1;$j<=$nbr_players;$j++)
         {
-            if ($_POST['player'.$i] == $_POST['player'.$j])
+            //if ($_POST['player'.$i] == $_POST['player'.$j])
+            $pjid = $_POST['player'.$j];
+            $q =
+            "SELECT ".TBL_USERS.".*, "
+            .TBL_PLAYERS.".*"
+            ." FROM ".TBL_USERS.", "
+            .TBL_PLAYERS
+            ." WHERE (".TBL_PLAYERS.".PlayerID = '$pjid')"
+            ."   AND (".TBL_PLAYERS.".User   = ".TBL_USERS.".user_id)";
+            $result = $sql->db_Query($q);
+            $row = mysql_fetch_array($result);
+            $pjuid = $row['user_id'];
+
+            if ($puid == $pjuid)
             $error_str .= '<li>Player #'.$i.' is the same as Player #'.$j.'</li>';
         }
     }
@@ -233,14 +260,12 @@ if (isset($_POST['submit']))
             .TBL_PLAYERS.".*"
             ." FROM ".TBL_USERS.", "
             .TBL_PLAYERS
-            ." WHERE (".TBL_USERS.".user_id = '$pid')"
-            ." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
-            ." AND (".TBL_PLAYERS.".Event = '$event_id')";
+            ." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
+            ."   AND (".TBL_PLAYERS.".User     = ".TBL_USERS.".user_id)";
             $result = $sql->db_Query($q);
             $row = mysql_fetch_array($result);
             $pname = $row['user_name'];
             $puid = $row['user_id'];
-            $pID = $row['PlayerID'];
 
             for($j=1;$j<=$nbr_teams;$j++)
             {
@@ -252,11 +277,11 @@ if (isset($_POST['submit']))
 
             $q =
             "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_Score,Player_Rank)
-            VALUES ($last_id,$pID,$pteam,$deltaELO,$nbr_teams-$prank,$prank)
+            VALUES ($last_id,$pid,$pteam,$deltaELO,$nbr_teams-$prank,$prank)
             ";
             $result = $sql->db_Query($q);
 
-            $text .= 'Player #'.$i.': '.$pname.' (user id:'.$puid.') (player id:'.$pID.')';
+            $text .= 'Player #'.$i.': '.$pname.' (user id:'.$puid.') (player id:'.$pid.')';
             $text .= ' in team '.$pteam;
             $text .= '<br />';
             /**/
@@ -327,21 +352,21 @@ if (isset($_POST['submit']))
                 for ($k=0;$k<$NbrPlayersTeamA;$k++)
                 {
                     $scoreELO = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaELO");
-                    $pID = mysql_result($resultA,$k, TBL_PLAYERS.".PlayerID");
+                    $pid = mysql_result($resultA,$k, TBL_PLAYERS.".PlayerID");
                     $scoreELO += $deltaELO;
                     $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO"
                     ." WHERE (MatchID = '$match_id')"
-                    ." AND (Player = '$pID')";
+                    ." AND (Player = '$pid')";
                     $result = $sql->db_Query($q);
                 }
                 for ($k=0;$k<$NbrPlayersTeamB;$k++)
                 {
                     $scoreELO = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaELO");
-                    $pID = mysql_result($resultB,$k, TBL_PLAYERS.".PlayerID");
+                    $pid = mysql_result($resultB,$k, TBL_PLAYERS.".PlayerID");
                     $scoreELO -= $deltaELO;
                     $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO"
                     ." WHERE (MatchID = '$match_id')"
-                    ." AND (Player = '$pID')";
+                    ." AND (Player = '$pid')";
                     $result = $sql->db_Query($q);
                 }
             }
@@ -368,7 +393,7 @@ if (isset($_POST['submit']))
         {
             $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
             $pscore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
-            $pID= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+            $pid= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
             $puid= mysql_result($result,$i, TBL_USERS.".user_id");
             $pName= mysql_result($result,$i, TBL_USERS.".user_name");
             $pELO= mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
@@ -386,13 +411,13 @@ if (isset($_POST['submit']))
 
             $text .= "Player $pName, new ELO:$pELO<br />";
 
-            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (User = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (PlayerID = '$pid')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (User = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (PlayerID = '$pid')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (User = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (PlayerID = '$pid')";
             $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (User = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (PlayerID = '$pid')";
             $result2 = $sql->db_Query($q);
 
             $gain = 2*$pscore - $nbr_teams +1;
@@ -409,11 +434,11 @@ if (isset($_POST['submit']))
 
             if ($pStreak > $pStreak_Best) $pStreak_Best = $pStreak;
             if ($pStreak < $pStreak_Worst) $pStreak_Worst = $pStreak;
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $pStreak WHERE (User = '$puid') AND (Event = '$event_id')";
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = $pStreak WHERE (PlayerID = '$pid')";
             $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pStreak_Best WHERE (User = '$puid') AND (Event = '$event_id')";
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pStreak_Best WHERE (PlayerID = '$pid')";
             $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $pStreak_Worst WHERE (User = '$puid') AND (Event = '$event_id')";
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $pStreak_Worst WHERE (PlayerID = '$pid')";
             $result3 = $sql->db_Query($q3);
         }
 

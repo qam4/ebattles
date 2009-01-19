@@ -94,6 +94,9 @@ BUGS:
   When you Submit, the match, it will be as a Guest.
 - Problem when editing include/main.php in UltraEdit.
   UltraEdit adds "0xFEFF" signature (BOM) at the beginning of the file, creating "header already sent" issues.
+- Do not have password check for "join team event"
+- Should use md5 for event passord
+- Security: check every textarea / input style="text" and see if we use htmlspecialchars when treating the output.
 
 SUGGESTIONS:
 - Don: need to sign up everybody in a team when the captain signs up the team.
