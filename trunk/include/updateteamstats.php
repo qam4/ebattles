@@ -140,7 +140,7 @@ for($i=0; $i<$nbrteams; $i++)
             $result_3 = $sql->db_Query($q_3);
             $num_rows_3 = mysql_numrows($result_3);
 
-            $players = '';
+            $players = array();
             if ($num_rows_3>0)
             {
                 for($k=0; $k<$num_rows_3; $k++)
@@ -168,26 +168,16 @@ for($i=0; $i<$nbrteams; $i++)
                         $uid  = mysql_result($result_4,$l, TBL_USERS.".user_id");
                         $uplayermatchteam  = mysql_result($result_4,$l, TBL_SCORES.".Player_MatchTeam");
                         $uELO  = mysql_result($result_4,$l, TBL_PLAYERS.".ELORanking");
-                        $players[] = "$uid";
-
                         if ($uplayermatchteam != $mplayermatchteam)
                         {
+                            $players[] = "$uid";
                             $popponentsELO += $uELO;
                             $popponents += 1;
                         }
                     }
                 }
             }
-
-            if (count($players)>1)
-            {
-                $punique_opponents = count(array_unique($players)) - 1;
-                //echo "<br />$puid Unique Opponents: $unique_opponents<br />";
-            }
-            else
-            {
-                $punique_opponents = 0;
-            }
+            $punique_opponents = count(array_unique($players));
 
             $twin += $pwin;
             $tloss += $ploss;

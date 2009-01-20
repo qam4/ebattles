@@ -176,7 +176,7 @@ for($i=0; $i<$num_rows; $i++)
     $result_2 = $sql->db_Query($q_2);
     $num_rows_2 = mysql_numrows($result_2);
 
-    $players = '';
+    $players = array();
     if ($num_rows_2>0)
     {
         for($j=0; $j<$num_rows_2; $j++)

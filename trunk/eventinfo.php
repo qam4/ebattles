@@ -78,6 +78,31 @@ else
         $q = " INSERT INTO ".TBL_TEAMS."(Event,Division)
         VALUES ($event_id,$div_id)";
         $sql->db_Query($q);
+        $team_id =  mysql_insert_id();
+
+        // All members of this division will automatically be signed up to this event
+        $q_2 = "SELECT ".TBL_DIVISIONS.".*, "
+        .TBL_MEMBERS.".*, "
+        .TBL_USERS.".*"
+        ." FROM ".TBL_DIVISIONS.", "
+        .TBL_USERS.", "
+        .TBL_MEMBERS
+        ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+        ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+        ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)";
+        $result_2 = $sql->db_Query($q_2);
+        $num_rows_2 = mysql_numrows($result_2);
+        if($num_rows_2 > 0)
+        {
+            for($j=0; $j<$num_rows_2; $j++)
+            {
+                $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+                $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking)
+                VALUES ($event_id,$mid,$team_id,$eELOdefault)";
+                $sql->db_Query($q);
+            }
+        }
+
         $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q4);
         header("Location: eventinfo.php?eventid=$event_id");
