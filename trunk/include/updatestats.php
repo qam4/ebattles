@@ -206,26 +206,16 @@ for($i=0; $i<$num_rows; $i++)
                 $ouid  = mysql_result($result_3,$k, TBL_USERS.".user_id");
                 $oplayermatchteam  = mysql_result($result_3,$k, TBL_SCORES.".Player_MatchTeam");
                 $oELO  = mysql_result($result_3,$k, TBL_PLAYERS.".ELORanking");
-                $players[] = "$ouid";
-
                 if ($oplayermatchteam != $mplayermatchteam)
                 {
+                    $players[] = "$ouid";
                     $popponentsELO += $oELO;
                     $popponents += 1;
                 }
             }
         }
     }
-
-    if (count($players)>1)
-    {
-        $punique_opponents = count(array_unique($players)) - 1;
-        //echo "<br />$pname Unique Opponents: $unique_opponents<br />";
-    }
-    else
-    {
-        $punique_opponents = 0;
-    }
+    $punique_opponents = count(array_unique($players));
 
     if ($popponents !=0)
     {
