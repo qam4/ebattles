@@ -44,7 +44,7 @@ if(isset($_POST['qrsubmitloss']))
     $q = "SELECT *"
     ." FROM ".TBL_PLAYERS
     ." WHERE (Event = '$event_id')"
-    ."   AND (Player = '$pwinnerID')";
+    ."   AND (PlayerID = '$pwinnerID')";
     $result = $sql->db_Query($q);
     $row = mysql_fetch_array($result);
     $pwinnerUser = $row['User'];

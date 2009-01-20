@@ -203,14 +203,14 @@ for($i=0; $i<$num_rows; $i++)
             $num_rows_3 = mysql_numrows($result_3);
             for($k=0; $k<$num_rows_3; $k++)
             {
-                $puid  = mysql_result($result_3,$k, TBL_USERS.".user_id");
-                $pplayermatchteam  = mysql_result($result_3,$k, TBL_SCORES.".Player_MatchTeam");
-                $pELO  = mysql_result($result_3,$k, TBL_PLAYERS.".ELORanking");
-                $players[] = "$puid";
+                $ouid  = mysql_result($result_3,$k, TBL_USERS.".user_id");
+                $oplayermatchteam  = mysql_result($result_3,$k, TBL_SCORES.".Player_MatchTeam");
+                $oELO  = mysql_result($result_3,$k, TBL_PLAYERS.".ELORanking");
+                $players[] = "$ouid";
 
-                if ($pplayermatchteam != $mplayermatchteam)
+                if ($oplayermatchteam != $mplayermatchteam)
                 {
-                    $popponentsELO += $pELO;
+                    $popponentsELO += $oELO;
                     $popponents += 1;
                 }
             }
