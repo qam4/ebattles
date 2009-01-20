@@ -146,65 +146,66 @@ function displayCurrentEvents(){
     }
     if($num_rows == 0){
         $text .= "No events";
-        return;
     }
+    else
+    {
+        /* Display table contents */
+        $text .= "<table class=\"type1Border\">\n";
+        $text .= "<tr><td class=\"type1Header\">Event</td><td colspan=\"2\" class=\"type1Header\">Game</td><td class=\"type1Header\">Type</td><td class=\"type1Header\">Start</td><td class=\"type1Header\">End</td><td class=\"type1Header\">Players</td><td class=\"type1Header\">Games</td></tr>\n";
+        for($i=0; $i<$num_rows; $i++){
+            $gname  = mysql_result($result,$i, TBL_GAMES.".name");
+            $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
+            $eid  = mysql_result($result,$i, TBL_EVENTS.".eventid");
+            $ename  = mysql_result($result,$i, TBL_EVENTS.".name");
+            $etype = mysql_result($result,$i, TBL_EVENTS.".type");
+            $estart = mysql_result($result,$i, TBL_EVENTS.".Start_timestamp");
+            $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
+            if($estart!=0)
+            {
+                $estart_local = $estart + GMT_TIMEOFFSET;
+                $date_start = date("d M Y",$estart_local);
+            }
+            else
+            {
+                $date_start = "-";
+            }
+            if($eend!=0)
+            {
+                $eend_local = $eend + GMT_TIMEOFFSET;
+                $date_end = date("d M Y",$eend_local);
+            }
+            else
+            {
+                $date_end = "-";
+            }
 
-    /* Display table contents */
-    $text .= "<table class=\"type1Border\">\n";
-    $text .= "<tr><td class=\"type1Header\">Event</td><td colspan=\"2\" class=\"type1Header\">Game</td><td class=\"type1Header\">Type</td><td class=\"type1Header\">Start</td><td class=\"type1Header\">End</td><td class=\"type1Header\">Players</td><td class=\"type1Header\">Games</td></tr>\n";
-    for($i=0; $i<$num_rows; $i++){
-        $gname  = mysql_result($result,$i, TBL_GAMES.".name");
-        $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-        $eid  = mysql_result($result,$i, TBL_EVENTS.".eventid");
-        $ename  = mysql_result($result,$i, TBL_EVENTS.".name");
-        $etype = mysql_result($result,$i, TBL_EVENTS.".type");
-        $estart = mysql_result($result,$i, TBL_EVENTS.".Start_timestamp");
-        $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
-        if($estart!=0)
-        {
-            $estart_local = $estart + GMT_TIMEOFFSET;
-            $date_start = date("d M Y",$estart_local);
-        }
-        else
-        {
-            $date_start = "-";
-        }
-        if($eend!=0)
-        {
-            $eend_local = $eend + GMT_TIMEOFFSET;
-            $date_end = date("d M Y",$eend_local);
-        }
-        else
-        {
-            $date_end = "-";
-        }
+            /* Nbr players */
+            $q_2 = "SELECT COUNT(*) as NbrPlayers"
+            ." FROM ".TBL_PLAYERS
+            ." WHERE (Event = '$eid')";
+            $result_2 = $sql->db_Query($q_2);
+            $row = mysql_fetch_array($result_2);
+            $nbrplayers = $row['NbrPlayers'];
+            /* Nbr matches */
+            $q_2 = "SELECT COUNT(*) as NbrMatches"
+            ." FROM ".TBL_MATCHS
+            ." WHERE (Event = '$eid')";
+            $result_2 = $sql->db_Query($q_2);
+            $row = mysql_fetch_array($result_2);
+            $nbrmatches = $row['NbrMatches'];
 
-        /* Nbr players */
-        $q_2 = "SELECT COUNT(*) as NbrPlayers"
-        ." FROM ".TBL_PLAYERS
-        ." WHERE (Event = '$eid')";
-        $result_2 = $sql->db_Query($q_2);
-        $row = mysql_fetch_array($result_2);
-        $nbrplayers = $row['NbrPlayers'];
-        /* Nbr matches */
-        $q_2 = "SELECT COUNT(*) as NbrMatches"
-        ." FROM ".TBL_MATCHS
-        ." WHERE (Event = '$eid')";
-        $result_2 = $sql->db_Query($q_2);
-        $row = mysql_fetch_array($result_2);
-        $nbrmatches = $row['NbrMatches'];
-
-        if(
-        ($eend==0)
-        ||($eend>=$time)
-        )
-        {
-            $text .= "<tr><td class=\"type1Body1\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body2\">$gname</td><td class=\"type1Body2\">$etype</td><td class=\"type1Body2\">$date_start</td><td class=\"type1Body2\">$date_end</td><td class=\"type1Body2\">$nbrplayers</td><td class=\"type1Body2\">$nbrmatches</td></tr>\n";
+            if(
+            ($eend==0)
+            ||($eend>=$time)
+            )
+            {
+                $text .= "<tr><td class=\"type1Body1\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body2\">$gname</td><td class=\"type1Body2\">$etype</td><td class=\"type1Body2\">$date_start</td><td class=\"type1Body2\">$date_end</td><td class=\"type1Body2\">$nbrplayers</td><td class=\"type1Body2\">$nbrmatches</td></tr>\n";
+            }
         }
+        $text .= "</table><br />\n";
+        // print the navigation link
+        $text .= paginate($rowsPerPage, $pg, $totalPages);
     }
-    $text .= "</table><br />\n";
-    // print the navigation link
-    $text .= paginate($rowsPerPage, $pg, $totalPages);
 
     if(check_class(e_UC_MEMBER))
     {
