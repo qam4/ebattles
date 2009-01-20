@@ -27,12 +27,6 @@ if (!$clan_id)
 }
 else
 {
-    $text .= '
-    <div class="tab-pane" id="tab-pane-6">
-
-    <div class="tab-page">
-    <div class="tab">Team Summary</div>
-    ';
     if(isset($_GET['joindivision']))
     {
         $div_id = $_GET['division'];
@@ -86,6 +80,13 @@ else
     $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
 
     $text .= "<h1>$clan_name ($clan_tag)</h1>";
+
+    $text .= '
+    <div class="tab-pane" id="tab-pane-6">
+
+    <div class="tab-page">
+    <div class="tab">Team Summary</div>
+    ';
     $text .= "<p>Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a><br />";
     $can_manage = 0;
     if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
