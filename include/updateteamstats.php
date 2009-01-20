@@ -93,6 +93,7 @@ for($i=0; $i<$nbrteams; $i++)
     $tclan = mysql_result($result_1,$i, TBL_CLANS.".ClanID");
     $tclantag = mysql_result($result_1,$i, TBL_CLANS.".Tag");
 
+    // Find all players for that event and that team
     $q_2 = "SELECT * "
     ." FROM ".TBL_PLAYERS." "
     ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
@@ -118,6 +119,7 @@ for($i=0; $i<$nbrteams; $i++)
     {
         for($j=0; $j<$tPlayers; $j++)
         {
+            $pid = mysql_result($result_2,$j, TBL_PLAYERS.".PlayerID");
             $puid = mysql_result($result_2,$j, TBL_PLAYERS.".User");
             $pgames_played = mysql_result($result_2,$j, TBL_PLAYERS.".GamesPlayed");
             $pELO = mysql_result($result_2,$j, TBL_PLAYERS.".ELORanking");
@@ -127,15 +129,16 @@ for($i=0; $i<$nbrteams; $i++)
             $popponentsELO = 0;
             $popponents = 0;
             // Unique Opponents
-            $q_3 = "SELECT DISTINCT ".TBL_MATCHS.".*, "
-            .TBL_SCORES.".*"
+            // Find all matchs for that player
+            $q_3 = "SELECT ".TBL_MATCHS.".*, "
+            .TBL_SCORES.".*, "
+            .TBL_PLAYERS.".*"
             ." FROM ".TBL_MATCHS.", "
             .TBL_SCORES.", "
             .TBL_PLAYERS
             ." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-            ." AND (".TBL_MATCHS.".Event = '$event_id')"
             ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-            ." AND (".TBL_PLAYERS.".User = '$puid')";
+            ." AND (".TBL_PLAYERS.".PlayerID = '$pid')";
 
             $result_3 = $sql->db_Query($q_3);
             $num_rows_3 = mysql_numrows($result_3);
@@ -148,6 +151,7 @@ for($i=0; $i<$nbrteams; $i++)
                     $mID  = mysql_result($result_3,$k, TBL_MATCHS.".MatchID");
                     $mplayermatchteam  = mysql_result($result_3,$k, TBL_SCORES.".Player_MatchTeam");
 
+                    // Find all users for that match
                     $q_4 = "SELECT ".TBL_MATCHS.".*, "
                     .TBL_SCORES.".*, "
                     .TBL_PLAYERS.".*, "

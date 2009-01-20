@@ -144,7 +144,15 @@ else
     $enextupdate = mysql_result($result,0 , TBL_EVENTS.".NextUpdate_timestamp");
     $eischanged = mysql_result($result,0 , TBL_EVENTS.".IsChanged");
 
-    $eneedupdate = 0;
+    if (DEBUG == 1)
+    {
+        $eneedupdate = 1;
+    }
+    else
+    {
+        $eneedupdate = 0;
+    }    
+
     if (  (($time > $enextupdate) && ($eischanged == 1))
     ||(file_exists($file) == FALSE)
     ||((file_exists($file_team) == FALSE) && (($etype == "Team Ladder")))
@@ -194,7 +202,6 @@ else
 
     $text .= "<h1>$ename ($etype)</h1>";
     $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
-
 
     /* Update Stats */
     if ($eneedupdate == 1)

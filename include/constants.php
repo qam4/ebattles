@@ -94,7 +94,7 @@ define("EMAIL_PASSWORD", "gmax76");
 define("EMAIL_WELCOME", true);
 
 define("LADDER_DIR","");
-define("EVENTS_UDATE_DELAY", 0*60*60);  // Minimum delay between 2 updates in seconds
-                                       // Set to negative value to disable the delayed updates
+define("EVENTS_UDATE_DELAY", 60*60);  // Minimum delay between 2 updates in seconds
+define("DEBUG", 1);                     //  
 
 ?>
