@@ -12,7 +12,8 @@ define("EBATTLES_L3", "eBattles caption");
 define("EBATTLES_L4", "eBattles installation successful");
 define("EBATTLES_L5", "eBattles link name");
 	
-define("EBATTLES_MENU_L1", "Events");
-define("EBATTLES_MENU_L2", "Teams");
+define("EBATTLES_MENU_L1", "eBattles");
+define("EBATTLES_MENU_L2", "Events");
+define("EBATTLES_MENU_L3", "Teams");
 
 ?>
