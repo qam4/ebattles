@@ -91,6 +91,7 @@ BUGS:
 - Do not have password check for "join team event"
 - Should use md5 for event passord
 - Security: check every textarea / input style="text" and see if we use htmlspecialchars when treating the output.
+- Team events: 2 players of same team should not be able to compete against each other.
 
 SUGGESTIONS:
 - Don: need to sign up everybody in a team when the captain signs up the team.

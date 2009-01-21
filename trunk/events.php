@@ -14,11 +14,13 @@ $text = '
 <script type="text/javascript" src="./js/tabpane.js"></script>
 ';
 
+$text .= '
+<div class="tab-pane" id="tab-pane-2">
+';
 /**
 * Display Current Events
 */
 $text .= '
-<div class="tab-pane" id="tab-pane-2">
 <div class="tab-page">
 <div class="tab">Current Events</div>
 ';
@@ -51,7 +53,6 @@ exit;
 /***************************************************************************************
 Functions
 ***************************************************************************************/
-
 /**
 * displayEvents - Displays the events database table in
 * a nicely formatted html table.
