@@ -243,30 +243,7 @@ require_once(HEADERF);
 	$sql->db_Query($query) or die ('Error, adding score<br />'. mysql_error());
 	$text .= "Added Scores<br />";
 
-	// Insert Games
-	if($file_handle = fopen("../images/games_icons/Games List.csv", "r"))
-	{
-	    while (!feof($file_handle) ) {
-	    	$line_of_text = fgetcsv($file_handle, 1024);
-	    
-	    	$shortname = addslashes($line_of_text[0]);
-	    	$longname  = addslashes($line_of_text[1]);
-	    	
-	    	//$text .= "$shortname - $longname <br />";
-	    	$query = 
-	    	"INSERT INTO ".TBL_GAMES."(Name, Icon)
-	    	 VALUES ('$longname', '$shortname.gif')";
-	    	$sql->db_Query($query) or die ('Error, adding game 1<br />'. mysql_error());
-	    }
-	    fclose($file_handle);
-	}
-	else
-	{
-	    $text .= "Failed to read the Games List.<br />";
-	}
-	$text .= "Added Games<br />";
-
-$ns->tablerender('Insert data', $text);
+$ns->tablerender('Insert debug data', $text);
 require_once(FOOTERF);
 exit;
 ?>
