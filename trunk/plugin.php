@@ -32,7 +32,7 @@ $eplug_folder = "ebattles";
 $eplug_menu_name = 'ebattles_menu';
 
 // Name of the admin configuration file --------------------------------------------------------------------------
-$eplug_conffile = "";
+$eplug_conffile = "admin_config.php";
 
 // Icon image and caption text ------------------------------------------------------------------------------------
 //$eplug_icon = $eplug_folder."/icon/list_32.png";
@@ -219,6 +219,23 @@ $eplug_tables = array(
 	Icon varchar(63)
 ) TYPE = MyISAM;"
 );
+
+// Insert Games in database
+if($file_handle = fopen(e_PLUGIN."ebattles/images/games_icons/Games List.csv", "r"))
+{
+    while (!feof($file_handle) ) {
+        $line_of_text = fgetcsv($file_handle, 1024);
+
+        $shortname = addslashes($line_of_text[0]);
+        $longname  = addslashes($line_of_text[1]);
+
+        $query =
+        "INSERT INTO ".TBL_GAMES."(Name, Icon)
+        VALUES ('$longname', '$shortname.gif')";
+        array_push($eplug_tables, $query); 
+    }
+    fclose($file_handle);
+}
 
 // Create a link in main menu (yes=TRUE, no=FALSE) -------------------------------------------------------------
 $eplug_link = FALSE;

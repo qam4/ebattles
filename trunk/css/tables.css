@@ -4,7 +4,6 @@ td.type1Header
    font-size: 11px;
    border-bottom: 2px solid #6699CC;
    border-left: 1px solid #6699CC;
-   background-color: #BEC8D1; 
    text-align: left;
    text-indent: 5px;
    font-family: Verdana;
@@ -20,8 +19,6 @@ td.type1Body1
    border-left: 1px solid #9CF;
    border-right: 0px;
    text-align: center;
-   background-color: antiquewhite;
-   color: #404040;
 }
 td.type1Body2
 { 
@@ -32,8 +29,6 @@ td.type1Body2
    border-left: 1px solid #9CF;
    border-right: 0px;
    text-align: center;
-   background-color: white;
-   color: #404040; 
 }
 
 td.type1Highlight
@@ -45,8 +40,6 @@ td.type1Highlight
    border-left: 1px solid #9CF;
    border-right: 0px;
    text-align: center;
-   background-color: pink;
-   color: #404040; 
 }
 
 
@@ -60,8 +53,6 @@ table.type1Border
    text-align: center;
    font-family: Verdana;
    font-size: 11px;
-   color: #404040;
-   background-color: #fafafa;
    border: 1px #6699CC solid;
    border-collapse: collapse;
    border-spacing: 0px;
