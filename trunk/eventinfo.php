@@ -144,14 +144,15 @@ else
     $enextupdate = mysql_result($result,0 , TBL_EVENTS.".NextUpdate_timestamp");
     $eischanged = mysql_result($result,0 , TBL_EVENTS.".IsChanged");
 
-    if (DEBUG == 1)
+    if ($pref['eb_events_update_delay_enable'] == 1)
     {
-        $eneedupdate = 1;
+        $eneedupdate = 0;
     }
     else
     {
-        $eneedupdate = 0;
-    }    
+        // Force always update
+        $eneedupdate = 1;
+    }
 
     if (  (($time > $enextupdate) && ($eischanged == 1))
     ||(file_exists($file) == FALSE)
@@ -206,7 +207,7 @@ else
     /* Update Stats */
     if ($eneedupdate == 1)
     {
-        $new_nextupdate = $time + EVENTS_UDATE_DELAY;
+        $new_nextupdate = $time + 60*$pref['eb_events_update_delay'];
         $q = "UPDATE ".TBL_EVENTS." SET NextUpdate_timestamp = $new_nextupdate WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q);
         $enextupdate = $new_nextupdate;
@@ -436,7 +437,7 @@ else
     $text .= "<tr>";
     $text .='<td class="forumheader3">Owner:</td><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
     $can_manage = 0;
-    if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
+    if (check_class($pref['eb_mod'])) $can_manage = 1;
     if (USERID==$eowner) $can_manage = 1;
     if ($can_manage == 1)
     $text .="<br /><a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$event_id\">Click here to Manage event</a>";
@@ -469,10 +470,6 @@ else
 
     $enextupdate_local = $enextupdate + GMT_TIMEOFFSET;
     $date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
-    if (($time < $enextupdate) && ($eischanged == 1))
-    {
-        $text .="Next Update: $date_nextupdate<br />";
-    }
 
     if ($etype == "Team Ladder")
     {
@@ -485,6 +482,10 @@ else
             include_once(e_PLUGIN."ebattles/include/updateteamstats.php");
         }
 
+        if (($time < $enextupdate) && ($eischanged == 1))
+        {
+            $text .="Next Update: $date_nextupdate<br />";
+        }
         /* Nbr Teams */
         $q = "SELECT COUNT(*) as NbrTeams"
         ." FROM ".TBL_TEAMS
@@ -510,6 +511,12 @@ else
 
     $text .="<div class=\"tab-page\">";
     $text .="<div class=\"tab\">Players Standings</div>";
+
+    if (($time < $enextupdate) && ($eischanged == 1))
+    {
+        $text .="Next Update: $date_nextupdate<br />";
+    }
+
     /* Nbr players */
     $q = "SELECT COUNT(*) as NbrPlayers"
     ." FROM ".TBL_PLAYERS
@@ -559,7 +566,7 @@ else
     }
 
     // Is the user admin?
-    if (check_class(e_UC_MAINADMIN)) $can_report = 1;
+    if (check_class($pref['eb_mod'])) $can_report = 1;
     // Is the user event owner?
     if (USERID==$eowner) $can_report = 1;
     // Is the user a moderator?

@@ -174,7 +174,7 @@ else
    $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
 
    $can_manage = 0;
-   if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
+   if (check_class($pref['eb_mod'])) $can_manage = 1;
    if (USERID==$eowner) $can_manage = 1;
    if ($can_manage == 0)
    {

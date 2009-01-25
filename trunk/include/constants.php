@@ -52,7 +52,4 @@ define("EMAIL_FROM_ADDR", "frederic.marchais@gmail.com");
 define("EMAIL_PASSWORD", "gmax76");
 define("EMAIL_WELCOME", true);
 
-define("EVENTS_UDATE_DELAY", 60*60);  // Minimum delay between 2 updates in seconds
-define("DEBUG", 1);                   //  
-
 ?>

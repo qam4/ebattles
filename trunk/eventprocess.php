@@ -27,7 +27,7 @@ else
    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
    
    $can_manage = 0;
-   if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
+   if (check_class($pref['eb_mod'])) $can_manage = 1;
    if (USERID==$eowner) $can_manage = 1;
    if ($can_manage == 0)
    {

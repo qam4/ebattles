@@ -105,7 +105,7 @@ else
     )
     )
     $can_delete = 1;
-    if (check_class(e_UC_MAINADMIN))  $can_delete = 1;
+    if (check_class($pref['eb_mod']))  $can_delete = 1;
     if (USERID==$eowner)  $can_delete = 1;
     if ($num_rows_2>0)  $can_delete = 1;
 

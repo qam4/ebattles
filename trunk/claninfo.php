@@ -14,7 +14,6 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
-$text .='<script type="text/javascript" src="./js/tabpane.js"></script>';
 
 /* Clan Name */
 $clan_id = $_GET['clanid'];
@@ -46,7 +45,6 @@ else
 
         $result_2 = $sql->db_Query($q_2);
         $num_rows_2 = mysql_numrows($result_2);
-        echo "$num_rows_2<br>";
         if($num_rows_2>0)
         {
             for($j=0; $j<$num_rows_2; $j++)
@@ -63,6 +61,69 @@ else
         }
         header("Location: claninfo.php?clanid=$clan_id");
     }
+
+    $text ='<script type="text/javascript" src="./js/tabpane.js"></script>';
+
+    $text .= '
+    <div class="tab-pane" id="tab-pane-6">
+    ';
+    /**
+    * Display Latest Games
+    */
+    $text .= '
+    <div class="tab-page">
+    <div class="tab">Team Summary</div>
+    ';
+    displayTeamSummary($clan_id);
+    $text .= '</div>';
+
+    /**
+    * Display Divisions
+    */
+    $text .= '
+    <div class="tab-page">
+    <div class="tab">Divisions</div>
+    ';
+    displayTeamDivisions($clan_id);
+    $text .= '</div>';
+
+    /**
+    * Display Events
+    */
+    $text .= '
+    <div class="tab-page">
+    <div class="tab">Events</div>
+    ';
+    displayTeamEvents($clan_id);
+    $text .= '</div>';
+
+    $text .= '
+    </div>
+
+    <p>
+    <br />Back to [<a href="'.e_PLUGIN.'ebattles/clans.php">Teams</a>]<br />
+    </p>
+
+    <script type="text/javascript">
+    //<![CDATA[
+    setupAllTabs();
+    //]]>
+    </script>
+    ';
+}
+$ns->tablerender('eBattles', $text);
+require_once(FOOTERF);
+exit;
+
+/***************************************************************************************
+Functions
+***************************************************************************************/
+/**
+* displayTeamSummary - Displays ...
+*/
+function displayTeamSummary($clan_id){
+    global $sql;
+    global $text;
 
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_USERS.".*"
@@ -81,25 +142,21 @@ else
 
     $text .= "<h1>$clan_name ($clan_tag)</h1>";
 
-    $text .= '
-    <div class="tab-pane" id="tab-pane-6">
-
-    <div class="tab-page">
-    <div class="tab">Team Summary</div>
-    ';
     $text .= "<p>Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a><br />";
     $can_manage = 0;
-    if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
+    if (check_class($pref['eb_mod'])) $can_manage = 1;
     if (USERID==$clan_owner) $can_manage = 1;
     if ($can_manage == 1)
     $text .="<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$clan_id\">Click here to Manage Team</a><br />";
     $text .="</p>";
-    $text .="</div>";
+}
 
-    $text .= '
-    <div class="tab-page">
-    <div class="tab">Divisions</div>
-    ';
+/**
+* displayTeamDivisions - Displays ...
+*/
+function displayTeamDivisions($clan_id){
+    global $sql;
+    global $text;
 
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_DIVISIONS.".*, "
@@ -163,8 +220,6 @@ else
         ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
         ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)"
         ." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
-
-
         $result_2 = $sql->db_Query($q_2);
         if(!$result_2 || (mysql_numrows($result_2) < 1))
         {
@@ -194,14 +249,15 @@ else
             $text .= "</table>\n";
         }
         $text .="</div>";
-        $text .= "<br />";
     }
-    $text .="</div>";
+}
 
-    $text .= '
-    <div class="tab-page">
-    <div class="tab">Events</div>
-    ';
+/**
+* displayTeamEvents - Displays ...
+*/
+function displayTeamEvents($clan_id){
+    global $sql;
+    global $text;
 
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_DIVISIONS.".*, "
@@ -294,16 +350,7 @@ else
             $text .= "</table>\n";
         }
         $text .="</div>";
-        $text .= "<br />";
     }
-    $text .="</div>";
-
-    $text .= "<p>";
-    $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/clans.php\">Teams</a>]<br />";
-    $text .= "</p>";
 }
 
-$ns->tablerender('Team Information', $text);
-require_once(FOOTERF);
-exit;
 ?>

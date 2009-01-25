@@ -19,7 +19,6 @@ $text .= '</a><br>';
 $text .= '<a href="'.$teams_link.'">';
 $text .= EBATTLES_MENU_L3;
 $text .= '</a><br>';
-if (check_class(e_UC_MAINADMIN)) $text .= '<a href="'.e_PLUGIN."ebattles/db_admin/insert_data.php".'">Insert Data</a>';
 
 $ns->tablerender($ebattles_title,$text);
 ?>
