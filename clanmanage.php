@@ -46,7 +46,7 @@ else
    $text .= "<h1><a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan_id\">$clan_name</a> ($clan_tag)</h1>";   
 
    $can_manage = 0;
-   if (check_class(e_UC_MAINADMIN)) $can_manage = 1;
+   if (check_class($pref['eb_mod'])) $can_manage = 1;
    if (USERID==$clan_owner) $can_manage = 1;
    if ($can_manage == 0)
    {
