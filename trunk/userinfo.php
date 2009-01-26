@@ -489,8 +489,8 @@ else
     if ($num_rows>0)
     {
         /* Display table contents */
-        $text .= "<table class=\"type1Border\">\n";
-        $text .= "<tr><td class=\"type1Header\" style=\"width:120px\"><b>Match ID</b></td><td class=\"type1Header\"><b>Event</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Reported By</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Date</b></td></tr>\n";
+        $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+        $text .= "<tr><td class=\"forumheader\" style=\"width:120px\"><b>Match ID</b></td><td class=\"forumheader\"><b>Event</b></td><td class=\"forumheader\" style=\"width:90px\"><b>Reported By</b></td><td class=\"forumheader\"><b>Players</b></td><td class=\"forumheader\" style=\"width:90px\"><b>Date</b></td></tr>\n";
         for($i=0; $i<$num_rows; $i++){
             $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
             $mReportedBy  = mysql_result($result,$i, TBL_MATCHS.".ReportedBy");
@@ -535,17 +535,17 @@ else
                 $pid  = mysql_result($result2,$j, TBL_USERS.".user_id");
                 $pname  = mysql_result($result2,$j, TBL_USERS.".user_name");
                 if ($j==0)
-                $players = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
+                $players = "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
                 else
-                $players = $players.", <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
+                $players = $players.", <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             }
 
             $text .= "<tr>\n";
-            $text .= "<td class=\"type1Body2\"><b>$mID</b> <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEvent&amp;matchid=$mID\">(Show details)</a></td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEvent\">$ename</a></td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"type1Body2\">$players</td><td class=\"type1Body2\">$date</td></tr>";
+            $text .= "<td class=\"forumheader3\"><b>$mID</b> <a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEvent&amp;matchid=$mID\">(Show details)</a></td><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEvent\">$ename</a></td><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"forumheader3\">$players</td><td class=\"forumheader3\">$date</td></tr>";
 
 
         }
-        $text .= "</table><br />\n";
+        $text .= "</tbody></table><br />\n";
     }
 
     $text .= paginate($rowsPerPage, $pg, $totalPages);

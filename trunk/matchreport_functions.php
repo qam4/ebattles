@@ -73,7 +73,7 @@ function user_form($players_id, $players_name, $eventid) {
     // TABLE - Player/Teams Add/Remove
     //----------------------------------
     $text .= 'Select the number of players and teams:';    
-    $text .= '<table class="fborder" id="matchresult" >';    
+    $text .= '<table class="fborder" style="width:95%" id="matchresult" ><tbody>';    
     $text .= '<tr><input type="hidden" name="matchreport" value="1"></tr>';
     // Players
     $text .= '<tr><td class="forumheader3">Number of Players:</td><td class="forumheader3">'.$nbr_players.'</td>';
@@ -119,7 +119,7 @@ function user_form($players_id, $players_name, $eventid) {
        $text .= '<td class="forumheader3"><input class="button" type="submit" value="Remove Team" name="removeTeam" DISABLED></td>';
     }
     $text .= "</tr>";
-    $text .= '</table>';
+    $text .= '</tbody></table>';
 
     //$text .= '<p><input class="inspector" type="button" value="Inspect" onclick="junkdrawer.inspectListOrder(\'matchresultlist\')"/></p>';
     $text .= "<br />";
@@ -127,7 +127,7 @@ function user_form($players_id, $players_name, $eventid) {
     // TABLE - Players/Teams Selection
     //----------------------------------
     $text .= 'Select the players and their respective team:';    
-    $text .= '<table class="fborder" id="matchresult">';
+    $text .= '<table class="fborder" style="width:95%" id="matchresult"><tbody>';
     for($i=1;$i<=$nbr_players;$i++)
     {
        $text .= '<tr><td class="forumheader3">Player #'.$i.':</td>';
@@ -155,13 +155,13 @@ function user_form($players_id, $players_name, $eventid) {
     {
        $text .= '<input type="hidden" name="rank'.$i.'" value="0">';
     }
-    $text .= '</table>';
+    $text .= '</tbody></table>';
     $text .= "<br />";
 
     // TABLE - Teams Rank Selection
     //----------------------------------
     $text .= 'Select the rank of each team by dragging each team in front of its rank:';    
-    $text .= '<table class="fborder" id="matchresult">';
+    $text .= '<table class="fborder" style="width:95%" id="matchresult"><tbody>';
     $text .= '<tr>';
     $text .= '<td class="forumheader3"><ul id="matchresultranklist" class="boxy2">';
     for($i=1;$i<=$nbr_teams;$i++)
@@ -176,7 +176,7 @@ function user_form($players_id, $players_name, $eventid) {
     }
     $text .= '</ul></td>';
     $text .= '</tr>';
-    $text .= '</table>';
+    $text .= '</tbody></table>';
 
     $text .= '<br />';
     $text .= '<p class="centered">';

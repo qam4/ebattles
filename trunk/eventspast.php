@@ -17,7 +17,7 @@ $text = '';
 $text .='
 <script type="text/javascript" src="./js/tabpane.js"></script>
 
-<div class="news">
+<div class="spacer">
 ';
 
 /**
@@ -134,8 +134,8 @@ function displayPastEvents(){
    }
    
    /* Display table contents */
-   $text .= "<table class=\"type1Border\">\n";
-   $text .= "<tr><td class=\"type1Header\"><b>Event</b></td><td colspan=\"2\" class=\"type1Header\"><b>Game</b></td><td class=\"type1Header\"><b>Type</b></td><td class=\"type1Header\"><b>Start</b></td><td class=\"type1Header\"><b>End</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\"><b>Games</b></td></tr>\n";
+   $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+   $text .= "<tr><td class=\"forumheader\"><b>Event</b></td><td colspan=\"2\" class=\"forumheader\"><b>Game</b></td><td class=\"forumheader\"><b>Type</b></td><td class=\"forumheader\"><b>Start</b></td><td class=\"forumheader\"><b>End</b></td><td class=\"forumheader\"><b>Players</b></td><td class=\"forumheader\"><b>Games</b></td></tr>\n";
    for($i=0; $i<$num_rows; $i++){
       $gname  = mysql_result($result,$i, TBL_GAMES.".name");
       $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -183,10 +183,10 @@ function displayPastEvents(){
          ||($eend<=$time)
         )
       {
-        $text .= "<tr><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body2\">$gname</td><td class=\"type1Body2\">$etype</td><td class=\"type1Body2\">$date_start</td><td class=\"type1Body2\">$date_end</td><td class=\"type1Body2\">$nbrplayers</td><td class=\"type1Body2\">$nbrmatches</td></tr>\n";
+        $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
       }
    }
-   $text .= "</table><br />\n";
+   $text .= "</tbody></table><br />\n";
    // print the navigation link
    $text .= paginate($rowsPerPage, $pg, $totalPages);
 

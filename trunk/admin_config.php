@@ -31,7 +31,8 @@ if (isset($message)) {
 
 $text = "<div style='text-align:center'>
 <form method='post' action='".e_SELF."' id='ebform'>
-<table style='".ADMIN_WIDTH."' class='fborder'>
+<table style='".ADMIN_WIDTH."' class='fborder' style='width:95%'>
+<tbody>
 ";
 
 $text .= "</select>
@@ -69,6 +70,7 @@ $text .= "<tr>
 <input class='button' type='submit' name='updatesettings' value='".EBATTLES_ADMIN_L8."' />
 </td>
 </tr>
+</tbody>
 </table>
 </form>
 </div>";

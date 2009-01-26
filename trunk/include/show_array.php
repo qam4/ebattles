@@ -46,8 +46,7 @@ function html_show_array($array){
 
 function html_show_table($array, $rows, $columns)
 {
-   $output = '';
-   $output .= "<table class=\"type1Border\">\n";
+   $output = "<table class=\"fborder\" style=\"width:95%\"><tbody>";
       
    for ($i=0; $i<$rows; $i++)
    {
@@ -56,24 +55,24 @@ function html_show_table($array, $rows, $columns)
      {
        if (strcasecmp($array[$i][0],"header")==0)
        {
-            $output .= "<td class=\"type1Header\">".$array[$i][$j]."</td>";
+            $output .= "<td class=\"forumheader\">".$array[$i][$j]."</td>";
        }
        elseif (strcasecmp($array[$i][0],"row_highlight")==0)
        {
-            $output .= "<td class=\"type1Highlight\">".$array[$i][$j]."</td>";
+            $output .= "<td class=\"forumheader3\">".$array[$i][$j]."</td>";
        }
        elseif ( $i % 2 == 1 )
        {
-            $output .= "<td class=\"type1Body2\">".$array[$i][$j]."</td>";
+            $output .= "<td class=\"forumheader3\">".$array[$i][$j]."</td>";
        }
        else
        {
-            $output .= "<td class=\"type1Body2\">".$array[$i][$j]."</td>";
+            $output .= "<td class=\"forumheader3\">".$array[$i][$j]."</td>";
        }
      }
      $output .= "</tr>\n";
    }
-   $output .= "</table>";
+   $output .= "</tbody></table>";
    return $output;
 }
 ?> 

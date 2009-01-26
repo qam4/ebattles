@@ -60,6 +60,8 @@ function displayLatestGames(){
     global $sql;
     global $text;
 
+    $time = GMT_time();
+
     $rowsPerPage = 5;
     /* Stats/Results */
     $q = "SELECT ".TBL_MATCHS.".*, "
@@ -131,7 +133,7 @@ function displayLatestGames(){
             $numPlayers = mysql_numrows($result2);
             $pname = '';
 
-            $players = "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"></img> ";
+            $players = "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"></img></a> ";
 
             $pid  = mysql_result($result2,0, TBL_USERS.".user_id");
             $pname  = mysql_result($result2,0 , TBL_USERS.".user_name");
@@ -155,6 +157,10 @@ function displayLatestGames(){
                 $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             }
             $players .= " playing $mEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEventID\">$mEventName</a>)";
+            $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
+
+;
+
             $text .= "$players<br>";
         }
     }

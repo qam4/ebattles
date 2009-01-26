@@ -181,7 +181,7 @@ function displayTeamDivisions($clan_id){
         $div_captain  = mysql_result($result,$i, TBL_USERS.".user_id");
         $div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
-        $text .="<div class=\"news\">";
+        $text .="<div class=\"spacer\">";
         $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</h2>";
         $text .= "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
 
@@ -232,8 +232,8 @@ function displayTeamDivisions($clan_id){
 
             $text .= "<p>$num_rows_2 member(s)</p>";
 
-            $text .= "<table class=\"type1Border\">\n";
-            $text .= "<tr><td class=\"type1Header\"><b>Name</b></td><td class=\"type1Header\"><b>Status</b></td><td class=\"type1Header\"><b>Joined</b></td></tr>\n";
+            $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+            $text .= "<tr><td class=\"forumheader\"><b>Name</b></td><td class=\"forumheader\"><b>Status</b></td><td class=\"forumheader\"><b>Joined</b></td></tr>\n";
             for($j=0; $j<$num_rows_2; $j++)
             {
                 $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
@@ -243,10 +243,10 @@ function displayTeamDivisions($clan_id){
                 $date = date("d M Y",$mjoined_local);
 
                 $text .= "<tr>\n";
-                $text .= "<td class=\"type1Body2\"><b><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mid\">$mname</a></b></td><td class=\"type1Body2\">Member</td><td class=\"type1Body2\">$date</td></tr>";
+                $text .= "<td class=\"forumheader3\"><b><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mid\">$mname</a></b></td><td class=\"forumheader3\">Member</td><td class=\"forumheader3\">$date</td></tr>";
 
             }
-            $text .= "</table>\n";
+            $text .= "</tbody></table>\n";
         }
         $text .="</div>";
     }
@@ -277,7 +277,7 @@ function displayTeamEvents($clan_id){
         $gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
         $div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 
-        $text .="<div class=\"news\">";
+        $text .="<div class=\"spacer\">";
         $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</h2>";
 
         $q_2 = "SELECT ".TBL_TEAMS.".*, "
@@ -301,8 +301,8 @@ function displayTeamEvents($clan_id){
 
             $text .= "<p>$num_rows_2 current event(s)</p>";
 
-            $text .= "<table class=\"type1Border\">\n";
-            $text .= "<tr><td class=\"type1Header\"><b>Event</b></td><td class=\"type1Header\"><b>Rank</b></td></tr>\n";
+            $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+            $text .= "<tr><td class=\"forumheader\"><b>Event</b></td><td class=\"forumheader\"><b>Rank</b></td></tr>\n";
             for($j=0; $j<$num_rows_2; $j++)
             {
                 $eid  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
@@ -310,9 +310,9 @@ function displayTeamEvents($clan_id){
                 $erank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
                 $text .= "<tr>\n";
-                $text .= "<td class=\"type1Body2\"><b><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></b></td><td class=\"type1Body2\">$erank</td></tr>";
+                $text .= "<td class=\"forumheader3\"><b><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></b></td><td class=\"forumheader3\">$erank</td></tr>";
             }
-            $text .= "</table>\n";
+            $text .= "</tbody></table>\n";
         }
 
         $q_2 = "SELECT ".TBL_TEAMS.".*, "
@@ -336,8 +336,8 @@ function displayTeamEvents($clan_id){
 
             $text .= "<p>$num_rows_2 old event(s)</p>";
 
-            $text .= "<table class=\"type1Border\">\n";
-            $text .= "<tr><td class=\"type1Header\"><b>Event</b></td><td class=\"type1Header\"><b>Rank</b></td></tr>\n";
+            $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+            $text .= "<tr><td class=\"forumheader\"><b>Event</b></td><td class=\"forumheader\"><b>Rank</b></td></tr>\n";
             for($j=0; $j<$num_rows_2; $j++)
             {
                 $eid  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
@@ -345,9 +345,9 @@ function displayTeamEvents($clan_id){
                 $erank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
                 $text .= "<tr>\n";
-                $text .= "<td class=\"type1Body2\"><b><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></b></td><td class=\"type1Body2\">$erank</td></tr>";
+                $text .= "<td class=\"forumheader3\"><b><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></b></td><td class=\"forumheader3\">$erank</td></tr>";
             }
-            $text .= "</table>\n";
+            $text .= "</tbody></table>\n";
         }
         $text .="</div>";
     }
