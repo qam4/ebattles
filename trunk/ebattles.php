@@ -95,9 +95,7 @@ function displayLatestGames(){
             $mEventgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
             $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
             $mTime_local = $mTime + GMT_TIMEOFFSET;
-            //$date = date("d M Y, h:i:s A",$mTime);
-            $date = date("d M Y",$mTime_local);
-
+            $date = date("d M Y, h:i:s A",$mTime_local);
             $q2 = "SELECT DISTINCT ".TBL_MATCHS.".*, "
             .TBL_SCORES.".Player_Rank"
             ." FROM ".TBL_MATCHS.", "
@@ -157,9 +155,16 @@ function displayLatestGames(){
                 $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             }
             $players .= " playing $mEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEventID\">$mEventName</a>)";
-            $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
+            if (($time-$mTime) < INT_DAY )
+            {
+                $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
+            }
+            else
+            {
+                $players .= " <div class='smalltext'>".$date.".</div>";
+            }
 
-;
+            ;
 
             $text .= "$players<br>";
         }

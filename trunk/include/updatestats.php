@@ -411,6 +411,15 @@ for($i=0; $i<$num_rows; $i++)
         $prankdelta = $new_rankdelta;
     }
 
+    if($OverallScore[$index]==0)
+    {
+        $rank = '<div title="Not ranked">-</div>';
+    }
+    else
+    {
+        $rank = $ranknumber;
+    }
+
     $prankdelta_string = "";
     if ($prankdelta>0)
     {
@@ -458,7 +467,7 @@ for($i=0; $i<$num_rows; $i++)
         );
     }
 
-    $stats_row[] = "<b>$ranknumber</b> $prankdelta_string";
+    $stats_row[] = "<b>$rank</b> $prankdelta_string";
     $stats_row[] = "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$uid[$index]\"><b>$pclantag$name[$index]</b></a>";
     $stats_row[] = number_format ($OverallScore[$index],2);
     if ($ELO_maxpoints > 0)

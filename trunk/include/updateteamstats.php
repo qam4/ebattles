@@ -376,6 +376,15 @@ for($i=0; $i<$num_rows; $i++)
 
     $index = array_search($tid,$id);
 
+    if($OverallScore[$index]==0)
+    {
+        $rank = '<div title="Not ranked">-</div>';
+    }
+    else
+    {
+        $rank = $ranknumber;
+    }
+    
     $q_2 = "SELECT *"
     ." FROM ".TBL_PLAYERS
     ." WHERE (".TBL_PLAYERS.".Team = '$tid')"
@@ -397,7 +406,7 @@ for($i=0; $i<$num_rows; $i++)
         );
     }
 
-    $stats_row[] = "<b>$ranknumber</b>";
+    $stats_row[] = "<b>$rank</b>";
     $stats_row[] = "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan[$index]\"><b>$name[$index] ($clantag[$index])</b></a>";
     $stats_row[] = "$nbr_players[$index]";
     $stats_row[] = number_format ($OverallScore[$index],2);

@@ -599,7 +599,7 @@ else
         $text .= "<tr>";
         if($can_report_quickloss != 0)
         {
-            $text .= '<td class="forumheader3">';
+            $text .= '<td>';
             $text .= "<form action=\"".e_PLUGIN."ebattles/quickreport.php?eventid=$event_id\" method=\"post\">";
             $text .= "<input class=\"button\" type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"></input>";
             $text .= "</form>";
@@ -607,7 +607,7 @@ else
         }
         if($can_report != 0)
         {
-            $text .= '<td class="forumheader3">';
+            $text .= '<td>';
             $text .= "<form action=\"".e_PLUGIN."ebattles/matchreport.php?eventid=$event_id\" method=\"post\">";
             $text .= "<input class=\"button\" type=\"submit\" name=\"matchreport\" value=\"Match Report\"></input>";
             $text .= "</form>";
