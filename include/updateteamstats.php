@@ -398,7 +398,7 @@ for($i=0; $i<$num_rows; $i++)
     }
 
     $stats_row[] = "<b>$ranknumber</b>";
-    $stats_row[] = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan[$index]\"><b>$name[$index] ($clantag[$index])</b></a>";
+    $stats_row[] = "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan[$index]\"><b>$name[$index] ($clantag[$index])</b></a>";
     $stats_row[] = "$nbr_players[$index]";
     $stats_row[] = number_format ($OverallScore[$index],2);
     if ($ELO_maxpoints > 0)

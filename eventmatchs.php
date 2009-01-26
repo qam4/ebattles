@@ -56,9 +56,9 @@ else
     $result = $sql->db_Query($q);
     $row = mysql_fetch_array($result);
     $nbrmatchs = $row['NbrMatchs'];
-    $text .="<div class=\"news\">";
     $text .="<h2>Matches for this Ladder ($nbrmatchs)</h2><br />";
-    $text .= "<p>";
+    $text .= "<div class=\"spacer\">";
+    $text .= "<div style=\"text-align:center\">";
     /* Stats/Results */
     $q = "SELECT ".TBL_MATCHS.".*, "
     .TBL_USERS.".*"
@@ -75,8 +75,8 @@ else
     if ($num_rows>0)
     {
         /* Display table contents */
-        $text .= "<table class=\"type1Border\">\n";
-        $text .= "<tr><td class=\"type1Header\" style=\"width:120px\"><b>Match ID</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Reported By</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Date</b></td></tr>\n";
+        $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+        $text .= "<tr><td class=\"forumheader\" style=\"width:120px\"><b>Match ID</b></td><td class=\"forumheader\" style=\"width:90px\"><b>Reported By</b></td><td class=\"forumheader\"><b>Players</b></td><td class=\"forumheader\" style=\"width:90px\"><b>Date</b></td></tr>\n";
         for($i=0; $i<$num_rows; $i++){
             $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
             $mReportedBy  = mysql_result($result,$i, TBL_MATCHS.".ReportedBy");
@@ -132,17 +132,17 @@ else
                 }
 
                 if ($j==0)
-                $players = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
+                $players = "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
                 else
-                $players = $players.", <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
+                $players = $players.", <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
             }
 
             $text .= "<tr>\n";
-            $text .= "<td class=\"type1Body2\"><b>$mID</b> <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&matchid=$mID\">(Show details)</a></td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickname</a></td><td class=\"type1Body2\">$players</td><td class=\"type1Body2\">$date</td></tr>";
+            $text .= "<td class=\"forumheader3\"><b>$mID</b> <a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&matchid=$mID\">(Show details)</a></td><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickname</a></td><td class=\"forumheader3\">$players</td><td class=\"forumheader3\">$date</td></tr>";
 
 
         }
-        $text .= "</table><br />\n";
+        $text .= "</tbody></table><br />\n";
     }
 
 
@@ -150,7 +150,7 @@ else
     $text .= paginate($rowsPerPage, $pg, $totalPages);
 
     $text .= "<br />";
-    $text .= "<p>";
+    $text .= "</div>";
     $text .= "</div>";
 }
 $ns->tablerender('Event Matches', $text);

@@ -42,7 +42,7 @@ else
     $num_rows = mysql_numrows($result);
 
     $text .= '
-    <div class="news">
+    <div class="spacer">
     <table>
     ';
 

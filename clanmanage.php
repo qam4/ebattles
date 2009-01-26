@@ -62,7 +62,7 @@ else
          <div class="tab">Team Summary</div>
       ';
       
-      $text .= '<table class="fborder">';
+      $text .= '<table class="fborder" style=\"width:95%\">';
       $text .= '<tbody>';
       $text .= '<tr>';
       $text .= '<td class="forumheader3"><b>Owner</b><br>';
@@ -141,7 +141,7 @@ else
          <div class="tab">Team Divisions</div>
       ';
 
-      $text .= '<table class="fborder">';
+      $text .= '<table class="fborder" style=\"width:95%\">';
       $text .= '<tbody>';
 
       $q = "SELECT ".TBL_GAMES.".*"
@@ -259,8 +259,8 @@ else
              $text .= '<td class="forumheader3">'.$num_rows_2.' member(s)</td>';
              $text .= '<td class="forumheader3">';
              $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
-             $text .= "<table class=\"type1Border\">\n";
-             $text .= "<tr><td class=\"type1Header\"><b>Name</b></td><td class=\"type1Header\"><b>Status</b></td><td class=\"type1Header\"><b>Joined</b></td><td class=\"type1Header\"><b>Kick</b></td></tr>\n";
+             $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+             $text .= "<tr><td class=\"forumheader\"><b>Name</b></td><td class=\"forumheader\"><b>Status</b></td><td class=\"forumheader\"><b>Joined</b></td><td class=\"forumheader\"><b>Kick</b></td></tr>\n";
              for($j=0; $j<$num_rows_2; $j++)
              {
                 $mid  = mysql_result($result_2,$j, TBL_MEMBERS.".MemberID");
@@ -271,10 +271,10 @@ else
                 $date  = date("d M Y",$mjoined_local);
              
                 $text .= "<tr>\n";
-                $text .= "<td class=\"type1Body2\"><b><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$muid\">$mname</a></b></td><td class=\"type1Body2\">Member</td><td class=\"type1Body2\">$date</td>";
+                $text .= "<td class=\"forumheader3\"><b><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$muid\">$mname</a></b></td><td class=\"forumheader3\">Member</td><td class=\"forumheader3\">$date</td>";
       
                 // Checkbox to select which member to kick
-                $text .= "<td class=\"type1Body2\"><input type=\"checkbox\" name=\"del[]\" value=\"$mid\" /></td>\n";
+                $text .= "<td class=\"forumheader3\"><input type=\"checkbox\" name=\"del[]\" value=\"$mid\" /></td>\n";
                 $text .= "</tr>";
              }
              $text .= "<tr>";
@@ -282,7 +282,7 @@ else
              $text .= "<input class=\"button\" type=\"submit\" name=\"kick\" value=\"Kick Selected\"></input>";
              $text .= "</td>\n";
              $text .= "</tr>";
-             $text .= "</table>\n";
+             $text .= "</tbody></table>\n";
              $text .= "</form>";
              $text .= '</td>';
              $text .= '</tr>';

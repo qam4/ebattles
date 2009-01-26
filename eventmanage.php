@@ -192,7 +192,7 @@ else
       ';
 
       $text .= '
-        <table class="fborder">
+        <table class="fborder" style="width:95%">
         <tbody>
           <tr>
       ';
@@ -278,7 +278,7 @@ else
       ';
       $text .= "<form name=\"eventsettingsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-      <table class="fborder">
+      <table class="fborder" style="width:95%">
       <tbody">
       ';
       //<!-- Event Name -->
@@ -457,7 +457,7 @@ else
       $text .= "<form name=\"eventrulesform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       
       $text .= '
-      <table class="fborder">
+      <table class="fborder" style="width:95%">
       <tbody>
       ';
       //<!-- Rules -->
@@ -490,7 +490,7 @@ else
       $text .='
       <div class="tab-page">
       <div class="tab">Event Reset</div>
-      <table class="fborder">
+      <table class="fborder" style="width:95%">
       <tbody>
         <tr>
       ';
@@ -550,7 +550,7 @@ else
       ';
       $text .= "<form name=\"eventstatsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-      <table class="fborder">
+      <table class="fborder" style="width:95%"><tbody>
       <tr>
       <td class="forumheader3">
       Number of Matches to Rank:
@@ -825,7 +825,7 @@ else
       $text .='
          </td>
          </tr>
-         </table>
+         </tbody></table>
          
          <br /><br />
          

@@ -139,7 +139,7 @@ for($i=0; $i<$num_rows; $i++){
 }
 
 $text .= '
-<div class="news">
+<div class="spacer">
 ';
 
 // assuming we saved the above function in "functions.php", let's make sure it's available

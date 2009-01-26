@@ -151,8 +151,8 @@ function displayCurrentEvents(){
     else
     {
         /* Display table contents */
-        $text .= "<table class=\"type1Border\">\n";
-        $text .= "<tr><td class=\"type1Header\">Event</td><td colspan=\"2\" class=\"type1Header\">Game</td><td class=\"type1Header\">Type</td><td class=\"type1Header\">Start</td><td class=\"type1Header\">End</td><td class=\"type1Header\">Players</td><td class=\"type1Header\">Games</td></tr>\n";
+        $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+        $text .= "<tr><td class=\"forumheader\">Event</td><td colspan=\"2\" class=\"forumheader\">Game</td><td class=\"forumheader\">Type</td><td class=\"forumheader\">Start</td><td class=\"forumheader\">End</td><td class=\"forumheader\">Players</td><td class=\"forumheader\">Games</td></tr>\n";
         for($i=0; $i<$num_rows; $i++){
             $gname  = mysql_result($result,$i, TBL_GAMES.".name");
             $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -200,10 +200,10 @@ function displayCurrentEvents(){
             ||($eend>=$time)
             )
             {
-                $text .= "<tr><td class=\"type1Body1\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body2\">$gname</td><td class=\"type1Body2\">$etype</td><td class=\"type1Body2\">$date_start</td><td class=\"type1Body2\">$date_end</td><td class=\"type1Body2\">$nbrplayers</td><td class=\"type1Body2\">$nbrmatches</td></tr>\n";
+                $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
             }
         }
-        $text .= "</table><br />\n";
+        $text .= "</tbody></table><br />\n";
         // print the navigation link
         $text .= paginate($rowsPerPage, $pg, $totalPages);
     }
@@ -298,8 +298,8 @@ function displayRecentEvents(){
         return;
     }
     /* Display table contents */
-    $text .= "<table class=\"type1Border\">\n";
-    $text .= "<tr><td class=\"type1Header\">Event</td><td colspan=\"2\" class=\"type1Header\">Game</td><td class=\"type1Header\">Type</td><td class=\"type1Header\">Start</td><td class=\"type1Header\">End</td><td class=\"type1Header\">Players</td><td class=\"type1Header\">Games</td></tr>\n";
+    $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+    $text .= "<tr><td class=\"forumheader\">Event</td><td colspan=\"2\" class=\"forumheader\">Game</td><td class=\"forumheader\">Type</td><td class=\"forumheader\">Start</td><td class=\"forumheader\">End</td><td class=\"forumheader\">Players</td><td class=\"forumheader\">Games</td></tr>\n";
     for($i=0; $i<$num_rows; $i++){
         $gname  = mysql_result($result,$i, TBL_GAMES.".name");
         $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -347,10 +347,10 @@ function displayRecentEvents(){
         &&($eend<$time)
         )
         {
-            $text .= "<tr><td class=\"type1Body1\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"type1Body2\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"type1Body2\">$gname</td><td class=\"type1Body2\">$etype</td><td class=\"type1Body2\">$date_start</td><td class=\"type1Body2\">$date_end</td><td class=\"type1Body2\">$nbrplayers</td><td class=\"type1Body2\">$nbrmatches</td></tr>\n";
+            $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
         }
     }
-    $text .= "</table><br />\n";
+    $text .= "</tbody></table><br />\n";
 
     $text .= "<p>";
     $text .= "[<a href=\"".e_PLUGIN."ebattles/eventspast.php\">Show all past events</a>]";

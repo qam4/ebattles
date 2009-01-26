@@ -5,14 +5,10 @@
 */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
+include_once(e_PLUGIN."ebattles/include/time.php");
 include_once(e_PLUGIN."ebattles/include/pagination.php");
 include_once(e_PLUGIN."ebattles/include/show_array.php");
 
-define('INT_SECOND', 1);
-define('INT_MINUTE', 60);
-define('INT_HOUR', 3600);
-define('INT_DAY', 86400);
-define('INT_WEEK', 604800);
 
 /*******************************************************************
 ********************************************************************/
@@ -234,9 +230,9 @@ else
     $text .="</div>";
 
     $text .="<div class=\"tab-page\">";
-    $text .="<div class=\"tab\"> Info</div>";
-
-    $text .= "<table>";
+    $text .="<div class=\"tab\">Info</div>";
+ 
+    $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
     if(check_class(e_UC_MEMBER))
     {
         if(($eend == 0) || ($time < $eend))
@@ -465,7 +461,7 @@ else
     $text .= '<tr><td class="forumheader3">Ends:</td><td class="forumheader3">'.$date_end.'</td></tr>';
     $text .= '<tr><td class="forumheader3"></td><td class="forumheader3">'.$time_comment.'</td></tr>';
     $text .= '<tr><td class="forumheader3">Rules:</td><td class="forumheader3">'.$erules.'</td></tr>';
-    $text .= '</table>';
+    $text .= '</tbody></table>';
     $text .= '</div>';
 
     $enextupdate_local = $enextupdate + GMT_TIMEOFFSET;
@@ -493,7 +489,7 @@ else
         $result = $sql->db_Query($q);
         $row = mysql_fetch_array($result);
         $nbrteams = $row['NbrTeams'];
-        $text .="<div class=\"news\">";
+        $text .="<div class=\"spacer\">";
         $text .="<p>";
         $text .="$nbrteams teams<br />";
         $text .="Minimum $eminteamgames team matches to rank.";
@@ -526,7 +522,7 @@ else
     $nbrplayers = $row['NbrPlayers'];
     $totalPages = $nbrplayers;
 
-    $text .="<div class=\"news\">";
+    $text .="<div class=\"spacer\">";
     $text .="<p>";
     $text .="$nbrplayers players<br />";
     $text .="Minimum $emingames matches to rank.<br />";
@@ -677,8 +673,8 @@ else
     if ($num_rows>0)
     {
         /* Display table contents */
-        $text .= "<table class=\"type1Border\">\n";
-        $text .= "<tr><td class=\"type1Header\" style=\"width:120px\"><b>Match ID</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Reported By</b></td><td class=\"type1Header\"><b>Players</b></td><td class=\"type1Header\" style=\"width:90px\"><b>Date</b></td></tr>\n";
+        $text .= "<table class=\"fborder\" style=\"width:95%\">\n";
+        $text .= "<tr><td class=\"forumheader\" style=\"width:120px\"><b>Match ID</b></td><td class=\"forumheader\" style=\"width:90px\"><b>Reported By</b></td><td class=\"forumheader\"><b>Players</b></td><td class=\"forumheader\" style=\"width:90px\"><b>Date</b></td></tr>\n";
         for($i=0; $i<$num_rows; $i++)
         {
             $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
@@ -735,15 +731,15 @@ else
                 }
 
                 if ($j==0)
-                $players = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
+                $players = "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
                 else
-                $players = $players.", <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
+                $players = $players.", <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
             }
 
             $text .= "<tr>\n";
-            $text .= "<td class=\"type1Body2\"><b>$mID</b> <a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">(Show details)</a></td><td class=\"type1Body2\"><a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"type1Body2\">$players</td><td class=\"type1Body2\">$date</td></tr>";
+            $text .= "<td class=\"forumheader3\"><b>$mID</b> <a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">(Show details)</a></td><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a></td><td class=\"forumheader3\">$players</td><td class=\"forumheader3\">$date</td></tr>";
         }
-        $text .= "</table><br />\n";
+        $text .= "</tbody></table><br />\n";
     }
     $text .= "[<a href=\"".e_PLUGIN."ebattles/eventmatchs.php?eventid=$event_id\">Show all Matches</a>]";
 
@@ -766,70 +762,7 @@ $ns->tablerender('Event Information', $text);
 require_once(FOOTERF);
 exit;
 
-/***************************************************************************************
-Functions
-***************************************************************************************/
-function get_formatted_timediff($then, $now = false)
-{
-    $now      = (!$now) ? time() : $now;
-    $timediff = ($now - $then);
-    $weeks    = (int) intval($timediff / INT_WEEK);
-    $timediff = (int) intval($timediff - (INT_WEEK * $weeks));
-    $days     = (int) intval($timediff / INT_DAY);
-    $timediff = (int) intval($timediff - (INT_DAY * $days));
-    $hours    = (int) intval($timediff / INT_HOUR);
-    $timediff = (int) intval($timediff - (INT_HOUR * $hours));
-    $mins     = (int) intval($timediff / INT_MINUTE);
-    $timediff = (int) intval($timediff - (INT_MINUTE * $mins));
-    $sec      = (int) intval($timediff / INT_SECOND);
-    $timediff = (int) intval($timediff - ($sec * INT_SECOND));
 
-    $str = '';
-    if ( $weeks )
-    {
-        $str .= intval($weeks);
-        $str .= ($weeks > 1) ? ' weeks' : ' week';
-    }
-
-    if ( $days )
-    {
-        $str .= ($str) ? ', ' : '';
-        $str .= intval($days);
-        $str .= ($days > 1) ? ' days' : ' day';
-    }
-
-    if ( $hours )
-    {
-        $str .= ($str) ? ', ' : '';
-        $str .= intval($hours);
-        $str .= ($hours > 1) ? ' hours' : ' hour';
-    }
-
-    if ( $mins )
-    {
-        $str .= ($str) ? ', ' : '';
-        $str .= intval($mins);
-        $str .= ($mins > 1) ? ' minutes' : ' minute';
-    }
-
-    if ( $sec )
-    {
-        $str .= ($str) ? ', ' : '';
-        $str .= intval($sec);
-        $str .= ($sec > 1) ? ' seconds' : ' second';
-    }
-
-    if ( !$weeks && !$days && !$hours && !$mins && !$sec )
-    {
-        $str .= '0 seconds';
-    }
-    else
-    {
-        $str .= '';
-    }
-
-    return $str;
-}
 ?>
 
 

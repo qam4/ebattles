@@ -459,7 +459,7 @@ for($i=0; $i<$num_rows; $i++)
     }
 
     $stats_row[] = "<b>$ranknumber</b> $prankdelta_string";
-    $stats_row[] = "<a class=\"type1Border\" href=\"".e_PLUGIN."ebattles/userinfo.php?user=$uid[$index]\"><b>$pclantag$name[$index]</b></a>";
+    $stats_row[] = "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$uid[$index]\"><b>$pclantag$name[$index]</b></a>";
     $stats_row[] = number_format ($OverallScore[$index],2);
     if ($ELO_maxpoints > 0)
     {
