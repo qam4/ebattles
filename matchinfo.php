@@ -48,6 +48,17 @@ else
     $text .= "<h2>$egame</h2>";
 
     $q = "SELECT ".TBL_MATCHS.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+    ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)";
+    $result = $sql->db_Query($q);
+    $reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
+    $reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
+
+
+    $q = "SELECT ".TBL_MATCHS.".*, "
     .TBL_SCORES.".*, "
     .TBL_PLAYERS.".*, "
     .TBL_USERS.".*"
@@ -68,8 +79,6 @@ else
 
     if ($num_rows>0)
     {
-        $reported_by  = mysql_result($result,0, TBL_USERS.".user_id");
-        $reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
         $comments  = mysql_result($result,0, TBL_MATCHS.".Comments");
         $time_reported  = mysql_result($result,0, TBL_MATCHS.".TimeReported");
         $time_reported_local = $time_reported + GMT_TIMEOFFSET;
