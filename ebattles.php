@@ -80,7 +80,7 @@ function displayLatestGames(){
 
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
-    $text .= "<br>";
+    $text .= "<br />";
     if ($num_rows>0)
     {
         /* Display table contents */
@@ -131,7 +131,7 @@ function displayLatestGames(){
             $numPlayers = mysql_numrows($result2);
             $pname = '';
 
-            $players = "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"></img></a> ";
+            $players = "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"></img></a> ";
 
             $pid  = mysql_result($result2,0, TBL_USERS.".user_id");
             $pname  = mysql_result($result2,0 , TBL_USERS.".user_name");
@@ -166,7 +166,7 @@ function displayLatestGames(){
 
             ;
 
-            $text .= "$players<br>";
+            $text .= "$players<br />";
         }
     }
 }

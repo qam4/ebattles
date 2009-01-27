@@ -20,11 +20,13 @@ displayClans();
 if(check_class(e_UC_MEMBER))
 {
    $text .= "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
+   $text .= "<div>";
    $text .= "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"></input>";
    $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"></input>";
    $text .= "<input class=\"button\" type=\"submit\" name=\"createteam\" value=\"Create new team\"></input>";
+   $text .= "</div>";
    $text .= "</form>";
-   $text .= "<br>";
+   $text .= "<br />";
 }
 
 $ns->tablerender('Teams', $text);

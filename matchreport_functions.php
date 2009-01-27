@@ -68,7 +68,7 @@ function user_form($players_id, $players_name, $eventid) {
     /////////////////
     /// MAIN FORM ///
     /////////////////
-    $text .= '<form name="myform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$eventid.'" method="post" onsubmit="get_ranks('.$nbr_teams.');">';
+    $text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$eventid.'" method="post" onsubmit="get_ranks('.$nbr_teams.');">';
     
     // TABLE - Player/Teams Add/Remove
     //----------------------------------

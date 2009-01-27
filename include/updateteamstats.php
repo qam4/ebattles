@@ -378,7 +378,7 @@ for($i=0; $i<$num_rows; $i++)
 
     if($OverallScore[$index]==0)
     {
-        $rank = '<div title="Not ranked">-</div>';
+        $rank = '<span title="Not ranked">-</span>';
     }
     else
     {

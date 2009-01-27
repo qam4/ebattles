@@ -29,7 +29,7 @@ ul.boxy2 li {
 	display: block;
 	text-decoration: none;
 	cursor: pointer;
-	cursor: hand;
+/*	cursor: hand; */
 }
 .clickable li:hover {
 	background-color: #f6f6f6;
