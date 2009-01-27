@@ -62,10 +62,11 @@ else
          <div class="tab">Team Summary</div>
       ';
       
-      $text .= '<table class="fborder" style=\"width:95%\">';
+      $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
+      $text .= '<table class="fborder" style="width:95%">';
       $text .= '<tbody>';
       $text .= '<tr>';
-      $text .= '<td class="forumheader3"><b>Owner</b><br>';
+      $text .= '<td class="forumheader3"><b>Owner</b><br />';
       $text .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a>";
       $text .= '</td>';
       
@@ -76,7 +77,6 @@ else
       $row = mysql_fetch_array($result_2);     
       $num_rows_2 = mysql_numrows($result_2);
       
-      $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
       $text .= '<td class="forumheader3">';
       $text .= '<table>';
       $text .= '<tr>';
@@ -103,12 +103,10 @@ else
       $text .= '</td>';
       $text .= '</tr>';
       $text .= '</table>';
-      $text .= '</form>';
       $text .= '</td>';
-      
-      $text .= '<tr>';
-      $text .= "<form name=\"clansettingsform\" action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
+      $text .= '</tr>';
 
+      $text .= '<tr>';
       $text .= '
            <td class="forumheader3"><b>Name</b></td>
            <td class="forumheader3">
@@ -126,11 +124,10 @@ else
          </tbody>
          </table>
          <!-- Save Button -->
-         <br />
-         <p align="center">
+         <table><tbody><tr><td>
              <input type="hidden" name="clansettingssave" value="1"></input>
              <input class="button" type="submit" value="Save"></input>
-         </p>
+         </td></tr></tbody></table>
          </form>
          
          </div>
@@ -141,7 +138,7 @@ else
          <div class="tab">Team Divisions</div>
       ';
 
-      $text .= '<table class="fborder" style=\"width:95%\">';
+      $text .= '<table class="fborder" style="width:95%">';
       $text .= '<tbody>';
 
       $q = "SELECT ".TBL_GAMES.".*"
@@ -150,12 +147,14 @@ else
       $result = $sql->db_Query($q);
       /* Error occurred, return given name by default */
       $num_rows = mysql_numrows($result);
-      $text .= "<form name=\"clanadddivform\" action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
       $text .= '<tr>';
       $text .= '<td class="forumheader3">';
       $text .= 'Create a division for each game your team plays in';
       $text .= '</td>';
-      $text .= '<td class="forumheader3"><select name="divgame">';
+      $text .= '<td class="forumheader3">';
+      $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
+      $text .= "<div>";
+      $text .= '<select name="divgame">';
       for($i=0; $i<$num_rows; $i++){
          $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
          $gid  = mysql_result($result,$i, TBL_GAMES.".GameId");
@@ -165,9 +164,10 @@ else
       $text .= '<input type="hidden" name="clanadddiv"></input>';
       $text .= '<input type="hidden" name="clanowner" value="'.$clan_owner.'"></input>';
       $text .= '<input class="button" type="submit" value="Add Division"></input>';
+      $text .= "</div>";
+      $text .= '</form>';
       $text .= '</td>';
       $text .= '</tr>';
-      $text .= '</form>';
       
       $q = "SELECT ".TBL_CLANS.".*, "
                     .TBL_DIVISIONS.".*, "
@@ -194,7 +194,7 @@ else
       
          $text .= '<tr>';
          $text .= '<td class="forumheader3">';
-         $text .= "<b><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</b><br>";
+         $text .= "<b><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</b><br />";
          $text .= "Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a>";
          $text .= '</td>';
          $q_2 = "SELECT ".TBL_CLANS.".*, "
@@ -254,6 +254,7 @@ else
              $text .= '</table>';
              $text .= '</form>';
              $text .= '</td>';
+             $text .= '</tr>';
 
              $text .= '<tr>';
              $text .= '<td class="forumheader3">'.$num_rows_2.' member(s)</td>';

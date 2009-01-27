@@ -413,7 +413,7 @@ for($i=0; $i<$num_rows; $i++)
 
     if($OverallScore[$index]==0)
     {
-        $rank = '<div title="Not ranked">-</div>';
+        $rank = '<span title="Not ranked">-</span>';
     }
     else
     {
@@ -423,11 +423,11 @@ for($i=0; $i<$num_rows; $i++)
     $prankdelta_string = "";
     if ($prankdelta>0)
     {
-        $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\">";
+        $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\"></img>";
     }
     else if ($prankdelta<0)
     {
-        $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\">";
+        $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\"></img>";
     }
 
     $pclan = '';

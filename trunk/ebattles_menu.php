@@ -12,13 +12,13 @@ $teams_link     = e_PLUGIN.'ebattles/clans.php';
 
 $text  = '<a href="'.$ebattles_link.'">';
 $text .= EBATTLES_MENU_L1;
-$text .= '</a><br>';
+$text .= '</a><br />';
 $text .= '<a href="'.$events_link.'">';
 $text .= EBATTLES_MENU_L2;
-$text .= '</a><br>';
+$text .= '</a><br />';
 $text .= '<a href="'.$teams_link.'">';
 $text .= EBATTLES_MENU_L3;
-$text .= '</a><br>';
+$text .= '</a><br />';
 
 $ns->tablerender($ebattles_title,$text);
 ?>

@@ -496,7 +496,7 @@ else
       ';
       $text .= "<form name=\"scoreresetform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-          <td class="forumheader3"><b>Reset Players/Teams.</b><br>
+          <td class="forumheader3"><b>Reset Players/Teams.</b><br />
           - Reset Players and Teams Statistics (Rank, Score, ELO, Games Played, Wins, Losses)<br />
           - Delete all Matches
           </td>
@@ -512,7 +512,7 @@ else
       ';
       $text .= "<form name=\"eventresetform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-          <td class="forumheader3"><b>Reset Event.</b><br>
+          <td class="forumheader3"><b>Reset Event.</b><br />
           - Delete all Players and Teams.<br />
           - Delete all Matches.
           </td>
@@ -528,7 +528,7 @@ else
       ';
       $text .= "<form name=\"eventdeleteform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
-          <td class="forumheader3"><b>Delete Event.</b><br>
+          <td class="forumheader3"><b>Delete Event.</b><br />
           - Delete Event.<br />
           </td>
           <td class="forumheader3">

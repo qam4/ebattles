@@ -231,7 +231,7 @@ else
 
     $text .="<div class=\"tab-page\">";
     $text .="<div class=\"tab\">Info</div>";
- 
+
     $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
     if(check_class(e_UC_MEMBER))
     {
@@ -280,10 +280,12 @@ else
                         {
                             $text .= '<td class="forumheader3">
                             <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
+                            <div>
                             <input type="hidden" name="division" value="'.$div_id.'"></input>
                             <input type="hidden" name="eventid" value="'.$event_id.'"></input>
                             <input type="hidden" name="teamjoinevent" value="1"></input>
                             <input class="button" type="submit" value="Team Join Event"></input>
+                            </div>
                             ';
                             $text .= '</form>';
                             $text .= '</td>';
@@ -351,7 +353,7 @@ else
                         else
                         {
                             $team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-                            $text .= '<tr><td class="forumheader3">Your team '.$clan_name.' has signed up to this event.';
+                            $text .= '<tr><td class="forumheader3">Your team '.$clan_name.' has signed up to this event.</td>';
 
                             // Is the user already signed up with that team for this event?
                             $q = "SELECT ".TBL_PLAYERS.".*"
@@ -365,10 +367,12 @@ else
                             {
                                 $text .= '<td class="forumheader3">
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
+                                <div>
                                 <input type="hidden" name="eventid" value="'.$event_id.'"></input>
                                 <input type="hidden" name="team" value="'.$team_id.'"></input>
                                 <input type="hidden" name="jointeamevent" value="1"></input>
                                 <input class="button" type="submit" value="Join Event"></input>
+                                </div>
                                 </form></td>
                                 ';
                             }
@@ -398,10 +402,12 @@ else
                         $text .= '<tr><td class="forumheader3">';
                         $text .= "
                         <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
+                        <div>
                         <input type=\"password\" title=\"Enter the password\" name=\"joinEventPassword\"></input>
                         <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                         <input type=\"hidden\" name=\"joinevent\" value=\"1\"></input>
                         <input class=\"button\" type=\"submit\" value=\"Join Event\"></input>
+                        </div>
                         </form></td></tr>
                         ";
                     }
@@ -410,10 +416,12 @@ else
                         $text .= '<tr><td class="forumheader3">';
                         $text .= "
                         <form action=\"".e_PLUGIN."ebattles/eventinfo.php\" method=\"get\">
+                        <div>
                         <input type=\"hidden\" name=\"joinEventPassword\" value=\"\"></input>
                         <input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>
                         <input type=\"hidden\" name=\"joinevent\" value=\"1\"></input>
                         <input class=\"button\" type=\"submit\" value=\"Join Event\"></input>
+                        </div>
                         </form></td></tr>
                         ";
                     }
@@ -449,13 +457,18 @@ else
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
     $text .= '<td class="forumheader3">Moderator(s):</td>';
-    $text .= '<td class="forumheader3"><ul>';
-    for($i=0; $i<$num_rows; $i++){
-        $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
-        $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
-        $text .= "<li><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modid\">$modname</a></li>";
+    $text .= '<td class="forumheader3">';
+    if ($num_rows>0)
+    {
+        $text .= '<ul>';
+        for($i=0; $i<$num_rows; $i++){
+            $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
+            $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
+            $text .= "<li><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modid\">$modname</a></li>";
+        }
+        $text .= '</ul>';
     }
-    $text .="</ul></td></tr>";
+    $text .= '</td></tr>';
 
     $text .= '<tr><td class="forumheader3">Starts:</td><td class="forumheader3">'.$date_start.'</td></tr>';
     $text .= '<tr><td class="forumheader3">Ends:</td><td class="forumheader3">'.$date_end.'</td></tr>';
@@ -601,7 +614,7 @@ else
         {
             $text .= '<td>';
             $text .= "<form action=\"".e_PLUGIN."ebattles/quickreport.php?eventid=$event_id\" method=\"post\">";
-            $text .= "<input class=\"button\" type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"></input>";
+            $text .= "<div><input class=\"button\" type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"></input></div>";
             $text .= "</form>";
             $text .= "</td>";
         }
@@ -609,7 +622,7 @@ else
         {
             $text .= '<td>';
             $text .= "<form action=\"".e_PLUGIN."ebattles/matchreport.php?eventid=$event_id\" method=\"post\">";
-            $text .= "<input class=\"button\" type=\"submit\" name=\"matchreport\" value=\"Match Report\"></input>";
+            $text .= "<div><input class=\"button\" type=\"submit\" name=\"matchreport\" value=\"Match Report\"></input></div>";
             $text .= "</form>";
             $text .= "</td>";
         }
@@ -640,8 +653,8 @@ else
     // print the navigation link
     $text .= paginate($rowsPerPage, $pg, $totalPages);
     $text .= "<br />";
-    $text .="</div>";
-    $text .="</div>";
+    $text .= "</div>";
+    $text .= "</div>";
 
     $text .="<div class=\"tab-page\">";
     $text .="<div class=\"tab\">Latest Matches</div>";
@@ -673,7 +686,7 @@ else
     if ($num_rows>0)
     {
         /* Display table contents */
-        $text .= "<table class=\"fborder\" style=\"width:95%\">\n";
+        $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
         $text .= "<tr><td class=\"forumheader\" style=\"width:120px\"><b>Match ID</b></td><td class=\"forumheader\" style=\"width:90px\"><b>Reported By</b></td><td class=\"forumheader\"><b>Players</b></td><td class=\"forumheader\" style=\"width:90px\"><b>Date</b></td></tr>\n";
         for($i=0; $i<$num_rows; $i++)
         {
@@ -744,7 +757,6 @@ else
     $text .= "[<a href=\"".e_PLUGIN."ebattles/eventmatchs.php?eventid=$event_id\">Show all Matches</a>]";
 
     $text .= "<br />";
-    $text .="</div>";
     $text .="</div>";
 
     $text .= '

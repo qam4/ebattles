@@ -59,7 +59,6 @@ else
     //$text .= "<b>Username: ".$req_user_info['username']."</b><br />";
     /* Username */
     //$text .= "<b>Nickname: ".$req_user_info['name']."</b><br />";
-    $text .= "</p>";
     $text .= "</div>";
 
     /* Display list of events */

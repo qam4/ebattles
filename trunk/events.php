@@ -77,7 +77,7 @@ function displayCurrentEvents(){
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
-    $text .= "<form name=\"myform\" action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
+    $text .= "<form action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
     $text .= "<table>\n";
     $text .= "<tr><td>\n";
     $text .= "Games:<br />\n";
@@ -211,9 +211,11 @@ function displayCurrentEvents(){
     if(check_class(e_UC_MEMBER))
     {
         $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
+        $text .= "<div>";
         $text .= "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"></input>";
         $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"></input>";
         $text .= "<input class=\"button\" type=\"submit\" name=\"createevent\" value=\"Create new event\"></input>";
+        $text .= "</div>";
         $text .= "</form>";
     }
     else
@@ -239,7 +241,7 @@ function displayRecentEvents(){
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
-    $text .= "<form name=\"myform\" action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
+    $text .= "<form action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
     $text .= "<table>\n";
     $text .= "<tr><td>\n";
     $text .= "Games:<br />\n";

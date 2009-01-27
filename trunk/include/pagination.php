@@ -22,7 +22,7 @@ string variables */
   $last = '<a href="'.$_SERVER['PHP_SELF'].$query_str.$pages.'">&#187;</a>';
    
   /* display opening navigation */
-  $output = '<p align="center">';
+  $output = '<table><tbody><tr><td>';
   $output .= ($pg > 1) ? "$first : $prev :" : '&#171; : &#139; :';
   
   /* limit the number of page links displayed */
@@ -38,7 +38,7 @@ string variables */
     
   /* display ending navigation */
   $output .= ($pg < $pages) ? ": $next : $last" : ': &#155; : &#187;';
-  $output .= '</p>';
+  $output .= '</td></tr></tbody></table>';
   
   return $output;
 }
