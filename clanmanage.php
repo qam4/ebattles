@@ -217,7 +217,7 @@ else
          $result_2 = $sql->db_Query($q_2);
          if(!$result_2 || (mysql_numrows($result_2) < 1))
          {
-            $text .= '<td class="forumheader3">No members</td>';
+            $text .= '<td class="forumheader3">No members</td></tr>';
          }
          else
          {

@@ -16,14 +16,14 @@ require_once e_PLUGIN.'ebattles/include/ELO.php';
 require_once(HEADERF);
 
 $text = '
-<script language="JavaScript" type="text/javascript" src="./js/tool-man/core.js"></script>
-<script language="JavaScript" type="text/javascript" src="./js/tool-man/events.js"></script>
-<script language="JavaScript" type="text/javascript" src="./js/tool-man/css.js"></script>
-<script language="JavaScript" type="text/javascript" src="./js/tool-man/coordinates.js"></script>
-<script language="JavaScript" type="text/javascript" src="./js/tool-man/drag.js"></script>
-<script language="JavaScript" type="text/javascript" src="./js/tool-man/dragsort.js"></script>
-<script language="JavaScript" type="text/javascript" src="./js/tool-man/cookies.js"></script>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript" src="./js/tool-man/core.js"></script>
+<script type="text/javascript" src="./js/tool-man/events.js"></script>
+<script type="text/javascript" src="./js/tool-man/css.js"></script>
+<script type="text/javascript" src="./js/tool-man/coordinates.js"></script>
+<script type="text/javascript" src="./js/tool-man/drag.js"></script>
+<script type="text/javascript" src="./js/tool-man/dragsort.js"></script>
+<script type="text/javascript" src="./js/tool-man/cookies.js"></script>
+<script type="text/javascript">
 ';
 $text .= "
 <!--
@@ -59,7 +59,7 @@ junkdrawer.serializeList(list), 365)
 ";
 $text .= '
 </script>
-<script language="javascript">
+<script type="text/javascript">
 ';
 $text .= "
 <!--

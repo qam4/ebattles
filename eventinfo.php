@@ -436,7 +436,8 @@ else
     }
     else
     {
-        $text .= '<tr><td class="forumheader3">Please log in to participate to this event.</td></tr>';
+        $text .= '<tr><td class="forumheader3">Please log in to participate to this event.</td>';
+        $text .= '<td class="forumheader3"></td></tr>';
     }
     $text .= "<tr>";
     $text .='<td class="forumheader3">Owner:</td><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';

@@ -38,8 +38,8 @@ function clearEndDate(frm)
 }
 //-->
 </script>
-    <script language="javascript" type="text/javascript" src="./js/tiny_mce/tiny_mce.js"></script>
-    <script language="javascript" type="text/javascript">
+    <script type="text/javascript" src="./js/tiny_mce/tiny_mce.js"></script>
+    <script type="text/javascript">
     tinyMCE.init({
 	mode : "textareas",
 	theme : "advanced",
@@ -218,24 +218,26 @@ else
       $text .= '<td class="forumheader3">';
       if ($num_rows>0)
       {
+         $text .= "<form action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
          $text .= "<table>";
          for($i=0; $i<$num_rows; $i++){
             $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
             $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
             $text .="<tr>";
-            $text .= "<form action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
             $text .= "<td><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modid\">$modname</a></td>";
             $text .= "<td>";
+            $text .= "<div>";
             $text .= "<input type=\"hidden\" name=\"eventmod\" value=\"$modid\"></input>";
             $text .= "<input type=\"hidden\" name=\"eventdeletemod\" value=\"1\"></input>";
             $text .= "<input class=\"button\" type=\"submit\" value=\"Remove Moderator\" onclick=\"return confirm('Are you sure you want to remove this moderator?');\"></input>";
-            $text .= "</form>";
+            $text .= "</div>";
             $text .= "</td>";
             $text .= "</tr>";
          }
          $text .= "</table>";
+         $text .= "</form>";
       }
-      $text .= "<form name=\"eventaddmodsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+      $text .= "<form action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $q = "SELECT ".TBL_USERS.".*"
           ." FROM ".TBL_USERS;
       $result = $sql->db_Query($q);
@@ -256,8 +258,10 @@ else
                       </select>
                     </td>
                     <td>
+                      <div>
                       <input type="hidden" name="eventaddmod"></input>
                       <input class="button" type="submit" value="Add Moderator"></input>
+                      </div>
                     </td>
                   </tr>
                 </table>
@@ -276,17 +280,17 @@ else
       <div class="tab-page">
       <div class="tab">Event Settings</div>
       ';
-      $text .= "<form name=\"eventsettingsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+      $text .= "<form action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
       <table class="fborder" style="width:95%">
-      <tbody">
+      <tbody>
       ';
       //<!-- Event Name -->
       $text .= '
       <tr>
         <td class="forumheader3"><b>Name</b></td>
         <td class="forumheader3">
-          <input type="text" size="40" name="eventname" value="'.$ename.'"></input>
+          <div><input type="text" size="40" name="eventname" value="'.$ename.'"></input></div>
         </td>
       </tr>
       ';
@@ -296,7 +300,7 @@ else
       <tr>
         <td class="forumheader3"><b>Join Event Password</b></td>
         <td class="forumheader3">
-          <input type="text" size="40" name="eventpassword" value="'.$epassword.'"></input>
+          <div><input type="text" size="40" name="eventpassword" value="'.$epassword.'"></input></div>
         </td>
       </tr>
       ';
@@ -331,11 +335,12 @@ else
       <tr>
         <td class="forumheader3"><b>Type</b></td>
         <td class="forumheader3">
+        <div>
       ';
          if ($etype == "Team Ladder")
          {
-          $text .= '<input type="radio" size="40" name="eventtype" value="Individual">Individual</input>';
-          $text .= '<input type="radio" size="40" name="eventtype" checked="checked" value="Team">Team</input>';
+          $text .= '<input type="radio" size="40" name="eventtype" value="Individual" />Individual';
+          $text .= '<input type="radio" size="40" name="eventtype" checked="checked" value="Team" />Team';
          }
          else
          {
@@ -343,6 +348,7 @@ else
           $text .= '<input type="radio" size="40" name="eventtype" value="Team" />Team';
          }
       $text .='
+        </div>
         </td>
       </tr>
       ';
@@ -355,7 +361,7 @@ else
           <table>
             <tr>
               <td>
-               <input type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" />
+               <div><input type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
               </td>
               <td>
                  <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="Date selector"
@@ -364,7 +370,7 @@ else
       $text .= '
               </td>
               <td>
-                <input class="button" type="button" value="Reset" onclick="clearStartDate(this.form);"></input>
+                <div><input class="button" type="button" value="Reset" onclick="clearStartDate(this.form);"></input></div>
               </td>
             </tr>
           </table>
@@ -392,7 +398,7 @@ else
       <table>
       <tr>
         <td>
-         <input type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" />
+         <div><input type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
         </td>
         <td>
            <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="Date selector"
@@ -401,7 +407,7 @@ else
       $text .= '
         </td>
         <td>
-          <input class="button" type="button" value="Reset" onclick="clearEndDate(this.form);"></input>
+          <div><input class="button" type="button" value="Reset" onclick="clearEndDate(this.form);"></input></div>
         </td>
       </tr>
       </table>
@@ -427,24 +433,22 @@ else
         <td class="forumheader3"><b>Description</b></td>
         <td class="forumheader3">
       ';
-      $text .= '<textarea id="eventdescription" name="eventdescription" cols="70" rows="20">'.$edescription.'</textarea>';
+      $text .= '<textarea id="eventdescription" name="eventdescription" cols="70" rows="20">'.htmlspecialchars($edescription).'</textarea>';
       $text .= '
         </td>
       </tr>
-      </tbody">
+      </tbody>
       </table>
       ';
-      
-      $text .= '
-      <br /><br />
-      ';
-      
+            
       //<!-- Save Button -->
       $text .= '
-      <p align="center">
+      <table><tr><td>
+          <div>
           <input type="hidden" name="eventsettingssave" value="1"></input>
           <input class="button" type="submit" value="Save"></input>
-      </p>
+          </div>
+      </td></tr></table>
       
       </form>
       </div>
@@ -454,7 +458,7 @@ else
       <div class="tab-page">
       <div class="tab">Event Rules</div>
       ';
-      $text .= "<form name=\"eventrulesform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+      $text .= "<form action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       
       $text .= '
       <table class="fborder" style="width:95%">
@@ -471,16 +475,16 @@ else
         </td>
       </tr>
       </tbody>
-      </table>
-      
-      <br /><br />
+      </table>      
       ';
       //<!-- Save Button -->
       $text .= '
-      <p align="center">
+      <table><tr><td>
+          <div>
           <input type="hidden" name="eventrulessave" value="1"></input>
           <input class="button" type="submit" value="Save"></input>
-      </p>
+          </div>
+      </td></tr></table>
       
       </form>
       </div>
@@ -490,11 +494,13 @@ else
       $text .='
       <div class="tab-page">
       <div class="tab">Event Reset</div>
+      ';
+      $text .= "<form action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+      $text .='
       <table class="fborder" style="width:95%">
       <tbody>
         <tr>
       ';
-      $text .= "<form name=\"scoreresetform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
           <td class="forumheader3"><b>Reset Players/Teams.</b><br />
           - Reset Players and Teams Statistics (Rank, Score, ELO, Games Played, Wins, Losses)<br />
@@ -506,11 +512,9 @@ else
       $text .= "<input class=\"button\" type=\"submit\" value=\"Reset Scores\" onclick=\"return confirm('Are you sure you want to delete this event scores?');\"></input>";
       $text .= '
           </td>
-        </form>
         </tr>
         <tr>
       ';
-      $text .= "<form name=\"eventresetform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
           <td class="forumheader3"><b>Reset Event.</b><br />
           - Delete all Players and Teams.<br />
@@ -522,11 +526,9 @@ else
       $text .= "<input class=\"button\" type=\"submit\" value=\"Reset Event\" onclick=\"return confirm('Are you sure you want to reset this event?');\"></input>";
       $text .= '
           </td>
-        </form>
         </tr>
         <tr>
       ';
-      $text .= "<form name=\"eventdeleteform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
           <td class="forumheader3"><b>Delete Event.</b><br />
           - Delete Event.<br />
@@ -537,10 +539,10 @@ else
       $text .= "<input class=\"button\" type=\"submit\" value=\"Delete Event\" onclick=\"return confirm('Are you sure you want to delete this event?');\"></input>";
       $text .= '
            </td>
-        </form>
         </tr>
       </tbody>
       </table>
+      </form>
       </div>
       ';
       //***************************************************************************************
@@ -548,7 +550,7 @@ else
       <div class="tab-page">
       <div class="tab">Event Stats</div>
       ';
-      $text .= "<form name=\"eventstatsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
+      $text .= "<form id=\"eventstatsform\" action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
       $text .= '
       <table class="fborder" style="width:95%"><tbody>
       <tr>
@@ -826,14 +828,14 @@ else
          </td>
          </tr>
          </tbody></table>
-         
-         <br /><br />
-         
+                  
          <!-- Save Button -->
-         <p align="center">
+         <table><tr><td>
+             <div>
              <input type="hidden" name="eventstatssave" value="1"></input>
              <input class="button" type="submit" value="Save"></input>
-         </p>
+             </div>
+         </td></tr></table>
          </form>
          </div>
          </div>

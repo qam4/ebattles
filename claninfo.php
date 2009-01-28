@@ -196,10 +196,12 @@ function displayTeamDivisions($clan_id){
             {
                 $text .= "
                 <form action=\"".e_PLUGIN."ebattles/claninfo.php\" method=\"get\">
+                <div>
                 <input type=\"hidden\" name=\"clanid\" value=\"$clan_id\"></input>
                 <input type=\"hidden\" name=\"division\" value=\"$div_id\"></input>
                 <input type=\"hidden\" name=\"joindivision\" value=\"1\"></input>
                 <input class=\"button\" type=\"submit\" value=\"Join Division\"></input>
+                </div>
                 </form>";
             }
         }
