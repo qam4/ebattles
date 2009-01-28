@@ -138,7 +138,7 @@ else
             }
 
             $text .= "<tr>\n";
-            $text .= "<td class=\"forumheader3\"><b>$mID</b> <a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&matchid=$mID\">(Show details)</a></td><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickname</a></td><td class=\"forumheader3\">$players</td><td class=\"forumheader3\">$date</td></tr>";
+            $text .= "<td class=\"forumheader3\"><b>$mID</b> <a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">(Show details)</a></td><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickname</a></td><td class=\"forumheader3\">$players</td><td class=\"forumheader3\">$date</td></tr>";
 
 
         }

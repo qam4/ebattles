@@ -75,4 +75,4 @@ function html_show_table($array, $rows, $columns)
    $output .= "</tbody></table>";
    return $output;
 }
-?> 
+?>
