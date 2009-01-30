@@ -146,7 +146,7 @@ function displayCurrentEvents(){
         return;
     }
     if($num_rows == 0){
-        $text .= "No events";
+        $text .= "<div>No events</div>";
     }
     else
     {
@@ -220,7 +220,7 @@ function displayCurrentEvents(){
     }
     else
     {
-        $text .= "Log in to create new events.";
+        $text .= "<div>Log in to create new events.</div>";
     }
 }
 
@@ -296,7 +296,7 @@ function displayRecentEvents(){
         return;
     }
     if($num_rows == 0){
-        $text .= "No events";
+        $text .= "<div>No events</div>";
         return;
     }
     /* Display table contents */

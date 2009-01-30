@@ -1,4 +1,4 @@
-.dynamic-tab-pane-control.tab-pane {
+.dynamic-tab-pane-control .tab-pane {
 	position:	relative;
 	width:		100%;
 }
@@ -52,6 +52,8 @@
     border-style: solid;
     border-width: 1px;
     padding: 3px;
+
+    min-height: 500px;
 
 }
 

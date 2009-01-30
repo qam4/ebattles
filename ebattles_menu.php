@@ -9,6 +9,7 @@ $ebattles_title = 'eBattles';
 $ebattles_link  = e_PLUGIN.'ebattles/ebattles.php';
 $events_link    = e_PLUGIN.'ebattles/events.php';
 $teams_link     = e_PLUGIN.'ebattles/clans.php';
+$profile_link   = e_PLUGIN.'ebattles/userinfo.php?user='.USERID;
 
 $text  = '<a href="'.$ebattles_link.'">';
 $text .= EBATTLES_MENU_L1;
@@ -19,6 +20,12 @@ $text .= '</a><br />';
 $text .= '<a href="'.$teams_link.'">';
 $text .= EBATTLES_MENU_L3;
 $text .= '</a><br />';
+if (check_class(e_UC_MEMBER))
+{
+    $text .= '<a href="'.$profile_link.'">';
+    $text .= EBATTLES_MENU_L4;
+    $text .= '</a><br />';
+}
 
 $ns->tablerender($ebattles_title,$text);
 ?>

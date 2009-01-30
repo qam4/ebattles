@@ -12,20 +12,20 @@ include_once(e_PLUGIN."ebattles/include/pagination.php");
 ********************************************************************/
 require_once(HEADERF);
 
-$text = '';
-
 $text .='
 <script type="text/javascript" src="./js/tabpane.js"></script>
-
-<div class="spacer">
 ';
 
 /**
  * Display Users Table
  */
+$text .= '
+<div class="tab-pane" id="tab-pane-9">
+<div class="tab-page">
+';
 displayPastEvents();
-
 $text .='
+</div>
 </div>
 ';
 
@@ -129,7 +129,7 @@ function displayPastEvents(){
       return;
    }
    if($num_rows == 0){
-      $text .= "Database table empty";
+      $text .= "<div>No old events.</div>";
       return;
    }
    

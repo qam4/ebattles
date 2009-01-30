@@ -10,7 +10,9 @@ include_once(e_PLUGIN."ebattles/include/pagination.php");
 ********************************************************************/
 require_once(HEADERF);
 
-$text = '';
+$text .='
+<script type="text/javascript" src="./js/tabpane.js"></script>
+';
 
 global $sql;
 
@@ -24,6 +26,9 @@ if (!$event_id)
 }
 else
 {
+    $text .="<div class=\"tab-pane\" id=\"tab-pane-11\">";
+    $text .="<div class=\"tab-page\">";
+
     /* set pagination variables */
     $rowsPerPage = 20;
     $pg = (isset($_REQUEST['pg']) && ctype_digit($_REQUEST['pg'])) ? $_REQUEST['pg'] : 1;
@@ -150,6 +155,8 @@ else
     $text .= paginate($rowsPerPage, $pg, $totalPages);
 
     $text .= "<br />";
+    $text .= "</div>";
+    $text .= "</div>";
     $text .= "</div>";
     $text .= "</div>";
 }

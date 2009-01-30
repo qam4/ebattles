@@ -15,6 +15,7 @@ define("EBATTLES_L5", "eBattles link name");
 define("EBATTLES_MENU_L1", "eBattles");
 define("EBATTLES_MENU_L2", "Events");
 define("EBATTLES_MENU_L3", "Teams");
+define("EBATTLES_MENU_L4", "My Profile");
 
 define("EBATTLES_ADMIN_L1", "eBattles settings updated.");
 define("EBATTLES_ADMIN_L2", "Moderator userclass");
