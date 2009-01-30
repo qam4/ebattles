@@ -33,7 +33,7 @@ $text .= '</div>';
 */
 $text .= '
 <div class="tab-page">
-<div class="tab">dummy</div>
+<div class="tab"><br/></div>
 ';
 $text .= '
 </div>

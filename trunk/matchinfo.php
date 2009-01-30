@@ -14,7 +14,9 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 ********************************************************************/
 require_once(HEADERF);
 
-$text = '';
+$text .='
+<script type="text/javascript" src="./js/tabpane.js"></script>
+';
 
 global $sql;
 
@@ -29,6 +31,9 @@ if (!$event_id)
 }
 else
 {
+    $text .="<div class=\"tab-pane\" id=\"tab-pane-12\">";
+    $text .="<div class=\"tab-page\">";
+
     $q = "SELECT ".TBL_EVENTS.".*, "
     .TBL_GAMES.".*"
     ." FROM ".TBL_EVENTS.", "
@@ -175,6 +180,9 @@ else
     $text .= "Comments:<br />\n";
     $text .= "$comments<br />\n";
     $text .= "</p>";
+    $text .= "</div>";
+
+    $text .= "</div>";
     $text .= "</div>";
 
     $text .= "<p>";
