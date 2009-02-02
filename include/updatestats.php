@@ -415,6 +415,22 @@ for($i=0; $i<$num_rows; $i++)
             $result_2 = $sql->db_Query($q_2);
             $prankdelta = $new_rankdelta;
         }
+        
+        if (($new_rankdelta != 0)&&($rank==1))
+        {
+            // Award: player took 1st place
+            $q_2 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+            VALUES ($pid,'PlayerTookFirstPlace',$time)";
+            $result_2 = $sql->db_Query($q_2);
+        }        
+        if (($new_rankdelta != 0)&&(($prank>10)||($prank==0))&&($rank<=10))
+        {
+            // Award: player enters top 10
+            $q_2 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+            VALUES ($pid,'PlayerInTopTen',$time)";
+            $result_2 = $sql->db_Query($q_2);
+        }        
+         
         $prankdelta_string = "";
         if ($prankdelta>0)
         {

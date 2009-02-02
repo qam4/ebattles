@@ -440,6 +440,29 @@ if (isset($_POST['submit']))
             $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $pStreak_Worst WHERE (PlayerID = '$pid')";
             $result3 = $sql->db_Query($q3);
+
+            if ($pStreak == 5)
+            {
+                // Award: player wins 5 games in a row
+                $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+                VALUES ($pid,'PlayerStreak5',$time)";
+                $result4 = $sql->db_Query($q4);
+            }
+            if ($pStreak == 10)
+            {
+                // Award: player wins 10 games in a row
+                $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+                VALUES ($pid,'PlayerStreak10',$time)";
+                $result4 = $sql->db_Query($q4);
+            }
+            if ($pStreak == 25)
+            {
+                // Award: player wins 25 games in a row
+                $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+                VALUES ($pid,'PlayerStreak25',$time)";
+                $result4 = $sql->db_Query($q4);
+            }
+
         }
 
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";

@@ -14,6 +14,8 @@ if(isset($_POST['qrsubmitloss']))
     $event_id = $_POST['eventid'];
     $reported_by = $_POST['reported_by'];
 
+    $time = GMT_time();
+
     $q = "SELECT ".TBL_EVENTS.".*"
     ." FROM ".TBL_EVENTS
     ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
@@ -108,6 +110,28 @@ if(isset($_POST['qrsubmitloss']))
     $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pwinnerStreak_Best WHERE (PlayerID = '$pwinnerID')";
     $result3 = $sql->db_Query($q3);
 
+    if ($pwinnerStreak == 5)
+    {
+        // Award: player wins 5 games in a row
+        $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+        VALUES ($pwinnerID,'PlayerStreak5',$time)";
+        $result4 = $sql->db_Query($q4);
+    }
+    if ($pwinnerStreak == 10)
+    {
+        // Award: player wins 10 games in a row
+        $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+        VALUES ($pwinnerID,'PlayerStreak10',$time)";
+        $result4 = $sql->db_Query($q4);
+    }
+    if ($pwinnerStreak == 25)
+    {
+        // Award: player wins 25 games in a row
+        $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+        VALUES ($pwinnerID,'PlayerStreak25',$time)";
+        $result4 = $sql->db_Query($q4);
+    }
+
     // Update Teams data ------------------------------------------
     if ($etype == "Team Ladder")
     {
@@ -117,7 +141,6 @@ if(isset($_POST['qrsubmitloss']))
     }
 
     // Create Match ------------------------------------------
-    $time = GMT_time();
     $comments = '';
     $q =
     "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments)

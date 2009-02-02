@@ -24,6 +24,10 @@ Known issues/improvements:
            -> % for each stats categorie
            -> nbr_games_to_rank, nbr_team_games_to_rank
    b. Awards
+     - player took 1st place
+     - player got into top 10
+     - player streaks: 5/10/25 games won in a row
+   
    c. Password to join (done)
    d. Ban/Kick Players/Teams
    
