@@ -15,8 +15,6 @@ $q_1 = "SELECT ".TBL_STATSCATEGORIES.".*"
 $result_1 = $sql->db_Query($q_1);
 $num_rows = mysql_numrows($result_1);
 
-
-
 $ELO_minpoints = 0;
 $ELO_maxpoints = 0;
 $games_played_minpoints = 0;
@@ -255,7 +253,6 @@ for($i=0; $i<$num_rows; $i++)
 
         $players_rated++;
     }
-
 }
 
 if ($players_rated>0)
@@ -400,34 +397,37 @@ for($i=0; $i<$num_rows; $i++)
     // Find index of player
     $index = array_search($pid,$id);
 
-    $q_2 = "UPDATE ".TBL_PLAYERS." SET Rank = $ranknumber WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
-    $result_2 = $sql->db_Query($q_2);
-
-    $new_rankdelta = $prank - $ranknumber;
-    if (($new_rankdelta != 0)&&($prank!=0)&&($OverallScore[$index]!=0))
-    {
-        $q_2 = "UPDATE ".TBL_PLAYERS." SET RankDelta = $new_rankdelta WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
-        $result_2 = $sql->db_Query($q_2);
-        $prankdelta = $new_rankdelta;
-    }
-
     if($OverallScore[$index]==0)
     {
         $rank = '<span title="Not ranked">-</span>';
+        $prankdelta_string = "";
     }
     else
     {
         $rank = $ranknumber;
-    }
+        $q_2 = "UPDATE ".TBL_PLAYERS." SET Rank = $ranknumber WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
+        $result_2 = $sql->db_Query($q_2);
 
-    $prankdelta_string = "";
-    if ($prankdelta>0)
-    {
-        $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\"></img>";
-    }
-    else if ($prankdelta<0)
-    {
-        $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\"></img>";
+        $new_rankdelta = $prank - $ranknumber;
+        if (($new_rankdelta != 0)&&($prank!=0))
+        {
+            $q_2 = "UPDATE ".TBL_PLAYERS." SET RankDelta = $new_rankdelta WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
+            $result_2 = $sql->db_Query($q_2);
+            $prankdelta = $new_rankdelta;
+        }
+        $prankdelta_string = "";
+        if ($prankdelta>0)
+        {
+            $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\"></img>";
+        }
+        else if ($prankdelta<0)
+        {
+            $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\"></img>";
+        }
+        else if ($prankdelta==0)
+        {
+            $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
+        }
     }
 
     $pclan = '';
@@ -503,9 +503,6 @@ for($i=0; $i<$num_rows; $i++)
     $ranknumber++; // increases $ranknumber by 1
 }
 
-
-
-
 /*
 // debug print array
 include_once(e_PLUGIN."ebattles/include/show_array.php");
@@ -527,8 +524,5 @@ foreach ($stats as $uid=>$row)
 print $row['category_name']."<br />";
 }
 */
-
-
-
 
 ?>
