@@ -27,6 +27,7 @@ define("TBL_DIVISIONS_SHORT",       TBL_PREFIX."Divisions");
 define("TBL_MEMBERS_SHORT",         TBL_PREFIX."Members");
 define("TBL_STATSCATEGORIES_SHORT", TBL_PREFIX."StatsCategories");
 define("TBL_GAMES_SHORT",           TBL_PREFIX."Games");
+define("TBL_AWARDS_SHORT",          TBL_PREFIX."Awards");
 
 define("TBL_USERS",           MPREFIX."user");
 define("TBL_EVENTS",          MPREFIX.TBL_EVENTS_SHORT);
@@ -40,6 +41,7 @@ define("TBL_DIVISIONS",       MPREFIX.TBL_DIVISIONS_SHORT);
 define("TBL_MEMBERS",         MPREFIX.TBL_MEMBERS_SHORT);
 define("TBL_STATSCATEGORIES", MPREFIX.TBL_STATSCATEGORIES_SHORT);
 define("TBL_GAMES",           MPREFIX.TBL_GAMES_SHORT);
+define("TBL_AWARDS",          MPREFIX.TBL_AWARDS_SHORT);
 
 /**
  * Email Constants - these specify what goes in

@@ -54,7 +54,8 @@ TBL_CLANS_SHORT,
 TBL_DIVISIONS_SHORT,
 TBL_MEMBERS_SHORT,
 TBL_STATSCATEGORIES_SHORT,
-TBL_GAMES_SHORT
+TBL_GAMES_SHORT,
+TBL_AWARDS_SHORT
 );
 
 // List of sql requests to create tables -----------------------------------------------------------------------------
@@ -217,6 +218,16 @@ $eplug_tables = array(
 	PRIMARY KEY(GameID),
 	Name varchar(63),
 	Icon varchar(63)
+) TYPE = MyISAM;",
+"CREATE TABLE ".TBL_AWARDS."
+(
+	AwardID int NOT NULL AUTO_INCREMENT, 
+	PRIMARY KEY(AwardID),
+	Player int NOT NULL,
+	INDEX (Player),
+	FOREIGN KEY (Player) REFERENCES ".TBL_PLAYERS." (PlayerID), 
+	Type varchar(63),
+	timestamp int(11) unsigned not null
 ) TYPE = MyISAM;"
 );
 
