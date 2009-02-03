@@ -396,6 +396,7 @@ for($i=0; $i<$num_rows; $i++)
     // Find index of player
     $index = array_search($pid,$id);
 
+    $prank_side_image = "";
     if($OverallScore[$index]==0)
     {
         $rank = '<span title="Not ranked">-</span>';
@@ -445,8 +446,6 @@ for($i=0; $i<$num_rows; $i++)
             $pawardType  = mysql_result($result_2,0, TBL_AWARDS.".Type");
         }
 
-
-        $prank_side_image = "";
         //echo "dbg: $name[$index]: $rank, $prankdelta, $numAwards: $pawardType<br>";
         if ($rank==1)
         {
@@ -495,7 +494,6 @@ for($i=0; $i<$num_rows; $i++)
         {
             $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
         }
-
     }
 
     $pclan = '';
