@@ -472,7 +472,8 @@ if (isset($_POST['submit']))
         $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
         $text .= "</p>";
 
-        //debug header("Location: eventinfo.php?eventid=$event_id");
+        header("Location: eventinfo.php?eventid=$event_id");
+        exit();
     }
     // if we get here, all data checks were okay, process information as you wish.
 } else {
