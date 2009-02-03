@@ -197,6 +197,14 @@ else
         $time_comment = 'Event is over';
     }
 
+    /* Nbr players */
+    $q = "SELECT COUNT(*) as NbrPlayers"
+    ." FROM ".TBL_PLAYERS
+    ." WHERE (Event = '$event_id')";
+    $result = $sql->db_Query($q);
+    $row = mysql_fetch_array($result);
+    $nbrplayers = $row['NbrPlayers'];
+
     $text .= "<h1>$ename ($etype)</h1>";
     $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
 
@@ -527,13 +535,6 @@ else
         $text .="Next Update: $date_nextupdate<br />";
     }
 
-    /* Nbr players */
-    $q = "SELECT COUNT(*) as NbrPlayers"
-    ." FROM ".TBL_PLAYERS
-    ." WHERE (Event = '$event_id')";
-    $result = $sql->db_Query($q);
-    $row = mysql_fetch_array($result);
-    $nbrplayers = $row['NbrPlayers'];
     $totalPages = $nbrplayers;
 
     $text .="<div class=\"spacer\">";

@@ -3,10 +3,8 @@
 * updatestats.php
 *
 */
-/* include_once(e_PLUGIN."ebattles/include/session.php"); */
 
 $file = 'cache/sql_cache_event_'.$event_id.'.txt';
-
 
 $q_1 = "SELECT ".TBL_STATSCATEGORIES.".*"
 ." FROM ".TBL_STATSCATEGORIES
@@ -229,7 +227,7 @@ for($i=0; $i<$num_rows; $i++)
     $ELO[] = $pELO;
     $win[] = $pwin;
     $loss[] = $ploss;
-    $streaks[] = $pstreak_score;
+    $streaks_score[] = $pstreak_score;
     $streaks_display[] = $pstreak_display;
     $winloss[] = $pwinloss;
     $victory_ratio[] = $pvictory_ratio;
@@ -357,7 +355,7 @@ for($i=0; $i<$num_rows; $i++)
         $victory_percent_final_score[$i] = $victory_percent_a * $victory_percent[$i] + $victory_percent_b;
         $unique_opponents_final_score[$i] = $unique_opponents_a * $unique_opponents[$i] + $unique_opponents_b;
         $opponentsELO_final_score[$i] = $opponentsELO_a * $opponentsELO[$i] + $opponentsELO_b;
-        $streaks_final_score[$i] = $streaks_a * $streaks[$i] + $streaks_b;
+        $streaks_final_score[$i] = $streaks_a * $streaks_score[$i] + $streaks_b;
     }
     else
     {
@@ -393,6 +391,7 @@ for($i=0; $i<$num_rows; $i++)
     $puid = mysql_result($result_1,$i, TBL_PLAYERS.".User");
     $prank = mysql_result($result_1,$i, TBL_PLAYERS.".Rank");
     $prankdelta = mysql_result($result_1,$i, TBL_PLAYERS.".RankDelta");
+    $pstreak = mysql_result($result_1,$i, TBL_PLAYERS.".Streak");
 
     // Find index of player
     $index = array_search($pid,$id);
@@ -415,35 +414,88 @@ for($i=0; $i<$num_rows; $i++)
             $result_2 = $sql->db_Query($q_2);
             $prankdelta = $new_rankdelta;
         }
-        
+
         if (($new_rankdelta != 0)&&($rank==1))
         {
             // Award: player took 1st place
             $q_2 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
             VALUES ($pid,'PlayerTookFirstPlace',$time)";
             $result_2 = $sql->db_Query($q_2);
-        }        
+        }
         if (($new_rankdelta != 0)&&(($prank>10)||($prank==0))&&($rank<=10))
         {
             // Award: player enters top 10
             $q_2 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
             VALUES ($pid,'PlayerInTopTen',$time)";
             $result_2 = $sql->db_Query($q_2);
-        }        
-         
-        $prankdelta_string = "";
-        if ($prankdelta>0)
+        }
+
+        $q_2 = "SELECT ".TBL_AWARDS.".*, "
+        .TBL_PLAYERS.".*"
+        ." FROM ".TBL_AWARDS.", "
+        .TBL_PLAYERS
+        ." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
+        ." AND (".TBL_PLAYERS.".PlayerID = '$pid')"
+        ." ORDER BY ".TBL_AWARDS.".timestamp DESC";        
+        $result_2 = $sql->db_Query($q_2);
+        $numAwards = mysql_numrows($result_2);
+        if ($numAwards > 0)
         {
-            $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\"></img>";
+            $paward  = mysql_result($result_2,0, TBL_AWARDS.".AwardID");
+            $pawardType  = mysql_result($result_2,0, TBL_AWARDS.".Type");
+        }
+
+
+        $prank_side_image = "";
+        //echo "dbg: $name[$index]: $rank, $prankdelta, $numAwards: $pawardType<br>";
+        if ($rank==1)
+        {
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"></img>";
+        }
+        else if (($rank<=10)&&(($rank+$prankdelta>min(10,$nbrplayers))||($prankdelta==0)))
+        {
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"></img>";
+        }
+        else if (($numAwards>0)&&($pawardType!='PlayerTookFirstPlace')&&($pawardType!='PlayerInTopTen')&&($pstreak>=5))
+        {
+            //echo "dbg: award: $pawardType";
+            switch ($pawardType) {
+                case 'PlayerStreak5':
+                if ($pstreak>=5)
+                {
+                    $award = " won 5 games in a row";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/medal_bronze_3.png\" alt=\"Streak 5\" title=\"5 wins in a row\"></img>";
+                }
+                break;
+                case 'PlayerStreak10':
+                if ($pstreak>=10)
+                {
+                    $award = " won 10 games in a row";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/medal_silver_3.png\" alt=\"Streak 10\" title=\"10 wins in a row\"></img>";
+                }
+                break;
+                case 'PlayerStreak25':
+                if ($pstreak>=25)
+                {
+                    $award = " won 25 games in a row";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/medal_gold_3.png\" alt=\"Streak 25\" title=\"25 wins in a row\"></img>";
+                }
+                break;
+            }
+        }
+        else if ($prankdelta>0)
+        {
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\"></img>";
         }
         else if ($prankdelta<0)
         {
-            $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\"></img>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\"></img>";
         }
         else if ($prankdelta==0)
         {
-            $prankdelta_string = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
         }
+
     }
 
     $pclan = '';
@@ -483,7 +535,7 @@ for($i=0; $i<$num_rows; $i++)
         );
     }
 
-    $stats_row[] = "<b>$rank</b> $prankdelta_string";
+    $stats_row[] = "<b>$rank</b> $prank_side_image";
     $stats_row[] = "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$uid[$index]\"><b>$pclantag$name[$index]</b></a>";
     $stats_row[] = number_format ($OverallScore[$index],2);
     if ($ELO_maxpoints > 0)
