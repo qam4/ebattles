@@ -68,8 +68,10 @@ else
     ';
     if(strcmp(USERID,$req_user) == 0){
         $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
+        $text .= "<div>";
         $text .= "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
         $text .= "<input class=\"button\" type=\"submit\" name=\"createevent\" value=\"Create new event\"></input>";
+        $text .= "</div>";
         $text .= "</form>";
     }
     $text .= "<h2>Player</h2>";
@@ -263,9 +265,11 @@ else
     ';
     if(strcmp(USERID,$req_user) == 0){
         $text .= "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
+        $text .= "<div>";
         $text .= "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
         $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"></input>";
         $text .= "<input class=\"button\" type=\"submit\" name=\"createteam\" value=\"Create new team\"></input>";
+        $text .= "</div>";
         $text .= "</form>";
     }
 

@@ -150,7 +150,7 @@ for($i=0; $i<$num_rows; $i++)
     $pstreak_worst = mysql_result($result_1,$i, TBL_PLAYERS.".Streak_Worst");
     $pstreak_best = mysql_result($result_1,$i, TBL_PLAYERS.".Streak_Best");
     $pstreak_display = $pstreak." | ".$pstreak_best." | ".$pstreak_worst;
-    $pstreak_score = $pstreak_best + $pstreak_worst; //fmarc- TBD
+    $pstreak_score = $pstreak_best; //max(0,$pstreak_best + $pstreak_worst); //fmarc- TBD
     $pwinloss = $pwin."/".$ploss;
     $pvictory_ratio = ($ploss>0) ? ($pwin/$ploss) : $pwin;
     $pvictory_percent = ($pgames_played>0) ? ((100 * $pwin)/$pgames_played) : 0;
@@ -227,7 +227,7 @@ for($i=0; $i<$num_rows; $i++)
     $ELO[] = $pELO;
     $win[] = $pwin;
     $loss[] = $ploss;
-    $streaks_score[] = $pstreak_score;
+    $streaks[] = $pstreak_score;
     $streaks_display[] = $pstreak_display;
     $winloss[] = $pwinloss;
     $victory_ratio[] = $pvictory_ratio;
@@ -247,7 +247,7 @@ for($i=0; $i<$num_rows; $i++)
         $victory_percent_score[] = $pvictory_percent;
         $unique_opponents_score[] = $punique_opponents;
         $opponentsELO_score[] = $popponentsELO;
-        $streaks_score[] = $pstreak_best + $pstreak_worst; //fmarc- TBD
+        $streaks_score[] = $pstreak_best; //max(0,$pstreak_best + $pstreak_worst); //fmarc- TBD
 
         $players_rated++;
     }
