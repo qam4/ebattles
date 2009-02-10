@@ -7,6 +7,7 @@
 require_once("../../class2.php");
 require_once e_PLUGIN.'ebattles/include/main.php';
 require_once e_PLUGIN.'ebattles/include/ELO.php';
+require_once e_PLUGIN.'ebattles/include/Trueskill.php';
 global $sql;
 
 if(isset($_POST['qrsubmitloss']))
@@ -25,6 +26,8 @@ if(isset($_POST['qrsubmitloss']))
     $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
     $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
     $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
+    $eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
+    $eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
 
     // Attention here, we use user_id, so there has to be 1 user for 1 player
     $plooserUser = $reported_by;
@@ -36,6 +39,8 @@ if(isset($_POST['qrsubmitloss']))
     $row = mysql_fetch_array($result);
     $plooserID = $row['PlayerID'];
     $plooserELO = $row['ELORanking'];
+    $plooserTS_mu = $row['TS_mu'];
+    $plooserTS_sigma = $row['TS_sigma'];
     $plooserGames = $row['GamesPlayed'];
     $plooserLosses = $row['Loss'];
     $plooserStreak = $row['Streak'];
@@ -51,6 +56,8 @@ if(isset($_POST['qrsubmitloss']))
     $row = mysql_fetch_array($result);
     $pwinnerUser = $row['User'];
     $pwinnerELO = $row['ELORanking'];
+    $pwinnerTS_mu = $row['TS_mu'];
+    $pwinnerTS_sigma = $row['TS_sigma'];
     $pwinnerGames = $row['GamesPlayed'];
     $pwinnerWins = $row['Win'];
     $pwinnerStreak = $row['Streak'];
@@ -64,10 +71,34 @@ if(isset($_POST['qrsubmitloss']))
     $plooserELO = $plooserELO - $deltaELO;
     $pwinnerELO = $pwinnerELO + $deltaELO;
 
+    // New TrueSkill ------------------------------------------
+    $beta=$eTS_beta;       // Span
+    $epsilon=$eTS_beta;       // Span
+    $update = Trueskill_update($epsilon,$beta, $pwinnerTS_mu, $pwinnerTS_sigma, 1, $plooserTS_mu, $plooserTS_sigma, 0);
+
+    $winner_deltaTS_mu = pow($pwinnerTS_sigma,2) * $update[0];
+    $looser_deltaTS_mu = - pow($plooserTS_sigma,2) * $update[0];
+    $winner_deltaTS_sigma = sqrt(1-pow($pwinnerTS_sigma,2) * $update[1]);
+    $looser_deltaTS_sigma = sqrt(1-pow($plooserTS_sigma,2) * $update[1]);
+    
+    $pwinnerTS_mu = $pwinnerTS_mu + $winner_deltaTS_mu;
+    $plooserTS_mu = $plooserTS_mu + $looser_deltaTS_mu;
+    $pwinnerTS_sigma = $pwinnerTS_sigma * $winner_deltaTS_sigma;
+    $plooserTS_sigma = $plooserTS_sigma * $looser_deltaTS_sigma;
+
     // Update players data ------------------------------------------
     $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $plooserELO WHERE (PlayerID = '$plooserID')";
     $result = $sql->db_Query($q);
     $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pwinnerELO WHERE (PlayerID = '$pwinnerID')";
+    $result = $sql->db_Query($q);
+
+    $q = "UPDATE ".TBL_PLAYERS." SET TS_mu = $plooserTS_mu WHERE (PlayerID = '$plooserID')";
+    $result = $sql->db_Query($q);
+    $q = "UPDATE ".TBL_PLAYERS." SET TS_sigma = $plooserTS_sigma WHERE (PlayerID = '$plooserID')";
+    $result = $sql->db_Query($q);
+    $q = "UPDATE ".TBL_PLAYERS." SET TS_mu = $pwinnerTS_mu WHERE (PlayerID = '$pwinnerID')";
+    $result = $sql->db_Query($q);
+    $q = "UPDATE ".TBL_PLAYERS." SET TS_sigma = $pwinnerTS_sigma WHERE (PlayerID = '$pwinnerID')";
     $result = $sql->db_Query($q);
 
     $plooserGames += 1;
@@ -151,14 +182,14 @@ if(isset($_POST['qrsubmitloss']))
 
     // Create Scores ------------------------------------------
     $q =
-    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_Score,Player_Rank)
-    VALUES ($last_id,$pwinnerID,1,$deltaELO,1,1)
+    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_mu,Player_Score,Player_Rank)
+    VALUES ($last_id,$pwinnerID,1,$deltaELO,$winner_deltaTS_mu,$winner_deltaTS_sigma,1,1)
     ";
     $result = $sql->db_Query($q);
 
     $q =
-    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_Score,Player_Rank)
-    VALUES ($last_id,$plooserID,2,-$deltaELO,0,2)
+    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_mu,Player_Score,Player_Rank)
+    VALUES ($last_id,$plooserID,2,-$deltaELO,$looser_deltaTS_mu,$looser_deltaTS_sigma,0,2)
     ";
     $result = $sql->db_Query($q);
 

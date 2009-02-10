@@ -27,6 +27,10 @@ else
    $result2 = $sql->db_Query($q2);
    $q2 = 
    "INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
+    VALUES ('$last_id', 'Skill')";
+   $result2 = $sql->db_Query($q2);
+   $q2 = 
+   "INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
     VALUES ('$last_id', 'GamesPlayed')";
    $result2 = $sql->db_Query($q2);
    $q2 = 

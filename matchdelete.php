@@ -64,17 +64,23 @@ else
         for($i=0;$i<$num_rows;$i++)
         {
             $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
+            $pdeltaTS_mu = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
+            $pdeltaTS_sigma = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
             $pscore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
             $pID= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
             $puid= mysql_result($result,$i, TBL_USERS.".user_id");
             $pname= mysql_result($result,$i, TBL_USERS.".user_name");
             $pELO= mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
+            $pTS_mu= mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
+            $pTS_sigma= mysql_result($result,$i, TBL_PLAYERS.".TS_sigma");
             $pGamesPlayed= mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
             $pWins= mysql_result($result,$i, TBL_PLAYERS.".Win");
             $pLosses= mysql_result($result,$i, TBL_PLAYERS.".Loss");
             $scoreid = mysql_result($result,$i, TBL_SCORES.".ScoreID");
             
             $pELO -= $pdeltaELO;
+            $pTS_mu -= $pdeltaTS_mu;
+            $pTS_sigma /= $pdeltaTS_sigma;
             $pLosses = $pLosses - $max_score + $pscore;
             $pWins = $pWins - $pscore;
             $pGamesPlayed -= 1;
@@ -82,6 +88,10 @@ else
             $text .= "Player $pname, new ELO:$pELO<br />"; 
 
             $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (User = '$puid') AND (Event = '$event_id')";
+            $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET TS_mu = $pTS_mu WHERE (User = '$puid') AND (Event = '$event_id')";
+            $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET TS_sigma = $pTS_sigma WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);

@@ -133,6 +133,12 @@ else
          $ELO_maxpoints = $cat_max;
          $rating_max += $ELO_maxpoints;
       }
+      if ($cat_name == "Skill")
+      {
+         $Skill_minpoints = $cat_min;
+         $Skill_maxpoints = $cat_max;
+         $rating_max += $Skill_maxpoints;
+      }
       if ($cat_name == "GamesPlayed")
       {
          $games_played_minpoints = $cat_min;
@@ -503,7 +509,7 @@ else
       ';
       $text .= '
           <td class="forumheader3"><b>Reset Players/Teams.</b><br />
-          - Reset Players and Teams Statistics (Rank, Score, ELO, Games Played, Wins, Losses)<br />
+          - Reset Players and Teams Statistics (Rank, Score, ELO, Skill, Games Played, Wins, Losses)<br />
           - Delete all Matches
           </td>
           <td class="forumheader3">
@@ -810,6 +816,33 @@ else
          	}
       
          new slider(A_INIT8, A_TPL);
+      ";
+      $text .= '
+         </script>
+         </td>
+         </tr>
+         
+         <tr>
+         <td class="forumheader3">
+         Skill:
+         </td>
+         <td class="forumheader3">
+         <input name="sliderValue9" id="sliderValue9" type="text" size="3" onchange="A_SLIDERS[9].f_setValue(this.value)"></input>
+         </td>
+         <td class="forumheader3">
+         <script type="text/javascript">
+      ';
+      $text .= "
+         	var A_INIT8 = {
+         		's_form' : 'eventstatsform',
+         		's_name': 'sliderValue9',
+         		'n_minValue' : 0,
+         		'n_maxValue' : 100,
+         		'n_value' : ".$skill_maxpoints.",
+         		'n_step' : 1
+         	}
+      
+         new slider(A_INIT9, A_TPL);
       ";
       $text .= '
          </script>
