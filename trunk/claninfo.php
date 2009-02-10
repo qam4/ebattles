@@ -51,9 +51,11 @@ else
             {
                 $eid  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
                 $eELOdefault  = mysql_result($result_2,$j, TBL_EVENTS.".ELO_default");
+                $eTS_default_mu  = mysql_result($result_2,$j, TBL_EVENTS.".TS_default_mu");
+                $eTS_default_sigma  = mysql_result($result_2,$j, TBL_EVENTS.".TS_default_sigma");
                 $team_id = mysql_result($result_2,$j, TBL_TEAMS.".TeamID");
-                $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking)
-                VALUES ($eid,".USERID.",$team_id,$eELOdefault)";
+                $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
+                VALUES ($eid,".USERID.",$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
                 $sql->db_Query($q);
                 $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$eid')";
                 $result = $sql->db_Query($q4);

@@ -46,14 +46,16 @@ else
     ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
     $result = $sql->db_Query($q);
     $eELOdefault = mysql_result($result, 0, TBL_EVENTS.".ELO_default");
+    $eTS_default_mu  = mysql_result($result, 0, TBL_EVENTS.".TS_default_mu");
+    $eTS_default_sigma  = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
     $epassword = mysql_result($result, 0, TBL_EVENTS.".Password");
 
     if(isset($_GET['joinevent'])){
         if ($_GET['joinEventPassword'] == $epassword)
         {
 
-            $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,ELORanking)
-            VALUES ($event_id,".USERID.",$eELOdefault)";
+            $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,ELORanking,TS_mu,TS_sigma)
+            VALUES ($event_id,".USERID.",$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
             $sql->db_Query($q);
             $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
             $result = $sql->db_Query($q4);
@@ -93,8 +95,8 @@ else
             for($j=0; $j<$num_rows_2; $j++)
             {
                 $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
-                $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking)
-                VALUES ($event_id,$mid,$team_id,$eELOdefault)";
+                $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
+                VALUES ($event_id,$mid,$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
                 $sql->db_Query($q);
             }
         }
@@ -105,8 +107,8 @@ else
     }
     if(isset($_GET['jointeamevent'])){
         $team_id = $_GET['team'];
-        $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking)
-        VALUES ($event_id,".USERID.",$team_id,$eELOdefault)";
+        $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
+        VALUES ($event_id,".USERID.",$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
         $sql->db_Query($q);
         $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q4);

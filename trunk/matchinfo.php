@@ -136,7 +136,7 @@ else
     $text .= "<br />";
 
     $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
-    $text .= "<tr><td class=\"forumheader\"><b>Rank</b></td><td class=\"forumheader\"><b>Team</b></td><td class=\"forumheader\"><b>Player</b></td><td class=\"forumheader\"><b>Score</b></td><td class=\"forumheader\"><b>ELO</b></td></tr>\n";
+    $text .= "<tr><td class=\"forumheader\"><b>Rank</b></td><td class=\"forumheader\"><b>Team</b></td><td class=\"forumheader\"><b>Player</b></td><td class=\"forumheader\"><b>Score</b></td><td class=\"forumheader\"><b>ELO</b><b>Skill</b></td></tr>\n";
     for($i=0; $i<$num_rows; $i++)
     {
         $pid  = mysql_result($result,$i, TBL_USERS.".user_id");
@@ -144,6 +144,8 @@ else
         $prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
         $pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
         $pdeltaELO  = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
+        $pdeltaTS_mu  = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
+        $pdeltaTS_sigma  = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
         $pscore  = mysql_result($result,$i, TBL_SCORES.".Player_Score");
 
         $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
@@ -171,7 +173,7 @@ else
 
         //$text .= "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
         $text .= "<tr>\n";
-        $text .= "<td class=\"forumheader3\"><b>$prank</b></td><td class=\"forumheader3\">$pMatchTeam</td><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a></td><td class=\"forumheader3\">$pscore</td><td class=\"forumheader3\">$pdeltaELO</td></tr>";
+        $text .= "<td class=\"forumheader3\"><b>$prank</b></td><td class=\"forumheader3\">$pMatchTeam</td><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a></td><td class=\"forumheader3\">$pscore</td><td class=\"forumheader3\">$pdeltaELO</td><td class=\"forumheader3\">".$pdeltaTS_mu."</td></tr>";
 
     }
     $text .= "</tbody></table><br />\n";

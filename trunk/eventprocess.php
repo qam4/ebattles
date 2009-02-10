@@ -285,6 +285,13 @@ else
                $q2 = "UPDATE ".TBL_STATSCATEGORIES." SET CategoryMaxValue = '$new_eventStreaks' WHERE (Event = '$event_id') AND (CategoryName = 'Streaks')";
                $result2 = $sql->db_Query($q2);
          }
+         /* Event Skill */
+         $new_eventSkill = htmlspecialchars($_POST['sliderValue9']);      
+         if (is_numeric($new_eventSkill))
+         {
+               $q2 = "UPDATE ".TBL_STATSCATEGORIES." SET CategoryMaxValue = '$new_eventSkill' WHERE (Event = '$event_id') AND (CategoryName = 'Skill')";
+               $result2 = $sql->db_Query($q2);
+         }
           
          $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
          $result = $sql->db_Query($q4);
@@ -308,6 +315,8 @@ function resetPlayers($event_id)
           ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";  
       $result2 = $sql->db_Query($q2);
       $eELOdefault = mysql_result($result2,0 , TBL_EVENTS.".ELO_default");
+      $eTS_default_mu  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_mu");
+      $eTS_default_sigma  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_sigma");
       
       $q2 = "SELECT ".TBL_PLAYERS.".*"
           ." FROM ".TBL_PLAYERS
@@ -333,6 +342,10 @@ function resetPlayers($event_id)
             $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = 0 WHERE (PlayerID = '$pID')";
             $result3 = $sql->db_Query($q3);
+            $q3 = "UPDATE ".TBL_PLAYERS." SET TS_mu = '$eTS_default_mu' WHERE (PlayerID = '$pID')";
+            $result3 = $sql->db_Query($q3);
+            $q3 = "UPDATE ".TBL_PLAYERS." SET TS_sigma = '$eTS_default_sigma' WHERE (PlayerID = '$pID')";
+            $result3 = $sql->db_Query($q3);
          }
       }
 }
@@ -344,6 +357,8 @@ function resetTeams($event_id)
           ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";  
       $result2 = $sql->db_Query($q2);
       $eELOdefault = mysql_result($result2,0 , TBL_EVENTS.".ELO_default");
+      $eTS_default_mu  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_mu");
+      $eTS_default_sigma  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_sigma");
       
       $q2 = "SELECT ".TBL_TEAMS.".*"
           ." FROM ".TBL_TEAMS
@@ -362,6 +377,10 @@ function resetTeams($event_id)
             $q3 = "UPDATE ".TBL_TEAMS." SET Loss = 0 WHERE (TeamID = '$tID')";
             $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_TEAMS." SET Win = 0 WHERE (TeamID = '$tID')";
+            $result3 = $sql->db_Query($q3);
+            $q3 = "UPDATE ".TBL_PLAYERS." SET TS_mu = '$eTS_default_mu' WHERE (TeamID = '$tID')";
+            $result3 = $sql->db_Query($q3);
+            $q3 = "UPDATE ".TBL_PLAYERS." SET TS_sigma = '$eTS_default_sigma' WHERE (TeamID = '$tID')";
             $result3 = $sql->db_Query($q3);
          }
       }
