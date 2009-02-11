@@ -15,6 +15,8 @@ $num_rows = mysql_numrows($result_1);
 
 $ELO_minpoints = 0;
 $ELO_maxpoints = 0;
+$Skill_minpoints = 0;
+$Skill_maxpoints = 0;
 $games_played_minpoints = 0;
 $games_played_maxpoints = 0;
 $streaks_minpoints = 0;
@@ -42,6 +44,12 @@ for($i=0; $i<$num_rows; $i++)
             $ELO_minpoints = $cat_min;
             $ELO_maxpoints = $cat_max;
             $rating_max += $ELO_maxpoints;
+        }
+        if ($cat_name == "Skill")
+        {
+            $Skill_minpoints = $cat_min;
+            $Skill_maxpoints = $cat_max;
+            $rating_max += $Skill_maxpoints;
         }
         if ($cat_name == "GamesPlayed")
         {
@@ -98,6 +106,10 @@ if ($ELO_maxpoints > 0)
 {
     $stats[0][] = "<b title=\"ELO\">ELO</b><br /><div class='smalltext'>[".number_format ($ELO_maxpoints,2)." max]</div>";
 }
+if ($Skill_maxpoints > 0)
+{
+    $stats[0][] = "<b title=\"TrueSkill(TM)\">Skill</b><br /><div class='smalltext'>[".number_format ($Skill_maxpoints,2)." max]</div>";
+}
 if ($games_played_maxpoints > 0)
 {
     $stats[0][] = "<b title=\"Games\">Games</b><br /><div class='smalltext'>[".number_format ($games_played_maxpoints,2)." max]</div>";
@@ -144,6 +156,9 @@ for($i=0; $i<$num_rows; $i++)
     $pteam = mysql_result($result_1,$i, TBL_PLAYERS.".Team");
     $pgames_played = mysql_result($result_1,$i, TBL_PLAYERS.".GamesPlayed");
     $pELO = mysql_result($result_1,$i, TBL_PLAYERS.".ELORanking");
+    $pTS_mu = mysql_result($result_1,$i, TBL_PLAYERS.".TS_mu");
+    $pTS_sigma = mysql_result($result_1,$i, TBL_PLAYERS.".TS_sigma");
+    $pSkill = $pTS_mu - 3*$pTS_sigma;
     $pwin = mysql_result($result_1,$i, TBL_PLAYERS.".Win");
     $ploss = mysql_result($result_1,$i, TBL_PLAYERS.".Loss");
     $pstreak = mysql_result($result_1,$i, TBL_PLAYERS.".Streak");
@@ -225,6 +240,7 @@ for($i=0; $i<$num_rows; $i++)
     $team[] = $pteam;
     $games_played[] = $pgames_played;
     $ELO[] = $pELO;
+    $Skill[] = $pSkill;
     $win[] = $pwin;
     $loss[] = $ploss;
     $streaks[] = $pstreak_score;
@@ -240,6 +256,7 @@ for($i=0; $i<$num_rows; $i++)
     {
         $games_played_score[] = $pgames_played;
         $ELO_score[] = $pELO;
+        $Skill_score[] = $pSkill;
         $win_score[] = $pwin;
         $loss_score[] = $ploss;
         $winloss_score[] = $pwin - $ploss;
@@ -257,6 +274,7 @@ if ($players_rated>0)
 {
     $games_played_min = 0; //min($games_played_score);
     $ELO_min = min($ELO_score);
+    $Skill_min = min($Skill_score);
     $victory_ratio_min = 0; //min($victory_ratio_score);
     $victory_percent_min = 0; //min($victory_percent_score);
     $unique_opponents_min = 0; //min($unique_opponents_score);
@@ -265,6 +283,7 @@ if ($players_rated>0)
 
     $games_played_max = max($games_played);
     $ELO_max = max($ELO_score);
+    $Skill_max = max($Skill_score);
     $victory_ratio_max = max($victory_ratio_score);
     $victory_percent_max = max($victory_percent_score);
     $unique_opponents_max = max($unique_opponents_score);
@@ -283,9 +302,19 @@ if ($players_rated>0)
         $ELO_a = ($ELO_maxpoints-$ELO_minpoints) / ($ELO_max-$ELO_min);
         $ELO_b = $ELO_minpoints - $ELO_a * $ELO_min;
     }
+    if ($Skill_max==$Skill_min)
+    {
+        $Skill_a = 0;
+        $Skill_b = $Skill_maxpoints;
+    }
+    else
+    {
+        $Skill_a = ($Skill_maxpoints-$Skill_minpoints) / ($Skill_max-$Skill_min);
+        $Skill_b = $Skill_minpoints - $Skill_a * $Skill_min;
+    }
     if ($games_played_max==$games_played_min)
     {
-        $games_played_a = 00;
+        $games_played_a = 0;
         $games_played_b = $games_played_maxpoints;
     }
     else
@@ -350,6 +379,7 @@ for($i=0; $i<$num_rows; $i++)
     if ($games_played[$i] >= $emingames)
     {
         $ELO_final_score[$i] = $ELO_a * $ELO[$i] + $ELO_b;
+        $Skill_final_score[$i] = $Skill_a * $Skill[$i] + $Skill_b;
         $games_played_final_score[$i] = $games_played_a * $games_played[$i] + $games_played_b;
         $victory_ratio_final_score[$i] = $victory_ratio_a * $victory_ratio[$i] + $victory_ratio_b;
         $victory_percent_final_score[$i] = $victory_percent_a * $victory_percent[$i] + $victory_percent_b;
@@ -360,6 +390,7 @@ for($i=0; $i<$num_rows; $i++)
     else
     {
         $ELO_final_score[$i] = 0;
+        $Skill_final_score[$i] = 0;
         $games_played_final_score[$i] = 0;
         $victory_ratio_final_score[$i] = 0;
         $victory_percent_final_score[$i] = 0;
@@ -368,7 +399,7 @@ for($i=0; $i<$num_rows; $i++)
         $streaks_final_score[$i] = 0;
     }
 
-    $OverallScore[$i] = $ELO_final_score[$i] + $games_played_final_score[$i] + $victory_ratio_final_score[$i] + $victory_percent_final_score[$i] + $unique_opponents_final_score[$i] + $opponentsELO_final_score[$i] + $streaks_final_score[$i];
+    $OverallScore[$i] = $ELO_final_score[$i] + $Skill_final_score[$i] + $games_played_final_score[$i] + $victory_ratio_final_score[$i] + $victory_percent_final_score[$i] + $unique_opponents_final_score[$i] + $opponentsELO_final_score[$i] + $streaks_final_score[$i];
 
     $q_3 = "UPDATE ".TBL_PLAYERS." SET OverallScore = $OverallScore[$i] WHERE (PlayerID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
@@ -539,6 +570,10 @@ for($i=0; $i<$num_rows; $i++)
     if ($ELO_maxpoints > 0)
     {
         $stats_row[] = "$ELO[$index]<br />[".number_format ($ELO_final_score[$index],2)."]";
+    }
+    if ($Skill_maxpoints > 0)
+    {
+        $stats_row[] = number_format ($Skill[$index],2)."<br />[".number_format ($Skill_final_score[$index],2)."]";
     }
     if ($games_played_maxpoints > 0)
     {

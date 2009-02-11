@@ -11,6 +11,7 @@
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 require_once e_PLUGIN.'ebattles/include/ELO.php';
+require_once e_PLUGIN.'ebattles/include/Trueskill.php';
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
@@ -90,6 +91,8 @@ $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
 $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
 $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
 $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
+$eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
+$eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
 
 $q = "SELECT ".TBL_PLAYERS.".*, "
 .TBL_USERS.".*"
@@ -274,10 +277,12 @@ if (isset($_POST['submit']))
             }
 
             $deltaELO = 0;
+            $deltaTS_mu = 0;
+            $deltaTS_sigma = 1;
 
             $q =
-            "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_Score,Player_Rank)
-            VALUES ($last_id,$pid,$pteam,$deltaELO,$nbr_teams-$prank,$prank)
+            "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank)
+            VALUES ($last_id,$pid,$pteam,$deltaELO,$deltaTS_mu,$deltaTS_sigma,$nbr_teams-$prank,$prank)
             ";
             $result = $sql->db_Query($q);
 
@@ -313,11 +318,17 @@ if (isset($_POST['submit']))
                 $NbrPlayersTeamA = mysql_numrows($resultA);
                 $teamA_Score= mysql_result($resultA,0, TBL_SCORES.".Player_Score");
                 $teamA_ELO=0;
+                $teamA_TS_mu=0;
+                $teamA_TS_sigma2=0;
                 for ($k=0;$k<$NbrPlayersTeamA;$k++)
                 {
                     $teamA_ELO += mysql_result($resultA,$k, TBL_PLAYERS.".ELORanking");
+                    $teamA_TS_mu += mysql_result($resultA,$k, TBL_PLAYERS.".TS_mu");
+                    $teamA_TS_sigma2 += pow(mysql_result($resultA,$k, TBL_PLAYERS.".TS_sigma"),2);
                 }
+                $teamA_TS_sigma = sqrt($teamA_TS_sigma2);
                 $text .= "Team $i ELO: $teamA_ELO, score: $teamA_Score<br />";
+                $text .= "Team $i TS: mu = $teamA_TS_mu, sigma= $teamA_TS_sigma<br />";
 
                 $q = "SELECT ".TBL_MATCHS.".*, "
                 .TBL_SCORES.".*, "
@@ -336,11 +347,17 @@ if (isset($_POST['submit']))
                 $NbrPlayersTeamB = mysql_numrows($resultB);
                 $teamB_Score= mysql_result($resultB,0, TBL_SCORES.".Player_Score");
                 $teamB_ELO=0;
+                $teamB_TS_mu=0;
+                $teamB_TS_sigma2=0;
                 for ($k=0;$k<$NbrPlayersTeamB;$k++)
                 {
                     $teamB_ELO += mysql_result($resultB,$k, TBL_PLAYERS.".ELORanking");
+                    $teamB_TS_mu += mysql_result($resultB,$k, TBL_PLAYERS.".TS_mu");
+                    $teamB_TS_sigma2 += pow(mysql_result($resultB,$k, TBL_PLAYERS.".TS_sigma"),2);
                 }
+                $teamB_TS_sigma = sqrt($teamB_TS_sigma2);
                 $text .= "Team $j ELO: $teamB_ELO, score: $teamB_Score<br />";
+                $text .= "Team $j TS: mu = $teamB_TS_mu, sigma= $teamB_TS_sigma<br />";
 
                 // New ELO ------------------------------------------
                 $M=min($NbrPlayersTeamA,$NbrPlayersTeamB)*$eELO_M;      // Span
@@ -348,13 +365,32 @@ if (isset($_POST['submit']))
                 $deltaELO = ELO($M, $K, $teamA_ELO, $teamB_ELO, $teamA_Score, $teamB_Score);
                 $text .= "deltaELO: $deltaELO<br />";
 
+                // New TrueSkill ------------------------------------------
+                $beta=$eTS_beta;          // beta
+                $epsilon=$eTS_epsilon;    // draw probability
+                $update = Trueskill_update($epsilon,$beta, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Score, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Score);
+
+                $teamA_deltaTS_mu = $update[0];
+                $teamA_deltaTS_sigma = $update[1];
+                $teamB_deltaTS_mu = $update[2];
+                $teamB_deltaTS_sigma = $update[3];
+
+                $teamA_mu += $teamA_deltaTS_mu;
+                $teamB_mu += $teamB_deltaTS_mu;
+                $teamA_sigma *= $teamA_deltaTS_sigma;
+                $teamB_sigma *= $teamB_deltaTS_sigma;
+                
                 // Update Scores ------------------------------------------
                 for ($k=0;$k<$NbrPlayersTeamA;$k++)
                 {
                     $scoreELO = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaELO");
+                    $scoreTS_mu = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_mu");
+                    $scoreTS_sigma = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_sigma");
                     $pid = mysql_result($resultA,$k, TBL_PLAYERS.".PlayerID");
                     $scoreELO += $deltaELO;
-                    $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO"
+                    $scoreTS_mu += $teamA_deltaTS_mu;
+                    $scoreTS_sigma *= $teamA_deltaTS_sigma;
+                    $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO, Player_deltaTS_mu = $scoreTS_mu, Player_deltaTS_sigma = $scoreTS_sigma"
                     ." WHERE (MatchID = '$match_id')"
                     ." AND (Player = '$pid')";
                     $result = $sql->db_Query($q);
@@ -362,9 +398,13 @@ if (isset($_POST['submit']))
                 for ($k=0;$k<$NbrPlayersTeamB;$k++)
                 {
                     $scoreELO = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaELO");
+                    $scoreTS_mu = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_mu");
+                    $scoreTS_sigma = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_sigma");
                     $pid = mysql_result($resultB,$k, TBL_PLAYERS.".PlayerID");
                     $scoreELO -= $deltaELO;
-                    $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO"
+                    $scoreTS_mu += $teamB_deltaTS_mu;
+                    $scoreTS_sigma *= $teamB_deltaTS_sigma;
+                    $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO, Player_deltaTS_mu = $scoreTS_mu, Player_deltaTS_sigma = $scoreTS_sigma"
                     ." WHERE (MatchID = '$match_id')"
                     ." AND (Player = '$pid')";
                     $result = $sql->db_Query($q);
@@ -392,11 +432,15 @@ if (isset($_POST['submit']))
         for($i=0;$i<$num_rows;$i++)
         {
             $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
+            $pdeltaTS_mu = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
+            $pdeltaTS_sigma = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
             $pscore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
             $pid= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
             $puid= mysql_result($result,$i, TBL_USERS.".user_id");
             $pName= mysql_result($result,$i, TBL_USERS.".user_name");
             $pELO= mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
+            $pTS_mu= mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
+            $pTS_sigma= mysql_result($result,$i, TBL_PLAYERS.".TS_sigma");
             $pGamesPlayed= mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
             $pWins= mysql_result($result,$i, TBL_PLAYERS.".Win");
             $pLosses= mysql_result($result,$i, TBL_PLAYERS.".Loss");
@@ -405,6 +449,8 @@ if (isset($_POST['submit']))
             $pStreak_Worst= mysql_result($result,$i, TBL_PLAYERS.".Streak_Worst");
 
             $pELO += $pdeltaELO;
+            $pTS_mu += $pdeltaTS_mu;
+            $pTS_sigma *= $pdeltaTS_sigma;
             $pGamesPlayed += 1;
             $pLosses = $pLosses + $nbr_teams - $pscore - 1;
             $pWins = $pWins + $pscore;
@@ -412,6 +458,10 @@ if (isset($_POST['submit']))
             $text .= "Player $pName, new ELO:$pELO<br />";
 
             $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (PlayerID = '$pid')";
+            $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET TS_mu = $pTS_mu WHERE (PlayerID = '$pid')";
+            $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET TS_sigma = $pTS_sigma WHERE (PlayerID = '$pid')";
             $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (PlayerID = '$pid')";
             $result2 = $sql->db_Query($q);
@@ -472,8 +522,8 @@ if (isset($_POST['submit']))
         $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
         $text .= "</p>";
 
-        header("Location: eventinfo.php?eventid=$event_id");
-        exit();
+        //dbg-header("Location: eventinfo.php?eventid=$event_id");
+        //dbg-exit();
     }
     // if we get here, all data checks were okay, process information as you wish.
 } else {

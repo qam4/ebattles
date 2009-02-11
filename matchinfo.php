@@ -136,7 +136,7 @@ else
     $text .= "<br />";
 
     $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
-    $text .= "<tr><td class=\"forumheader\"><b>Rank</b></td><td class=\"forumheader\"><b>Team</b></td><td class=\"forumheader\"><b>Player</b></td><td class=\"forumheader\"><b>Score</b></td><td class=\"forumheader\"><b>ELO</b><b>Skill</b></td></tr>\n";
+    $text .= "<tr><td class=\"forumheader\"><b>Rank</b></td><td class=\"forumheader\"><b>Team</b></td><td class=\"forumheader\"><b>Player</b></td><td class=\"forumheader\"><b>Score</b></td><td class=\"forumheader\"><b>ELO</b></td><td class=\"forumheader\"><b>Skill</b></td></tr>\n";
     for($i=0; $i<$num_rows; $i++)
     {
         $pid  = mysql_result($result,$i, TBL_USERS.".user_id");

@@ -124,6 +124,10 @@ require_once(HEADERF);
 	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
 	 VALUES ('$last_id', 'Streaks', '1', '20')";
 	$sql->db_Query($query) or die ('Error, adding StatsCategories 7<br />'. mysql_error());        	
+ 	$query = 
+	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
+	 VALUES ('$last_id', 'Skill', '1', '20')";
+	$sql->db_Query($query) or die ('Error, adding StatsCategories 1<br />'. mysql_error());
 			
 	$query = 
 	"INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Description)
@@ -158,6 +162,10 @@ require_once(HEADERF);
 	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
 	 VALUES ('$last_id', 'Streaks', '1', '20')";
 	$sql->db_Query($query) or die ('Error, adding StatsCategories 7<br />'. mysql_error());
+ 	$query = 
+	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
+	 VALUES ('$last_id', 'Skill', '1', '20')";
+	$sql->db_Query($query) or die ('Error, adding StatsCategories 1<br />'. mysql_error());
 	
 	$query = 
 	"INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Start_timestamp, End_timestamp, Rules, Description)
@@ -193,6 +201,10 @@ require_once(HEADERF);
 	 VALUES ('$last_id', 'Streaks', '1', '20')";
 	$sql->db_Query($query) or die ('Error, adding StatsCategories 7<br />'. mysql_error());
 	$text .= "Added Events<br />";
+ 	$query = 
+	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
+	 VALUES ('$last_id', 'Skill', '1', '20')";
+	$sql->db_Query($query) or die ('Error, adding StatsCategories 1<br />'. mysql_error());
 	
 	// Insert Mods in Event
 	$query = 
@@ -236,12 +248,6 @@ require_once(HEADERF);
 	$sql->db_Query($query) or die ('Error, adding player 2<br />'. mysql_error());
 	
 	$text .= "Added Players<br />";
-
-	$query = 
-	"INSERT INTO ".TBL_SCORES."(Player,Player_MatchTeam,Player_deltaELO,Player_Score,Player_Rank)
-	 VALUES (1,1,10,1,1)";
-	$sql->db_Query($query) or die ('Error, adding score<br />'. mysql_error());
-	$text .= "Added Scores<br />";
 
 $ns->tablerender('Insert debug data', $text);
 require_once(FOOTERF);
