@@ -68,23 +68,23 @@ if(isset($_POST['qrsubmitloss']))
     $M=$eELO_M;       // Span
     $K=$eELO_K;	// Max adjustment per game
     $deltaELO = ELO($M, $K, $pwinnerELO, $plooserELO, 1, 0);
-    $plooserELO = $plooserELO - $deltaELO;
-    $pwinnerELO = $pwinnerELO + $deltaELO;
+    $plooserELO -= $deltaELO;
+    $pwinnerELO += $deltaELO;
 
     // New TrueSkill ------------------------------------------
-    $beta=$eTS_beta;       // Span
-    $epsilon=$eTS_beta;       // Span
+    $beta=$eTS_beta;          // beta
+    $epsilon=$eTS_epsilon;    // draw probability
     $update = Trueskill_update($epsilon,$beta, $pwinnerTS_mu, $pwinnerTS_sigma, 1, $plooserTS_mu, $plooserTS_sigma, 0);
 
-    $winner_deltaTS_mu = pow($pwinnerTS_sigma,2) * $update[0];
-    $looser_deltaTS_mu = - pow($plooserTS_sigma,2) * $update[0];
-    $winner_deltaTS_sigma = sqrt(1-pow($pwinnerTS_sigma,2) * $update[1]);
-    $looser_deltaTS_sigma = sqrt(1-pow($plooserTS_sigma,2) * $update[1]);
+    $winner_deltaTS_mu = $update[0];
+    $winner_deltaTS_sigma = $update[1];
+    $looser_deltaTS_mu = $update[2];
+    $looser_deltaTS_sigma = $update[3];
     
-    $pwinnerTS_mu = $pwinnerTS_mu + $winner_deltaTS_mu;
-    $plooserTS_mu = $plooserTS_mu + $looser_deltaTS_mu;
-    $pwinnerTS_sigma = $pwinnerTS_sigma * $winner_deltaTS_sigma;
-    $plooserTS_sigma = $plooserTS_sigma * $looser_deltaTS_sigma;
+    $pwinnerTS_mu += $winner_deltaTS_mu;
+    $plooserTS_mu += $looser_deltaTS_mu;
+    $pwinnerTS_sigma *= $winner_deltaTS_sigma;
+    $plooserTS_sigma *= $looser_deltaTS_sigma;
 
     // Update players data ------------------------------------------
     $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $plooserELO WHERE (PlayerID = '$plooserID')";
@@ -182,13 +182,13 @@ if(isset($_POST['qrsubmitloss']))
 
     // Create Scores ------------------------------------------
     $q =
-    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_mu,Player_Score,Player_Rank)
+    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank)
     VALUES ($last_id,$pwinnerID,1,$deltaELO,$winner_deltaTS_mu,$winner_deltaTS_sigma,1,1)
     ";
     $result = $sql->db_Query($q);
 
     $q =
-    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_mu,Player_Score,Player_Rank)
+    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank)
     VALUES ($last_id,$plooserID,2,-$deltaELO,$looser_deltaTS_mu,$looser_deltaTS_sigma,0,2)
     ";
     $result = $sql->db_Query($q);

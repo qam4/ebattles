@@ -33,10 +33,28 @@ function Trueskill_update($epsilon,$beta, $A_mu, $A_sigma, $A_points, $B_mu, $B_
     $v = $N / $Psi;
     $w = $v * ($v + ($t-$alpha));
 
-    $v = $v / $c_ij;
-    $w = $w / pow($c_ij,2);
+    $winner_delta_mu = pow($winner_sigma,2) * $v / $c_ij;
+    $looser_delta_mu = - pow($looser_sigma,2) * $v / $c_ij;
+    $winner_delta_sigma = sqrt(1-pow($winner_sigma,2) * $w / pow($c_ij,2));
+    $looser_delta_sigma = sqrt(1-pow($looser_sigma,2) * $w / pow($c_ij,2));
 
-    return array($v,$w);
+    //echo "Winner: $winner_mu, $winner_sigma, $winner_delta_mu, $winner_delta_sigma<br>";
+    //echo "Looser: $looser_mu, $looser_sigma, $looser_delta_mu, $looser_delta_sigma<br>";
+
+    if($A_points>$B_points)
+    {
+        return array($winner_delta_mu,$winner_delta_sigma,$looser_delta_mu,$looser_delta_sigma);
+    }
+    elseif($A_points==$B_points)
+    {
+        // TBD
+    }
+    else
+    {
+        return array($looser_delta_mu,$looser_delta_sigma,$winner_delta_mu,$winner_delta_sigma);
+    }
+
+
 }
 
 function erf($x)

@@ -54,4 +54,12 @@ define("EMAIL_FROM_ADDR", "frederic.marchais@gmail.com");
 define("EMAIL_PASSWORD", "gmax76");
 define("EMAIL_WELCOME", true);
 
+define("ELO_DEFAULT", 1000);
+define("ELO_K", 50);
+define("ELO_M", 100);
+define("TS_Mu0"     , 25);
+define("TS_sigma0"  , TS_Mu0/3);
+define("TS_beta"    , TS_Mu0/6);
+define("TS_epsilon" , 0);
+
 ?>
