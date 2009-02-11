@@ -92,35 +92,35 @@ $stats = array
 )
 );
 
-$stats[0][] = "<b>Rating</b><br />[".number_format ($rating_max,2)." max]";
+$stats[0][] = "<b title=\"Rating\">Rating</b><br /><div class='smalltext'>[".number_format ($rating_max,2)." max]</div>";
 
 if ($ELO_maxpoints > 0)
 {
-    $stats[0][] = "<b>ELO</b><br />[".number_format ($ELO_maxpoints,2)." max]";
+    $stats[0][] = "<b title=\"ELO\">ELO</b><br /><div class='smalltext'>[".number_format ($ELO_maxpoints,2)." max]</div>";
 }
 if ($games_played_maxpoints > 0)
 {
-    $stats[0][] = "<b>Games</b><br />[".number_format ($games_played_maxpoints,2)." max]";
+    $stats[0][] = "<b title=\"Games\">Games</b><br /><div class='smalltext'>[".number_format ($games_played_maxpoints,2)." max]</div>";
 }
 if ($victory_ratio_maxpoints > 0)
 {
-    $stats[0][] = "<b>W/L</b><br />[".number_format ($victory_ratio_maxpoints,2)." max]";
+    $stats[0][] = "<b title=\"Win/Loss ratio\">W/L</b><br /><div class='smalltext'><div class='smalltext'>[".number_format ($victory_ratio_maxpoints,2)." max]</div>";
 }
 if ($victory_percent_maxpoints > 0)
 {
-    $stats[0][] = "<b>W%</b><br />[".number_format ($victory_percent_maxpoints,2)." max]";
+    $stats[0][] = "<b title=\"Wins percentage\">W%</b><br /><div class='smalltext'>[".number_format ($victory_percent_maxpoints,2)." max]</div>";
 }
 if ($unique_opponents_maxpoints > 0)
 {
-    $stats[0][] = "<b>Unique Opponents</b><br />[".number_format ($unique_opponents_maxpoints,2)." max]";
+    $stats[0][] = "<b title=\"Unique Opponents\">Opponents</b><br /><div class='smalltext'>[".number_format ($unique_opponents_maxpoints,2)." max]</div>";
 }
 if ($opponentsELO_maxpoints > 0)
 {
-    $stats[0][] = "<b>Opponents Avg ELO</b><br />[".number_format ($opponentsELO_maxpoints,2)." max]";
+    $stats[0][] = "<b title=\"Opponents Average ELO\">Opp. ELO</b><br /><div class='smalltext'>[".number_format ($opponentsELO_maxpoints,2)." max]</div>";
 }
 if ($streaks_maxpoints > 0)
 {
-    $stats[0][] = "<b title=\"Current|Best|Worst Streaks\">Streaks</b><br />[".number_format ($streaks_maxpoints,2)." max]";
+    $stats[0][] = "<b title=\"Current|Best|Worst Streaks\">Streaks</b><br /><div class='smalltext'>[".number_format ($streaks_maxpoints,2)." max]</div>";
 }
 
 // Update Overall Score
