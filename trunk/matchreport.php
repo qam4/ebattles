@@ -388,7 +388,7 @@ if (isset($_POST['submit']))
                     $scoreTS_sigma = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_sigma");
                     $pid = mysql_result($resultA,$k, TBL_PLAYERS.".PlayerID");
                     $scoreELO += $deltaELO;
-                    $scoreTS_mu += $teamA_deltaTS_mu;
+                    $scoreTS_mu += $teamA_deltaTS_mu/$NbrPlayersTeamA;
                     $scoreTS_sigma *= $teamA_deltaTS_sigma;
                     $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO, Player_deltaTS_mu = $scoreTS_mu, Player_deltaTS_sigma = $scoreTS_sigma"
                     ." WHERE (MatchID = '$match_id')"
@@ -402,13 +402,15 @@ if (isset($_POST['submit']))
                     $scoreTS_sigma = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_sigma");
                     $pid = mysql_result($resultB,$k, TBL_PLAYERS.".PlayerID");
                     $scoreELO -= $deltaELO;
-                    $scoreTS_mu += $teamB_deltaTS_mu;
+                    $scoreTS_mu += $teamB_deltaTS_mu/$NbrPlayersTeamB;
                     $scoreTS_sigma *= $teamB_deltaTS_sigma;
                     $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO, Player_deltaTS_mu = $scoreTS_mu, Player_deltaTS_sigma = $scoreTS_sigma"
                     ." WHERE (MatchID = '$match_id')"
                     ." AND (Player = '$pid')";
                     $result = $sql->db_Query($q);
                 }
+                $text .= "Team $i TS: new mu = $teamA_TS_mu, sigma= $teamA_TS_sigma<br />";
+                $text .= "Team $j TS: new mu = $teamB_TS_mu, sigma= $teamB_TS_sigma<br />";
             }
         }
         $text .= '<br />';
@@ -522,8 +524,8 @@ if (isset($_POST['submit']))
         $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
         $text .= "</p>";
 
-        //dbg-header("Location: eventinfo.php?eventid=$event_id");
-        //dbg-exit();
+        header("Location: eventinfo.php?eventid=$event_id");
+        exit();
     }
     // if we get here, all data checks were okay, process information as you wish.
 } else {
