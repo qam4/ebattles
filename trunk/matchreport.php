@@ -11,7 +11,7 @@
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 require_once e_PLUGIN.'ebattles/include/ELO.php';
-require_once e_PLUGIN.'ebattles/include/Trueskill.php';
+require_once e_PLUGIN.'ebattles/include/trueskill.php';
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);

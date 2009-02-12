@@ -7,7 +7,7 @@
 require_once("../../class2.php");
 require_once e_PLUGIN.'ebattles/include/main.php';
 require_once e_PLUGIN.'ebattles/include/ELO.php';
-require_once e_PLUGIN.'ebattles/include/Trueskill.php';
+require_once e_PLUGIN.'ebattles/include/trueskill.php';
 global $sql;
 
 if(isset($_POST['qrsubmitloss']))
