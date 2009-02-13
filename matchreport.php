@@ -138,7 +138,7 @@ for($i=0; $i<$num_rows; $i++){
     }
     $players_id[$i+1] = $pid;
     $players_uid[$i+1] = $puid;
-    $players_name[$i+1] = $pclantag.$pname;
+    $players_name[$i+1] = $pclantag.$pname." (#$prank)";
 }
 
 $text .= '

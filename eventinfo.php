@@ -813,6 +813,82 @@ else
     $text .= "<br />";
     $text .="</div>";
 
+    $text .="<div class=\"tab-page\">";
+    $text .="<div class=\"tab\">Latest Awards</div>";
+
+    $rowsPerPage = 5;
+    /* Stats/Results */
+    $q = "SELECT ".TBL_AWARDS.".*, "
+    .TBL_PLAYERS.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_AWARDS.", "
+    .TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
+    ." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
+    ." AND (".TBL_PLAYERS.".Event = '$event_id')"
+    ." ORDER BY ".TBL_AWARDS.".timestamp DESC"
+    ." LIMIT 0, $rowsPerPage";
+
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+
+    $text .= "<br />";
+    if ($num_rows>0)
+    {
+        /* Display table contents */
+        for($i=0; $i<$num_rows; $i++)
+        {
+            $aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
+            $aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
+            $aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
+            $aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
+            $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
+            $aTime_local = $aTime + GMT_TIMEOFFSET;
+            $date = date("d M Y, h:i:s A",$aTime_local);
+
+            switch ($aType) {
+                case 'PlayerTookFirstPlace':
+                $award = " took 1st place";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"></img> ";
+                break;
+                case 'PlayerInTopTen':
+                $award = " entered top 10";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"></img> ";
+                break;
+                case 'PlayerStreak5':
+                $award = " won 5 games in a row";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/medal_bronze_3.png\" alt=\"1st place\" title=\"5 in a row\"></img> ";
+                break;
+                case 'PlayerStreak10':
+                $award = " won 10 games in a row";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/medal_silver_3.png\" alt=\"1st place\" title=\"10 in a row\"></img> ";
+                break;
+                case 'PlayerStreak25':
+                $award = " won 25 games in a row";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/medal_gold_3.png\" alt=\"1st place\" title=\"25 in a row\"></img> ";
+                break;
+            }
+
+            $award_string = $icon;
+            $award_string .= " <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$aUser\">$aUserNickName</a>";
+            $award_string .= $award;
+
+            if (($time-$aTime) < INT_DAY )
+            {
+                $award_string .= " <div class='smalltext'>".get_formatted_timediff($aTime, $time)." ago.</div>";
+            }
+            else
+            {
+                $award_string .= " <div class='smalltext'>".$date.".</div>";
+            }
+
+            $text .= "$award_string<br />";
+        }
+    }
+    $text .= "<br />";
+    $text .="</div>";
+    
     $text .= '
     </div>
 
