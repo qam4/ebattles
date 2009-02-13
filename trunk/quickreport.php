@@ -85,7 +85,7 @@ else
 
         if($puid != USERID)
         {
-            $text .= "<option value=\"$pid\">#$prank - $pclantag$pname</option>";
+            $text .= "<option value=\"$pid\">$pclantag$pname (#$prank)</option>";
         }
     }
 
