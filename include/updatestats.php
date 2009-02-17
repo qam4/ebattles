@@ -168,7 +168,7 @@ for($i=0; $i<$num_rows; $i++)
     $pstreak_score = $pstreak_best; //max(0,$pstreak_best + $pstreak_worst); //fmarc- TBD
     $pwinloss = $pwin."/".$ploss;
     $pvictory_ratio = ($ploss>0) ? ($pwin/$ploss) : $pwin;
-    $pvictory_percent = ($pgames_played>0) ? ((100 * $pwin)/$pgames_played) : 0;
+    $pvictory_percent = ($pgames_played>0) ? ((100 * $pwin)/($pwin+$ploss)) : 0;
 
     $popponentsELO = 0;
     $popponents = 0;

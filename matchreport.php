@@ -16,62 +16,40 @@ require_once e_PLUGIN.'ebattles/include/trueskill.php';
 ********************************************************************/
 require_once(HEADERF);
 
-$text = '
-<script type="text/javascript" src="./js/tool-man/core.js"></script>
-<script type="text/javascript" src="./js/tool-man/events.js"></script>
-<script type="text/javascript" src="./js/tool-man/css.js"></script>
-<script type="text/javascript" src="./js/tool-man/coordinates.js"></script>
-<script type="text/javascript" src="./js/tool-man/drag.js"></script>
-<script type="text/javascript" src="./js/tool-man/dragsort.js"></script>
-<script type="text/javascript" src="./js/tool-man/cookies.js"></script>
-<script type="text/javascript">
-';
-$text .= "
-<!--
-var dragsort = ToolMan.dragsort()
-var junkdrawer = ToolMan.junkdrawer()
-window.onload = function() {
-junkdrawer.restoreListOrder('matchresultlist')
-dragsort.makeListSortable(document.getElementById('matchresultlist'),
-verticalOnly, saveOrder)
-}
+$text = '';
 
-function verticalOnly(item) {
-item.toolManDragGroup.verticalOnly()
-}
-
-function speak(id, what) {
-var element = document.getElementById(id);
-element.innerHTML = 'Clicked ' + what;
-}
-
-function saveOrder(item) {
-var group = item.toolManDragGroup
-var list = group.element.parentNode
-var id = list.getAttribute('id')
-if (id == null) return
-group.register('dragend', function() {
-ToolMan.cookies().set('list-' + id,
-junkdrawer.serializeList(list), 365)
-})
-}
-
-//-->
-";
 $text .= '
-</script>
 <script type="text/javascript">
 ';
 $text .= "
 <!--
-function get_ranks(nbr_ranks)
+function SwitchSelected(id)
 {
-for(i=1;i<=nbr_ranks;i++)
-{
-var rank = document.getElementsByName('rank'+i);
-rank[0].value = junkdrawer.inspectItem('matchresultlist', (i-1))
-//    alert('rank'+i);
-}
+  var select = document.getElementById('rank'+id);
+  nbr_ranks = select.length
+  new_rank_txt = select.options[select.selectedIndex].text
+  
+  for (k = 1; k <= nbr_ranks; k++)
+  {
+    old_rank_found=0
+    for (j = 1; j <= nbr_ranks; j++)
+    {
+      var select = document.getElementById('rank'+j);
+      rank_txt = select.options[select.selectedIndex].text
+      if (rank_txt == 'Team #'+k) {old_rank_found=1}
+    }
+    if (old_rank_found==0) {old_rank = k}
+  }
+  
+  for (j = 1; j <= nbr_ranks; j++)
+  {
+    if (j!=id)
+    {
+      var select = document.getElementById('rank'+j);
+      rank_txt = select.options[select.selectedIndex].text
+      if (rank_txt == new_rank_txt) {select.selectedIndex=old_rank-1}
+    }
+  }
 }
 //-->
 ";
@@ -379,7 +357,7 @@ if (isset($_POST['submit']))
                 $teamB_mu += $teamB_deltaTS_mu;
                 $teamA_sigma *= $teamA_deltaTS_sigma;
                 $teamB_sigma *= $teamB_deltaTS_sigma;
-                
+
                 // Update Scores ------------------------------------------
                 for ($k=0;$k<$NbrPlayersTeamA;$k++)
                 {
