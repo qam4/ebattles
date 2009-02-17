@@ -210,7 +210,7 @@ for($i=0; $i<$nbrteams; $i++)
 
     $twinloss = $twin."/".$tloss;
     $tvictory_ratio = ($tloss>0) ? ($twin/$tloss) : $twin;
-    $tvictory_percent = ($tgames_played>0) ? ((100 * $twin)/$tgames_played) : 0;
+    $tvictory_percent = ($tgames_played>0) ? ((100 * $twin)/($twin+$tloss)) : 0;
 
     $id[]  = $tid;
     $name[]  = $tname;

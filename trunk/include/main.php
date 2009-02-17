@@ -18,7 +18,6 @@ if(!isset($pref['eb_mod']))
 }
 
 $eplug_css = array(
-"js/tool-man/lists.css",
 "js/calendar/calendar-blue.css",
 "css/tab.css"
 );

@@ -74,12 +74,10 @@ Known issues/improvements:
   - DHTML calendar 1.0 - http://www.dynarch.com/projects/calendar
   - TinyMCE 2.1.0 - http://tinymce.moxiecode.com/
   - Tab Pane 1.02 - http://webfx.eae.net
-  - ToolMan DHTML Library 0.2 (Drag & Drop Sortable Lists ) - http://tool-man.org/
   - TrueSkill™ Ranking system - http://research.microsoft.com/mlp/trueskill/
   - Pagination "Multiple Pages of Data from a Text File" - http://www.codewalkers.com/c/a/Database-Articles/Multiple-Pages-of-Data-from-a-Text-File/
   - Tigra Slider Control - http://www.softcomplex.com/products/tigra_slider_control/
   - Games icons - xfireplus.com
-  - Table CSS designs - http://www.robertdenton.org/reference/css-tables-tutorial.html
   - Photoshop/Design - http://www.empiredezign.com, http://www.tutorialstream.com
  
 BUGS:
