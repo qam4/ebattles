@@ -336,6 +336,12 @@ function resetPlayers($event_id)
             $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_PLAYERS." SET Win = 0 WHERE (PlayerID = '$pID')";
             $result3 = $sql->db_Query($q3);
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Draw = 0 WHERE (PlayerID = '$pID')";
+            $result3 = $sql->db_Query($q3);
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Score = 0 WHERE (PlayerID = '$pID')";
+            $result3 = $sql->db_Query($q3);
+            $q3 = "UPDATE ".TBL_PLAYERS." SET Points = 0 WHERE (PlayerID = '$pID')";
+            $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = 0 WHERE (PlayerID = '$pID')";
             $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = 0 WHERE (PlayerID = '$pID')";
@@ -377,6 +383,12 @@ function resetTeams($event_id)
             $q3 = "UPDATE ".TBL_TEAMS." SET Loss = 0 WHERE (TeamID = '$tID')";
             $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_TEAMS." SET Win = 0 WHERE (TeamID = '$tID')";
+            $result3 = $sql->db_Query($q3);
+            $q3 = "UPDATE ".TBL_TEAMS." SET Draws = 0 WHERE (TeamID = '$tID')";
+            $result3 = $sql->db_Query($q3);
+            $q3 = "UPDATE ".TBL_TEAMS." SET Score = 0 WHERE (TeamID = '$tID')";
+            $result3 = $sql->db_Query($q3);
+            $q3 = "UPDATE ".TBL_TEAMS." SET Points = 0 WHERE (TeamID = '$tID')";
             $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_PLAYERS." SET TS_mu = '$eTS_default_mu' WHERE (TeamID = '$tID')";
             $result3 = $sql->db_Query($q3);

@@ -63,10 +63,6 @@ else
 
         for($i=0;$i<$num_rows;$i++)
         {
-            $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
-            $pdeltaTS_mu = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
-            $pdeltaTS_sigma = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
-            $pscore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
             $pID= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
             $puid= mysql_result($result,$i, TBL_USERS.".user_id");
             $pname= mysql_result($result,$i, TBL_USERS.".user_name");
@@ -75,14 +71,28 @@ else
             $pTS_sigma= mysql_result($result,$i, TBL_PLAYERS.".TS_sigma");
             $pGamesPlayed= mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
             $pWins= mysql_result($result,$i, TBL_PLAYERS.".Win");
+            $pDraws= mysql_result($result,$i, TBL_PLAYERS.".Draw");
             $pLosses= mysql_result($result,$i, TBL_PLAYERS.".Loss");
+            $pScore= mysql_result($result,$i, TBL_PLAYERS.".Score");
+            $pPoints= mysql_result($result,$i, TBL_PLAYERS.".Points");
             $scoreid = mysql_result($result,$i, TBL_SCORES.".ScoreID");
+            $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
+            $pdeltaTS_mu = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
+            $pdeltaTS_sigma = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
+            $psWins = mysql_result($result,$i, TBL_SCORES.".Player_Win");
+            $psDraws = mysql_result($result,$i, TBL_SCORES.".Player_Draw");
+            $psLosses = mysql_result($result,$i, TBL_SCORES.".Player_Loss");
+            $psScore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
+            $psPoints = mysql_result($result,$i, TBL_SCORES.".Player_Points");
             
             $pELO -= $pdeltaELO;
             $pTS_mu -= $pdeltaTS_mu;
             $pTS_sigma /= $pdeltaTS_sigma;
-            $pLosses = $pLosses - $max_score + $pscore;
-            $pWins = $pWins - $pscore;
+            $pWins -= $psWins;
+            $pDraws -= $psDraws;
+            $pLosses -= $psLosses;
+            $pScore -= $psScore;
+            $pPoints -= $psPoints;
             $pGamesPlayed -= 1;
             
             $text .= "Player $pname, new ELO:$pELO<br />"; 
@@ -99,8 +109,14 @@ else
             $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET Draw = $pDraws WHERE (User = '$puid') AND (Event = '$event_id')";
+            $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET Score = $pScore WHERE (User = '$puid') AND (Event = '$event_id')";
+            $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET Points = $pPoints WHERE (User = '$puid') AND (Event = '$event_id')";
+            $result2 = $sql->db_Query($q);
             
-            // fmarc- Can not change "streak" information here :(
+            // fmarc- Can not reverse "streak" information here :(
             
             // Delete Score
             $q = "DELETE FROM ".TBL_SCORES." WHERE (ScoreID = '$scoreid')";

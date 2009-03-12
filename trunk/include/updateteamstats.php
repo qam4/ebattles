@@ -28,7 +28,7 @@ if ($ELO_maxpoints > 0)
 }
 if ($games_played_maxpoints > 0)
 {
-    $stats[0][] = "<b title=\"Games\">Games</b><br /><div class='smalltext'>[".number_format ($games_played_maxpoints,2)." max]</div>";
+    $stats[0][] = "<b title=\"Number of games played\">Games</b><br /><div class='smalltext'>[".number_format ($games_played_maxpoints,2)." max]</div>";
 }
 if ($victory_ratio_maxpoints > 0)
 {
@@ -124,7 +124,10 @@ for($i=0; $i<$nbrteams; $i++)
             $pgames_played = mysql_result($result_2,$j, TBL_PLAYERS.".GamesPlayed");
             $pELO = mysql_result($result_2,$j, TBL_PLAYERS.".ELORanking");
             $pwin = mysql_result($result_2,$j, TBL_PLAYERS.".Win");
+            $pdraw = mysql_result($result_2,$j, TBL_PLAYERS.".Draw");
             $ploss = mysql_result($result_2,$j, TBL_PLAYERS.".Loss");
+            $pscore = mysql_result($result_2,$j, TBL_PLAYERS.".Score");
+            $ppoints = mysql_result($result_2,$j, TBL_PLAYERS.".Points");
 
             $popponentsELO = 0;
             $popponents = 0;
@@ -184,7 +187,10 @@ for($i=0; $i<$nbrteams; $i++)
             $punique_opponents = count(array_unique($players));
 
             $twin += $pwin;
+            $tdraw += $pdraw;
             $tloss += $ploss;
+            $tscore += $pscore;
+            $tpoints += $ppoints;
             $tgames_played += $pgames_played;
             $tunique_opponents += $punique_opponents;
             $topponentsELO += $popponentsELO;
@@ -208,9 +214,10 @@ for($i=0; $i<$nbrteams; $i++)
         }
     }
 
+    $twindrawloss = $twin."/".$tdraw."/".$tloss;
     $twinloss = $twin."/".$tloss;
-    $tvictory_ratio = ($tloss>0) ? ($twin/$tloss) : $twin;
-    $tvictory_percent = ($tgames_played>0) ? ((100 * $twin)/($twin+$tloss)) : 0;
+    $tvictory_ratio = ($tloss>0) ? ($twin/$tloss) : $twin; //fm --> draws???
+    $tvictory_percent = ($tgames_played>0) ? ((100 * $twin)/($twin+$tdraw+$tloss)) : 0;
 
     $id[]  = $tid;
     $name[]  = $tname;
@@ -221,6 +228,8 @@ for($i=0; $i<$nbrteams; $i++)
     $ELO[] = $tELO;
     $win[] = $twin;
     $loss[] = $tloss;
+    $draw[] = $tdraw;
+    $windrawloss[] = $twindrawloss;
     $winloss[] = $twinloss;
     $victory_ratio[] = $tvictory_ratio;
     $victory_percent[] = $tvictory_percent;
@@ -233,7 +242,9 @@ for($i=0; $i<$nbrteams; $i++)
         $ELO_score[] = $tELO;
         $win_score[] = $twin;
         $loss_score[] = $tloss;
-        $winloss_score[] = $twinloss;
+        $draw_score[] = $tdraw;
+        $windrawloss_score[] = $twin - $tloss; //fm - ???
+        $winloss_score[] = $twin - $tloss; // not used for now, use victory ratio
         $victory_ratio_score[] = $tvictory_ratio;
         $victory_percent_score[] = $tvictory_percent;
         $unique_opponents_score[] = $tunique_opponents;
@@ -350,7 +361,13 @@ for($i=0; $i<$nbrteams; $i++)
     $result_3 = $sql->db_Query($q_3);
     $q_3 = "UPDATE ".TBL_TEAMS." SET Win = $twin WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
+    $q_3 = "UPDATE ".TBL_TEAMS." SET Draw = $tdraw WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
+    $result_3 = $sql->db_Query($q_3);
     $q_3 = "UPDATE ".TBL_TEAMS." SET Loss = $tloss WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
+    $result_3 = $sql->db_Query($q_3);
+    $q_3 = "UPDATE ".TBL_TEAMS." SET Score = $tscore WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
+    $result_3 = $sql->db_Query($q_3);
+    $q_3 = "UPDATE ".TBL_TEAMS." SET Points = $tpoints WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
     $q_3 = "UPDATE ".TBL_TEAMS." SET OverallScore = $OverallScore[$i] WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
@@ -373,6 +390,8 @@ for($i=0; $i<$num_rows; $i++)
 
     $q_2 = "UPDATE ".TBL_TEAMS." SET Rank = $ranknumber WHERE (TeamID = '$tid') AND (Event = '$event_id')";
     $result_2 = $sql->db_Query($q_2);
+
+//fm- Need rank delta for up/dn arrow
 
     $index = array_search($tid,$id);
 

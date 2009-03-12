@@ -61,5 +61,7 @@ define("TS_Mu0"     , 25);
 define("TS_sigma0"  , TS_Mu0/3);
 define("TS_beta"    , TS_Mu0/6);
 define("TS_epsilon" , 0);
-
+define("PointsPerWin_DEFAULT" , 3);
+define("PointsPerDraw_DEFAULT" , 1);
+define("PointsPerLoss_DEFAULT" , 0);
 ?>

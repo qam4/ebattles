@@ -90,13 +90,33 @@ BUGS:
   When you Submit, the match, it will be as a Guest.
 - Problem when editing include/main.php in UltraEdit.
   UltraEdit adds "0xFEFF" signature (BOM) at the beginning of the file, creating "header already sent" issues.
-- Do not have password check for "join team event"
 - Should use md5 for event passord
 - Security: check every textarea / input style="text" and see if we use htmlspecialchars when treating the output.
-- Team events: 2 players of same team should not be able to compete against each other.
+- Team events: 2 players of same team should not be able to compete against each other. fixed?
+- Use "name" field of submit buttons to differentiate them, avoid using hidden input.
+- Match delete: do we need to update "TBL_TEAMS"?
+- rank shows as #0 in checkboxes when not ranked
+
 
 SUGGESTIONS:
 - Don: need to sign up everybody in a team when the captain signs up the team.
 - Need to be able to delete Teams, or kick division members.
 - Database dates should be GMT, and display dates should be user local time. (done)
-
+- Add new stats categorie:
+ . score
+ . score difference
+ . points
+ . W/D/L
+- quick loss: how to do "player.score" update?
+- Team.rankdelta (up/dn arrow)
+- Team.streaks?
+- Draws:
+ . add checkboxes in front of ranks 2 to last in match report
+ . if checked, then team has same rank as rank ofteam in previous row.
+ --> will need to change the rank calculation algo here a little bit.
+ . add ELO and TS calculations for draw case
+ . add players.draw update in match process, and teams.draw calculation in updateteamstats
+- Scores:
+ . add inputs in match reports for scores, and use that to update players.score
+ . score diff -> might need new field in tbl_scores, tbl_players and tbl_teams
+ . preg_match("/^\d+$/", $input)

@@ -114,7 +114,7 @@ else
             $eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
             $eowner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
             $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-            $pwinloss  = mysql_result($result,$i, TBL_PLAYERS.".Win")."/".mysql_result($result,$i, TBL_PLAYERS.".Loss");
+            $pwinloss  = mysql_result($result,$i, TBL_PLAYERS.".Win")."/".mysql_result($result,$i, TBL_PLAYERS.".Draw")."/".mysql_result($result,$i, TBL_PLAYERS.".Loss");
             $text .= "<tr>";
             $text .= "<td>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";

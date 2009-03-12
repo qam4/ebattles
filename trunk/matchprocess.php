@@ -28,6 +28,8 @@ if(isset($_POST['qrsubmitloss']))
     $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
     $eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
     $eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
+    $ePointsPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
+    $ePointsPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
 
     // Attention here, we use user_id, so there has to be 1 user for 1 player
     $plooserUser = $reported_by;
@@ -43,6 +45,8 @@ if(isset($_POST['qrsubmitloss']))
     $plooserTS_sigma = $row['TS_sigma'];
     $plooserGames = $row['GamesPlayed'];
     $plooserLosses = $row['Loss'];
+    $plooserPoints = $row['Points'];
+    $plooserScore = $row['Score'];
     $plooserStreak = $row['Streak'];
     $plooserStreak_Best = $row['Streak_Best'];
     $plooserStreak_Worst = $row['Streak_Worst'];
@@ -60,6 +64,8 @@ if(isset($_POST['qrsubmitloss']))
     $pwinnerTS_sigma = $row['TS_sigma'];
     $pwinnerGames = $row['GamesPlayed'];
     $pwinnerWins = $row['Win'];
+    $pwinnerPoints = $row['Points'];
+    $pwinnerScore = $row['Score'];
     $pwinnerStreak = $row['Streak'];
     $pwinnerStreak_Best = $row['Streak_Best'];
     $pwinnerStreak_Worst = $row['Streak_Worst'];
@@ -104,10 +110,18 @@ if(isset($_POST['qrsubmitloss']))
     $plooserGames += 1;
     $pwinnerGames += 1;
     $plooserLosses += 1;
+    $plooserPoints += $ePointsPerLoss;
+    $plooserScore += 0; //fm- TBD
     $pwinnerWins += 1;
+    $pwinnerPoints += $ePointsPerWin;
+    $pwinnerScore += 0; //fm- TBD
     $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $plooserGames WHERE (PlayerID = '$plooserID')";
     $result = $sql->db_Query($q);
     $q = "UPDATE ".TBL_PLAYERS." SET Loss = $plooserLosses WHERE (PlayerID = '$plooserID')";
+    $result = $sql->db_Query($q);
+    $q = "UPDATE ".TBL_PLAYERS." SET Points = $plooserPoints WHERE (PlayerID = '$plooserID')";
+    $result = $sql->db_Query($q);
+    $q = "UPDATE ".TBL_PLAYERS." SET Score = $plooserScore WHERE (PlayerID = '$plooserID')";
     $result = $sql->db_Query($q);
     if ($plooserStreak > 0)
     {
@@ -125,7 +139,11 @@ if(isset($_POST['qrsubmitloss']))
 
     $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pwinnerGames WHERE (PlayerID = '$pwinnerID')";
     $result = $sql->db_Query($q);
-    $q = "UPDATE ".TBL_PLAYERS." SET Win = $pwinnerWins WHERE (PlayerID = '$pwinnerID') AND (Event = '$event_id')";
+    $q = "UPDATE ".TBL_PLAYERS." SET Win = $pwinnerWins WHERE (PlayerID = '$pwinnerID')";
+    $result = $sql->db_Query($q);
+    $q = "UPDATE ".TBL_PLAYERS." SET Points = $pwinnerPoints WHERE (PlayerID = '$pwinnerID')";
+    $result = $sql->db_Query($q);
+    $q = "UPDATE ".TBL_PLAYERS." SET Score = $pwinnerScore WHERE (PlayerID = '$pwinnerID')";
     $result = $sql->db_Query($q);
     if ($pwinnerStreak < 0)
     {
@@ -182,14 +200,14 @@ if(isset($_POST['qrsubmitloss']))
 
     // Create Scores ------------------------------------------
     $q =
-    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank)
-    VALUES ($last_id,$pwinnerID,1,$deltaELO,$winner_deltaTS_mu,$winner_deltaTS_sigma,1,1)
+    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank,Player_Win,Player_Points)
+    VALUES ($last_id,$pwinnerID,1,$deltaELO,$winner_deltaTS_mu,$winner_deltaTS_sigma,1,1,1,$ePointsPerWin)
     ";
     $result = $sql->db_Query($q);
 
     $q =
-    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank)
-    VALUES ($last_id,$plooserID,2,-$deltaELO,$looser_deltaTS_mu,$looser_deltaTS_sigma,0,2)
+    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank,Player_Loss,Player_Points)
+    VALUES ($last_id,$plooserID,2,-$deltaELO,$looser_deltaTS_mu,$looser_deltaTS_sigma,0,2,1,$ePointsPerLoss)
     ";
     $result = $sql->db_Query($q);
 

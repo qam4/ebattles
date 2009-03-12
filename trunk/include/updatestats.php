@@ -4,6 +4,10 @@
 *
 */
 
+//fm- need to add "Score", "Points" categories
+//fm- need to use "Allow draw", "Allow score", and "InfoOnly" flags
+
+
 $file = 'cache/sql_cache_event_'.$event_id.'.txt';
 
 $q_1 = "SELECT ".TBL_STATSCATEGORIES.".*"
@@ -112,7 +116,7 @@ if ($Skill_maxpoints > 0)
 }
 if ($games_played_maxpoints > 0)
 {
-    $stats[0][] = "<b title=\"Games\">Games</b><br /><div class='smalltext'>[".number_format ($games_played_maxpoints,2)." max]</div>";
+    $stats[0][] = "<b title=\"Number of games played\">Games</b><br /><div class='smalltext'>[".number_format ($games_played_maxpoints,2)." max]</div>";
 }
 if ($victory_ratio_maxpoints > 0)
 {
@@ -160,14 +164,16 @@ for($i=0; $i<$num_rows; $i++)
     $pTS_sigma = mysql_result($result_1,$i, TBL_PLAYERS.".TS_sigma");
     $pSkill = $pTS_mu - 3*$pTS_sigma;
     $pwin = mysql_result($result_1,$i, TBL_PLAYERS.".Win");
+    $pdraw = mysql_result($result_1,$i, TBL_PLAYERS.".Draw");
     $ploss = mysql_result($result_1,$i, TBL_PLAYERS.".Loss");
     $pstreak = mysql_result($result_1,$i, TBL_PLAYERS.".Streak");
     $pstreak_worst = mysql_result($result_1,$i, TBL_PLAYERS.".Streak_Worst");
     $pstreak_best = mysql_result($result_1,$i, TBL_PLAYERS.".Streak_Best");
     $pstreak_display = $pstreak." | ".$pstreak_best." | ".$pstreak_worst;
     $pstreak_score = $pstreak_best; //max(0,$pstreak_best + $pstreak_worst); //fmarc- TBD
+    $pwindrawloss = $pwin."/".$pdraw."/".$ploss;
     $pwinloss = $pwin."/".$ploss;
-    $pvictory_ratio = ($ploss>0) ? ($pwin/$ploss) : $pwin;
+    $pvictory_ratio = ($ploss>0) ? ($pwin/$ploss) : $pwin; //fm- draw here???
     $pvictory_percent = ($pgames_played>0) ? ((100 * $pwin)/($pwin+$ploss)) : 0;
 
     $popponentsELO = 0;
@@ -243,8 +249,10 @@ for($i=0; $i<$num_rows; $i++)
     $Skill[] = $pSkill;
     $win[] = $pwin;
     $loss[] = $ploss;
+    $draw[] = $pdraw;
     $streaks[] = $pstreak_score;
     $streaks_display[] = $pstreak_display;
+    $windrawloss[] = $pwindrawloss;
     $winloss[] = $pwinloss;
     $victory_ratio[] = $pvictory_ratio;
     $victory_percent[] = $pvictory_percent;
@@ -259,7 +267,9 @@ for($i=0; $i<$num_rows; $i++)
         $Skill_score[] = $pSkill;
         $win_score[] = $pwin;
         $loss_score[] = $ploss;
-        $winloss_score[] = $pwin - $ploss;
+        $draw_score[] = $pdraw;
+        $windrawloss_score[] = $pwin - $ploss; //fm - ???
+        $winloss_score[] = $pwin - $ploss; // not used for now, use victory ratio
         $victory_ratio_score[] = $pvictory_ratio;
         $victory_percent_score[] = $pvictory_percent;
         $unique_opponents_score[] = $punique_opponents;
