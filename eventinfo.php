@@ -581,9 +581,14 @@ else
         $row = mysql_fetch_array($result);
         $prank = $row['Rank'];
 
+        if ($prank==0)
+        $prank_txt = "(Not ranked)";
+        else
+        $prank_txt = "#$prank";
+
         $link_page = ceil($prank/$rowsPerPage);
         $text .= "<p>";
-        $text .= "<a href=\"$self?eventid=$event_id&amp;pg=$link_page\">Show My Position #$prank</a><br />";
+        $text .= "<a href=\"$self?eventid=$event_id&amp;pg=$link_page\">Show My Position $prank_txt</a><br />";
         $text .= "</p>";
         $time = GMT_time();
         // Is the event started, and not ended
@@ -888,7 +893,7 @@ else
     }
     $text .= "<br />";
     $text .="</div>";
-    
+
     $text .= '
     </div>
 

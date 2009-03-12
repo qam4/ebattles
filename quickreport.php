@@ -85,7 +85,11 @@ else
 
         if($puid != USERID)
         {
-            $text .= "<option value=\"$pid\">$pclantag$pname (#$prank)</option>";
+            if ($prank==0)
+            $prank_txt = "Not ranked";
+            else
+            $prank_txt = "#$prank";
+            $text .= "<option value=\"$pid\">$pclantag$pname ($prank_txt)</option>";
         }
     }
 

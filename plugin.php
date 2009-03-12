@@ -44,22 +44,29 @@ $eplug_prefs = array();
 
 // List of table names -----------------------------------------------------------------------------------------------
 $eplug_table_names = array(
+TBL_GAMES_SHORT,
 TBL_EVENTS_SHORT,
 TBL_EVENTMODS_SHORT,
+TBL_CLANS_SHORT,
+TBL_DIVISIONS_SHORT,
+TBL_MEMBERS_SHORT,
 TBL_TEAMS_SHORT,
 TBL_MATCHS_SHORT,
 TBL_PLAYERS_SHORT,
 TBL_SCORES_SHORT,
-TBL_CLANS_SHORT,
-TBL_DIVISIONS_SHORT,
-TBL_MEMBERS_SHORT,
 TBL_STATSCATEGORIES_SHORT,
-TBL_GAMES_SHORT,
 TBL_AWARDS_SHORT
 );
 
 // List of sql requests to create tables -----------------------------------------------------------------------------
 $eplug_tables = array(
+"CREATE TABLE ".TBL_GAMES."
+(
+	GameID int NOT NULL AUTO_INCREMENT, 
+	PRIMARY KEY(GameID),
+	Name varchar(63),
+	Icon varchar(63)
+) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTS."
 (
 	EventID int NOT NULL AUTO_INCREMENT, 
@@ -87,7 +94,12 @@ $eplug_tables = array(
 	Rules text NOT NULL,
 	Description text NOT NULL,
 	NextUpdate_timestamp int(11) unsigned not null,
-	IsChanged tinyint(1) DEFAULT 1
+	IsChanged tinyint(1) DEFAULT 1,
+	AllowDraw tinyint(1) DEFAULT 0,
+	AllowScore tinyint(1) DEFAULT 0,
+	PointsPerWin int default ".PointsPerWin_DEFAULT.",
+	PointsPerDraw int default ".PointsPerDraw_DEFAULT.",
+	PointsPerLoss int default ".PointsPerLoss_DEFAULT."
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
@@ -147,13 +159,17 @@ $eplug_tables = array(
 	Division int NOT NULL,
 	INDEX (Division),
 	FOREIGN KEY (Division) REFERENCES ".TBL_DIVISIONS." (DivisionID),
-	Rank int,
+	Rank int DEFAULT 0,
+	RankDelta int DEFAULT 0,
 	OverallScore float DEFAULT 0,
 	ELORanking int DEFAULT ".ELO_DEFAULT.",
 	TS_mu float DEFAULT ".TS_Mu0.",
 	TS_sigma float DEFAULT ".TS_sigma0.",
 	Win int DEFAULT 0,
-	Loss int DEFAULT 0
+	Draw int DEFAULT 0,
+	Loss int DEFAULT 0,
+	Score int DEFAULT 0,
+	Points int DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_MATCHS."
 (
@@ -181,7 +197,7 @@ $eplug_tables = array(
 	Team int NOT NULL,
 	INDEX (Team),
 	FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID), 
-	Rank int,
+	Rank int DEFAULT 0,
 	RankDelta int DEFAULT 0,
 	OverallScore float DEFAULT 0,
 	ELORanking int DEFAULT ".ELO_DEFAULT.",
@@ -189,10 +205,13 @@ $eplug_tables = array(
 	TS_sigma float DEFAULT ".TS_sigma0.",
 	GamesPlayed int DEFAULT 0,
 	Win int DEFAULT 0,
+	Draw int DEFAULT 0,
 	Loss int DEFAULT 0,
 	Streak int DEFAULT 0,
 	Streak_Best int DEFAULT 0,
-	Streak_Worst int DEFAULT 0
+	Streak_Worst int DEFAULT 0,
+	Score int DEFAULT 0,
+	Points int DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_SCORES."
 (
@@ -204,12 +223,16 @@ $eplug_tables = array(
 	Player int NOT NULL,
 	INDEX (Player),
 	FOREIGN KEY (Player) REFERENCES ".TBL_PLAYERS." (PlayerID), 
-	Player_MatchTeam int NOT NULL,
-	Player_deltaELO int NOT NULL,
-	Player_deltaTS_mu float NOT NULL,
-	Player_deltaTS_sigma float NOT NULL,
-	Player_Score int NOT NULL,
-	Player_Rank int NOT NULL
+	Player_MatchTeam int DEFAULT 0,
+	Player_deltaELO int DEFAULT 0,
+	Player_deltaTS_mu float DEFAULT 0,
+	Player_deltaTS_sigma float DEFAULT 0,
+	Player_Score int DEFAULT 0,
+	Player_Rank int DEFAULT 0,
+	Player_Win int DEFAULT 0,
+	Player_Loss int DEFAULT 0,
+	Player_Draw int DEFAULT 0,
+	Player_Points int DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_STATSCATEGORIES."
 (
@@ -220,14 +243,8 @@ $eplug_tables = array(
 	FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
 	CategoryName varchar(63),
 	CategoryMinValue int DEFAULT 1,
-	CategoryMaxValue int DEFAULT 100
-) TYPE = MyISAM;",
-"CREATE TABLE ".TBL_GAMES."
-(
-	GameID int NOT NULL AUTO_INCREMENT, 
-	PRIMARY KEY(GameID),
-	Name varchar(63),
-	Icon varchar(63)
+	CategoryMaxValue int DEFAULT 100,
+	InfoOnly tinyint(1) DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_AWARDS."
 (

@@ -513,9 +513,8 @@ else
           - Delete all Matches
           </td>
           <td class="forumheader3">
-             <input type="hidden" name="eventresetscores" value="1"></input>
       ';
-      $text .= "<input class=\"button\" type=\"submit\" value=\"Reset Scores\" onclick=\"return confirm('Are you sure you want to delete this event scores?');\"></input>";
+      $text .= "<input class=\"button\" type=\"submit\" name=\"eventresetscores\" value=\"Reset Scores\" onclick=\"return confirm('Are you sure you want to delete this event scores?');\"></input>";
       $text .= '
           </td>
         </tr>
@@ -527,9 +526,8 @@ else
           - Delete all Matches.
           </td>
           <td class="forumheader3">
-             <input type="hidden" name="eventresetevent" value="1"></input>
       ';
-      $text .= "<input class=\"button\" type=\"submit\" value=\"Reset Event\" onclick=\"return confirm('Are you sure you want to reset this event?');\"></input>";
+      $text .= "<input class=\"button\" type=\"submit\" name=\"eventresetevent\" value=\"Reset Event\" onclick=\"return confirm('Are you sure you want to reset this event?');\"></input>";
       $text .= '
           </td>
         </tr>
@@ -540,9 +538,8 @@ else
           - Delete Event.<br />
           </td>
           <td class="forumheader3">
-             <input type="hidden" name="eventdelete" value="1"></input>
       ';
-      $text .= "<input class=\"button\" type=\"submit\" value=\"Delete Event\" onclick=\"return confirm('Are you sure you want to delete this event?');\"></input>";
+      $text .= "<input class=\"button\" type=\"submit\" name=\"eventdelete\" value=\"Delete Event\" onclick=\"return confirm('Are you sure you want to delete this event?');\"></input>";
       $text .= '
            </td>
         </tr>

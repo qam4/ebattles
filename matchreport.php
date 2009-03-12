@@ -25,31 +25,31 @@ $text .= "
 <!--
 function SwitchSelected(id)
 {
-  var select = document.getElementById('rank'+id);
-  nbr_ranks = select.length
-  new_rank_txt = select.options[select.selectedIndex].text
-  
-  for (k = 1; k <= nbr_ranks; k++)
-  {
-    old_rank_found=0
-    for (j = 1; j <= nbr_ranks; j++)
-    {
-      var select = document.getElementById('rank'+j);
-      rank_txt = select.options[select.selectedIndex].text
-      if (rank_txt == 'Team #'+k) {old_rank_found=1}
-    }
-    if (old_rank_found==0) {old_rank = k}
-  }
-  
-  for (j = 1; j <= nbr_ranks; j++)
-  {
-    if (j!=id)
-    {
-      var select = document.getElementById('rank'+j);
-      rank_txt = select.options[select.selectedIndex].text
-      if (rank_txt == new_rank_txt) {select.selectedIndex=old_rank-1}
-    }
-  }
+var select = document.getElementById('rank'+id);
+nbr_ranks = select.length
+new_rank_txt = select.options[select.selectedIndex].text
+
+for (k = 1; k <= nbr_ranks; k++)
+{
+old_rank_found=0
+for (j = 1; j <= nbr_ranks; j++)
+{
+var select = document.getElementById('rank'+j);
+rank_txt = select.options[select.selectedIndex].text
+if (rank_txt == 'Team #'+k) {old_rank_found=1}
+}
+if (old_rank_found==0) {old_rank = k}
+}
+
+for (j = 1; j <= nbr_ranks; j++)
+{
+if (j!=id)
+{
+var select = document.getElementById('rank'+j);
+rank_txt = select.options[select.selectedIndex].text
+if (rank_txt == new_rank_txt) {select.selectedIndex=old_rank-1}
+}
+}
 }
 //-->
 ";
@@ -71,6 +71,9 @@ $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
 $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
 $eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
 $eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
+$ePointPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
+$ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
+$ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
 
 $q = "SELECT ".TBL_PLAYERS.".*, "
 .TBL_USERS.".*"
@@ -114,9 +117,14 @@ for($i=0; $i<$num_rows; $i++){
             $pclantag  = mysql_result($result_2,0, TBL_CLANS.".Tag") ."_";
         }
     }
+    if ($prank==0)
+      $prank_txt = "Not ranked";
+    else
+      $prank_txt = "#$prank";
+    
     $players_id[$i+1] = $pid;
     $players_uid[$i+1] = $puid;
-    $players_name[$i+1] = $pclantag.$pname." (#$prank)";
+    $players_name[$i+1] = $pclantag.$pname." ($prank_txt)";
 }
 
 $text .= '
@@ -252,25 +260,29 @@ if (isset($_POST['submit']))
             {
                 if( $_POST['rank'.$j] == "Team #".$pteam)
                 $prank = $j;
+                
+                //fm- need to add "Draw" checkbox
+                // if draw is checked, then the rank of the team is same as the rank of the previous team...
             }
 
             $deltaELO = 0;
             $deltaTS_mu = 0;
             $deltaTS_sigma = 1;
+            $pscore = $nbr_teams-$prank; //fm- need to change this later to be an input
 
             $q =
             "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank)
-            VALUES ($last_id,$pid,$pteam,$deltaELO,$deltaTS_mu,$deltaTS_sigma,$nbr_teams-$prank,$prank)
+            VALUES ($last_id,$pid,$pteam,$deltaELO,$deltaTS_mu,$deltaTS_sigma,$pscore,$prank)
             ";
             $result = $sql->db_Query($q);
 
             $text .= 'Player #'.$i.': '.$pname.' (user id:'.$puid.') (player id:'.$pid.')';
             $text .= ' in team '.$pteam;
             $text .= '<br />';
-            /**/
         }
         $text .= '--------------------<br />';
 
+        // Update scores ELO and TS
         for($i=1;$i<=$nbr_teams-1;$i++)
         {
             for($j=($i+1);$j<=$nbr_teams;$j++)
@@ -365,7 +377,7 @@ if (isset($_POST['submit']))
                     $scoreTS_mu = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_mu");
                     $scoreTS_sigma = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_sigma");
                     $pid = mysql_result($resultA,$k, TBL_PLAYERS.".PlayerID");
-                    $scoreELO += $deltaELO;
+                    $scoreELO += $deltaELO/$NbrPlayersTeamA;
                     $scoreTS_mu += $teamA_deltaTS_mu/$NbrPlayersTeamA;
                     $scoreTS_sigma *= $teamA_deltaTS_sigma;
                     $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO, Player_deltaTS_mu = $scoreTS_mu, Player_deltaTS_sigma = $scoreTS_sigma"
@@ -379,7 +391,7 @@ if (isset($_POST['submit']))
                     $scoreTS_mu = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_mu");
                     $scoreTS_sigma = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_sigma");
                     $pid = mysql_result($resultB,$k, TBL_PLAYERS.".PlayerID");
-                    $scoreELO -= $deltaELO;
+                    $scoreELO -= $deltaELO/$NbrPlayersTeamB;
                     $scoreTS_mu += $teamB_deltaTS_mu/$NbrPlayersTeamB;
                     $scoreTS_sigma *= $teamB_deltaTS_sigma;
                     $q = "UPDATE ".TBL_SCORES." SET Player_deltaELO = $scoreELO, Player_deltaTS_mu = $scoreTS_mu, Player_deltaTS_sigma = $scoreTS_sigma"
@@ -392,6 +404,65 @@ if (isset($_POST['submit']))
             }
         }
         $text .= '<br />';
+
+        // Update scores Wins, Draws, Losses, points
+        for($i=1;$i<=$nbr_players;$i++)
+        {
+            $q =
+            "SELECT ".TBL_SCORES.".*, "
+            .TBL_PLAYERS.".*"
+            ." FROM ".TBL_SCORES.", "
+            .TBL_PLAYERS
+            ." WHERE (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)"
+            ."   AND (".TBL_PLAYERS.".PlayerID = '$i')";
+            $result = $sql->db_Query($q);
+            $scoreid= mysql_result($result,0, TBL_SCORES.".ScoreID");
+            $pid= mysql_result($result,0, TBL_PLAYERS.".PlayerID");
+            $prank= mysql_result($result,0, TBL_SCORES.".Player_Rank");
+            $pteam= mysql_result($result,0, TBL_SCORES.".Player_MatchTeam");
+            $pwin = 0;
+            $ploss = 0;
+            $pdraw = 0;
+
+            for($j=1;$j<=$nbr_players;$j++)
+            {
+                $q =
+                "SELECT ".TBL_SCORES.".*, "
+                .TBL_PLAYERS.".*"
+                ." FROM ".TBL_SCORES.", "
+                .TBL_PLAYERS
+                ." WHERE (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)"
+                ."   AND (".TBL_PLAYERS.".PlayerID = '$j')";
+                $result = $sql->db_Query($q);
+                $oppid= mysql_result($result,0, TBL_PLAYERS.".PlayerID");
+                $opprank= mysql_result($result,0, TBL_SCORES.".Player_Rank");
+                $oppteam= mysql_result($result,0, TBL_SCORES.".Player_MatchTeam");
+                
+                if ($pteam != $oppteam)
+                {
+                    if ($prank<$opprank)
+                    {
+                        $pwin++;
+                    }
+                    else if ($prank>$opprank)
+                    {
+                        $ploss++;
+                    }
+                    else
+                    {
+                        $pdraw++;
+                    }
+                }
+            }
+            $q = "UPDATE ".TBL_SCORES." SET Player_Win = $pwin, Player_Draw = $pdraw, Player_Loss = $ploss, Player_Points = $pwin*$ePointPerWin + $pdraw*$ePointPerDraw + $ploss*$ePointPerLoss"
+            ." WHERE (ScoreID = '$scoreid')"
+            ." AND (Player = '$pid')";
+            $result = $sql->db_Query($q);
+        }
+
+
+
+
         $text .= '<br />';
 
         // Update Players with scores
@@ -414,7 +485,6 @@ if (isset($_POST['submit']))
             $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
             $pdeltaTS_mu = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
             $pdeltaTS_sigma = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
-            $pscore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
             $pid= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
             $puid= mysql_result($result,$i, TBL_USERS.".user_id");
             $pName= mysql_result($result,$i, TBL_USERS.".user_name");
@@ -423,17 +493,24 @@ if (isset($_POST['submit']))
             $pTS_sigma= mysql_result($result,$i, TBL_PLAYERS.".TS_sigma");
             $pGamesPlayed= mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
             $pWins= mysql_result($result,$i, TBL_PLAYERS.".Win");
+            $pDraws= mysql_result($result,$i, TBL_PLAYERS.".Draw");
             $pLosses= mysql_result($result,$i, TBL_PLAYERS.".Loss");
             $pStreak= mysql_result($result,$i, TBL_PLAYERS.".Streak");
             $pStreak_Best= mysql_result($result,$i, TBL_PLAYERS.".Streak_Best");
             $pStreak_Worst= mysql_result($result,$i, TBL_PLAYERS.".Streak_Worst");
+            $pPoints= mysql_result($result,$i, TBL_PLAYERS.".Points");
+            $pScore= mysql_result($result,$i, TBL_PLAYERS.".Score");
+
+            $pWins += mysql_result($result,$i, TBL_SCORES.".Player_Win");
+            $pDraws += mysql_result($result,$i, TBL_SCORES.".Player_Draw");
+            $pLosses += mysql_result($result,$i, TBL_SCORES.".Player_Loss");
+            $pPoints += mysql_result($result,$i, TBL_SCORES.".Player_Points");
+            $pScore += mysql_result($result,$i, TBL_SCORES.".Player_Score");
 
             $pELO += $pdeltaELO;
             $pTS_mu += $pdeltaTS_mu;
             $pTS_sigma *= $pdeltaTS_sigma;
             $pGamesPlayed += 1;
-            $pLosses = $pLosses + $nbr_teams - $pscore - 1;
-            $pWins = $pWins + $pscore;
 
             $text .= "Player $pName, new ELO:$pELO<br />";
 
@@ -449,8 +526,14 @@ if (isset($_POST['submit']))
             $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (PlayerID = '$pid')";
             $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET Draw = $pDraws WHERE (PlayerID = '$pid')";
+            $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET Points = $pPoints WHERE (PlayerID = '$pid')";
+            $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET Score = $pScore WHERE (PlayerID = '$pid')";
+            $result2 = $sql->db_Query($q);
 
-            $gain = 2*$pscore - $nbr_teams +1;
+            $gain = mysql_result($result,$i, TBL_SCORES.".Player_Win") - mysql_result($result,$i, TBL_SCORES.".Player_Loss");
             if ($gain * $pStreak > 0)
             {
                 // same sign
