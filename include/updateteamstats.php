@@ -127,6 +127,7 @@ for($i=0; $i<$nbrteams; $i++)
             $pdraw = mysql_result($result_2,$j, TBL_PLAYERS.".Draw");
             $ploss = mysql_result($result_2,$j, TBL_PLAYERS.".Loss");
             $pscore = mysql_result($result_2,$j, TBL_PLAYERS.".Score");
+            $pscoreAgainst = mysql_result($result_2,$j, TBL_PLAYERS.".ScoreAgainst");
             $ppoints = mysql_result($result_2,$j, TBL_PLAYERS.".Points");
 
             $popponentsELO = 0;
@@ -190,6 +191,7 @@ for($i=0; $i<$nbrteams; $i++)
             $tdraw += $pdraw;
             $tloss += $ploss;
             $tscore += $pscore;
+            $tscoreAgainst += $pscoreAgainst;
             $tpoints += $ppoints;
             $tgames_played += $pgames_played;
             $tunique_opponents += $punique_opponents;
@@ -366,6 +368,8 @@ for($i=0; $i<$nbrteams; $i++)
     $q_3 = "UPDATE ".TBL_TEAMS." SET Loss = $tloss WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
     $q_3 = "UPDATE ".TBL_TEAMS." SET Score = $tscore WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
+    $result_3 = $sql->db_Query($q_3);
+    $q_3 = "UPDATE ".TBL_TEAMS." SET ScoreAgainst = $tscoreAgainst WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
     $q_3 = "UPDATE ".TBL_TEAMS." SET Points = $tpoints WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);

@@ -1,9 +1,14 @@
 <?php
 // function to output form and hold previously entered values.
 
-function user_form($players_id, $players_name, $eventid) {
+function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore) {
     global $text;
 
+    
+    //dbg form
+    //print_r($_POST);    // show $_POST
+    //print_r($_GET);     // show $_GET
+    
     $reported_by = USERID;
     $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
     $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
@@ -16,7 +21,7 @@ function user_form($players_id, $players_name, $eventid) {
     }
 
     $max_nbr_players = count($players_id)-1;
-    // if vars aren't set, set them as empty.
+    // if vars are not set, set them as empty.
     // (prevents "notice" errors showing for those who have them enabled)
     if (!isset($_POST['nbr_players'])) $_POST['nbr_players'] = 2;
     if (!isset($_POST['nbr_teams'])) $_POST['nbr_teams'] = 2;
@@ -63,6 +68,7 @@ function user_form($players_id, $players_name, $eventid) {
     for($i=1;$i<=$nbr_teams;$i++)
     {
         if (!isset($_POST['rank'.$i])) $_POST['rank'.$i] = 'Team #'.$i;
+        if (!isset($_POST['score'.$i])) $_POST['score'.$i] = 0;
     }
 
     /////////////////
@@ -73,7 +79,7 @@ function user_form($players_id, $players_name, $eventid) {
     // TABLE - Player/Teams Add/Remove
     //----------------------------------
     $text .= 'Select the number of players and teams:';
-    $text .= '<table class="fborder" style="width:95%" id="matchresult" ><tbody>';
+    $text .= '<table class="fborder" id="matchresult" ><tbody>';
     $text .= '<tr><input type="hidden" name="matchreport" value="1"></tr>';
     // Players
     $text .= '<tr><td class="forumheader3">Number of Players:</td><td class="forumheader3">'.$nbr_players.'</td>';
@@ -127,7 +133,7 @@ function user_form($players_id, $players_name, $eventid) {
     // TABLE - Players/Teams Selection
     //----------------------------------
     $text .= 'Select the players and their respective team:';
-    $text .= '<table class="fborder" style="width:95%" id="matchresult"><tbody>';
+    $text .= '<table class="fborder" id="matchresult"><tbody>';
     for($i=1;$i<=$nbr_players;$i++)
     {
         $text .= '<tr><td class="forumheader3">Player #'.$i.':</td>';
@@ -157,7 +163,8 @@ function user_form($players_id, $players_name, $eventid) {
     // TABLE - Teams Rank Selection
     //----------------------------------
     $text .= 'Select the rank of each team:';
-    $text .= '<table class="fborder" style="width:95%" id="matchresult"><tbody>';
+    $text .= '<table class="fborder" id="matchresult"><tbody>';
+    $text .= '<tr><td></td><td>Team</td><td>Score</td><td>Draw?</td></tr>';
     for($i=1;$i<=$nbr_teams;$i++)
     {
         $text .= '<tr>';
@@ -172,18 +179,39 @@ function user_form($players_id, $players_name, $eventid) {
             $text .= '>Team #'.$j.'</option>';
         }
         $text .= '</select></td>';
+        $text .= '<td class="forumheader3">';
+        $text .= '<input type="text" name="score'.$i.'" value="'.$_POST['score'.$i].'"';
+        if ($allowScore == FALSE)
+          $text .=' disabled>';
+        else 
+          $text .= '>';
+        
+        $text .= '</td>';
+        $text .= '<td class="forumheader3">';
+        if ($i>1)
+        {
+           $text .= '<input type="checkbox" name="draw'.$i.'" value="1"';
+           if (strtolower($_POST['draw'.$i]) != "") $text .= ' checked';
+           if ($allowDraw == FALSE)
+             $text .=' disabled>';
+           else 
+             $text .= '>';
+        }
+        $text .= '</td>';
         $text .= '</tr>';
     }
     $text .= '</tbody></table>';
 
     $text .= '<br />';
-    $text .= '<p class="centered">';
-    $text .= 'Your comments<br />';
-    $text .= '<textarea id="elm1" name="elm1" cols="70" rows="20">'.$sContent.'</textarea>';
-    $text .= '</p>';
-    $text .= '<hr>';
+    $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';
+    $text .= 'Your comments:<br />';
+    $text .= '<textarea id="elm1" name="elm1" style="width:500px">'.$sContent.'</textarea>';
+    $text .= '</div>';
+    $text .= '<br />';
+    $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';
     $text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'">';
     $text .= '<input class="button" type="submit" value="Submit Match" name="submit">';
+    $text .= '</div>';
     $text .= '<br /><br />';
     $text .= '</form>';
 }

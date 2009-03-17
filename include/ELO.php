@@ -1,14 +1,14 @@
 <?php
 // function for ELO calculation.
 
-function ELO($M, $K, $Rating_A, $Rating_B, $points_A, $points_B)
+function ELO($M, $K, $Rating_A, $Rating_B, $rank_A, $rank_B)
 {
        // New ELO ------------------------------------------        		
-	if($points_A>$points_B)
+	if($rank_A < $rank_B)
 	{
 		$score_A = 1;
 	}
-	elseif($points_A==$points_B)
+	elseif($rank_A==$rank_B)
 	{
 		$score_A = 1/2;
 	}
@@ -17,8 +17,8 @@ function ELO($M, $K, $Rating_A, $Rating_B, $points_A, $points_B)
 		$score_A = 0;
 	}
 	$score_B = 1-$score_A;	
-	//echo "point A: $points_A, score A: $score_A<br />";
-	//echo "point B: $points_B, score B: $score_B<br />";
+	//echo "point A: $rank_A, score A: $score_A<br />";
+	//echo "point B: $rank_B, score B: $score_B<br />";
 
 	$E_A=1/(1+pow(10,($Rating_B-$Rating_A)/$M));
 	$E_B=1-$E_A;	

@@ -147,6 +147,7 @@ else
         $pdeltaTS_mu  = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
         $pdeltaTS_sigma  = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
         $pscore  = mysql_result($result,$i, TBL_SCORES.".Player_Score");
+        $pscoreAgainst  = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
 
         $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
         $pclan = '';

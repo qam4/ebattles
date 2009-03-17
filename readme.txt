@@ -95,7 +95,6 @@ BUGS:
 - Team events: 2 players of same team should not be able to compete against each other. fixed?
 - Use "name" field of submit buttons to differentiate them, avoid using hidden input.
 - Match delete: do we need to update "TBL_TEAMS"?
-- rank shows as #0 in checkboxes when not ranked
 
 
 SUGGESTIONS:
@@ -111,12 +110,16 @@ SUGGESTIONS:
 - Team.rankdelta (up/dn arrow)
 - Team.streaks?
 - Draws:
- . add checkboxes in front of ranks 2 to last in match report
- . if checked, then team has same rank as rank ofteam in previous row.
- --> will need to change the rank calculation algo here a little bit.
- . add ELO and TS calculations for draw case
- . add players.draw update in match process, and teams.draw calculation in updateteamstats
+ . add checkboxes in front of ranks 2 to last in match report (done)
+ . if checked, then team has same rank as rank of team in previous row. (done)
+ --> will need to change the rank calculation algo here a little bit. (done)
+ . add ELO (done) and TS calculations for draw case
+ . add players.draw update in match process, and teams.draw calculation in updateteamstats (done)
+ . Manage event, add "Allow draws", "Draw proba"
+ . matchinfo should have TS match rating
+ . Streaks ok when draw?
 - Scores:
- . add inputs in match reports for scores, and use that to update players.score
+ . add inputs in match reports for scores, and use that to update players.score (done)
  . score diff -> might need new field in tbl_scores, tbl_players and tbl_teams
- . preg_match("/^\d+$/", $input)
+ . preg_match("/^\d+$/", $input) (done)
+ . quick loss report -> no score???
