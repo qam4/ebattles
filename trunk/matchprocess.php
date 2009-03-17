@@ -73,7 +73,7 @@ if(isset($_POST['qrsubmitloss']))
     // New ELO ------------------------------------------
     $M=$eELO_M;       // Span
     $K=$eELO_K;	// Max adjustment per game
-    $deltaELO = ELO($M, $K, $pwinnerELO, $plooserELO, 1, 0);
+    $deltaELO = ELO($M, $K, $pwinnerELO, $plooserELO, 1, 2);
     $plooserELO -= $deltaELO;
     $pwinnerELO += $deltaELO;
 
@@ -197,24 +197,25 @@ if(isset($_POST['qrsubmitloss']))
     $result = $sql->db_Query($q);
 
     $last_id = mysql_insert_id();
+    $match_id = $last_id;
 
     // Create Scores ------------------------------------------
     $q =
-    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank,Player_Win,Player_Points)
-    VALUES ($last_id,$pwinnerID,1,$deltaELO,$winner_deltaTS_mu,$winner_deltaTS_sigma,1,1,1,$ePointsPerWin)
+    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_ScoreAgainst,Player_Rank,Player_Win,Player_Points)
+    VALUES ($match_id,$pwinnerID,1,$deltaELO,$winner_deltaTS_mu,$winner_deltaTS_sigma,0,0,1,1,$ePointsPerWin)
     ";
     $result = $sql->db_Query($q);
 
     $q =
     "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank,Player_Loss,Player_Points)
-    VALUES ($last_id,$plooserID,2,-$deltaELO,$looser_deltaTS_mu,$looser_deltaTS_sigma,0,2,1,$ePointsPerLoss)
+    VALUES ($last_id,$plooserID,2,-$deltaELO,$looser_deltaTS_mu,$looser_deltaTS_sigma,0,0,2,1,$ePointsPerLoss)
     ";
     $result = $sql->db_Query($q);
 
     $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
     $result = $sql->db_Query($q);
 
-    header("Location: eventinfo.php?eventid=$event_id");
+    header("Location: matchinfo.php?eventid=$event_id&matchid=$match_id");
 }
 else
 {

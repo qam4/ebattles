@@ -120,7 +120,7 @@ if ($games_played_maxpoints > 0)
 }
 if ($victory_ratio_maxpoints > 0)
 {
-    $stats[0][] = "<b title=\"Win/Loss ratio\">W/L</b><br /><div class='smalltext'><div class='smalltext'>[".number_format ($victory_ratio_maxpoints,2)." max]</div>";
+    $stats[0][] = "<b title=\"Win/Loss ratio\">W/L</b><br /><div class='smalltext'>[".number_format ($victory_ratio_maxpoints,2)." max]</div>";
 }
 if ($victory_percent_maxpoints > 0)
 {

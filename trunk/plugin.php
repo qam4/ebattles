@@ -169,6 +169,7 @@ $eplug_tables = array(
 	Draw int DEFAULT 0,
 	Loss int DEFAULT 0,
 	Score int DEFAULT 0,
+	ScoreAgainst int DEFAULT 0,
 	Points int DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_MATCHS."
@@ -211,6 +212,7 @@ $eplug_tables = array(
 	Streak_Best int DEFAULT 0,
 	Streak_Worst int DEFAULT 0,
 	Score int DEFAULT 0,
+	ScoreAgainst int DEFAULT 0,
 	Points int DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_SCORES."
@@ -228,6 +230,7 @@ $eplug_tables = array(
 	Player_deltaTS_mu float DEFAULT 0,
 	Player_deltaTS_sigma float DEFAULT 0,
 	Player_Score int DEFAULT 0,
+	Player_ScoreAgainst int DEFAULT 0,
 	Player_Rank int DEFAULT 0,
 	Player_Win int DEFAULT 0,
 	Player_Loss int DEFAULT 0,

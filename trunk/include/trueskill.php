@@ -2,16 +2,18 @@
 // functions for Trueskill calculation.
 //___________________________________________________________________
 
-function Trueskill_update($epsilon,$beta, $A_mu, $A_sigma, $A_points, $B_mu, $B_sigma, $B_points)
+function Trueskill_update($epsilon,$beta, $A_mu, $A_sigma, $A_rank, $B_mu, $B_sigma, $B_rank)
 {
-    if($A_points>$B_points)
+    
+    echo "$A_rank, $B_rank<br>";
+    if($A_rank < $B_rank)
     {
         $winner_mu    = $A_mu;
         $winner_sigma = $A_sigma;
         $looser_mu    = $B_mu;
         $looser_sigma = $B_sigma;
     }
-    elseif($A_points==$B_points)
+    elseif($A_rank==$B_rank)
     {
         // TBD
     }
@@ -38,16 +40,17 @@ function Trueskill_update($epsilon,$beta, $A_mu, $A_sigma, $A_points, $B_mu, $B_
     $winner_delta_sigma = sqrt(1-pow($winner_sigma,2) * $w / pow($c_ij,2));
     $looser_delta_sigma = sqrt(1-pow($looser_sigma,2) * $w / pow($c_ij,2));
 
-    //echo "Winner: $winner_mu, $winner_sigma, $winner_delta_mu, $winner_delta_sigma<br>";
-    //echo "Looser: $looser_mu, $looser_sigma, $looser_delta_mu, $looser_delta_sigma<br>";
+    echo "Winner: $winner_mu, $winner_sigma, $winner_delta_mu, $winner_delta_sigma<br>";
+    echo "Looser: $looser_mu, $looser_sigma, $looser_delta_mu, $looser_delta_sigma<br>";
 
-    if($A_points>$B_points)
+    if($A_rank < $B_rank)
     {
         return array($winner_delta_mu,$winner_delta_sigma,$looser_delta_mu,$looser_delta_sigma);
     }
-    elseif($A_points==$B_points)
+    elseif($A_rank==$B_rank)
     {
         // TBD
+        return array(0,0,0,0);
     }
     else
     {

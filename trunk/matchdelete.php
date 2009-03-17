@@ -53,6 +53,7 @@ else
         $result = $sql->db_Query($q);
         $num_rows = mysql_numrows($result);
 
+        // fm -> do not know why i calculate max_score here???
         $max_score = 0;
         for($i=0;$i<$num_rows;$i++)
         {
@@ -74,6 +75,7 @@ else
             $pDraws= mysql_result($result,$i, TBL_PLAYERS.".Draw");
             $pLosses= mysql_result($result,$i, TBL_PLAYERS.".Loss");
             $pScore= mysql_result($result,$i, TBL_PLAYERS.".Score");
+            $pScoreAgainst= mysql_result($result,$i, TBL_PLAYERS.".ScoreAgainst");
             $pPoints= mysql_result($result,$i, TBL_PLAYERS.".Points");
             $scoreid = mysql_result($result,$i, TBL_SCORES.".ScoreID");
             $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
@@ -83,6 +85,7 @@ else
             $psDraws = mysql_result($result,$i, TBL_SCORES.".Player_Draw");
             $psLosses = mysql_result($result,$i, TBL_SCORES.".Player_Loss");
             $psScore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
+            $psScoreAgainst = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
             $psPoints = mysql_result($result,$i, TBL_SCORES.".Player_Points");
             
             $pELO -= $pdeltaELO;
@@ -92,6 +95,7 @@ else
             $pDraws -= $psDraws;
             $pLosses -= $psLosses;
             $pScore -= $psScore;
+            $pScoreAgainst -= $psScoreAgainst;
             $pPoints -= $psPoints;
             $pGamesPlayed -= 1;
             
@@ -112,6 +116,8 @@ else
             $q = "UPDATE ".TBL_PLAYERS." SET Draw = $pDraws WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET Score = $pScore WHERE (User = '$puid') AND (Event = '$event_id')";
+            $result2 = $sql->db_Query($q);
+            $q = "UPDATE ".TBL_PLAYERS." SET ScoreAgainst = $pScoreAgainst WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
             $q = "UPDATE ".TBL_PLAYERS." SET Points = $pPoints WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
