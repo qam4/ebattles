@@ -9,44 +9,7 @@
 $file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
 
 
-$stats = array
-(
-"0"=>array
-(
-"header",
-"<b>Rank</b>",
-"<b>Team</b>",
-"<b>Players</b>",
-)
-);
-
-$stats[0][] = "<b title=\"Rating\">Rating</b><br /><div class='smalltext'>[".number_format ($rating_max,2)." max]</div>";
-
-if ($ELO_maxpoints > 0)
-{
-    $stats[0][] = "<b title=\"ELO\">ELO</b><br /><div class='smalltext'>[".number_format ($ELO_maxpoints,2)." max]</div>";
-}
-if ($games_played_maxpoints > 0)
-{
-    $stats[0][] = "<b title=\"Number of games played\">Games</b><br /><div class='smalltext'>[".number_format ($games_played_maxpoints,2)." max]</div>";
-}
-if ($victory_ratio_maxpoints > 0)
-{
-    $stats[0][] = "<b title=\"Win/Loss ratio\">W/L</b><br /><div class='smalltext'>[".number_format ($victory_ratio_maxpoints,2)." max]</div>";
-}
-if ($victory_percent_maxpoints > 0)
-{
-    $stats[0][] = "<b title=\"Wins percentage\">W%</b><br /><div class='smalltext'>[".number_format ($victory_percent_maxpoints,2)." max]</div>";
-}
-if ($unique_opponents_maxpoints > 0)
-{
-    $stats[0][] = "<b title=\"Unique Opponents\">Opponents</b><br /><div class='smalltext'>[".number_format ($unique_opponents_maxpoints,2)." max]</div>";
-}
-if ($opponentsELO_maxpoints > 0)
-{
-    $stats[0][] = "<b title=\"Opponents Average ELO\">Opp. ELO</b><br /><div class='smalltext'>[".number_format ($opponentsELO_maxpoints,2)." max]</div>";
-}
-
+//Update Teams stats
 $q_1 = "SELECT ".TBL_TEAMS.".*, "
 .TBL_DIVISIONS.".*, "
 .TBL_CLANS.".*"
@@ -58,8 +21,7 @@ $q_1 = "SELECT ".TBL_TEAMS.".*, "
 ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
 
 $result_1 = $sql->db_Query($q_1);
-$num_rows = mysql_numrows($result_1);
-$nbrteams = $num_rows;
+$numTeams = mysql_numrows($result_1);
 $teams_rated = 0;
 
 $id = array();
@@ -86,7 +48,7 @@ $victory_percent_score = array();
 $unique_opponents_score = array();
 $opponentsELO_score = array();
 
-for($i=0; $i<$nbrteams; $i++)
+for($i=0; $i<$numTeams; $i++)
 {
     $tid = mysql_result($result_1,$i, TBL_TEAMS.".TeamID");
     $tname = mysql_result($result_1,$i, TBL_CLANS.".Name");
@@ -100,8 +62,7 @@ for($i=0; $i<$nbrteams; $i++)
     ." AND (".TBL_PLAYERS.".Team = '$tid')";
 
     $result_2 = $sql->db_Query($q_2);
-    $num_rows_2 = mysql_numrows($result_2);
-    $tPlayers = $num_rows_2;
+    $tPlayers = mysql_numrows($result_2);
     $tnbrplayers_rated = 0;
 
     $tOverallScore = 0;
@@ -145,13 +106,14 @@ for($i=0; $i<$nbrteams; $i++)
             ." AND (".TBL_PLAYERS.".PlayerID = '$pid')";
 
             $result_3 = $sql->db_Query($q_3);
-            $num_rows_3 = mysql_numrows($result_3);
+            $numMatches = mysql_numrows($result_3);
 
             $players = array();
-            if ($num_rows_3>0)
+            if ($numMatches>0)
             {
-                for($k=0; $k<$num_rows_3; $k++)
+                for($k=0; $k<$numMatches; $k++)
                 {
+                    // For each match played by current player
                     $mID  = mysql_result($result_3,$k, TBL_MATCHS.".MatchID");
                     $mplayermatchteam  = mysql_result($result_3,$k, TBL_SCORES.".Player_MatchTeam");
 
@@ -170,8 +132,8 @@ for($i=0; $i<$nbrteams; $i++)
                     ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
 
                     $result_4 = $sql->db_Query($q_4);
-                    $num_rows_4 = mysql_numrows($result_4);
-                    for($l=0; $l<$num_rows_4; $l++)
+                    $numScores = mysql_numrows($result_4);
+                    for($l=0; $l<$numScores; $l++)
                     {
                         $uid  = mysql_result($result_4,$l, TBL_USERS.".user_id");
                         $uplayermatchteam  = mysql_result($result_4,$l, TBL_SCORES.".Player_MatchTeam");
@@ -197,6 +159,10 @@ for($i=0; $i<$nbrteams; $i++)
             $tunique_opponents += $punique_opponents;
             $topponentsELO += $popponentsELO;
             $topponents += $popponents;
+            $twindrawloss = $twin."/".$tdraw."/".$tloss;
+            $twinloss = $twin."/".$tloss;
+            $tvictory_ratio = ($tloss>0) ? ($twin/$tloss) : $twin; //fm --> draws???
+            $tvictory_percent = ($tgames_played>0) ? ((100 * $twin)/($twin+$tdraw+$tloss)) : 0;
 
             if ($pgames_played>=$emingames)
             {
@@ -215,12 +181,7 @@ for($i=0; $i<$nbrteams; $i++)
             $tELO /= $tnbrplayers_rated;
         }
     }
-
-    $twindrawloss = $twin."/".$tdraw."/".$tloss;
-    $twinloss = $twin."/".$tloss;
-    $tvictory_ratio = ($tloss>0) ? ($twin/$tloss) : $twin; //fm --> draws???
-    $tvictory_percent = ($tgames_played>0) ? ((100 * $twin)/($twin+$tdraw+$tloss)) : 0;
-
+    // For display
     $id[]  = $tid;
     $name[]  = $tname;
     $clan[]  = $tclan;
@@ -232,11 +193,10 @@ for($i=0; $i<$nbrteams; $i++)
     $loss[] = $tloss;
     $draw[] = $tdraw;
     $windrawloss[] = $twindrawloss;
-    $winloss[] = $twinloss;
-    $victory_ratio[] = $tvictory_ratio;
-    $victory_percent[] = $tvictory_percent;
+    $victory_ratio[] = $twinloss;
+    $victory_percent[] = number_format ($tvictory_percent,2)." %";
     $unique_opponents[] = $tunique_opponents;
-    $opponentsELO[] = $topponentsELO;
+    $opponentsELO[] = floor($topponentsELO);
 
     if ($tgames_played >= $eminteamgames)
     {
@@ -246,7 +206,6 @@ for($i=0; $i<$nbrteams; $i++)
         $loss_score[] = $tloss;
         $draw_score[] = $tdraw;
         $windrawloss_score[] = $twin - $tloss; //fm - ???
-        $winloss_score[] = $twin - $tloss; // not used for now, use victory ratio
         $victory_ratio_score[] = $tvictory_ratio;
         $victory_percent_score[] = $tvictory_percent;
         $unique_opponents_score[] = $tunique_opponents;
@@ -256,108 +215,140 @@ for($i=0; $i<$nbrteams; $i++)
     }
 }
 
-if ($teams_rated>0)
+$rating_max= 0;
+
+$q_1 = "SELECT ".TBL_STATSCATEGORIES.".*"
+." FROM ".TBL_STATSCATEGORIES
+." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
+$result_1 = $sql->db_Query($q_1);
+$numCategories = mysql_numrows($result_1);
+
+$stat_cat_header = array();
+$stat_min = array();
+$stat_max = array();
+$stat_a = array();
+$stat_b = array();
+$stat_score = array();
+$stat_display = array();
+$cat_index = 0;
+for($i=0; $i<$numCategories; $i++)
 {
-    $games_played_min = 0; //min($games_played_score);
-    $ELO_min = min($ELO_score);
-    $victory_ratio_min = 0; //min($victory_ratio_score);
-    $victory_percent_min = 0; //min($victory_percent_score);
-    $unique_opponents_min = 0; //min($unique_opponents_score);
-    $opponentsELO_min = min($opponentsELO_score);
+    $cat_name = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryName");
+    $cat_minpoints = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryMinValue");
+    $cat_maxpoints = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryMaxValue");
 
-    $games_played_max = max($games_played);
-    $ELO_max = max($ELO_score);
-    $victory_ratio_max = max($victory_ratio_score);
-    $victory_percent_max = max($victory_percent_score);
-    $unique_opponents_max = max($unique_opponents_score);
-    $opponentsELO_max = max($opponentsELO_score);
+    if ($cat_maxpoints > 0)
+    {
+        $display_cat = 1;
+        switch ($cat_name)
+        {
+            case "ELO":
+            $cat_header = "<b title=\"ELO\">ELO</b>";
+            $min = min($ELO_score);
+            $max = max($ELO_score);
+            $stat_score[$cat_index] = $ELO_score;
+            $stat_display[$cat_index] = $ELO;
+            break;
+            case "GamesPlayed":
+            $cat_header = "<b title=\"Number of games played\">Games</b>";
+            $min = 0; //min($games_played_score);
+            $max = max($games_played);
+            $stat_score[$cat_index] = $games_played_score;
+            $stat_display[$cat_index] = $games_played;
+            break;
+            case "VictoryRatio":
+            $cat_header = "<b title=\"Win/Loss ratio\">W/L</b>";
+            $min = 0; //min($victory_ratio_score);
+            $max = max($victory_ratio_score);
+            $stat_score[$cat_index] = $victory_ratio_score;
+            $stat_display[$cat_index] = $victory_ratio;
+            break;
+            case "VictoryPercent":
+            $cat_header = "<b title=\"Wins percentage\">W%</b>";
+            $min = 0; //min($victory_percent_score);
+            $max = max($victory_percent_score);
+            $stat_score[$cat_index] = $victory_percent_score;
+            $stat_display[$cat_index] = $victory_percent;
+            break;
+            case "UniqueOpponents":
+            $cat_header = "<b title=\"Unique Opponents\">Opponents</b>";
+            $min = 0; //min($unique_opponents_score);
+            $max = max($unique_opponents_score);
+            $stat_score[$cat_index] = $unique_opponents_score;
+            $stat_display[$cat_index] = $unique_opponents;
+            break;
+            case "OpponentsELO":
+            $cat_header = "<b title=\"Opponents Average ELO\">Opp. ELO</b>";
+            $min = min($opponentsELO_score);
+            $max = max($opponentsELO_score);
+            $stat_score[$cat_index] = $opponentsELO_score;
+            $stat_display[$cat_index] = $opponentsELO;
+            break;
+            default:
+            $display_cat = 0;
+        }
 
-    // a = (ymax-ymin)/(xmax-xmin)
-    // b = ymin - a.xmin
-    if ($ELO_max==$ELO_min)
-    {
-        $ELO_a = 0;
-        $ELO_b = $ELO_maxpoints;
-    }
-    else
-    {
-        $ELO_a = ($ELO_maxpoints-$ELO_minpoints) / ($ELO_max-$ELO_min);
-        $ELO_b = $ELO_minpoints - $ELO_a * $ELO_min;
-    }
-    if ($games_played_max==$games_played_min)
-    {
-        $games_played_a = 00;
-        $games_played_b = $games_played_maxpoints;
-    }
-    else
-    {
-        $games_played_a = ($games_played_maxpoints-$games_played_minpoints) / ($games_played_max-$games_played_min);
-        $games_played_b = $games_played_minpoints - $games_played_a * $games_played_min;
-    }
-    if ($victory_ratio_max==$victory_ratio_min)
-    {
-        $victory_ratio_a = 0;
-        $victory_ratio_b = $victory_ratio_maxpoints;
-    }
-    else
-    {
-        $victory_ratio_a = ($victory_ratio_maxpoints-$victory_ratio_minpoints) / ($victory_ratio_max-$victory_ratio_min);
-        $victory_ratio_b = $victory_ratio_minpoints - $victory_ratio_a * $victory_ratio_min;
-    }
-    if ($victory_percent_max==$victory_percent_min)
-    {
-        $victory_percent_a = 0;
-        $victory_percent_b = $victory_percent_maxpoints;
-    }
-    else
-    {
-        $victory_percent_a = ($victory_percent_maxpoints-$victory_percent_minpoints) / ($victory_percent_max-$victory_percent_min);
-        $victory_percent_b = $victory_percent_minpoints - $victory_percent_a * $victory_percent_min;
-    }
-    if ($unique_opponents_max==$unique_opponents_min)
-    {
-        $unique_opponents_a = 0;
-        $unique_opponents_b = $unique_opponents_maxpoints;
-    }
-    else
-    {
-        $unique_opponents_a = ($unique_opponents_maxpoints-$unique_opponents_minpoints) / ($unique_opponents_max-$unique_opponents_min);
-        $unique_opponents_b = $unique_opponents_minpoints - $unique_opponents_a * $unique_opponents_min;
-    }
-    if ($opponentsELO_max==$opponentsELO_min)
-    {
-        $opponentsELO_a = 0;
-        $opponentsELO_b = $opponentsELO_maxpoints;
-    }
-    else
-    {
-        $opponentsELO_a = ($opponentsELO_maxpoints-$opponentsELO_minpoints) / ($opponentsELO_max-$opponentsELO_min);
-        $opponentsELO_b = $opponentsELO_minpoints - $opponentsELO_a * $opponentsELO_min;
+        if ($display_cat==1)
+        {
+            $cat_header .= "<br /><div class='smalltext'>[".number_format ($cat_maxpoints,2)." max]</div>";
+
+            // a = (ymax-ymin)/(xmax-xmin)
+            // b = ymin - a.xmin
+            if ($max==$min)
+            {
+                $a = 0;
+                $b = $cat_maxpoints;
+            }
+            else
+            {
+                $a = ($cat_maxpoints-$cat_minpoints) / ($max-$min);
+                $b = $cat_minpoints - $a * $min;
+            }
+
+            $stat_min[$cat_index] = $min;
+            $stat_max[$cat_index] = $max;
+            $stat_a[$cat_index] = $a;
+            $stat_b[$cat_index] = $b;
+
+            $stat_cat_header[$cat_index] = $cat_header;
+
+            $rating_max += $cat_maxpoints;
+            $cat_index++;
+        }
     }
 }
+$numDisplayedCategories = $cat_index;
 
-for($i=0; $i<$nbrteams; $i++)
+$stats = array
+(
+"0"=>array("header","<b>Rank</b>","<b>Team</b>","<b>Players</b>")
+);
+
+$stats[0][] = "<b title=\"Rating\">Rating</b><br /><div class='smalltext'>[".number_format ($rating_max,2)." max]</div>";
+for ($j=0; $j<$numDisplayedCategories; $j++)
 {
+    $stats[0][] = $stat_cat_header[$j];
+}
+
+$final_score = array();
+for($i=0; $i<$numTeams; $i++)
+{
+    $OverallScore[$i]=0;
     if ($games_played[$i] >= $emingames)
     {
-        $ELO_final_score[$i] = $ELO_a * $ELO[$i] + $ELO_b;
-        $games_played_final_score[$i] = $games_played_a * $games_played[$i] + $games_played_b;
-        $victory_ratio_final_score[$i] = $victory_ratio_a * $victory_ratio[$i] + $victory_ratio_b;
-        $victory_percent_final_score[$i] = $victory_percent_a * $victory_percent[$i] + $victory_percent_b;
-        $unique_opponents_final_score[$i] = $unique_opponents_a * $unique_opponents[$i] + $unique_opponents_b;
-        $opponentsELO_final_score[$i] = $opponentsELO_a * $opponentsELO[$i] + $opponentsELO_b;
+        for ($j=0; $j<$numDisplayedCategories; $j++)
+        {
+            $final_score[$j][$i] = $stat_a[$j] * $stat_score[$j][$i] + $stat_b[$j];
+            $OverallScore[$i]+=$final_score[$j][$i];
+        }
     }
     else
     {
-        $ELO_final_score[$i] = 0;
-        $games_played_final_score[$i] = 0;
-        $victory_ratio_final_score[$i] = 0;
-        $victory_percent_final_score[$i] = 0;
-        $unique_opponents_final_score[$i] = 0;
-        $opponentsELO_final_score[$i] = 0;
+        for ($j=0; $j<$numDisplayedCategories; $j++)
+        {
+            $final_score[$j][$i] = 0;
+        }
     }
-
-    $OverallScore[$i] = $ELO_final_score[$i] + $games_played_final_score[$i] + $victory_ratio_final_score[$i] + $victory_percent_final_score[$i] + $unique_opponents_final_score[$i] + $opponentsELO_final_score[$i];
 
     $q_3 = "UPDATE ".TBL_TEAMS." SET ELORanking = $tELO WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
@@ -377,25 +368,23 @@ for($i=0; $i<$nbrteams; $i++)
     $result_3 = $sql->db_Query($q_3);
 }
 
-// Calculate Rank
-//----------------
+// Build results table
+//--------------------
 $q_1 = "SELECT *"
 ." FROM ".TBL_TEAMS
 ." WHERE (Event = '$event_id')"
 ." ORDER BY ".TBL_TEAMS.".OverallScore DESC, ".TBL_TEAMS.".ELORanking DESC";
 
 $result_1 = $sql->db_Query($q_1);
-$num_rows = mysql_numrows($result_1);
-
 $ranknumber = 1;
-for($i=0; $i<$num_rows; $i++)
+for($i=0; $i<$numTeams; $i++)
 {
     $tid = mysql_result($result_1,$i, TBL_TEAMS.".TeamID");
 
     $q_2 = "UPDATE ".TBL_TEAMS." SET Rank = $ranknumber WHERE (TeamID = '$tid') AND (Event = '$event_id')";
     $result_2 = $sql->db_Query($q_2);
 
-//fm- Need rank delta for up/dn arrow
+    //fm- Need rank delta for up/dn arrow
 
     $index = array_search($tid,$id);
 
@@ -407,7 +396,7 @@ for($i=0; $i<$num_rows; $i++)
     {
         $rank = $ranknumber;
     }
-    
+
     $q_2 = "SELECT *"
     ." FROM ".TBL_PLAYERS
     ." WHERE (".TBL_PLAYERS.".Team = '$tid')"
@@ -433,43 +422,19 @@ for($i=0; $i<$num_rows; $i++)
     $stats_row[] = "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan[$index]\"><b>$name[$index] ($clantag[$index])</b></a>";
     $stats_row[] = "$nbr_players[$index]";
     $stats_row[] = number_format ($OverallScore[$index],2);
-    if ($ELO_maxpoints > 0)
+    for ($j=0; $j<$numDisplayedCategories; $j++)
     {
-        $stats_row[] = "$ELO[$index]<br />[".number_format ($ELO_final_score[$index],2)."]";
+        $stats_row[] = $stat_display[$j][$index]."<br />[".number_format ($final_score[$j][$index],2)."]";
     }
-    if ($games_played_maxpoints > 0)
-    {
-        $stats_row[] = "$games_played[$index]<br />[".number_format ($games_played_final_score[$index],2)."]";
-    }
-    if ($victory_ratio_maxpoints > 0)
-    {
-        $stats_row[] = "$winloss[$index]<br />[".number_format ($victory_ratio_final_score[$index],2)."]";
-    }
-    if ($victory_percent_maxpoints > 0)
-    {
-        $stats_row[] = number_format ($victory_percent[$index],2)." %<br />[".number_format ($victory_percent_final_score[$index],2)."]";
-    }
-    if ($unique_opponents_maxpoints > 0)
-    {
-        $stats_row[] = "$unique_opponents[$index]<br />[".number_format ($unique_opponents_final_score[$index],2)."]";
-    }
-    if ($opponentsELO_maxpoints > 0)
-    {
-        $stats_row[] = floor($opponentsELO[$index])."<br />[".number_format ($opponentsELO_final_score[$index],2)."]";
-    }
-
     $stats[] = $stats_row;
     $ranknumber++; // increases $ranknumber by 1
 }
-
-
-
 
 /*
 // debug print array
 include_once(e_PLUGIN."ebattles/include/show_array.php");
 echo "<br />";
-html_show_table($stats, $num_rows+1, 7);
+html_show_table($stats, $numTeams+1, 7);
 echo "<br />";
 */
 

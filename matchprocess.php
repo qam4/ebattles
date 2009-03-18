@@ -207,8 +207,8 @@ if(isset($_POST['qrsubmitloss']))
     $result = $sql->db_Query($q);
 
     $q =
-    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_Rank,Player_Loss,Player_Points)
-    VALUES ($last_id,$plooserID,2,-$deltaELO,$looser_deltaTS_mu,$looser_deltaTS_sigma,0,0,2,1,$ePointsPerLoss)
+    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_deltaELO,Player_deltaTS_mu,Player_deltaTS_sigma,Player_Score,Player_ScoreAgainst,Player_Rank,Player_Loss,Player_Points)
+    VALUES ($match_id,$plooserID,2,-$deltaELO,$looser_deltaTS_mu,$looser_deltaTS_sigma,0,0,2,1,$ePointsPerLoss)
     ";
     $result = $sql->db_Query($q);
 

@@ -61,6 +61,11 @@ Known issues/improvements:
         . ELO
         . Rank delta, with up/down arrow next to rank
         . streak of victory & loss
+      - Need to add new stats categories:
+        . score
+        . score difference
+        . points
+        . W/D/L
       - Improvements
 
 6. Better use of tinyMCE
@@ -101,11 +106,6 @@ SUGGESTIONS:
 - Don: need to sign up everybody in a team when the captain signs up the team.
 - Need to be able to delete Teams, or kick division members.
 - Database dates should be GMT, and display dates should be user local time. (done)
-- Add new stats categorie:
- . score
- . score difference
- . points
- . W/D/L
 - quick loss: how to do "player.score" update?
 - Team.rankdelta (up/dn arrow)
 - Team.streaks?
