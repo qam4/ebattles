@@ -2,7 +2,7 @@
 
 include(e_PLUGIN."ebattles/include/SVNrevision.php");
 $majorRevision = 0;
-$minorRevision = 1;
+$minorRevision = 2;
 $svnRevision = $svnRevision;
 
 ?>

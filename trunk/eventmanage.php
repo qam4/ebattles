@@ -92,6 +92,8 @@ else
     $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
     $erules = mysql_result($result,0 , TBL_EVENTS.".Rules");
     $edescription = mysql_result($result,0 , TBL_EVENTS.".Description");
+    $eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
+    $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
     $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
     if($estart!=0)
@@ -289,6 +291,50 @@ else
         {
             $text .= '<input type="radio" size="40" name="eventtype" checked="checked" value="Individual" />Individual';
             $text .= '<input type="radio" size="40" name="eventtype" value="Team" />Team';
+        }
+        $text .='
+        </div>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Allow Score -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>Allow Scoring</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input type="checkbox" name="eventallowscore"';
+        if ($eAllowScore == TRUE)
+        {
+            $text .= 'checked>';
+        }
+        else
+        {
+            $text .= '>';
+        }
+        $text .='
+        </div>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Allow Draws -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>Allow Draws</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input type="checkbox" name="eventallowdraw"';
+        if ($eAllowDraw == TRUE)
+        {
+            $text .= 'checked>';
+        }
+        else
+        {
+            $text .= '>';
         }
         $text .='
         </div>
