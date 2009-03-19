@@ -89,13 +89,14 @@ require_once(HEADERF);
 	 VALUES (8,3,$time)";
 	$sql->db_Query($query) or die ('Error, adding Division<br />'. mysql_error());
 
-	// Insert Event
+	// Insert Events
+	// Event 1 - 1v1 ladder test
 	$query = 
-	"INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Start_timestamp, End_timestamp, Rules, Description)
-	 VALUES ('1v1 Ladder Test', '', '1', 'One Player Ladder',1, $time, ($time+7*86400), '...', '<p>This is a 1v1 test ladder.<br />Feel free to join this event and use the &quot;Match Report&quot; system. </p>')";
+	"INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Start_timestamp, End_timestamp, Rules, Description, AllowDraw, AllowScore)
+	 VALUES ('1v1 Ladder Test', '', '1', 'One Player Ladder',1, $time, ($time+7*86400), '...', '<p>This is a 1v1 test ladder.<br />Feel free to join this event and use the &quot;Match Report&quot; system. </p>',1,1)";
 	$sql->db_Query($query) or die ('Error, adding event 1<br />'. mysql_error());
 	
-        $last_id = mysql_insert_id();
+    $last_id = mysql_insert_id();
  	$query = 
 	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
 	 VALUES ('$last_id', 'ELO', '1', '20')";
@@ -127,8 +128,46 @@ require_once(HEADERF);
  	$query = 
 	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
 	 VALUES ('$last_id', 'Skill', '1', '20')";
-	$sql->db_Query($query) or die ('Error, adding StatsCategories 1<br />'. mysql_error());
+	$sql->db_Query($query) or die ('Error, adding StatsCategories 8<br />'. mysql_error());
+ 	$query = 
+	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
+	 VALUES ('$last_id', 'Score', '1', '20')";
+	$sql->db_Query($query) or die ('Error, adding StatsCategories 9<br />'. mysql_error());
+ 	$query = 
+	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
+	 VALUES ('$last_id', 'ScoreAgainst', '1', '20')";
+	$sql->db_Query($query) or die ('Error, adding StatsCategories 10<br />'. mysql_error());
+ 	$query = 
+	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
+	 VALUES ('$last_id', 'ScoreDiff', '1', '20')";
+	$sql->db_Query($query) or die ('Error, adding StatsCategories 11<br />'. mysql_error());
+ 	$query = 
+	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
+	 VALUES ('$last_id', 'Points', '1', '20')";
+	$sql->db_Query($query) or die ('Error, adding StatsCategories 12<br />'. mysql_error());
 			
+	// Insert Mods in Event
+	$query = 
+	"INSERT INTO ".TBL_EVENTMODS."(Event,User,Level)
+	 VALUES ($last_id,1,9)";
+	$sql->db_Query($query) or die ('Error, adding moderator 1<br />'. mysql_error());
+	$text .= "Added Mods<br />";
+
+	// Insert Players in Event
+	$query = 
+	"INSERT INTO ".TBL_PLAYERS."(Event,User)
+	 VALUES ($last_id,1)";
+	$sql->db_Query($query) or die ('Error, adding player 1<br />'. mysql_error());
+	$query = 
+	"INSERT INTO ".TBL_PLAYERS."(Event,User)
+	 VALUES ($last_id,2)";
+	$sql->db_Query($query) or die ('Error, adding player 2<br />'. mysql_error());
+	$query = 
+	"INSERT INTO ".TBL_PLAYERS."(Event,User)
+	 VALUES ($last_id,3)";
+	$sql->db_Query($query) or die ('Error, adding player 3<br />'. mysql_error());
+
+    // Event 2 - team ladder test
 	$query = 
 	"INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Description)
 	 VALUES ('Team Ladder Test', '', '2', 'Team Ladder',1, '<p>This is a Team test ladder.<br />Feel free to join this event and use the &quot;Match Report&quot; system. </p>')";
@@ -167,11 +206,37 @@ require_once(HEADERF);
 	 VALUES ('$last_id', 'Skill', '1', '20')";
 	$sql->db_Query($query) or die ('Error, adding StatsCategories 1<br />'. mysql_error());
 	
+	// Insert Teams in Event
+	$query = 
+	"INSERT INTO ".TBL_TEAMS."(Event,Division)
+	 VALUES ($last_id,4)";
+	$sql->db_Query($query) or die ('Error, adding team 1<br />'. mysql_error());
+	$team1_id = mysql_insert_id();
+
+	$query = 
+	"INSERT INTO ".TBL_TEAMS."(Event,Division)
+	VALUES ($last_id,6)";
+	$sql->db_Query($query) or die ('Error, adding team 2<br />'. mysql_error());
+	$team2_id = mysql_insert_id();
+	$text .= "Added Teams<br />";
+
+	$query = 
+	"INSERT INTO ".TBL_PLAYERS."(Event,User,Team)
+	 VALUES ($last_id,1,$team1_id)";
+	$sql->db_Query($query) or die ('Error, adding player 1<br />'. mysql_error());
+	$query = 
+	"INSERT INTO ".TBL_PLAYERS."(Event,User,Team)
+	 VALUES ($last_id,2,$team2_id)";
+	$sql->db_Query($query) or die ('Error, adding player 2<br />'. mysql_error());
+	
+	
+	// Event 3 - Old 1v1 ladder test
 	$query = 
 	"INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Start_timestamp, End_timestamp, Rules, Description)
 	 VALUES ('Old 1v1 Event Test', '', '1', 'One Player Ladder',3, ($time-15*86400), ($time-7*86400), '...', 'This is a test past ladder')";
 	$sql->db_Query($query) or die ('Error, adding event 2<br />'. mysql_error());
-        $last_id = mysql_insert_id();
+    $last_id = mysql_insert_id();
+    
  	$query = 
 	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
 	 VALUES ('$last_id', 'ELO', '1', '20')";
@@ -206,48 +271,6 @@ require_once(HEADERF);
 	 VALUES ('$last_id', 'Skill', '1', '20')";
 	$sql->db_Query($query) or die ('Error, adding StatsCategories 1<br />'. mysql_error());
 	
-	// Insert Mods in Event
-	$query = 
-	"INSERT INTO ".TBL_EVENTMODS."(Event,User,Level)
-	 VALUES (1,1,9)";
-	$sql->db_Query($query) or die ('Error, adding moderator 1<br />'. mysql_error());
-	$text .= "Added Mods<br />";
-
-
-	// Insert Teams in Events
-	$query = 
-	"INSERT INTO ".TBL_TEAMS."(Event,Division)
-	 VALUES (2,4)";
-	$sql->db_Query($query) or die ('Error, adding team 1<br />'. mysql_error());
-	$query = 
-	"INSERT INTO ".TBL_TEAMS."(Event,Division)
-	VALUES (2,6)";
-	$sql->db_Query($query) or die ('Error, adding team 2<br />'. mysql_error());
-	$text .= "Added Teams<br />";
-
-	// Insert Players in Event
-	$query = 
-	"INSERT INTO ".TBL_PLAYERS."(Event,User)
-	 VALUES (1,1)";
-	$sql->db_Query($query) or die ('Error, adding player 1<br />'. mysql_error());
-	$query = 
-	"INSERT INTO ".TBL_PLAYERS."(Event,User)
-	 VALUES (1,2)";
-	$sql->db_Query($query) or die ('Error, adding player 2<br />'. mysql_error());
-	$query = 
-	"INSERT INTO ".TBL_PLAYERS."(Event,User)
-	 VALUES (1,3)";
-	$sql->db_Query($query) or die ('Error, adding player 3<br />'. mysql_error());
-	$query = 
-	"INSERT INTO ".TBL_PLAYERS."(Event,User,Team)
-	 VALUES (2,1,1)";
-	$sql->db_Query($query) or die ('Error, adding player 1<br />'. mysql_error());
-	$query = 
-	"INSERT INTO ".TBL_PLAYERS."(Event,User,Team)
-	 VALUES (2,2,2)";
-	$sql->db_Query($query) or die ('Error, adding player 2<br />'. mysql_error());
-	
-	$text .= "Added Players<br />";
 
 $ns->tablerender('Insert debug data', $text);
 require_once(FOOTERF);

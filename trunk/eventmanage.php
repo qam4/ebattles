@@ -612,6 +612,18 @@ else
                 case "Skill":
                 $cat_name_display = "Skill";
                 break;
+                case "Score":
+                $cat_name_display = "Score";
+                break;
+                case "ScoreAgainst":
+                $cat_name_display = "Opponents Score";
+                break;
+                case "ScoreDiff":
+                $cat_name_display = "Score Difference";
+                break;
+                case "Points":
+                $cat_name_display = "Points";
+                break;
                 default:
             }
             $rating_max+=$cat_max;
