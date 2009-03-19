@@ -24,6 +24,12 @@ if (isset($_POST['updatesettings'])) {
     save_prefs();
     $message = EBATTLES_ADMIN_L1;
 }
+if (isset($_POST['eb_events_insert_data']))
+{
+    @include_once e_PLUGIN."ebattles/db_admin/insert_data.php";
+    $message .= EBATTLES_ADMIN_L11;
+}
+
 
 if (isset($message)) {
     $ns->tablerender("", "<div style='text-align:center'><b>".$message."</b></div>");
@@ -59,7 +65,7 @@ $text .= "<tr>
 $text .= "<tr>
 <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L7.": </td>
 <td class='forumheader3' style='width:60%'>
-<a href=\"".e_PLUGIN."ebattles/db_admin/insert_data.php\">Insert Data</a>
+<input class='button' type='submit' name='eb_events_insert_data' value='".EBATTLES_ADMIN_L8."'>
 </td>
 </tr>
 ";
@@ -67,7 +73,7 @@ $text .= "<tr>
 
 $text .= "<tr>
 <td  class='forumheader' colspan='3' style='text-align:center'>
-<input class='button' type='submit' name='updatesettings' value='".EBATTLES_ADMIN_L8."' />
+<input class='button' type='submit' name='updatesettings' value='".EBATTLES_ADMIN_L9."' />
 </td>
 </tr>
 </tbody>
@@ -76,7 +82,7 @@ $text .= "<tr>
 </div>";
 
 // The usual, tell e107 what to include on the page
-$ns->tablerender(EBATTLES_ADMIN_L9, $text);
+$ns->tablerender(EBATTLES_ADMIN_L10, $text);
 
 require_once(e_ADMIN."footer.php");
 ?>

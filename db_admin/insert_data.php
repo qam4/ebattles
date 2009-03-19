@@ -1,10 +1,5 @@
 <?php
 
-require_once("../../../class2.php");
-include_once(e_PLUGIN."ebattles/include/main.php");
-
-require_once(HEADERF);
-
 	global $sql;
 
 	$time = GMT_time();
@@ -93,7 +88,9 @@ require_once(HEADERF);
 	// Event 1 - 1v1 ladder test
 	$query = 
 	"INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Start_timestamp, End_timestamp, Rules, Description, AllowDraw, AllowScore)
-	 VALUES ('1v1 Ladder Test', '', '1', 'One Player Ladder',1, $time, ($time+7*86400), '...', '<p>This is a 1v1 test ladder.<br />Feel free to join this event and use the &quot;Match Report&quot; system. </p>',1,1)";
+	 VALUES ('1v1 Ladder Test', '', '656', 'One Player Ladder',1, $time, ($time+7*86400), '...', 
+	 '<p style=\"text-align: center;\">This is a 1v1 test ladder.</p><p style=\"text-align: center;\">Feel free to join this event and use the \"Match Report\" system.</p><p style=\"text-align: center;\"><img src=\"http://www.visionfutur.com/img/linux/starcraft1.jpg\" border=\"0\" alt=\"Starcraft\" title=\"Starcraft\" width=\"640\" height=\"480\" /></p>',
+	 1,1)";
 	$sql->db_Query($query) or die ('Error, adding event 1<br />'. mysql_error());
 	
     $last_id = mysql_insert_id();
@@ -275,8 +272,6 @@ require_once(HEADERF);
 	 VALUES ('$last_id', 'Skill', '1', '20')";
 	$sql->db_Query($query) or die ('Error, adding StatsCategories 1<br />'. mysql_error());
 	
-
-$ns->tablerender('Insert debug data', $text);
-require_once(FOOTERF);
-exit;
+	$message = $text;
+	
 ?>

@@ -432,27 +432,49 @@ $q_1 = "SELECT *"
 ." FROM ".TBL_TEAMS
 ." WHERE (Event = '$event_id')"
 ." ORDER BY ".TBL_TEAMS.".OverallScore DESC, ".TBL_TEAMS.".ELORanking DESC";
-
 $result_1 = $sql->db_Query($q_1);
 $ranknumber = 1;
 for($i=0; $i<$numTeams; $i++)
 {
     $tid = mysql_result($result_1,$i, TBL_TEAMS.".TeamID");
+    $trank = mysql_result($result_1,$i, TBL_TEAMS.".Rank");
+    $trankdelta = mysql_result($result_1,$i, TBL_TEAMS.".RankDelta");
 
-    $q_2 = "UPDATE ".TBL_TEAMS." SET Rank = $ranknumber WHERE (TeamID = '$tid') AND (Event = '$event_id')";
-    $result_2 = $sql->db_Query($q_2);
-
-    //fm- Need rank delta for up/dn arrow
-
+    // Find index of team
     $index = array_search($tid,$id);
 
+    $trank_side_image = "";
     if($OverallScore[$index]==0)
     {
         $rank = '<span title="Not ranked">-</span>';
+        $trankdelta_string = "";
     }
     else
     {
         $rank = $ranknumber;
+        $q_2 = "UPDATE ".TBL_TEAMS." SET Rank = $ranknumber WHERE (TeamID = '$tid') AND (Event = '$event_id')";
+        $result_2 = $sql->db_Query($q_2);
+
+        $new_rankdelta = $trank - $ranknumber;
+        if (($new_rankdelta != 0)&&($trank!=0))
+        {
+            $q_2 = "UPDATE ".TBL_TEAMS." SET RankDelta = $new_rankdelta WHERE (TeamID = '$tid') AND (Event = '$event_id')";
+            $result_2 = $sql->db_Query($q_2);
+            $trankdelta = $new_rankdelta;
+        }
+
+        if ($trankdelta>0)
+        {
+            $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$trankdelta\" title=\"+$trankdelta\"></img>";
+        }
+        else if ($trankdelta<0)
+        {
+            $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$trankdelta\" title=\"$trankdelta\"></img>";
+        }
+        else if ($trankdelta==0)
+        {
+            $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
+        }
     }
 
     $q_2 = "SELECT *"
@@ -476,7 +498,7 @@ for($i=0; $i<$numTeams; $i++)
         );
     }
 
-    $stats_row[] = "<b>$rank</b>";
+    $stats_row[] = "<b>$rank</b> $trank_side_image";
     $stats_row[] = "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan[$index]\"><b>$name[$index] ($clantag[$index])</b></a>";
     $stats_row[] = "$nbr_players[$index]";
     $stats_row[] = number_format ($OverallScore[$index],2);
