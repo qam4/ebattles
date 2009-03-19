@@ -255,6 +255,14 @@ else
                     $q2 = "UPDATE ".TBL_STATSCATEGORIES." SET CategoryMaxValue = '$new_eventStat' WHERE (Event = '$event_id') AND (CategoryName = '$cat_name')";
                     $result2 = $sql->db_Query($q2);
                 }
+                
+                // Display Only
+                if ($_POST['infoonly'.$i] != "")
+                    $q2 = "UPDATE ".TBL_STATSCATEGORIES." SET InfoOnly = 1 WHERE (Event = '$event_id') AND (CategoryName = '$cat_name')";
+                else
+                    $q2 = "UPDATE ".TBL_STATSCATEGORIES." SET InfoOnly = 0 WHERE (Event = '$event_id') AND (CategoryName = '$cat_name')";
+                $result2 = $sql->db_Query($q2);
+                
                 $cat_index ++;
             }
 
