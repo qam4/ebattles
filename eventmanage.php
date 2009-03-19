@@ -608,6 +608,9 @@ else
                 case "VictoryPercent":
                 $cat_name_display = "Victory Percent";
                 break;
+                case "WinDrawLoss":
+                $cat_name_display = "Victory Ratio";
+                break;
                 case "UniqueOpponents":
                 $cat_name_display = "Unique Opponents";
                 break;

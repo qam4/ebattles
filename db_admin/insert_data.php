@@ -115,6 +115,10 @@ require_once(HEADERF);
 	$sql->db_Query($query) or die ('Error, adding StatsCategories 4<br />'. mysql_error());
  	$query = 
 	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
+	 VALUES ('$last_id', 'WinDrawLoss', '1', '10')";
+	$sql->db_Query($query) or die ('Error, adding StatsCategories 4<br />'. mysql_error());
+ 	$query = 
+	"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMinValue, CategoryMaxValue)
 	 VALUES ('$last_id', 'UniqueOpponents', '1', '20')";
 	$sql->db_Query($query) or die ('Error, adding StatsCategories 5<br />'. mysql_error());
  	$query = 

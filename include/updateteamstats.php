@@ -231,7 +231,8 @@ $rating_max= 0;
 
 $q_1 = "SELECT ".TBL_STATSCATEGORIES.".*"
 ." FROM ".TBL_STATSCATEGORIES
-." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
+." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')"
+." ORDER BY ".TBL_STATSCATEGORIES.".CategoryMaxValue DESC";
 $result_1 = $sql->db_Query($q_1);
 $numCategories = mysql_numrows($result_1);
 
@@ -282,6 +283,13 @@ for($i=0; $i<$numCategories; $i++)
             $max = max($victory_percent_score);
             $stat_score[$cat_index] = $victory_percent_score;
             $stat_display[$cat_index] = $victory_percent;
+            break;
+            case "WinDrawLoss":
+            $cat_header = "<b title=\"Win/Draw/Loss\">W/D/L</b>";
+            $min = 0;
+            $max = max($windrawloss_score);
+            $stat_score[$cat_index] = $windrawloss_score;
+            $stat_display[$cat_index] = $windrawloss;
             break;
             case "UniqueOpponents":
             $cat_header = "<b title=\"Unique Opponents\">Opponents</b>";

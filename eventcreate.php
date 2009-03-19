@@ -39,6 +39,10 @@ else
    $result2 = $sql->db_Query($q2);
    $q2 = 
    "INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
+    VALUES ('$last_id', 'WinDrawLoss')";
+   $result2 = $sql->db_Query($q2);
+   $q2 = 
+   "INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
     VALUES ('$last_id', 'VictoryPercent')";
    $result2 = $sql->db_Query($q2);
    $q2 = 

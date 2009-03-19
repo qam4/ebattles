@@ -111,16 +111,9 @@ SUGGESTIONS:
 - Team.rankdelta (up/dn arrow)
 - Team.streaks?
 - Draws:
- . add checkboxes in front of ranks 2 to last in match report (done)
- . if checked, then team has same rank as rank of team in previous row. (done)
- --> will need to change the rank calculation algo here a little bit. (done)
- . add ELO (done) and TS calculations for draw case
- . add players.draw update in match process, and teams.draw calculation in updateteamstats (done)
+ . add TS calculations for draw case
  . Manage event, add "Allow draws", "Draw proba"
  . matchinfo should have TS match rating
- . Streaks ok when draw?
+ . Streaks ok when draw???
 - Scores:
- . add inputs in match reports for scores, and use that to update players.score (done)
- . score diff -> might need new field in tbl_scores, tbl_players and tbl_teams
- . preg_match("/^\d+$/", $input) (done)
  . quick loss report -> no score???
