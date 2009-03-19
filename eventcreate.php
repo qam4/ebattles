@@ -53,6 +53,22 @@ else
    "INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
     VALUES ('$last_id', 'Streaks')";
    $result2 = $sql->db_Query($q2);
+   $q2 = 
+   "INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
+    VALUES ('$last_id', 'Score')";
+   $result2 = $sql->db_Query($q2);
+   $q2 = 
+   "INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
+    VALUES ('$last_id', 'ScoreAgainst')";
+   $result2 = $sql->db_Query($q2);
+   $q2 = 
+   "INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
+    VALUES ('$last_id', 'ScoreDiff')";
+   $result2 = $sql->db_Query($q2);
+   $q2 = 
+   "INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
+    VALUES ('$last_id', 'Points')";
+   $result2 = $sql->db_Query($q2);
 
    $q2 = "UPDATE ".TBL_EVENTS." SET Name = 'Event $last_id - $username' WHERE (EventID = '$last_id')";
    $result2 = $sql->db_Query($q2);

@@ -80,7 +80,7 @@ if(isset($_POST['qrsubmitloss']))
     // New TrueSkill ------------------------------------------
     $beta=$eTS_beta;          // beta
     $epsilon=$eTS_epsilon;    // draw probability
-    $update = Trueskill_update($epsilon,$beta, $pwinnerTS_mu, $pwinnerTS_sigma, 1, $plooserTS_mu, $plooserTS_sigma, 0);
+    $update = Trueskill_update($epsilon,$beta, $pwinnerTS_mu, $pwinnerTS_sigma, 1, $plooserTS_mu, $plooserTS_sigma, 2);
 
     $winner_deltaTS_mu = $update[0];
     $winner_deltaTS_sigma = $update[1];

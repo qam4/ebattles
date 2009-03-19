@@ -100,6 +100,7 @@ BUGS:
 - Team events: 2 players of same team should not be able to compete against each other. fixed?
 - Use "name" field of submit buttons to differentiate them, avoid using hidden input.
 - Match delete: do we need to update "TBL_TEAMS"?
+- manage plugin - insert data is a link.
 
 
 SUGGESTIONS:
