@@ -53,7 +53,7 @@ Known issues/improvements:
       - Scoring Catagories
         . Overall Rating
         . Games played
-        . Wins, Losses, Victory ratio (W/L), Victory % (100*W/Games Played)
+        . Wins, Losses, W/D/L, Victory ratio (W/L), Victory % (100*W/Games Played)
         . Avg score/points per game
         . Avg enemy score/points per game
         . Unique opponents (absolute, %)
@@ -61,12 +61,9 @@ Known issues/improvements:
         . ELO
         . Rank delta, with up/down arrow next to rank
         . streak of victory & loss
-      - Need to add new stats categories:
         . score
         . score difference
-        . points
-        . W/D/L
-      - Improvements
+        . points 
 
 6. Better use of tinyMCE
 - Images, Emoticons
@@ -100,20 +97,18 @@ BUGS:
 - Team events: 2 players of same team should not be able to compete against each other. fixed?
 - Use "name" field of submit buttons to differentiate them, avoid using hidden input.
 - Match delete: do we need to update "TBL_TEAMS"?
-- manage plugin - insert data is a link.
-
 
 SUGGESTIONS:
-- Don: need to sign up everybody in a team when the captain signs up the team.
 - Need to be able to delete Teams, or kick division members.
-- Database dates should be GMT, and display dates should be user local time. (done)
-- quick loss: how to do "player.score" update?
-- Team.rankdelta (up/dn arrow)
-- Team.streaks?
-- Draws:
+- Teams
+  . rankdelta (up/dn arrow)
+  . streaks?
+- Draws
  . add TS calculations for draw case
- . Manage event, add "Allow draws", "Draw proba"
+ . Manage event, add "Draw proba"
  . matchinfo should have TS match rating
  . Streaks ok when draw???
-- Scores:
+- Scores
  . quick loss report -> no score???
+- Awards
+ . Need to see awards in user profile.
