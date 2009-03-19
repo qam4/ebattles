@@ -4,11 +4,11 @@
 function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore) {
     global $text;
 
-    
+
     //dbg form
     //print_r($_POST);    // show $_POST
     //print_r($_GET);     // show $_GET
-    
+
     $reported_by = USERID;
     $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
     $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
@@ -164,7 +164,11 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     //----------------------------------
     $text .= 'Select the rank of each team:';
     $text .= '<table class="fborder" id="matchresult"><tbody>';
-    $text .= '<tr><td></td><td>Team</td><td>Score</td><td>Draw?</td></tr>';
+    $text .= '<tr><td></td><td>Team</td>';
+    if ($allowScore == TRUE) $text .= '<td>Score</td>';
+    if ($allowDraw == TRUE) $text .= '<td>Draw?</td>';
+    $text .= '</tr>';
+    
     for($i=1;$i<=$nbr_teams;$i++)
     {
         $text .= '<tr>';
@@ -179,25 +183,23 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
             $text .= '>Team #'.$j.'</option>';
         }
         $text .= '</select></td>';
-        $text .= '<td class="forumheader3">';
-        $text .= '<input type="text" name="score'.$i.'" value="'.$_POST['score'.$i].'"';
-        if ($allowScore == FALSE)
-          $text .=' disabled>';
-        else 
-          $text .= '>';
-        
-        $text .= '</td>';
-        $text .= '<td class="forumheader3">';
-        if ($i>1)
+        if ($allowScore == TRUE)
         {
-           $text .= '<input type="checkbox" name="draw'.$i.'" value="1"';
-           if (strtolower($_POST['draw'.$i]) != "") $text .= ' checked';
-           if ($allowDraw == FALSE)
-             $text .=' disabled>';
-           else 
-             $text .= '>';
+            $text .= '<td class="forumheader3">';
+            $text .= '<input type="text" name="score'.$i.'" value="'.$_POST['score'.$i].'">';
+            $text .= '</td>';
         }
-        $text .= '</td>';
+        if ($allowDraw == TRUE)
+        {
+            $text .= '<td class="forumheader3">';
+            if ($i>1)
+            {
+                $text .= '<input type="checkbox" name="draw'.$i.'" value="1"';
+                if (strtolower($_POST['draw'.$i]) != "") $text .= ' checked';
+                $text .= '>';
+            }
+            $text .= '</td>';
+        }
         $text .= '</tr>';
     }
     $text .= '</tbody></table>';

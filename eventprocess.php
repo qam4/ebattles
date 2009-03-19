@@ -116,6 +116,30 @@ else
                 }
             }
 
+            /* Event Allow Score */
+            if ($_POST['eventallowscore'] != "")
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET AllowScore = 1 WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
+            else
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET AllowScore = 0 WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
+
+            /* Event Allow Draw */
+            if ($_POST['eventallowdraw'] != "")
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET AllowDraw = 1 WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
+            else
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET AllowDraw = 0 WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
+
             /* Event Game */
             $new_eventgame = $_POST['eventgame'];
             $q2 = "UPDATE ".TBL_EVENTS." SET Game = '$new_eventgame' WHERE (EventID = '$event_id')";
@@ -255,14 +279,14 @@ else
                     $q2 = "UPDATE ".TBL_STATSCATEGORIES." SET CategoryMaxValue = '$new_eventStat' WHERE (Event = '$event_id') AND (CategoryName = '$cat_name')";
                     $result2 = $sql->db_Query($q2);
                 }
-                
+
                 // Display Only
                 if ($_POST['infoonly'.$i] != "")
-                    $q2 = "UPDATE ".TBL_STATSCATEGORIES." SET InfoOnly = 1 WHERE (Event = '$event_id') AND (CategoryName = '$cat_name')";
+                $q2 = "UPDATE ".TBL_STATSCATEGORIES." SET InfoOnly = 1 WHERE (Event = '$event_id') AND (CategoryName = '$cat_name')";
                 else
-                    $q2 = "UPDATE ".TBL_STATSCATEGORIES." SET InfoOnly = 0 WHERE (Event = '$event_id') AND (CategoryName = '$cat_name')";
+                $q2 = "UPDATE ".TBL_STATSCATEGORIES." SET InfoOnly = 0 WHERE (Event = '$event_id') AND (CategoryName = '$cat_name')";
                 $result2 = $sql->db_Query($q2);
-                
+
                 $cat_index ++;
             }
 

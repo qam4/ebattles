@@ -4,8 +4,6 @@
 *
 */
 
-//fm- need to use "Allow draw", "Allow score" flags
-
 $file = 'cache/sql_cache_event_'.$event_id.'.txt';
 
 // Update Players stats
@@ -118,7 +116,7 @@ for($i=0; $i<$numPlayers; $i++)
     $win[] = $pwin;
     $loss[] = $ploss;
     $draw[] = $pdraw;
-    $streaks[] = $pstreak." | ".$pstreak_best." | ".$pstreak_worst;
+    $streaks[] = $pstreak."|".$pstreak_best."|".$pstreak_worst;
     $windrawloss[] = $pwindrawloss;
     $victory_ratio[] = $pwinloss;
     $victory_percent[] = number_format ($pvictory_percent,2)." %";
