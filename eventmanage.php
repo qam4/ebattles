@@ -513,6 +513,11 @@ else
         $text .= '
         <table class="fborder" style="width:95%"><tbody>
         <tr>
+        <td class="forumheader">Stat</td>
+        <td class="forumheader" colspan=2>Max</td>
+        <td class="forumheader">Info Only</td>
+        </tr>
+        <tr>
         <td class="forumheader3">
         Number of Matches to Rank
         </td>
@@ -537,6 +542,7 @@ else
         ";
         $text .= '
         </td>
+        <td class="forumheader3"></td>
         </tr>
         ';
 
@@ -566,6 +572,7 @@ else
             ";
             $text .= '
             </td>
+            <td class="forumheader3"></td>
             </tr>
             ';
         }
@@ -584,6 +591,7 @@ else
             $cat_name = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryName");
             $cat_min = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryMinValue");
             $cat_max = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryMaxValue");
+            $cat_InfoOnly = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".InfoOnly");
 
             switch ($cat_name)
             {
@@ -626,7 +634,6 @@ else
                 break;
                 default:
             }
-            $rating_max+=$cat_max;
 
             //---------------------------------------------------
             $text .= '
@@ -651,9 +658,24 @@ else
             new slider(A_INIT, A_TPL);
             </script>
             ";
+            $text .= '</td>';
+
             $text .= '
-            </td>
-            </tr>';
+            <td class="forumheader3">
+            <input type="checkbox" name="infoonly'.$i.'" value="1"
+            ';
+            if ($cat_InfoOnly == TRUE)
+            {
+                $text .= ' checked';
+            }
+            else
+            {
+                $rating_max+=$cat_max;
+
+            }
+            $text .= '></td>';
+
+            $text .= '</tr>';
             //----------------------------------------
 
             $cat_index++;
@@ -662,7 +684,7 @@ else
         $text .= '
         <tr>
         <td class="forumheader3">Rating Max</td>
-        <td class="forumheader3" colspan="2">'.$rating_max.'</td>
+        <td class="forumheader3" colspan="3">'.$rating_max.'</td>
         </tr>
         </tbody></table>
 

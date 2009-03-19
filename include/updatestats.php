@@ -4,9 +4,7 @@
 *
 */
 
-//fm- need to add "Score", "Points" categories
-//fm- need to use "Allow draw", "Allow score", and "InfoOnly" flags
-
+//fm- need to use "Allow draw", "Allow score" flags
 
 $file = 'cache/sql_cache_event_'.$event_id.'.txt';
 
@@ -46,7 +44,7 @@ for($i=0; $i<$numPlayers; $i++)
     $pscore = mysql_result($result_1,$i, TBL_PLAYERS.".Score");
     $poppscore = mysql_result($result_1,$i, TBL_PLAYERS.".ScoreAgainst");
     $ppoints = mysql_result($result_1,$i, TBL_PLAYERS.".Points");
-    
+
     $popponentsELO = 0;
     $popponents = 0;
     // Unique Opponents
@@ -129,8 +127,8 @@ for($i=0; $i<$numPlayers; $i++)
     $score[] = $pscore;
     $oppscore[] = $poppscore;
     $scorediff[] = $pscore - $poppscore;
-    $points[] = $ppoints;        
-    
+    $points[] = $ppoints;
+
     // Actual score (not for display)
     if ($pgames_played >= $emingames)
     {
@@ -176,6 +174,7 @@ for($i=0; $i<$numCategories; $i++)
     $cat_name = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryName");
     $cat_minpoints = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryMinValue");
     $cat_maxpoints = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryMaxValue");
+    $cat_InfoOnly = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".InfoOnly");
 
     if ($cat_maxpoints > 0)
     {
@@ -272,29 +271,36 @@ for($i=0; $i<$numCategories; $i++)
 
         if ($display_cat==1)
         {
-            $cat_header .= "<br /><div class='smalltext'>[".number_format ($cat_maxpoints,2)." max]</div>";
-
-            // a = (ymax-ymin)/(xmax-xmin)
-            // b = ymin - a.xmin
-            if ($max==$min)
+            $stat_InfoOnly[$cat_index] = $cat_InfoOnly;
+            if ($cat_InfoOnly == TRUE)
             {
-                $a = 0;
-                $b = $cat_maxpoints;
+                $cat_header .= "";
             }
             else
             {
-                $a = ($cat_maxpoints-$cat_minpoints) / ($max-$min);
-                $b = $cat_minpoints - $a * $min;
+                $cat_header .= "<br /><div class='smalltext'>[".number_format ($cat_maxpoints,2)." max]</div>";
+
+                // a = (ymax-ymin)/(xmax-xmin)
+                // b = ymin - a.xmin
+                if ($max==$min)
+                {
+                    $a = 0;
+                    $b = $cat_maxpoints;
+                }
+                else
+                {
+                    $a = ($cat_maxpoints-$cat_minpoints) / ($max-$min);
+                    $b = $cat_minpoints - $a * $min;
+                }
+
+                $stat_min[$cat_index] = $min;
+                $stat_max[$cat_index] = $max;
+                $stat_a[$cat_index] = $a;
+                $stat_b[$cat_index] = $b;
+
+                $rating_max += $cat_maxpoints;
             }
-
-            $stat_min[$cat_index] = $min;
-            $stat_max[$cat_index] = $max;
-            $stat_a[$cat_index] = $a;
-            $stat_b[$cat_index] = $b;
-
             $stat_cat_header[$cat_index] = $cat_header;
-
-            $rating_max += $cat_maxpoints;
             $cat_index++;
         }
     }
@@ -312,30 +318,32 @@ for ($j=0; $j<$numDisplayedCategories; $j++)
     $stats[0][] = $stat_cat_header[$j];
 }
 
-$final_score = array();
-for($i=0; $i<$numPlayers; $i++)
+if ($stat_InfoOnly[$j] == FALSE)
 {
-    $OverallScore[$i]=0;
-    if ($games_played[$i] >= $emingames)
+    $final_score = array();
+    for($i=0; $i<$numPlayers; $i++)
     {
-        for ($j=0; $j<$numDisplayedCategories; $j++)
+        $OverallScore[$i]=0;
+        if ($games_played[$i] >= $emingames)
         {
-            $final_score[$j][$i] = $stat_a[$j] * $stat_score[$j][$i] + $stat_b[$j];
-            $OverallScore[$i]+=$final_score[$j][$i];
+            for ($j=0; $j<$numDisplayedCategories; $j++)
+            {
+                $final_score[$j][$i] = $stat_a[$j] * $stat_score[$j][$i] + $stat_b[$j];
+                $OverallScore[$i]+=$final_score[$j][$i];
+            }
         }
-    }
-    else
-    {
-        for ($j=0; $j<$numDisplayedCategories; $j++)
+        else
         {
-            $final_score[$j][$i] = 0;
+            for ($j=0; $j<$numDisplayedCategories; $j++)
+            {
+                $final_score[$j][$i] = 0;
+            }
         }
-    }
 
-    $q_3 = "UPDATE ".TBL_PLAYERS." SET OverallScore = $OverallScore[$i] WHERE (PlayerID = '$id[$i]') AND (Event = '$event_id')";
-    $result_3 = $sql->db_Query($q_3);
+        $q_3 = "UPDATE ".TBL_PLAYERS." SET OverallScore = $OverallScore[$i] WHERE (PlayerID = '$id[$i]') AND (Event = '$event_id')";
+        $result_3 = $sql->db_Query($q_3);
+    }
 }
-
 // Build results table
 //--------------------
 $q_1 = "SELECT *"
@@ -496,7 +504,14 @@ for($i=0; $i<$numPlayers; $i++)
     $stats_row[] = number_format ($OverallScore[$index],2);
     for ($j=0; $j<$numDisplayedCategories; $j++)
     {
-        $stats_row[] = $stat_display[$j][$index]."<br />[".number_format ($final_score[$j][$index],2)."]";
+        if ($stat_InfoOnly[$j] == TRUE)
+        {
+            $stats_row[] = $stat_display[$j][$index];
+        }
+        else
+        {
+            $stats_row[] = $stat_display[$j][$index]."<br />[".number_format ($final_score[$j][$index],2)."]";
+        }
     }
     $stats[] = $stats_row;
     $ranknumber++; // increases $ranknumber by 1
