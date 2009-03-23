@@ -1,51 +1,34 @@
 ReadMe.txt
 -----------
 
-Known issues/improvements:
-1. Teams
-   a. Team Admin/Creation pages
-      - Ban (not done), Kick (done)
-      - password to join
-   b. Divisions Admin page ?
-
-2. Events.
+Features
+1. Events.
    a. Event Admin/Creation pages.
       - Manage:
-        -> Name
-        -> Game
-        -> Type -> =ladders
-        -> Rules
-        -> Description
-        -> Owner
-        -> Mods
-        -> Dates
-        -> Stats coeffs 
-           - ELO K, ELO M, ELO_default (can't be changed if one player has signed up)
-           -> % for each stats categorie
-           -> nbr_games_to_rank, nbr_team_games_to_rank
-   b. Awards
-     - player took 1st place
-     - player got into top 10
-     - player streaks: 5/10/25 games won in a row
-   
-   c. Password to join (done)
-   d. Ban/Kick Players/Teams
-   
-3. Match report
-   a. Need improved error checking when match report.
-      - Need to check all possible cases.
-   b. ELO calculation.
-      Maybe need to multiply K/M by the number of players per team, since ELO of a team is sum of players ELOs.
-   c. Sort names alphabetically, not by rank in the list boxes?
-   d. Clanmates should not be able to play against each other.
+         . Event summary
+            -> Owner
+            -> Moderators
+         . Event settings
+            -> Name
+            -> Password to join
+            -> Game
+            -> Type -> 1v1 or team ladder
+            -> Enable/disable scoring, and draws
+            -> Dates (start/end)
+            -> Description
+         . Event rules
+            -> Rules
+         . Event reset
+            -> reset players/teams, reset scores, deleteevent
+            -> Stats coeffs 
+               -> nbr_games_to_rank, nbr_team_games_to_rank
+               -> % for each stats categorie
+               -> "Info only" mode, if you want to show the stat but not count it in results.
+               -> TBD: ELO K, ELO M, ELO_default (can't be changed if one player has signed up)
+               -> TBD: TS beta, epsilon (can't be changed if one player has signed up)
+         . TBD: Ban/Kick Players/Teams
 
-4. User Account
-   a. Xfire?
-   b. Signature?
-   c. Team chooser, for each Game?
-   d. time user joined
-
-5. Results/Ranking/Ratings
+2. Events Info: Results/Ranking/Ratings
    a. List of categories:
       - Requirements to rank
         . Games required for player/team rating.
@@ -64,15 +47,40 @@ Known issues/improvements:
         . score
         . score difference
         . points 
+           
+3. Match report
+Suggestions:
+   a. Need improved error checking when match report.
+      - Need to check all possible cases.
+   b. ELO calculation.
+      Maybe need to multiply K/M by the number of players per team, since ELO of a team is sum of players ELOs.
+   c. Sort names alphabetically, not by rank in the list boxes?
+   d. Clanmates should not be able to play against each other.
 
-6. Better use of tinyMCE
+4. Teams
+   a. Team Admin/Creation pages
+      - Kick
+      - TBD: Ban
+      - password to join
+   b. Divisions Admin page ?
+
+5. User Account
+   a. TBD: Xfire?
+   b. TBD: Team chooser, for each Game?
+
+6. Awards
+ - player took 1st place
+ - player got into top 10
+ - player streaks: 5/10/25 games won in a row
+
+7. tinyMCE
 - Images, Emoticons
 
-7. Misc
+8. Misc
 - Add tables sorting (by links in the column header)
   &sortby=field_(up/down), field = Rank, Players, ...
 
-8. Credits
+9. Credits
   - DHTML calendar 1.0 - http://www.dynarch.com/projects/calendar
   - TinyMCE 2.1.0 - http://tinymce.moxiecode.com/
   - Tab Pane 1.02 - http://webfx.eae.net
@@ -107,7 +115,7 @@ SUGGESTIONS:
  . add TS calculations for draw case
  . Manage event, add "Draw proba"
  . matchinfo should have TS match rating
- . Streaks ok when draw???
+ . When draw occurs, winning or losing streak ends.
 - Scores
  . quick loss report -> no score???
 - Awards
