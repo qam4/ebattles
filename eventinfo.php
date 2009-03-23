@@ -9,7 +9,6 @@ include_once(e_PLUGIN."ebattles/include/time.php");
 include_once(e_PLUGIN."ebattles/include/pagination.php");
 include_once(e_PLUGIN."ebattles/include/show_array.php");
 
-
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
@@ -21,6 +20,17 @@ $text = '
 global $sql;
 
 $time = GMT_time();
+if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;
+$orderby=$_GET['orderby'];
+
+$sort = "DESC";
+if(isset($_GET["sort"]) && !empty($_GET["sort"]))
+{
+    $sort = ($_GET["sort"]=="ASC") ? "DESC" : "ASC";
+    $sort_type = ($_GET["sort"]=="ASC") ? SORT_DESC : SORT_ASC;
+}
+
+
 
 /* Event Name */
 $event_id = $_GET['eventid'];
@@ -664,6 +674,23 @@ else
     $stats = unserialize(implode('',file($file)));
     $num_columns = count($stats[0]) - 1;
 
+    //print_r($stats);
+
+    // Sorting
+    $header = $stats[0];
+    $new_header = array();
+    $column = 0;
+    foreach ($header as $header_cell)
+    {
+        $new_header[] = '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&orderby='.$column.'&sort='.$sort.'">'.$header_cell.'</a>';
+        $column++;
+    }
+    $header = array($new_header);
+
+    array_splice($stats,0,1);
+    multi2dSortAsc($stats, $orderby, $sort_type);
+    $stats = array_merge($header, $stats);
+
     // Paginate the statistics array
     $max_row = count($stats);
     $stats_paginate = array($stats[0]);
@@ -909,7 +936,21 @@ $ns->tablerender('Event Information', $text);
 require_once(FOOTERF);
 exit;
 
+function multi2dSortAsc(&$arr, $key, $sort)
+{
+    $sort_col = array();
+    foreach ($arr as $sub)
+    {
+        $string = $sub[$key];
+        // remove html tags
+        $string = preg_replace("/<[^>]*>/e","", $string);
+        $string = preg_split("/\/\s|\||(<br)/", $string);
 
+        //echo "$string[0]<br>";
+        $sort_col[] = $string[0];
+    }
+    array_multisort($sort_col, $sort, SORT_NUMERIC, $arr);
+}
 ?>
 
 
