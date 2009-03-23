@@ -4,60 +4,81 @@
 
 function Trueskill_update($epsilon,$beta, $A_mu, $A_sigma, $A_rank, $B_mu, $B_sigma, $B_rank)
 {
+    if ($epsilon == 0) $epsilon = 1.0;
     
-    echo "$A_rank, $B_rank<br>";
-    if($A_rank < $B_rank)
+    if($A_rank==$B_rank)
     {
-        $winner_mu    = $A_mu;
-        $winner_sigma = $A_sigma;
-        $looser_mu    = $B_mu;
-        $looser_sigma = $B_sigma;
-    }
-    elseif($A_rank==$B_rank)
-    {
-        // TBD
-    }
-    else
-    {
-        $winner_mu    = $B_mu;
-        $winner_sigma = $B_sigma;
-        $looser_mu    = $A_mu;
-        $looser_sigma = $A_sigma;
-    }
+        // Draw
+        $c_ij = sqrt(2*pow($beta,2) + pow($A_sigma,2) + pow($B_sigma,2));
+        $t = ($A_mu - $B_mu)/$c_ij;
+        $alpha = $epsilon / $c_ij;
+        $d = $alpha - $t;
+        $s = $alpha + $t;
 
-    $c_ij = sqrt(2*pow($beta,2) + pow($winner_sigma,2) + pow($looser_sigma,2));
-    $t = ($winner_mu - $looser_mu)/$c_ij;
-    $alpha = $epsilon / $c_ij;
+        $N_d = 1/(sqrt(2*M_PI)) * exp(- pow($d,2) / 2) ;
+        $Psi_d = cdf($d);
+        $N_s = 1/(sqrt(2*M_PI)) * exp(- pow($s,2) / 2) ;
+        $Psi_s = cdf(-$s);
 
-    $N = 1/(sqrt(2*M_PI)) * exp(- pow(($t - $alpha),2) / 2) ;
-    $Psi = cdf($t - $alpha);
+        $v = ($N_s-$N_d) / ($Psi_d-$Psi_s);
+        $w = pow($v,2) + ($d*$N_d+$s*$N_s) / ($Psi_d-$Psi_s);
 
-    $v = $N / $Psi;
-    $w = $v * ($v + ($t-$alpha));
-
-    $winner_delta_mu = pow($winner_sigma,2) * $v / $c_ij;
-    $looser_delta_mu = - pow($looser_sigma,2) * $v / $c_ij;
-    $winner_delta_sigma = sqrt(1-pow($winner_sigma,2) * $w / pow($c_ij,2));
-    $looser_delta_sigma = sqrt(1-pow($looser_sigma,2) * $w / pow($c_ij,2));
-
-    echo "Winner: $winner_mu, $winner_sigma, $winner_delta_mu, $winner_delta_sigma<br>";
-    echo "Looser: $looser_mu, $looser_sigma, $looser_delta_mu, $looser_delta_sigma<br>";
-
-    if($A_rank < $B_rank)
-    {
-        return array($winner_delta_mu,$winner_delta_sigma,$looser_delta_mu,$looser_delta_sigma);
-    }
-    elseif($A_rank==$B_rank)
-    {
-        // TBD
-        return array(0,0,0,0);
+        $A_delta_mu = pow($A_sigma,2) * $v / $c_ij;
+        $B_delta_mu = - pow($B_sigma,2) * $v / $c_ij;
+        $A_delta_sigma = sqrt(1-pow($A_sigma,2) * $w / pow($c_ij,2));
+        $B_delta_sigma = sqrt(1-pow($B_sigma,2) * $w / pow($c_ij,2));
+        
+        echo "A: $A_mu, $A_sigma, $A_delta_mu, $A_delta_sigma<br>";
+        echo "B: $B_mu, $B_sigma, $B_delta_mu, $B_delta_sigma<br>";
+        return array($A_delta_mu,$A_delta_sigma,$B_delta_mu,$B_delta_sigma);
+        //return array(0,1,0,1);
     }
     else
     {
-        return array($looser_delta_mu,$looser_delta_sigma,$winner_delta_mu,$winner_delta_sigma);
+        if($A_rank < $B_rank)
+        {
+            $winner_mu    = $A_mu;
+            $winner_sigma = $A_sigma;
+            $looser_mu    = $B_mu;
+            $looser_sigma = $B_sigma;
+        }
+        else
+        {
+            $winner_mu    = $B_mu;
+            $winner_sigma = $B_sigma;
+            $looser_mu    = $A_mu;
+            $looser_sigma = $A_sigma;
+        }
+
+        $c_ij = sqrt(2*pow($beta,2) + pow($winner_sigma,2) + pow($looser_sigma,2));
+        $t = ($winner_mu - $looser_mu)/$c_ij;
+        $alpha = $epsilon / $c_ij;
+        $d = $t - $alpha;
+
+        $N = 1/(sqrt(2*M_PI)) * exp(- pow($d,2) / 2) ;
+        $Psi = cdf($d);
+
+        $v = $N / $Psi;
+        $w = $v * ($v + $d);
+
+        $winner_delta_mu = pow($winner_sigma,2) * $v / $c_ij;
+        $looser_delta_mu = - pow($looser_sigma,2) * $v / $c_ij;
+        $winner_delta_sigma = sqrt(1-pow($winner_sigma,2) * $w / pow($c_ij,2));
+        $looser_delta_sigma = sqrt(1-pow($looser_sigma,2) * $w / pow($c_ij,2));
+
+        echo "Winner: $winner_mu, $winner_sigma, $winner_delta_mu, $winner_delta_sigma<br>";
+        echo "Looser: $looser_mu, $looser_sigma, $looser_delta_mu, $looser_delta_sigma<br>";
+
+        if($A_rank < $B_rank)
+        {
+            return array($winner_delta_mu,$winner_delta_sigma,$looser_delta_mu,$looser_delta_sigma);
+        }
+        else
+        {
+            return array($looser_delta_mu,$looser_delta_sigma,$winner_delta_mu,$winner_delta_sigma);
+        }
+
     }
-
-
 }
 
 function erf($x)
