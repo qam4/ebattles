@@ -6,6 +6,45 @@
 
 $file = 'cache/sql_cache_event_'.$event_id.'.txt';
 
+$id = array();
+$uid = array();
+$team = array();
+$name = array();
+$games_played = array();
+$ELO = array();
+$Skill = array();
+$win = array();
+$loss = array();
+$draw = array();
+$windrawloss = array();
+$streaks = array();
+$victory_ratio = array();
+$victory_percent = array();
+$unique_opponents = array();
+$opponentsELO = array();
+$score = array();
+$oppscore = array();
+$scorediff = array();
+$points = array();
+
+$games_played_score = array();
+$ELO_score = array();
+$Skill_score = array();
+$win_score = array();
+$loss_score = array();
+$draw_score = array();
+$windrawloss_score = array();
+$victory_ratio_score = array();
+$victory_percent_score = array();
+$unique_opponents_score = array();
+$opponentsELO_score = array();
+$streak_score = array();
+$score_score = array();
+$oppscore_score = array();
+$scorediff_score = array();
+$points_score = array();
+
+
 // Update Players stats
 $q_1 = "SELECT ".TBL_PLAYERS.".*, "
 .TBL_USERS.".*"
@@ -112,7 +151,7 @@ for($i=0; $i<$numPlayers; $i++)
     $team[] = $pteam;
     $games_played[] = $pgames_played;
     $ELO[] = $pELO;
-    $Skill[] = number_format ($pSkill,2);
+    $Skill[] = max(0,number_format ($pSkill,0));
     $win[] = $pwin;
     $loss[] = $ploss;
     $draw[] = $pdraw;
@@ -324,31 +363,33 @@ for ($j=0; $j<$numDisplayedCategories; $j++)
     $stats[0][] = $stat_cat_header[$j];
 }
 
-if ($stat_InfoOnly[$j] == FALSE)
+$player_index=0;
+$final_score = array();
+for($i=0; $i<$numPlayers; $i++)
 {
-    $final_score = array();
-    for($i=0; $i<$numPlayers; $i++)
+    $OverallScore[$i]=0;
+    if ($games_played[$i] >= $emingames)
     {
-        $OverallScore[$i]=0;
-        if ($games_played[$i] >= $emingames)
+        for ($j=0; $j<$numDisplayedCategories; $j++)
         {
-            for ($j=0; $j<$numDisplayedCategories; $j++)
+            if ($stat_InfoOnly[$j] == FALSE)
             {
-                $final_score[$j][$i] = $stat_a[$j] * $stat_score[$j][$i] + $stat_b[$j];
+                $final_score[$j][$i] = $stat_a[$j] * $stat_score[$j][$player_index] + $stat_b[$j];
                 $OverallScore[$i]+=$final_score[$j][$i];
             }
         }
-        else
-        {
-            for ($j=0; $j<$numDisplayedCategories; $j++)
-            {
-                $final_score[$j][$i] = 0;
-            }
-        }
-
-        $q_3 = "UPDATE ".TBL_PLAYERS." SET OverallScore = $OverallScore[$i] WHERE (PlayerID = '$id[$i]') AND (Event = '$event_id')";
-        $result_3 = $sql->db_Query($q_3);
+        $player_index++;
     }
+    else
+    {
+        for ($j=0; $j<$numDisplayedCategories; $j++)
+        {
+            $final_score[$j][$i] = 0;
+        }
+    }
+
+    $q_3 = "UPDATE ".TBL_PLAYERS." SET OverallScore = $OverallScore[$i] WHERE (PlayerID = '$id[$i]') AND (Event = '$event_id')";
+    $result_3 = $sql->db_Query($q_3);
 }
 // Build results table
 //--------------------
@@ -378,10 +419,11 @@ for($i=0; $i<$numPlayers; $i++)
     else
     {
         $rank = $ranknumber;
-        $q_2 = "UPDATE ".TBL_PLAYERS." SET Rank = $ranknumber WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
+        $ranknumber++; // increases $ranknumber by 1
+        $q_2 = "UPDATE ".TBL_PLAYERS." SET Rank = $rank WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
         $result_2 = $sql->db_Query($q_2);
 
-        $new_rankdelta = $prank - $ranknumber;
+        $new_rankdelta = $prank - $rank;
         if (($new_rankdelta != 0)&&($prank!=0))
         {
             $q_2 = "UPDATE ".TBL_PLAYERS." SET RankDelta = $new_rankdelta WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
@@ -520,7 +562,6 @@ for($i=0; $i<$numPlayers; $i++)
         }
     }
     $stats[] = $stats_row;
-    $ranknumber++; // increases $ranknumber by 1
 }
 
 /*

@@ -54,7 +54,8 @@ theme_advanced_toolbar_location : "bottom",
 theme_advanced_toolbar_align : "left",
 plugin_insertdate_dateFormat : "%Y-%m-%d",
 plugin_insertdate_timeFormat : "%H:%M:%S",
-extended_valid_elements : "a[name|href|target|title|onclick],img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name],hr[class|width|size|noshade],font[face|size|color|style],span[class|align|style]"
+extended_valid_elements : "a[name|href|target|title|onclick],img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name],hr[class|width|size|noshade],font[face|size|color|style],span[class|align|style]",
+editor_selector : "mceEditor"
 });
 </script>
 ';
@@ -94,6 +95,13 @@ else
     $edescription = mysql_result($result,0 , TBL_EVENTS.".Description");
     $eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
     $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
+    $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
+    $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
+    $eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
+    $eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
+    $ePointPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
+    $ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
+    $ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
     $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
     if($estart!=0)
@@ -342,6 +350,33 @@ else
         </tr>
         ';
 
+        //<!-- Points -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>Points</b></td>
+        <td class="forumheader3">
+        <table>
+        <tr>
+        <td>per win</td><td>per draw</td><td>per loss</td>
+        </tr>
+        <tr>
+        <td>
+        <div><input type="text" name="eventpointsperwin" value="'.$ePointPerWin.'"/></div>
+        </td>
+        <td>
+        <div><input type="text" name="eventpointsperdraw" value="'.$ePointPerDraw.'"/></div>
+        </td>
+        <td>
+        <div><input type="text" name="eventpointsperloss" value="'.$ePointPerLoss.'"/></div>
+        </td>
+        </tr>
+        </table>
+        ';
+        $text .= '
+        </td>
+        </tr>
+        ';
+        
         //<!-- Start Date -->
         $text .= '
         <tr>
@@ -422,7 +457,7 @@ else
         <td class="forumheader3"><b>Description</b></td>
         <td class="forumheader3">
         ';
-        $text .= '<textarea id="eventdescription" name="eventdescription" cols="70" rows="20">'.htmlspecialchars($edescription).'</textarea>';
+        $text .= '<textarea class="mceEditor" id="eventdescription" name="eventdescription" cols="70" rows="20">'.htmlspecialchars($edescription).'</textarea>';
         $text .= '
         </td>
         </tr>
@@ -459,7 +494,7 @@ else
         <td class="forumheader3"><b>Rules</b></td>
         <td class="forumheader3">
         ';
-        $text .= '<textarea id="eventrules" name="eventrules" cols="70" rows="20">'.$erules.'</textarea>';
+        $text .= '<textarea class="mceEditor" id="eventrules" name="eventrules" cols="70" rows="20">'.$erules.'</textarea>';
         $text .= '
         </td>
         </tr>
@@ -532,10 +567,14 @@ else
         </div>
         ';
         //***************************************************************************************
+        $cat_index = 0;
         $text .= '
         <div class="tab-page">
         <div class="tab">Event Stats</div>
         ';
+        $text .= 'Enter stats maximum ratings for each category.<br />';
+        $text .= 'Categories will be displayed in order of max rating.<br />';
+        $text .= 'Categories with max=0 will not be displayed.<br />';
         $text .= "
         <script type='text/javascript'>
         var A_TPL = {
@@ -568,7 +607,7 @@ else
         Number of Matches to Rank
         </td>
         <td class="forumheader3">
-        <input name="sliderValue0" id="sliderValue0" type="text" size="3" onchange="A_SLIDERS[0].f_setValue(this.value)"></input>
+        <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
         </td>
         <td class="forumheader3">
         ';
@@ -576,7 +615,7 @@ else
         <script type='text/javascript'>
         var A_INIT = {
         's_form' : 'eventstatsform',
-        's_name': 'sliderValue0',
+        's_name': 'sliderValue".$cat_index."',
         'n_minValue' : 0,
         'n_maxValue' : 10,
         'n_value' : ".$emingames.",
@@ -591,6 +630,7 @@ else
         <td class="forumheader3"></td>
         </tr>
         ';
+        $cat_index ++;
 
         if ($etype == "Team Ladder")
         {
@@ -598,7 +638,7 @@ else
             <tr>
             <td class="forumheader3">Number of Team Matches to Rank</td>
             <td class="forumheader3">
-            <input name="sliderValue1" id="sliderValue1" type="text" size="3" onchange="A_SLIDERS[1].f_setValue(this.value)"></input>
+            <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
             </td>
             <td class="forumheader3">
             ';
@@ -606,7 +646,7 @@ else
             <script type='text/javascript'>
             var A_INIT = {
             's_form' : 'eventstatsform',
-            's_name': 'sliderValue1',
+            's_name': 'sliderValue".$cat_index."',
             'n_minValue' : 0,
             'n_maxValue' : 10,
             'n_value' : ".$eminteamgames.",
@@ -621,6 +661,7 @@ else
             <td class="forumheader3"></td>
             </tr>
             ';
+            $cat_index ++;
         }
 
         $q_1 = "SELECT ".TBL_STATSCATEGORIES.".*"
@@ -631,7 +672,6 @@ else
         $numCategories = mysql_numrows($result_1);
 
         $rating_max=0;
-        $cat_index = 2;
         for($i=0; $i<$numCategories; $i++)
         {
             $cat_name = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryName");
@@ -649,13 +689,13 @@ else
                 $cat_name_display = "Games Played";
                 break;
                 case "VictoryRatio":
-                $cat_name_display = "Victory Ratio";
+                $cat_name_display = "Win/Loss";
                 break;
                 case "VictoryPercent":
                 $cat_name_display = "Victory Percent";
                 break;
                 case "WinDrawLoss":
-                $cat_name_display = "Victory Ratio";
+                $cat_name_display = "Win/Draw/Loss";
                 break;
                 case "UniqueOpponents":
                 $cat_name_display = "Unique Opponents";

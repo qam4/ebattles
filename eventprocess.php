@@ -140,6 +140,26 @@ else
                 $result2 = $sql->db_Query($q2);
             }
 
+            /* Points */
+            $new_eventpointsperwin = htmlspecialchars($_POST['eventpointsperwin']);
+            if (preg_match("/^\d+$/", $new_eventpointsperwin))
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET PointsPerWin = '$new_eventpointsperwin' WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
+            $new_eventpointsperdraw = htmlspecialchars($_POST['eventpointsperdraw']);
+            if (preg_match("/^\d+$/", $new_eventpointsperdraw))
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET PointsPerDraw = '$new_eventpointsperdraw' WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
+            $new_eventpointsperloss = htmlspecialchars($_POST['eventpointsperloss']);
+            if (preg_match("/^\d+$/", $new_eventpointsperloss))
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET PointsPerLoss = '$new_eventpointsperloss' WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
+
             /* Event Game */
             $new_eventgame = $_POST['eventgame'];
             $q2 = "UPDATE ".TBL_EVENTS." SET Game = '$new_eventgame' WHERE (EventID = '$event_id')";
@@ -242,23 +262,27 @@ else
             $event_id = $_GET['eventid'];
 
             //echo "-- eventstatssave --<br />";
+            $cat_index = 0;
 
             /* Event Min games to rank */
-            $new_eventGamesToRank = htmlspecialchars($_POST['sliderValue0']);
+            $new_eventGamesToRank = htmlspecialchars($_POST['sliderValue'.$cat_index]);
             if (is_numeric($new_eventGamesToRank))
             {
                 $q2 = "UPDATE ".TBL_EVENTS." SET nbr_games_to_rank = '$new_eventGamesToRank' WHERE (EventID = '$event_id')";
                 $result2 = $sql->db_Query($q2);
             }
+            $cat_index++;
+
             if ($etype == "Team Ladder")
             {
                 /* Event Min Team games to rank */
-                $new_eventTeamGamesToRank = htmlspecialchars($_POST['sliderValue1']);
+                $new_eventTeamGamesToRank = htmlspecialchars($_POST['sliderValue'.$cat_index]);
                 if (is_numeric($new_eventTeamGamesToRank))
                 {
                     $q2 = "UPDATE ".TBL_EVENTS." SET nbr_team_games_to_rank = '$new_eventTeamGamesToRank' WHERE (EventID = '$event_id')";
                     $result2 = $sql->db_Query($q2);
                 }
+                $cat_index++;
             }
 
             $q_1 = "SELECT ".TBL_STATSCATEGORIES.".*"
@@ -268,7 +292,6 @@ else
             $result_1 = $sql->db_Query($q_1);
             $numCategories = mysql_numrows($result_1);
 
-            $cat_index = 2;
             for($i=0; $i<$numCategories; $i++)
             {
                 $cat_name = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryName");
