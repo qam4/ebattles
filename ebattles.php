@@ -114,7 +114,11 @@ function displayLatestGames(){
             ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
             $result2 = $sql->db_Query($q2);
             $numRanks = mysql_numrows($result2);
-            if ($numRanks == 2)
+            if ($numRanks == 1)
+            {
+                $str = " tied ";
+            }
+            else if ($numRanks == 2)
             {
                 $str = " defeated ";
             }
@@ -135,7 +139,7 @@ function displayLatestGames(){
             ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
             ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
             ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-            ." ORDER BY ".TBL_SCORES.".Player_Rank";
+            ." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 
             $result2 = $sql->db_Query($q2);
             $numPlayers = mysql_numrows($result2);
@@ -148,19 +152,21 @@ function displayLatestGames(){
             $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
 
             $rank = 1;
+            $team = 1;
             for ($index = 1; $index < $numPlayers; $index++)
             {
                 $pid  = mysql_result($result2,$index , TBL_USERS.".user_id");
                 $pname  = mysql_result($result2,$index , TBL_USERS.".user_name");
-                $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
-                if ($pteam == $rank)
+                $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
+                $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
+                if ($pteam == team)
                 {
                     $players .= " & ";
                 }
                 else
                 {
                     $players .= $str;
-                    $rank++;
+                    $team++;
                 }
                 $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
             }

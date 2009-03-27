@@ -426,9 +426,9 @@ for($i=0; $i<$numPlayers; $i++)
         $new_rankdelta = $prank - $rank;
         if (($new_rankdelta != 0)&&($prank!=0))
         {
-            $q_2 = "UPDATE ".TBL_PLAYERS." SET RankDelta = $new_rankdelta WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
+            $prankdelta += $new_rankdelta;
+            $q_2 = "UPDATE ".TBL_PLAYERS." SET RankDelta = $prankdelta WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
             $result_2 = $sql->db_Query($q_2);
-            $prankdelta = $new_rankdelta;
         }
 
         if (($new_rankdelta != 0)&&($rank==1))
@@ -504,7 +504,7 @@ for($i=0; $i<$numPlayers; $i++)
         {
             $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\"></img>";
         }
-        else if ($prankdelta==0)
+        else if ($prank==0)
         {
             $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
         }

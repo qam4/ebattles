@@ -23,7 +23,7 @@ $time = GMT_time();
 if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;
 $orderby=$_GET['orderby'];
 
-$sort = "DESC";
+$sort = "ASC";
 if(isset($_GET["sort"]) && !empty($_GET["sort"]))
 {
     $sort = ($_GET["sort"]=="ASC") ? "DESC" : "ASC";
@@ -759,7 +759,11 @@ else
             ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
             $result2 = $sql->db_Query($q2);
             $numRanks = mysql_numrows($result2);
-            if ($numRanks == 2)
+            if ($numRanks == 1)
+            {
+                $str = " tied ";
+            }
+            else if ($numRanks == 2)
             {
                 $str = " defeated ";
             }
@@ -780,7 +784,7 @@ else
             ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
             ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
             ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-            ." ORDER BY ".TBL_SCORES.".Player_Rank";
+            ." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 
             $result2 = $sql->db_Query($q2);
             $numPlayers = mysql_numrows($result2);
@@ -788,11 +792,13 @@ else
             $players = '';
 
             $rank = 1;
+            $team = 1;
             for ($index = 0; $index < $numPlayers; $index++)
             {
                 $pid  = mysql_result($result2,$index , TBL_USERS.".user_id");
                 $pname  = mysql_result($result2,$index , TBL_USERS.".user_name");
-                $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
+                $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
+                $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
                 $pclan = '';
                 $pclantag = '';
                 if ($etype == "Team Ladder")
@@ -816,14 +822,14 @@ else
                 }
                 if($index>0)
                 {
-                    if ($pteam == $rank)
+                    if ($pteam == $team)
                     {
                         $players .= " & ";
                     }
                     else
                     {
                         $players .= $str;
-                        $rank++;
+                        $team++;
                     }
                 }
                 $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";

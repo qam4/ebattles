@@ -47,6 +47,10 @@ Features
         . score
         . score difference
         . points 
+Suggestions:
+- rank delta could be accumulated (like streaks) 
+   - until delta is changing sign. if old_delta*delta > 0 -> ...
+   - or since last match...
            
 3. Match report
 Suggestions:
@@ -77,8 +81,6 @@ Suggestions:
 - Images, Emoticons
 
 8. Misc
-- Add tables sorting (by links in the column header)
-  &sortby=field_(up/down), field = Rank, Players, ...
 
 9. Credits
   - DHTML calendar 1.0 - http://www.dynarch.com/projects/calendar
