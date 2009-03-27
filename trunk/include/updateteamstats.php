@@ -438,7 +438,6 @@ for($i=0; $i<$numTeams; $i++)
     $q_3 = "UPDATE ".TBL_TEAMS." SET OverallScore = $OverallScore[$i] WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
 }
-}
 // Build results table
 //--------------------
 $q_1 = "SELECT *"
@@ -472,9 +471,9 @@ for($i=0; $i<$numTeams; $i++)
         $new_rankdelta = $trank - $rank;
         if (($new_rankdelta != 0)&&($trank!=0))
         {
-            $q_2 = "UPDATE ".TBL_TEAMS." SET RankDelta = $new_rankdelta WHERE (TeamID = '$tid') AND (Event = '$event_id')";
+            $trankdelta += $new_rankdelta;
+            $q_2 = "UPDATE ".TBL_TEAMS." SET RankDelta = $trankdelta WHERE (TeamID = '$tid') AND (Event = '$event_id')";
             $result_2 = $sql->db_Query($q_2);
-            $trankdelta = $new_rankdelta;
         }
 
         if ($trankdelta>0)
@@ -485,7 +484,7 @@ for($i=0; $i<$numTeams; $i++)
         {
             $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$trankdelta\" title=\"$trankdelta\"></img>";
         }
-        else if ($trankdelta==0)
+        else if ($trank==0)
         {
             $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
         }
@@ -552,3 +551,4 @@ print $row['category_name']."<br />";
 }
 */
 
+?>

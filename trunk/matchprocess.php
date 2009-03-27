@@ -93,11 +93,10 @@ if(isset($_POST['qrsubmitloss']))
     $plooserTS_sigma *= $looser_deltaTS_sigma;
 
     // Update players data ------------------------------------------
+    // Looser
+    //--------
     $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $plooserELO WHERE (PlayerID = '$plooserID')";
     $result = $sql->db_Query($q);
-    $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pwinnerELO WHERE (PlayerID = '$pwinnerID')";
-    $result = $sql->db_Query($q);
-
     $q = "UPDATE ".TBL_PLAYERS." SET TS_mu = $plooserTS_mu WHERE (PlayerID = '$plooserID')";
     $result = $sql->db_Query($q);
     $q = "UPDATE ".TBL_PLAYERS." SET TS_sigma = $plooserTS_sigma WHERE (PlayerID = '$plooserID')";
@@ -137,6 +136,14 @@ if(isset($_POST['qrsubmitloss']))
     $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $plooserStreak_Worst WHERE (PlayerID = '$plooserID')";
     $result3 = $sql->db_Query($q3);
 
+     // Reset rank delta after a match.
+     $q_3 = "UPDATE ".TBL_PLAYERS." SET RankDelta = 0 WHERE (PlayerID = '$pwinnerID')";
+     $result_3 = $sql->db_Query($q_3);
+
+    // Winner
+    //--------
+    $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pwinnerELO WHERE (PlayerID = '$pwinnerID')";
+    $result = $sql->db_Query($q);
     $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pwinnerGames WHERE (PlayerID = '$pwinnerID')";
     $result = $sql->db_Query($q);
     $q = "UPDATE ".TBL_PLAYERS." SET Win = $pwinnerWins WHERE (PlayerID = '$pwinnerID')";
@@ -158,6 +165,10 @@ if(isset($_POST['qrsubmitloss']))
     $result3 = $sql->db_Query($q3);
     $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pwinnerStreak_Best WHERE (PlayerID = '$pwinnerID')";
     $result3 = $sql->db_Query($q3);
+
+     // Reset rank delta after a match.
+     $q_3 = "UPDATE ".TBL_PLAYERS." SET RankDelta = 0 WHERE (PlayerID = '$pwinnerID')";
+     $result_3 = $sql->db_Query($q_3);
 
     if ($pwinnerStreak == 5)
     {

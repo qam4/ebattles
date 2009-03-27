@@ -587,6 +587,9 @@ if (isset($_POST['submit']))
 				$result4 = $sql->db_Query($q4);
 			}
 
+            // Reset rank delta after a match.
+            $q_3 = "UPDATE ".TBL_PLAYERS." SET RankDelta = 0 WHERE (PlayerID = '$pid')";
+            $result_3 = $sql->db_Query($q_3);
 		}
 
 		$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";

@@ -410,9 +410,9 @@ function resetTeams($event_id)
             $result3 = $sql->db_Query($q3);
             $q3 = "UPDATE ".TBL_TEAMS." SET Points = 0 WHERE (TeamID = '$tID')";
             $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET TS_mu = '$eTS_default_mu' WHERE (TeamID = '$tID')";
+            $q3 = "UPDATE ".TBL_TEAMS." SET TS_mu = '$eTS_default_mu' WHERE (TeamID = '$tID')";
             $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET TS_sigma = '$eTS_default_sigma' WHERE (TeamID = '$tID')";
+            $q3 = "UPDATE ".TBL_TEAMS." SET TS_sigma = '$eTS_default_sigma' WHERE (TeamID = '$tID')";
             $result3 = $sql->db_Query($q3);
         }
     }
