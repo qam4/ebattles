@@ -80,6 +80,7 @@ for($i=0; $i<$numTeams; $i++)
 
     $tOverallScore = 0;
     $tELO = 0;
+    $tSkill = 0;
     $twin = 0;
     $tloss = 0;
     $tgames_played = 0;
@@ -97,11 +98,14 @@ for($i=0; $i<$numTeams; $i++)
             $puid = mysql_result($result_2,$j, TBL_PLAYERS.".User");
             $pgames_played = mysql_result($result_2,$j, TBL_PLAYERS.".GamesPlayed");
             $pELO = mysql_result($result_2,$j, TBL_PLAYERS.".ELORanking");
+            $pTS_mu = mysql_result($result_2,$j, TBL_PLAYERS.".TS_mu");
+            $pTS_sigma = mysql_result($result_2,$j, TBL_PLAYERS.".TS_sigma");
+            $pSkill = $pTS_mu - 3*$pTS_sigma;
             $pwin = mysql_result($result_2,$j, TBL_PLAYERS.".Win");
             $pdraw = mysql_result($result_2,$j, TBL_PLAYERS.".Draw");
             $ploss = mysql_result($result_2,$j, TBL_PLAYERS.".Loss");
             $pscore = mysql_result($result_2,$j, TBL_PLAYERS.".Score");
-            $pscoreAgainst = mysql_result($result_2,$j, TBL_PLAYERS.".ScoreAgainst");
+            $poppscore = mysql_result($result_2,$j, TBL_PLAYERS.".ScoreAgainst");
             $ppoints = mysql_result($result_2,$j, TBL_PLAYERS.".Points");
 
             $popponentsELO = 0;
@@ -162,11 +166,12 @@ for($i=0; $i<$numTeams; $i++)
             }
             $punique_opponents = count(array_unique($players));
 
+            $tSkill += $pSkill;
             $twin += $pwin;
             $tdraw += $pdraw;
             $tloss += $ploss;
             $tscore += $pscore;
-            $tscoreAgainst += $pscoreAgainst;
+            $toppscore += $poppscore;
             $tpoints += $ppoints;
             $tgames_played += $pgames_played;
             $tunique_opponents += $punique_opponents;
@@ -192,6 +197,7 @@ for($i=0; $i<$numTeams; $i++)
         if ($tnbrplayers_rated>0)
         {
             $tELO /= $tnbrplayers_rated;
+            $tSkill /= $tnbrplayers_rated;
         }
     }
     // For display
@@ -202,6 +208,7 @@ for($i=0; $i<$numTeams; $i++)
     $nbr_players[]  = $tPlayers;
     $games_played[] = $tgames_played;
     $ELO[] = $tELO;
+    $Skill[] = max(0,number_format ($tSkill,0));
     $win[] = $twin;
     $loss[] = $tloss;
     $draw[] = $tdraw;
@@ -218,20 +225,21 @@ for($i=0; $i<$numTeams; $i++)
     // Actual score (not for display)
     if ($tgames_played >= $eminteamgames)
     {
-    $games_played_score[] = $tgames_played;
-    $ELO_score[] = $tELO;
-    $win_score[] = $twin;
-    $loss_score[] = $tloss;
-    $draw_score[] = $tdraw;
-    $windrawloss_score[] = $twin - $tloss; //fm - ???
-    $victory_ratio_score[] = $tvictory_ratio;
-    $victory_percent_score[] = $tvictory_percent;
-    $unique_opponents_score[] = $tunique_opponents;
-    $opponentsELO_score[] = $topponentsELO;
-    $score_score[] = $tscore;
-    $oppscore_score[] = $toppscore;
-    $scorediff_score[] = $tscore - $toppscore;
-    $points_score[] = $tpoints;
+        $games_played_score[] = $tgames_played;
+        $ELO_score[] = $tELO;
+        $Skill_score[] = $tSkill;
+        $win_score[] = $twin;
+        $loss_score[] = $tloss;
+        $draw_score[] = $tdraw;
+        $windrawloss_score[] = $twin - $tloss; //fm - ???
+        $victory_ratio_score[] = $tvictory_ratio;
+        $victory_percent_score[] = $tvictory_percent;
+        $unique_opponents_score[] = $tunique_opponents;
+        $opponentsELO_score[] = $topponentsELO;
+        $score_score[] = $tscore;
+        $oppscore_score[] = $toppscore;
+        $scorediff_score[] = $tscore - $toppscore;
+        $points_score[] = $tpoints;
 
         $teams_rated++;
     }
@@ -272,6 +280,13 @@ for($i=0; $i<$numCategories; $i++)
             $max = max($ELO_score);
             $stat_score[$cat_index] = $ELO_score;
             $stat_display[$cat_index] = $ELO;
+            break;
+            case "Skill":
+            $cat_header = "<b title=\"TrueSkill(TM)\">Skill</b>";
+            $min = min($Skill_score);
+            $max = max($Skill_score);
+            $stat_score[$cat_index] = $Skill_score;
+            $stat_display[$cat_index] = $Skill;
             break;
             case "GamesPlayed":
             $cat_header = "<b title=\"Number of games played\">Games</b>";
@@ -431,7 +446,7 @@ for($i=0; $i<$numTeams; $i++)
     $result_3 = $sql->db_Query($q_3);
     $q_3 = "UPDATE ".TBL_TEAMS." SET Score = $tscore WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
-    $q_3 = "UPDATE ".TBL_TEAMS." SET ScoreAgainst = $tscoreAgainst WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
+    $q_3 = "UPDATE ".TBL_TEAMS." SET ScoreAgainst = $toppscore WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
     $q_3 = "UPDATE ".TBL_TEAMS." SET Points = $tpoints WHERE (TeamID = '$id[$i]') AND (Event = '$event_id')";
     $result_3 = $sql->db_Query($q_3);
@@ -469,7 +484,7 @@ for($i=0; $i<$numTeams; $i++)
         $result_2 = $sql->db_Query($q_2);
 
         $new_rankdelta = $trank - $rank;
-        if (($new_rankdelta != 0)&&($trank!=0))
+        if ($new_rankdelta != 0)
         {
             $trankdelta += $new_rankdelta;
             $q_2 = "UPDATE ".TBL_TEAMS." SET RankDelta = $trankdelta WHERE (TeamID = '$tid') AND (Event = '$event_id')";
@@ -480,11 +495,11 @@ for($i=0; $i<$numTeams; $i++)
         {
             $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$trankdelta\" title=\"+$trankdelta\"></img>";
         }
-        else if ($trankdelta<0)
+        else if (($trankdelta<0)&&($rank+$trankdelta!=0))
         {
             $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$trankdelta\" title=\"$trankdelta\"></img>";
         }
-        else if ($trank==0)
+        else if ($rank+$trankdelta==0)
         {
             $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
         }
