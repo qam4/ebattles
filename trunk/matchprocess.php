@@ -50,6 +50,7 @@ if(isset($_POST['qrsubmitloss']))
     $plooserStreak = $row['Streak'];
     $plooserStreak_Best = $row['Streak_Best'];
     $plooserStreak_Worst = $row['Streak_Worst'];
+    $plooserTeam = $row['Team'];
 
     $pwinnerID = $_POST['Player'];
     $q = "SELECT *"
@@ -69,6 +70,7 @@ if(isset($_POST['qrsubmitloss']))
     $pwinnerStreak = $row['Streak'];
     $pwinnerStreak_Best = $row['Streak_Best'];
     $pwinnerStreak_Worst = $row['Streak_Worst'];
+    $pwinnerTeam = $row['Team'];
 
     // New ELO ------------------------------------------
     $M=$eELO_M;       // Span
@@ -86,7 +88,7 @@ if(isset($_POST['qrsubmitloss']))
     $winner_deltaTS_sigma = $update[1];
     $looser_deltaTS_mu = $update[2];
     $looser_deltaTS_sigma = $update[3];
-    
+
     $pwinnerTS_mu += $winner_deltaTS_mu;
     $plooserTS_mu += $looser_deltaTS_mu;
     $pwinnerTS_sigma *= $winner_deltaTS_sigma;
@@ -136,9 +138,9 @@ if(isset($_POST['qrsubmitloss']))
     $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = $plooserStreak_Worst WHERE (PlayerID = '$plooserID')";
     $result3 = $sql->db_Query($q3);
 
-     // Reset rank delta after a match.
-     $q_3 = "UPDATE ".TBL_PLAYERS." SET RankDelta = 0 WHERE (PlayerID = '$pwinnerID')";
-     $result_3 = $sql->db_Query($q_3);
+    // Reset rank delta after a match.
+    $q_3 = "UPDATE ".TBL_PLAYERS." SET RankDelta = 0 WHERE (PlayerID = '$plooserID')";
+    $result_3 = $sql->db_Query($q_3);
 
     // Winner
     //--------
@@ -166,9 +168,9 @@ if(isset($_POST['qrsubmitloss']))
     $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = $pwinnerStreak_Best WHERE (PlayerID = '$pwinnerID')";
     $result3 = $sql->db_Query($q3);
 
-     // Reset rank delta after a match.
-     $q_3 = "UPDATE ".TBL_PLAYERS." SET RankDelta = 0 WHERE (PlayerID = '$pwinnerID')";
-     $result_3 = $sql->db_Query($q_3);
+    // Reset rank delta after a match.
+    $q_3 = "UPDATE ".TBL_PLAYERS." SET RankDelta = 0 WHERE (PlayerID = '$pwinnerID')";
+    $result_3 = $sql->db_Query($q_3);
 
     if ($pwinnerStreak == 5)
     {
@@ -195,9 +197,11 @@ if(isset($_POST['qrsubmitloss']))
     // Update Teams data ------------------------------------------
     if ($etype == "Team Ladder")
     {
+        $q_3 = "UPDATE ".TBL_TEAMS." SET RankDelta = 0 WHERE (TeamID = '$plooserTeam')";
+        $result_3 = $sql->db_Query($q_3);
 
-
-
+        $q_3 = "UPDATE ".TBL_TEAMS." SET RankDelta = 0 WHERE (TeamID = '$pwinnerTeam')";
+        $result_3 = $sql->db_Query($q_3);
     }
 
     // Create Match ------------------------------------------

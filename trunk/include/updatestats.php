@@ -424,7 +424,7 @@ for($i=0; $i<$numPlayers; $i++)
         $result_2 = $sql->db_Query($q_2);
 
         $new_rankdelta = $prank - $rank;
-        if (($new_rankdelta != 0)&&($prank!=0))
+        if ($new_rankdelta != 0)
         {
             $prankdelta += $new_rankdelta;
             $q_2 = "UPDATE ".TBL_PLAYERS." SET RankDelta = $prankdelta WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
@@ -465,7 +465,7 @@ for($i=0; $i<$numPlayers; $i++)
         {
             $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"></img>";
         }
-        else if (($rank<=10)&&(($rank+$prankdelta>min(10,$nbrplayers))||($prankdelta==0)))
+        else if (($rank<=10)&&(($rank+$prankdelta>min(10,$nbrplayers))||($rank+$prankdelta==0)))
         {
             $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"></img>";
         }
@@ -500,11 +500,11 @@ for($i=0; $i<$numPlayers; $i++)
         {
             $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\"></img>";
         }
-        else if ($prankdelta<0)
+        else if (($prankdelta<0)&&($rank+$prankdelta!=0))
         {
             $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\"></img>";
         }
-        else if ($prank==0)
+        else if ($rank+$prankdelta==0)
         {
             $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
         }
