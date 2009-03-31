@@ -181,6 +181,7 @@ if(isset($_POST['qrsubmitloss']))
     ."     Streak_Best = $pwinnerStreak_Best,"
     ."     RankDelta = 0"
     ." WHERE (PlayerID = '$pwinnerID')";
+    $result = $sql->db_Query($q);
 
     // Update Teams data ------------------------------------------
     if ($etype == "Team Ladder")
