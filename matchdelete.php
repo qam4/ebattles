@@ -75,7 +75,7 @@ else
             $pDraws= mysql_result($result,$i, TBL_PLAYERS.".Draw");
             $pLosses= mysql_result($result,$i, TBL_PLAYERS.".Loss");
             $pScore= mysql_result($result,$i, TBL_PLAYERS.".Score");
-            $pScoreAgainst= mysql_result($result,$i, TBL_PLAYERS.".ScoreAgainst");
+            $pOppScore= mysql_result($result,$i, TBL_PLAYERS.".ScoreAgainst");
             $pPoints= mysql_result($result,$i, TBL_PLAYERS.".Points");
             $scoreid = mysql_result($result,$i, TBL_SCORES.".ScoreID");
             $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
@@ -85,7 +85,7 @@ else
             $psDraws = mysql_result($result,$i, TBL_SCORES.".Player_Draw");
             $psLosses = mysql_result($result,$i, TBL_SCORES.".Player_Loss");
             $psScore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
-            $psScoreAgainst = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
+            $psOppScore = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
             $psPoints = mysql_result($result,$i, TBL_SCORES.".Player_Points");
             
             $pELO -= $pdeltaELO;
@@ -95,31 +95,24 @@ else
             $pDraws -= $psDraws;
             $pLosses -= $psLosses;
             $pScore -= $psScore;
-            $pScoreAgainst -= $psScoreAgainst;
+            $pOppScore -= $psOppScore;
             $pPoints -= $psPoints;
             $pGamesPlayed -= 1;
             
             $text .= "Player $pname, new ELO:$pELO<br />"; 
 
-            $q = "UPDATE ".TBL_PLAYERS." SET ELORanking = $pELO WHERE (User = '$puid') AND (Event = '$event_id')";
-            $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET TS_mu = $pTS_mu WHERE (User = '$puid') AND (Event = '$event_id')";
-            $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET TS_sigma = $pTS_sigma WHERE (User = '$puid') AND (Event = '$event_id')";
-            $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = $pGamesPlayed WHERE (User = '$puid') AND (Event = '$event_id')";
-            $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Loss = $pLosses WHERE (User = '$puid') AND (Event = '$event_id')";
-            $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Win = $pWins WHERE (User = '$puid') AND (Event = '$event_id')";
-            $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Draw = $pDraws WHERE (User = '$puid') AND (Event = '$event_id')";
-            $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Score = $pScore WHERE (User = '$puid') AND (Event = '$event_id')";
-            $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET ScoreAgainst = $pScoreAgainst WHERE (User = '$puid') AND (Event = '$event_id')";
-            $result2 = $sql->db_Query($q);
-            $q = "UPDATE ".TBL_PLAYERS." SET Points = $pPoints WHERE (User = '$puid') AND (Event = '$event_id')";
+            $q = "UPDATE ".TBL_PLAYERS
+            ." SET ELORanking = $pELO,"
+            ."     TS_mu = $pTS_mu,"
+            ."     TS_sigma = $pTS_sigma,"
+            ."     GamesPlayed = $pGamesPlayed,"
+            ."     Loss = $pLosses,"
+            ."     Win = $pWins,"
+            ."     Draw = $pDraws,"
+            ."     Score = $pScore,"
+            ."     ScoreAgainst = $pOppScore,"
+            ."     Points = $pPoints"
+            ." WHERE (User = '$puid') AND (Event = '$event_id')";
             $result2 = $sql->db_Query($q);
             
             // fmarc- Can not reverse "streak" information here :(

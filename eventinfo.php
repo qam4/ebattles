@@ -454,8 +454,8 @@ else
                     }
                     else
                     {
-                        $text .= '<tr><td class="forumheader3">';
-                        $text .= '
+                        $text .= '<tr><td class="forumheader3"></td>';
+                        $text .= '<td class="forumheader3">
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                         <div>
                         <input type="hidden" name="joinEventPassword" value=""></input>
