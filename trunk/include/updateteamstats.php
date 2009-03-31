@@ -83,7 +83,11 @@ for($team=0; $team<$numTeams; $team++)
     $tTS_sigma2 = 0;
     $twin = 0;
     $tloss = 0;
+    $tdraw = 0;
     $tgames_played = 0;
+    $tscore = 0;
+    $toppscore = 0;
+    $tpoints = 0;
     $tunique_opponents = 0;
     $topponentsELO = 0;
     $topponents = 0;
@@ -248,6 +252,20 @@ for($team=0; $team<$numTeams; $team++)
 
         $teams_rated++;
     }
+    
+    $q_update = "UPDATE ".TBL_TEAMS
+    ." SET ELORanking = $tELO,"
+    ."     TS_mu = $tTS_mu,"
+    ."     TS_sigma = $tTS_sigma,"
+    ."     Loss = $tloss,"
+    ."     Win = $twin,"
+    ."     Draw = $tdraw,"
+    ."     Score = $tscore,"
+    ."     ScoreAgainst = $toppscore,"
+    ."     Points = $tpoints"
+    ." WHERE (TeamID = '$id[$team]')"
+    ."   AND (Event = '$event_id')";
+    $result_update = $sql->db_Query($q_update);
 }
 
 $rating_max= 0;
@@ -445,16 +463,7 @@ for($team=0; $team<$numTeams; $team++)
     }
 
     $q_update = "UPDATE ".TBL_TEAMS
-    ." SET ELORanking = $tELO,"
-    ."     TS_mu = $tTS_mu,"
-    ."     TS_sigma = $tTS_sigma,"
-    ."     Loss = $tloss,"
-    ."     Win = $twin,"
-    ."     Draw = $tdraw,"
-    ."     Score = $tscore,"
-    ."     ScoreAgainst = $toppscore,"
-    ."     Points = $tpoints,"
-    ."     OverallScore = $OverallScore[$team]"
+    ." SET OverallScore = $OverallScore[$team]"
     ." WHERE (TeamID = '$id[$team]')"
     ."   AND (Event = '$event_id')";
     $result_update = $sql->db_Query($q_update);
