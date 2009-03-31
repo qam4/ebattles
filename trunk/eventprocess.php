@@ -348,29 +348,21 @@ function resetPlayers($event_id)
         for($j=0; $j<$num_rows_2; $j++)
         {
             $pID  = mysql_result($result2,$j, TBL_PLAYERS.".PlayerID");
-            $q3 = "UPDATE ".TBL_PLAYERS." SET ELORanking = '$eELOdefault' WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET GamesPlayed = 0 WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Loss = 0 WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Win = 0 WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Draw = 0 WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Score = 0 WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Points = 0 WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak = 0 WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Best = 0 WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET Streak_Worst = 0 WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET TS_mu = '$eTS_default_mu' WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_PLAYERS." SET TS_sigma = '$eTS_default_sigma' WHERE (PlayerID = '$pID')";
+            $q3 = "UPDATE ".TBL_PLAYERS
+            ." SET ELORanking = '$eELOdefault',"
+            ."     TS_mu = '$eTS_default_mu',"
+            ."     TS_sigma = '$eTS_default_sigma',"
+            ."     GamesPlayed = 0,"
+            ."     Loss = 0,"
+            ."     Win = 0,"
+            ."     Draw = 0,"
+            ."     Score = 0,"
+            ."     ScoreAgainst = 0,"
+            ."     Points = 0,"
+            ."     Streak = 0,"
+            ."     Streak_Best = 0,"
+            ."     Streak_Worst = 0,"
+            ." WHERE (PlayerID = '$pID')";
             $result3 = $sql->db_Query($q3);
         }
     }
@@ -396,23 +388,18 @@ function resetTeams($event_id)
         for($j=0; $j<$num_rows_2; $j++)
         {
             $tID  = mysql_result($result2,$j, TBL_TEAMS.".PlayerID");
-            $q3 = "UPDATE ".TBL_TEAMS." SET ELORanking = '$eELOdefault' WHERE (TeamID = '$tID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_TEAMS." SET GamesPlayed = 0 WHERE (TeamID = '$tID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_TEAMS." SET Loss = 0 WHERE (TeamID = '$tID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_TEAMS." SET Win = 0 WHERE (TeamID = '$tID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_TEAMS." SET Draws = 0 WHERE (TeamID = '$tID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_TEAMS." SET Score = 0 WHERE (TeamID = '$tID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_TEAMS." SET Points = 0 WHERE (TeamID = '$tID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_TEAMS." SET TS_mu = '$eTS_default_mu' WHERE (TeamID = '$tID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "UPDATE ".TBL_TEAMS." SET TS_sigma = '$eTS_default_sigma' WHERE (TeamID = '$tID')";
+            $q3 = "UPDATE ".TBL_TEAMS
+            ." SET ELORanking = '$eELOdefault',"
+            ."     TS_mu = '$eTS_default_mu',"
+            ."     TS_sigma = '$eTS_default_sigma',"
+            ."     GamesPlayed = 0,"
+            ."     Loss = 0,"
+            ."     Win = 0,"
+            ."     Draws = 0,"
+            ."     Score = 0,"
+            ."     ScoreAgainst = 0,"
+            ."     Points = 0"
+            ." WHERE (TeamID = '$tID')";
             $result3 = $sql->db_Query($q3);
         }
     }

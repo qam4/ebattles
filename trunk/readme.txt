@@ -123,3 +123,9 @@ SUGGESTIONS:
  . quick loss report -> no score???
 - Awards
  . Need to see awards in user profile.
+- Team skill != average of players skills.
+
+SQL database
+- Queries:
+ . eventinfo -> . 35 + 2 if signed up
+ . updatestats: 3 + 2*players + 2* matches
