@@ -579,7 +579,7 @@ if (isset($_POST['submit']))
             ."     TS_mu = $pTS_mu,"
             ."     TS_sigma = $pTS_sigma,"
             ."     GamesPlayed = $pGamesPlayed,"
-            ."     Loss = $pLosses, "
+            ."     Loss = $pLosses,"
             ."     Win = $pWins,"
             ."     Draw = $pDraws,"
             ."     Score = $pScore,"
@@ -590,7 +590,7 @@ if (isset($_POST['submit']))
             ."     Streak_Worst = $pStreak_Worst,"
             ."     RankDelta = 0"
             ." WHERE (PlayerID = '$pid')";
-            $result_3 = $sql->db_Query($q);
+            $result_3 = $sql->db_Query($q_3);
             
             if ($etype == "Team Ladder")
             {
