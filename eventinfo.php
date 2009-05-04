@@ -678,6 +678,7 @@ else
 
     // Sorting
     $header = $stats[0];
+    
     $new_header = array();
     $column = 0;
     foreach ($header as $header_cell)
@@ -686,6 +687,7 @@ else
         $column++;
     }
     $header = array($new_header);
+    $header[0][0] = "header";
 
     array_splice($stats,0,1);
     multi2dSortAsc($stats, $orderby, $sort_type);
