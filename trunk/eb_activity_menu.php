@@ -1,63 +1,20 @@
 <?php
 /**
-* eBattles.php
+* eb_activity_menu.php
 *
 */
 
-// always include the class2.php file - this is the main e107 file
-require_once("../../class2.php");
+if (!defined('e107_INIT')) { exit; }
+
+global $PLUGINS_DIRECTORY;
+$lan_file = e_PLUGIN."ebattles/languages/".e_LANGUAGE.".php";
+include_once(file_exists($lan_file) ? $lan_file : e_PLUGIN."ebattles/languages/English.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 
-// this generates all the HTML up to the start of the main section
-require_once(HEADERF);
+$ebattles_title = "Recent activity";
+$text = displayRecentActivity();
 
-$text = '
-<script type="text/javascript" src="./js/tabpane.js"></script>
-';
-
-$text .= '
-<div class="tab-pane" id="tab-pane-7">
-';
-/**
-* Display Latest Games
-*/
-$text .= '
-<div class="tab-page">
-<div class="tab">Latest Games</div>
-';
-displayLatestGames();
-$text .= '</div>';
-
-/**
-* Display Latest Awards
-*/
-$text .= '
-<div class="tab-page">
-<div class="tab">Latest Awards</div>
-';
-displayLatestAwards();
-$text .= '</div>';
-
-/**
-* Display ...
-*/
-$text .= '
-<div class="tab-page">
-<div class="tab"><br/></div>
-';
-$text .= '
-</div>
-</div>
-
-<script type="text/javascript">
-//<![CDATA[
-setupAllTabs();
-//]]>
-</script>
-';
-
-$ns->tablerender('eBattles', $text);
-require_once(FOOTERF);
+$ns->tablerender($ebattles_title,$text);
 exit;
 
 /***************************************************************************************
@@ -66,12 +23,15 @@ Functions
 /**
 * displayLatestGames - Displays Latest Games
 */
-function displayLatestGames(){
+function displayRecentActivity(){
     global $sql;
-    global $text;
 
     $time = GMT_time();
+    $events = array();
+    $nbr_events = 0;
+    
 
+    // Add recent games
     $rowsPerPage = 5;
     /* Stats/Results */
     $q = "SELECT ".TBL_MATCHS.".*, "
@@ -180,22 +140,13 @@ function displayLatestGames(){
                 $players .= " <div class='smalltext'>".$date.".</div>";
             }
 
-            $text .= "$players<br />";
+            $events[$nbr_events][0] = $mTime;
+            $events[$nbr_events][1] = $players;
+            $nbr_events ++;
         }
     }
-}
-
-/**
-* displayLatestAwards - Displays Latest Awards
-*/
-function displayLatestAwards(){
-    global $sql;
-    global $text;
-
-    $time = GMT_time();
-
-    $rowsPerPage = 5;
-    /* Stats/Results */
+    
+    // Add Awards events
     $q = "SELECT ".TBL_AWARDS.".*, "
     .TBL_PLAYERS.".*, "
     .TBL_USERS.".*, "
@@ -216,7 +167,6 @@ function displayLatestAwards(){
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
 
-    $text .= "<br />";
     if ($num_rows>0)
     {
         /* Display table contents */
@@ -271,8 +221,19 @@ function displayLatestAwards(){
                 $award_string .= " <div class='smalltext'>".$date.".</div>";
             }
 
-            $text .= "$award_string<br />";
+            $events[$nbr_events][0] = $aTime;
+            $events[$nbr_events][1] = $award_string;
+            $nbr_events ++;
         }
     }
+    
+    multi2dSortAsc($events, 0, SORT_DESC);
+    for ($index = 0; $index<$nbr_events; $index++)
+    {
+        $text .= $events[$index][1]; 
+    }
+        
+    return $text;
 }
+
 ?>
