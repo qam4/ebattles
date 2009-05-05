@@ -22,4 +22,19 @@ $eplug_css = array(
 "css/tab.css"
 );
 
+function multi2dSortAsc(&$arr, $key, $sort)
+{
+    $sort_col = array();
+    foreach ($arr as $sub)
+    {
+        $string = $sub[$key];
+        // remove html tags
+        $string = preg_replace("/<[^>]*>/e","", $string);
+        $string = preg_split("/\/\s|\||(<br)/", $string);
+
+        //echo "$string[0]<br>";
+        $sort_col[] = $string[0];
+    }
+    array_multisort($sort_col, $sort, SORT_NUMERIC, $arr);
+}
 ?>
