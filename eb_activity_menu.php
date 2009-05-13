@@ -15,7 +15,6 @@ $ebattles_title = "Recent activity";
 $text = displayRecentActivity();
 
 $ns->tablerender($ebattles_title,$text);
-exit;
 
 /***************************************************************************************
 Functions

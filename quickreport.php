@@ -51,7 +51,7 @@ else
     <tr>
     <td>
     Player:
-    <select name="Player">
+    <select class="tbox" name="Player">
     ';
 
     for($i=0; $i<$num_rows; $i++)

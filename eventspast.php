@@ -58,12 +58,12 @@ function displayPastEvents(){
    $result = $sql->db_Query($q);
    /* Error occurred, return given name by default */
    $num_rows = mysql_numrows($result);
-   $text .= "<form action=\"".htmlspecialchars($_SERVER['PHP_SELF'])."\" method=\"post\">";
-   $text .= "<table>\n";
-   $text .= "<tr><td>\n";
-   $text .= "Games:<br />\n";
-   $text .= "<select name=\"gameid\">\n";
-   $text .= "<option value=\"All\">All</option>\n";
+   $text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="post">';
+   $text .= '<table>';
+   $text .= '<tr><td>';
+   $text .= 'Games:<br />';
+   $text .= '<select class="tbox" name="gameid">';
+   $text .= '<option value="All">All</option>';
    for($i=0; $i<$num_rows; $i++){
       $gname  = mysql_result($result,$i, TBL_GAMES.".name");
       $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");

@@ -56,7 +56,7 @@ $text .= "<tr>
 <td class='forumheader3' style='width:60%'>
 <input class='tbox' type='text' name='eb_events_update_delay' size='8' value='".$pref['eb_events_update_delay']."' maxlength='3' /> ".EBATTLES_ADMIN_L5."<br />
 
-<input type='checkbox' name='eb_events_update_delay_enable' value='1' ".($pref['eb_events_update_delay_enable'] == 1 ? "checked='checked'" :"")."/>".EBATTLES_ADMIN_L6."
+<input class='tbox' type='checkbox' name='eb_events_update_delay_enable' value='1' ".($pref['eb_events_update_delay_enable'] == 1 ? "checked='checked'" :"")."/>".EBATTLES_ADMIN_L6."
 </td>
 </tr>
 ";

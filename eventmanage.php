@@ -200,7 +200,7 @@ else
         <table>
         <tr>
         <td>
-        <select name="mod">
+        <select class="tbox" name="mod">
         ';
         for($i=0; $i<$numUsers; $i++){
             $uid  = mysql_result($result,$i, TBL_USERS.".user_id");
@@ -243,7 +243,7 @@ else
         <tr>
         <td class="forumheader3"><b>Name</b></td>
         <td class="forumheader3">
-        <div><input type="text" size="40" name="eventname" value="'.$ename.'"></input></div>
+        <div><input class="tbox" type="text" size="40" name="eventname" value="'.$ename.'"></input></div>
         </td>
         </tr>
         ';
@@ -253,7 +253,7 @@ else
         <tr>
         <td class="forumheader3"><b>Join Event Password</b></td>
         <td class="forumheader3">
-        <div><input type="text" size="40" name="eventpassword" value="'.$epassword.'"></input></div>
+        <div><input class="tbox" type="text" size="40" name="eventpassword" value="'.$epassword.'"></input></div>
         </td>
         </tr>
         ';
@@ -267,7 +267,7 @@ else
         $numGames = mysql_numrows($result);
         $text .= '<tr>';
         $text .= '<td class="forumheader3"><b>Game</b></td>';
-        $text .= '<td class="forumheader3"><select name="eventgame">';
+        $text .= '<td class="forumheader3"><select class="tbox" name="eventgame">';
         for($i=0; $i<$numGames; $i++){
             $gname  = mysql_result($result,$i, TBL_GAMES.".name");
             $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -292,13 +292,13 @@ else
         ';
         if ($etype == "Team Ladder")
         {
-            $text .= '<input type="radio" size="40" name="eventtype" value="Individual" />Individual';
-            $text .= '<input type="radio" size="40" name="eventtype" checked="checked" value="Team" />Team';
+            $text .= '<input class="tbox" type="radio" size="40" name="eventtype" value="Individual" />Individual';
+            $text .= '<input class="tbox" type="radio" size="40" name="eventtype" checked="checked" value="Team" />Team';
         }
         else
         {
-            $text .= '<input type="radio" size="40" name="eventtype" checked="checked" value="Individual" />Individual';
-            $text .= '<input type="radio" size="40" name="eventtype" value="Team" />Team';
+            $text .= '<input class="tbox" type="radio" size="40" name="eventtype" checked="checked" value="Individual" />Individual';
+            $text .= '<input class="tbox" type="radio" size="40" name="eventtype" value="Team" />Team';
         }
         $text .='
         </div>
@@ -313,7 +313,7 @@ else
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input type="checkbox" name="eventallowscore"';
+        $text .= '<input class="tbox" type="checkbox" name="eventallowscore"';
         if ($eAllowScore == TRUE)
         {
             $text .= 'checked>';
@@ -335,7 +335,7 @@ else
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input type="checkbox" name="eventallowdraw"';
+        $text .= '<input class="tbox" type="checkbox" name="eventallowdraw"';
         if ($eAllowDraw == TRUE)
         {
             $text .= 'checked>';
@@ -361,13 +361,13 @@ else
         </tr>
         <tr>
         <td>
-        <div><input type="text" name="eventpointsperwin" value="'.$ePointPerWin.'"/></div>
+        <div><input class="tbox" type="text" name="eventpointsperwin" value="'.$ePointPerWin.'"/></div>
         </td>
         <td>
-        <div><input type="text" name="eventpointsperdraw" value="'.$ePointPerDraw.'"/></div>
+        <div><input class="tbox" type="text" name="eventpointsperdraw" value="'.$ePointPerDraw.'"/></div>
         </td>
         <td>
-        <div><input type="text" name="eventpointsperloss" value="'.$ePointPerLoss.'"/></div>
+        <div><input class="tbox" type="text" name="eventpointsperloss" value="'.$ePointPerLoss.'"/></div>
         </td>
         </tr>
         </table>
@@ -385,7 +385,7 @@ else
         <table>
         <tr>
         <td>
-        <div><input type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
+        <div><input class="tbox" type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
         </td>
         <td>
         <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="Date selector"
@@ -422,7 +422,7 @@ else
         <table>
         <tr>
         <td>
-        <div><input type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
+        <div><input class="tbox" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
         </td>
         <td>
         <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="Date selector"
@@ -607,7 +607,7 @@ else
         Number of Matches to Rank
         </td>
         <td class="forumheader3">
-        <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
+        <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
         </td>
         <td class="forumheader3">
         ';
@@ -638,7 +638,7 @@ else
             <tr>
             <td class="forumheader3">Number of Team Matches to Rank</td>
             <td class="forumheader3">
-            <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
+            <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
             </td>
             <td class="forumheader3">
             ';
@@ -729,7 +729,7 @@ else
             <tr>
             <td class="forumheader3">'.$cat_name_display.'</td>
             <td class="forumheader3">
-            <input name="sliderValue'.$cat_index.'" id="sliderValue" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
+            <input name="sliderValue'.$cat_index.'" id="sliderValue" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
             </td>
             <td class="forumheader3">
             ';
@@ -751,7 +751,7 @@ else
 
             $text .= '
             <td class="forumheader3">
-            <input type="checkbox" name="infoonly'.$i.'" value="1"
+            <input class="tbox" type="checkbox" name="infoonly'.$i.'" value="1"
             ';
             if ($cat_InfoOnly == TRUE)
             {

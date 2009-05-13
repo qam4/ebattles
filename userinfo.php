@@ -90,18 +90,18 @@ else
     if ($num_rows>0)
     {
         /* Display table contents */
-        $text .= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
+        $text .= "<table class='fborder' cellspacing=\"0\" cellpadding=\"3\">\n";
         $text .= "<tr>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Name";
         $text .= "</td>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Rank";
         $text .= "</td>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "W/L";
         $text .= "</td>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Status";
         $text .= "</td>";
         $text .= "</tr>";
@@ -116,17 +116,17 @@ else
             $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
             $pwinloss  = mysql_result($result,$i, TBL_PLAYERS.".Win")."/".mysql_result($result,$i, TBL_PLAYERS.".Draw")."/".mysql_result($result,$i, TBL_PLAYERS.".Loss");
             $text .= "<tr>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
             $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
             $text .= "</td>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             $text .= "$prank";
             $text .= "</td>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             $text .= "$pwinloss";
             $text .= "</td>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             if($eowner == $req_user)
             {
                 $text .= "Owner";
@@ -159,12 +159,12 @@ else
     if ($num_rows>0)
     {
         /* Display table contents */
-        $text .= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
+        $text .= "<table class='fborder' cellspacing=\"0\" cellpadding=\"3\">\n";
         $text .= "<tr>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Name";
         $text .= "</td>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Status";
         $text .= "</td>";
         $text .= "</tr>";
@@ -177,11 +177,11 @@ else
             $eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
             $eowner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
             $text .= "<tr>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
             $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
             $text .= "</td>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             if($eowner == $req_user)
             {
                 $text .= "Owner";
@@ -216,12 +216,12 @@ else
     if ($num_rows>0)
     {
         /* Display table contents */
-        $text .= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
+        $text .= "<table class='fborder' cellspacing=\"0\" cellpadding=\"3\">\n";
         $text .= "<tr>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Name";
         $text .= "</td>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Status";
         $text .= "</td>";
         $text .= "</tr>";
@@ -234,11 +234,11 @@ else
             $eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
             $eowner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
             $text .= "<tr>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
             $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
             $text .= "</td>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             if($eowner == $req_user)
             {
                 $text .= "Owner";
@@ -296,12 +296,12 @@ else
 
     if ($num_rows>0)
     {
-        $text .= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
+        $text .= "<table class='fborder' cellspacing=\"0\" cellpadding=\"3\">\n";
         $text .= "<tr>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Division";
         $text .= "</td>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Status";
         $text .= "</td>";
         $text .= "</tr>";
@@ -314,11 +314,11 @@ else
             $cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
             $cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
             $text .= "<tr>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$cid\">$cname</a><br />";
             $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$dgameicon\" alt=\"$egameicon\"></img> $dgame";
             $text .= "</td>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             if($cowner == $req_user)
             {
                 $text .= "Owner";
@@ -352,12 +352,12 @@ else
 
     if ($num_rows>0)
     {
-        $text .= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
+        $text .= "<table class='fborder' cellspacing=\"0\" cellpadding=\"3\">\n";
         $text .= "<tr>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Team";
         $text .= "</td>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Status";
         $text .= "</td>";
         $text .= "</tr>";
@@ -368,10 +368,10 @@ else
             $cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
             $cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
             $text .= "<tr>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$cid\">$cname</a><br />";
             $text .= "</td>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             if($cowner == $req_user)
             {
                 $text .= "Owner";
@@ -408,12 +408,12 @@ else
 
     if ($num_rows>0)
     {
-        $text .= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
+        $text .= "<table class='fborder' cellspacing=\"0\" cellpadding=\"3\">\n";
         $text .= "<tr>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Division";
         $text .= "</td>";
-        $text .= "<td>";
+        $text .= "<td class='forumheader3'>";
         $text .= "Status";
         $text .= "</td>";
         $text .= "</tr>";
@@ -428,11 +428,11 @@ else
 
 
             $text .= "<tr>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$cid\">$cname</a><br />";
             $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$dgameicon\" alt=\"$egameicon\"></img> $dgame";
             $text .= "</td>";
-            $text .= "<td>";
+            $text .= "<td class='forumheader3'>";
             if($cowner == $req_user)
             {
                 $text .= "Owner";
