@@ -80,7 +80,7 @@ else
       $text .= '<td class="forumheader3">';
       $text .= '<table>';
       $text .= '<tr>';
-      $text .= '<td><select name="clanowner">';
+      $text .= '<td><select class="tbox" name="clanowner">';
       for($j=0; $j<$num_rows_2; $j++)
       {
          $uid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
@@ -110,7 +110,7 @@ else
       $text .= '
            <td class="forumheader3"><b>Name</b></td>
            <td class="forumheader3">
-             <input type="text" size="40" name="clanname" value="'.$clan_name.'"></input>
+             <input class="tbox" type="text" size="40" name="clanname" value="'.$clan_name.'"></input>
            </td>
          </tr>
          
@@ -118,7 +118,7 @@ else
          <tr>
            <td class="forumheader3"><b>Tag</b></td>
            <td class="forumheader3">
-             <input type="text" size="40" name="clantag" value="'.$clan_tag.'"></input>
+             <input class="tbox" type="text" size="40" name="clantag" value="'.$clan_tag.'"></input>
            </td>
          </tr>
          </tbody>
@@ -154,7 +154,7 @@ else
       $text .= '<td class="forumheader3">';
       $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
       $text .= "<div>";
-      $text .= '<select name="divgame">';
+      $text .= '<select class="tbox" name="divgame">';
       for($i=0; $i<$num_rows; $i++){
          $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
          $gid  = mysql_result($result,$i, TBL_GAMES.".GameId");
@@ -228,7 +228,7 @@ else
              $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
              $text .= '<table>';
              $text .= '<tr>';
-             $text .= '<td><select name="divcaptain">';
+             $text .= '<td><select class="tbox" name="divcaptain">';
              for($j=0; $j<$num_rows_2; $j++)
              {
                 $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");

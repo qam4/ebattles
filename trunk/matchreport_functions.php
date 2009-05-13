@@ -79,11 +79,11 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     // TABLE - Player/Teams Add/Remove
     //----------------------------------
     $text .= 'Select the number of players and teams:';
-    $text .= '<table class="fborder" id="matchresult" ><tbody>';
+    $text .= '<table id="matchresult"><tbody>';
     $text .= '<tr><input type="hidden" name="matchreport" value="1"></tr>';
     // Players
-    $text .= '<tr><td class="forumheader3">Number of Players:</td><td class="forumheader3">'.$nbr_players.'</td>';
-    $text .= '<td class="forumheader3"><input type="hidden" name="nbr_players" value="'.$_POST['nbr_players'].'">';
+    $text .= '<tr><td>'.$nbr_players.' players</td>';
+    $text .= '<td><input type="hidden" name="nbr_players" value="'.$_POST['nbr_players'].'">';
     // Add Player
     if ($nbr_players < $max_nbr_players)
     {
@@ -91,21 +91,21 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     }
     else
     {
-        $text .= '<input class="button" type="submit" value="Add Player" name="addPlayer" DISABLED></td>';
+        $text .= '<input class="button_disabled" type="submit" value="Add Player" name="addPlayer" DISABLED></td>';
     }
     // Remove Player
     if ($nbr_players>2)
     {
-        $text .= '<td class="forumheader3"><input class="button" type="submit" value="Remove Player" name="removePlayer"></td>';
+        $text .= '<td><input class="button" type="submit" value="Remove Player" name="removePlayer"></td>';
     }
     else
     {
-        $text .= '<td class="forumheader3"><input class="button" type="submit" value="Remove Player" name="removePlayer" DISABLED></td>';
+        $text .= '<td><input class="button_disabled" type="submit" value="Remove Player" name="removePlayer" DISABLED></td>';
     }
 
     // Teams
-    $text .= '<tr><td class="forumheader3">Number of Teams:</td><td class="forumheader3">'.$nbr_teams.'</td>';
-    $text .= '<td class="forumheader3"><input type="hidden" name="nbr_teams" value="'.$_POST['nbr_teams'].'">';
+    $text .= '<tr><td>'.$nbr_teams.' teams</td>';
+    $text .= '<td><input type="hidden" name="nbr_teams" value="'.$_POST['nbr_teams'].'">';
     // Add Team
     if ($nbr_teams<$nbr_players)
     {
@@ -113,16 +113,16 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     }
     else
     {
-        $text .= '<input class="button" type="submit" value="Add Team" name="addTeam" DISABLED></td>';
+        $text .= '<input class="button_disabled" type="submit" value="Add Team" name="addTeam" DISABLED></td>';
     }
     // Remove Team
     if ($nbr_teams>2)
     {
-        $text .= '<td class="forumheader3"><input class="button" type="submit" value="Remove Team" name="removeTeam"></td>';
+        $text .= '<td><input class="button" type="submit" value="Remove Team" name="removeTeam"></td>';
     }
     else
     {
-        $text .= '<td class="forumheader3"><input class="button" type="submit" value="Remove Team" name="removeTeam" DISABLED></td>';
+        $text .= '<td><input class="button_disabled" type="submit" value="Remove Team" name="removeTeam" DISABLED></td>';
     }
     $text .= "</tr>";
     $text .= '</tbody></table>';
@@ -133,12 +133,12 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     // TABLE - Players/Teams Selection
     //----------------------------------
     $text .= 'Select the players and their respective team:';
-    $text .= '<table class="fborder" id="matchresult"><tbody>';
+    $text .= '<table id="matchresult"><tbody>';
     for($i=1;$i<=$nbr_players;$i++)
     {
-        $text .= '<tr><td class="forumheader3">Player #'.$i.':</td>';
+        $text .= '<tr><td>Player #'.$i.':</td>';
 
-        $text .= '<td class="forumheader3"><select name="player'.$i.'">';
+        $text .= '<td><select class="tbox" name="player'.$i.'">';
         for($j=1;$j <= $max_nbr_players+1;$j++)
         {
             $text .= '<option value="'.$players_id[($j-1)].'"';
@@ -147,7 +147,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
         }
         $text .= '</select></td>';
 
-        $text .= '<td class="forumheader3"><select name="team'.$i.'">';
+        $text .= '<td><select class="tbox" name="team'.$i.'">';
         for($j=1;$j<=$nbr_teams;$j++)
         {
             $text .= '<option value="Team #'.$j.'"';
@@ -163,7 +163,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     // TABLE - Teams Rank Selection
     //----------------------------------
     $text .= 'Select the rank of each team:';
-    $text .= '<table class="fborder" id="matchresult"><tbody>';
+    $text .= '<table id="matchresult"><tbody>';
     $text .= '<tr><td></td><td>Team</td>';
     if ($allowScore == TRUE) $text .= '<td>Score</td>';
     if ($allowDraw == TRUE) $text .= '<td>Draw?</td>';
@@ -172,10 +172,10 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     for($i=1;$i<=$nbr_teams;$i++)
     {
         $text .= '<tr>';
-        $text .= '<td class="forumheader3">';
+        $text .= '<td>';
         $text .= 'Rank #'.$i.':';
         $text .= '</td>';
-        $text .= '<td class="forumheader3"><select name="rank'.$i.'" id="rank'.$i.'" onChange = "SwitchSelected('.$i.')">';
+        $text .= '<td><select class="tbox" name="rank'.$i.'" id="rank'.$i.'" onChange = "SwitchSelected('.$i.')">';
         for($j=1;$j<=$nbr_teams;$j++)
         {
             $text .= '<option value="Team #'.$j.'"';
@@ -185,16 +185,16 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
         $text .= '</select></td>';
         if ($allowScore == TRUE)
         {
-            $text .= '<td class="forumheader3">';
-            $text .= '<input type="text" name="score'.$i.'" value="'.$_POST['score'.$i].'">';
+            $text .= '<td>';
+            $text .= '<input class="tbox" type="text" name="score'.$i.'" value="'.$_POST['score'.$i].'">';
             $text .= '</td>';
         }
         if ($allowDraw == TRUE)
         {
-            $text .= '<td class="forumheader3">';
+            $text .= '<td>';
             if ($i>1)
             {
-                $text .= '<input type="checkbox" name="draw'.$i.'" value="1"';
+                $text .= '<input class="tbox" type="checkbox" name="draw'.$i.'" value="1"';
                 if (strtolower($_POST['draw'.$i]) != "") $text .= ' checked';
                 $text .= '>';
             }

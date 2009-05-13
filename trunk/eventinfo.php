@@ -305,7 +305,7 @@ else
                                 $text .= '<td class="forumheader3">
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                                 <div>
-                                <input type="password" title="Enter the password" name="joinEventPassword"></input>
+                                <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"></input>
                                 <input type="hidden" name="division" value="'.$div_id.'"></input>
                                 <input type="hidden" name="eventid" value="'.$event_id.'"></input>
                                 <input type="hidden" name="teamjoinevent" value="1"></input>
@@ -444,7 +444,7 @@ else
                         $text .= '
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                         <div>
-                        <input type="password" title="Enter the password" name="joinEventPassword"></input>
+                        <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"></input>
                         <input type="hidden" name="eventid" value="'.$event_id.'"></input>
                         <input type="hidden" name="joinevent" value="1"></input>
                         <input class="button" type="submit" value="Join Event"></input>
