@@ -143,6 +143,8 @@ else
     $egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
     $egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
     $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+    $eallowdraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
+    $eallowscore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
     $eowner = mysql_result($result,0 , TBL_USERS.".user_id");
     $eownername = mysql_result($result,0 , TBL_USERS.".user_name");
     $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
@@ -251,16 +253,16 @@ else
     $text .= $edescription;
     $text .="</div>";
 
+    /* Join/Quit Event */
     $text .="<div class=\"tab-page\">";
-    $text .="<div class=\"tab\">Info</div>";
-
+    $text .="<div class=\"tab\">Signup</div>";
     $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
     if(check_class(e_UC_MEMBER))
     {
+        // If looged in
         if(($eend == 0) || ($time < $eend))
         {
-
-            /* Join/Quit Event */
+            // If event is not finished
             if ($etype == "Team Ladder")
             {
                 // Find if user is captain of a division playing that game
@@ -297,19 +299,21 @@ else
                         $num_rows_2 = mysql_numrows($result_2);
 
                         $text .= "<tr>";
-                        $text .= '<td class="forumheader3">Your are the captain of '.$div_name.'.</td>';
+                        $text .= '<td class="">You are the captain of '.$div_name.'.</td>';
                         if( $num_rows_2 == 0)
                         {
+                            
                             if ($epassword != "")
                             {
-                                $text .= '<td class="forumheader3">
+                                $text .= '<td class="">Enter the password and click here to let your team participate to this event.</td>';
+                                $text .= '<td class="">
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                                 <div>
                                 <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"></input>
                                 <input type="hidden" name="division" value="'.$div_id.'"></input>
                                 <input type="hidden" name="eventid" value="'.$event_id.'"></input>
                                 <input type="hidden" name="teamjoinevent" value="1"></input>
-                                <input class="button" type="submit" value="Team Join Event"></input>
+                                <input class="button" type="submit" value="Sign up this team!"></input>
                                 </div>
                                 ';
                                 $text .= '</form>';
@@ -317,14 +321,15 @@ else
                             }
                             else
                             {
-                                $text .= '<td class="forumheader3">
+                                $text .= '<td class="">Click here to let your team participate to this event.</td>';
+                                $text .= '<td class="">
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                                 <div>
                                 <input type="hidden" name="joinEventPassword" value=""></input>
                                 <input type="hidden" name="division" value="'.$div_id.'"></input>
                                 <input type="hidden" name="eventid" value="'.$event_id.'"></input>
                                 <input type="hidden" name="teamjoinevent" value="1"></input>
-                                <input class="button" type="submit" value="Team Join Event"></input>
+                                <input class="button" type="submit" value="Sign up this team!"></input>
                                 </div>
                                 ';
                                 $text .= '</form>';
@@ -333,7 +338,8 @@ else
                         }
                         else
                         {
-                            $text .= '<td class="forumheader3">Team signed up.</td>';
+                            // Team signed up.
+                            $text .= '<td class="">This team is signed up.</td>';
                         }
                         $text .= '</tr>';
                     }
@@ -360,24 +366,37 @@ else
                 ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
                 ." AND (".TBL_MEMBERS.".User = ".USERID.")";
 
-
                 $result_2 = $sql->db_Query($q_2);
                 $num_rows_2 = mysql_numrows($result_2);
                 if(!$result_2 || ( $num_rows_2 == 0))
                 {
-                    $text .= '<tr><td class="forumheader3">You are not a member of any team for this game.</td>';
-                    $text .= '<td class="forumheader3"></td></tr>';
+                    $text .= '<tr><td class="">You are not a member of any team for this game.</td>';
+                    $text .= '<td class=""></td></tr>';
                 }
                 else
                 {
+
                     for($i=0;$i < $num_rows_2;$i++)
                     {
                         $clan_name  = mysql_result($result_2,$i , TBL_CLANS.".Name");
                         $div_id  = mysql_result($result_2,$i , TBL_DIVISIONS.".DivisionID");
 
+                        $q_3 = "SELECT ".TBL_DIVISIONS.".*, "
+                        .TBL_USERS.".*"
+                        ." FROM ".TBL_DIVISIONS.", "
+                        .TBL_USERS
+                        ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+                        ." AND (".TBL_USERS.".user_id = ".TBL_DIVISIONS.".Captain)";
+                        $result_3 = $sql->db_Query($q_3);
+                        if($result_3)
+                        {
+                            $captain_name  = mysql_result($result_3,$i, TBL_USERS.".user_name");
+                            $captain_id  = mysql_result($result_3,$i, TBL_USERS.".user_id");
+                        }
+
                         $q_3 = "SELECT ".TBL_CLANS.".*, "
                         .TBL_TEAMS.".*, "
-                        .TBL_DIVISIONS.".*"
+                        .TBL_DIVISIONS.".* "
                         ." FROM ".TBL_CLANS.", "
                         .TBL_TEAMS.", "
                         .TBL_DIVISIONS
@@ -388,15 +407,20 @@ else
                         $result_3 = $sql->db_Query($q_3);
                         if(!$result_3 || (mysql_numrows($result_3) == 0))
                         {
-                            $text .= '<tr><td class="forumheader3">Your team '.$clan_name.' has not signed up to this event.</td>';
-                            $text .= '<td class="forumheader3">Please contact your captain.</td></tr>';
+
+                            if ($captain_id != USERID)
+                            {
+                            
+                            $text .= '<tr><td class="">Your team '.$clan_name.' has not signed up to this event.</td>';
+                            $text .= '<td class="">Please contact your captain <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
+                        }
                         }
                         else
                         {
                             $team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-                            $text .= '<tr><td class="forumheader3">Your team '.$clan_name.' has signed up to this event.</td>';
+                            $text .= '<tr><td class="">Your team '.$clan_name.' has signed up to this event.</td>';
 
-                            // Is the user already signed up with that team for this event?
+                            // Is the user already signed up with that team?
                             $q = "SELECT ".TBL_PLAYERS.".*"
                             ." FROM ".TBL_PLAYERS
                             ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
@@ -406,20 +430,21 @@ else
                             $result = $sql->db_Query($q);
                             if(!$result || (mysql_numrows($result) == 0))
                             {
-                                $text .= '<td class="forumheader3">
+                                $text .= '<td class="">
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                                 <div>
                                 <input type="hidden" name="eventid" value="'.$event_id.'"></input>
                                 <input type="hidden" name="team" value="'.$team_id.'"></input>
                                 <input type="hidden" name="jointeamevent" value="1"></input>
-                                <input class="button" type="submit" value="Join Event"></input>
+                                <input class="button" type="submit" value="Sign up!"></input>
                                 </div>
                                 </form></td>
                                 ';
                             }
                             else
                             {
-                                $text .= '<td class="forumheader3">You are signed up for this event.</td>';
+                                // Player signed up
+                                $text .= '<td class="">You are signed up.</td>';
                             }
                             $text .= '</tr>';
                         }
@@ -428,7 +453,7 @@ else
             }
             else
             {
-                // Is the user already signed up with that team for this event?
+                // Is the user already signed up with that team?
                 $q = "SELECT ".TBL_PLAYERS.".*"
                 ." FROM ".TBL_PLAYERS
                 ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
@@ -439,29 +464,30 @@ else
                 {
                     if ($epassword != "")
                     {
-                        $text .= '<tr><td class="forumheader3">Event Password:</td>';
-                        $text .= '<td class="forumheader3">';
+                        $text .= '<td class="">Enter the password and click here to participate to this event.</td>';
+                        $text .= '<td class="">Event Password:</td>';
+                        $text .= '<td class="">';
                         $text .= '
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                         <div>
                         <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"></input>
                         <input type="hidden" name="eventid" value="'.$event_id.'"></input>
                         <input type="hidden" name="joinevent" value="1"></input>
-                        <input class="button" type="submit" value="Join Event"></input>
+                        <input class="button" type="submit" value="Sign up!"></input>
                         </div>
                         </form></td></tr>
                         ';
                     }
                     else
                     {
-                        $text .= '<tr><td class="forumheader3"></td>';
-                        $text .= '<td class="forumheader3">
+                        $text .= '<td class="">Click here to participate to this event.</td>';
+                        $text .= '<td class="">
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                         <div>
                         <input type="hidden" name="joinEventPassword" value=""></input>
                         <input type="hidden" name="eventid" value="'.$event_id.'"></input>
                         <input type="hidden" name="joinevent" value="1"></input>
-                        <input class="button" type="submit" value="Join Event"></input>
+                        <input class="button" type="submit" value="Sign up!"></input>
                         </div>
                         </form></td></tr>
                         ';
@@ -469,17 +495,24 @@ else
                 }
                 else
                 {
-                    $text .= '<tr><td class="forumheader3">You are signed up for this event.</td>';
-                    $text .= '<td class="forumheader3"></td></tr>';
+                    $text .= '<tr><td class="">You are signed up.</td>';
+                    $text .= '<td class=""></td></tr>';
                 }
             }
         }
     }
     else
     {
-        $text .= '<tr><td class="forumheader3">Please log in to participate to this event.</td>';
-        $text .= '<td class="forumheader3"></td></tr>';
+        $text .= '<tr><td class="">Please log in to participate to this event.</td>';
+        $text .= '<td class=""></td></tr>';
     }
+    $text .= '</tbody></table>';
+    $text .="</div>";
+
+    $text .="<div class=\"tab-page\">";
+    $text .="<div class=\"tab\">Info</div>";
+
+    $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
     $text .= "<tr>";
     $text .='<td class="forumheader3">Owner:</td><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
     $can_manage = 0;
@@ -646,6 +679,10 @@ else
     if ($num_rows>1)
     $can_report_quickloss = 0;
 
+    // Check if AllowScore is set
+    if ($eallowscore==TRUE)
+    $can_report_quickloss = 0;
+
     if(($can_report_quickloss != 0)||($can_report != 0))
     {
         $text .= "<table>";
@@ -678,7 +715,7 @@ else
 
     // Sorting
     $header = $stats[0];
-    
+
     $new_header = array();
     $column = 0;
     foreach ($header as $header_cell)
@@ -761,89 +798,104 @@ else
             ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
             $result2 = $sql->db_Query($q2);
             $numRanks = mysql_numrows($result2);
-            if ($numRanks == 1)
+            if ($numRanks > 0)
             {
-                $str = " tied ";
-            }
-            else if ($numRanks == 2)
-            {
-                $str = " defeated ";
-            }
-            else
-            {
-                $str = " vs ";
-            }
-
-            $q2 = "SELECT ".TBL_MATCHS.".*, "
-            .TBL_SCORES.".*, "
-            .TBL_PLAYERS.".*, "
-            .TBL_USERS.".*"
-            ." FROM ".TBL_MATCHS.", "
-            .TBL_SCORES.", "
-            .TBL_PLAYERS.", "
-            .TBL_USERS
-            ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
-            ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-            ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-            ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-            ." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
-
-            $result2 = $sql->db_Query($q2);
-            $numPlayers = mysql_numrows($result2);
-            $pname = '';
-            $players = '';
-
-            $rank = 1;
-            $team = 1;
-            for ($index = 0; $index < $numPlayers; $index++)
-            {
-                $pid  = mysql_result($result2,$index , TBL_USERS.".user_id");
-                $pname  = mysql_result($result2,$index , TBL_USERS.".user_name");
-                $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
-                $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
-                $pclan = '';
-                $pclantag = '';
-                if ($etype == "Team Ladder")
+                if ($numRanks == 1)
                 {
-                    $q_3 = "SELECT ".TBL_CLANS.".*, "
-                    .TBL_DIVISIONS.".*, "
-                    .TBL_TEAMS.".* "
-                    ." FROM ".TBL_CLANS.", "
-                    .TBL_DIVISIONS.", "
-                    .TBL_TEAMS
-                    ." WHERE (".TBL_TEAMS.".TeamID = '$pteam')"
-                    ."   AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
-                    ."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-                    $result_3 = $sql->db_Query($q_3);
-                    $num_rows_3 = mysql_numrows($result_3);
-                    if ($num_rows_3 == 1)
-                    {
-                        $pclan  = mysql_result($result_3,0, TBL_CLANS.".Name");
-                        $pclantag  = mysql_result($result_3,0, TBL_CLANS.".Tag") ."_";
-                    }
+                    $str = " tied ";
                 }
-                if($index>0)
+                else if ($numRanks == 2)
                 {
-                    if ($pteam == $team)
-                    {
-                        $players .= " & ";
-                    }
-                    else
-                    {
-                        $players .= $str;
-                        $team++;
-                    }
+                    $str = " defeated ";
                 }
-                $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
-            }
-            $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">Match #$mID</a>)";
-            if (($time-$mTime) < INT_DAY )
-            {
-                $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
-            }
-            else
-            {
-                $players .= " <div class='smalltext'>".$date.".</div>";
+                else
+                {
+                    $str = " vs ";
+                }
+
+                $q2 = "SELECT ".TBL_MATCHS.".*, "
+                .TBL_SCORES.".*, "
+                .TBL_PLAYERS.".*, "
+                .TBL_USERS.".*"
+                ." FROM ".TBL_MATCHS.", "
+                .TBL_SCORES.", "
+                .TBL_PLAYERS.", "
+                .TBL_USERS
+                ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
+                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+                ." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+
+                $result2 = $sql->db_Query($q2);
+                $numPlayers = mysql_numrows($result2);
+                $pname = '';
+                $players = '';
+                $scores = '';
+
+                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"></img></a> ";
+
+                $rank = 1;
+                $team = 1;
+                for ($index = 0; $index < $numPlayers; $index++)
+                {
+                    $pid  = mysql_result($result2,$index , TBL_USERS.".user_id");
+                    $pname  = mysql_result($result2,$index , TBL_USERS.".user_name");
+                    $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
+                    $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
+                    $pscore = mysql_result($result2,$index , TBL_SCORES.".Player_Score");
+                    $pclan = '';
+                    $pclantag = '';
+                    if ($mEventType == "Team Ladder")
+                    {
+                        $q_3 = "SELECT ".TBL_CLANS.".*, "
+                        .TBL_DIVISIONS.".*, "
+                        .TBL_TEAMS.".* "
+                        ." FROM ".TBL_CLANS.", "
+                        .TBL_DIVISIONS.", "
+                        .TBL_TEAMS
+                        ." WHERE (".TBL_TEAMS.".TeamID = '$pteam')"
+                        ."   AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
+                        ."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
+                        $result_3 = $sql->db_Query($q_3);
+                        $num_rows_3 = mysql_numrows($result_3);
+                        if ($num_rows_3 == 1)
+                        {
+                            $pclan  = mysql_result($result_3,0, TBL_CLANS.".Name");
+                            $pclantag  = mysql_result($result_3,0, TBL_CLANS.".Tag") ."_";
+                        }
+                    }
+                    if($index>0)
+                    {
+                        if ($pteam == $team)
+                        {
+                            $players .= " & ";
+                        }
+                        else
+                        {
+                            $players .= $str;
+                            $scores .= "-";
+                            $team++;
+                        }
+                    }
+                    $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
+                    $scores .= $pscore;
+                }
+
+                //score here
+                if ($mEventAllowScore == TRUE)
+                {
+                    $players .= " (".$scores.") ";
+                }
+                $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">Match #$mID</a> reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a>)";
+                if (($time-$mTime) < INT_DAY )
+                {
+                    $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
+                }
+                else
+                {
+                    $players .= " <div class='smalltext'>".$date.".</div>";
+                }
             }
             $text .= "$players<br />";
         }
