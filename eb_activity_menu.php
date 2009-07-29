@@ -28,7 +28,7 @@ function displayRecentActivity(){
     $time = GMT_time();
     $events = array();
     $nbr_events = 0;
-    
+
 
     // Add recent games
     $rowsPerPage = 5;
@@ -62,6 +62,8 @@ function displayRecentActivity(){
             $mEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
             $mEventgame = mysql_result($result,$i , TBL_GAMES.".Name");
             $mEventgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
+            $mEventType  = mysql_result($result,$i, TBL_EVENTS.".Type");
+            $mEventAllowScore = mysql_result($result,$i, TBL_EVENTS.".AllowScore");
             $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
             $mTime_local = $mTime + GMT_TIMEOFFSET;
             $date = date("d M Y, h:i:s A",$mTime_local);
@@ -73,78 +75,113 @@ function displayRecentActivity(){
             ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
             $result2 = $sql->db_Query($q2);
             $numRanks = mysql_numrows($result2);
-            if ($numRanks == 1)
+            if ($numRanks > 0)
             {
-                $str = " tied ";
-            }
-            else if ($numRanks == 2)
-            {
-                $str = " defeated ";
-            }
-            else
-            {
-                $str = " vs ";
-            }
-
-            $q2 = "SELECT ".TBL_MATCHS.".*, "
-            .TBL_SCORES.".*, "
-            .TBL_PLAYERS.".*, "
-            .TBL_USERS.".*"
-            ." FROM ".TBL_MATCHS.", "
-            .TBL_SCORES.", "
-            .TBL_PLAYERS.", "
-            .TBL_USERS
-            ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
-            ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-            ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-            ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-            ." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
-
-            $result2 = $sql->db_Query($q2);
-            $numPlayers = mysql_numrows($result2);
-            $pname = '';
-
-            $players = "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"></img></a> ";
-
-            $pid  = mysql_result($result2,0, TBL_USERS.".user_id");
-            $pname  = mysql_result($result2,0 , TBL_USERS.".user_name");
-            $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
-
-            $rank = 1;
-            $team = 1;
-            for ($index = 1; $index < $numPlayers; $index++)
-            {
-                $pid  = mysql_result($result2,$index , TBL_USERS.".user_id");
-                $pname  = mysql_result($result2,$index , TBL_USERS.".user_name");
-                $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
-                $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
-                if ($pteam == team)
+                if ($numRanks == 1)
                 {
-                    $players .= " & ";
+                    $str = " tied ";
+                }
+                else if ($numRanks == 2)
+                {
+                    $str = " defeated ";
                 }
                 else
                 {
-                    $players .= $str;
-                    $team++;
+                    $str = " vs ";
                 }
-                $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pname</a>";
-            }
-            $players .= " playing $mEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEventID\">$mEventName</a>)";
-            if (($time-$mTime) < INT_DAY )
-            {
-                $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
-            }
-            else
-            {
-                $players .= " <div class='smalltext'>".$date.".</div>";
-            }
 
-            $events[$nbr_events][0] = $mTime;
-            $events[$nbr_events][1] = $players;
-            $nbr_events ++;
+                $q2 = "SELECT ".TBL_MATCHS.".*, "
+                .TBL_SCORES.".*, "
+                .TBL_PLAYERS.".*, "
+                .TBL_USERS.".*"
+                ." FROM ".TBL_MATCHS.", "
+                .TBL_SCORES.", "
+                .TBL_PLAYERS.", "
+                .TBL_USERS
+                ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
+                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+                ." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+
+                $result2 = $sql->db_Query($q2);
+                $numPlayers = mysql_numrows($result2);
+                $pname = '';
+                $players = '';
+                $scores = '';
+
+                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"></img></a> ";
+
+                $rank = 1;
+                $team = 1;
+                for ($index = 0; $index < $numPlayers; $index++)
+                {
+                    $pid  = mysql_result($result2,$index , TBL_USERS.".user_id");
+                    $pname  = mysql_result($result2,$index , TBL_USERS.".user_name");
+                    $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
+                    $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
+                    $pscore = mysql_result($result2,$index , TBL_SCORES.".Player_Score");
+                    $pclan = '';
+                    $pclantag = '';
+                    if ($mEventType == "Team Ladder")
+                    {
+                        $q_3 = "SELECT ".TBL_CLANS.".*, "
+                        .TBL_DIVISIONS.".*, "
+                        .TBL_TEAMS.".* "
+                        ." FROM ".TBL_CLANS.", "
+                        .TBL_DIVISIONS.", "
+                        .TBL_TEAMS
+                        ." WHERE (".TBL_TEAMS.".TeamID = '$pteam')"
+                        ."   AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
+                        ."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
+                        $result_3 = $sql->db_Query($q_3);
+                        $num_rows_3 = mysql_numrows($result_3);
+                        if ($num_rows_3 == 1)
+                        {
+                            $pclan  = mysql_result($result_3,0, TBL_CLANS.".Name");
+                            $pclantag  = mysql_result($result_3,0, TBL_CLANS.".Tag") ."_";
+                        }
+                    }
+                    if($index>0)
+                    {
+                        if ($pteam == $team)
+                        {
+                            $players .= " & ";
+                        }
+                        else
+                        {
+                            $players .= $str;
+                            $scores .= "-";
+                            $team++;
+                        }
+                    }
+                    $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
+                    $scores .= $pscore;
+                }
+
+                //score here
+                if ($mEventAllowScore == TRUE)
+                {
+                    $players .= " (".$scores.") ";
+                }
+
+                $players .= " playing $mEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEventID\">$mEventName</a>)";
+                if (($time-$mTime) < INT_DAY )
+                {
+                    $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
+                }
+                else
+                {
+                    $players .= " <div class='smalltext'>".$date.".</div>";
+                }
+
+                $events[$nbr_events][0] = $mTime;
+                $events[$nbr_events][1] = $players;
+                $nbr_events ++;
+            }
         }
     }
-    
+
     // Add Awards events
     $q = "SELECT ".TBL_AWARDS.".*, "
     .TBL_PLAYERS.".*, "
@@ -225,13 +262,13 @@ function displayRecentActivity(){
             $nbr_events ++;
         }
     }
-    
+
     multi2dSortAsc($events, 0, SORT_DESC);
     for ($index = 0; $index<$nbr_events; $index++)
     {
-        $text .= $events[$index][1]; 
+        $text .= $events[$index][1];
     }
-        
+
     return $text;
 }
 

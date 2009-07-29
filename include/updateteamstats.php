@@ -226,9 +226,9 @@ for($team=0; $team<$numTeams; $team++)
     $victory_percent[] = number_format ($tvictory_percent,2)." %";
     $unique_opponents[] = $tunique_opponents;
     $opponentsELO[] = floor($topponentsELO);
-    $score[] = $tscore;
-    $oppscore[] = $toppscore;
-    $scorediff[] = $tscore - $toppscore;
+    $score[] = ($tgames_played>0) ? number_format($tscore/$tgames_played,2) : 0;
+    $oppscore[] = ($tgames_played>0) ? number_format($toppscore/$tgames_played,2) : 0;
+    $scorediff[] = ($tgames_played>0) ? number_format(($tscore - $toppscore)/$tgames_played,2) : 0;
     $points[] = $tpoints;
 
     // Actual score (not for display)
@@ -245,10 +245,10 @@ for($team=0; $team<$numTeams; $team++)
         $victory_percent_score[] = $tvictory_percent;
         $unique_opponents_score[] = $tunique_opponents;
         $opponentsELO_score[] = $topponentsELO;
-        $score_score[] = $tscore;
-        $oppscore_score[] = $toppscore;
-        $scorediff_score[] = $tscore - $toppscore;
-        $points_score[] = $tpoints;
+        $score_score[] = ($tgames_played>0) ? $tscore/$tgames_played : 0;
+        $oppscore_score[] = ($tgames_played>0) ? -$toppscore/$tgames_played : 0;
+        $scorediff_score[] = ($tgames_played>0) ? ($tscore - $toppscore)/$tgames_played : 0;
+        $points_score[] = ($tgames_played>0) ? $tpoints/$tgames_played : 0;
 
         $teams_rated++;
     }
@@ -306,7 +306,7 @@ for($category=0; $category<$numCategories; $category++)
             break;
             case "Skill":
             $cat_header = "<b title=\"TrueSkill(TM)\">Skill</b>";
-            $min = 0; //min($Skill_score);
+            $min = min($Skill_score);
             $max = max($Skill_score);
             $stat_score[$cat_index] = $Skill_score;
             $stat_display[$cat_index] = $Skill;
@@ -357,28 +357,28 @@ for($category=0; $category<$numCategories; $category++)
             $display_cat = 0;
             break;
             case "Score":
-            $cat_header = "<b title=\"Score\">Score</b>";
+            $cat_header = "<b title=\"Score Average\">Score</b>";
             $min = min($score_score);
             $max = max($score_score);
             $stat_score[$cat_index] = $score_score;
             $stat_display[$cat_index] = $score;
             break;
             case "ScoreAgainst":
-            $cat_header = "<b title=\"Opponents Score\">Opp. Score</b>";
+            $cat_header = "<b title=\"Opponents Score Average\">Opp. Score</b>";
             $min = min($oppscore_score);
             $max = max($oppscore_score);
             $stat_score[$cat_index] = $oppscore_score;
             $stat_display[$cat_index] = $oppscore;
             break;
             case "ScoreDiff":
-            $cat_header = "<b title=\"Score Difference\">Score Diff.</b>";
+            $cat_header = "<b title=\"Score Difference Average\">Score Diff.</b>";
             $min = min($scorediff_score);
             $max = max($scorediff_score);
             $stat_score[$cat_index] = $scorediff_score;
             $stat_display[$cat_index] = $scorediff;
             break;
             case "Points":
-            $cat_header = "<b title=\"Points\">Points</b>";
+            $cat_header = "<b title=\"Points Average\">Points</b>";
             $min = min($points_score);
             $max = max($points_score);
             $stat_score[$cat_index] = $points_score;

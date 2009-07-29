@@ -108,6 +108,9 @@ BUGS:
 - Use "name" field of submit buttons to differentiate them, avoid using hidden input.
 - Match delete: do we need to update "TBL_TEAMS"?
 - team "rank delta" not reset after a match in team ladder
+- a player was created with user ID = 0
+- activity lists matchs with no scores.
+- 
 
 SUGGESTIONS:
 - Need to be able to delete Teams, or kick division members.
@@ -124,6 +127,7 @@ SUGGESTIONS:
 - Awards
  . Need to see awards in user profile.
 - Team skill != average of players skills.
+- Join button is difficult to find
 
 SQL database
 - Queries:
