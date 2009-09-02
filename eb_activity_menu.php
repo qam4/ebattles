@@ -142,6 +142,7 @@ function displayRecentActivity(){
                             $pclantag  = mysql_result($result_3,0, TBL_CLANS.".Tag") ."_";
                         }
                     }
+
                     if($index>0)
                     {
                         if ($pteam == $team)
@@ -150,13 +151,17 @@ function displayRecentActivity(){
                         }
                         else
                         {
+                            $scores .= "-".$pscore;
                             $players .= $str;
-                            $scores .= "-";
                             $team++;
                         }
                     }
+                    else
+                    {
+                        $scores .= $pscore;
+                    }
+
                     $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
-                    $scores .= $pscore;
                 }
 
                 //score here

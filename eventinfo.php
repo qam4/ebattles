@@ -755,6 +755,9 @@ else
     $text .="<div class=\"tab-page\">";
     $text .="<div class=\"tab\">Latest Matches</div>";
 
+    $mEventType  = $etype;
+    $mEventAllowScore = $eallowscore;
+
     $q = "SELECT COUNT(*) as NbrMatches"
     ." FROM ".TBL_MATCHS
     ." WHERE (Event = '$event_id')";
@@ -865,6 +868,7 @@ else
                             $pclantag  = mysql_result($result_3,0, TBL_CLANS.".Tag") ."_";
                         }
                     }
+
                     if($index>0)
                     {
                         if ($pteam == $team)
@@ -873,13 +877,17 @@ else
                         }
                         else
                         {
+                            $scores .= "-".$pscore;
                             $players .= $str;
-                            $scores .= "-";
                             $team++;
                         }
                     }
+                    else
+                    {
+                        $scores .= $pscore;
+                    }
+
                     $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
-                    $scores .= $pscore;
                 }
 
                 //score here
