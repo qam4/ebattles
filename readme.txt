@@ -93,43 +93,22 @@ Suggestions:
   - Photoshop/Design - http://www.empiredezign.com, http://www.tutorialstream.com
  
 BUGS:
-- In eventinfo.php, the players standings table should not count players if user does not exist.
-- Need to make sure the test to see if ppl can report/modify/delete is performed inside the corresponding file.
-- If you are logged out and look at a team with no member, but a division, this division does not appear.
-- Forgot password won't work, because we can't send emails...
-- Jawad managed to report a game as a guest
-  To reproduce this, go to the match report page in a tab, and logout in another tab.
-  When you Submit, the match, it will be as a Guest.
+Priority 1
+Priority 2
 - Problem when editing include/main.php in UltraEdit.
   UltraEdit adds "0xFEFF" signature (BOM) at the beginning of the file, creating "header already sent" issues.
-- Should use md5 for event passord
-- Security: check every textarea / input style="text" and see if we use htmlspecialchars when treating the output.
-- Team events: 2 players of same team should not be able to compete against each other. fixed?
-- Use "name" field of submit buttons to differentiate them, avoid using hidden input.
-- Match delete: do we need to update "TBL_TEAMS"?
-- team "rank delta" not reset after a match in team ladder
-- a player was created with user ID = 0
-- activity lists matchs with no scores.
-- 
-
-SUGGESTIONS:
-- Need to be able to delete Teams, or kick division members.
-- Teams
-  . rankdelta (up/dn arrow)
-  . streaks?
-- Draws
- . add TS calculations for draw case
- . Manage event, add "Draw proba"
- . matchinfo should have TS match rating
- . When draw occurs, winning or losing streak ends.
-- Scores
- . quick loss report -> no score???
-- Awards
- . Need to see awards in user profile.
-- Team skill != average of players skills.
-- Join button is difficult to find
 
 SQL database
 - Queries:
  . eventinfo -> . 35 + 2 if signed up
  . updatestats: 3 + 2*players + 2* matches
+ 
+EBATTLES.FREEHOSTIA.COM specific issues:
+ - Forgot password won't work, because we can't send emails...
+   e107 PHP mailer is not always workin properly
+
+Regression:
+- Need to make sure the test to see if ppl can report/modify/delete is performed inside the corresponding file.
+- Should not be able to report a game as a guest
+  To reproduce this, go to the match report page in a tab, and logout in another tab.
+  When you Submit, the match, it will be as a Guest.
