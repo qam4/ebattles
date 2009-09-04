@@ -105,6 +105,7 @@ if(isset($_POST['clanchangedivcaptain']))
     //echo "-- clanchangedivcaptain --<br />";
     header("Location: clanmanage.php?clanid=$clan_id");
 }
+/*
 if(isset($_POST['clandelete']))
 {
     $clan_id = $_GET['clanid'];
@@ -113,7 +114,7 @@ if(isset($_POST['clandelete']))
     //echo "-- clandelete --<br />";
     header("Location: clans.php");
 }
-
+*/
 if (isset($_POST['kick']))
 {
     $clan_id = $_GET['clanid'];
