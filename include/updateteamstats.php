@@ -508,15 +508,15 @@ for($team=0; $team<$numTeams; $team++)
 
         if ($trankdelta>0)
         {
-            $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$trankdelta\" title=\"+$trankdelta\"></img>";
+            $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$trankdelta\" title=\"+$trankdelta\"/>";
         }
         else if (($trankdelta<0)&&($rank+$trankdelta!=0))
         {
-            $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$trankdelta\" title=\"$trankdelta\"></img>";
+            $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$trankdelta\" title=\"$trankdelta\"/>";
         }
         else if ($rank+$trankdelta==0)
         {
-            $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
+            $trank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"/>";
         }
     }
 

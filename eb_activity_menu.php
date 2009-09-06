@@ -110,7 +110,7 @@ function displayRecentActivity(){
                 $players = '';
                 $scores = '';
 
-                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"></img></a> ";
+                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"/></a> ";
 
                 $rank = 1;
                 $team = 1;
@@ -228,23 +228,23 @@ function displayRecentActivity(){
             switch ($aType) {
                 case 'PlayerTookFirstPlace':
                 $award = " took 1st place";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"></img> ";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"/> ";
                 break;
                 case 'PlayerInTopTen':
                 $award = " entered top 10";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"></img> ";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"/> ";
                 break;
                 case 'PlayerStreak5':
                 $award = " won 5 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/medal_bronze_3.png\" alt=\"1st place\" title=\"5 in a row\"></img> ";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_bronze_3.png\" alt=\"1st place\" title=\"5 in a row\"/> ";
                 break;
                 case 'PlayerStreak10':
                 $award = " won 10 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/medal_silver_3.png\" alt=\"1st place\" title=\"10 in a row\"></img> ";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_silver_3.png\" alt=\"1st place\" title=\"10 in a row\"/> ";
                 break;
                 case 'PlayerStreak25':
                 $award = " won 25 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/medal_gold_3.png\" alt=\"1st place\" title=\"25 in a row\"></img> ";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_gold_3.png\" alt=\"1st place\" title=\"25 in a row\"/> ";
                 break;
             }
 

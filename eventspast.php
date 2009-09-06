@@ -73,8 +73,8 @@ function displayPastEvents(){
    $text .= "</td>\n";
    $text .= "<td>\n";
    $text .= "<br />\n";
-   $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"></input>\n";
-   $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"></input>\n";
+   $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"/>\n";
+   $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"/>\n";
    $text .= "</td>\n";
    $text .= "</tr>\n";
    $text .= "</table>\n";
@@ -183,7 +183,7 @@ function displayPastEvents(){
          ||($eend<=$time)
         )
       {
-        $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
+        $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"/></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
       }
    }
    $text .= "</tbody></table><br />\n";

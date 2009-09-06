@@ -1,6 +1,5 @@
 <?php
 // function to output form and hold previously entered values.
-
 function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore) {
     global $text;
 
@@ -207,7 +206,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     $text .= '<br />';
     $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';
     $text .= 'Your comments:<br />';
-    $text .= '<textarea class="mceEditor" id="elm1" name="elm1" style="width:500px">'.$sContent.'</textarea>';
+    $text .= '<textarea class="tbox" id="elm1" name="elm1" style="width:500px">'.$sContent.'</textarea>';
     $text .= '</div>';
     $text .= '<br />';
     $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';

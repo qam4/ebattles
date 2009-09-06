@@ -98,8 +98,8 @@ else
       $text .= '</select>';
       $text .= '</td>';
       $text .= '<td>';
-      $text .= '<input type="hidden" name="clanchangeowner"></input>';
-      $text .= '<input class="button" type="submit" value="Change Owner"></input>';
+      $text .= '<input type="hidden" name="clanchangeowner"/>';
+      $text .= '<input class="button" type="submit" value="Change Owner"/>';
       $text .= '</td>';
       $text .= '</tr>';
       $text .= '</table>';
@@ -110,7 +110,7 @@ else
       $text .= '
            <td class="forumheader3"><b>Name</b></td>
            <td class="forumheader3">
-             <input class="tbox" type="text" size="40" name="clanname" value="'.$clan_name.'"></input>
+             <input class="tbox" type="text" size="40" name="clanname" value="'.$clan_name.'"/>
            </td>
          </tr>
          
@@ -118,15 +118,15 @@ else
          <tr>
            <td class="forumheader3"><b>Tag</b></td>
            <td class="forumheader3">
-             <input class="tbox" type="text" size="40" name="clantag" value="'.$clan_tag.'"></input>
+             <input class="tbox" type="text" size="40" name="clantag" value="'.$clan_tag.'"/>
            </td>
          </tr>
          </tbody>
          </table>
          <!-- Save Button -->
          <table><tbody><tr><td>
-             <input type="hidden" name="clansettingssave" value="1"></input>
-             <input class="button" type="submit" value="Save"></input>
+             <input type="hidden" name="clansettingssave" value="1"/>
+             <input class="button" type="submit" value="Save"/>
          </td></tr></tbody></table>
          </form>
          
@@ -161,9 +161,9 @@ else
          $text .= "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
       }
       $text .= '</select>';
-      $text .= '<input type="hidden" name="clanadddiv"></input>';
-      $text .= '<input type="hidden" name="clanowner" value="'.$clan_owner.'"></input>';
-      $text .= '<input class="button" type="submit" value="Add Division"></input>';
+      $text .= '<input type="hidden" name="clanadddiv"/>';
+      $text .= '<input type="hidden" name="clanowner" value="'.$clan_owner.'"/>';
+      $text .= '<input class="button" type="submit" value="Add Division"/>';
       $text .= "</div>";
       $text .= '</form>';
       $text .= '</td>';
@@ -194,7 +194,7 @@ else
       
          $text .= '<tr>';
          $text .= '<td class="forumheader3">';
-         $text .= "<b><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</b><br />";
+         $text .= "<b><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"/> $gname</b><br />";
          $text .= "Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a>";
          $text .= '</td>';
          $q_2 = "SELECT ".TBL_CLANS.".*, "
@@ -246,9 +246,9 @@ else
              $text .= '</select>';
              $text .= '</td>';
              $text .= '<td>';
-             $text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"></input>';
-             $text .= '<input type="hidden" name="clanchangedivcaptain"></input>';
-             $text .= '<input class="button" type="submit" value="Change Captain"></input>';
+             $text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"/>';
+             $text .= '<input type="hidden" name="clanchangedivcaptain"/>';
+             $text .= '<input class="button" type="submit" value="Change Captain"/>';
              $text .= '</td>';
              $text .= '</tr>';
              $text .= '</table>';
@@ -280,7 +280,7 @@ else
              }
              $text .= "<tr>";
              $text .= "<td colspan=\"4\">";
-             $text .= "<input class=\"button\" type=\"submit\" name=\"kick\" value=\"Kick Selected\"></input>";
+             $text .= "<input class=\"button\" type=\"submit\" name=\"kick\" value=\"Kick Selected\"/>";
              $text .= "</td>\n";
              $text .= "</tr>";
              $text .= "</tbody></table>\n";

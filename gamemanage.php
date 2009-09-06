@@ -31,7 +31,8 @@ if ($can_manage == 0)
 
 
 $text .= '
-<table class="fborder" style="width:95%">
+<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">
+<table>
 <tbody>
 ';
 //<!-- Game Select -->
@@ -54,10 +55,9 @@ $game_name  = mysql_result($result2,0 , TBL_GAMES.".Name");
 $game_icon  = mysql_result($result2,0 , TBL_GAMES.".Icon");
 
 $text .= '
-<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">
 <tr>
-<td class="forumheader3"><b>Game</b></td>
-<td class="forumheader3">
+<td><b>Game</b></td>
+<td>
 <select class="tbox" name="gameid" onChange="this.form.submit()">';
 for($i=0; $i<$numGames; $i++)
 {
@@ -74,18 +74,22 @@ for($i=0; $i<$numGames; $i++)
     }
 }
 $text .= '</select>';
-//$text .= '<input class="button" type="submit" value="Select"></input>';
+//$text .= '<input class="button" type="submit" value="Select"/>';
 $text .= '</td>';
 $text .= '</tr>';
+$text .= '</tbody>';
+$text .= '</table>';
 $text .= '</form>';
 
 $text .= '<form action="'.e_PLUGIN.'ebattles/gameprocess.php?gameid='.$game_id.'" method="post">';
+$text .= '<table class="fborder" style="width:95%">';
+$text .= '<tbody>';
 //<!-- Game Name -->
 $text .= '
 <tr>
 <td class="forumheader3"><b>Name</b></td>
 <td class="forumheader3">
-<input type="text" name="gameName" value="'.$game_name.'"></input>
+<input type="text" name="gameName" value="'.$game_name.'"/>
 </td>
 </tr>
 ';
@@ -95,31 +99,31 @@ $text .= '
 <tr>
 <td class="forumheader3"><b>Icon</b></td>
 <td class="forumheader3">
-<img src="'.e_PLUGIN.'ebattles/images/games_icons/'.$game_icon.'" alt="'.$game_icon.'"></img>
-<input type="text" name="gameIcon" value="'.$game_icon.'"></input>
+<img src="'.e_PLUGIN.'ebattles/images/games_icons/'.$game_icon.'" alt="'.$game_icon.'"/>
+<input type="text" name="gameIcon" value="'.$game_icon.'"/>
 Icon must be in ebattles/images/games_icons/
 </td>
 </tr>
+</tbody>
+</table>
 ';
-
-$text .= '</tbody>';
-$text .= '</table>';
 
 //<!-- Save, Add new Game, Delete Game Button -->
 $text .= '
 <table><tr>
 <td>
-<input class="button" type="submit" name="gamesettingssave" value="Save Changes"></input>
+<input class="button" type="submit" name="gamesettingssave" value="Save Changes"/>
 </td>
 <td>
-<input class="button" type="submit" name="gamecreate" value="Create new Game"></input>
+<input class="button" type="submit" name="gamecreate" value="Create new Game"/>
 </td>
 <td>
-<input class="button" type="submit" name="gamedelete" value="Delete Game" onclick="return confirm(\'Are you sure you want to delete '.$game_name.'?\');"></input>
+<input class="button" type="submit" name="gamedelete" value="Delete Game" onclick="return confirm(\'Are you sure you want to delete '.$game_name.'?\');"/>
 </td>
-</tr></table>
+</tr>
+</table>
+</form>
 ';
-$text .= '</form>';
 
 $ns->tablerender('Manage Games', $text);
 require_once(FOOTERF);

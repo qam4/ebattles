@@ -184,7 +184,7 @@ function displayTeamDivisions($clan_id){
         $div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
         $text .="<div class=\"spacer\">";
-        $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</h2>";
+        $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"/> $gname</h2>";
         $text .= "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
 
         if(check_class(e_UC_MEMBER))
@@ -199,10 +199,10 @@ function displayTeamDivisions($clan_id){
                 $text .= "
                 <form action=\"".e_PLUGIN."ebattles/claninfo.php\" method=\"get\">
                 <div>
-                <input type=\"hidden\" name=\"clanid\" value=\"$clan_id\"></input>
-                <input type=\"hidden\" name=\"division\" value=\"$div_id\"></input>
-                <input type=\"hidden\" name=\"joindivision\" value=\"1\"></input>
-                <input class=\"button\" type=\"submit\" value=\"Join Division\"></input>
+                <input type=\"hidden\" name=\"clanid\" value=\"$clan_id\"/>
+                <input type=\"hidden\" name=\"division\" value=\"$div_id\"/>
+                <input type=\"hidden\" name=\"joindivision\" value=\"1\"/>
+                <input class=\"button\" type=\"submit\" value=\"Join Division\"/>
                 </div>
                 </form>";
             }
@@ -282,7 +282,7 @@ function displayTeamEvents($clan_id){
         $div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 
         $text .="<div class=\"spacer\">";
-        $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img> $gname</h2>";
+        $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"/> $gname</h2>";
 
         $q_2 = "SELECT ".TBL_TEAMS.".*, "
         .TBL_EVENTS.".*"

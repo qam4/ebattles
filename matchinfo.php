@@ -127,8 +127,8 @@ else
     {
         $text .= "<form action=\"".e_PLUGIN."ebattles/matchdelete.php?eventid=$event_id\" method=\"post\">";
         $text .= "<div>";
-        $text .= "<input type=\"hidden\" name=\"matchid\" value=\"$match_id\"></input>";
-        $text .= "<input class=\"button\" type=\"submit\" name=\"deletematch\" value=\"Delete this match\"></input>";
+        $text .= "<input type=\"hidden\" name=\"matchid\" value=\"$match_id\"/>";
+        $text .= "<input class=\"button\" type=\"submit\" name=\"deletematch\" value=\"Delete this match\"/>";
         $text .= "</div>";
         $text .= "</form>";
     }

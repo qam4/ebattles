@@ -466,11 +466,11 @@ for($player=0; $player<$numPlayers; $player++)
 
         if ($rank==1)
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"></img>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"/>";
         }
         else if (($rank<=10)&&(($rank+$prankdelta>min(10,$nbrplayers))||($rank+$prankdelta==0)))
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"></img>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"/>";
         }
         else if (($numAwards>0)&&($pawardType!='PlayerTookFirstPlace')&&($pawardType!='PlayerInTopTen')&&($pstreak>=5))
         {
@@ -480,36 +480,36 @@ for($player=0; $player<$numPlayers; $player++)
                 if ($pstreak>=5)
                 {
                     $award = " won 5 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/medal_bronze_3.png\" alt=\"Streak 5\" title=\"5 wins in a row\"></img>";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/awards/images/medal_bronze_3.png\" alt=\"Streak 5\" title=\"5 wins in a row\"/>";
                 }
                 break;
                 case 'PlayerStreak10':
                 if ($pstreak>=10)
                 {
                     $award = " won 10 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/medal_silver_3.png\" alt=\"Streak 10\" title=\"10 wins in a row\"></img>";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/awards/images/medal_silver_3.png\" alt=\"Streak 10\" title=\"10 wins in a row\"/>";
                 }
                 break;
                 case 'PlayerStreak25':
                 if ($pstreak>=25)
                 {
                     $award = " won 25 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/medal_gold_3.png\" alt=\"Streak 25\" title=\"25 wins in a row\"></img>";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_gold_3.png\" alt=\"Streak 25\" title=\"25 wins in a row\"/>";
                 }
                 break;
             }
         }
         else if ($prankdelta>0)
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\"></img>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\"/>";
         }
         else if (($prankdelta<0)&&($rank+$prankdelta!=0))
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\"></img>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\"/>";
         }
         else if ($rank+$prankdelta==0)
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"></img>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"/>";
         }
     }
 

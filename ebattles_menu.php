@@ -1,4 +1,6 @@
 <?php
+include_once(e_PLUGIN."ebattles/include/main.php");
+
 if (!defined('e107_INIT')) { exit; }
 
 global $PLUGINS_DIRECTORY;
