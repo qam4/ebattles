@@ -103,12 +103,12 @@ else
 
     $reported_by = USERID;
     $text .= "<div>";
-    $text .= "<input type=\"hidden\" name=\"eventid\" value=\"$event_id\"></input>";
-    $text .= "<input type=\"hidden\" name=\"reported_by\" value=\"$reported_by\"></input>";
+    $text .= "<input type=\"hidden\" name=\"eventid\" value=\"$event_id\"/>";
+    $text .= "<input type=\"hidden\" name=\"reported_by\" value=\"$reported_by\"/>";
 
     $text .= '
-    <input type="hidden" name="qrsubmitloss" value="1"></input>
-    <input class="button" type="submit" value="Submit Loss"></input>
+    <input type="hidden" name="qrsubmitloss" value="1"/>
+    <input class="button" type="submit" value="Submit Loss"/>
     </div>
     </td>
     </tr>

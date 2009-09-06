@@ -92,8 +92,8 @@ function displayCurrentEvents(){
     $text .= "</td>\n";
     $text .= "<td>\n";
     $text .= "<br />\n";
-    $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"></input>\n";
-    $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"></input>\n";
+    $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"/>\n";
+    $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"/>\n";
     $text .= "</td>\n";
     $text .= "</tr>\n";
     $text .= "</table>\n";
@@ -200,7 +200,7 @@ function displayCurrentEvents(){
             ||($eend>=$time)
             )
             {
-                $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
+                $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"/></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
             }
         }
         $text .= "</tbody></table><br />\n";
@@ -212,9 +212,9 @@ function displayCurrentEvents(){
     {
         $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
         $text .= "<div>";
-        $text .= "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"></input>";
-        $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"></input>";
-        $text .= "<input class=\"button\" type=\"submit\" name=\"createevent\" value=\"Create new event\"></input>";
+        $text .= "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"/>";
+        $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"/>";
+        $text .= "<input class=\"button\" type=\"submit\" name=\"createevent\" value=\"Create new event\"/>";
         $text .= "</div>";
         $text .= "</form>";
     }
@@ -256,8 +256,8 @@ function displayRecentEvents(){
     $text .= "</td>\n";
     $text .= "<td>\n";
     $text .= "<br />\n";
-    $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"></input>\n";
-    $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"></input>\n";
+    $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"/>\n";
+    $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"/>\n";
     $text .= "</td>\n";
     $text .= "</tr>\n";
     $text .= "</table>\n";
@@ -349,7 +349,7 @@ function displayRecentEvents(){
         &&($eend<$time)
         )
         {
-            $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"></img></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
+            $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"/></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
         }
     }
     $text .= "</tbody></table><br />\n";

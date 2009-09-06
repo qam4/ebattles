@@ -30,8 +30,6 @@ if(isset($_GET["sort"]) && !empty($_GET["sort"]))
     $sort_type = ($_GET["sort"]=="ASC") ? SORT_DESC : SORT_ASC;
 }
 
-
-
 /* Event Name */
 $event_id = $_GET['eventid'];
 
@@ -222,7 +220,7 @@ else
     $nbrplayers = $row['NbrPlayers'];
 
     $text .= "<h1>$ename ($etype)</h1>";
-    $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
+    $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"/> $egame</h2>";
 
     /* Update Stats */
     if ($eneedupdate == 1)
@@ -309,11 +307,11 @@ else
                                 $text .= '<td class="">
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                                 <div>
-                                <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"></input>
-                                <input type="hidden" name="division" value="'.$div_id.'"></input>
-                                <input type="hidden" name="eventid" value="'.$event_id.'"></input>
-                                <input type="hidden" name="teamjoinevent" value="1"></input>
-                                <input class="button" type="submit" value="Sign up this team!"></input>
+                                <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"/>
+                                <input type="hidden" name="division" value="'.$div_id.'"/>
+                                <input type="hidden" name="eventid" value="'.$event_id.'"/>
+                                <input type="hidden" name="teamjoinevent" value="1"/>
+                                <input class="button" type="submit" value="Sign up this team!"/>
                                 </div>
                                 ';
                                 $text .= '</form>';
@@ -325,11 +323,11 @@ else
                                 $text .= '<td class="">
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                                 <div>
-                                <input type="hidden" name="joinEventPassword" value=""></input>
-                                <input type="hidden" name="division" value="'.$div_id.'"></input>
-                                <input type="hidden" name="eventid" value="'.$event_id.'"></input>
-                                <input type="hidden" name="teamjoinevent" value="1"></input>
-                                <input class="button" type="submit" value="Sign up this team!"></input>
+                                <input type="hidden" name="joinEventPassword" value=""/>
+                                <input type="hidden" name="division" value="'.$div_id.'"/>
+                                <input type="hidden" name="eventid" value="'.$event_id.'"/>
+                                <input type="hidden" name="teamjoinevent" value="1"/>
+                                <input class="button" type="submit" value="Sign up this team!"/>
                                 </div>
                                 ';
                                 $text .= '</form>';
@@ -433,10 +431,10 @@ else
                                 $text .= '<td class="">
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                                 <div>
-                                <input type="hidden" name="eventid" value="'.$event_id.'"></input>
-                                <input type="hidden" name="team" value="'.$team_id.'"></input>
-                                <input type="hidden" name="jointeamevent" value="1"></input>
-                                <input class="button" type="submit" value="Sign up!"></input>
+                                <input type="hidden" name="eventid" value="'.$event_id.'"/>
+                                <input type="hidden" name="team" value="'.$team_id.'"/>
+                                <input type="hidden" name="jointeamevent" value="1"/>
+                                <input class="button" type="submit" value="Sign up!"/>
                                 </div>
                                 </form></td>
                                 ';
@@ -464,30 +462,30 @@ else
                 {
                     if ($epassword != "")
                     {
-                        $text .= '<td class="">Enter the password and click here to participate to this event.</td>';
+                        $text .= '<tr><td class="">Enter the password and click here to participate to this event.</td>';
                         $text .= '<td class="">Event Password:</td>';
                         $text .= '<td class="">';
                         $text .= '
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                         <div>
-                        <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"></input>
-                        <input type="hidden" name="eventid" value="'.$event_id.'"></input>
-                        <input type="hidden" name="joinevent" value="1"></input>
-                        <input class="button" type="submit" value="Sign up!"></input>
+                        <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"/>
+                        <input type="hidden" name="eventid" value="'.$event_id.'"/>
+                        <input type="hidden" name="joinevent" value="1"/>
+                        <input class="button" type="submit" value="Sign up!"/>
                         </div>
                         </form></td></tr>
                         ';
                     }
                     else
                     {
-                        $text .= '<td class="">Click here to participate to this event.</td>';
+                        $text .= '<tr><td class="">Click here to participate to this event.</td>';
                         $text .= '<td class="">
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
                         <div>
-                        <input type="hidden" name="joinEventPassword" value=""></input>
-                        <input type="hidden" name="eventid" value="'.$event_id.'"></input>
-                        <input type="hidden" name="joinevent" value="1"></input>
-                        <input class="button" type="submit" value="Sign up!"></input>
+                        <input type="hidden" name="joinEventPassword" value=""/>
+                        <input type="hidden" name="eventid" value="'.$event_id.'"/>
+                        <input type="hidden" name="joinevent" value="1"/>
+                        <input class="button" type="submit" value="Sign up!"/>
                         </div>
                         </form></td></tr>
                         ';
@@ -691,7 +689,7 @@ else
         {
             $text .= '<td>';
             $text .= "<form action=\"".e_PLUGIN."ebattles/quickreport.php?eventid=$event_id\" method=\"post\">";
-            $text .= "<div><input class=\"button\" type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"></input></div>";
+            $text .= "<div><input class=\"button\" type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"/></div>";
             $text .= "</form>";
             $text .= "</td>";
         }
@@ -699,7 +697,7 @@ else
         {
             $text .= '<td>';
             $text .= "<form action=\"".e_PLUGIN."ebattles/matchreport.php?eventid=$event_id\" method=\"post\">";
-            $text .= "<div><input class=\"button\" type=\"submit\" name=\"matchreport\" value=\"Match Report\"></input></div>";
+            $text .= "<div><input class=\"button\" type=\"submit\" name=\"matchreport\" value=\"Match Report\"/></div>";
             $text .= "</form>";
             $text .= "</td>";
         }
@@ -836,7 +834,7 @@ else
                 $players = '';
                 $scores = '';
 
-                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"></img></a> ";
+                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"/></a> ";
 
                 $rank = 1;
                 $team = 1;
@@ -950,23 +948,23 @@ else
             switch ($aType) {
                 case 'PlayerTookFirstPlace':
                 $award = " took 1st place";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"></img> ";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"/> ";
                 break;
                 case 'PlayerInTopTen':
                 $award = " entered top 10";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"></img> ";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"/> ";
                 break;
                 case 'PlayerStreak5':
                 $award = " won 5 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/medal_bronze_3.png\" alt=\"1st place\" title=\"5 in a row\"></img> ";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_bronze_3.png\" alt=\"1st place\" title=\"5 in a row\"/> ";
                 break;
                 case 'PlayerStreak10':
                 $award = " won 10 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/medal_silver_3.png\" alt=\"1st place\" title=\"10 in a row\"></img> ";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_silver_3.png\" alt=\"1st place\" title=\"10 in a row\"/> ";
                 break;
                 case 'PlayerStreak25':
                 $award = " won 25 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/medal_gold_3.png\" alt=\"1st place\" title=\"25 in a row\"></img> ";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_gold_3.png\" alt=\"1st place\" title=\"25 in a row\"/> ";
                 break;
             }
 

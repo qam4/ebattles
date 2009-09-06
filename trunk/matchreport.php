@@ -12,6 +12,19 @@ require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 require_once e_PLUGIN.'ebattles/include/ELO.php';
 require_once e_PLUGIN.'ebattles/include/trueskill.php';
+
+//these have to be set for the tinymce wysiwyg
+global $pref, $e_wysiwyg;
+
+// Enable WYSIWYG
+if ($pref['wysiwyg'])
+{
+// Specify if we use WYSIWYG for text areas
+$e_wysiwyg	= "elm1";
+define(e_WYSIWYG, TRUE);
+$WYSIWYG = TRUE;
+}
+
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);

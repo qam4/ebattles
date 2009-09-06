@@ -69,8 +69,8 @@ else
     if(strcmp(USERID,$req_user) == 0){
         $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
         $text .= "<div>";
-        $text .= "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
-        $text .= "<input class=\"button\" type=\"submit\" name=\"createevent\" value=\"Create new event\"></input>";
+        $text .= "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"/>";
+        $text .= "<input class=\"button\" type=\"submit\" name=\"createevent\" value=\"Create new event\"/>";
         $text .= "</div>";
         $text .= "</form>";
     }
@@ -118,7 +118,7 @@ else
             $text .= "<tr>";
             $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
-            $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
+            $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"/> $egame";
             $text .= "</td>";
             $text .= "<td class='forumheader3'>";
             $text .= "$prank";
@@ -179,7 +179,7 @@ else
             $text .= "<tr>";
             $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
-            $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
+            $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"/> $egame";
             $text .= "</td>";
             $text .= "<td class='forumheader3'>";
             if($eowner == $req_user)
@@ -236,7 +236,7 @@ else
             $text .= "<tr>";
             $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
-            $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame";
+            $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"/> $egame";
             $text .= "</td>";
             $text .= "<td class='forumheader3'>";
             if($eowner == $req_user)
@@ -266,9 +266,9 @@ else
     if(strcmp(USERID,$req_user) == 0){
         $text .= "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
         $text .= "<div>";
-        $text .= "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"></input>";
-        $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"></input>";
-        $text .= "<input class=\"button\" type=\"submit\" name=\"createteam\" value=\"Create new team\"></input>";
+        $text .= "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"/>";
+        $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"/>";
+        $text .= "<input class=\"button\" type=\"submit\" name=\"createteam\" value=\"Create new team\"/>";
         $text .= "</div>";
         $text .= "</form>";
     }
@@ -316,7 +316,7 @@ else
             $text .= "<tr>";
             $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$cid\">$cname</a><br />";
-            $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$dgameicon\" alt=\"$egameicon\"></img> $dgame";
+            $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$dgameicon\" alt=\"$egameicon\"/> $dgame";
             $text .= "</td>";
             $text .= "<td class='forumheader3'>";
             if($cowner == $req_user)
@@ -430,7 +430,7 @@ else
             $text .= "<tr>";
             $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$cid\">$cname</a><br />";
-            $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$dgameicon\" alt=\"$egameicon\"></img> $dgame";
+            $text .= "<img src=\"".e_PLUGIN."ebattles/images/games_icons/$dgameicon\" alt=\"$egameicon\"/> $dgame";
             $text .= "</td>";
             $text .= "<td class='forumheader3'>";
             if($cowner == $req_user)

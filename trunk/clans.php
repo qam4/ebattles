@@ -20,10 +20,14 @@ $text = '
 $text .= '
 <div class="tab-pane" id="tab-pane-8">
 <div class="tab-page">
+<div class="tab">Teams</div>
 ';
 displayClans();
 $text .= '
 </div>
+';
+
+$text .= '
 </div>
 ';
 
@@ -90,9 +94,9 @@ function displayClans(){
     {
         $text .= "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
         $text .= "<div>";
-        $text .= "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"></input>";
-        $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"></input>";
-        $text .= "<input class=\"button\" type=\"submit\" name=\"createteam\" value=\"Create new team\"></input>";
+        $text .= "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"/>";
+        $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"/>";
+        $text .= "<input class=\"button\" type=\"submit\" name=\"createteam\" value=\"Create new team\"/>";
         $text .= "</div>";
         $text .= "</form>";
     }

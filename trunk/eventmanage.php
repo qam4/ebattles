@@ -8,6 +8,18 @@
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 
+//these have to be set for the tinymce wysiwyg
+global $pref, $e_wysiwyg;
+
+// Enable WYSIWYG
+if ($pref['wysiwyg'])
+{
+// Specify if we use WYSIWYG for text areas
+$e_wysiwyg	= "eventdescription,eventrules";
+define(e_WYSIWYG, TRUE);
+$WYSIWYG = TRUE;
+}
+
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
@@ -37,26 +49,6 @@ function clearEndDate(frm)
 frm.enddate.value = ""
 }
 //-->
-</script>
-<script type="text/javascript" src="./js/tiny_mce/tiny_mce.js"></script>
-<script type="text/javascript">
-tinyMCE.init({
-mode : "textareas",
-theme : "advanced",
-skin : "o2k7",
-skin_variant : "black",
-plugins : "table,save,advhr,advimage,advlink,emotions,iespell,insertdatetime,preview,searchreplace,print,contextmenu",
-theme_advanced_buttons1 : "save,print,preview,separator,bold,italic,underline,strikethrough,separator,justifyleft,justifycenter,justifyright, justifyfull",
-theme_advanced_buttons2: "cut,copy,paste,separator,undo,redo,bullist,numlist,separator,outdent,indent",
-theme_advanced_buttons2_add : "separator,forecolor,backcolor",
-theme_advanced_buttons3 : "link,unlink,image,charmap,emotions,insertdate,inserttime",
-theme_advanced_toolbar_location : "bottom",
-theme_advanced_toolbar_align : "left",
-plugin_insertdate_dateFormat : "%Y-%m-%d",
-plugin_insertdate_timeFormat : "%H:%M:%S",
-extended_valid_elements : "a[name|href|target|title|onclick],img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name],hr[class|width|size|noshade],font[face|size|color|style],span[class|align|style]",
-editor_selector : "mceEditor"
-});
 </script>
 ';
 
@@ -124,7 +116,7 @@ else
     }
 
     $text .= "<h1><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">$ename</a> ($etype)</h1>";
-    $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"></img> $egame</h2>";
+    $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"/> $egame</h2>";
 
     $can_manage = 0;
     if (check_class($pref['eb_mod'])) $can_manage = 1;
@@ -180,9 +172,9 @@ else
                 $text .= "<td><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modid\">$modname</a></td>";
                 $text .= "<td>";
                 $text .= "<div>";
-                $text .= "<input type=\"hidden\" name=\"eventmod\" value=\"$modid\"></input>";
-                $text .= "<input type=\"hidden\" name=\"eventdeletemod\" value=\"1\"></input>";
-                $text .= "<input class=\"button\" type=\"submit\" value=\"Remove Moderator\" onclick=\"return confirm('Are you sure you want to remove this moderator?');\"></input>";
+                $text .= "<input type=\"hidden\" name=\"eventmod\" value=\"$modid\"/>";
+                $text .= "<input type=\"hidden\" name=\"eventdeletemod\" value=\"1\"/>";
+                $text .= "<input class=\"button\" type=\"submit\" value=\"Remove Moderator\" onclick=\"return confirm('Are you sure you want to remove this moderator?');\"/>";
                 $text .= "</div>";
                 $text .= "</td>";
                 $text .= "</tr>";
@@ -212,8 +204,8 @@ else
         </td>
         <td>
         <div>
-        <input type="hidden" name="eventaddmod"></input>
-        <input class="button" type="submit" value="Add Moderator"></input>
+        <input type="hidden" name="eventaddmod"/>
+        <input class="button" type="submit" value="Add Moderator"/>
         </div>
         </td>
         </tr>
@@ -243,7 +235,7 @@ else
         <tr>
         <td class="forumheader3"><b>Name</b></td>
         <td class="forumheader3">
-        <div><input class="tbox" type="text" size="40" name="eventname" value="'.$ename.'"></input></div>
+        <div><input class="tbox" type="text" size="40" name="eventname" value="'.$ename.'"/></div>
         </td>
         </tr>
         ';
@@ -253,7 +245,7 @@ else
         <tr>
         <td class="forumheader3"><b>Join Event Password</b></td>
         <td class="forumheader3">
-        <div><input class="tbox" type="text" size="40" name="eventpassword" value="'.$epassword.'"></input></div>
+        <div><input class="tbox" type="text" size="40" name="eventpassword" value="'.$epassword.'"/></div>
         </td>
         </tr>
         ';
@@ -394,7 +386,7 @@ else
         $text .= '
         </td>
         <td>
-        <div><input class="button" type="button" value="Reset" onclick="clearStartDate(this.form);"></input></div>
+        <div><input class="button" type="button" value="Reset" onclick="clearStartDate(this.form);"/></div>
         </td>
         </tr>
         </table>
@@ -431,7 +423,7 @@ else
         $text .= '
         </td>
         <td>
-        <div><input class="button" type="button" value="Reset" onclick="clearEndDate(this.form);"></input></div>
+        <div><input class="button" type="button" value="Reset" onclick="clearEndDate(this.form);"/></div>
         </td>
         </tr>
         </table>
@@ -457,7 +449,7 @@ else
         <td class="forumheader3"><b>Description</b></td>
         <td class="forumheader3">
         ';
-        $text .= '<textarea class="mceEditor" id="eventdescription" name="eventdescription" cols="70" rows="20">'.htmlspecialchars($edescription).'</textarea>';
+        $text .= '<textarea class="tbox" id="eventdescription" name="eventdescription" cols="70" rows="20">'.htmlspecialchars($edescription).'</textarea>';
         $text .= '
         </td>
         </tr>
@@ -469,8 +461,8 @@ else
         $text .= '
         <table><tr><td>
         <div>
-        <input type="hidden" name="eventsettingssave" value="1"></input>
-        <input class="button" type="submit" value="Save"></input>
+        <input type="hidden" name="eventsettingssave" value="1"/>
+        <input class="button" type="submit" value="Save"/>
         </div>
         </td></tr></table>
 
@@ -494,7 +486,7 @@ else
         <td class="forumheader3"><b>Rules</b></td>
         <td class="forumheader3">
         ';
-        $text .= '<textarea class="mceEditor" id="eventrules" name="eventrules" cols="70" rows="20">'.$erules.'</textarea>';
+        $text .= '<textarea class="tbox" id="eventrules" name="eventrules" cols="70" rows="20">'.$erules.'</textarea>';
         $text .= '
         </td>
         </tr>
@@ -505,8 +497,8 @@ else
         $text .= '
         <table><tr><td>
         <div>
-        <input type="hidden" name="eventrulessave" value="1"></input>
-        <input class="button" type="submit" value="Save"></input>
+        <input type="hidden" name="eventrulessave" value="1"/>
+        <input class="button" type="submit" value="Save"/>
         </div>
         </td></tr></table>
 
@@ -532,7 +524,7 @@ else
         </td>
         <td class="forumheader3">
         ';
-        $text .= "<input class=\"button\" type=\"submit\" name=\"eventresetscores\" value=\"Reset Scores\" onclick=\"return confirm('Are you sure you want to delete this event scores?');\"></input>";
+        $text .= "<input class=\"button\" type=\"submit\" name=\"eventresetscores\" value=\"Reset Scores\" onclick=\"return confirm('Are you sure you want to delete this event scores?');\"/>";
         $text .= '
         </td>
         </tr>
@@ -545,7 +537,7 @@ else
         </td>
         <td class="forumheader3">
         ';
-        $text .= "<input class=\"button\" type=\"submit\" name=\"eventresetevent\" value=\"Reset Event\" onclick=\"return confirm('Are you sure you want to reset this event?');\"></input>";
+        $text .= "<input class=\"button\" type=\"submit\" name=\"eventresetevent\" value=\"Reset Event\" onclick=\"return confirm('Are you sure you want to reset this event?');\"/>";
         $text .= '
         </td>
         </tr>
@@ -557,7 +549,7 @@ else
         </td>
         <td class="forumheader3">
         ';
-        $text .= "<input class=\"button\" type=\"submit\" name=\"eventdelete\" value=\"Delete Event\" onclick=\"return confirm('Are you sure you want to delete this event?');\"></input>";
+        $text .= "<input class=\"button\" type=\"submit\" name=\"eventdelete\" value=\"Delete Event\" onclick=\"return confirm('Are you sure you want to delete this event?');\"/>";
         $text .= '
         </td>
         </tr>
@@ -587,8 +579,8 @@ else
         'n_pathLeft' : 0,
         'n_pathTop' : 0,
         'n_pathLength' : 83,
-        's_imgControl': 'images/sldr3h_bg.gif',
-        's_imgSlider': 'images/sldr3h_sl.gif',
+        's_imgControl': 'images/slider/sldr3h_bg.gif',
+        's_imgSlider': 'images/slider/sldr3h_sl.gif',
         'n_zIndex': 1
         }
         </script>
@@ -607,7 +599,7 @@ else
         Number of Matches to Rank
         </td>
         <td class="forumheader3">
-        <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
+        <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
         </td>
         <td class="forumheader3">
         ';
@@ -638,7 +630,7 @@ else
             <tr>
             <td class="forumheader3">Number of Team Matches to Rank</td>
             <td class="forumheader3">
-            <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
+            <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
             </td>
             <td class="forumheader3">
             ';
@@ -729,7 +721,7 @@ else
             <tr>
             <td class="forumheader3">'.$cat_name_display.'</td>
             <td class="forumheader3">
-            <input name="sliderValue'.$cat_index.'" id="sliderValue" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"></input>
+            <input name="sliderValue'.$cat_index.'" id="sliderValue" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
             </td>
             <td class="forumheader3">
             ';
@@ -762,7 +754,7 @@ else
                 $rating_max+=$cat_max;
 
             }
-            $text .= '></td>';
+            $text .= '/></td>';
 
             $text .= '</tr>';
             //----------------------------------------
@@ -780,8 +772,8 @@ else
         <!-- Save Button -->
         <table><tr><td>
         <div>
-        <input type="hidden" name="eventstatssave" value="1"></input>
-        <input class="button" type="submit" value="Save"></input>
+        <input type="hidden" name="eventstatssave" value="1"/>
+        <input class="button" type="submit" value="Save"/>
         </div>
         </td></tr></table>
         </form>
