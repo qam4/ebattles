@@ -92,8 +92,7 @@ function displayCurrentEvents(){
     $text .= "</td>\n";
     $text .= "<td>\n";
     $text .= "<br />\n";
-    $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"/>\n";
-    $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"/>\n";
+    $text .= "<input class=\"button\" type=\"submit\" name=\"subgameselect\" value=\"Filter\"/>\n";
     $text .= "</td>\n";
     $text .= "</tr>\n";
     $text .= "</table>\n";
@@ -256,8 +255,7 @@ function displayRecentEvents(){
     $text .= "</td>\n";
     $text .= "<td>\n";
     $text .= "<br />\n";
-    $text .= "<input type=\"hidden\" name=\"subgameselect\" value=\"1\"/>\n";
-    $text .= "<input class=\"button\" type=\"submit\" value=\"Filter\"/>\n";
+    $text .= "<input class=\"button\" type=\"submit\" name=\"subgameselect\" value=\"Filter\"/>\n";
     $text .= "</td>\n";
     $text .= "</tr>\n";
     $text .= "</table>\n";

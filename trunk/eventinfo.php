@@ -58,8 +58,8 @@ else
     $eTS_default_sigma  = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
     $epassword = mysql_result($result, 0, TBL_EVENTS.".Password");
 
-    if(isset($_GET['joinevent'])){
-        if ($_GET['joinEventPassword'] == $epassword)
+    if(isset($_POST['joinevent'])){
+        if ($_POST['joinEventPassword'] == $epassword)
         {
             $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,ELORanking,TS_mu,TS_sigma)
             VALUES ($event_id,".USERID.",$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
@@ -69,7 +69,7 @@ else
             header("Location: eventinfo.php?eventid=$event_id");
         }
     }
-    if(isset($_GET['quitevent'])){
+    if(isset($_POST['quitevent'])){
         $q = " DELETE FROM ".TBL_PLAYERS
         ." WHERE (Event = '$event_id')"
         ."   AND (User = ".USERID.")";
@@ -78,10 +78,10 @@ else
         $result = $sql->db_Query($q4);
         header("Location: eventinfo.php?eventid=$event_id");
     }
-    if(isset($_GET['teamjoinevent'])){
-        if ($_GET['joinEventPassword'] == $epassword)
+    if(isset($_POST['teamjoinevent'])){
+        if ($_POST['joinEventPassword'] == $epassword)
         {
-            $div_id = $_GET['division'];
+            $div_id = $_POST['division'];
             $q = " INSERT INTO ".TBL_TEAMS."(Event,Division)
             VALUES ($event_id,$div_id)";
             $sql->db_Query($q);
@@ -115,8 +115,8 @@ else
             header("Location: eventinfo.php?eventid=$event_id");
         }
     }
-    if(isset($_GET['jointeamevent'])){
-        $team_id = $_GET['team'];
+    if(isset($_POST['jointeamevent'])){
+        $team_id = $_POST['team'];
         $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
         VALUES ($event_id,".USERID.",$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
         $sql->db_Query($q);
@@ -305,13 +305,11 @@ else
                             {
                                 $text .= '<td class="">Enter the password and click here to let your team participate to this event.</td>';
                                 $text .= '<td class="">
-                                <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
+                                <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                 <div>
                                 <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"/>
                                 <input type="hidden" name="division" value="'.$div_id.'"/>
-                                <input type="hidden" name="eventid" value="'.$event_id.'"/>
-                                <input type="hidden" name="teamjoinevent" value="1"/>
-                                <input class="button" type="submit" value="Sign up this team!"/>
+                                <input class="button" type="submit" name="teamjoinevent" value="Sign up this team!"/>
                                 </div>
                                 ';
                                 $text .= '</form>';
@@ -321,13 +319,11 @@ else
                             {
                                 $text .= '<td class="">Click here to let your team participate to this event.</td>';
                                 $text .= '<td class="">
-                                <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
+                                <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                 <div>
                                 <input type="hidden" name="joinEventPassword" value=""/>
                                 <input type="hidden" name="division" value="'.$div_id.'"/>
-                                <input type="hidden" name="eventid" value="'.$event_id.'"/>
-                                <input type="hidden" name="teamjoinevent" value="1"/>
-                                <input class="button" type="submit" value="Sign up this team!"/>
+                                <input class="button" type="submit" name="teamjoinevent" value="Sign up this team!"/>
                                 </div>
                                 ';
                                 $text .= '</form>';
@@ -429,12 +425,10 @@ else
                             if(!$result || (mysql_numrows($result) == 0))
                             {
                                 $text .= '<td class="">
-                                <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
+                                <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                 <div>
-                                <input type="hidden" name="eventid" value="'.$event_id.'"/>
                                 <input type="hidden" name="team" value="'.$team_id.'"/>
-                                <input type="hidden" name="jointeamevent" value="1"/>
-                                <input class="button" type="submit" value="Sign up!"/>
+                                <input class="button" type="submit" name="jointeamevent" value="Sign up!"/>
                                 </div>
                                 </form></td>
                                 ';
@@ -466,12 +460,10 @@ else
                         $text .= '<td class="">Event Password:</td>';
                         $text .= '<td class="">';
                         $text .= '
-                        <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
+                        <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                         <div>
                         <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"/>
-                        <input type="hidden" name="eventid" value="'.$event_id.'"/>
-                        <input type="hidden" name="joinevent" value="1"/>
-                        <input class="button" type="submit" value="Sign up!"/>
+                        <input class="button" type="submit" name="joinevent" value="Sign up!"/>
                         </div>
                         </form></td></tr>
                         ';
@@ -480,12 +472,10 @@ else
                     {
                         $text .= '<tr><td class="">Click here to participate to this event.</td>';
                         $text .= '<td class="">
-                        <form action="'.e_PLUGIN.'ebattles/eventinfo.php" method="get">
+                        <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                         <div>
                         <input type="hidden" name="joinEventPassword" value=""/>
-                        <input type="hidden" name="eventid" value="'.$event_id.'"/>
-                        <input type="hidden" name="joinevent" value="1"/>
-                        <input class="button" type="submit" value="Sign up!"/>
+                        <input class="button" type="submit" name="joinevent" value="Sign up!"/>
                         </div>
                         </form></td></tr>
                         ';

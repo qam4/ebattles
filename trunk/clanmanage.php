@@ -125,8 +125,7 @@ else
          </table>
          <!-- Save Button -->
          <table><tbody><tr><td>
-             <input type="hidden" name="clansettingssave" value="1"/>
-             <input class="button" type="submit" value="Save"/>
+             <input class="button" type="submit" name="clansettingssave" value="Save"/>
          </td></tr></tbody></table>
          </form>
          

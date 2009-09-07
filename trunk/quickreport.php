@@ -107,8 +107,7 @@ else
     $text .= "<input type=\"hidden\" name=\"reported_by\" value=\"$reported_by\"/>";
 
     $text .= '
-    <input type="hidden" name="qrsubmitloss" value="1"/>
-    <input class="button" type="submit" value="Submit Loss"/>
+    <input class="button" type="submit" name="qrsubmitloss" value="Submit Loss"/>
     </div>
     </td>
     </tr>

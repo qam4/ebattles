@@ -201,8 +201,7 @@ function displayTeamDivisions($clan_id){
                 <div>
                 <input type=\"hidden\" name=\"clanid\" value=\"$clan_id\"/>
                 <input type=\"hidden\" name=\"division\" value=\"$div_id\"/>
-                <input type=\"hidden\" name=\"joindivision\" value=\"1\"/>
-                <input class=\"button\" type=\"submit\" value=\"Join Division\"/>
+                <input class=\"button\" type=\"submit\" name=\"joindivision\" value=\"Join Division\"/>
                 </div>
                 </form>";
             }

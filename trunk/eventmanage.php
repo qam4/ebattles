@@ -173,8 +173,7 @@ else
                 $text .= "<td>";
                 $text .= "<div>";
                 $text .= "<input type=\"hidden\" name=\"eventmod\" value=\"$modid\"/>";
-                $text .= "<input type=\"hidden\" name=\"eventdeletemod\" value=\"1\"/>";
-                $text .= "<input class=\"button\" type=\"submit\" value=\"Remove Moderator\" onclick=\"return confirm('Are you sure you want to remove this moderator?');\"/>";
+                $text .= "<input class=\"button\" type=\"submit\" name=\"eventdeletemod\" value=\"Remove Moderator\" onclick=\"return confirm('Are you sure you want to remove this moderator?');\"/>";
                 $text .= "</div>";
                 $text .= "</td>";
                 $text .= "</tr>";
@@ -461,8 +460,7 @@ else
         $text .= '
         <table><tr><td>
         <div>
-        <input type="hidden" name="eventsettingssave" value="1"/>
-        <input class="button" type="submit" value="Save"/>
+        <input class="button" type="submit" name="eventsettingssave" value="Save"/>
         </div>
         </td></tr></table>
 
@@ -497,8 +495,7 @@ else
         $text .= '
         <table><tr><td>
         <div>
-        <input type="hidden" name="eventrulessave" value="1"/>
-        <input class="button" type="submit" value="Save"/>
+        <input class="button" type="submit" name="eventrulessave" value="Save"/>
         </div>
         </td></tr></table>
 
@@ -772,8 +769,7 @@ else
         <!-- Save Button -->
         <table><tr><td>
         <div>
-        <input type="hidden" name="eventstatssave" value="1"/>
-        <input class="button" type="submit" value="Save"/>
+        <input class="button" type="submit" name="eventstatssave" value="Save"/>
         </div>
         </td></tr></table>
         </form>
