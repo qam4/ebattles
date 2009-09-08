@@ -1,0 +1,12 @@
+#summary eBattles wiki Table of Contents.
+
+  * [Introduction Introduction to eBattles]
+  * [PluginInstallation How to install the plugin]
+  * Events
+   * [EventsInfo Introduction] 
+   * [EventManage Create/Manage/Customize your event]
+  * Teams
+   * [TeamsInfo Introduction] 
+   * [TeamManage Create/Manage/Customize your team]
+  * Games
+  * [FAQ FAQ-Troubleshoot]
