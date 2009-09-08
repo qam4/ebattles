@@ -570,6 +570,12 @@ echo "<br />";
 // Serialize results array
 $OUTPUT = serialize($stats);
 $fp = fopen($file_team,"w"); // open file with Write permission
+
+if ($fp == FALSE) {
+// handle error
+$text .= "Could not write to cache directory, please verify cache direcory is writable";    
+}
+
 fputs($fp, $OUTPUT);
 fclose($fp);
 
