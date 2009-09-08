@@ -26,9 +26,9 @@ if (!$clan_id)
 }
 else
 {
-    if(isset($_GET['joindivision']))
+    if(isset($_POST['joindivision']))
     {
-        $div_id = $_GET['division'];
+        $div_id = $_POST['division'];
         $q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
         VALUES ($div_id,".USERID.",$time)";
         $sql->db_Query($q);
@@ -197,9 +197,8 @@ function displayTeamDivisions($clan_id){
             if(!$result_2 || (mysql_numrows($result_2) < 1))
             {
                 $text .= "
-                <form action=\"".e_PLUGIN."ebattles/claninfo.php\" method=\"get\">
+                <form action=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan_id\" method=\"post\">
                 <div>
-                <input type=\"hidden\" name=\"clanid\" value=\"$clan_id\"/>
                 <input type=\"hidden\" name=\"division\" value=\"$div_id\"/>
                 <input class=\"button\" type=\"submit\" name=\"joindivision\" value=\"Join Division\"/>
                 </div>
