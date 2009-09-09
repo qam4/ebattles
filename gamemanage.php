@@ -99,9 +99,9 @@ $text .= '
 <tr>
 <td class="forumheader3"><b>Icon</b></td>
 <td class="forumheader3">
-<img src="'.e_PLUGIN.'ebattles/images/games_icons/'.$game_icon.'" alt="'.$game_icon.'"/>
+<img src="'.getGameIcon($game_icon).'" alt="'.$game_icon.'"/>
 <input type="text" name="gameIcon" value="'.$game_icon.'"/>
-Icon must be in ebattles/images/games_icons/
+<div class="smalltext">Icon can be an external link or must be placed in ebattles/images/games_icons/<div>
 </td>
 </tr>
 </tbody>

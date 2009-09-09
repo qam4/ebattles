@@ -193,7 +193,7 @@ else
       
          $text .= '<tr>';
          $text .= '<td class="forumheader3">';
-         $text .= "<b><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"/> $gname</b><br />";
+         $text .= '<b><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</b><br />';
          $text .= "Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a>";
          $text .= '</td>';
          $q_2 = "SELECT ".TBL_CLANS.".*, "

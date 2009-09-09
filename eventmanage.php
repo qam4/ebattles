@@ -116,7 +116,7 @@ else
     }
 
     $text .= "<h1><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">$ename</a> ($etype)</h1>";
-    $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"/> $egame</h2>";
+    $text .= "<h2><img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame</h2>";
 
     $can_manage = 0;
     if (check_class($pref['eb_mod'])) $can_manage = 1;

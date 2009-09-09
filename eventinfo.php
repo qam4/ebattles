@@ -220,7 +220,7 @@ else
     $nbrplayers = $row['NbrPlayers'];
 
     $text .= "<h1>$ename ($etype)</h1>";
-    $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$egameicon\" alt=\"$egameicon\"/> $egame</h2>";
+    $text .= "<h2><img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame</h2>";
 
     /* Update Stats */
     if ($eneedupdate == 1)
@@ -300,7 +300,7 @@ else
                         $text .= '<td class="">You are the captain of '.$div_name.'.</td>';
                         if( $num_rows_2 == 0)
                         {
-                            
+
                             if ($epassword != "")
                             {
                                 $text .= '<td class="">Enter the password and click here to let your team participate to this event.</td>';
@@ -404,10 +404,10 @@ else
 
                             if ($captain_id != USERID)
                             {
-                            
-                            $text .= '<tr><td class="">Your team '.$clan_name.' has not signed up to this event.</td>';
-                            $text .= '<td class="">Please contact your captain <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
-                        }
+
+                                $text .= '<tr><td class="">Your team '.$clan_name.' has not signed up to this event.</td>';
+                                $text .= '<td class="">Please contact your captain <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
+                            }
                         }
                         else
                         {
@@ -740,8 +740,10 @@ else
     $text .= "</div>";
     $text .= "</div>";
 
-    $text .="<div class=\"tab-page\">";
-    $text .="<div class=\"tab\">Latest Matches</div>";
+    $text .= '
+    <div class="tab-page">
+    <div class="tab">Latest Matches</div>
+    ';
 
     $mEventType  = $etype;
     $mEventAllowScore = $eallowscore;
@@ -770,9 +772,9 @@ else
 
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
-
     if ($num_rows>0)
     {
+        /* Display table contents */
         for($i=0; $i<$num_rows; $i++)
         {
             $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
@@ -824,10 +826,9 @@ else
                 $players = '';
                 $scores = '';
 
-                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"/></a> ";
+                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".getGameIcon($mEventgameicon)."\" alt=\"$mEventgameicon\"/></a> ";
 
                 $rank = 1;
-                $team = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
                 {
                     $pid  = mysql_result($result2,$index , TBL_USERS.".user_id");
@@ -872,6 +873,7 @@ else
                     }
                     else
                     {
+                        $team = $pteam;
                         $scores .= $pscore;
                     }
 
@@ -883,6 +885,7 @@ else
                 {
                     $players .= " (".$scores.") ";
                 }
+
                 $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">Match #$mID</a> reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a>)";
                 if (($time-$mTime) < INT_DAY )
                 {
@@ -892,8 +895,8 @@ else
                 {
                     $players .= " <div class='smalltext'>".$date.".</div>";
                 }
+                $text .= "$players<br />";
             }
-            $text .= "$players<br />";
         }
     }
     $text .= "[<a href=\"".e_PLUGIN."ebattles/eventmatchs.php?eventid=$event_id\">Show all Matches</a>]";

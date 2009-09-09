@@ -67,7 +67,6 @@ else
     $nbrmatches = $row['NbrMatches'];
     $text .="<h2>Matches for this Ladder ($nbrmatches)</h2><br />";
     $text .= "<div class=\"spacer\">";
-    $text .= "<div style=\"text-align:center\">";
     /* Stats/Results */
     $q = "SELECT ".TBL_MATCHS.".*, "
     .TBL_USERS.".*"
@@ -80,7 +79,6 @@ else
 
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
-
     if ($num_rows>0)
     {
         for($i=0; $i<$num_rows; $i++)
@@ -134,10 +132,9 @@ else
                 $players = '';
                 $scores = '';
 
-                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"/></a> ";
+                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".getGameIcon($mEventgameicon)."\" alt=\"$mEventgameicon\"/></a> ";
 
                 $rank = 1;
-                $team = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
                 {
                     $pid  = mysql_result($result2,$index , TBL_USERS.".user_id");
@@ -182,6 +179,7 @@ else
                     }
                     else
                     {
+                        $team = $pteam;
                         $scores .= $pscore;
                     }
 
@@ -210,7 +208,6 @@ else
     $text .= paginate($rowsPerPage, $pg, $totalPages);
 
     $text .= "<br />";
-    $text .= "</div>";
     $text .= "</div>";
     $text .= "</div>";
     $text .= "</div>";

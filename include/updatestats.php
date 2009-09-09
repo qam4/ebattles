@@ -480,14 +480,14 @@ for($player=0; $player<$numPlayers; $player++)
                 if ($pstreak>=5)
                 {
                     $award = " won 5 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/awards/images/medal_bronze_3.png\" alt=\"Streak 5\" title=\"5 wins in a row\"/>";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_bronze_3.png\" alt=\"Streak 5\" title=\"5 wins in a row\"/>";
                 }
                 break;
                 case 'PlayerStreak10':
                 if ($pstreak>=10)
                 {
                     $award = " won 10 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/awards/images/medal_silver_3.png\" alt=\"Streak 10\" title=\"10 wins in a row\"/>";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_silver_3.png\" alt=\"Streak 10\" title=\"10 wins in a row\"/>";
                 }
                 break;
                 case 'PlayerStreak25':
