@@ -49,7 +49,6 @@ function displayRecentActivity(){
 
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
-    $text .= "<br />";
     if ($num_rows>0)
     {
         /* Display table contents */
@@ -110,10 +109,9 @@ function displayRecentActivity(){
                 $players = '';
                 $scores = '';
 
-                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".e_PLUGIN."ebattles/images/games_icons/$mEventgameicon\" alt=\"$mEventgameicon\"/></a> ";
+                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".getGameIcon($mEventgameicon)."\" alt=\"$mEventgameicon\"/></a> ";
 
                 $rank = 1;
-                $team = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
                 {
                     $pid  = mysql_result($result2,$index , TBL_USERS.".user_id");
@@ -158,6 +156,7 @@ function displayRecentActivity(){
                     }
                     else
                     {
+                        $team = $pteam;
                         $scores .= $pscore;
                     }
 

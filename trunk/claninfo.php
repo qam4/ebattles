@@ -183,8 +183,8 @@ function displayTeamDivisions($clan_id){
         $div_captain  = mysql_result($result,$i, TBL_USERS.".user_id");
         $div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
-        $text .="<div class=\"spacer\">";
-        $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"/> $gname</h2>";
+        $text .= '<div class="spacer">';
+        $text .= '<h2><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</h2>';
         $text .= "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
 
         if(check_class(e_UC_MEMBER))
@@ -279,8 +279,8 @@ function displayTeamEvents($clan_id){
         $gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
         $div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 
-        $text .="<div class=\"spacer\">";
-        $text .= "<h2><img src=\"".e_PLUGIN."ebattles/images/games_icons/$gicon\" alt=\"$gicon\"/> $gname</h2>";
+        $text .= '<div class="spacer">';
+        $text .= '<h2><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</h2>';
 
         $q_2 = "SELECT ".TBL_TEAMS.".*, "
         .TBL_EVENTS.".*"

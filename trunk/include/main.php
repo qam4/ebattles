@@ -37,4 +37,18 @@ function multi2dSortAsc(&$arr, $key, $sort)
     }
     array_multisort($sort_col, $sort, SORT_NUMERIC, $arr);
 }
+
+function getGameIcon($icon)
+{
+    if (preg_match("/\//", $icon))
+    {
+        // External link
+        return $icon;
+    }
+    else
+    {
+        // Internal link
+        return e_PLUGIN."ebattles/images/games_icons/$icon";
+    }
+}
 ?>

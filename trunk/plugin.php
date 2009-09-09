@@ -264,15 +264,17 @@ $eplug_tables = array(
 // Insert Games in database
 if($file_handle = fopen(e_PLUGIN."ebattles/images/games_icons/Games List.csv", "r"))
 {
+    $line_of_text = fgetcsv($file_handle, 1024); // header
     while (!feof($file_handle) ) {
         $line_of_text = fgetcsv($file_handle, 1024);
 
         $shortname = addslashes($line_of_text[0]);
         $longname  = addslashes($line_of_text[1]);
+        $icon  = addslashes($line_of_text[2]);
 
         $query =
         "INSERT INTO ".TBL_GAMES."(Name, Icon)
-        VALUES ('$longname', '$shortname.gif')";
+        VALUES ('$longname', '$icon')";
         array_push($eplug_tables, $query); 
     }
     fclose($file_handle);
