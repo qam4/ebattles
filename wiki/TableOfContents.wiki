@@ -3,10 +3,10 @@
   * [Introduction Introduction to eBattles]
   * [PluginInstallation How to install the plugin]
   * Events
-   * [EventsInfo Introduction] 
-   * [EventManage Create/Manage/Customize your event]
+   * [EventsInfo Events Information] 
+   * [EventManage Create/Manage your event]
   * Teams
-   * [TeamsInfo Introduction] 
-   * [TeamManage Create/Manage/Customize your team]
+   * [TeamsInfo Teams Introduction] 
+   * [TeamManage Create/Manage your team]
   * Games
   * [FAQ FAQ-Troubleshoot]
