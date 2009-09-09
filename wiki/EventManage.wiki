@@ -1,0 +1,38 @@
+#summary Create, Manage, Customize an event.
+
+= Create an event =
+  * Users can create new event by clicking one of the "Create new Event" button located:
+    * "Events" page, "Current Events" tab
+    * "My profile" page, "Events" tab
+  
+= Manage an event =
+== Access Manage event page ==  
+  # Event Manage page is accessible to
+    * the user who owns the event (event's creator owns it by default)
+    * eBattles admins
+  # Event Manage page is accessible from
+    * "Manage" link in "My profile" page, "Events" tab, "Owner" events list
+    * "Click here to Manage event" link in the "Event" page, "Info" tab
+== Manage the event ==
+List of things that can be customized in events
+  # Event Summary
+     * Owner
+     * Moderators
+  # Event Settings
+     * Name
+     * Password to join
+     * Game
+     * Type: 1v1 or team ladder
+     * Enable/disable scoring, and draws
+     * Dates (start/end)
+     * Description
+  # Event Rules
+     * Rules
+  # Event Reset
+     * reset players/teams, reset scores, delete event
+  # Event Stats
+     * Number of games to rank, number of team games to rank
+     * Max points for each stats categorie
+     * "Info only" mode, if you want to show the stat but not count it in results.
+     * TBD: ELO K, ELO M, ELO_default (can't be changed if one player has signed up)
+     * TBD: TS beta, epsilon (can't be changed if one player has signed up)
