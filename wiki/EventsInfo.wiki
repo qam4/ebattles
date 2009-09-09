@@ -1,0 +1,54 @@
+#summary Event information
+
+=Event information page=
+  * Events are listed in the "Events" page
+  * To sign-up to an event:
+    * Log in 
+    * Go to the Event page, "Sign up" tab
+    * Click on "Sign up" button
+
+==Match reporting==
+eBattles supports any kind of multiplayer matches.
+
+Any number of teams and any number of players per team is allowed: 1v1, 2v2, 1v1v1, 3v1...
+  * To report a match:
+    * Log in
+    * Go to the Event page, "Player Standings" tab
+    * Click on "Quick loss report" or "Match Report" button
+      * Quick Loss report: Choose an opponent in the drop-down list and click on "Submit Loss"
+      * Match report:
+        * Select the number of players and teams
+        * Select the players and their respective team
+        * Select the rank of each team
+        * Enter score (if applicable).
+        * Check the draw checkbox if rank is same as previous team (if applicable) 
+        * Add games comments
+
+==Players Standing==
+The rating calculation is based on each players score in a set of ranking categories.
+Each category is assigned a max value which is attributed to the player who scores best in that category.
+Other players get a portion of the max value, proportional to their score.
+Overall score is the sum of the categories scores. 
+ 
+==Team Standing==
+In "Team" ladders, the score of each player goes toward his teams score.
+This type of ladder is perfect for clan wars.
+
+==List of supported statistics categories==
+  * Requirements to rank
+    * Games required for player/team rating.
+    * Number of players required for team rating
+  * Scoring Catagories
+    * Overall Rating
+    * ELO
+    * [http://research.microsoft.com/en-us/projects/trueskill/ TrueSkill™]
+    * Games played
+    * Wins, Losses, W/D/L, Victory ratio (W/L), Victory % (100*W/Games Played)
+    * Unique opponents
+    * Opponent average ELO
+    * Rank delta, with up/down arrow next to rank
+    * streak of victory & loss
+    * Avg score per game
+    * Avg enemy score per game
+    * Avg score difference per game
+    * points
