@@ -1,13 +1,21 @@
-#summary One-sentence summary of this page.
+#summary eBattles installation.
 
 = Requirements =
-
-Add your content here.
-
+ * e107 CMS v0.7+
 
 = Step-by-step installation =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+ # Upload the plugin 
+  # Unzip the plugin
+  # Upload ebattles/ folder in e107_plugins/
+  # Make sure ebattles/cache/ folder is writable (CHMOD 755 or 777)
+ # Install the plugin
+  # In e107, Admin Area>Plugin Manager, click on the eBattles "Install" button 
+ # Add plugin menus 
+  # In Admin Area>Menus, you can choose an area for eBattles menus
+   * ebattles: menu with links to Events, Teams, User Profile pages
+   * eb_activity: menu with list of latest gaming activity
+ # Configure the plugin
+  # In Admin Area>Plugins/eBattles, you can change the plugin settings
+   * Moderator userclass: determines which userclass has admin privileges on ebattles
+   * Events delayed updates: If enabled, events stats will be recalculated only if the event has changed and the delay has expired
+   * Insert debug data in database: for debugging purpose only
