@@ -1,0 +1,26 @@
+#summary Create, Manage, Customize a Team.
+
+= Create a team =
+  * Users can create new team by clicking one of the "Create new Team" button located:
+    * "Teams" page, "Teams" tab
+    * "My profile" page, "Teams" tab
+  
+= Manage an event =
+== Access Manage event page ==  
+  # Event Manage page is accessible to
+    * the user who owns the team (team's creator owns it by default)
+    * eBattles admins
+  # Event Manage page is accessible from
+    * "Manage" link in "My profile" page, "Teams Membership" tab, "Owner" teams list
+    * "Click here to Manage event" link in the "Event" page, "Team summary" tab
+== Manage the event ==
+List of things that can be customized in teams
+  # Team Summary
+    * Owner
+    * Name
+    * Tag (shortname or acronym)
+  # Team Divisions
+    * Create game divisions 
+    * Change divisions captains
+    * Kick divisions members
+     
