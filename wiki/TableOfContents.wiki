@@ -6,7 +6,7 @@
    * [EventsInfo Events Information] 
    * [EventManage Create/Manage your event]
   * Teams
-   * [TeamsInfo Teams Introduction] 
+   * [TeamsInfo Teams Information] 
    * [TeamManage Create/Manage your team]
   * Games
   * [FAQ FAQ-Troubleshoot]
