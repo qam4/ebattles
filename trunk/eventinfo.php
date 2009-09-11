@@ -61,12 +61,21 @@ else
     if(isset($_POST['joinevent'])){
         if ($_POST['joinEventPassword'] == $epassword)
         {
-            $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,ELORanking,TS_mu,TS_sigma)
-            VALUES ($event_id,".USERID.",$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
-            $sql->db_Query($q);
-            $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-            $result = $sql->db_Query($q4);
-            header("Location: eventinfo.php?eventid=$event_id");
+            // Is the user already signed up?
+            $q = "SELECT ".TBL_PLAYERS.".*"
+            ." FROM ".TBL_PLAYERS
+            ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+            ."   AND (".TBL_PLAYERS.".User = ".USERID.")";
+            $result = $sql->db_Query($q);
+            if(!$result || (mysql_numrows($result) < 1))
+            {
+                $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,ELORanking,TS_mu,TS_sigma)
+                VALUES ($event_id,".USERID.",$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
+                $sql->db_Query($q);
+                $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+                $result = $sql->db_Query($q4);
+                header("Location: eventinfo.php?eventid=$event_id");
+            }
         }
     }
     if(isset($_POST['quitevent'])){
@@ -82,47 +91,69 @@ else
         if ($_POST['joinEventPassword'] == $epassword)
         {
             $div_id = $_POST['division'];
-            $q = " INSERT INTO ".TBL_TEAMS."(Event,Division)
-            VALUES ($event_id,$div_id)";
-            $sql->db_Query($q);
-            $team_id =  mysql_insert_id();
 
-            // All members of this division will automatically be signed up to this event
-            $q_2 = "SELECT ".TBL_DIVISIONS.".*, "
-            .TBL_MEMBERS.".*, "
-            .TBL_USERS.".*"
-            ." FROM ".TBL_DIVISIONS.", "
-            .TBL_USERS.", "
-            .TBL_MEMBERS
-            ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
-            ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-            ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)";
-            $result_2 = $sql->db_Query($q_2);
-            $num_rows_2 = mysql_numrows($result_2);
-            if($num_rows_2 > 0)
+            // Is the division signed up
+            $q = "SELECT ".TBL_TEAMS.".*"
+            ." FROM ".TBL_TEAMS
+            ." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+            ." AND (".TBL_TEAMS.".Division = '$div_id')";
+            $result = $sql->db_Query($q);
+            $num_rows = mysql_numrows($result);
+            if($num_rows == 0)
             {
-                for($j=0; $j<$num_rows_2; $j++)
-                {
-                    $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
-                    $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
-                    VALUES ($event_id,$mid,$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
-                    $sql->db_Query($q);
-                }
-            }
+                $q = " INSERT INTO ".TBL_TEAMS."(Event,Division)
+                VALUES ($event_id,$div_id)";
+                $sql->db_Query($q);
+                $team_id =  mysql_insert_id();
 
-            $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-            $result = $sql->db_Query($q4);
-            header("Location: eventinfo.php?eventid=$event_id");
+                // All members of this division will automatically be signed up to this event
+                $q_2 = "SELECT ".TBL_DIVISIONS.".*, "
+                .TBL_MEMBERS.".*, "
+                .TBL_USERS.".*"
+                ." FROM ".TBL_DIVISIONS.", "
+                .TBL_USERS.", "
+                .TBL_MEMBERS
+                ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+                ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+                ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)";
+                $result_2 = $sql->db_Query($q_2);
+                $num_rows_2 = mysql_numrows($result_2);
+                if($num_rows_2 > 0)
+                {
+                    for($j=0; $j<$num_rows_2; $j++)
+                    {
+                        $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+                        $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
+                        VALUES ($event_id,$mid,$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
+                        $sql->db_Query($q);
+                    }
+                }
+
+                $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+                $result = $sql->db_Query($q4);
+                header("Location: eventinfo.php?eventid=$event_id");
+            }
         }
     }
     if(isset($_POST['jointeamevent'])){
         $team_id = $_POST['team'];
-        $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
-        VALUES ($event_id,".USERID.",$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
-        $sql->db_Query($q);
-        $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-        $result = $sql->db_Query($q4);
-        header("Location: eventinfo.php?eventid=$event_id");
+
+        // Is the user already signed up for that team?
+        $q = "SELECT ".TBL_PLAYERS.".*"
+        ." FROM ".TBL_PLAYERS
+        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+        ."   AND (".TBL_PLAYERS.".Team = '$team_id')"
+        ."   AND (".TBL_PLAYERS.".User = ".USERID.")";
+        $result = $sql->db_Query($q);
+        if(!$result || (mysql_numrows($result) < 1))
+        {
+            $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
+            VALUES ($event_id,".USERID.",$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
+            $sql->db_Query($q);
+            $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+            $result = $sql->db_Query($q4);
+            header("Location: eventinfo.php?eventid=$event_id");
+        }
     }
 
     $q = "SELECT ".TBL_EVENTS.".*, "
@@ -254,10 +285,10 @@ else
     /* Join/Quit Event */
     $text .="<div class=\"tab-page\">";
     $text .="<div class=\"tab\">Signup</div>";
-    $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+    $text .= "<table class=\"\" style=\"width:95%\"><tbody>";
     if(check_class(e_UC_MEMBER))
     {
-        // If looged in
+        // If logged in
         if(($eend == 0) || ($time < $eend))
         {
             // If event is not finished
@@ -374,7 +405,6 @@ else
                     {
                         $clan_name  = mysql_result($result_2,$i , TBL_CLANS.".Name");
                         $div_id  = mysql_result($result_2,$i , TBL_DIVISIONS.".DivisionID");
-
                         $q_3 = "SELECT ".TBL_DIVISIONS.".*, "
                         .TBL_USERS.".*"
                         ." FROM ".TBL_DIVISIONS.", "
@@ -384,8 +414,8 @@ else
                         $result_3 = $sql->db_Query($q_3);
                         if($result_3)
                         {
-                            $captain_name  = mysql_result($result_3,$i, TBL_USERS.".user_name");
-                            $captain_id  = mysql_result($result_3,$i, TBL_USERS.".user_id");
+                            $captain_name  = mysql_result($result_3,0, TBL_USERS.".user_name");
+                            $captain_id  = mysql_result($result_3,0, TBL_USERS.".user_id");
                         }
 
                         $q_3 = "SELECT ".TBL_CLANS.".*, "
@@ -404,7 +434,6 @@ else
 
                             if ($captain_id != USERID)
                             {
-
                                 $text .= '<tr><td class="">Your team '.$clan_name.' has not signed up to this event.</td>';
                                 $text .= '<td class="">Please contact your captain <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
                             }
@@ -445,7 +474,7 @@ else
             }
             else
             {
-                // Is the user already signed up with that team?
+                // Is the user already signed up?
                 $q = "SELECT ".TBL_PLAYERS.".*"
                 ." FROM ".TBL_PLAYERS
                 ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
@@ -886,7 +915,7 @@ else
                     $players .= " (".$scores.") ";
                 }
 
-                $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">Match #$mID</a> reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a>)";
+                $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">View details</a>)";
                 if (($time-$mTime) < INT_DAY )
                 {
                     $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
