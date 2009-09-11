@@ -191,7 +191,7 @@ else
                 {
                     $players .= " (".$scores.") ";
                 }
-                $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">Match #$mID</a> reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a>)";
+                $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">View details</a>)";
                 if (($time-$mTime) < INT_DAY )
                 {
                     $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
