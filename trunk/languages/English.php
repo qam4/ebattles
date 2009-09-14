@@ -31,4 +31,5 @@ define("EBATTLES_ADMIN_L10", "eBattles Settings");
 define("EBATTLES_ADMIN_L11", "Data inserted in database.");
 define("EBATTLES_ADMIN_L12", "Events creators userclass");
 define("EBATTLES_ADMIN_L13", "Teams creators userclass");
+define("EBATTLES_ADMIN_L14", "Tabs stylesheet");
 ?>

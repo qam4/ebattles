@@ -1,8 +1,8 @@
 <?php
 /**
- * Main.php
- *
- */
+* Main.php
+*
+*/
 
 include(e_PLUGIN."ebattles/include/constants.php");
 include(e_PLUGIN."ebattles/include/time.php");
@@ -31,12 +31,30 @@ if(!isset($pref['eb_teams_create_class']))
 }
 if(!isset($pref['eb_tab_theme']))
 {
-    $pref['eb_tab_theme'] = 'css/tab.css';
+    $pref['eb_tab_theme'] = 'default';
+}
+
+switch ($pref['eb_tab_theme'])
+{
+    case 'dark':
+    $tab_theme = 'css/tab.dark.css';
+    break;
+    case 'winclassic':
+    $tab_theme = 'css/tab.winclassic.css';
+    break;
+    case 'webfx':
+    $tab_theme = 'css/tab.webfx.css';
+    break;
+    case 'luna':
+    $tab_theme = 'css/luna/tab.css';
+    break;
+    default:
+    $tab_theme = 'css/tab.css';
 }
 
 $eplug_css = array(
 "js/calendar/calendar-blue.css",
-$pref['eb_tab_theme']
+$tab_theme
 );
 
 function multi2dSortAsc(&$arr, $key, $sort)
