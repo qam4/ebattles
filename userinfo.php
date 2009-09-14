@@ -15,8 +15,6 @@ include_once(e_PLUGIN."ebattles/include/pagination.php");
 require_once(HEADERF);
 $text .= '';
 
-$time = GMT_time();
-
 /* User */
 $req_user = $_GET['user'];
 
@@ -68,7 +66,8 @@ else
     <div class="tab-page">
     <div class="tab">Events</div>
     ';
-    if(strcmp(USERID,$req_user) == 0){
+    if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_events_create_class'])))
+    {
         $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
         $text .= "<div>";
         $text .= "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"/>";
@@ -265,7 +264,8 @@ else
     <div class="tab-page">
     <div class="tab">Teams membership</div>
     ';
-    if(strcmp(USERID,$req_user) == 0){
+    if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_teams_create_class'])))
+    {
         $text .= "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
         $text .= "<div>";
         $text .= "<input type=\"hidden\" name=\"userid\" value=\"$req_user\"/>";

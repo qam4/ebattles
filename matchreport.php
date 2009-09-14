@@ -14,7 +14,7 @@ require_once e_PLUGIN.'ebattles/include/ELO.php';
 require_once e_PLUGIN.'ebattles/include/trueskill.php';
 
 //these have to be set for the tinymce wysiwyg
-global $pref, $e_wysiwyg;
+global $e_wysiwyg;
 
 // Enable WYSIWYG
 if ($pref['wysiwyg'])
@@ -254,7 +254,6 @@ if (isset($_POST['submit']))
         $text .= 'Comments: '.$comments.'<br />';
 
         // Create Match ------------------------------------------
-        $time = GMT_time();
         $q =
         "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments)
         VALUES ($event_id,'$reported_by',$time, '$comments')";

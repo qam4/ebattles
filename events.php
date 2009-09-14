@@ -58,10 +58,10 @@ Functions
 * a nicely formatted html table.
 */
 function displayCurrentEvents(){
+    global $pref;
     global $sql;
     global $text;
-
-    $time = GMT_time();
+    global $time;
 
     // how many rows to show per page
     $rowsPerPage = 5;
@@ -207,7 +207,7 @@ function displayCurrentEvents(){
         $text .= paginate($rowsPerPage, $pg, $totalPages);
     }
 
-    if(check_class(e_UC_MEMBER))
+    if(check_class($pref['eb_events_create_class']))
     {
         $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
         $text .= "<div>";
@@ -219,7 +219,7 @@ function displayCurrentEvents(){
     }
     else
     {
-        $text .= "<div>Log in to create new events.</div>";
+        //$text .= "<div>You are not authorized to create an event.</div>";
     }
 }
 
@@ -227,8 +227,7 @@ function displayRecentEvents(){
     global $sql;
     global $session;
     global $text;
-
-    $time = GMT_time();
+    global $time;
 
     // how many rows to show per page
     $rowsPerPage = 5;

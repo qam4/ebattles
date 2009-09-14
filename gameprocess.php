@@ -7,7 +7,7 @@ require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 
 $can_manage = 0;
-if (check_class($pref['eb_mod'])) $can_manage = 1;
+if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 if ($can_manage == 0)
 {
     header("location:".e_HTTP."index.php");

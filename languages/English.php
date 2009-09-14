@@ -24,9 +24,11 @@ define("EBATTLES_ADMIN_L3", "Events delayed updates");
 define("EBATTLES_ADMIN_L4", "If enabled, events stats will be recalculated only if the event has changed and the delay has expired");
 define("EBATTLES_ADMIN_L5", "minutes");
 define("EBATTLES_ADMIN_L6", "Enable delayed update");
-define("EBATTLES_ADMIN_L7", "Insert debug data in database (for testing purpose)");
+define("EBATTLES_ADMIN_L7", "Insert debug data in database (for testing purpose, inserts new users in database)");
 define("EBATTLES_ADMIN_L8", "Insert data");
 define("EBATTLES_ADMIN_L9", "Update eBattles settings");
 define("EBATTLES_ADMIN_L10", "eBattles Settings");
 define("EBATTLES_ADMIN_L11", "Data inserted in database.");
+define("EBATTLES_ADMIN_L12", "Events creators userclass");
+define("EBATTLES_ADMIN_L13", "Teams creators userclass");
 ?>

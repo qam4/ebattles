@@ -16,7 +16,7 @@ require_once(HEADERF);
 $text = '';
 
 $can_manage = 0;
-if (check_class($pref['eb_mod'])) $can_manage = 1;
+if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 if ($can_manage == 0)
 {
     header("location:".e_HTTP."index.php");

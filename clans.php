@@ -44,6 +44,7 @@ Functions
 * a nicely formatted html table.
 */
 function displayClans(){
+    global $pref;
     global $sql;
     global $text;
 
@@ -90,7 +91,7 @@ function displayClans(){
         $text .= paginate($rowsPerPage, $pg, $totalPages);
     }
     
-    if(check_class(e_UC_MEMBER))
+    if(check_class($pref['eb_teams_create_class']))
     {
         $text .= "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";
         $text .= "<div>";
@@ -102,7 +103,7 @@ function displayClans(){
     }
     else
     {
-        $text .= "<div>Log in to create new teams.</div>";
+        //$text .= "<div>You are not authorized to create a team.</div>";
     }
 
 

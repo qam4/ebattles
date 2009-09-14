@@ -43,6 +43,7 @@ exit;
 function displayPastEvents(){
    global $sql;
    global $text;
+   global $time;
 
    // how many rows to show per page
    $rowsPerPage = 20;
@@ -81,7 +82,6 @@ function displayPastEvents(){
    $text .= "<br />\n";
    $text .= "<br />\n";
    
-   $time = GMT_time();
    if ($_POST['gameid'] == "All")
    {
      $q = "SELECT count(*) "

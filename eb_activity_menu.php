@@ -24,8 +24,8 @@ Functions
 */
 function displayRecentActivity(){
     global $sql;
+    global $time;
 
-    $time = GMT_time();
     $events = array();
     $nbr_events = 0;
 

@@ -8,7 +8,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 require_once(HEADERF);
 $text = '';
 
-if (!isset($_POST['createteam']))
+if ((!isset($_POST['createteam']))||(!check_class($pref['eb_teams_create_class'])))
 {
    $text .= "<br />You are not authorized to create a team.<br />";
 }
