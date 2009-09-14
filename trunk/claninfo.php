@@ -17,7 +17,6 @@ require_once(HEADERF);
 
 /* Clan Name */
 $clan_id = $_GET['clanid'];
-$time = GMT_time();
 
 if (!$clan_id)
 {
@@ -146,7 +145,7 @@ function displayTeamSummary($clan_id){
 
     $text .= "<p>Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a><br />";
     $can_manage = 0;
-    if (check_class($pref['eb_mod'])) $can_manage = 1;
+    if (check_class($pref['eb_mod_class'])) $can_manage = 1;
     if (USERID==$clan_owner) $can_manage = 1;
     if ($can_manage == 1)
     $text .="<a href=\"".e_PLUGIN."ebattles/clanmanage.php?clanid=$clan_id\">Click here to Manage Team</a><br />";
@@ -260,6 +259,7 @@ function displayTeamDivisions($clan_id){
 function displayTeamEvents($clan_id){
     global $sql;
     global $text;
+    global $time;
 
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_DIVISIONS.".*, "

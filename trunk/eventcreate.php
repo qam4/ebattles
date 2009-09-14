@@ -8,7 +8,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 require_once(HEADERF);
 $text = '';
 
-if (!isset($_POST['createevent']))
+if ((!isset($_POST['createevent']))||(!check_class($pref['eb_events_create_class'])))
 {
    $text .= "<br />You are not authorized to create an event.<br />";
 }

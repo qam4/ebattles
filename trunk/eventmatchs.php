@@ -14,9 +14,6 @@ $text .='
 <script type="text/javascript" src="./js/tabpane.js"></script>
 ';
 
-global $sql;
-$time = GMT_time();
-
 /* Event Name */
 $event_id = $_GET['eventid'];
 

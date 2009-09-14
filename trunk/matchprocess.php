@@ -8,14 +8,11 @@ require_once("../../class2.php");
 require_once e_PLUGIN.'ebattles/include/main.php';
 require_once e_PLUGIN.'ebattles/include/ELO.php';
 require_once e_PLUGIN.'ebattles/include/trueskill.php';
-global $sql;
 
 if(isset($_POST['qrsubmitloss']))
 {
     $event_id = $_POST['eventid'];
     $reported_by = $_POST['reported_by'];
-
-    $time = GMT_time();
 
     $q = "SELECT ".TBL_EVENTS.".*"
     ." FROM ".TBL_EVENTS

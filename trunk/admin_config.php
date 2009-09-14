@@ -20,7 +20,9 @@ if (isset($_POST['updatesettings'])) {
 
     $pref['eb_events_update_delay'] = $_POST['eb_events_update_delay'];
     $pref['eb_events_update_delay_enable'] = $_POST['eb_events_update_delay_enable'];
-    $pref['eb_mod'] = $_POST['eb_mod'];
+    $pref['eb_events_create_class'] = $_POST['eb_events_create_class'];
+    $pref['eb_teams_create_class'] = $_POST['eb_teams_create_class'];
+    $pref['eb_mod_class'] = $_POST['eb_mod_class'];
     save_prefs();
     $message = EBATTLES_ADMIN_L1;
 }
@@ -44,9 +46,25 @@ $text = "<div style='text-align:center'>
 $text .= "</select>
 </td>
 </tr>
+";
 
-<tr><td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L2.": </td>
-<td class='forumheader3' style='width:60%'>". r_userclass("eb_mod", $pref['eb_mod'], 'off', "admin, classes")."
+$text .= "<tr>
+<td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L2.": </td>
+<td class='forumheader3' style='width:60%'>". r_userclass("eb_mod_class", $pref['eb_mod_class'], 'off', "admin, classes")."
+</td>
+</tr>
+";
+
+$text .= "<tr>
+<td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L12.": </td>
+<td class='forumheader3' style='width:60%'>". r_userclass("eb_events_create_class", $pref['eb_events_create_class'], 'off', "public, member, admin, classes")."
+</td>
+</tr>
+";
+
+$text .= "<tr>
+<td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L13.": </td>
+<td class='forumheader3' style='width:60%'>". r_userclass("eb_teams_create_class", $pref['eb_teams_create_class'], 'off', "public, member, admin, classes")."
 </td>
 </tr>
 ";
@@ -69,7 +87,6 @@ $text .= "<tr>
 </td>
 </tr>
 ";
-
 
 $text .= "<tr>
 <td  class='forumheader' colspan='3' style='text-align:center'>

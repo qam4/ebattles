@@ -9,7 +9,7 @@ require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 
 //these have to be set for the tinymce wysiwyg
-global $pref, $e_wysiwyg;
+global $e_wysiwyg;
 
 // Enable WYSIWYG
 if ($pref['wysiwyg'])
@@ -119,7 +119,7 @@ else
     $text .= "<h2><img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame</h2>";
 
     $can_manage = 0;
-    if (check_class($pref['eb_mod'])) $can_manage = 1;
+    if (check_class($pref['eb_mod_class'])) $can_manage = 1;
     if (USERID==$eowner) $can_manage = 1;
     if ($can_manage == 0)
     {

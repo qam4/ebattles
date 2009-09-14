@@ -7,19 +7,36 @@
 include(e_PLUGIN."ebattles/include/constants.php");
 include(e_PLUGIN."ebattles/include/time.php");
 
+global $pref;
+global $sql;
+
+$time = GMT_time();
+
 // If preferences are not set, use default
 if(!isset($pref['eb_events_update_delay']))
 {
     $pref['eb_events_update_delay'] = 60;    // default 1 hour
 }
-if(!isset($pref['eb_mod']))
+if(!isset($pref['eb_mod_class']))
 {
-    $pref['eb_mod'] = e_UC_ADMIN;
+    $pref['eb_mod_class'] = e_UC_ADMIN;
+}
+if(!isset($pref['eb_events_create_class']))
+{
+    $pref['eb_events_create_class'] = e_UC_MEMBER;
+}
+if(!isset($pref['eb_teams_create_class']))
+{
+    $pref['eb_teams_create_class'] = e_UC_MEMBER;
+}
+if(!isset($pref['eb_tab_theme']))
+{
+    $pref['eb_tab_theme'] = 'css/tab.css';
 }
 
 $eplug_css = array(
 "js/calendar/calendar-blue.css",
-"css/tab.css"
+$pref['eb_tab_theme']
 );
 
 function multi2dSortAsc(&$arr, $key, $sort)

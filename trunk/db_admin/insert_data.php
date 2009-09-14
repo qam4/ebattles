@@ -1,9 +1,4 @@
 <?php
-
-	global $sql;
-
-	$time = GMT_time();
-
 	// Insert Clans
 	$query = 
 	"INSERT INTO ".TBL_CLANS."(Name,Tag,Owner)

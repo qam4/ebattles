@@ -19,7 +19,7 @@ $text .= '</a><br />';
 $text .= '<a href="'.$teams_link.'">';
 $text .= EBATTLES_MENU_L3;
 $text .= '</a><br />';
-if (check_class($pref['eb_mod']))
+if (check_class($pref['eb_mod_class']))
 {
     $text .= '<a href="'.$games_link.'">';
     $text .= EBATTLES_MENU_L5;

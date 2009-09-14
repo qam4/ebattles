@@ -5,7 +5,6 @@
 */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
-include_once(e_PLUGIN."ebattles/include/time.php");
 include_once(e_PLUGIN."ebattles/include/pagination.php");
 include_once(e_PLUGIN."ebattles/include/show_array.php");
 
@@ -17,9 +16,6 @@ $text = '
 <script type="text/javascript" src="./js/tabpane.js"></script>
 ';
 
-global $sql;
-
-$time = GMT_time();
 if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;
 $orderby=$_GET['orderby'];
 
@@ -533,7 +529,7 @@ else
     $text .= "<tr>";
     $text .='<td class="forumheader3">Owner:</td><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
     $can_manage = 0;
-    if (check_class($pref['eb_mod'])) $can_manage = 1;
+    if (check_class($pref['eb_mod_class'])) $can_manage = 1;
     if (USERID==$eowner) $can_manage = 1;
     if ($can_manage == 1)
     $text .="<br /><a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$event_id\">Click here to Manage event</a>";
@@ -650,7 +646,6 @@ else
         $text .= "<p>";
         $text .= "<a href=\"$self?eventid=$event_id&amp;pg=$link_page\">Show My Position $prank_txt</a><br />";
         $text .= "</p>";
-        $time = GMT_time();
         // Is the event started, and not ended
         if (  ($eend == 0)
         ||(  ($eend >= $time)
@@ -665,7 +660,7 @@ else
     }
 
     // Is the user admin?
-    if (check_class($pref['eb_mod'])) $can_report = 1;
+    if (check_class($pref['eb_mod_class'])) $can_report = 1;
     // Is the user event owner?
     if (USERID==$eowner) $can_report = 1;
     // Is the user a moderator?
