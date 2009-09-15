@@ -1,0 +1,21 @@
+#summary Manage the Games.
+
+= Manage the Games =
+== Access Manage games page ==  
+  # Game Manage page is accessible to
+    * eBattles admins (see [Permissions])
+  # Game Manage page is accessible from
+    * "Games" link in eBattles Menu
+== Manage the games ==
+  # List of things that can be customized in games
+    * Name
+    * Icon (internal or external link to image)
+  # To edit a game
+    * Select the game from the drop-down list
+    * Change settings
+    * Click on "Save Changes" button
+  # To Add a new game
+    * Click on "Create a new game" button
+  # To Delete an existing  game
+    * Select the game from the drop-down list
+    * Click on "Delete game" button
