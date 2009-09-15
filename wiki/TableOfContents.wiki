@@ -9,4 +9,6 @@
    * [TeamsInfo Teams Information] 
    * [TeamManage Create/Manage your team]
   * Games
+   * [GamesManage Manage the games] 
+  * [Permissions]
   * [FAQ FAQ-Troubleshoot]
