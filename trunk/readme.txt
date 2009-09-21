@@ -104,23 +104,36 @@ SQL database
 - Need to add to database:
 Changed
  . events:
-   . accept_method (players accepted by default, or after owners survey)
-   . match_report_userclass
-   . quick_loss_report_enable tinyint(1) DEFAULT 1
-   . hide_ratings_column tinyint(1) DEFAULT 0
+   . players_verification ???
+      - no verification: Player can play in the event right after joining.
+      - owner's approval: Plauyer needs owner's approval to start playing.
+   . match_report_userclass tinyint(3) unsigned NOT NULL default '0',
+   . quick_loss_report tinyint(1) DEFAULT 1,
+     - enable/disable
+   . hide_ratings_column tinyint(1) DEFAULT 0,
+     - true/false
  . players
-   . banned tinyint(1) DEFAULT 0
-   . accepted tinyint(1) DEFAULT 1
+   . banned tinyint(1) DEFAULT 0,
+     - true/false
+   . accepted tinyint(1) DEFAULT 1,
+     - true/false, not sure if necessary? need to think if we create the player after sign up, or after verified.
  . teams
-   . Password
+   . password varchar(32),
    . Streak int DEFAULT 0,
    . Streak_Best int DEFAULT 0,
    . Streak_Worst int DEFAULT 0,
  . games
-   . style
-   . genre
-   . description
- . 
+   . Style
+   . Genre
+   . Description
+   . Developer
+   . Publisher
+   . Release Date
+   . Official Website
+   . ESRB
+   . Banner
+ 
+ 
 New:
  . players_results
    . PlayerResultID
