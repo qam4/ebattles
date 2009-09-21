@@ -101,6 +101,38 @@ SQL database
 - Queries:
  . eventinfo -> . 35 + 2 if signed up
  . updatestats: 3 + 2*players + 2* matches
+- Need to add to database:
+Changed
+ . events:
+   . accept_method (players accepted by default, or after owners survey)
+   . match_report_userclass
+   . quick_loss_report_enable tinyint(1) DEFAULT 1
+   . hide_ratings_column tinyint(1) DEFAULT 0
+ . players
+   . banned tinyint(1) DEFAULT 0
+   . accepted tinyint(1) DEFAULT 1
+ . teams
+   . Password
+   . Streak int DEFAULT 0,
+   . Streak_Best int DEFAULT 0,
+   . Streak_Worst int DEFAULT 0,
+ . games
+   . style
+   . genre
+   . description
+ . 
+New:
+ . players_results
+   . PlayerResultID
+   . PlayerID
+   . EventID
+   . timestamp
+   . ResultType
+   . ResultValue
+ 
+Ideas:
+- caption for ebattles menu.
+- number of things to display in eb_recent_activity
  
 EBATTLES.FREEHOSTIA.COM specific issues:
  - Forgot password won't work, because we can't send emails...

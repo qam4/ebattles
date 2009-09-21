@@ -12,28 +12,6 @@ global $sql;
 
 $time = GMT_time();
 
-// If preferences are not set, use default
-if(!isset($pref['eb_events_update_delay']))
-{
-    $pref['eb_events_update_delay'] = 60;    // default 1 hour
-}
-if(!isset($pref['eb_mod_class']))
-{
-    $pref['eb_mod_class'] = e_UC_ADMIN;
-}
-if(!isset($pref['eb_events_create_class']))
-{
-    $pref['eb_events_create_class'] = e_UC_MEMBER;
-}
-if(!isset($pref['eb_teams_create_class']))
-{
-    $pref['eb_teams_create_class'] = e_UC_MEMBER;
-}
-if(!isset($pref['eb_tab_theme']))
-{
-    $pref['eb_tab_theme'] = 'default';
-}
-
 switch ($pref['eb_tab_theme'])
 {
     case 'dark':
