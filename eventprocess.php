@@ -205,6 +205,9 @@ else
             $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
             $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
             $new_eventdescription = strip_tags(stripslashes($_POST['eventdescription']),$allowedTags);
+            //remove html bbcode (the html bbcode would not be parsed)
+			$new_eventdescription = preg_replace("/\\[html\](.*?)\[\/html\]/si", '\1', $new_eventdescription);
+
             $q2 = "UPDATE ".TBL_EVENTS." SET Description = '$new_eventdescription' WHERE (EventID = '$event_id')";
             $result2 = $sql->db_Query($q2);
 
@@ -219,6 +222,8 @@ else
             $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
             $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
             $new_eventrules = strip_tags(stripslashes($_POST['eventrules']),$allowedTags);
+            //remove html bbcode (the html bbcode would not be parsed)
+			$new_eventrules = preg_replace("/\\[html\](.*?)\[\/html\]/si", '\1', $new_eventrules);
             $q2 = "UPDATE ".TBL_EVENTS." SET Rules = '$new_eventrules' WHERE (EventID = '$event_id')";
             $result2 = $sql->db_Query($q2);
 

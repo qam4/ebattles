@@ -14,6 +14,8 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     if(isset($_POST['elm1'])) {
         $sHeader = '<h1>Ah, content is king.</h1>';
         $sContent = strip_tags(stripslashes($_POST['elm1']),$allowedTags);
+        //remove html bbcode (the html bbcode would not be parsed)
+		$sContent = preg_replace("/\\[html\](.*?)\[\/html\]/si", '\1', $sContent);
     } else {
         $sHeader = '<h1>Nothing submitted yet</h1>';
         $sContent = '';

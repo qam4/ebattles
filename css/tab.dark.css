@@ -29,6 +29,7 @@
 	padding:		2px 6px 6px 6px;
 	margin:			1px -1px 5px 0px;
 	top:            -2px;
+	#background:		white;
 }
 
 .dynamic-tab-pane-control .tab-row .tab a {
@@ -38,6 +39,7 @@
 }
 
 .dynamic-tab-pane-control .tab-row .hover a {
+	#color:	rgb(0,66,174);
 }
 
 .dynamic-tab-pane-control .tab-row .tab.selected a {
