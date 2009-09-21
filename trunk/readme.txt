@@ -84,7 +84,6 @@ Suggestions:
 
 9. Credits
   - DHTML calendar 1.0 - http://www.dynarch.com/projects/calendar
-  - TinyMCE 2.1.0 - http://tinymce.moxiecode.com/
   - Tab Pane 1.02 - http://webfx.eae.net
   - TrueSkill™ Ranking system - http://research.microsoft.com/mlp/trueskill/
   - Pagination "Multiple Pages of Data from a Text File" - http://www.codewalkers.com/c/a/Database-Articles/Multiple-Pages-of-Data-from-a-Text-File/
@@ -106,6 +105,9 @@ SQL database
 EBATTLES.FREEHOSTIA.COM specific issues:
  - Forgot password won't work, because we can't send emails...
    e107 PHP mailer is not always workin properly
+ - sometimes, the site can freeze, and the page source will stop at <!-- log meta -->
+   This is because of corrupted site stats.
+   Can be fixed by erasing logs in e107_plugins/log/logs
 
 Regression:
 - Need to make sure the test to see if ppl can report/modify/delete is performed inside the corresponding file.
