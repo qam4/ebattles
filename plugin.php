@@ -309,8 +309,18 @@ $upgrade_alter_tables = "";
 if ($eb_version[2] < 91)
 {
     // To revision 91
-//    $upgrade_alter_tables = array(
-//    );
+/*
+    $upgrade_alter_tables = array(
+    );
+
+$upgrade_add_prefs = array(
+"eb_events_update_delay" => 60,
+"eb_mod_class" => e_UC_ADMIN,
+"eb_events_create_class" => e_UC_MEMBER,
+"eb_teams_create_class" => e_UC_MEMBER,
+"eb_tab_theme" => 'default'
+);
+*/
 }
 
 $eplug_upgrade_done = 'Forum successfully upgraded, now using version: '.$eplug_version;

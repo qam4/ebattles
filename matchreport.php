@@ -217,8 +217,6 @@ if (isset($_POST['submit']))
         $error_str .= '<li>Score #'.$i.' is not a number: '.$_POST['score'.$i].'</li>';
     }
 
-    //??? if (empty($_POST['player1'])) $error_str .= '<li>You did not enter your player 1.</li>';
-
     // we could do more data checks, but you get the idea.
     // we could also strip any HTML from the variables, convert it to entities, have a maximum character limit on the values, etc etc, but this is just an example.
     // now, have any of these errors happened? We can find out by checking if $error_str is empty
