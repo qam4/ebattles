@@ -62,7 +62,11 @@ else
     $result = $sql->db_Query($q);
     $row = mysql_fetch_array($result);
     $nbrmatches = $row['NbrMatches'];
-    $text .="<h2>Matches for this Ladder ($nbrmatches)</h2><br />";
+    $text .="<p>";
+    $text .="$nbrmatches matches played";
+    $text .="</p>";
+    $text .="<br />";
+    
     $text .= "<div class=\"spacer\">";
     /* Stats/Results */
     $q = "SELECT ".TBL_MATCHS.".*, "
@@ -205,6 +209,13 @@ else
     $text .= paginate($rowsPerPage, $pg, $totalPages);
 
     $text .= "<br />";
+
+    $text .= '
+    <p>
+    <br />Back to [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a></a>]<br />
+    </p>
+    ';
+    
     $text .= "</div>";
     $text .= "</div>";
     $text .= "</div>";
