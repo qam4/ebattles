@@ -75,12 +75,49 @@ else
         }
     }
     if(isset($_POST['quitevent'])){
-        $q = " DELETE FROM ".TBL_PLAYERS
-        ." WHERE (Event = '$event_id')"
-        ."   AND (User = ".USERID.")";
-        $sql->db_Query($q);
-        $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-        $result = $sql->db_Query($q4);
+        // Player can quit event if he has not played yet
+        $q = "SELECT COUNT(*) as NbrScores"
+        ." FROM ".TBL_SCORES.", "
+        .TBL_PLAYERS
+        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+        ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+        $result = $sql->db_Query($q);
+        $row = mysql_fetch_array($result);
+        $nbrscores = $row['NbrScores'];
+        if ($nbrscores == 0)
+        {
+            $q = " DELETE FROM ".TBL_PLAYERS
+            ." WHERE (Event = '$event_id')"
+            ."   AND (User = ".USERID.")";
+            $sql->db_Query($q);
+            $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+            $result = $sql->db_Query($q4);
+        }
+        header("Location: eventinfo.php?eventid=$event_id");
+    }
+    if(isset($_POST['quitteamevent'])){
+        $team_id = $_POST['team'];
+
+        // Player can quit event if he has not played yet
+        $q = "SELECT COUNT(*) as NbrScores"
+        ." FROM ".TBL_SCORES.", "
+        .TBL_TEAMS
+        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+        ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)"
+        ." AND (".TBL_PLAYERS.".Team = '$team_id')";
+        $result = $sql->db_Query($q);
+        $row = mysql_fetch_array($result);
+        $nbrscores = $row['NbrScores'];
+        if ($nbrscores == 0)
+        {
+            $q = " DELETE FROM ".TBL_PLAYERS
+            ." WHERE (Event = '$event_id')"
+            ."   AND (Team = '$team_id')"
+            ."   AND (User = ".USERID.")";
+            $sql->db_Query($q);
+            $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+            $result = $sql->db_Query($q4);
+        }
         header("Location: eventinfo.php?eventid=$event_id");
     }
     if(isset($_POST['teamjoinevent'])){
@@ -180,7 +217,7 @@ else
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
     $enextupdate = mysql_result($result,0 , TBL_EVENTS.".NextUpdate_timestamp");
     $eischanged = mysql_result($result,0 , TBL_EVENTS.".IsChanged");
-    $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");    
+    $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
 
     if ($pref['eb_events_update_delay_enable'] == 1)
     {
@@ -463,6 +500,32 @@ else
                             {
                                 // Player signed up
                                 $text .= '<td class="">You are signed up.</td>';
+
+                                // Player can quit event if he has not played yet
+                                $q = "SELECT COUNT(*) as NbrScores"
+                                ." FROM ".TBL_SCORES.", "
+                                .TBL_PLAYERS
+                                ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+                                ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)"
+                                ." AND (".TBL_PLAYERS.".Team = '$team_id')";
+                                $result = $sql->db_Query($q);
+                                $row = mysql_fetch_array($result);
+                                $nbrscores = $row['NbrScores'];
+                                if ($nbrscores == 0)
+                                {
+                                    $text .= '<td class="">
+                                    <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
+                                    <div>
+                                    <input type="hidden" name="team" value="'.$team_id.'"/>
+                                    <input class="button" type="submit" name="quitteamevent" value="Quit this event"/>
+                                    </div>
+                                    </form></td></tr>
+                                    ';
+                                }
+                                else
+                                {
+                                    $text .= '<td class=""></td></tr>';
+                                }
                             }
                             $text .= '</tr>';
                         }
@@ -510,7 +573,30 @@ else
                 else
                 {
                     $text .= '<tr><td class="">You are signed up.</td>';
-                    $text .= '<td class=""></td></tr>';
+
+                    // Player can quit event if he has not played yet
+                    $q = "SELECT COUNT(*) as NbrScores"
+                    ." FROM ".TBL_SCORES.", "
+                    .TBL_PLAYERS
+                    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+                    ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+                    $result = $sql->db_Query($q);
+                    $row = mysql_fetch_array($result);
+                    $nbrscores = $row['NbrScores'];
+                    if ($nbrscores == 0)
+                    {
+                        $text .= '<td class="">
+                        <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
+                        <div>
+                        <input class="button" type="submit" name="quitevent" value="Quit this event"/>
+                        </div>
+                        </form></td></tr>
+                        ';
+                    }
+                    else
+                    {
+                        $text .= '<td class=""></td></tr>';
+                    }
                 }
             }
         }

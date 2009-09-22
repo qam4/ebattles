@@ -14,6 +14,9 @@ $time = GMT_time();
 
 switch ($pref['eb_tab_theme'])
 {
+    case 'ebattles':
+    $tab_theme = 'css/tab.ebattles.css';
+    break;
     case 'dark':
     $tab_theme = 'css/tab.dark.css';
     break;
