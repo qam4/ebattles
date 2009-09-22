@@ -42,6 +42,7 @@ else
    $clan_owner  = mysql_result($result,0, TBL_USERS.".user_id");
    $clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
    $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
+   $clan_password    = mysql_result($result,0, TBL_CLANS.".password");
 
    $text .= "<h1><a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan_id\">$clan_name</a> ($clan_tag)</h1>";   
 
@@ -65,6 +66,7 @@ else
       $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
       $text .= '<table class="fborder" style="width:95%">';
       $text .= '<tbody>';
+      $text .= '<!-- Clan Owner -->';
       $text .= '<tr>';
       $text .= '<td class="forumheader3"><b>Owner</b><br />';
       $text .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a>";
@@ -106,6 +108,7 @@ else
       $text .= '</td>';
       $text .= '</tr>';
 
+      $text .= '<!-- Clan Name -->';
       $text .= '<tr>';
       $text .= '
            <td class="forumheader3"><b>Name</b></td>
@@ -121,6 +124,15 @@ else
              <input class="tbox" type="text" size="40" name="clantag" value="'.$clan_tag.'"/>
            </td>
          </tr>
+
+         <!-- Clan Password -->
+         <tr>
+           <td class="forumheader3"><b>Password</b></td>
+           <td class="forumheader3">
+             <input class="tbox" type="text" size="40" name="clanpassword" value="'.$clan_password.'"/>
+           </td>
+         </tr>
+         
          </tbody>
          </table>
          <!-- Save Button -->

@@ -77,6 +77,13 @@ if(isset($_POST['clansettingssave']))
         $q2 = "UPDATE ".TBL_CLANS." SET Tag = '$new_clantag' WHERE (ClanID = '$clan_id')";
         $result2 = $sql->db_Query($q2);
     }
+    /* Clan Password */
+    $new_clanpassword = htmlspecialchars($_POST['clanpassword']);
+    if ($new_clanpassword != '')
+    {
+        $q2 = "UPDATE ".TBL_CLANS." SET password = '$new_clanpassword' WHERE (ClanID = '$clan_id')";
+        $result2 = $sql->db_Query($q2);
+    }
     //echo "-- clansettingssave --<br />";
     header("Location: clanmanage.php?clanid=$clan_id");
 }
@@ -90,7 +97,7 @@ if(isset($_POST['clanchangeowner']))
     $result2 = $sql->db_Query($q2);
 
     //echo "-- clanchangeowner --<br />";
-    header("Location: clans.php");
+    header("Location: clanmanage.php?clanid=$clan_id");
 }
 if(isset($_POST['clanchangedivcaptain']))
 {
