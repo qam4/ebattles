@@ -1,0 +1,32 @@
+#summary eBattles Release Notes.
+
+= Release 0.4.101 =
+== Features ==
+ * Players can now "quit" events if they have not played yet. (Fixes issue 31)
+ * Tabs themes:
+  * Changed default tabs theme to remove background so it can work with any theme
+  * Added eBattles tabs theme
+ * Added "Team password" support (Fixes issue 30)
+ The team password is used when user tries to join a division of that team.
+ * Added "Hide Ratings column" checkbox in Event manager. (Fixes issue 37)
+ This is used to hide/unhide the ratings column in events standings.
+ It can be useful if only one scoring category is used.
+ * Added a link back to the event in eventmatchs.php
+== Upgrade Notes ==
+ * This release has changes in database.
+ * The plugin settings will be reset when upgrading.
+
+= Release 0.3.92 =
+== Features ==
+ * Add plugin preferences settings for tab theme. (Fixes issue 34)
+ The site admin can now choose the tabs theme between a choice of pre-defined themes.
+  * default (ebattles light color default)
+  * dark
+  * webfx
+  * luna
+  * windows classic
+
+= Release 0.3.91 =
+== Features ==
+ * Add plugin preferences settings for Events/Teams creators userclasses (Fixes issue 33)
+ The site admin can now decide which class of users are allowed to create teams/events
