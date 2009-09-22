@@ -12,4 +12,4 @@
    * [GamesManage Manage the games] 
   * [Permissions]
   * [FAQ FAQ-Troubleshoot]
-  * [Release Notes]
+  * [ReleaseNotes Release Notes]
