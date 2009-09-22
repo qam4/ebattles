@@ -66,7 +66,8 @@ TBL_MATCHS_SHORT,
 TBL_PLAYERS_SHORT,
 TBL_SCORES_SHORT,
 TBL_STATSCATEGORIES_SHORT,
-TBL_AWARDS_SHORT
+TBL_AWARDS_SHORT,
+TBL_PLAYERS_RESULTS_SHORT
 );
 
 // List of sql requests to create tables -----------------------------------------------------------------------------
@@ -76,7 +77,16 @@ $eplug_tables = array(
 GameID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(GameID),
 Name varchar(63),
-Icon varchar(63)
+Icon varchar(63),
+Style varchar(63) NOT NULL default '',
+Genre varchar(63) NOT NULL default '',
+Description text NOT NULL default '',
+Developer varchar(63) NOT NULL default '',
+Publisher varchar(63) NOT NULL default '',
+ReleaseDate varchar(63) NOT NULL default '',
+OfficialWebsite varchar(63) NOT NULL default '',
+ESRB varchar(63) NOT NULL default '',
+Banner varchar(63) NOT NULL default '',
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTS."
 (
@@ -110,7 +120,10 @@ AllowDraw tinyint(1) DEFAULT 0,
 AllowScore tinyint(1) DEFAULT 0,
 PointsPerWin int default ".PointsPerWin_DEFAULT.",
 PointsPerDraw int default ".PointsPerDraw_DEFAULT.",
-PointsPerLoss int default ".PointsPerLoss_DEFAULT."
+PointsPerLoss int default ".PointsPerLoss_DEFAULT.",
+match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT 0,
+quick_loss_report tinyint(1) DEFAULT 1,
+hide_ratings_column tinyint(1) DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
@@ -132,7 +145,8 @@ Name varchar(30),
 Tag varchar(30),
 Owner int(10) unsigned NOT NULL,
 INDEX (Owner),
-FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id)
+FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id),
+password varchar(32)
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_DIVISIONS."
 (
@@ -179,9 +193,13 @@ TS_sigma float DEFAULT ".TS_sigma0.",
 Win int DEFAULT 0,
 Draw int DEFAULT 0,
 Loss int DEFAULT 0,
+Streak int DEFAULT 0,
+Streak_Best int DEFAULT 0,
+Streak_Worst int DEFAULT 0,
 Score int DEFAULT 0,
 ScoreAgainst int DEFAULT 0,
-Points int DEFAULT 0
+Points int DEFAULT 0,
+Banned tinyint(1) DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_MATCHS."
 (
@@ -224,7 +242,8 @@ Streak_Best int DEFAULT 0,
 Streak_Worst int DEFAULT 0,
 Score int DEFAULT 0,
 ScoreAgainst int DEFAULT 0,
-Points int DEFAULT 0
+Points int DEFAULT 0,
+Banned tinyint(1) DEFAULT 0
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_SCORES."
 (
@@ -269,6 +288,17 @@ INDEX (Player),
 FOREIGN KEY (Player) REFERENCES ".TBL_PLAYERS." (PlayerID),
 Type varchar(63),
 timestamp int(11) unsigned not null
+) TYPE = MyISAM;",
+"CREATE TABLE ".TBL_PLAYERS_RESULTS."
+(
+PlayerResultID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(PlayerResultID),
+Player int NOT NULL,
+INDEX (Player),
+FOREIGN KEY (Player) REFERENCES ".TBL_PLAYERS." (PlayerID),
+Type varchar(63),
+Value float DEFAULT 0,
+timestamp int(11) unsigned not null
 ) TYPE = MyISAM;"
 );
 
@@ -306,21 +336,49 @@ $upgrade_add_prefs = "";
 $upgrade_remove_prefs = "";
 $upgrade_alter_tables = "";
 
-if ($eb_version[2] < 91)
+if ($eb_version[2] < 98)
 {
-    // To revision 91
-/*
+    // To revision 96
     $upgrade_alter_tables = array(
+    "ALTER TABLE ".TBL_GAMES." ADD Style varchar(63) NOT NULL default ''",
+    "ALTER TABLE ".TBL_GAMES." ADD Genre varchar(63) NOT NULL default ''",
+    "ALTER TABLE ".TBL_GAMES." ADD Description text NOT NULL default ''",
+    "ALTER TABLE ".TBL_GAMES." ADD Developer varchar(63) NOT NULL default ''",
+    "ALTER TABLE ".TBL_GAMES." ADD Publisher varchar(63) NOT NULL default ''",
+    "ALTER TABLE ".TBL_GAMES." ADD ReleaseDate varchar(63) NOT NULL default ''",
+    "ALTER TABLE ".TBL_GAMES." ADD OfficialWebsite varchar(63) NOT NULL default ''",
+    "ALTER TABLE ".TBL_GAMES." ADD ESRB varchar(63) NOT NULL default ''",
+    "ALTER TABLE ".TBL_GAMES." ADD Banner varchar(63) NOT NULL default ''",
+    "ALTER TABLE ".TBL_EVENTS." ADD match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT 0",
+    "ALTER TABLE ".TBL_EVENTS." ADD quick_loss_report tinyint(1) DEFAULT 1",
+    "ALTER TABLE ".TBL_EVENTS." ADD hide_ratings_column tinyint(1) DEFAULT 0",
+    "ALTER TABLE ".TBL_CLANS." ADD password varchar(32)",
+    "ALTER TABLE ".TBL_TEAMS." ADD Streak int DEFAULT 0",
+    "ALTER TABLE ".TBL_TEAMS." ADD Streak_Best int DEFAULT 0",
+    "ALTER TABLE ".TBL_TEAMS." ADD Streak_Worst int DEFAULT 0",
+    "ALTER TABLE ".TBL_TEAMS." ADD Banned tinyint(1) DEFAULT 0",
+    "ALTER TABLE ".TBL_PLAYERS." ADD Banned tinyint(1) DEFAULT 0",
+    "CREATE TABLE ".TBL_PLAYERS_RESULTS."
+    (
+    PlayerResultID int NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(PlayerResultID),
+    Player int NOT NULL,
+    INDEX (Player),
+    FOREIGN KEY (Player) REFERENCES ".TBL_PLAYERS." (PlayerID),
+    Type varchar(63),
+    Value float DEFAULT 0,
+    timestamp int(11) unsigned not null
+    ) TYPE = MyISAM;"
     );
 
-$upgrade_add_prefs = array(
-"eb_events_update_delay" => 60,
-"eb_mod_class" => e_UC_ADMIN,
-"eb_events_create_class" => e_UC_MEMBER,
-"eb_teams_create_class" => e_UC_MEMBER,
-"eb_tab_theme" => 'default'
-);
-*/
+    $upgrade_add_prefs = array(
+    "eb_events_update_delay" => 60,
+    "eb_mod_class" => e_UC_ADMIN,
+    "eb_events_create_class" => e_UC_MEMBER,
+    "eb_teams_create_class" => e_UC_MEMBER,
+    "eb_tab_theme" => 'default'
+    );
+
 }
 
 $eplug_upgrade_done = 'Forum successfully upgraded, now using version: '.$eplug_version;

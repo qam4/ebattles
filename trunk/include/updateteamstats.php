@@ -431,7 +431,9 @@ $stats = array
 "0"=>array("header","<b>Rank</b>","<b>Team</b>","<b>Players</b>")
 );
 
+if ($ehide_ratings_column == FALSE)
 $stats[0][] = "<b title=\"Rating\">Rating</b><br /><div class='smalltext'>[".number_format ($rating_max,2)." max]</div>";
+
 for ($category=0; $category<$numDisplayedCategories; $category++)
 {
     $stats[0][] = $stat_cat_header[$category];
@@ -544,7 +546,10 @@ for($team=0; $team<$numTeams; $team++)
     $stats_row[] = "<b>$rank</b> $trank_side_image";
     $stats_row[] = "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan[$index]\"><b>$name[$index] ($clantag[$index])</b></a>";
     $stats_row[] = "$nbr_players[$index]";
+
+    if ($ehide_ratings_column == FALSE)
     $stats_row[] = number_format ($OverallScore[$index],2);
+
     for ($category=0; $category<$numDisplayedCategories; $category++)
     {
         if ($stat_InfoOnly[$category] == TRUE)

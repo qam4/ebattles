@@ -206,7 +206,7 @@ else
             $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
             $new_eventdescription = strip_tags(stripslashes($_POST['eventdescription']),$allowedTags);
             //remove html bbcode (the html bbcode would not be parsed)
-			$new_eventdescription = preg_replace("/\\[html\](.*?)\[\/html\]/si", '\1', $new_eventdescription);
+            $new_eventdescription = preg_replace("/\\[html\](.*?)\[\/html\]/si", '\1', $new_eventdescription);
 
             $q2 = "UPDATE ".TBL_EVENTS." SET Description = '$new_eventdescription' WHERE (EventID = '$event_id')";
             $result2 = $sql->db_Query($q2);
@@ -223,7 +223,7 @@ else
             $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
             $new_eventrules = strip_tags(stripslashes($_POST['eventrules']),$allowedTags);
             //remove html bbcode (the html bbcode would not be parsed)
-			$new_eventrules = preg_replace("/\\[html\](.*?)\[\/html\]/si", '\1', $new_eventrules);
+            $new_eventrules = preg_replace("/\\[html\](.*?)\[\/html\]/si", '\1', $new_eventrules);
             $q2 = "UPDATE ".TBL_EVENTS." SET Rules = '$new_eventrules' WHERE (EventID = '$event_id')";
             $result2 = $sql->db_Query($q2);
 
@@ -317,6 +317,13 @@ else
 
                 $cat_index ++;
             }
+
+            // Hide ratings column
+            if ($_POST['hideratings'] != "")
+            $q2 = "UPDATE ".TBL_EVENTS." SET hide_ratings_column = 1 WHERE (EventID = '$event_id')";
+            else
+            $q2 = "UPDATE ".TBL_EVENTS." SET hide_ratings_column = 0 WHERE (EventID = '$event_id')";
+            $result2 = $sql->db_Query($q2);
 
             $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
             $result = $sql->db_Query($q4);
