@@ -93,6 +93,7 @@ $text .= "<tr>
 <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L14.": </td>
 <td class='forumheader3' style='width:60%'>
 <input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'default' ? "checked='checked'" :"")." value='default' />Default
+<input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'eBattles' ? "checked='checked'" :"")." value='ebattles' />eBattles
 <input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'dark' ? "checked='checked'" :"")." value='dark' />Dark
 <input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'winclassic' ? "checked='checked'" :"")." value='winclassic' />Windows Classic
 <input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'webfx' ? "checked='checked'" :"")." value='webfx' />Web FX
