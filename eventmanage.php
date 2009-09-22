@@ -14,10 +14,10 @@ global $e_wysiwyg;
 // Enable WYSIWYG
 if ($pref['wysiwyg'])
 {
-// Specify if we use WYSIWYG for text areas
-$e_wysiwyg	= "eventdescription,eventrules";
-define(e_WYSIWYG, TRUE);
-$WYSIWYG = TRUE;
+    // Specify if we use WYSIWYG for text areas
+    $e_wysiwyg	= "eventdescription,eventrules";
+    define(e_WYSIWYG, TRUE);
+    $WYSIWYG = TRUE;
 }
 
 /*******************************************************************
@@ -96,6 +96,8 @@ else
     $ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
     $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
+    $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
+    
     if($estart!=0)
     {
         $estart_local = $estart + GMT_TIMEOFFSET;
@@ -367,7 +369,7 @@ else
         </td>
         </tr>
         ';
-        
+
         //<!-- Start Date -->
         $text .= '
         <tr>
@@ -762,8 +764,17 @@ else
         $text .= '
         <tr>
         <td class="forumheader3">Rating Max</td>
-        <td class="forumheader3" colspan="3">'.$rating_max.'</td>
-        </tr>
+        <td class="forumheader3">'.$rating_max.'</td>
+        <td class="forumheader3" colspan="2">
+        <input class="tbox" type="checkbox" name="hideratings" value="1"
+        ';
+        if ($ehide_ratings_column == TRUE)
+        {
+            $text .= ' checked';
+        }
+        $text .= '/> hide ratings column if checked</td>';
+
+        $text .= '
         </tbody></table>
 
         <!-- Save Button -->

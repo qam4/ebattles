@@ -117,8 +117,9 @@ Changed
      - true/false
    . accepted tinyint(1) DEFAULT 1,
      - true/false, not sure if necessary? need to think if we create the player after sign up, or after verified.
- . teams
+ . clan
    . password varchar(32),
+ . teams
    . Streak int DEFAULT 0,
    . Streak_Best int DEFAULT 0,
    . Streak_Worst int DEFAULT 0,

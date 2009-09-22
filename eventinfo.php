@@ -180,6 +180,7 @@ else
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
     $enextupdate = mysql_result($result,0 , TBL_EVENTS.".NextUpdate_timestamp");
     $eischanged = mysql_result($result,0 , TBL_EVENTS.".IsChanged");
+    $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");    
 
     if ($pref['eb_events_update_delay_enable'] == 1)
     {
