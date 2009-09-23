@@ -11,6 +11,9 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 require_once(HEADERF);
 $text = '';
 
+
+//dbg: print_r($_POST);
+
 $event_id = $_GET['eventid'];
 if (!$event_id)
 {
@@ -115,6 +118,11 @@ else
                     $result2 = $sql->db_Query($q2);
                 }
             }
+
+            /* Event Match report userclass */
+            $new_eventmatchreportuserclass = $_POST['eventmatchreportuserclass'];
+            $q2 = "UPDATE ".TBL_EVENTS." SET match_report_userclass = '$new_eventmatchreportuserclass' WHERE (EventID = '$event_id')";
+            $result2 = $sql->db_Query($q2);
 
             /* Event Allow Score */
             if ($_POST['eventallowscore'] != "")
