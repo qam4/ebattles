@@ -66,4 +66,11 @@ define("TS_epsilon" , 1.0);
 define("PointsPerWin_DEFAULT" , 3);
 define("PointsPerDraw_DEFAULT" , 1);
 define("PointsPerLoss_DEFAULT" , 0);
+
+// Match report userclass
+define("eb_UC_MODERATOR", 255);
+define("eb_UC_EVENT_OWNER", 254);
+define("eb_UC_EVENT_MODERATOR", 253);
+define("eb_UC_EVENT_PLAYER", 252);
+
 ?>

@@ -8,6 +8,9 @@
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 
+// Include userclass file
+require_once(e_HANDLER."userclass_class.php");
+
 //these have to be set for the tinymce wysiwyg
 global $e_wysiwyg;
 
@@ -97,6 +100,7 @@ else
     $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
     $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
+    $ematch_report_userclass = mysql_result($result,0 , TBL_EVENTS.".match_report_userclass");
     
     if($estart!=0)
     {
@@ -299,6 +303,20 @@ else
         </tr>
         ';
 
+        //<!-- Match report userclass -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>Match report userclass</b></td>
+        <td class="forumheader3"><select class="tbox" name="eventmatchreportuserclass">';
+        $text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.($ematch_report_userclass == eb_UC_EVENT_PLAYER ? 'selected="selected"' : '') .'>Event Player</option>';
+        $text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.($ematch_report_userclass == eb_UC_EVENT_MODERATOR ? 'selected="selected"' : '') .'>Event Moderator</option>';
+        $text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.($ematch_report_userclass == eb_UC_EVENT_OWNER ? 'selected="selected"' : '') .'>Event Owner</option>';
+        $text .= '<option value="'.eb_UC_MODERATOR.'" '.($ematch_report_userclass == eb_UC_MODERATOR ? 'selected="selected"' : '') .'>eBattles Moderator</option>';
+        $text .= '</select>
+        </td>
+        </tr>
+        ';
+        
         //<!-- Allow Score -->
         $text .= '
         <tr>
