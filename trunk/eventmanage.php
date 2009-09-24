@@ -101,7 +101,8 @@ else
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
     $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
     $ematch_report_userclass = mysql_result($result,0 , TBL_EVENTS.".match_report_userclass");
-    
+    $equick_loss_report = mysql_result($result,0 , TBL_EVENTS.".quick_loss_report");
+
     if($estart!=0)
     {
         $estart_local = $estart + GMT_TIMEOFFSET;
@@ -143,16 +144,49 @@ else
         ';
 
         $text .= '
+        <form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">
         <table class="fborder" style="width:95%">
         <tbody>
         <tr>
         ';
-        $text .= '<td class="forumheader3">Owner</td>';
+        $text .= '<td class="forumheader3"><b>Owner</b><br />';
+        $text .= '<a href="'.e_PLUGIN.'"ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
+        $text .= '</td>';
+
+        $q_2 = "SELECT ".TBL_USERS.".*"
+        ." FROM ".TBL_USERS;
+        $result_2 = $sql->db_Query($q_2);
+        $row = mysql_fetch_array($result_2);
+        $num_rows_2 = mysql_numrows($result_2);
+
         $text .= '<td class="forumheader3">';
-        $text .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$eowner\">$eownername</a></td>";
-        $text .= '
-        </tr>
-        ';
+        $text .= '<table>';
+        $text .= '<tr>';
+        $text .= '<td><select class="tbox" name="eventowner">';
+        for($j=0; $j<$num_rows_2; $j++)
+        {
+            $uid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+            $uname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
+
+            if ($eowner == $uid)
+            {
+                $text .= "<option value=\"$uid\" selected=\"selected\">$uname</option>\n";
+            }
+            else
+            {
+                $text .= "<option value=\"$uid\">$uname</option>\n";
+            }
+        }
+        $text .= '</select>';
+        $text .= '</td>';
+        $text .= '<td>';
+        $text .= '<input class="button" type="submit" name="eventchangeowner" value="Change Owner"/>';
+        $text .= '</td>';
+        $text .= '</tr>';
+        $text .= '</table>';
+        $text .= '</td>';
+        $text .= '</tr>';
+
 
         $q = "SELECT ".TBL_EVENTMODS.".*, "
         .TBL_USERS.".*"
@@ -169,7 +203,6 @@ else
         $text .= '<td class="forumheader3">';
         if ($numMods>0)
         {
-            $text .= "<form action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
             $text .= "<table>";
             for($i=0; $i<$numMods; $i++){
                 $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
@@ -185,9 +218,7 @@ else
                 $text .= "</tr>";
             }
             $text .= "</table>";
-            $text .= "</form>";
         }
-        $text .= "<form action=\"".e_PLUGIN."ebattles/eventprocess.php?eventid=$event_id\" method=\"post\">";
         $q = "SELECT ".TBL_USERS.".*"
         ." FROM ".TBL_USERS;
         $result = $sql->db_Query($q);
@@ -209,19 +240,18 @@ else
         </td>
         <td>
         <div>
-        <input type="hidden" name="eventaddmod"/>
-        <input class="button" type="submit" value="Add Moderator"/>
+        <input class="button" type="submit" name="eventaddmod" value="Add Moderator"/>
         </div>
         </td>
         </tr>
         </table>
-        </form>
         ';
         $text .= '
         </td>
         </tr>
         </tbody>
         </table>
+        </form>
         </div>
         ';
 
@@ -311,8 +341,29 @@ else
         $text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.($ematch_report_userclass == eb_UC_EVENT_PLAYER ? 'selected="selected"' : '') .'>Event Player</option>';
         $text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.($ematch_report_userclass == eb_UC_EVENT_MODERATOR ? 'selected="selected"' : '') .'>Event Moderator</option>';
         $text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.($ematch_report_userclass == eb_UC_EVENT_OWNER ? 'selected="selected"' : '') .'>Event Owner</option>';
-        $text .= '<option value="'.eb_UC_MODERATOR.'" '.($ematch_report_userclass == eb_UC_MODERATOR ? 'selected="selected"' : '') .'>eBattles Moderator</option>';
         $text .= '</select>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Allow Quick Loss Report -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>Allow Quick Loss</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input class="tbox" type="checkbox" name="eventallowquickloss"';
+        if ($equick_loss_report == TRUE)
+        {
+            $text .= 'checked>';
+        }
+        else
+        {
+            $text .= '>';
+        }
+        $text .='
+        </div>
         </td>
         </tr>
         ';

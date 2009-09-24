@@ -86,6 +86,7 @@ else
     $eischanged = mysql_result($result,0 , TBL_EVENTS.".IsChanged");
     $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
     $ematch_report_userclass = mysql_result($result,0 , TBL_EVENTS.".match_report_userclass");
+    $equick_loss_report = mysql_result($result,0 , TBL_EVENTS.".quick_loss_report");
 
     if ($pref['eb_events_update_delay_enable'] == 1)
     {
@@ -586,8 +587,11 @@ else
     $result = $sql->db_Query($q);
     $can_report = 0;
     $can_report_quickloss = 0;
+    $userclass = 0;
     if(mysql_numrows($result) == 1)
     {
+        $userclass |= eb_UC_EVENT_PLAYER;
+        
         // Show link to my position
         $row = mysql_fetch_array($result);
         $prank = $row['Rank'];
@@ -615,9 +619,17 @@ else
 
     // Check if user can report
     // Is the user admin?
-    if (check_class($pref['eb_mod_class'])) $can_report = 1;
+    if (check_class($pref['eb_mod_class']))
+    {
+        $userclass |= eb_UC_EB_MODERATOR;
+        $can_report = 1;
+    }
     // Is the user event owner?
-    if (USERID==$eowner) $can_report = 1;
+    if (USERID==$eowner)
+    {
+        $userclass |= eb_UC_EVENT_OWNER;
+        $can_report = 1;
+    }
     // Is the user a moderator?
     $q_2 = "SELECT ".TBL_EVENTMODS.".*"
     ." FROM ".TBL_EVENTMODS
@@ -625,8 +637,12 @@ else
     ."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
     $result_2 = $sql->db_Query($q_2);
     $num_rows_2 = mysql_numrows($result_2);
-    if ($num_rows_2>0) $can_report = 1;
-
+    if ($num_rows_2>0)
+    {
+        $userclass |= eb_UC_EVENT_MODERATOR;
+        $can_report = 1;
+    }
+    
     if ($nbrplayers < 2)
     {
         $can_report = 0;
@@ -649,6 +665,9 @@ else
     // Check if AllowScore is set
     if ($eallowscore==TRUE)
     $can_report_quickloss = 0;
+
+    if($userclass <= $ematch_report_userclass) $can_report = 0;
+    if($equick_loss_report==FALSE) $can_report_quickloss = 0;
 
     if(($can_report_quickloss != 0)||($can_report != 0))
     {

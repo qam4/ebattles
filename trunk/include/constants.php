@@ -68,9 +68,9 @@ define("PointsPerDraw_DEFAULT" , 1);
 define("PointsPerLoss_DEFAULT" , 0);
 
 // Match report userclass
-define("eb_UC_MODERATOR", 255);
-define("eb_UC_EVENT_OWNER", 254);
-define("eb_UC_EVENT_MODERATOR", 253);
-define("eb_UC_EVENT_PLAYER", 252);
+define("eb_UC_EB_MODERATOR", 8);
+define("eb_UC_EVENT_OWNER", 4);
+define("eb_UC_EVENT_MODERATOR", 2);
+define("eb_UC_EVENT_PLAYER", 1);
 
 ?>

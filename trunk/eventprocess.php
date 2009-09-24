@@ -12,7 +12,8 @@ require_once(HEADERF);
 $text = '';
 
 
-//dbg: print_r($_POST);
+//dbg- print_r($_POST);
+//dbg- exit;
 
 $event_id = $_GET['eventid'];
 if (!$event_id)
@@ -42,6 +43,17 @@ else
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q);
 
+        if(isset($_POST['eventchangeowner']))
+        {
+            $event_owner = $_POST['eventowner'];
+
+            /* Event Owner */
+            $q2 = "UPDATE ".TBL_EVENTS." SET Owner = '$event_owner' WHERE (EventID = '$event_id')";
+            $result2 = $sql->db_Query($q2);
+
+            //echo "-- eventchangeowner --<br />";
+            header("Location: eventmanage.php?eventid=$event_id");
+        }
         if(isset($_POST['eventdeletemod']))
         {
             $eventmod = $_POST['eventmod'];
@@ -123,6 +135,18 @@ else
             $new_eventmatchreportuserclass = $_POST['eventmatchreportuserclass'];
             $q2 = "UPDATE ".TBL_EVENTS." SET match_report_userclass = '$new_eventmatchreportuserclass' WHERE (EventID = '$event_id')";
             $result2 = $sql->db_Query($q2);
+
+            /* Event Quick Loss Report */
+            if ($_POST['eventallowquickloss'] != "")
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET quick_loss_report = 1 WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
+            else
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET quick_loss_report = 0 WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
 
             /* Event Allow Score */
             if ($_POST['eventallowscore'] != "")
@@ -340,8 +364,8 @@ else
         }
     }
 }
-$ns->tablerender('Process Event', $text);
-require_once(FOOTERF);
+
+header("Location: eventmanage.php?eventid=$event_id");
 exit;
 
 /***************************************************************************************
