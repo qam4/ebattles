@@ -1,5 +1,18 @@
 #summary eBattles Release Notes.
 
+= Release 0.4.106 =
+== Features ==
+ * Userclass for match report (Fixes issue 36)
+ Now event owner can choose who is allowed to report matches in the event.
+ "Match Report userclass" 
+  * Owner: Owner only can report matches
+  * Moderator: Owner & Moderators can report matches
+  * Player: Owner, Mods & Players can report matches
+ * Quick Loss report enable/disable
+ Now event owner can choose to enable or disable quick loss report in the event.
+ * Change Event owner in Event Manage
+ Now event owner can be changed from Event Manage page.
+
 = Release 0.4.101 =
 == Features ==
  * Players can now "quit" events if they have not played yet. (Fixes issue 31)
