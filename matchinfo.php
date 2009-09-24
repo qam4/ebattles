@@ -114,10 +114,7 @@ else
     if (  (USERID==$reported_by)
     &&(  ($eend==0)
     ||(  ($eend>=$time)
-    &&($estart<=$time)
-    )
-    )
-    )
+    &&($estart<=$time))))
     $can_delete = 1;
     if (check_class($pref['eb_mod_class']))  $can_delete = 1;
     if (USERID==$eowner)  $can_delete = 1;

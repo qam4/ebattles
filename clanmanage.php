@@ -100,8 +100,7 @@ else
       $text .= '</select>';
       $text .= '</td>';
       $text .= '<td>';
-      $text .= '<input type="hidden" name="clanchangeowner"/>';
-      $text .= '<input class="button" type="submit" value="Change Owner"/>';
+      $text .= '<input class="button" type="submit" name="clanchangeowner" value="Change Owner"/>';
       $text .= '</td>';
       $text .= '</tr>';
       $text .= '</table>';
@@ -172,9 +171,8 @@ else
          $text .= "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
       }
       $text .= '</select>';
-      $text .= '<input type="hidden" name="clanadddiv"/>';
       $text .= '<input type="hidden" name="clanowner" value="'.$clan_owner.'"/>';
-      $text .= '<input class="button" type="submit" value="Add Division"/>';
+      $text .= '<input class="button" type="submit" name="clanadddiv" value="Add Division"/>';
       $text .= "</div>";
       $text .= '</form>';
       $text .= '</td>';
@@ -258,8 +256,7 @@ else
              $text .= '</td>';
              $text .= '<td>';
              $text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"/>';
-             $text .= '<input type="hidden" name="clanchangedivcaptain"/>';
-             $text .= '<input class="button" type="submit" value="Change Captain"/>';
+             $text .= '<input class="button" type="submit" name="clanchangedivcaptain" value="Change Captain"/>';
              $text .= '</td>';
              $text .= '</tr>';
              $text .= '</table>';

@@ -147,6 +147,28 @@ New:
 Ideas:
 - caption for ebattles menu.
 - number of things to display in eb_recent_activity
+- for forms validations, 
+Before showing a button, I check if the user can use this button or not...
+ . Should I re-check the user validity after the form is submitted?
+ . Should check the button has been pressed: 
+// form:
+<input class="button" type="submit" name="matchreport" value="Match Report"/>
+or
+<input type="hidden" name="matchreport" value="1">
+...
+// submit:
+if (!isset($_POST['matchreport']))
+{
+    $text .= "<p>You are not authorized to report a match.</p>";
+    $text .= "<p>Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]</p>";
+}
+else
+{
+    ... 
+}
+
+ . Can $_POST be hacked somehow?
+
  
 EBATTLES.FREEHOSTIA.COM specific issues:
  - Forgot password won't work, because we can't send emails...
