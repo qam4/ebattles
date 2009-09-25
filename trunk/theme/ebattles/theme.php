@@ -63,11 +63,11 @@ $HEADER = "
 
 	<table cellpadding='0' cellspacing='0' border='0' style='width:100%; margin-top:5px'>
 		<tr>
-			<td style='width:20%; vertical-align:top;'>
+			<td style='width:10%; vertical-align:top;'>
 				{MENU=1}
 			</td>
 
-			<td style='width:60%; vertical-align:top;'>
+			<td style='width:70%; vertical-align:top;'>
 ";
 
 $FOOTER = "
@@ -143,13 +143,6 @@ $NEWSSTYLE = "
 	</table>
 	</div>
 	
-	<table style='width:100%' cellspacing='0' cellpadding='0'>
-		<tr>
-			<td class='md1'><img src='".THEME."images/blank.gif' width='7' height='39' alt='' class='ffimgfix' /></td>
-			<td class='mdbg' style='width:100%'></td>
-			<td class='md2'><img src='".THEME."images/blank.gif' width='19' height='39' alt='' class='ffimgfix' /></td>
-		</tr>
-	</table>
 ";
 
 
@@ -210,13 +203,13 @@ function tablestyle($caption, $text)
 
 	<table style='width:100%' cellspacing='0' cellpadding='0' >
 		<tr>
-			<td class='md1'><img src='".THEME."images/blank.gif' width='7' height='39' alt='' class='ffimgfix' /></td>
+			<td class='md1'><img src='".THEME."images/blank.gif' width='7' height='10' alt='' class='ffimgfix' /></td>
 			<td class='mdbg' style='width:100%'>
 			<div style='width: 100%; text-align: center;'>
             <img style='margin-top: auto; margin-bottom: auto; margin-left: auto; margin-right: auto;' src='".THEME."images/blank.gif' width='160' height='0' alt='' class='ffimgfix' />
             </div>
             </td>
-			<td class='md2'><img src='".THEME."images/blank.gif' width='19' height='39' alt='' class='ffimgfix' /></td>
+			<td class='md2'><img src='".THEME."images/blank.gif' width='19' height='10' alt='' class='ffimgfix' /></td>
 		</tr>
 	</table>
 	";
