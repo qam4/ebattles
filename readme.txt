@@ -166,9 +166,10 @@ else
 {
     ... 
 }
-
  . Can $_POST be hacked somehow?
-
+ . If $_POST contains enough info, we should not have to recheck everytinh after submit.
+ . how do you handle cases like: join button appears if player has not joined yet.
+   You have to check pre/post submit, because someone can open 2 pages showing the "join" button, then join twice.
  
 EBATTLES.FREEHOSTIA.COM specific issues:
  - Forgot password won't work, because we can't send emails...

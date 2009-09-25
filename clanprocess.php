@@ -6,37 +6,36 @@
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 
-/*
-function deleteDivisions($clan_id)
-{
-global $sql;
-$q3 = "DELETE FROM ".TBL_DIVISIONS
-." WHERE (".TBL_EVENTMODS.".Clan = '$clan_id')";
-$result3 = $sql->db_Query($q3);
-}
-function deleteClan($clan_id)
-{
-global $sql;
-$q3 = "DELETE FROM ".TBL_CLANS
-." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
-$result3 = $sql->db_Query($q3);
-}
-*/
-/*
 if(isset($_POST['clandeletediv']))
 {
-$clan_id = $_GET['clanid'];
-$div_game = $_POST['divgame'];
+    $clan_id = $_GET['clanid'];
+    $div_id = $_POST['clandiv'];
 
-$q2 = "DELETE FROM ".TBL_DIVISIONS
-." WHERE (".TBL_DIVISIONS.".Clan = '$clan_id')"
-."   AND (".TBL_DIVISIONS.".Game = '$div_game')";
-$result2 = $sql->db_Query($q2);
-
-echo "-- clandeletemod --<br />";
-header("Location: clanmanage.php?clanid=$clan_id");
+    $q_DivScores = "SELECT ".TBL_DIVISIONS.".*, "
+    .TBL_TEAMS.".*, "
+    .TBL_PLAYERS.".*, "
+    .TBL_SCORES.".*"
+    ." FROM ".TBL_DIVISIONS.", "
+    .TBL_TEAMS.", "
+    .TBL_PLAYERS.", "
+    .TBL_SCORES
+    ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+    ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+    ." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+    ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+    $result_DivScores = $sql->db_Query($q_DivScores);
+    $numDivScores = mysql_numrows($result_DivScores);
+    if ($numDivScores == 0)
+    {
+        // Delete players, teams, members and divison
+        deleteDivPlayers($div_id);
+        deleteDivTeams($div_id);
+        deleteDivMembers($div_id);
+        deleteDiv($div_id);
+    }
+    echo "-- clandeletediv --<br />";
+    header("Location: clanmanage.php?clanid=$clan_id");
 }
-*/
 if(isset($_POST['clanadddiv']))
 {
     $clan_id = $_GET['clanid'];
@@ -79,11 +78,9 @@ if(isset($_POST['clansettingssave']))
     }
     /* Clan Password */
     $new_clanpassword = htmlspecialchars($_POST['clanpassword']);
-    if ($new_clanpassword != '')
-    {
-        $q2 = "UPDATE ".TBL_CLANS." SET password = '$new_clanpassword' WHERE (ClanID = '$clan_id')";
-        $result2 = $sql->db_Query($q2);
-    }
+    $q2 = "UPDATE ".TBL_CLANS." SET password = '$new_clanpassword' WHERE (ClanID = '$clan_id')";
+    $result2 = $sql->db_Query($q2);
+
     //echo "-- clansettingssave --<br />";
     header("Location: clanmanage.php?clanid=$clan_id");
 }
@@ -115,11 +112,11 @@ if(isset($_POST['clanchangedivcaptain']))
 /*
 if(isset($_POST['clandelete']))
 {
-    $clan_id = $_GET['clanid'];
-    deleteClan($clan_id);
+$clan_id = $_GET['clanid'];
+deleteClan($clan_id);
 
-    //echo "-- clandelete --<br />";
-    header("Location: clans.php");
+//echo "-- clandelete --<br />";
+header("Location: clans.php");
 }
 */
 if (isset($_POST['kick']))
@@ -142,4 +139,67 @@ if (isset($_POST['kick']))
 
 //echo "-- test clan process --<br />";
 exit;
+
+//----------------------------------------------------------
+function deleteDivPlayers($div_id)
+{
+    global $sql;
+    $q_DivPlayers = "SELECT ".TBL_TEAMS.".*, "
+    .TBL_PLAYERS.".*"
+    ." FROM ".TBL_TEAMS.", "
+    .TBL_PLAYERS
+    ." WHERE (".TBL_TEAMS.".Division = '$div_id')"
+    ." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)";
+    $result_DivPlayers = $sql->db_Query($q_DivPlayers);
+    $numDivPlayers = mysql_numrows($result_DivPlayers);
+    if ($numDivPlayers!=0)
+    {
+        for($j=0; $j<$numDivPlayers; $j++)
+        {
+            $pID  = mysql_result($result_DivPlayers,$j, TBL_PLAYERS.".PlayerID");
+            $q = "DELETE FROM ".TBL_PLAYERS
+            ." WHERE (".TBL_PLAYERS.".PlayerID = '$pID')";
+            $result = $sql->db_Query($q);
+        }
+    }
+}
+function deleteDivTeams($div_id)
+{
+    // Attention, need to make sure teams have no players/scores first
+    global $sql;
+    $q = "DELETE FROM ".TBL_TEAMS
+    ." WHERE (".TBL_TEAMS.".Division = '$div_id')";
+    $result = $sql->db_Query($q);
+}
+function deleteDivMembers($div_id)
+{
+    global $sql;
+    $q = "DELETE FROM ".TBL_MEMBERS
+    ." WHERE (".TBL_MEMBERS.".Division = '$div_id')";
+    $result = $sql->db_Query($q);
+}
+function deleteDiv($div_id)
+{
+    global $sql;
+    $q = "DELETE FROM ".TBL_DIVISIONS
+    ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')";
+    $result = $sql->db_Query($q);
+}
+
+/*
+function deleteDivisions($clan_id)
+{
+global $sql;
+$q3 = "DELETE FROM ".TBL_DIVISIONS
+." WHERE (".TBL_EVENTMODS.".Clan = '$clan_id')";
+$result3 = $sql->db_Query($q3);
+}
+function deleteClan($clan_id)
+{
+global $sql;
+$q3 = "DELETE FROM ".TBL_CLANS
+." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
+$result3 = $sql->db_Query($q3);
+}
+*/
 ?>

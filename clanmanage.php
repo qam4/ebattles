@@ -203,8 +203,35 @@ else
       
          $text .= '<tr>';
          $text .= '<td class="forumheader3">';
-         $text .= '<b><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</b><br />';
+         $text .= '<b><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'-'.$div_id.'</b><br />';
          $text .= "Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a>";
+
+         // Delete division
+         $q_DivScores = "SELECT ".TBL_DIVISIONS.".*, "
+                      .TBL_TEAMS.".*, "
+                      .TBL_PLAYERS.".*, "
+                      .TBL_SCORES.".*"
+            ." FROM ".TBL_DIVISIONS.", "
+                     .TBL_TEAMS.", "
+                     .TBL_PLAYERS.", "
+                     .TBL_SCORES
+            ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+              ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+              ." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+              ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+         $result_DivScores = $sql->db_Query($q_DivScores);
+         $numDivScores = mysql_numrows($result_DivScores);
+         //dbg: echo "division $div_id scores: $numDivScores<br>";
+         //dbg: include_once(e_PLUGIN."ebattles/include/show_db_results.php");
+         //dbg: show_db_results($result_DivScores);
+         if ($numDivScores == 0)
+         {
+             $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
+             $text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"/>';
+             $text .= '<input class="button" type="submit" name="clandeletediv" value="Delete Division"/>';
+             $text .= "</form>";
+         }
+
          $text .= '</td>';
          $q_2 = "SELECT ".TBL_CLANS.".*, "
                       .TBL_DIVISIONS.".*, "
