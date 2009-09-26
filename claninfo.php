@@ -26,6 +26,18 @@ else
 
     $text ='<script type="text/javascript" src="./js/tabpane.js"></script>';
 
+    $q = "SELECT ".TBL_CLANS.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_CLANS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_CLANS.".ClanID = '$clan_id')"
+    ." AND (".TBL_USERS.".user_id = ".TBL_CLANS.".Owner)";
+
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+
+    $clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
+    
     $text .= '
     <div class="tab-pane" id="tab-pane-6">
     ';
@@ -73,7 +85,7 @@ else
     </script>
     ';
 }
-$ns->tablerender('eBattles', $text);
+$ns->tablerender("$clan_name", $text);
 require_once(FOOTERF);
 exit;
 
@@ -102,7 +114,7 @@ function displayTeamSummary($clan_id){
     $clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
     $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
 
-    $text .= "<h1>$clan_name ($clan_tag)</h1>";
+    $text .= "<b>$clan_name ($clan_tag)</b><br />";
 
     $text .= "<p>Owner: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a><br />";
     $can_manage = 0;
@@ -145,7 +157,7 @@ function displayTeamDivisions($clan_id){
         $div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
         $text .= '<div class="spacer">';
-        $text .= '<h2><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</h2>';
+        $text .= '<b><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</b><br />';
         $text .= "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
 
         if(check_class(e_UC_MEMBER))
@@ -258,7 +270,7 @@ function displayTeamEvents($clan_id){
         $div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 
         $text .= '<div class="spacer">';
-        $text .= '<h2><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</h2>';
+        $text .= '<b><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</b><br />';
 
         $q_2 = "SELECT ".TBL_TEAMS.".*, "
         .TBL_EVENTS.".*"

@@ -122,8 +122,12 @@ else
         $date_end = "";
     }
 
-    $text .= "<h1><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">$ename</a> ($etype)</h1>";
-    $text .= "<h2><img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame</h2>";
+    /*
+    $text .= '<p>';
+    $text .= "<b><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">$ename</a> ($etype)</b><br />";
+    $text .= "<b><img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame</b><br /><br />";
+    $text .= '</p>';
+    */
 
     $can_manage = 0;
     if (check_class($pref['eb_mod_class'])) $can_manage = 1;
@@ -142,13 +146,17 @@ else
         <div class="tab-page">
         <div class="tab">Event Summary</div>
         ';
-
+    
         $text .= '
         <form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">
         <table class="fborder" style="width:95%">
         <tbody>
-        <tr>
         ';
+        $text .= "<tr>";
+        $text .= '<td class="forumheader3"><b>Ladder</b></td>';
+        $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$ename.'</a></td>';
+        $text .= "</tr>";
+
         $text .= '<td class="forumheader3"><b>Owner</b><br />';
         $text .= '<a href="'.e_PLUGIN.'"ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
         $text .= '</td>';
@@ -866,7 +874,7 @@ else
     }
 }
 
-$ns->tablerender('Manage Event', $text);
+$ns->tablerender("$ename ($egame - $etype) - Manage", $text);
 require_once(FOOTERF);
 exit;
 ?>

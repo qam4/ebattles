@@ -24,9 +24,6 @@ if (!$event_id)
 }
 else
 {
-    $text .="<div class=\"tab-pane\" id=\"tab-pane-11\">";
-    $text .="<div class=\"tab-page\">";
-
     /* set pagination variables */
     $rowsPerPage = 5;
     $pg = (isset($_REQUEST['pg']) && ctype_digit($_REQUEST['pg'])) ? $_REQUEST['pg'] : 1;
@@ -52,10 +49,17 @@ else
     $mEventgameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
     $mEventType  = mysql_result($result,0 , TBL_EVENTS.".Type");
     $mEventAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
-    $text .= "<h1>$mEventName</h1>";
-    $text .= "<h2>$mEventgame</h2>";
-    $text .= "<br />";
 
+    /*
+    $text .= '<p>';
+    $text .= "<b>$mEventName</b> ($mEventType)<br />";
+    $text .= "<b><img src=\"".getGameIcon($mEventgameicon)."\" alt=\"$mEventgameicon\"/> $mEventgame</b><br /><br />";
+    $text .= '</p>';
+    */
+
+    $text .="<div class=\"tab-pane\" id=\"tab-pane-11\">";
+    $text .="<div class=\"tab-page\">";
+    $text .="<div class=\"tab\">All Matches</div>";
     $q = "SELECT COUNT(*) as NbrMatches"
     ." FROM ".TBL_MATCHS
     ." WHERE (Event = '$event_id')";
@@ -220,7 +224,7 @@ else
     $text .= "</div>";
     $text .= "</div>";
 }
-$ns->tablerender('Event Matches', $text);
+$ns->tablerender("$mEventName ($mEventgame - $mEventType)", $text);
 require_once(FOOTERF);
 exit;
 ?>

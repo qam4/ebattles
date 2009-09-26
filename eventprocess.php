@@ -234,7 +234,7 @@ else
 
 
             /* Event Description */
-            $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
+            $allowedTags='<p><strong><em><u><b><b><h3><h4><h5><h6><img>';
             $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
             $new_eventdescription = strip_tags(stripslashes($_POST['eventdescription']),$allowedTags);
             //remove html bbcode (the html bbcode would not be parsed)
@@ -251,7 +251,7 @@ else
             $event_id = $_GET['eventid'];
 
             /* Event Rules */
-            $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
+            $allowedTags='<p><strong><em><u><b><b><h3><h4><h5><h6><img>';
             $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
             $new_eventrules = strip_tags(stripslashes($_POST['eventrules']),$allowedTags);
             //remove html bbcode (the html bbcode would not be parsed)

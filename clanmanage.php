@@ -44,8 +44,6 @@ else
    $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
    $clan_password    = mysql_result($result,0, TBL_CLANS.".password");
 
-   $text .= "<h1><a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clan_id\">$clan_name</a> ($clan_tag)</h1>";   
-
    $can_manage = 0;
    if (check_class($pref['eb_mod_class'])) $can_manage = 1;
    if (USERID==$clan_owner) $can_manage = 1;
@@ -66,6 +64,13 @@ else
       $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
       $text .= '<table class="fborder" style="width:95%">';
       $text .= '<tbody>';
+      $text .= '<!-- Clan -->';
+      $text .= '<tr>';
+      $text .= '<td class="forumheader3"><b>Team</b></td>';
+      $text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan_name.'</a> ('.$clan_tag.')</b>';   
+      $text .= '</td>';
+
+
       $text .= '<!-- Clan Owner -->';
       $text .= '<tr>';
       $text .= '<td class="forumheader3"><b>Owner</b><br />';
@@ -344,8 +349,8 @@ else
       </script>
    ';
 
+   $ns->tablerender("$clan_name - Manage", $text);
 }
-$ns->tablerender('Manage Team', $text);
 require_once(FOOTERF);
 exit;
 ?>

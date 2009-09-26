@@ -9,15 +9,15 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     //print_r($_GET);     // show $_GET
 
     $reported_by = USERID;
-    $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
+    $allowedTags='<p><strong><em><u><b><b><h3><h4><h5><h6><img>';
     $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
     if(isset($_POST['elm1'])) {
-        $sHeader = '<h1>Ah, content is king.</h1>';
+        $sHeader = '<b>Ah, content is king.</b><br />';
         $sContent = strip_tags(stripslashes($_POST['elm1']),$allowedTags);
         //remove html bbcode (the html bbcode would not be parsed)
 		$sContent = preg_replace("/\\[html\](.*?)\[\/html\]/si", '\1', $sContent);
     } else {
-        $sHeader = '<h1>Nothing submitted yet</h1>';
+        $sHeader = '<b>Nothing submitted yet</b><br />';
         $sContent = '';
     }
 
