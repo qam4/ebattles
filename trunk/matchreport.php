@@ -159,7 +159,7 @@ if (isset($_POST['submit']))
     $reported_by = $_POST['reported_by'];
     //$text .= "reported by: $reported_by<br />";
 
-    $allowedTags='<p><strong><em><u><h1><h2><h3><h4><h5><h6><img>';
+    $allowedTags='<p><strong><em><u><b><b><h3><h4><h5><h6><img>';
     $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
     $comments = strip_tags(stripslashes($_POST['elm1']),$allowedTags);
 
@@ -644,7 +644,7 @@ $text .= '
 </div>
 ';
 
-$ns->tablerender('Match Report', $text);
+$ns->tablerender("$ename ($egame - $etype) - Match Report", $text);
 require_once(FOOTERF);
 exit;
 ?>

@@ -6,11 +6,11 @@
 // which writes: /include/SVNrevision.php
 //
 
-$svnRevision = "107";
+$svnRevision = "109";
 $svnModified = "Not modified";
-$svnDate = "2009/09/24 15:26:38";
-$svnRevRange = "100:107";
-$svnMixed = "Mixed revision WC";
+$svnDate = "2009/09/25 17:43:18";
+$svnRevRange = "109";
+$svnMixed = "Not mixed";
 $svnURL = "https://ebattles.googlecode.com/svn/trunk/include";
 
 $thisRevRange = explode(':', $svnRevRange);

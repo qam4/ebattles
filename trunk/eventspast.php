@@ -22,6 +22,7 @@ $text .='
 $text .= '
 <div class="tab-pane" id="tab-pane-9">
 <div class="tab-page">
+<div class="tab">Past Events</div>
 ';
 displayPastEvents();
 $text .='
@@ -79,7 +80,6 @@ function displayPastEvents(){
    $text .= "</tr>\n";
    $text .= "</table>\n";
    $text .= "</form>\n";
-   $text .= "<br />\n";
    $text .= "<br />\n";
    
    if ($_POST['gameid'] == "All")

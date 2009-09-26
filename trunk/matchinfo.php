@@ -33,6 +33,7 @@ else
 {
     $text .="<div class=\"tab-pane\" id=\"tab-pane-12\">";
     $text .="<div class=\"tab-page\">";
+    $text .="<div class=\"tab\">Match details</div>";
 
     $q = "SELECT ".TBL_EVENTS.".*, "
     .TBL_GAMES.".*"
@@ -48,9 +49,6 @@ else
     $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
     $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-
-    $text .= "<h1>$ename</h1>";
-    $text .= "<h2>$egame</h2>";
 
     $q = "SELECT ".TBL_MATCHS.".*, "
     .TBL_USERS.".*"
@@ -80,7 +78,6 @@ else
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
     $text .="<div class=\"spacer\">";
-    $text .= "<h2>Match (#$match_id)</h2><br />";
 
     if ($num_rows>0)
     {
@@ -188,8 +185,9 @@ else
     $text .= "<p>";
     $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
     $text .= "</p>";
+
+    $ns->tablerender("$ename ($egame - $etype)", $text);
 }
-$ns->tablerender('Event Matches', $text);
 require_once(FOOTERF);
 exit;
 ?>

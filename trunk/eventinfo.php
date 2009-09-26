@@ -153,8 +153,12 @@ else
     $row = mysql_fetch_array($result);
     $nbrplayers = $row['NbrPlayers'];
 
-    $text .= "<h1>$ename ($etype)</h1>";
-    $text .= "<h2><img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame</h2>";
+    /*
+    $text .= '<p>';
+    $text .= "<b>$ename</b> ($etype)<br />";
+    $text .= "<b><img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame</b><br /><br />";
+    $text .= '</p>';
+    */
 
     /* Update Stats */
     if ($eneedupdate == 1)
@@ -415,7 +419,7 @@ else
                     if ($epassword != "")
                     {
                         $text .= '<tr><td class="">Enter the password and click here to participate to this event.</td>';
-                        $text .= '<td class="">Event Password:</td>';
+                        $text .= '<td class="">Event Password</td>';
                         $text .= '<td class="">';
                         $text .= '
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
@@ -482,8 +486,24 @@ else
     $text .="<div class=\"tab\">Info</div>";
 
     $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+
     $text .= "<tr>";
-    $text .='<td class="forumheader3">Owner:</td><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
+    $text .= '<td class="forumheader3">Ladder</td>';
+    $text .= '<td class="forumheader3"><b>'.$ename.'</b></td>';
+    $text .= "</tr>";
+
+    $text .= "<tr>";
+    $text .= '<td class="forumheader3">Type</td>';
+    $text .= '<td class="forumheader3">'.$etype.'</td>';
+    $text .= "</tr>";
+
+    $text .= "<tr>";
+    $text .= '<td class="forumheader3">Game</td>';
+    $text .= '<td class="forumheader3"><img src="'.getGameIcon($egameicon).'" alt="'.$egameicon.'"/> '.$egame.'</td>';
+    $text .= "</tr>";  
+    
+    $text .= "<tr>";
+    $text .='<td class="forumheader3">Owner</td><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
     $can_manage = 0;
     if (check_class($pref['eb_mod_class'])) $can_manage = 1;
     if (USERID==$eowner) $can_manage = 1;
@@ -500,7 +520,7 @@ else
     ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".User)";
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
-    $text .= '<td class="forumheader3">Moderator(s):</td>';
+    $text .= '<td class="forumheader3">Moderator(s)</td>';
     $text .= '<td class="forumheader3">';
     if ($num_rows>0)
     {
@@ -514,10 +534,10 @@ else
     }
     $text .= '</td></tr>';
 
-    $text .= '<tr><td class="forumheader3">Starts:</td><td class="forumheader3">'.$date_start.'</td></tr>';
-    $text .= '<tr><td class="forumheader3">Ends:</td><td class="forumheader3">'.$date_end.'</td></tr>';
+    $text .= '<tr><td class="forumheader3">Starts</td><td class="forumheader3">'.$date_start.'</td></tr>';
+    $text .= '<tr><td class="forumheader3">Ends</td><td class="forumheader3">'.$date_end.'</td></tr>';
     $text .= '<tr><td class="forumheader3"></td><td class="forumheader3">'.$time_comment.'</td></tr>';
-    $text .= '<tr><td class="forumheader3">Rules:</td><td class="forumheader3">'.$erules.'</td></tr>';
+    $text .= '<tr><td class="forumheader3">Rules</td><td class="forumheader3">'.$erules.'</td></tr>';
     $text .= '</tbody></table>';
     $text .= '</div>';
 
@@ -549,7 +569,7 @@ else
         $text .="<div class=\"spacer\">";
         $text .="<p>";
         $text .="$nbrteams teams<br />";
-        $text .="Minimum $eminteamgames team matches to rank.";
+        $text .="Minimum $eminteamgames team matches to rank.<br /><br />";
         $text .="</p>";
 
         $stats = unserialize(implode('',file($file_team)));
@@ -989,7 +1009,7 @@ else
     ';
 }
 
-$ns->tablerender('Event Information', $text);
+$ns->tablerender("$ename ($egame - $etype)", $text);
 require_once(FOOTERF);
 exit;
 

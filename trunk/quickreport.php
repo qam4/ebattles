@@ -22,6 +22,8 @@ if ( (!isset($_POST['quicklossreport'])) || (!isset($_GET['eventid'])))
 }
 else
 {
+    $text .= 'Select the player';
+
     $q = "SELECT ".TBL_EVENTS.".*"
     ." FROM ".TBL_EVENTS
     ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
@@ -117,7 +119,7 @@ else
     ';
 }
 
-$ns->tablerender('Quick Loss Report', $text);
+$ns->tablerender("$ename ($egame - $etype) - Quick Loss Report", $text);
 require_once(FOOTERF);
 exit;
 ?>
