@@ -20,9 +20,9 @@ if(isset($_POST['joinevent'])){
             $sql->db_Query($q);
             $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
             $result = $sql->db_Query($q4);
-            header("Location: eventinfo.php?eventid=$event_id");
         }
     }
+    header("Location: eventinfo.php?eventid=$event_id");
 }
 if(isset($_POST['quitevent'])){
     // Player can quit event if he has not played yet
@@ -114,9 +114,9 @@ if(isset($_POST['teamjoinevent'])){
 
             $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
             $result = $sql->db_Query($q4);
-            header("Location: eventinfo.php?eventid=$event_id");
         }
     }
+    header("Location: eventinfo.php?eventid=$event_id");
 }
 if(isset($_POST['jointeamevent'])){
     $team_id = $_POST['team'];
@@ -135,8 +135,8 @@ if(isset($_POST['jointeamevent'])){
         $sql->db_Query($q);
         $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q4);
-        header("Location: eventinfo.php?eventid=$event_id");
     }
+    header("Location: eventinfo.php?eventid=$event_id");
 }
 
 ?>

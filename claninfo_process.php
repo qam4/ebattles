@@ -53,5 +53,14 @@ if(isset($_POST['joindivision']))
     }
     header("Location: claninfo.php?clanid=$clan_id");
 }
+if(isset($_POST['quitdivision']))
+{
+    $div_id = $_POST['division'];
 
+    $q = " DELETE FROM ".TBL_MEMBERS
+    ." WHERE (Division = '$div_id')"
+    ."   AND (User = ".USERID.")";
+    $sql->db_Query($q);
+    header("Location: claninfo.php?clanid=$clan_id");
+}
 ?>
