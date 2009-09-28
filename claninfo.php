@@ -98,6 +98,7 @@ Functions
 function displayTeamSummary($clan_id){
     global $sql;
     global $text;
+    global $pref;
 
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_USERS.".*"
@@ -195,7 +196,26 @@ function displayTeamDivisions($clan_id){
             }
             else
             {
-
+                /*
+                // This is if we want to check that the member has made no games with this division
+                // But it is not necessary, it will not leave orphans.
+                // Actually, it's better to use this.
+                $q_MemberScores = "SELECT ".TBL_MEMBERS.".*, "
+                .TBL_TEAMS.".*, "
+                .TBL_PLAYERS.".*, "
+                .TBL_SCORES.".*"
+                ." FROM ".TBL_MEMBERS.", "
+                .TBL_TEAMS.", "
+                .TBL_PLAYERS.", "
+                .TBL_SCORES
+                ." WHERE (".TBL_MEMBERS.".User = ".USERID.")"
+                ." AND (".TBL_MEMBERS.".Division = '$div_id')"
+                ." AND (".TBL_TEAMS.".Division = '$div_id')"
+                ." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+                ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+                $result_MemberScores = $sql->db_Query($q_MemberScores);
+                $numMemberScores = mysql_numrows($result_MemberScores);
+                */
                 $text .= '
                 <form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
                 <div>

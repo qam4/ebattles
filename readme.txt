@@ -90,6 +90,11 @@ Suggestions:
   - Tigra Slider Control - http://www.softcomplex.com/products/tigra_slider_control/
   - Games icons - xfireplus.com
   - Photoshop/Design - http://www.empiredezign.com, http://www.tutorialstream.com
+
+SQL database
+- Queries:
+ . eventinfo -> . 35 + 2 if signed up
+ . updatestats: 3 + 2*players + 2* matches
  
 BUGS:
 Priority 1
@@ -97,53 +102,6 @@ Priority 2
 - Problem when editing include/main.php in UltraEdit.
   UltraEdit adds "0xFEFF" signature (BOM) at the beginning of the file, creating "header already sent" issues.
 
-SQL database
-- Queries:
- . eventinfo -> . 35 + 2 if signed up
- . updatestats: 3 + 2*players + 2* matches
-- Need to add to database:
-Changed
- . events:
-   . players_verification ???
-      - no verification: Player can play in the event right after joining.
-      - owner's approval: Plauyer needs owner's approval to start playing.
-   . match_report_userclass tinyint(3) unsigned NOT NULL default '0',
-   . quick_loss_report tinyint(1) DEFAULT 1,
-     - enable/disable
-   . hide_ratings_column tinyint(1) DEFAULT 0,
-     - true/false
- . players
-   . banned tinyint(1) DEFAULT 0,
-     - true/false
-   . accepted tinyint(1) DEFAULT 1,
-     - true/false, not sure if necessary? need to think if we create the player after sign up, or after verified.
- . clan
-   . password varchar(32),
- . teams
-   . Streak int DEFAULT 0,
-   . Streak_Best int DEFAULT 0,
-   . Streak_Worst int DEFAULT 0,
- . games
-   . Style
-   . Genre
-   . Description
-   . Developer
-   . Publisher
-   . Release Date
-   . Official Website
-   . ESRB
-   . Banner
- 
- 
-New:
- . players_results
-   . PlayerResultID
-   . PlayerID
-   . EventID
-   . timestamp
-   . ResultType
-   . ResultValue
- 
 Ideas:
 - caption for ebattles menu.
 - number of things to display in eb_recent_activity
@@ -166,11 +124,31 @@ else
 {
     ... 
 }
- . Can $_POST be hacked somehow?
+ . Can $_POST be hacked somehow? Since it does not appear in the URL, can someone force a the value of $_POST ?
  . If $_POST contains enough info, we should not have to recheck everytinh after submit.
  . how do you handle cases like: join button appears if player has not joined yet.
    You have to check pre/post submit, because someone can open 2 pages showing the "join" button, then join twice.
- 
+
+- I should replace Players.Team by Players.Members, where members is in the TBL_MEMBERS.
+2 players with the same userid and team can not be allowed.
+Let's say a player plays for a clan, then quit the clan, and re-joins the clan, he'll be automatically signed up to the event again.
+So there will be 2 players with the same userid, and team, unless quitting the clan also delete the players.
+
+Now, we can delete members without deleting the corresponding players w/o leaving orphans.
+But the example above shows there is an issue with this.
+If the Players table references the members table, then deleting a member will force to delete the players.
+
+If I do this chage,
+ . database maight be messed up
+ . kicking members of divisions will be more difficult if the player has played already.
+
+- Problem with having 2 players with the same userid in the same event.
+  Since we do not know which player the current user is,
+ . the user can not use quick loss report
+ . if the user quits the event, it will delete both players
+ - Add "Are you sure..." when deleting/quitting things.
+
+
 EBATTLES.FREEHOSTIA.COM specific issues:
  - Forgot password won't work, because we can't send emails...
    e107 PHP mailer is not always workin properly
@@ -179,7 +157,7 @@ EBATTLES.FREEHOSTIA.COM specific issues:
    Can be fixed by erasing logs in e107_plugins/log/logs
 
 Regression:
-- Need to make sure the test to see if ppl can report/modify/delete is performed inside the corresponding file.
+- Need to make sure that the check to see if user can join/report/modify/delete is performed at the proper time.
 - Should not be able to report a game as a guest
   To reproduce this, go to the match report page in a tab, and logout in another tab.
   When you Submit, the match, it will be as a Guest.

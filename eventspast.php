@@ -189,6 +189,7 @@ function displayPastEvents(){
    // print the navigation link
    $text .= paginate($rowsPerPage, $pg, $totalPages);
 
+   $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/events.php\">Events</a>]<br />";
 }
 
 ?>

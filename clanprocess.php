@@ -6,6 +6,46 @@
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 
+if(isset($_POST['clandelete']))
+{
+    $clan_id = $_GET['clanid'];
+
+    $q_ClanScores = "SELECT ".TBL_DIVISIONS.".*, "
+    .TBL_TEAMS.".*, "
+    .TBL_PLAYERS.".*, "
+    .TBL_SCORES.".*"
+    ." FROM ".TBL_DIVISIONS.", "
+    .TBL_TEAMS.", "
+    .TBL_PLAYERS.", "
+    .TBL_SCORES
+    ." WHERE (".TBL_DIVISIONS.".Clan = '$clan_id')"
+    ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+    ." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+    ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+    $result_ClanScores = $sql->db_Query($q_ClanScores);
+    $numClanScores = mysql_numrows($result_ClanScores);
+    if ($numClanScores == 0)
+    {
+        // Delete players, teams, members, divisions and clan
+        $q_ClanDivs = "SELECT ".TBL_DIVISIONS.".*"
+        ." FROM ".TBL_DIVISIONS
+        ." WHERE (".TBL_DIVISIONS.".Clan = '$clan_id')";
+        $result_ClanDivs = $sql->db_Query($q_ClanDivs);
+        $numClanDivs = mysql_numrows($result_ClanDivs);
+        for ($i = 0; $i < $numClanDivs; $i ++)
+        {
+            $div_id = mysql_result($result_ClanDivs, $i, TBL_DIVISIONS.".DivisionID");
+            deleteDivPlayers($div_id);
+            deleteDivTeams($div_id);
+            deleteDivMembers($div_id);
+            deleteDiv($div_id);
+        }
+
+        deleteClan($clan_id);
+    }
+    //echo "-- clandelete --<br />";
+    header("Location: clans.php");
+}
 if(isset($_POST['clandeletediv']))
 {
     $clan_id = $_GET['clanid'];
@@ -185,21 +225,11 @@ function deleteDiv($div_id)
     ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')";
     $result = $sql->db_Query($q);
 }
-
-/*
-function deleteDivisions($clan_id)
-{
-global $sql;
-$q3 = "DELETE FROM ".TBL_DIVISIONS
-." WHERE (".TBL_EVENTMODS.".Clan = '$clan_id')";
-$result3 = $sql->db_Query($q3);
-}
 function deleteClan($clan_id)
 {
-global $sql;
-$q3 = "DELETE FROM ".TBL_CLANS
-." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
-$result3 = $sql->db_Query($q3);
+    global $sql;
+    $q3 = "DELETE FROM ".TBL_CLANS
+    ." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
+    $result3 = $sql->db_Query($q3);
 }
-*/
 ?>
