@@ -196,10 +196,7 @@ function displayTeamDivisions($clan_id){
             }
             else
             {
-                /*
-                // This is if we want to check that the member has made no games with this division
-                // But it is not necessary, it will not leave orphans.
-                // Actually, it's better to use this.
+                // Check that the member has made no games with this division
                 $q_MemberScores = "SELECT ".TBL_MEMBERS.".*, "
                 .TBL_TEAMS.".*, "
                 .TBL_PLAYERS.".*, "
@@ -215,14 +212,16 @@ function displayTeamDivisions($clan_id){
                 ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
                 $result_MemberScores = $sql->db_Query($q_MemberScores);
                 $numMemberScores = mysql_numrows($result_MemberScores);
-                */
-                $text .= '
-                <form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
-                <div>
-                <input type="hidden" name="division" value="'.$div_id.'"/>
-                <input class="button" type="submit" name="quitdivision" value="Quit Division"/>
-                </div>
-                </form>';
+                if (numMemberScores == 0)
+                {
+                    $text .= '
+                    <form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
+                    <div>
+                    <input type="hidden" name="division" value="'.$div_id.'"/>
+                    <input class="button" type="submit" name="quitdivision" value="Quit Division" onclick="return confirm(\'Are you sure you want to quit this division?\');"/>
+                    </div>
+                    </form>';
+                }
             }
         }
 

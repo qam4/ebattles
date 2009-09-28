@@ -390,7 +390,7 @@ else
                                     <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                     <div>
                                     <input type="hidden" name="team" value="'.$team_id.'"/>
-                                    <input class="button" type="submit" name="quitteamevent" value="Quit this event"/>
+                                    <input class="button" type="submit" name="quitteamevent" value="Quit this event" onclick="return confirm(\'Are you sure you want to quit this event?\');"/>
                                     </div>
                                     </form></td></tr>
                                     ';
@@ -461,7 +461,7 @@ else
                         $text .= '<td class="">
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                         <div>
-                        <input class="button" type="submit" name="quitevent" value="Quit this event"/>
+                        <input class="button" type="submit" name="quitevent" value="Quit this event" onclick="return confirm(\'Are you sure you want to quit this event?\');"/>
                         </div>
                         </form></td></tr>
                         ';

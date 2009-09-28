@@ -129,8 +129,7 @@ else
  . how do you handle cases like: join button appears if player has not joined yet.
    You have to check pre/post submit, because someone can open 2 pages showing the "join" button, then join twice.
 
-- I should replace Players.Team by Players.Members, where members is in the TBL_MEMBERS.
-2 players with the same userid and team can not be allowed.
+- 2 players with the same userid and team can not be allowed.
 Let's say a player plays for a clan, then quit the clan, and re-joins the clan, he'll be automatically signed up to the event again.
 So there will be 2 players with the same userid, and team, unless quitting the clan also delete the players.
 
@@ -138,9 +137,10 @@ Now, we can delete members without deleting the corresponding players w/o leavin
 But the example above shows there is an issue with this.
 If the Players table references the members table, then deleting a member will force to delete the players.
 
-If I do this chage,
- . database maight be messed up
- . kicking members of divisions will be more difficult if the player has played already.
+- Kicking members of divisions has the same issue.
+We can not delete members w/o deleting the corresponding players.
+And we can delete players only if they have not scored yet.
+Therefore, we can only delete members if they have not played in a match yet.
 
 - Problem with having 2 players with the same userid in the same event.
   Since we do not know which player the current user is,
