@@ -87,7 +87,7 @@ else
         if ($numClanScores == 0)
         {
             $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
-            $text .= '<br /><input class="button" type="submit" name="clandelete" value="Delete Team"/>';
+            $text .= '<br /><input class="button" type="submit" name="clandelete" value="Delete Team" onclick="return confirm(\'Are you sure you want to delete this team?\');"/>';
             $text .= "</form>";
         }
         $text .= '</td>';
@@ -254,7 +254,7 @@ else
             {
                 $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
                 $text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"/>';
-                $text .= '<input class="button" type="submit" name="clandeletediv" value="Delete Division"/>';
+                $text .= '<input class="button" type="submit" name="clandeletediv" value="Delete Division" onclick="return confirm(\'Are you sure you want to delete this division?\');"/>';
                 $text .= "</form>";
             }
 

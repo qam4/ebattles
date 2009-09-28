@@ -161,6 +161,10 @@ header("Location: clans.php");
 */
 if (isset($_POST['kick']))
 {
+//fm: Not good
+// We can not delete members w/o deleting the corresponding players.
+// And we can delete players only if they have not scored yet.
+// Therefore, we can only delete members if they have not played in a match yet.
     $clan_id = $_GET['clanid'];
     if (count($_POST['del']) > 0)
     {

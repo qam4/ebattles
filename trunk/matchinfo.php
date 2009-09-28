@@ -119,12 +119,12 @@ else
 
     if($can_delete != 0)
     {
-        $text .= "<form action=\"".e_PLUGIN."ebattles/matchdelete.php?eventid=$event_id\" method=\"post\">";
-        $text .= "<div>";
-        $text .= "<input type=\"hidden\" name=\"matchid\" value=\"$match_id\"/>";
-        $text .= "<input class=\"button\" type=\"submit\" name=\"deletematch\" value=\"Delete this match\"/>";
-        $text .= "</div>";
-        $text .= "</form>";
+        $text .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?eventid='.$event_id.'" method="post">';
+        $text .= '<div>';
+        $text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
+        $text .= '<input class="button" type="submit" name="deletematch" value="Delete this match" onclick="return confirm(\'Are you sure you want to delete this match?\');"/>';
+        $text .= '</div>';
+        $text .= '</form>';
     }
 
     $text .= "<br />";
