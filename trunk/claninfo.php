@@ -37,7 +37,7 @@ else
     $num_rows = mysql_numrows($result);
 
     $clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
-    
+
     $text .= '
     <div class="tab-pane" id="tab-pane-6">
     ';
@@ -193,6 +193,17 @@ function displayTeamDivisions($clan_id){
                     </form>';
                 }
             }
+            else
+            {
+
+                $text .= '
+                <form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
+                <div>
+                <input type="hidden" name="division" value="'.$div_id.'"/>
+                <input class="button" type="submit" name="quitdivision" value="Quit Division"/>
+                </div>
+                </form>';
+            }
         }
 
         $q_2 = "SELECT ".TBL_CLANS.".*, "
@@ -239,7 +250,7 @@ function displayTeamDivisions($clan_id){
             }
             $text .= "</tbody></table>\n";
         }
-        $text .="</div>";
+        $text .="<br /></div>";
     }
 }
 
