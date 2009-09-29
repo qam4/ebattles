@@ -34,4 +34,5 @@ define("EBATTLES_ADMIN_L13", "Teams creators userclass");
 define("EBATTLES_ADMIN_L14", "Tabs stylesheet");
 define("EBATTLES_ADMIN_L15", "Images max size");
 define("EBATTLES_ADMIN_L16", "If enabled, images will be resized if they exceed the max size (can be slow)");
+define("EBATTLES_ADMIN_L17", "Enable images max size");
 ?>
