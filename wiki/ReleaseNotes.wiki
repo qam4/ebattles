@@ -1,5 +1,19 @@
 #summary eBattles Release Notes.
 
+= Release 0.4.116 =
+== Features ==
+ * "Team/Division delete" support (Fixes issue 32)
+Added support to delete divisions/teams from team manage page.
+Division/Team can only be deleted if there are no players who have already played in the division/team.
+ * Added "Quit Division" button for members of a division in a team. (Fixes issue 44)
+ * Changed plugin menus header to show info about the event or team (Fixes issue 35)
+Also removed html tags `<h1`> and `<h2`> as they might appear to big for some themes.  
+ * Added option for eBattles admin to resize all games images if they exceed the maximum size allowed. (Fixes issue 42)
+ * Added confirmation dialog when user quits/deletes an event or a team.
+== Bug fixes ==
+ * eBattles moderators could not manage teams.
+ * Can not reset team password when it has been set. (Fixes issue 40)
+
 = Release 0.4.106 =
 == Features ==
  * Userclass for match report (Fixes issue 36)
