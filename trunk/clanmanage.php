@@ -247,9 +247,6 @@ else
             ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
             $result_DivScores = $sql->db_Query($q_DivScores);
             $numDivScores = mysql_numrows($result_DivScores);
-            //dbg: echo "division $div_id scores: $numDivScores<br>";
-            //dbg: include_once(e_PLUGIN."ebattles/include/show_db_results.php");
-            //dbg: show_db_results($result_DivScores);
             if ($numDivScores == 0)
             {
                 $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";

@@ -300,7 +300,6 @@ else
                 }
                 else
                 {
-
                     for($i=0;$i < $num_rows_2;$i++)
                     {
                         $clan_name  = mysql_result($result_2,$i , TBL_CLANS.".Name");
@@ -349,7 +348,6 @@ else
                             ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
                             ."   AND (".TBL_PLAYERS.".User = ".USERID.")"
                             ."   AND (".TBL_PLAYERS.".Team = '$team_id')";
-
                             $result = $sql->db_Query($q);
                             if(!$result || (mysql_numrows($result) == 0))
                             {

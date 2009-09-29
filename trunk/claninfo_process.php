@@ -43,11 +43,24 @@ if(isset($_POST['joindivision']))
                 $eTS_default_mu  = mysql_result($result_2,$j, TBL_EVENTS.".TS_default_mu");
                 $eTS_default_sigma  = mysql_result($result_2,$j, TBL_EVENTS.".TS_default_sigma");
                 $team_id = mysql_result($result_2,$j, TBL_TEAMS.".TeamID");
-                $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
-                VALUES ($eid,".USERID.",$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
-                $sql->db_Query($q);
-                $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$eid')";
-                $result = $sql->db_Query($q4);
+
+                // Verify there is no other player for that user/event/team
+                $q = "SELECT COUNT(*) as NbrPlayers"
+                ." FROM ".TBL_PLAYERS
+                ." WHERE (Event = '$eid')"
+                ." AND (Team = '$team_id')"
+                ." AND (User = ".USERID.")";
+                $result = $sql->db_Query($q);
+                $row = mysql_fetch_array($result);
+                $nbrplayers = $row['NbrPlayers'];
+                if ($nbrplayers == 0)
+                {
+                    $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
+                    VALUES ($eid,".USERID.",$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
+                    $sql->db_Query($q);
+                    $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$eid')";
+                    $result = $sql->db_Query($q4);
+                }
             }
         }
     }

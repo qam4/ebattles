@@ -26,13 +26,9 @@ else
 
     $text ='<script type="text/javascript" src="./js/tabpane.js"></script>';
 
-    $q = "SELECT ".TBL_CLANS.".*, "
-    .TBL_USERS.".*"
-    ." FROM ".TBL_CLANS.", "
-    .TBL_USERS
-    ." WHERE (".TBL_CLANS.".ClanID = '$clan_id')"
-    ." AND (".TBL_USERS.".user_id = ".TBL_CLANS.".Owner)";
-
+    $q = "SELECT ".TBL_CLANS.".*"
+    ." FROM ".TBL_CLANS
+    ." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
 
@@ -212,7 +208,7 @@ function displayTeamDivisions($clan_id){
                 ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
                 $result_MemberScores = $sql->db_Query($q_MemberScores);
                 $numMemberScores = mysql_numrows($result_MemberScores);
-                if (numMemberScores == 0)
+                if ($numMemberScores == 0)
                 {
                     $text .= '
                     <form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
