@@ -148,6 +148,16 @@ Therefore, we can only delete members if they have not played in a match yet.
  . if the user quits the event, it will delete both players
  - Add "Are you sure..." when deleting/quitting things.
 
+- e107 admin can delete a user.
+=> need to make sure each time we reference users, we check if exists.
+.TBL_EVENTS.".Owner
+.TBL_EVENTMODS.".User
+.TBL_CLANS.".Owner
+.TBL_DIVISIONS.".Captain
+.TBL_MEMBERS.".User
+.TBL_MATCHS.".ReportedBy
+.TBL_PLAYERS.".User
+
 
 EBATTLES.FREEHOSTIA.COM specific issues:
  - Forgot password won't work, because we can't send emails...

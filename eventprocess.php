@@ -405,7 +405,7 @@ function resetPlayers($event_id)
             ."     Points = 0,"
             ."     Streak = 0,"
             ."     Streak_Best = 0,"
-            ."     Streak_Worst = 0,"
+            ."     Streak_Worst = 0"
             ." WHERE (PlayerID = '$pID')";
             $result3 = $sql->db_Query($q3);
         }
@@ -442,7 +442,10 @@ function resetTeams($event_id)
             ."     Draws = 0,"
             ."     Score = 0,"
             ."     ScoreAgainst = 0,"
-            ."     Points = 0"
+            ."     Points = 0,"
+            ."     Streak = 0,"
+            ."     Streak_Best = 0,"
+            ."     Streak_Worst = 0"
             ." WHERE (TeamID = '$tID')";
             $result3 = $sql->db_Query($q3);
         }
@@ -491,6 +494,13 @@ function deleteMods($event_id)
     ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')";
     $result3 = $sql->db_Query($q3);
 }
+function deleteStatsCats($event_id)
+{
+    global $sql;
+    $q3 = "DELETE FROM ".TBL_STATSCATEGORIES
+    ." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
+    $result3 = $sql->db_Query($q3);
+}
 function deleteEvent($event_id)
 {
     global $sql;
@@ -498,6 +508,7 @@ function deleteEvent($event_id)
     deletePlayers($event_id);
     deleteTeams($event_id);
     deleteMods($event_id);
+    deleteStatsCats($event_id);
     $q3 = "DELETE FROM ".TBL_EVENTS
     ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
     $result3 = $sql->db_Query($q3);
