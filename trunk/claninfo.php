@@ -158,7 +158,7 @@ function displayTeamDivisions($clan_id){
         $div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
         $text .= '<div class="spacer">';
-        $text .= '<b><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</b><br />';
+        $text .= '<b><img '.getGameIconResize($gicon).'"/> '.$gname.'</b><br />';
         $text .= "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
 
         if(check_class(e_UC_MEMBER))
@@ -300,7 +300,7 @@ function displayTeamEvents($clan_id){
         $div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 
         $text .= '<div class="spacer">';
-        $text .= '<b><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</b><br />';
+        $text .= '<b><img '.getGameIconResize($gicon).'/> '.$gname.'</b><br />';
 
         $q_2 = "SELECT ".TBL_TEAMS.".*, "
         .TBL_EVENTS.".*"

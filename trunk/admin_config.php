@@ -24,6 +24,8 @@ if (isset($_POST['updatesettings'])) {
     $pref['eb_teams_create_class'] = $_POST['eb_teams_create_class'];
     $pref['eb_mod_class'] = $_POST['eb_mod_class'];
     $pref['eb_tab_theme'] = $_POST['eb_tab_theme'];
+    $pref['eb_max_image_size_check'] = $_POST['eb_max_image_size_check'];
+    $pref['eb_max_image_size'] = $_POST['eb_max_image_size'];
     save_prefs();
     $message = EBATTLES_ADMIN_L1;
 }
@@ -80,7 +82,6 @@ $text .= "<tr>
 </tr>
 ";
 
-
 $text .= "<tr>
 <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L7.": </td>
 <td class='forumheader3' style='width:60%'>
@@ -98,6 +99,16 @@ $text .= "<tr>
 <input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'winclassic' ? "checked='checked'" :"")." value='winclassic' />Windows Classic
 <input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'webfx' ? "checked='checked'" :"")." value='webfx' />Web FX
 <input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'luna' ? "checked='checked'" :"")." value='luna' />Luna
+</td>
+</tr>
+";
+
+$text .= "<tr>
+<td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L15.":  <div class='smalltext'>".EBATTLES_ADMIN_L16."</div></td>
+<td class='forumheader3' style='width:60%'>
+<input class='tbox' type='text' name='eb_max_image_size' size='8' value='".$pref['eb_max_image_size']."' maxlength='3' /><br />
+
+<input class='tbox' type='checkbox' name='eb_max_image_size_check' value='1' ".($pref['eb_max_image_size_check'] == 1 ? "checked='checked'" :"")."/>".EBATTLES_ADMIN_L6."
 </td>
 </tr>
 ";

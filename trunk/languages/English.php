@@ -32,4 +32,6 @@ define("EBATTLES_ADMIN_L11", "Data inserted in database.");
 define("EBATTLES_ADMIN_L12", "Events creators userclass");
 define("EBATTLES_ADMIN_L13", "Teams creators userclass");
 define("EBATTLES_ADMIN_L14", "Tabs stylesheet");
+define("EBATTLES_ADMIN_L15", "Images max size");
+define("EBATTLES_ADMIN_L16", "If enabled, images will be resized if they exceed the max size (can be slow)");
 ?>

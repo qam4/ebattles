@@ -122,13 +122,6 @@ else
         $date_end = "";
     }
 
-    /*
-    $text .= '<p>';
-    $text .= "<b><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">$ename</a> ($etype)</b><br />";
-    $text .= "<b><img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame</b><br /><br />";
-    $text .= '</p>';
-    */
-
     $can_manage = 0;
     if (check_class($pref['eb_mod_class'])) $can_manage = 1;
     if (USERID==$eowner) $can_manage = 1;

@@ -99,7 +99,7 @@ $text .= '
 <tr>
 <td class="forumheader3"><b>Icon</b></td>
 <td class="forumheader3">
-<img src="'.getGameIcon($game_icon).'" alt="'.$game_icon.'"/>
+<img '.getGameIconResize($game_icon).'/>
 <input type="text" name="gameIcon" value="'.$game_icon.'"/>
 <div class="smalltext">Icon can be an external link or must be placed in ebattles/images/games_icons/<div>
 </td>

@@ -119,7 +119,7 @@ else
             $text .= "<tr>";
             $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
-            $text .= "<img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame";
+            $text .= "<img ".getGameIconResize($egameicon)."/> $egame";
             $text .= "</td>";
             $text .= "<td class='forumheader3'>";
             $text .= "$prank";
@@ -180,7 +180,7 @@ else
             $text .= "<tr>";
             $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
-            $text .= "<img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame";
+            $text .= "<img ".getGameIconResize($egameicon)."/> $egame";
             $text .= "</td>";
             $text .= "<td class='forumheader3'>";
             if($eowner == $req_user)
@@ -237,7 +237,7 @@ else
             $text .= "<tr>";
             $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a><br />";
-            $text .= "<img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame";
+            $text .= "<img ".getGameIconResize($egameicon)."/> $egame";
             $text .= "</td>";
             $text .= "<td class='forumheader3'>";
             if($eowner == $req_user)
@@ -318,7 +318,7 @@ else
             $text .= "<tr>";
             $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$cid\">$cname</a><br />";
-            $text .= "<img src=\"".getGameIcon($dgameicon)."\" alt=\"$egameicon\"/> $dgame";
+            $text .= "<img ".getGameIconResize($dgameicon)."/> $dgame";
             $text .= "</td>";
             $text .= "<td class='forumheader3'>";
             if($cowner == $req_user)
@@ -432,7 +432,7 @@ else
             $text .= "<tr>";
             $text .= "<td class='forumheader3'>";
             $text .= "<a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$cid\">$cname</a><br />";
-            $text .= "<img src=\"".getGameIcon($dgameicon)."\" alt=\"$egameicon\"/> $dgame";
+            $text .= "<img ".getGameIconResize($dgameicon)."/> $dgame";
             $text .= "</td>";
             $text .= "<td class='forumheader3'>";
             if($cowner == $req_user)
@@ -558,7 +558,7 @@ else
                 $players = '';
                 $scores = '';
 
-                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".getGameIcon($mEventgameicon)."\" alt=\"$mEventgameicon\"/></a> ";
+                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
 
                 $rank = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
