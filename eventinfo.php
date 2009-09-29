@@ -153,13 +153,6 @@ else
     $row = mysql_fetch_array($result);
     $nbrplayers = $row['NbrPlayers'];
 
-    /*
-    $text .= '<p>';
-    $text .= "<b>$ename</b> ($etype)<br />";
-    $text .= "<b><img src=\"".getGameIcon($egameicon)."\" alt=\"$egameicon\"/> $egame</b><br /><br />";
-    $text .= '</p>';
-    */
-
     /* Update Stats */
     if ($eneedupdate == 1)
     {
@@ -499,7 +492,7 @@ else
 
     $text .= "<tr>";
     $text .= '<td class="forumheader3">Game</td>';
-    $text .= '<td class="forumheader3"><img src="'.getGameIcon($egameicon).'" alt="'.$egameicon.'"/> '.$egame.'</td>';
+    $text .= '<td class="forumheader3"><img '.getGameIconResize($egameicon).'/> '.$egame.'</td>';
     $text .= "</tr>";  
     
     $text .= "<tr>";
@@ -844,7 +837,7 @@ else
                 $players = '';
                 $scores = '';
 
-                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".getGameIcon($mEventgameicon)."\" alt=\"$mEventgameicon\"/></a> ";
+                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
 
                 $rank = 1;
                 for ($index = 0; $index < $numPlayers; $index++)

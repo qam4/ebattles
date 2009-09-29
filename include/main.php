@@ -67,4 +67,51 @@ function getGameIcon($icon)
         return e_PLUGIN."ebattles/images/games_icons/$icon";
     }
 }
+
+function imageResize($image, $target) {
+    // Resize image so it does not exceeds the max size.
+    $image_dims = getimagesize($image);
+
+    $width  = $image_dims[0];
+    $height = $image_dims[1];
+
+    if(max($width,$height)>$target)
+    {
+        //takes the larger size of the width and height and applies the
+        //formula accordingly...this is so this script will work
+        //dynamically with any size image
+
+        if ($width > $height) {
+            $percentage = ($target / $width);
+        } else {
+            $percentage = ($target / $height);
+        }
+
+        //gets the new value and applies the percentage, then rounds the value
+        $width = round($width * $percentage);
+        $height = round($height * $percentage);
+
+        //returns the new sizes in html image tag format...this is so you
+        //can plug this function inside an image tag and just get the
+        return 'width="'.$width.'" height="'.$height.'"';
+    }
+    else
+    {
+        return '';
+    }
+}
+
+function getGameIconResize($gicon) {
+    global $pref;
+
+    if ($pref['eb_max_image_size_check'] == 1)
+    {
+        return 'src="'.getGameIcon($gicon).'" alt="'.$gicon.'" '.imageResize(getGameIcon($gicon), $pref['eb_max_image_size']);
+    }
+    else
+    {
+        return 'src="'.getGameIcon($gicon).'" alt="'.$gicon.'"';;
+    }
+}
+
 ?>

@@ -109,7 +109,7 @@ function displayRecentActivity(){
                 $players = '';
                 $scores = '';
 
-                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".getGameIcon($mEventgameicon)."\" alt=\"$mEventgameicon\"/></a> ";
+                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img ".getGameIconResize($mEventgameicon)." alt=\"$mEventgameicon\"/></a> ";
 
                 $rank = 1;
                 for ($index = 0; $index < $numPlayers; $index++)

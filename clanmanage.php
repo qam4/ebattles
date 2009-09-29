@@ -229,7 +229,7 @@ else
 
             $text .= '<tr>';
             $text .= '<td class="forumheader3">';
-            $text .= '<b><img src="'.getGameIcon($gicon).'" alt="'.$gicon.'"/> '.$gname.'</b><br />';
+            $text .= '<b><img '.getGameIconResize($gicon).'"/> '.$gname.'</b><br />';
             $text .= "Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a>";
 
             // Delete division

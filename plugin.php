@@ -47,10 +47,13 @@ $eplug_icon_small = $eplug_folder."/images/ebattles_16.ico";
 // List of preferences -----------------------------------------------------------------------------------------------
 $eplug_prefs = array(
 "eb_events_update_delay" => 60,
+"eb_events_update_delay_enable" => 0,
 "eb_mod_class" => e_UC_ADMIN,
 "eb_events_create_class" => e_UC_MEMBER,
 "eb_teams_create_class" => e_UC_MEMBER,
-"eb_tab_theme" => 'default'
+"eb_tab_theme" => 'default',
+"eb_max_image_size_check" => 0,
+"eb_max_image_size" => 16
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -336,7 +339,8 @@ $upgrade_add_prefs = "";
 $upgrade_remove_prefs = "";
 $upgrade_alter_tables = "";
 
-if ($eb_version[2] < 98)
+$revision = $eb_version[2];
+if ($revision < 98)
 {
     // To revision 96
     $upgrade_alter_tables = array(
@@ -379,6 +383,15 @@ if ($eb_version[2] < 98)
     "eb_tab_theme" => 'default'
     );
 
+}
+
+if ($revision < 114)
+{
+    // To revision 114
+    $upgrade_add_prefs = array(
+    "eb_max_image_size_check" => 0,
+    "eb_max_image_size" => 16
+    );
 }
 
 $eplug_upgrade_done = 'Forum successfully upgraded, now using version: '.$eplug_version;

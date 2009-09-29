@@ -50,13 +50,6 @@ else
     $mEventType  = mysql_result($result,0 , TBL_EVENTS.".Type");
     $mEventAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
 
-    /*
-    $text .= '<p>';
-    $text .= "<b>$mEventName</b> ($mEventType)<br />";
-    $text .= "<b><img src=\"".getGameIcon($mEventgameicon)."\" alt=\"$mEventgameicon\"/> $mEventgame</b><br /><br />";
-    $text .= '</p>';
-    */
-
     $text .="<div class=\"tab-pane\" id=\"tab-pane-11\">";
     $text .="<div class=\"tab-page\">";
     $text .="<div class=\"tab\">All Matches</div>";
@@ -137,7 +130,7 @@ else
                 $players = '';
                 $scores = '';
 
-                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img src=\"".getGameIcon($mEventgameicon)."\" alt=\"$mEventgameicon\"/></a> ";
+                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
 
                 $rank = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
