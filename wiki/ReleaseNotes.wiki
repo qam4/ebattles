@@ -1,5 +1,12 @@
 #summary eBattles Release Notes.
 
+= Release 0.4.119 =
+== Features ==
+ * Fixed tabs default theme "height" issue.
+The tab height was different for different e107 themes or on some different browsers.
+== Bug fixes ==
+ * The plugin installation was failing starting from revision 98. (Fixes issue 45)
+
 = Release 0.4.116 =
 == Features ==
  * "Team/Division delete" support (Fixes issue 32)
