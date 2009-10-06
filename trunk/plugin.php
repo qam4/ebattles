@@ -89,7 +89,7 @@ Publisher varchar(63) NOT NULL default '',
 ReleaseDate varchar(63) NOT NULL default '',
 OfficialWebsite varchar(63) NOT NULL default '',
 ESRB varchar(63) NOT NULL default '',
-Banner varchar(63) NOT NULL default '',
+Banner varchar(63) NOT NULL default ''
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTS."
 (
