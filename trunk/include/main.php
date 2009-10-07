@@ -35,6 +35,7 @@ switch ($pref['eb_tab_theme'])
 
 $eplug_css = array(
 "js/calendar/calendar-blue.css",
+"css/paginate.css",
 $tab_theme
 );
 

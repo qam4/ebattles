@@ -6,7 +6,8 @@
 
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
-include_once(e_PLUGIN."ebattles/include/pagination.php");
+//include_once(e_PLUGIN."ebattles/include/pagination.php");
+require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 
 require_once(HEADERF);
 
@@ -62,14 +63,11 @@ function displayCurrentEvents(){
     global $sql;
     global $text;
     global $time;
-
-    // how many rows to show per page
-    $rowsPerPage = 5;
-    $pg = (isset($_REQUEST['pg']) && ctype_digit($_REQUEST['pg'])) ? $_REQUEST['pg'] : 1;
-    $start = $rowsPerPage * $pg - $rowsPerPage;
-
-    if (!isset($_POST['gameid'])) $_POST['gameid'] = "All";
-
+    $pages = new Paginator;
+    
+    if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
+    $gameid = $_GET['gameid'];
+    
     // Drop down list to select Games to display
     $q = "SELECT ".TBL_GAMES.".*"
     ." FROM ".TBL_GAMES
@@ -77,29 +75,39 @@ function displayCurrentEvents(){
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
-    $text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="post">';
+    $text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
     $text .= '<table>';
     $text .= '<tr><td>';
     $text .= 'Games:<br />';
-    $text .= '<select class="tbox" name="gameid">';
-    $text .= '<option value="All">All</option>';
+    $text .= '<select class="tbox" name="gameid" onChange="this.form.submit()">';
+    if ($gameid == "All")
+    {
+        $text .= '<option value="All" selected="selected">All</option>';
+    }
+    else
+    {
+        $text .= '<option value="All">All</option>';
+    }
     for($i=0; $i<$num_rows; $i++){
         $gname  = mysql_result($result,$i, TBL_GAMES.".name");
         $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
-        $text .= "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
+        if ($gameid == $gid)
+        {
+            $text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
+        }
+        else
+        {
+            $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
+        }
     }
     $text .= "</select>\n";
-    $text .= "</td>\n";
-    $text .= "<td>\n";
-    $text .= "<br />\n";
-    $text .= "<input class=\"button\" type=\"submit\" name=\"subgameselect\" value=\"Filter\"/>\n";
     $text .= "</td>\n";
     $text .= "</tr>\n";
     $text .= "</table>\n";
     $text .= "</form>\n";
     $text .= "<br />\n";
 
-    if ($_POST['gameid'] == "All")
+    if ($gameid == "All")
     {
         $q = "SELECT count(*) "
         ." FROM ".TBL_EVENTS
@@ -107,6 +115,9 @@ function displayCurrentEvents(){
         ."        OR (".TBL_EVENTS.".End_timestamp > $time)) ";
         $result = $sql->db_Query($q);
         $totalPages = mysql_result($result, 0);
+        $pages->items_total = $totalPages;
+        $pages->mid_range = 7;
+        $pages->paginate();
 
         $q = "SELECT ".TBL_EVENTS.".*, "
         .TBL_GAMES.".*"
@@ -115,7 +126,7 @@ function displayCurrentEvents(){
         ." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
         ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
         ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-        ." LIMIT $start, $rowsPerPage";
+        ." $pages->limit";
     }
     else
     {
@@ -123,9 +134,12 @@ function displayCurrentEvents(){
         ." FROM ".TBL_EVENTS
         ." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
         ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
-        ."   AND (".TBL_EVENTS.".Game = ".$_POST['gameid'].")";
+        ."   AND (".TBL_EVENTS.".Game = '$gameid')";
         $result = $sql->db_Query($q);
         $totalPages = mysql_result($result, 0);
+        $pages->items_total = $totalPages;
+        $pages->mid_range = 7;
+        $pages->paginate();
 
         $q = "SELECT ".TBL_EVENTS.".*, "
         .TBL_GAMES.".*"
@@ -134,8 +148,8 @@ function displayCurrentEvents(){
         ." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
         ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
         ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-        ."   AND (".TBL_EVENTS.".Game = ".$_POST['gameid'].")"
-        ." LIMIT $start, $rowsPerPage";
+        ."   AND (".TBL_EVENTS.".Game = '$gameid')"
+        ." $pages->limit";
     }
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
@@ -149,6 +163,13 @@ function displayCurrentEvents(){
     }
     else
     {
+        $text .= "<table><tr><td>";
+
+        // Paginate
+        $text .= $pages->display_pages();
+        $text .= "<span style=\"margin-left:25px\"> ". $pages->display_jump_menu(). $pages->display_items_per_page() . "</span>";
+        $text .= "</td></tr></table><br/>";
+
         /* Display table contents */
         $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
         $text .= "<tr><td class=\"forumheader\">Event</td><td colspan=\"2\" class=\"forumheader\">Game</td><td class=\"forumheader\">Type</td><td class=\"forumheader\">Start</td><td class=\"forumheader\">End</td><td class=\"forumheader\">Players</td><td class=\"forumheader\">Games</td></tr>\n";
@@ -203,8 +224,6 @@ function displayCurrentEvents(){
             }
         }
         $text .= "</tbody></table><br />\n";
-        // print the navigation link
-        $text .= paginate($rowsPerPage, $pg, $totalPages);
     }
 
     if(check_class($pref['eb_events_create_class']))
@@ -228,10 +247,13 @@ function displayRecentEvents(){
     global $session;
     global $text;
     global $time;
+    $pages = new Paginator;
 
     // how many rows to show per page
     $rowsPerPage = 5;
-    if (!isset($_POST['gameid'])) $_POST['gameid'] = "All";
+
+    if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
+    $gameid = $_GET['gameid'];
 
     $q = "SELECT ".TBL_GAMES.".*"
     ." FROM ".TBL_GAMES
@@ -239,29 +261,39 @@ function displayRecentEvents(){
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
-    $text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="post">';
+    $text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
     $text .= '<table>';
     $text .= '<tr><td>';
     $text .= 'Games:<br />';
-    $text .= '<select class="tbox" name="gameid">';
-    $text .= '<option value="All">All</option>';
+    $text .= '<select class="tbox" name="gameid" onChange="this.form.submit()">';
+    if ($gameid == "All")
+    {
+        $text .= '<option value="All" selected="selected">All</option>';
+    }
+    else
+    {
+        $text .= '<option value="All">All</option>';
+    }
     for($i=0; $i<$num_rows; $i++){
         $gname  = mysql_result($result,$i, TBL_GAMES.".name");
         $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
-        $text .= "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
+        if ($gameid == $gid)
+        {
+            $text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
+        }
+        else
+        {
+            $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
+        }
     }
     $text .= "</select>\n";
-    $text .= "</td>\n";
-    $text .= "<td>\n";
-    $text .= "<br />\n";
-    $text .= "<input class=\"button\" type=\"submit\" name=\"subgameselect\" value=\"Filter\"/>\n";
     $text .= "</td>\n";
     $text .= "</tr>\n";
     $text .= "</table>\n";
     $text .= "</form>\n";
     $text .= "<br />\n";
 
-    if ($_POST['gameid'] == "All")
+    if ($gameid == "All")
     {
         $q = "SELECT ".TBL_EVENTS.".*, "
         .TBL_GAMES.".*"
@@ -281,7 +313,7 @@ function displayRecentEvents(){
         ." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
         ."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
         ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-        ."   AND (".TBL_EVENTS.".Game = ".$_POST['gameid'].")"
+        ."   AND (".TBL_EVENTS.".Game = '$gameid')"
         ." LIMIT 0, $rowsPerPage";
     }
 
