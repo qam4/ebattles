@@ -26,6 +26,7 @@ if (isset($_POST['updatesettings'])) {
     $pref['eb_tab_theme'] = $_POST['eb_tab_theme'];
     $pref['eb_max_image_size_check'] = $_POST['eb_max_image_size_check'];
     $pref['eb_max_image_size'] = $_POST['eb_max_image_size'];
+    $pref['eb_default_items_per_page'] = $_POST['eb_default_items_per_page'];
     save_prefs();
     $message = EBATTLES_ADMIN_L1;
 }
@@ -109,6 +110,18 @@ $text .= "<tr>
 <input class='tbox' type='text' name='eb_max_image_size' size='8' value='".$pref['eb_max_image_size']."' maxlength='3' /> px<br />
 
 <input class='tbox' type='checkbox' name='eb_max_image_size_check' value='1' ".($pref['eb_max_image_size_check'] == 1 ? "checked='checked'" :"")."/>".EBATTLES_ADMIN_L17."
+</td>
+</tr>
+";
+
+$items = '';
+$ipp_array = array(5,10,25,50,100,'All');
+foreach($ipp_array as $ipp_opt)
+$items .= ($ipp_opt == $pref['eb_default_items_per_page']) ? "<option selected value=\"$ipp_opt\">$ipp_opt</option>\n":"<option value=\"$ipp_opt\">$ipp_opt</option>\n";
+$text .= "<tr>
+<td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L18.":</td>
+<td class='forumheader3' style='width:60%'>
+<select class='tbox' name='eb_default_items_per_page'>".$items."</select>
 </td>
 </tr>
 ";

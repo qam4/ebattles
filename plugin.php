@@ -53,7 +53,8 @@ $eplug_prefs = array(
 "eb_teams_create_class" => e_UC_MEMBER,
 "eb_tab_theme" => 'default',
 "eb_max_image_size_check" => 0,
-"eb_max_image_size" => 16
+"eb_max_image_size" => 16,
+"eb_default_items_per_page" => 25
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -391,6 +392,15 @@ if ($revision < 114)
     $upgrade_add_prefs = array(
     "eb_max_image_size_check" => 0,
     "eb_max_image_size" => 16
+    );
+}
+
+
+if ($revision < 121)
+{
+    // To revision 120
+    $upgrade_add_prefs = array(
+    "eb_default_items_per_page" => 25
     );
 }
 
