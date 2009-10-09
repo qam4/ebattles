@@ -1,5 +1,14 @@
 #summary eBattles Release Notes.
 
+= Release 0.4.123 =
+== Features ==
+ * New pagination system.(Fixes issue 46)
+   * "Digg" style pagination
+   * This class provides pagination, with drop-downs selectors for "Go to page" and "Items per page"
+   * Used paginator class from http://www.catchmyfame.com/2007/07/28/finally-the-simple-pagination-class
+   * Added plugin preference setting for the number of items per pages used for pagination.
+ * Events list sorting
+
 = Release 0.4.119 =
 == Features ==
  * Fixed tabs default theme "height" issue.
