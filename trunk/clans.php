@@ -6,7 +6,8 @@
 
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
-include_once(e_PLUGIN."ebattles/include/pagination.php");
+
+require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
@@ -48,20 +49,21 @@ function displayClans(){
     global $sql;
     global $text;
 
-    /* set pagination variables */
-    $rowsPerPage = 5;
-    $pg = (isset($_REQUEST['pg']) && ctype_digit($_REQUEST['pg'])) ? $_REQUEST['pg'] : 1;
-    $start = $rowsPerPage * $pg - $rowsPerPage;
+    $pages = new Paginator;
 
+    /* set pagination variables */
     $q = "SELECT count(*) "
     ." FROM ".TBL_CLANS;
     $result = $sql->db_Query($q);
-    $totalPages = mysql_result($result, 0);
+    $totalItems = mysql_result($result, 0);
+    $pages->items_total = $totalItems;
+    $pages->mid_range = eb_PAGINATION_MIDRANGE;
+    $pages->paginate();
 
     $q = "SELECT ".TBL_CLANS.".*"
     ." FROM ".TBL_CLANS
     ." ORDER BY Name"
-    ." LIMIT $start, $rowsPerPage";
+    ." $pages->limit";
 
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
@@ -75,6 +77,16 @@ function displayClans(){
     }
     else
     {
+        // Paginate
+        $text .= $pages->display_pages();
+        $text .= '<span style="float:right">';
+        // Go To Page
+        $text .= $pages->display_jump_menu();
+        $text .= '&nbsp;&nbsp;&nbsp;';
+        // Items per page
+        $text .= $pages->display_items_per_page();
+        $text .= '</span><br /><br />';
+
         /* Display table contents */
         $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
         $text .= "<tr><td class=\"forumheader\"><b>Team</b></td><td class=\"forumheader\"><b>Tag</b></td></tr>\n";
@@ -87,10 +99,8 @@ function displayClans(){
             $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/claninfo.php?clanid=$clanid\">$cname</a></td><td class=\"forumheader3\">$ctag</td></tr>\n";
         }
         $text .= "</tbody></table><br />\n";
-
-        $text .= paginate($rowsPerPage, $pg, $totalPages);
     }
-    
+
     if(check_class($pref['eb_teams_create_class']))
     {
         $text .= "<form action=\"".e_PLUGIN."ebattles/clancreate.php\" method=\"post\">";

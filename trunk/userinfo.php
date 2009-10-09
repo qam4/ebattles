@@ -8,11 +8,14 @@
 */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
-include_once(e_PLUGIN."ebattles/include/pagination.php");
+require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
+
+$pages = new Paginator;
+
 $text .= '';
 
 /* User */
@@ -459,12 +462,9 @@ else
     <div class="tab-page">
     <div class="tab">Matches</div>
     ';
-    /* set pagination variables */
-    $rowsPerPage = 5;
-    $pg = (isset($_REQUEST['pg']) && ctype_digit($_REQUEST['pg'])) ? $_REQUEST['pg'] : 1;
-    $start = $rowsPerPage * $pg - $rowsPerPage;
-
+    
     /* Stats/Results */
+    /* set pagination variables */
     $q = "SELECT count(*) "
     ." FROM ".TBL_MATCHS.", "
     .TBL_SCORES.", "
@@ -473,7 +473,10 @@ else
     ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
     ." AND (".TBL_PLAYERS.".User = '$req_user')";
     $result = $sql->db_Query($q);
-    $totalPages = mysql_result($result, 0);
+    $totalItems = mysql_result($result, 0);
+    $pages->items_total = $totalItems;
+    $pages->mid_range = eb_PAGINATION_MIDRANGE;
+    $pages->paginate();
 
     $q = "SELECT DISTINCT ".TBL_MATCHS.".*, "
     .TBL_SCORES.".*, "
@@ -494,12 +497,22 @@ else
     ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
     ." AND (".TBL_PLAYERS.".User = '$req_user')"
     ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
-    ." LIMIT $start, $rowsPerPage";
+    ." $pages->limit";
 
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
     if ($num_rows>0)
     {
+        // Paginate
+        $text .= $pages->display_pages();
+        $text .= '<span style="float:right">';
+        // Go To Page
+        $text .= $pages->display_jump_menu();
+        $text .= '&nbsp;&nbsp;&nbsp;';
+        // Items per page
+        $text .= $pages->display_items_per_page();
+        $text .= '</span><br /><br />';
+
         /* Display table contents */
         for($i=0; $i<$num_rows; $i++)
         {
@@ -631,8 +644,6 @@ else
             $text .= "$players";
         }
     }
-
-    $text .= paginate($rowsPerPage, $pg, $totalPages);
 
     $text .= "</div>";
     $text .= "</div>";

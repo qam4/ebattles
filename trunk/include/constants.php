@@ -73,4 +73,6 @@ define("eb_UC_EVENT_OWNER", 4);
 define("eb_UC_EVENT_MODERATOR", 2);
 define("eb_UC_EVENT_PLAYER", 1);
 
+define("eb_PAGINATION_MIDRANGE", 7)
+
 ?>

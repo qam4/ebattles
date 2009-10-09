@@ -5,10 +5,12 @@
 */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
-include_once(e_PLUGIN."ebattles/include/pagination.php");
+require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
+
+$pages = new Paginator;
 
 $text .='
 <script type="text/javascript" src="./js/tabpane.js"></script>
@@ -25,15 +27,14 @@ if (!$event_id)
 else
 {
     /* set pagination variables */
-    $rowsPerPage = 5;
-    $pg = (isset($_REQUEST['pg']) && ctype_digit($_REQUEST['pg'])) ? $_REQUEST['pg'] : 1;
-    $start = $rowsPerPage * $pg - $rowsPerPage;
-
     $q = "SELECT count(*) "
     ." FROM ".TBL_MATCHS
     ." WHERE (".TBL_MATCHS.".Event = '$event_id')";
     $result = $sql->db_Query($q);
-    $totalPages = mysql_result($result, 0);
+    $totalItems = mysql_result($result, 0);
+    $pages->items_total = $totalItems;
+    $pages->mid_range = eb_PAGINATION_MIDRANGE;
+    $pages->paginate();
 
     $q = "SELECT ".TBL_EVENTS.".*, "
     .TBL_GAMES.".*"
@@ -63,7 +64,17 @@ else
     $text .="$nbrmatches matches played";
     $text .="</p>";
     $text .="<br />";
-    
+
+    // Paginate
+    $text .= $pages->display_pages();
+    $text .= '<span style="float:right">';
+    // Go To Page
+    $text .= $pages->display_jump_menu();
+    $text .= '&nbsp;&nbsp;&nbsp;';
+    // Items per page
+    $text .= $pages->display_items_per_page();
+    $text .= '</span><br /><br />';
+
     $text .= "<div class=\"spacer\">";
     /* Stats/Results */
     $q = "SELECT ".TBL_MATCHS.".*, "
@@ -73,7 +84,7 @@ else
     ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
     ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
     ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
-    ." LIMIT $start, $rowsPerPage";
+    ." $pages->limit";
 
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
@@ -202,9 +213,6 @@ else
             $text .= "$players<br />";
         }
     }
-
-    $text .= paginate($rowsPerPage, $pg, $totalPages);
-
     $text .= "<br />";
 
     $text .= '
@@ -212,7 +220,7 @@ else
     <br />Back to [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a></a>]<br />
     </p>
     ';
-    
+
     $text .= "</div>";
     $text .= "</div>";
     $text .= "</div>";

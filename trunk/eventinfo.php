@@ -5,12 +5,15 @@
 */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
-include_once(e_PLUGIN."ebattles/include/pagination.php");
+
+require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 include_once(e_PLUGIN."ebattles/include/show_array.php");
 
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
+
+$pages = new Paginator;
 
 $text = '
 <script type="text/javascript" src="./js/tabpane.js"></script>
@@ -39,11 +42,6 @@ else
     $self = $_SERVER['PHP_SELF'];
     $file = 'cache/sql_cache_event_'.$event_id.'.txt';
     $file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
-
-    // how many rows to show per page
-    $rowsPerPage = 20;
-    $pg = (isset($_REQUEST['pg']) && ctype_digit($_REQUEST['pg'])) ? $_REQUEST['pg'] : 1;
-    $start = $rowsPerPage * $pg - $rowsPerPage;
 
     $q = "SELECT ".TBL_EVENTS.".*"
     ." FROM ".TBL_EVENTS
@@ -147,11 +145,23 @@ else
 
     /* Nbr players */
     $q = "SELECT COUNT(*) as NbrPlayers"
-    ." FROM ".TBL_PLAYERS
-    ." WHERE (Event = '$event_id')";
+    ." FROM ".TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+    ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
     $result = $sql->db_Query($q);
     $row = mysql_fetch_array($result);
     $nbrplayers = $row['NbrPlayers'];
+
+
+    "SELECT ".TBL_PLAYERS.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+    ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+
+
 
     /* Update Stats */
     if ($eneedupdate == 1)
@@ -491,8 +501,8 @@ else
     $text .= "<tr>";
     $text .= '<td class="forumheader3">Game</td>';
     $text .= '<td class="forumheader3"><img '.getGameIconResize($egameicon).'/> '.$egame.'</td>';
-    $text .= "</tr>";  
-    
+    $text .= "</tr>";
+
     $text .= "<tr>";
     $text .='<td class="forumheader3">Owner</td><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
     $can_manage = 0;
@@ -572,6 +582,27 @@ else
         $text .= "</div>";
         $text .= "</div>";
     }
+    // Players standings stats
+    $stats = unserialize(implode('',file($file)));
+    $num_columns = count($stats[0]) - 1;
+    //print_r($stats);
+
+    // Sorting the stats table
+    $header = $stats[0];
+
+    $new_header = array();
+    $column = 0;
+    foreach ($header as $header_cell)
+    {
+        $new_header[] = '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&orderby='.$column.'&sort='.$sort.'">'.$header_cell.'</a>';
+        $column++;
+    }
+    $header = array($new_header);
+    $header[0][0] = "header";
+
+    array_splice($stats,0,1);
+    multi2dSortAsc($stats, $orderby, $sort_type);
+    $stats = array_merge($header, $stats);
 
     $text .="<div class=\"tab-page\">";
     $text .="<div class=\"tab\">Players Standings</div>";
@@ -581,7 +612,10 @@ else
         $text .="Next Update: $date_nextupdate<br />";
     }
 
-    $totalPages = $nbrplayers;
+    $totalItems = $nbrplayers;
+    $pages->items_total = $totalItems;
+    $pages->mid_range = eb_PAGINATION_MIDRANGE;
+    $pages->paginate();
 
     $text .="<div class=\"spacer\">";
     $text .="<p>";
@@ -602,7 +636,7 @@ else
     if(mysql_numrows($result) == 1)
     {
         $userclass |= eb_UC_EVENT_PLAYER;
-        
+
         // Show link to my position
         $row = mysql_fetch_array($result);
         $prank = $row['Rank'];
@@ -612,9 +646,12 @@ else
         else
         $prank_txt = "#$prank";
 
-        $link_page = ceil($prank/$rowsPerPage);
+        $search_user = array_searchRecursive( 'user='.USERID.'"', $stats, false);
+
+        ($search_user) ? $link_page = ceil($search_user[0]/$pages->items_per_page) : $link_page = 1;
+
         $text .= "<p>";
-        $text .= "<a href=\"$self?eventid=$event_id&amp;pg=$link_page\">Show My Position $prank_txt</a><br />";
+        $text .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">Show My Position $prank_txt</a><br />";
         $text .= "</p>";
         // Is the event started, and not ended
         if (  ($eend == 0)
@@ -653,7 +690,7 @@ else
         $userclass |= eb_UC_EVENT_MODERATOR;
         $can_report = 1;
     }
-    
+
     if ($nbrplayers < 2)
     {
         $can_report = 0;
@@ -705,33 +742,22 @@ else
     }
     $text .= "<br />";
 
-    $stats = unserialize(implode('',file($file)));
-    $num_columns = count($stats[0]) - 1;
-
-    //print_r($stats);
-
-    // Sorting
-    $header = $stats[0];
-
-    $new_header = array();
-    $column = 0;
-    foreach ($header as $header_cell)
-    {
-        $new_header[] = '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&orderby='.$column.'&sort='.$sort.'">'.$header_cell.'</a>';
-        $column++;
-    }
-    $header = array($new_header);
-    $header[0][0] = "header";
-
-    array_splice($stats,0,1);
-    multi2dSortAsc($stats, $orderby, $sort_type);
-    $stats = array_merge($header, $stats);
+    // Paginate
+    $text .= $pages->display_pages();
+    $text .= '<span style="float:right">';
+    // Go To Page
+    $text .= $pages->display_jump_menu();
+    $text .= '&nbsp;&nbsp;&nbsp;';
+    // Items per page
+    $text .= $pages->display_items_per_page();
+    $text .= '</span><br /><br />';
 
     // Paginate the statistics array
     $max_row = count($stats);
     $stats_paginate = array($stats[0]);
     $nbr_rows = 1;
-    for ($i = $start+1; $i < $start + $rowsPerPage + 1; $i++)
+
+    for ($i = $pages->low + 1; $i <= $pages->high + 1; $i++)
     {
         if ($i < $max_row)
         {
@@ -741,11 +767,6 @@ else
     }
     $text .= html_show_table($stats_paginate, $nbr_rows, $num_columns);
 
-    $text .= "<br />";
-
-    // print the navigation link
-    $text .= paginate($rowsPerPage, $pg, $totalPages);
-    $text .= "<br />";
     $text .= "</div>";
     $text .= "</div>";
 
@@ -768,7 +789,7 @@ else
     $text .="</p>";
     $text .="<br />";
 
-    $rowsPerPage = 5;
+    $rowsPerPage = $pref['eb_default_items_per_page'];
     /* Stats/Results */
     $q = "SELECT ".TBL_MATCHS.".*, "
     .TBL_USERS.".*"
@@ -916,7 +937,7 @@ else
     $text .="<div class=\"tab-page\">";
     $text .="<div class=\"tab\">Latest Awards</div>";
 
-    $rowsPerPage = 5;
+    $rowsPerPage = $pref['eb_default_items_per_page'];
     /* Stats/Results */
     $q = "SELECT ".TBL_AWARDS.".*, "
     .TBL_PLAYERS.".*, "
@@ -1005,6 +1026,4 @@ require_once(FOOTERF);
 exit;
 
 ?>
-
-
 
