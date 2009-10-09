@@ -6,7 +6,6 @@
 
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
-//include_once(e_PLUGIN."ebattles/include/pagination.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 
 require_once(HEADERF);
@@ -64,10 +63,26 @@ function displayCurrentEvents(){
     global $text;
     global $time;
     $pages = new Paginator;
-    
+
+    $array = array(
+    'latest' => array('Latest','EventID'),
+    'name'   => array('Name', TBL_EVENTS.'.Name'),
+    'game'   => array('Game', TBL_GAMES.'.Name'),
+    'type'   => array('Type', TBL_EVENTS.'.Type'),
+    'start'  => array('Start date', TBL_EVENTS.'.Start_timestamp')
+    );
     if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
     $gameid = $_GET['gameid'];
-    
+
+    if (!isset($_GET['orderby'])) $_GET['orderby'] = 'latest';
+    $orderby=$_GET['orderby'];
+
+    $sort = "ASC";
+    if(isset($_GET["sort"]) && !empty($_GET["sort"]))
+    {
+        $sort = ($_GET["sort"]=="ASC") ? "DESC" : "ASC";
+    }
+
     // Drop down list to select Games to display
     $q = "SELECT ".TBL_GAMES.".*"
     ." FROM ".TBL_GAMES
@@ -104,7 +119,6 @@ function displayCurrentEvents(){
     $text .= "</td>\n";
     $text .= "</tr>\n";
     $text .= "</table>\n";
-    $text .= "</form>\n";
     $text .= "<br />\n";
 
     if ($gameid == "All")
@@ -114,11 +128,12 @@ function displayCurrentEvents(){
         ." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
         ."        OR (".TBL_EVENTS.".End_timestamp > $time)) ";
         $result = $sql->db_Query($q);
-        $totalPages = mysql_result($result, 0);
-        $pages->items_total = $totalPages;
-        $pages->mid_range = 7;
+        $totalItems = mysql_result($result, 0);
+        $pages->items_total = $totalItems;
+        $pages->mid_range = eb_PAGINATION_MIDRANGE;
         $pages->paginate();
 
+        $orderby_array = $array["$orderby"];
         $q = "SELECT ".TBL_EVENTS.".*, "
         .TBL_GAMES.".*"
         ." FROM ".TBL_EVENTS.", "
@@ -126,6 +141,7 @@ function displayCurrentEvents(){
         ." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
         ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
         ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+        ." ORDER BY $orderby_array[1] $sort"
         ." $pages->limit";
     }
     else
@@ -136,11 +152,12 @@ function displayCurrentEvents(){
         ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
         ."   AND (".TBL_EVENTS.".Game = '$gameid')";
         $result = $sql->db_Query($q);
-        $totalPages = mysql_result($result, 0);
-        $pages->items_total = $totalPages;
-        $pages->mid_range = 7;
+        $totalItems = mysql_result($result, 0);
+        $pages->items_total = $totalItems;
+        $pages->mid_range = eb_PAGINATION_MIDRANGE;
         $pages->paginate();
 
+        $orderby_array = $array["$orderby"];
         $q = "SELECT ".TBL_EVENTS.".*, "
         .TBL_GAMES.".*"
         ." FROM ".TBL_EVENTS.", "
@@ -149,8 +166,10 @@ function displayCurrentEvents(){
         ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
         ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
         ."   AND (".TBL_EVENTS.".Game = '$gameid')"
+        ." ORDER BY $orderby_array[1] $sort"
         ." $pages->limit";
     }
+
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
@@ -160,15 +179,35 @@ function displayCurrentEvents(){
     }
     if($num_rows == 0){
         $text .= "<div>No events</div>";
+        $text .= "</form><br/>";
     }
     else
     {
-        $text .= "<table><tr><td>";
+
+        // Paginate & Sorting
+        $items = '';
+        foreach($array as $opt=>$opt_array)	$items .= ($opt == $orderby) ? "<option selected value=\"$opt\">$opt_array[0]</option>\n":"<option value=\"$opt\">$opt_array[0]</option>\n";
 
         // Paginate
         $text .= $pages->display_pages();
-        $text .= "<span style=\"margin-left:25px\"> ". $pages->display_jump_menu(). $pages->display_items_per_page() . "</span>";
-        $text .= "</td></tr></table><br/>";
+
+        $text .= '<span style="float:right">';
+        // Sort By
+        $text .= 'Sort by ';
+        $text .= '<select class="tbox" name="orderby" onChange="this.form.submit()">';
+        $text .= $items;
+        $text .= "</select>\n";
+        // Up/Down arrow
+        $text .= ($sort == "ASC") ? '<input type="image" name="sort" value="ASC" src="'.e_PLUGIN.'ebattles/images/sort_asc.gif" alt="ASC" title="Ascending" style="vertical-align:middle">' : '<input type="image" name="sort" value="DESC" src="'.e_PLUGIN.'ebattles/images/sort_desc.gif" alt="DESC" title="Descending" style="vertical-align:middle">';
+        $text .= '&nbsp;&nbsp;&nbsp;';
+        // Go To Page
+        $text .= $pages->display_jump_menu();
+        $text .= '&nbsp;&nbsp;&nbsp;';
+        // Items per page
+        $text .= $pages->display_items_per_page();
+        $text .= '</span>';
+
+        $text .= '</form><br/>';
 
         /* Display table contents */
         $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
@@ -247,10 +286,12 @@ function displayRecentEvents(){
     global $session;
     global $text;
     global $time;
+    global $pref;
+    
     $pages = new Paginator;
 
     // how many rows to show per page
-    $rowsPerPage = 5;
+    $rowsPerPage = $pref['eb_default_items_per_page'];
 
     if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
     $gameid = $_GET['gameid'];

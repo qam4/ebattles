@@ -25,13 +25,13 @@ Functions
 function displayRecentActivity(){
     global $sql;
     global $time;
+    global $pref;
 
     $events = array();
     $nbr_events = 0;
 
-
     // Add recent games
-    $rowsPerPage = 5;
+    $rowsPerPage = $pref['eb_default_items_per_page'];
     /* Stats/Results */
     $q = "SELECT ".TBL_MATCHS.".*, "
     .TBL_USERS.".*, "

@@ -55,6 +55,34 @@ function multi2dSortAsc(&$arr, $key, $sort)
     array_multisort($sort_col, $sort, SORT_NUMERIC, $arr);
 }
 
+/**
+* Searches haystack for needle and
+* returns an array of the key path if
+* it is found in the (multidimensional)
+* array, FALSE otherwise.
+*
+* @mixed array_searchRecursive ( mixed needle,
+* array haystack [, bool strict[, array path]] )
+*/
+function array_searchRecursive( $needle, $haystack, $strict=false, $path=array() ) 
+{ 
+    if( !is_array($haystack) ) { 
+        return false; 
+    } 
+
+    foreach( $haystack as $key => $val ) { 
+        $pos = strpos($val,$needle);        
+        if( is_array($val) && $subPath = array_searchRecursive($needle, $val, $strict, $path) ) { 
+            $path = array_merge($path, array($key), $subPath); 
+            return $path; 
+        } elseif( (!$strict && $val == $needle) || ($strict && $val === $needle) || (!$strict && $pos !== false)) { 
+            $path[] = $key; 
+            return $path; 
+        } 
+    } 
+    return false; 
+} 
+
 function getGameIcon($icon)
 {
     if (preg_match("/\//", $icon))

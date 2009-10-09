@@ -1,5 +1,5 @@
 <?php
-function paginate($rowsPerPage, $pg, $totalPages) {
+function paginate($rowsPerPage, $pg, $totalItems) {
   /* make sure pagination doesn't interfere with other query 
 string variables */
   if(isset($_SERVER['QUERY_STRING']) && trim(
@@ -13,7 +13,7 @@ string variables */
     $query_str = '?pg=';
     
   /* find out how many pages we have */
-  $pages = ($totalPages <= $rowsPerPage) ? 1 : ceil($totalPages / $rowsPerPage);
+  $pages = ($totalItems <= $rowsPerPage) ? 1 : ceil($totalItems / $rowsPerPage);
     
   /* create the links */
   $first = '<a href="'.$_SERVER['PHP_SELF'].$query_str.'1">&#171;</a>';

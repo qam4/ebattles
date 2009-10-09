@@ -10,14 +10,13 @@
  */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
-include_once(e_PLUGIN."ebattles/include/pagination.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
 
-$text = '';
-
 global $sql;
+
+$text = '';
 
 /* Event Name */
 $event_id = $_GET['eventid'];
