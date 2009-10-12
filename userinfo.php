@@ -538,19 +538,6 @@ else
             $numRanks = mysql_numrows($result2);
             if ($numRanks > 0)
             {
-                if ($numRanks == 1)
-                {
-                    $str = " tied ";
-                }
-                else if ($numRanks == 2)
-                {
-                    $str = " defeated ";
-                }
-                else
-                {
-                    $str = " vs ";
-                }
-
                 $q2 = "SELECT ".TBL_MATCHS.".*, "
                 .TBL_SCORES.".*, "
                 .TBL_PLAYERS.".*, "
@@ -611,6 +598,14 @@ else
                         }
                         else
                         {
+                            if ($prank == $rank)
+                            {
+                                $str = " tied ";
+                            }
+                            else
+                            {
+                                $str = " defeated ";
+                            }
                             $scores .= "-".$pscore;
                             $players .= $str;
                             $team++;

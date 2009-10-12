@@ -4,12 +4,15 @@
 *
 */
 
+require_once(e_HANDLER."avatar_handler.php");
+
 $file = 'cache/sql_cache_event_'.$event_id.'.txt';
 
 $id = array();
 $uid = array();
 $team = array();
 $name = array();
+$avatar = array();
 $games_played = array();
 $ELO = array();
 $Skill = array();
@@ -62,6 +65,7 @@ for($player=0; $player<$numPlayers; $player++)
     $pid  = mysql_result($result_Players,$player, TBL_PLAYERS.".PlayerID");
     $puid  = mysql_result($result_Players,$player, TBL_PLAYERS.".User");
     $pname  = mysql_result($result_Players,$player, TBL_USERS.".user_name");
+    $pavatar = mysql_result($result_Players,$player, TBL_USERS.".user_image");
     $pteam = mysql_result($result_Players,$player, TBL_PLAYERS.".Team");
     $pgames_played = mysql_result($result_Players,$player, TBL_PLAYERS.".GamesPlayed");
     $pELO = mysql_result($result_Players,$player, TBL_PLAYERS.".ELORanking");
@@ -148,6 +152,7 @@ for($player=0; $player<$numPlayers; $player++)
     $id[]  = $pid;
     $uid[]  = $puid;
     $name[]  = $pname;
+    $avatar[] = $pavatar;
     $team[] = $pteam;
     $games_played[] = $pgames_played;
     $ELO[] = $pELO;
@@ -161,9 +166,9 @@ for($player=0; $player<$numPlayers; $player++)
     $victory_percent[] = number_format ($pvictory_percent,2)." %";
     $unique_opponents[] = $punique_opponents;
     $opponentsELO[] = floor($popponentsELO);
-//    $score[] = (($pgames_played>0) ? number_format($pscore/$pgames_played,2) : 0)." (".$pscore.")";
-//    $oppscore[] = (($pgames_played>0) ? number_format($poppscore/$pgames_played,2) : 0)." (".$poppscore.")";
-//    $scorediff[] = (($pgames_played>0) ? number_format(($pscore - $poppscore)/$pgames_played,2) : 0)." (".($pscore - $poppscore).")";
+    //    $score[] = (($pgames_played>0) ? number_format($pscore/$pgames_played,2) : 0)." (".$pscore.")";
+    //    $oppscore[] = (($pgames_played>0) ? number_format($poppscore/$pgames_played,2) : 0)." (".$poppscore.")";
+    //    $scorediff[] = (($pgames_played>0) ? number_format(($pscore - $poppscore)/$pgames_played,2) : 0)." (".($pscore - $poppscore).")";
     $score[] = ($pgames_played>0) ? number_format($pscore/$pgames_played,2) : 0;
     $oppscore[] = ($pgames_played>0) ? number_format($poppscore/$pgames_played,2) : 0;
     $scorediff[] = ($pgames_played>0) ? number_format(($pscore - $poppscore)/$pgames_played,2) : 0;
@@ -468,11 +473,11 @@ for($player=0; $player<$numPlayers; $player++)
 
         if ($rank==1)
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"/>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"  style='vertical-align:middle'/>";
         }
         else if (($rank<=10)&&(($rank+$prankdelta>min(10,$nbrplayers))||($rank+$prankdelta==0)))
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"/>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\" style='vertical-align:middle'/>";
         }
         else if (($numAwards>0)&&($pawardType!='PlayerTookFirstPlace')&&($pawardType!='PlayerInTopTen')&&($pstreak>=5))
         {
@@ -482,36 +487,36 @@ for($player=0; $player<$numPlayers; $player++)
                 if ($pstreak>=5)
                 {
                     $award = " won 5 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_bronze_3.png\" alt=\"Streak 5\" title=\"5 wins in a row\"/>";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_bronze_3.png\" alt=\"Streak 5\" title=\"5 wins in a row\" style='vertical-align:middle'/>";
                 }
                 break;
                 case 'PlayerStreak10':
                 if ($pstreak>=10)
                 {
                     $award = " won 10 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_silver_3.png\" alt=\"Streak 10\" title=\"10 wins in a row\"/>";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_silver_3.png\" alt=\"Streak 10\" title=\"10 wins in a row\" style='vertical-align:middle'/>";
                 }
                 break;
                 case 'PlayerStreak25':
                 if ($pstreak>=25)
                 {
                     $award = " won 25 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_gold_3.png\" alt=\"Streak 25\" title=\"25 wins in a row\"/>";
+                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_gold_3.png\" alt=\"Streak 25\" title=\"25 wins in a row\" style='vertical-align:middle'/>";
                 }
                 break;
             }
         }
         else if ($prankdelta>0)
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\"/>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\" style='vertical-align:middle'/>";
         }
         else if (($prankdelta<0)&&($rank+$prankdelta!=0))
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\"/>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\" style='vertical-align:middle'/>";
         }
         else if ($rank+$prankdelta==0)
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"/>";
+            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"/> style='vertical-align:middle'";
         }
     }
 
@@ -553,7 +558,20 @@ for($player=0; $player<$numPlayers; $player++)
     }
 
     $stats_row[] = "<b>$rank</b> $prank_side_image";
-    $stats_row[] = "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$uid[$index]\"><b>$pclantag$name[$index]</b></a>";
+
+
+    $image = "";
+    if ($pref['eb_avatar_enable']['EventInfo'] == 1)
+    {
+        if($avatar[$index])
+        {
+            $image = "<img src='".avatar($avatar[$index])."' alt=''  ".imageResize(avatar($avatar[$index]), $pref['eb_max_avatar_size'])."' style='vertical-align:middle'/>";
+        } else if ($pref['eb_avatar_default_image'] != ''){
+            $image = "<img src='".getAvatar($pref['eb_avatar_default_image'])."' alt='' style='vertical-align:middle' width=".$pref['eb_max_avatar_size']."'/>";
+        }
+    }
+
+    $stats_row[] = "$image&nbsp;<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$uid[$index]\"><b>$pclantag$name[$index]</b></a>";
 
     if ($ehide_ratings_column == FALSE)
     $stats_row[] = number_format ($OverallScore[$index],2);
@@ -585,8 +603,8 @@ $OUTPUT = serialize($stats);
 $fp = fopen($file,"w"); // open file with Write permission
 
 if ($fp == FALSE) {
-// handle error
-$text .= "Could not write to cache directory, please verify cache direcory is writable";    
+    // handle error
+    $text .= "Could not write to cache directory, please verify cache direcory is writable";
 }
 
 fputs($fp, $OUTPUT);
