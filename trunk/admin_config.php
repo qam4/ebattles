@@ -17,7 +17,6 @@ require_once(e_ADMIN."auth.php");
 require_once(e_HANDLER."userclass_class.php");
 
 if (isset($_POST['updatesettings'])) {
-
     $pref['eb_events_update_delay'] = $_POST['eb_events_update_delay'];
     $pref['eb_events_update_delay_enable'] = $_POST['eb_events_update_delay_enable'];
     $pref['eb_events_create_class'] = $_POST['eb_events_create_class'];
@@ -27,6 +26,9 @@ if (isset($_POST['updatesettings'])) {
     $pref['eb_max_image_size_check'] = $_POST['eb_max_image_size_check'];
     $pref['eb_max_image_size'] = $_POST['eb_max_image_size'];
     $pref['eb_default_items_per_page'] = $_POST['eb_default_items_per_page'];
+    $pref['eb_max_avatar_size'] = $_POST['eb_max_avatar_size'];
+    $pref['eb_avatar_enable']['EventInfo'] = $_POST['eb_avatar_eventinfo_enable'];
+    $pref['eb_avatar_default_image'] = $_POST['eb_avatar_default_image'];
     save_prefs();
     $message = EBATTLES_ADMIN_L1;
 }
@@ -84,14 +86,6 @@ $text .= "<tr>
 ";
 
 $text .= "<tr>
-<td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L7.": </td>
-<td class='forumheader3' style='width:60%'>
-<input class='button' type='submit' name='eb_events_insert_data' value='".EBATTLES_ADMIN_L8."'>
-</td>
-</tr>
-";
-
-$text .= "<tr>
 <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L14.": </td>
 <td class='forumheader3' style='width:60%'>
 <input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'default' ? "checked='checked'" :"")." value='default' />Default
@@ -108,9 +102,29 @@ $text .= "<tr>
 <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L15.":  <div class='smalltext'>".EBATTLES_ADMIN_L16."</div></td>
 <td class='forumheader3' style='width:60%'>
 <input class='tbox' type='text' name='eb_max_image_size' size='8' value='".$pref['eb_max_image_size']."' maxlength='3' /> px<br />
-
 <input class='tbox' type='checkbox' name='eb_max_image_size_check' value='1' ".($pref['eb_max_image_size_check'] == 1 ? "checked='checked'" :"")."/>".EBATTLES_ADMIN_L17."
 </td>
+</tr>
+";
+
+$text .= "<tr>
+<td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L19.":  <div class='smalltext'>".EBATTLES_ADMIN_L20."</div></td>
+<td class='forumheader3' style='width:60%'>
+<input class='tbox' type='text' name='eb_max_avatar_size' size='8' value='".$pref['eb_max_avatar_size']."' maxlength='3' /> px<br />
+<input class='tbox' type='checkbox' name='eb_avatar_eventinfo_enable' value='1' ".($pref['eb_avatar_enable']['EventInfo'] == 1 ? "checked='checked'" :"")."/>".EBATTLES_ADMIN_L21."
+</td>
+</tr>
+";
+
+$text .= "<tr>
+<td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L22.":  <div class='smalltext'>".EBATTLES_ADMIN_L23."</div></td>
+<td class='forumheader3' style='width:60%'>
+<input class='tbox' type='text' name='eb_avatar_default_image' size='20' value='".$pref['eb_avatar_default_image']."'/><br />";
+if ($pref['eb_avatar_default_image'] != '')
+{
+    $text .= "<img src='".getAvatar($pref['eb_avatar_default_image'])."'/>";
+}
+$text .= "</td>
 </tr>
 ";
 
@@ -122,6 +136,14 @@ $text .= "<tr>
 <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L18.":</td>
 <td class='forumheader3' style='width:60%'>
 <select class='tbox' name='eb_default_items_per_page'>".$items."</select>
+</td>
+</tr>
+";
+
+$text .= "<tr>
+<td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L7.": </td>
+<td class='forumheader3' style='width:60%'>
+<input class='button' type='submit' name='eb_events_insert_data' value='".EBATTLES_ADMIN_L8."'>
 </td>
 </tr>
 ";

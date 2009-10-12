@@ -97,6 +97,20 @@ function getGameIcon($icon)
     }
 }
 
+function getAvatar($name)
+{
+    if (preg_match("/\//", $name))
+    {
+        // External link
+        return $name;
+    }
+    else
+    {
+        // Internal link
+        return e_PLUGIN."ebattles/images/avatars/$name";
+    }
+}
+
 function imageResize($image, $target) {
     // Resize image so it does not exceeds the max size.
     $image_dims = getimagesize($image);

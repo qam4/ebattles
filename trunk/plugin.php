@@ -54,7 +54,12 @@ $eplug_prefs = array(
 "eb_tab_theme" => 'default',
 "eb_max_image_size_check" => 0,
 "eb_max_image_size" => 16,
-"eb_default_items_per_page" => 25
+"eb_default_items_per_page" => 25,
+"eb_max_avatar_size" => 32,
+"eb_avatar_enable" => array(
+"EventInfo" => 1
+),
+"eb_avatar_default_image" => 'anonymous.png'
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -398,9 +403,21 @@ if ($revision < 114)
 
 if ($revision < 121)
 {
-    // To revision 120
+    // To revision 121
     $upgrade_add_prefs = array(
     "eb_default_items_per_page" => 25
+    );
+}
+
+if ($revision < 122)
+{
+    // To revision 122
+    $upgrade_add_prefs = array(
+    "eb_max_avatar_size" => 32,
+    "eb_avatar_enable" => array(
+    "EventInfo" => 1
+    ),
+    "eb_avatar_default_image" => 'anonymous.png'
     );
 }
 
