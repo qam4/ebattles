@@ -157,4 +157,9 @@ function getGameIconResize($gicon) {
     }
 }
 
+function floatToSQL($number)
+{
+    return number_format($number, 5, ".", "");  
+}
+
 ?>

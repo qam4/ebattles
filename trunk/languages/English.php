@@ -38,7 +38,7 @@ define("EBATTLES_ADMIN_L17", "Enable images max size");
 define("EBATTLES_ADMIN_L18", "Pagination default number of items per pages");
 define("EBATTLES_ADMIN_L19", "Use Avatars");
 define("EBATTLES_ADMIN_L20", "Specify the max size and pages where users avatar will be used in the tables displays");
-define("EBATTLES_ADMIN_L21", "Event Info");
+define("EBATTLES_ADMIN_L21", "Players Standings");
 define("EBATTLES_ADMIN_L22", "Default Avatar");
 define("EBATTLES_ADMIN_L23", "Icon can be an external link or must be placed in ebattles/images/avatars/");
 ?>

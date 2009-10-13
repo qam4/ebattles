@@ -27,7 +27,7 @@ if (isset($_POST['updatesettings'])) {
     $pref['eb_max_image_size'] = $_POST['eb_max_image_size'];
     $pref['eb_default_items_per_page'] = $_POST['eb_default_items_per_page'];
     $pref['eb_max_avatar_size'] = $_POST['eb_max_avatar_size'];
-    $pref['eb_avatar_enable']['EventInfo'] = $_POST['eb_avatar_eventinfo_enable'];
+    $pref['eb_avatar_enable_playersstandings'] = $_POST['eb_avatar_enable_playersstandings'];
     $pref['eb_avatar_default_image'] = $_POST['eb_avatar_default_image'];
     save_prefs();
     $message = EBATTLES_ADMIN_L1;
@@ -111,7 +111,7 @@ $text .= "<tr>
 <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L19.":  <div class='smalltext'>".EBATTLES_ADMIN_L20."</div></td>
 <td class='forumheader3' style='width:60%'>
 <input class='tbox' type='text' name='eb_max_avatar_size' size='8' value='".$pref['eb_max_avatar_size']."' maxlength='3' /> px<br />
-<input class='tbox' type='checkbox' name='eb_avatar_eventinfo_enable' value='1' ".($pref['eb_avatar_enable']['EventInfo'] == 1 ? "checked='checked'" :"")."/>".EBATTLES_ADMIN_L21."
+<input class='tbox' type='checkbox' name='eb_avatar_enable_playersstandings' value='1' ".($pref['eb_avatar_enable_playersstandings'] == 1 ? "checked='checked'" :"")."/>".EBATTLES_ADMIN_L21."
 </td>
 </tr>
 ";
