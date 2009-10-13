@@ -561,7 +561,7 @@ for($player=0; $player<$numPlayers; $player++)
 
 
     $image = "";
-    if ($pref['eb_avatar_enable']['EventInfo'] == 1)
+    if ($pref['eb_avatar_enable_playersstandings'] == 1)
     {
         if($avatar[$index])
         {
