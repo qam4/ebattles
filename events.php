@@ -10,9 +10,18 @@ require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 
 require_once(HEADERF);
 
-$text = '
-<script type="text/javascript" src="./js/tabpane.js"></script>
-';
+$text = "
+<script type='text/javascript' src='./js/tabpane.js'></script>
+<script type='text/javascript'>
+<!--//
+function buttonval(v)
+{
+document.getElementById('sort').value=v;
+document.getElementById('submitform').submit();
+}
+//-->
+</script>
+";
 
 $text .= '
 <div class="tab-pane" id="tab-pane-2">
@@ -90,7 +99,7 @@ function displayCurrentEvents(){
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
-    $text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
+    $text .= '<form id="submitform" name="submitform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
     $text .= '<table>';
     $text .= '<tr><td>';
     $text .= 'Games:<br />';
@@ -198,7 +207,17 @@ function displayCurrentEvents(){
         $text .= $items;
         $text .= "</select>\n";
         // Up/Down arrow
-        $text .= ($sort == "ASC") ? '<input type="image" name="sort" value="ASC" src="'.e_PLUGIN.'ebattles/images/sort_asc.gif" alt="ASC" title="Ascending" style="vertical-align:middle">' : '<input type="image" name="sort" value="DESC" src="'.e_PLUGIN.'ebattles/images/sort_desc.gif" alt="DESC" title="Descending" style="vertical-align:middle">';
+        $text .= '<input type="hidden" id="sort" name="sort" value="">';
+        if ($sort =="ASC")
+        {
+            $text .= '<a href="javascript:buttonval(\'ASC\');" title="Ascending"><img src="'.e_PLUGIN.'ebattles/images/sort_asc.gif" border="0" style="vertical-align:middle"></a>';
+        }
+        else
+        {
+            $text .= '<a href="javascript:buttonval(\'DESC\');" title="Descending"><img src="'.e_PLUGIN.'ebattles/images/sort_desc.gif" border="0" style="vertical-align:middle"></a>';
+
+        }
+
         $text .= '&nbsp;&nbsp;&nbsp;';
         // Go To Page
         $text .= $pages->display_jump_menu();
@@ -287,7 +306,7 @@ function displayRecentEvents(){
     global $text;
     global $time;
     global $pref;
-    
+
     $pages = new Paginator;
 
     // how many rows to show per page

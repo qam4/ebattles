@@ -23,12 +23,16 @@ if ($can_manage == 0)
     exit();
 }
 
-//dbg form
-//print_r($_POST);    // show $_POST
-//print_r($_GET);     // show $_GET
-
-
-
+$text .= "
+<script type='text/javascript'>
+<!--//
+function changetext(v)
+{
+document.getElementById('gameIcon').value=v;
+}
+//-->
+</script>
+";
 
 $text .= '
 <form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">
@@ -81,7 +85,7 @@ $text .= '</tbody>';
 $text .= '</table>';
 $text .= '</form>';
 
-$text .= '<form action="'.e_PLUGIN.'ebattles/gameprocess.php?gameid='.$game_id.'" method="post">';
+$text .= '<form id="gameform" action="'.e_PLUGIN.'ebattles/gameprocess.php?gameid='.$game_id.'" method="post">';
 $text .= '<table class="fborder" style="width:95%">';
 $text .= '<tbody>';
 //<!-- Game Name -->
@@ -100,8 +104,30 @@ $text .= '
 <td class="forumheader3"><b>Icon</b></td>
 <td class="forumheader3">
 <img '.getGameIconResize($game_icon).'/>
-<input type="text" name="gameIcon" value="'.$game_icon.'"/>
-<div class="smalltext">Icon can be an external link or must be placed in ebattles/images/games_icons/<div>
+<input type="text" id="gameIcon" name="gameIcon" value="'.$game_icon.'"/>
+<div class="smalltext">Icon can be an external link or must be placed in ebattles/images/games_icons/<div>';
+
+$text .= "<div>";
+$avatarlist[0] = "";
+$handle = opendir(e_PLUGIN."ebattles/images/games_icons/");
+while ($file = readdir($handle))
+{
+	if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn" && $file != "Games List.csv")
+	{
+		$avatarlist[] = $file;
+	}
+}
+closedir($handle);
+
+for($c = 1; $c <= (count($avatarlist)-1); $c++)
+{
+	$text .= '<a href="javascript:changetext(\''.$avatarlist[$c].'\')"><img src="'.e_PLUGIN.'ebattles/images/games_icons/'.$avatarlist[$c].'" style="border:0" alt="" /></a> ';
+}
+$text .= "
+</div>
+";
+
+$text .= '
 </td>
 </tr>
 </tbody>

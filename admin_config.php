@@ -38,13 +38,23 @@ if (isset($_POST['eb_events_insert_data']))
     $message .= EBATTLES_ADMIN_L11;
 }
 
-
 if (isset($message)) {
     $ns->tablerender("", "<div style='text-align:center'><b>".$message."</b></div>");
 }
 
-$text = "<div style='text-align:center'>
-<form method='post' action='".e_SELF."' id='ebform'>
+$text = "
+<script type='text/javascript'>
+<!--//
+function changetext(v)
+{
+document.getElementById('eb_avatar_default_image').value=v;
+}
+//-->
+</script>
+";
+
+$text .= "<div style='text-align:center'>
+<form id='adminform' method='post' action='".e_SELF."'>
 <table style='".ADMIN_WIDTH."' class='fborder' style='width:95%'>
 <tbody>
 ";
@@ -119,11 +129,33 @@ $text .= "<tr>
 $text .= "<tr>
 <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L22.":  <div class='smalltext'>".EBATTLES_ADMIN_L23."</div></td>
 <td class='forumheader3' style='width:60%'>
-<input class='tbox' type='text' name='eb_avatar_default_image' size='20' value='".$pref['eb_avatar_default_image']."'/><br />";
+";
 if ($pref['eb_avatar_default_image'] != '')
 {
-    $text .= "<img src='".getAvatar($pref['eb_avatar_default_image'])."'/>";
+    $text .= '<img src="'.getAvatar($pref['eb_avatar_default_image']).'" style="vertical-align:middle"/>&nbsp;';
 }
+$text .= "<input class='tbox' type='text' id='eb_avatar_default_image' name='eb_avatar_default_image' size='20' value='".$pref['eb_avatar_default_image']."'/>";
+
+$text .= "<div>";
+$avatarlist[0] = "";
+$handle = opendir(e_PLUGIN."ebattles/images/avatars/");
+while ($file = readdir($handle))
+{
+	if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn")
+	{
+		$avatarlist[] = $file;
+	}
+}
+closedir($handle);
+
+for($c = 1; $c <= (count($avatarlist)-1); $c++)
+{
+	$text .= '<a href="javascript:changetext(\''.$avatarlist[$c].'\')"><img src="'.e_PLUGIN.'ebattles/images/avatars/'.$avatarlist[$c].'" style="border:0" alt="" /></a> ';
+}
+$text .= "
+</div>
+";
+
 $text .= "</td>
 </tr>
 ";

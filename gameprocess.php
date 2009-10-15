@@ -54,6 +54,7 @@ if (isset($_POST['gamecreate']))
    header("Location: gamemanage.php?gameid=".$last_id);
    exit;
 }
+
 exit;
 
 /***************************************************************************************
