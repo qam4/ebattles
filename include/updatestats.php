@@ -91,7 +91,8 @@ for($player=0; $player<$numPlayers; $player++)
     // Unique Opponents
     // Find all matches played by current player
     $q_Matches = "SELECT ".TBL_MATCHS.".*, "
-    .TBL_SCORES.".*"
+            .TBL_SCORES.".*, "
+            .TBL_PLAYERS.".*"
     ." FROM ".TBL_MATCHS.", "
     .TBL_SCORES.", "
     .TBL_PLAYERS
@@ -166,9 +167,6 @@ for($player=0; $player<$numPlayers; $player++)
     $victory_percent[] = number_format ($pvictory_percent,2)." %";
     $unique_opponents[] = $punique_opponents;
     $opponentsELO[] = floor($popponentsELO);
-    //    $score[] = (($pgames_played>0) ? number_format($pscore/$pgames_played,2) : 0)." (".$pscore.")";
-    //    $oppscore[] = (($pgames_played>0) ? number_format($poppscore/$pgames_played,2) : 0)." (".$poppscore.")";
-    //    $scorediff[] = (($pgames_played>0) ? number_format(($pscore - $poppscore)/$pgames_played,2) : 0)." (".($pscore - $poppscore).")";
     $score[] = ($pgames_played>0) ? number_format($pscore/$pgames_played,2) : 0;
     $oppscore[] = ($pgames_played>0) ? number_format($poppscore/$pgames_played,2) : 0;
     $scorediff[] = ($pgames_played>0) ? number_format(($pscore - $poppscore)/$pgames_played,2) : 0;
@@ -228,91 +226,91 @@ for($category=0; $category<$numCategories; $category++)
         switch ($cat_name)
         {
             case "ELO":
-            $cat_header = "<b title=\"ELO\">ELO</b>";
+            $cat_header = '<b title="ELO">ELO</b>';
             $min = min($ELO_score);
             $max = max($ELO_score);
             $stat_score[$cat_index] = $ELO_score;
             $stat_display[$cat_index] = $ELO;
             break;
             case "Skill":
-            $cat_header = "<b title=\"TrueSkill(TM)\">Skill</b>";
+            $cat_header = '<b title="TrueSkill(TM)">Skill</b>';
             $min = min($Skill_score);
             $max = max($Skill_score);
             $stat_score[$cat_index] = $Skill_score;
             $stat_display[$cat_index] = $Skill;
             break;
             case "GamesPlayed":
-            $cat_header = "<b title=\"Number of games played\">Games</b>";
+            $cat_header = '<b title="Number of games played">Games</b>';
             $min = 0; //min($games_played_score);
             $max = max($games_played);
             $stat_score[$cat_index] = $games_played_score;
             $stat_display[$cat_index] = $games_played;
             break;
             case "VictoryRatio":
-            $cat_header = "<b title=\"Win/Loss ratio\">W/L</b>";
+            $cat_header = '<b title="Win/Loss ratio">W/L</b>';
             $min = 0; //min($victory_ratio_score);
             $max = max($victory_ratio_score);
             $stat_score[$cat_index] = $victory_ratio_score;
             $stat_display[$cat_index] = $victory_ratio;
             break;
             case "VictoryPercent":
-            $cat_header = "<b title=\"Wins percentage\">W%</b>";
+            $cat_header = '<b title="Wins percentage">W%</b>';
             $min = 0; //min($victory_percent_score);
             $max = max($victory_percent_score);
             $stat_score[$cat_index] = $victory_percent_score;
             $stat_display[$cat_index] = $victory_percent;
             break;
             case "WinDrawLoss":
-            $cat_header = "<b title=\"Win/Draw/Loss\">W/D/L</b>";
+            $cat_header = '<b title="Win/Draw/Loss">W/D/L</b>';
             $min = min($windrawloss_score);
             $max = max($windrawloss_score);
             $stat_score[$cat_index] = $windrawloss_score;
             $stat_display[$cat_index] = $windrawloss;
             break;
             case "UniqueOpponents":
-            $cat_header = "<b title=\"Unique Opponents\">Opponents</b>";
+            $cat_header = '<b title="Unique Opponents">Opponents</b>';
             $min = 0; //min($unique_opponents_score);
             $max = max($unique_opponents_score);
             $stat_score[$cat_index] = $unique_opponents_score;
             $stat_display[$cat_index] = $unique_opponents;
             break;
             case "OpponentsELO":
-            $cat_header = "<b title=\"Opponents Average ELO\">Opp. ELO</b>";
+            $cat_header = '<b title="Opponents Average ELO">Opp. ELO</b>';
             $min = min($opponentsELO_score);
             $max = max($opponentsELO_score);
             $stat_score[$cat_index] = $opponentsELO_score;
             $stat_display[$cat_index] = $opponentsELO;
             break;
             case "Streaks":
-            $cat_header = "<b title=\"Current|Best|Worst Streaks\">Streaks</b>";
+            $cat_header = '<b title="Current|Best|Worst Streaks">Streaks</b>';
             $min = min($streaks_score);
             $max = max($streaks_score);
             $stat_score[$cat_index] = $streaks_score;
             $stat_display[$cat_index] = $streaks;
             break;
             case "Score":
-            $cat_header = "<b title=\"Score Average\">Score</b>";
+            $cat_header = '<b title="Score Average">Score</b>';
             $min = min($score_score);
             $max = max($score_score);
             $stat_score[$cat_index] = $score_score;
             $stat_display[$cat_index] = $score;
             break;
             case "ScoreAgainst":
-            $cat_header = "<b title=\"Opponents Score Average\">Opp. Score</b>";
+            $cat_header = '<b title="Opponents Score Average">Opp. Score</b>';
             $min = min($oppscore_score);
             $max = max($oppscore_score);
             $stat_score[$cat_index] = $oppscore_score;
             $stat_display[$cat_index] = $oppscore;
             break;
             case "ScoreDiff":
-            $cat_header = "<b title=\"Score Difference Average\">Score Diff.</b>";
+            $cat_header = '<b title="Score Difference Average">Score Diff.</b>';
             $min = min($scorediff_score);
             $max = max($scorediff_score);
             $stat_score[$cat_index] = $scorediff_score;
             $stat_display[$cat_index] = $scorediff;
             break;
             case "Points":
-            $cat_header = "<b title=\"Points Average\">Points</b>";
+            $cat_header = '<b title="Points Average">Points</b>';
             $min = min($points_score);
             $max = max($points_score);
             $stat_score[$cat_index] = $points_score;
@@ -331,7 +329,7 @@ for($category=0; $category<$numCategories; $category++)
             }
             else
             {
-                $cat_header .= "<br /><div class='smalltext'>[".number_format ($cat_maxpoints,2)." max]</div>";
+                $cat_header .= '<br /><div class="smalltext">['.number_format ($cat_maxpoints,2).' max]</div>';
 
                 // a = (ymax-ymin)/(xmax-xmin)
                 // b = ymin - a.xmin
@@ -366,7 +364,7 @@ $stats = array
 );
 
 if ($ehide_ratings_column == FALSE)
-$stats[0][] = "<b title=\"Rating\">Rating</b><br /><div class='smalltext'>[".number_format ($rating_max,2)." max]</div>";
+$stats[0][] = '<b title="Rating">Rating</b><br /><div class="smalltext">['.number_format ($rating_max,2).' max]</div>';
 
 for ($category=0; $category<$numDisplayedCategories; $category++)
 {
@@ -473,11 +471,11 @@ for($player=0; $player<$numPlayers; $player++)
 
         if ($rank==1)
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"  style='vertical-align:middle'/>";
+            $prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/award_star_gold_3.png" alt="1st place" title="1st place" style="vertical-align:middle"/>';
         }
         else if (($rank<=10)&&(($rank+$prankdelta>min(10,$nbrplayers))||($rank+$prankdelta==0)))
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\" style='vertical-align:middle'/>";
+            $prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/award_star_bronze_3.png" alt="top 10" title="top 10" style="vertical-align:middle"/>';
         }
         else if (($numAwards>0)&&($pawardType!='PlayerTookFirstPlace')&&($pawardType!='PlayerInTopTen')&&($pstreak>=5))
         {
@@ -487,36 +485,36 @@ for($player=0; $player<$numPlayers; $player++)
                 if ($pstreak>=5)
                 {
                     $award = " won 5 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_bronze_3.png\" alt=\"Streak 5\" title=\"5 wins in a row\" style='vertical-align:middle'/>";
+                    $prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_bronze_3.png" alt="Streak 5" title="5 wins in a row" style="vertical-align:middle"/>';
                 }
                 break;
                 case 'PlayerStreak10':
                 if ($pstreak>=10)
                 {
                     $award = " won 10 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_silver_3.png\" alt=\"Streak 10\" title=\"10 wins in a row\" style='vertical-align:middle'/>";
+                    $prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_silver_3.png" alt="Streak 10" title="10 wins in a row" style="vertical-align:middle"/>';
                 }
                 break;
                 case 'PlayerStreak25':
                 if ($pstreak>=25)
                 {
                     $award = " won 25 games in a row";
-                    $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_gold_3.png\" alt=\"Streak 25\" title=\"25 wins in a row\" style='vertical-align:middle'/>";
+                    $prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_gold_3.png" alt="Streak 25" title="25 wins in a row" style="vertical-align:middle"/>';
                 }
                 break;
             }
         }
         else if ($prankdelta>0)
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"+$prankdelta\" title=\"+$prankdelta\" style='vertical-align:middle'/>";
+            $prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/arrow_up.gif" alt="+'.$prankdelta.'" title="+'.$prankdelta.'" style="vertical-align:middle"/>';
         }
         else if (($prankdelta<0)&&($rank+$prankdelta!=0))
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_down.gif\" alt=\"$prankdelta\" title=\"$prankdelta\" style='vertical-align:middle'/>";
+            $prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/arrow_down.gif" alt="'.$prankdelta.'" title="'.$prankdelta.'" style="vertical-align:middle"/>';
         }
         else if ($rank+$prankdelta==0)
         {
-            $prank_side_image = "<img src=\"".e_PLUGIN."ebattles/images/arrow_up.gif\" alt=\"Up\" title=\"From unranked\"/> style='vertical-align:middle'";
+            $prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/arrow_up.gif" alt="Up" title="From unranked" style="vertical-align:middle"/>';
         }
     }
 
@@ -565,13 +563,13 @@ for($player=0; $player<$numPlayers; $player++)
     {
         if($avatar[$index])
         {
-            $image = "<img src='".avatar($avatar[$index])."' alt=''  ".imageResize(avatar($avatar[$index]), $pref['eb_max_avatar_size'])."' style='vertical-align:middle'/>";
+            $image = '<img src="'.avatar($avatar[$index]).'" alt="" '.imageResize(avatar($avatar[$index]), $pref['eb_max_avatar_size']).' style="vertical-align:middle"/>';
         } else if ($pref['eb_avatar_default_image'] != ''){
-            $image = "<img src='".getAvatar($pref['eb_avatar_default_image'])."' alt='' style='vertical-align:middle' width=".$pref['eb_max_avatar_size']."'/>";
+            $image = '<img src="'.getAvatar($pref['eb_avatar_default_image']).'" alt="" style="vertical-align:middle" width="'.$pref['eb_max_avatar_size'].'"/>';
         }
     }
 
-    $stats_row[] = "$image&nbsp;<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$uid[$index]\"><b>$pclantag$name[$index]</b></a>";
+    $stats_row[] = $image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$uid[$index].'"><b>'.$pclantag.$name[$index].'</b></a>';
 
     if ($ehide_ratings_column == FALSE)
     $stats_row[] = number_format ($OverallScore[$index],2);
@@ -584,7 +582,7 @@ for($player=0; $player<$numPlayers; $player++)
         }
         else
         {
-            $stats_row[] = $stat_display[$category][$index]."<br /><div class='smalltext'>[".number_format ($final_score[$category][$index],2)."]</div>";
+            $stats_row[] = $stat_display[$category][$index].'<br /><div class="smalltext">['.number_format ($final_score[$category][$index],2).']</div>';
         }
     }
     $stats[] = $stats_row;
