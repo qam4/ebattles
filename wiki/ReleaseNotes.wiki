@@ -1,5 +1,27 @@
 #summary eBattles Release Notes.
 
+= Release 0.4.127 =
+== Features ==
+ * Added Avatars support for event's players standing. (Fixes issue 39)
+ Site admin can choose:
+   * the max size of avatars.
+   * the pages where avatars will be enabled (for now only players standings)
+   * default avatar, for users with no avatar.
+ Added 3 default avatars.
+== Bug fixes ==
+ * SQL query fails for servers where decimal format is using decimal comma instead of decimal point (Europe). (Fixes issue 47)
+ Added the new floatToSQL() function which formats floats before they are sent to SQL.
+ * Fixed problem in matchs lists display. "defeated" or "tied" is now based on the rank of current player.
+ * Fix bug in plugin upgrade.
+ Now accumulate tables/prefs upgrades based on revision, instead of just taking last tables/prefs upgrades.
+ * Some servers can block fopen() access to remote URLs.
+ Error: "Failed to open stream: Permission Denied".
+ This causes getimagesize() and thus imageResize() to return nothing.
+ Work-around: in that case, imageResize() will return width=target_width.
+ * Fixed height issue in "eBattles" and "Dark" tabs CSS themes
+ * Fixed up/down arrow selector to sort Events list, which was not working in Internet Explorer.
+
+
 = Release 0.4.123 =
 == Features ==
  * New pagination system.(Fixes issue 46)
