@@ -64,24 +64,24 @@ function multi2dSortAsc(&$arr, $key, $sort)
 * @mixed array_searchRecursive ( mixed needle,
 * array haystack [, bool strict[, array path]] )
 */
-function array_searchRecursive( $needle, $haystack, $strict=false, $path=array() ) 
-{ 
-    if( !is_array($haystack) ) { 
-        return false; 
-    } 
+function array_searchRecursive( $needle, $haystack, $strict=false, $path=array() )
+{
+    if( !is_array($haystack) ) {
+        return false;
+    }
 
-    foreach( $haystack as $key => $val ) { 
-        $pos = strpos($val,$needle);        
-        if( is_array($val) && $subPath = array_searchRecursive($needle, $val, $strict, $path) ) { 
-            $path = array_merge($path, array($key), $subPath); 
-            return $path; 
-        } elseif( (!$strict && $val == $needle) || ($strict && $val === $needle) || (!$strict && $pos !== false)) { 
-            $path[] = $key; 
-            return $path; 
-        } 
-    } 
-    return false; 
-} 
+    foreach( $haystack as $key => $val ) {
+        $pos = strpos($val,$needle);
+        if( is_array($val) && $subPath = array_searchRecursive($needle, $val, $strict, $path) ) {
+            $path = array_merge($path, array($key), $subPath);
+            return $path;
+        } elseif( (!$strict && $val == $needle) || ($strict && $val === $needle) || (!$strict && $pos !== false)) {
+            $path[] = $key;
+            return $path;
+        }
+    }
+    return false;
+}
 
 function getGameIcon($icon)
 {
@@ -115,32 +115,39 @@ function imageResize($image, $target) {
     // Resize image so it does not exceeds the max size.
     $image_dims = getimagesize($image);
 
-    $width  = $image_dims[0];
-    $height = $image_dims[1];
-
-    if(max($width,$height)>$target)
+    if ($image_dims != '')
     {
-        //takes the larger size of the width and height and applies the
-        //formula accordingly...this is so this script will work
-        //dynamically with any size image
+        $width  = $image_dims[0];
+        $height = $image_dims[1];
 
-        if ($width > $height) {
-            $percentage = ($target / $width);
-        } else {
-            $percentage = ($target / $height);
+        if(max($width,$height)>$target)
+        {
+            //takes the larger size of the width and height and applies the
+            //formula accordingly...this is so this script will work
+            //dynamically with any size image
+
+            if ($width > $height) {
+                $percentage = ($target / $width);
+            } else {
+                $percentage = ($target / $height);
+            }
+
+            //gets the new value and applies the percentage, then rounds the value
+            $width = round($width * $percentage);
+            $height = round($height * $percentage);
+
+            //returns the new sizes in html image tag format...this is so you
+            //can plug this function inside an image tag and just get the
+            return 'width="'.$width.'" height="'.$height.'"';
         }
-
-        //gets the new value and applies the percentage, then rounds the value
-        $width = round($width * $percentage);
-        $height = round($height * $percentage);
-
-        //returns the new sizes in html image tag format...this is so you
-        //can plug this function inside an image tag and just get the
-        return 'width="'.$width.'" height="'.$height.'"';
+        else
+        {
+            return '';
+        }
     }
     else
     {
-        return '';
+        return 'width="'.$target.'"';
     }
 }
 
@@ -159,7 +166,7 @@ function getGameIconResize($gicon) {
 
 function floatToSQL($number)
 {
-    return number_format($number, 5, ".", "");  
+    return number_format($number, 5, ".", "");
 }
 
 ?>
