@@ -14,7 +14,6 @@
 	border-bottom:		1px solid;
 	border-color:		rgb(70,70,70);
 	
-	cursor:			hand;
 	cursor:			pointer;
 	
 	z-index:		1;
@@ -35,7 +34,6 @@
 
 .dynamic-tab-pane-control .tab-row .tab a {
 	text-decoration:	none;
-	cursor:			hand;
 	cursor:			pointer;	
 }
 

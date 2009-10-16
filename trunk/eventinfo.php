@@ -195,7 +195,7 @@ else
     /* Join/Quit Event */
     $text .="<div class=\"tab-page\">";
     $text .="<div class=\"tab\">Signup</div>";
-    $text .= "<table class=\"\" style=\"width:95%\"><tbody>";
+    $text .= "<table style=\"width:95%\"><tbody>";
     if(check_class(e_UC_MEMBER))
     {
         // If logged in
@@ -238,14 +238,14 @@ else
                         $num_rows_2 = mysql_numrows($result_2);
 
                         $text .= "<tr>";
-                        $text .= '<td class="">You are the captain of '.$div_name.'.</td>';
+                        $text .= '<td>You are the captain of '.$div_name.'.</td>';
                         if( $num_rows_2 == 0)
                         {
 
                             if ($epassword != "")
                             {
-                                $text .= '<td class="">Enter the password and click here to let your team participate to this event.</td>';
-                                $text .= '<td class="">
+                                $text .= '<td>Enter the password and click here to let your team participate to this event.</td>';
+                                $text .= '<td>
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                 <div>
                                 <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"/>
@@ -258,8 +258,8 @@ else
                             }
                             else
                             {
-                                $text .= '<td class="">Click here to let your team participate to this event.</td>';
-                                $text .= '<td class="">
+                                $text .= '<td>Click here to let your team participate to this event.</td>';
+                                $text .= '<td>
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                 <div>
                                 <input type="hidden" name="joinEventPassword" value=""/>
@@ -274,7 +274,7 @@ else
                         else
                         {
                             // Team signed up.
-                            $text .= '<td class="">This team is signed up.</td>';
+                            $text .= '<td>This team is signed up.</td>';
                         }
                         $text .= '</tr>';
                     }
@@ -305,8 +305,8 @@ else
                 $num_rows_2 = mysql_numrows($result_2);
                 if(!$result_2 || ( $num_rows_2 == 0))
                 {
-                    $text .= '<tr><td class="">You are not a member of any team for this game.</td>';
-                    $text .= '<td class=""></td></tr>';
+                    $text .= '<tr><td>You are not a member of any team for this game.</td>';
+                    $text .= '<td></td></tr>';
                 }
                 else
                 {
@@ -343,14 +343,14 @@ else
 
                             if ($captain_id != USERID)
                             {
-                                $text .= '<tr><td class="">Your team '.$clan_name.' has not signed up to this event.</td>';
-                                $text .= '<td class="">Please contact your captain <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
+                                $text .= '<tr><td>Your team '.$clan_name.' has not signed up to this event.</td>';
+                                $text .= '<td>Please contact your captain <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
                             }
                         }
                         else
                         {
                             $team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-                            $text .= '<tr><td class="">Your team '.$clan_name.' has signed up to this event.</td>';
+                            $text .= '<tr><td>Your team '.$clan_name.' has signed up to this event.</td>';
 
                             // Is the user already signed up with that team?
                             $q = "SELECT ".TBL_PLAYERS.".*"
@@ -361,7 +361,7 @@ else
                             $result = $sql->db_Query($q);
                             if(!$result || (mysql_numrows($result) == 0))
                             {
-                                $text .= '<td class="">
+                                $text .= '<td>
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                 <div>
                                 <input type="hidden" name="team" value="'.$team_id.'"/>
@@ -373,7 +373,7 @@ else
                             else
                             {
                                 // Player signed up
-                                $text .= '<td class="">You are signed up.</td>';
+                                $text .= '<td>You are signed up.</td>';
 
                                 // Player can quit event if he has not played yet
                                 $q = "SELECT COUNT(*) as NbrScores"
@@ -387,7 +387,7 @@ else
                                 $nbrscores = $row['NbrScores'];
                                 if ($nbrscores == 0)
                                 {
-                                    $text .= '<td class="">
+                                    $text .= '<td>
                                     <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                     <div>
                                     <input type="hidden" name="team" value="'.$team_id.'"/>
@@ -398,7 +398,7 @@ else
                                 }
                                 else
                                 {
-                                    $text .= '<td class=""></td></tr>';
+                                    $text .= '<td></td></tr>';
                                 }
                             }
                             $text .= '</tr>';
@@ -419,9 +419,9 @@ else
                 {
                     if ($epassword != "")
                     {
-                        $text .= '<tr><td class="">Enter the password and click here to participate to this event.</td>';
-                        $text .= '<td class="">Event Password</td>';
-                        $text .= '<td class="">';
+                        $text .= '<tr><td>Enter the password and click here to participate to this event.</td>';
+                        $text .= '<td>Event Password</td>';
+                        $text .= '<td>';
                         $text .= '
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                         <div>
@@ -433,8 +433,8 @@ else
                     }
                     else
                     {
-                        $text .= '<tr><td class="">Click here to participate to this event.</td>';
-                        $text .= '<td class="">
+                        $text .= '<tr><td>Click here to participate to this event.</td>';
+                        $text .= '<td>
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                         <div>
                         <input type="hidden" name="joinEventPassword" value=""/>
@@ -446,7 +446,7 @@ else
                 }
                 else
                 {
-                    $text .= '<tr><td class="">You are signed up.</td>';
+                    $text .= '<tr><td>You are signed up.</td>';
 
                     // Player can quit event if he has not played yet
                     $q = "SELECT COUNT(*) as NbrScores"
@@ -459,7 +459,7 @@ else
                     $nbrscores = $row['NbrScores'];
                     if ($nbrscores == 0)
                     {
-                        $text .= '<td class="">
+                        $text .= '<td>
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                         <div>
                         <input class="button" type="submit" name="quitevent" value="Quit this event" onclick="return confirm(\'Are you sure you want to quit this event?\');"/>
@@ -469,7 +469,7 @@ else
                     }
                     else
                     {
-                        $text .= '<td class=""></td></tr>';
+                        $text .= '<td></td></tr>';
                     }
                 }
             }
@@ -477,8 +477,8 @@ else
     }
     else
     {
-        $text .= '<tr><td class="">Please log in to participate to this event.</td>';
-        $text .= '<td class=""></td></tr>';
+        $text .= '<tr><td>Please log in to participate to this event.</td>';
+        $text .= '<td></td></tr>';
     }
     $text .= '</tbody></table>';
     $text .="</div>";
@@ -594,7 +594,10 @@ else
     $column = 0;
     foreach ($header as $header_cell)
     {
-        $new_header[] = '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&orderby='.$column.'&sort='.$sort.'">'.$header_cell.'</a>';
+        //fm echo "column $column: $header_cell<br>";
+        $pieces = explode("<br />", $header_cell);
+        
+        $new_header[] = '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&amp;orderby='.$column.'&amp;sort='.$sort.'">'.$pieces[0].'</a>'.$pieces[1];
         $column++;
     }
     $header = array($new_header);

@@ -102,7 +102,7 @@ class Paginator{
     {
         $items = '';
         $ipp_array = array(5,10,25,50,100,'All');
-        foreach($ipp_array as $ipp_opt)	$items .= ($ipp_opt == $this->items_per_page) ? "<option selected value=\"$ipp_opt\">$ipp_opt</option>\n":"<option value=\"$ipp_opt\">$ipp_opt</option>\n";
+        foreach($ipp_array as $ipp_opt)	$items .= ($ipp_opt == $this->items_per_page) ? "<option selected=\"selected\" value=\"$ipp_opt\">$ipp_opt</option>\n":"<option value=\"$ipp_opt\">$ipp_opt</option>\n";
         return "Items per page <select class=\"tbox\" onchange=\"window.location='$_SERVER[PHP_SELF]?page=1&amp;ipp='+this[this.selectedIndex].value+'$this->querystring';return false\">$items</select>\n";
     }
 
@@ -110,7 +110,7 @@ class Paginator{
     {
         for($i=1;$i<=$this->num_pages;$i++)
         {
-            $option .= ($i==$this->current_page) ? "<option value=\"$i\" selected>$i</option>\n":"<option value=\"$i\">$i</option>\n";
+            $option .= ($i==$this->current_page) ? "<option value=\"$i\" selected=\"selected\">$i</option>\n":"<option value=\"$i\">$i</option>\n";
         }
         return "Go To Page <select class=\"tbox\" onchange=\"window.location='$_SERVER[PHP_SELF]?page='+this[this.selectedIndex].value+'&amp;ipp=$this->items_per_page$this->querystring';return false\">$option</select>\n";
     }

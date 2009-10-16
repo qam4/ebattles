@@ -96,7 +96,7 @@ function displayRecentActivity(){
                 $players = '';
                 $scores = '';
 
-                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img ".getGameIconResize($mEventgameicon)." alt=\"$mEventgameicon\"/></a> ";
+                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
 
                 $rank = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
@@ -263,7 +263,7 @@ function displayRecentActivity(){
     }
 
     multi2dSortAsc($events, 0, SORT_DESC);
-    for ($index = 0; $index<$nbr_events; $index++)
+    for ($index = 0; $index<min($nbr_events, $rowsPerPage); $index++)
     {
         $text .= $events[$index][1];
     }

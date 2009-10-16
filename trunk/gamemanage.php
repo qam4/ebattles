@@ -62,7 +62,7 @@ $text .= '
 <tr>
 <td><b>Game</b></td>
 <td>
-<select class="tbox" name="gameid" onChange="this.form.submit()">';
+<select class="tbox" name="gameid" onchange="this.form.submit()">';
 for($i=0; $i<$numGames; $i++)
 {
     $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
@@ -105,7 +105,7 @@ $text .= '
 <td class="forumheader3">
 <img '.getGameIconResize($game_icon).'/>
 <input type="text" id="gameIcon" name="gameIcon" value="'.$game_icon.'"/>
-<div class="smalltext">Icon can be an external link or must be placed in ebattles/images/games_icons/<div>';
+<div class="smalltext">Icon can be an external link or must be placed in ebattles/images/games_icons/</div>';
 
 $text .= "<div>";
 $avatarlist[0] = "";

@@ -99,11 +99,12 @@ function displayCurrentEvents(){
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
-    $text .= '<form id="submitform" name="submitform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
+    $text .= '<form id="submitform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
+    $text .= '<div>';
     $text .= '<table>';
     $text .= '<tr><td>';
     $text .= 'Games:<br />';
-    $text .= '<select class="tbox" name="gameid" onChange="this.form.submit()">';
+    $text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
     if ($gameid == "All")
     {
         $text .= '<option value="All" selected="selected">All</option>';
@@ -187,7 +188,7 @@ function displayCurrentEvents(){
         return;
     }
     if($num_rows == 0){
-        $text .= "<div>No events</div>";
+        $text .= "No events</div>";
         $text .= "</form><br/>";
     }
     else
@@ -195,7 +196,7 @@ function displayCurrentEvents(){
 
         // Paginate & Sorting
         $items = '';
-        foreach($array as $opt=>$opt_array)	$items .= ($opt == $orderby) ? "<option selected value=\"$opt\">$opt_array[0]</option>\n":"<option value=\"$opt\">$opt_array[0]</option>\n";
+        foreach($array as $opt=>$opt_array)	$items .= ($opt == $orderby) ? "<option selected=\"selected\" value=\"$opt\">$opt_array[0]</option>\n":"<option value=\"$opt\">$opt_array[0]</option>\n";
 
         // Paginate
         $text .= $pages->display_pages();
@@ -203,18 +204,18 @@ function displayCurrentEvents(){
         $text .= '<span style="float:right">';
         // Sort By
         $text .= 'Sort by ';
-        $text .= '<select class="tbox" name="orderby" onChange="this.form.submit()">';
+        $text .= '<select class="tbox" name="orderby" onchange="this.form.submit()">';
         $text .= $items;
         $text .= "</select>\n";
         // Up/Down arrow
-        $text .= '<input type="hidden" id="sort" name="sort" value="">';
+        $text .= '<input type="hidden" id="sort" name="sort" value=""/>';
         if ($sort =="ASC")
         {
-            $text .= '<a href="javascript:buttonval(\'ASC\');" title="Ascending"><img src="'.e_PLUGIN.'ebattles/images/sort_asc.gif" border="0" style="vertical-align:middle"></a>';
+            $text .= '<a href="javascript:buttonval(\'ASC\');" title="Ascending"><img src="'.e_PLUGIN.'ebattles/images/sort_asc.gif" alt="Asc" style="vertical-align:middle; border:0"/></a>';
         }
         else
         {
-            $text .= '<a href="javascript:buttonval(\'DESC\');" title="Descending"><img src="'.e_PLUGIN.'ebattles/images/sort_desc.gif" border="0" style="vertical-align:middle"></a>';
+            $text .= '<a href="javascript:buttonval(\'DESC\');" title="Descending"><img src="'.e_PLUGIN.'ebattles/images/sort_desc.gif" alt="Desc" style="vertical-align:middle; border:0"/></a>';
 
         }
 
@@ -225,7 +226,7 @@ function displayCurrentEvents(){
         // Items per page
         $text .= $pages->display_items_per_page();
         $text .= '</span>';
-
+        $text .= '</div>';
         $text .= '</form><br/>';
 
         /* Display table contents */
@@ -325,7 +326,7 @@ function displayRecentEvents(){
     $text .= '<table>';
     $text .= '<tr><td>';
     $text .= 'Games:<br />';
-    $text .= '<select class="tbox" name="gameid" onChange="this.form.submit()">';
+    $text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
     if ($gameid == "All")
     {
         $text .= '<option value="All" selected="selected">All</option>';
