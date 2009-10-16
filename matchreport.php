@@ -637,14 +637,14 @@ if (isset($_POST['submit']))
     {
         // the form has not been submitted, let's show it
         user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore);
-    }
+}
 }
 
 $text .= '
 </div>
 ';
 
-$ns->tablerender("$ename ($egame - $etype) - Match Report", $text);
+$ns->tablerender("$ename ($etype) - Match Report", $text);
 require_once(FOOTERF);
 exit;
 ?>

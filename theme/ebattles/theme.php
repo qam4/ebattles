@@ -50,7 +50,7 @@ $HEADER = "
             </td>
 		</tr>
 		<tr>
-			<td class='logo' colspan='3' height='68' style='text-align:center; vertical-align:center'>
+			<td class='logo' colspan='3' style='text-align:center; vertical-align:middle; height:68px'>
 			<img src='".THEME."images/logo.png' alt='eBattles' />
 			</td>
 		</tr>

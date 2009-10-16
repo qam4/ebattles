@@ -55,13 +55,8 @@ document.getElementById('eb_avatar_default_image').value=v;
 
 $text .= "<div style='text-align:center'>
 <form id='adminform' method='post' action='".e_SELF."'>
-<table style='".ADMIN_WIDTH."' class='fborder' style='width:95%'>
+<table style='".ADMIN_WIDTH."' class='fborder'>
 <tbody>
-";
-
-$text .= "</select>
-</td>
-</tr>
 ";
 
 $text .= "<tr>
@@ -132,7 +127,7 @@ $text .= "<tr>
 ";
 if ($pref['eb_avatar_default_image'] != '')
 {
-    $text .= '<img src="'.getAvatar($pref['eb_avatar_default_image']).'" style="vertical-align:middle"/>&nbsp;';
+    $text .= '<img src="'.getAvatar($pref['eb_avatar_default_image']).'" alt="Default Avatar" style="vertical-align:middle"/>&nbsp;';
 }
 $text .= "<input class='tbox' type='text' id='eb_avatar_default_image' name='eb_avatar_default_image' size='20' value='".$pref['eb_avatar_default_image']."'/>";
 
@@ -150,7 +145,7 @@ closedir($handle);
 
 for($c = 1; $c <= (count($avatarlist)-1); $c++)
 {
-	$text .= '<a href="javascript:changetext(\''.$avatarlist[$c].'\')"><img src="'.e_PLUGIN.'ebattles/images/avatars/'.$avatarlist[$c].'" style="border:0" alt="" /></a> ';
+	$text .= '<a href="javascript:changetext(\''.$avatarlist[$c].'\')"><img src="'.e_PLUGIN.'ebattles/images/avatars/'.$avatarlist[$c].'" alt="'.$avatarlist[$c].'" style="border:0"/></a> ';
 }
 $text .= "
 </div>
@@ -163,7 +158,7 @@ $text .= "</td>
 $items = '';
 $ipp_array = array(5,10,25,50,100,'All');
 foreach($ipp_array as $ipp_opt)
-$items .= ($ipp_opt == $pref['eb_default_items_per_page']) ? "<option selected value=\"$ipp_opt\">$ipp_opt</option>\n":"<option value=\"$ipp_opt\">$ipp_opt</option>\n";
+$items .= ($ipp_opt == $pref['eb_default_items_per_page']) ? "<option selected=\"selected\" value=\"$ipp_opt\">$ipp_opt</option>\n":"<option value=\"$ipp_opt\">$ipp_opt</option>\n";
 $text .= "<tr>
 <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L18.":</td>
 <td class='forumheader3' style='width:60%'>
@@ -175,7 +170,7 @@ $text .= "<tr>
 $text .= "<tr>
 <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L7.": </td>
 <td class='forumheader3' style='width:60%'>
-<input class='button' type='submit' name='eb_events_insert_data' value='".EBATTLES_ADMIN_L8."'>
+<input class='button' type='submit' name='eb_events_insert_data' value='".EBATTLES_ADMIN_L8."'/>
 </td>
 </tr>
 ";

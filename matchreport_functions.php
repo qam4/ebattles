@@ -76,54 +76,55 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     /// MAIN FORM ///
     /////////////////
     $text .= '<form id="f1" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$eventid.'" method="post">';
-
+    $text .= '<div>';
     // TABLE - Player/Teams Add/Remove
     //----------------------------------
     $text .= 'Select the number of players and teams:';
-    $text .= '<table id="matchresult"><tbody>';
-    $text .= '<tr><input type="hidden" name="matchreport" value="1"></tr>';
+    $text .= '<table id="matchresult_nbrPlayersTeams"><tbody>';
+    $text .= '<tr><td><input type="hidden" name="matchreport" value="1"/></td></tr>';
     // Players
     $text .= '<tr><td>'.$nbr_players.' players</td>';
-    $text .= '<td><input type="hidden" name="nbr_players" value="'.$_POST['nbr_players'].'">';
+    $text .= '<td><input type="hidden" name="nbr_players" value="'.$_POST['nbr_players'].'"/>';
     // Add Player
     if ($nbr_players < $max_nbr_players)
     {
-        $text .= '<input class="button" type="submit" value="Add Player" name="addPlayer"></td>';
+        $text .= '<input class="button" type="submit" value="Add Player" name="addPlayer"/></td>';
     }
     else
     {
-        $text .= '<input class="button_disabled" type="submit" value="Add Player" name="addPlayer" DISABLED></td>';
+        $text .= '<input class="button_disabled" type="submit" value="Add Player" name="addPlayer" disabled="disabled"/></td>';
     }
     // Remove Player
     if ($nbr_players>2)
     {
-        $text .= '<td><input class="button" type="submit" value="Remove Player" name="removePlayer"></td>';
+        $text .= '<td><input class="button" type="submit" value="Remove Player" name="removePlayer"/></td>';
     }
     else
     {
-        $text .= '<td><input class="button_disabled" type="submit" value="Remove Player" name="removePlayer" DISABLED></td>';
+        $text .= '<td><input class="button_disabled" type="submit" value="Remove Player" name="removePlayer" disabled="disabled"/></td>';
     }
-
+    $text .= '</tr>';
+    
     // Teams
     $text .= '<tr><td>'.$nbr_teams.' teams</td>';
-    $text .= '<td><input type="hidden" name="nbr_teams" value="'.$_POST['nbr_teams'].'">';
+    $text .= '<td><input type="hidden" name="nbr_teams" value="'.$_POST['nbr_teams'].'"/>';
     // Add Team
     if ($nbr_teams<$nbr_players)
     {
-        $text .= '<input class="button" type="submit" value="Add Team" name="addTeam"></td>';
+        $text .= '<input class="button" type="submit" value="Add Team" name="addTeam"/></td>';
     }
     else
     {
-        $text .= '<input class="button_disabled" type="submit" value="Add Team" name="addTeam" DISABLED></td>';
+        $text .= '<input class="button_disabled" type="submit" value="Add Team" name="addTeam" disabled="disabled"/></td>';
     }
     // Remove Team
     if ($nbr_teams>2)
     {
-        $text .= '<td><input class="button" type="submit" value="Remove Team" name="removeTeam"></td>';
+        $text .= '<td><input class="button" type="submit" value="Remove Team" name="removeTeam"/></td>';
     }
     else
     {
-        $text .= '<td><input class="button_disabled" type="submit" value="Remove Team" name="removeTeam" DISABLED></td>';
+        $text .= '<td><input class="button_disabled" type="submit" value="Remove Team" name="removeTeam" disabled="disabled"/></td>';
     }
     $text .= "</tr>";
     $text .= '</tbody></table>';
@@ -134,7 +135,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     // TABLE - Players/Teams Selection
     //----------------------------------
     $text .= 'Select the players and their respective team:';
-    $text .= '<table id="matchresult"><tbody>';
+    $text .= '<table id="matchresult_selectPlayersTeams"><tbody>';
     for($i=1;$i<=$nbr_players;$i++)
     {
         $text .= '<tr><td>Player #'.$i.':</td>';
@@ -164,7 +165,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     // TABLE - Teams Rank Selection
     //----------------------------------
     $text .= 'Select the rank of each team:';
-    $text .= '<table id="matchresult"><tbody>';
+    $text .= '<table id="matchresult_rankTeams"><tbody>';
     $text .= '<tr><td></td><td>Team</td>';
     if ($allowScore == TRUE) $text .= '<td>Score</td>';
     if ($allowDraw == TRUE) $text .= '<td>Draw?</td>';
@@ -176,7 +177,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
         $text .= '<td>';
         $text .= 'Rank #'.$i.':';
         $text .= '</td>';
-        $text .= '<td><select class="tbox" name="rank'.$i.'" id="rank'.$i.'" onChange = "SwitchSelected('.$i.')">';
+        $text .= '<td><select class="tbox" name="rank'.$i.'" id="rank'.$i.'" onchange = "SwitchSelected('.$i.')">';
         for($j=1;$j<=$nbr_teams;$j++)
         {
             $text .= '<option value="Team #'.$j.'"';
@@ -187,7 +188,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
         if ($allowScore == TRUE)
         {
             $text .= '<td>';
-            $text .= '<input class="tbox" type="text" name="score'.$i.'" value="'.$_POST['score'.$i].'">';
+            $text .= '<input class="tbox" type="text" name="score'.$i.'" value="'.$_POST['score'.$i].'"/>';
             $text .= '</td>';
         }
         if ($allowDraw == TRUE)
@@ -196,8 +197,8 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
             if ($i>1)
             {
                 $text .= '<input class="tbox" type="checkbox" name="draw'.$i.'" value="1"';
-                if (strtolower($_POST['draw'.$i]) != "") $text .= ' checked';
-                $text .= '>';
+                if (strtolower($_POST['draw'.$i]) != "") $text .= ' checked="checked"';
+                $text .= '/>';
             }
             $text .= '</td>';
         }
@@ -208,14 +209,15 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     $text .= '<br />';
     $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';
     $text .= 'Your comments:<br />';
-    $text .= '<textarea class="tbox" id="elm1" name="elm1" style="width:500px">'.$sContent.'</textarea>';
+    $text .= '<textarea class="tbox" id="elm1" name="elm1" style="width:500px" cols="70" rows="4">'.$sContent.'</textarea>';
     $text .= '</div>';
     $text .= '<br />';
     $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';
-    $text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'">';
-    $text .= '<input class="button" type="submit" value="Submit Match" name="submit">';
+    $text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
+    $text .= '<input class="button" type="submit" value="Submit Match" name="submit"/>';
     $text .= '</div>';
     $text .= '<br /><br />';
+    $text .= '</div>';
     $text .= '</form>';
 }
 

@@ -86,11 +86,10 @@ else
         $numClanScores = mysql_numrows($result_ClanScores);
         if ($numClanScores == 0)
         {
-            $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
-            $text .= '<br /><input class="button" type="submit" name="clandelete" value="Delete Team" onclick="return confirm(\'Are you sure you want to delete this team?\');"/>';
-            $text .= "</form>";
+            $text .= "<br />";
+            $text .= '<input class="button" type="submit" name="clandelete" value="Delete Team" onclick="return confirm(\'Are you sure you want to delete this team?\');"/>';
         }
-        $text .= '</td>';
+        $text .= '</td></tr>';
 
         $text .= '<!-- Clan Owner -->';
         $text .= '<tr>';
@@ -229,7 +228,7 @@ else
 
             $text .= '<tr>';
             $text .= '<td class="forumheader3">';
-            $text .= '<b><img '.getGameIconResize($gicon).'"/> '.$gname.'</b><br />';
+            $text .= '<b><img '.getGameIconResize($gicon).'/> '.$gname.'</b><br />';
             $text .= "Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a>";
 
             // Delete division
@@ -249,10 +248,8 @@ else
             $numDivScores = mysql_numrows($result_DivScores);
             if ($numDivScores == 0)
             {
-                $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
-                $text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"/>';
+                $text .= '<br /><input type="hidden" name="clandiv" value="'.$div_id.'"/>';
                 $text .= '<input class="button" type="submit" name="clandeletediv" value="Delete Division" onclick="return confirm(\'Are you sure you want to delete this division?\');"/>';
-                $text .= "</form>";
             }
 
             $text .= '</td>';

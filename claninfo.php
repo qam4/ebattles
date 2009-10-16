@@ -154,7 +154,7 @@ function displayTeamDivisions($clan_id){
         $div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
         $text .= '<div class="spacer">';
-        $text .= '<b><img '.getGameIconResize($gicon).'"/> '.$gname.'</b><br />';
+        $text .= '<b><img '.getGameIconResize($gicon).'/> '.$gname.'</b><br />';
         $text .= "<p>Captain: <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$div_captain\">$div_captain_name</a></p>";
 
         if(check_class(e_UC_MEMBER))

@@ -212,7 +212,7 @@ else
 
     $text .= '
     <p>
-    <br />Back to [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a></a>]<br />
+    <br />Back to [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]<br />
     </p>
     ';
 

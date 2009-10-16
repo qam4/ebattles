@@ -145,13 +145,14 @@ else
         <table class="fborder" style="width:95%">
         <tbody>
         ';
-        $text .= "<tr>";
+        $text .= '<tr>';
         $text .= '<td class="forumheader3"><b>Ladder</b></td>';
         $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$ename.'</a></td>';
-        $text .= "</tr>";
+        $text .= '</tr>';
 
+        $text .= '<tr>';
         $text .= '<td class="forumheader3"><b>Owner</b><br />';
-        $text .= '<a href="'.e_PLUGIN.'"ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
+        $text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
         $text .= '</td>';
 
         $q_2 = "SELECT ".TBL_USERS.".*"
@@ -357,11 +358,11 @@ else
         $text .= '<input class="tbox" type="checkbox" name="eventallowquickloss"';
         if ($equick_loss_report == TRUE)
         {
-            $text .= 'checked>';
+            $text .= ' checked="checked"/>';
         }
         else
         {
-            $text .= '>';
+            $text .= '/>';
         }
         $text .='
         </div>
@@ -379,11 +380,11 @@ else
         $text .= '<input class="tbox" type="checkbox" name="eventallowscore"';
         if ($eAllowScore == TRUE)
         {
-            $text .= 'checked>';
+            $text .= ' checked="checked"/>';
         }
         else
         {
-            $text .= '>';
+            $text .= '/>';
         }
         $text .='
         </div>
@@ -401,11 +402,11 @@ else
         $text .= '<input class="tbox" type="checkbox" name="eventallowdraw"';
         if ($eAllowDraw == TRUE)
         {
-            $text .= 'checked>';
+            $text .= ' checked="checked"/>';
         }
         else
         {
-            $text .= '>';
+            $text .= '/>';
         }
         $text .='
         </div>
@@ -660,7 +661,7 @@ else
         <table class="fborder" style="width:95%"><tbody>
         <tr>
         <td class="forumheader">Stat</td>
-        <td class="forumheader" colspan=2>Max</td>
+        <td class="forumheader" colspan="2">Max</td>
         <td class="forumheader">Info Only</td>
         </tr>
         <tr>
@@ -790,7 +791,7 @@ else
             <tr>
             <td class="forumheader3">'.$cat_name_display.'</td>
             <td class="forumheader3">
-            <input name="sliderValue'.$cat_index.'" id="sliderValue" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
+            <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
             </td>
             <td class="forumheader3">
             ';
@@ -816,7 +817,7 @@ else
             ';
             if ($cat_InfoOnly == TRUE)
             {
-                $text .= ' checked';
+                $text .= ' checked="checked"';
             }
             else
             {
@@ -840,12 +841,12 @@ else
         ';
         if ($ehide_ratings_column == TRUE)
         {
-            $text .= ' checked';
+            $text .= ' checked="checked"';
         }
         $text .= '/> hide ratings column if checked</td>';
 
         $text .= '
-        </tbody></table>
+        </tr></tbody></table>
 
         <!-- Save Button -->
         <table><tr><td>

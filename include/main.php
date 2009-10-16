@@ -160,7 +160,7 @@ function getGameIconResize($gicon) {
     }
     else
     {
-        return 'src="'.getGameIcon($gicon).'" alt="'.$gicon.'"';;
+        return 'src="'.getGameIcon($gicon).'" alt="'.$gicon.'"';
     }
 }
 
