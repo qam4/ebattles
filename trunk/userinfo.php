@@ -149,7 +149,7 @@ else
         $text .= "</table>";
     }
 
-    $text .= "<b>Owner</b><br />";
+    $text .= "<br /><b>Owner</b><br />";
     $text .= "Events this user owns";
     $q = " SELECT *"
     ." FROM ".TBL_EVENTS.", "
@@ -204,7 +204,7 @@ else
         $text .= "</table>";
     }
 
-    $text .= "<b>Moderator</b><br />";
+    $text .= "<br /><b>Moderator</b><br />";
     $text .= "Events this user moderates";
     $q = " SELECT *"
     ." FROM ".TBL_EVENTMODS.", "
@@ -343,7 +343,7 @@ else
         $text .= "</table>";
     }
 
-    $text .= "<b>Owner</b><br />";
+    $text .= "<br /><b>Owner</b><br />";
     $text .= "$uname is owner of the following teams";
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_USERS.".*"
@@ -396,7 +396,7 @@ else
         $text .= "</table>";
     }
 
-    $text .= "<b>Captain</b><br />";
+    $text .= "<br /><b>Captain</b><br />";
     $text .= "$uname is captain of the following divisions";
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_DIVISIONS.".*, "

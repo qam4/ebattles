@@ -398,7 +398,6 @@ if ($revision < 114)
     );
 }
 
-
 if ($revision < 121)
 {
     // To revision 121

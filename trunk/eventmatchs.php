@@ -26,16 +26,6 @@ if (!$event_id)
 }
 else
 {
-    /* set pagination variables */
-    $q = "SELECT count(*) "
-    ." FROM ".TBL_MATCHS
-    ." WHERE (".TBL_MATCHS.".Event = '$event_id')";
-    $result = $sql->db_Query($q);
-    $totalItems = mysql_result($result, 0);
-    $pages->items_total = $totalItems;
-    $pages->mid_range = eb_PAGINATION_MIDRANGE;
-    $pages->paginate();
-
     $q = "SELECT ".TBL_EVENTS.".*, "
     .TBL_GAMES.".*"
     ." FROM ".TBL_EVENTS.", "
@@ -54,9 +44,11 @@ else
     $text .="<div class=\"tab-pane\" id=\"tab-pane-11\">";
     $text .="<div class=\"tab-page\">";
     $text .="<div class=\"tab\">All Matches</div>";
-    $q = "SELECT COUNT(*) as NbrMatches"
-    ." FROM ".TBL_MATCHS
-    ." WHERE (Event = '$event_id')";
+    $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES
+    ." WHERE (Event = '$event_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
     $result = $sql->db_Query($q);
     $row = mysql_fetch_array($result);
     $nbrmatches = $row['NbrMatches'];
@@ -64,6 +56,12 @@ else
     $text .="$nbrmatches matches played";
     $text .="</p>";
     $text .="<br />";
+
+    /* set pagination variables */
+    $totalItems = $nbrmatches;
+    $pages->items_total = $totalItems;
+    $pages->mid_range = eb_PAGINATION_MIDRANGE;
+    $pages->paginate();
 
     // Paginate
     $text .= $pages->display_pages();
@@ -77,11 +75,13 @@ else
 
     $text .= "<div class=\"spacer\">";
     /* Stats/Results */
-    $q = "SELECT ".TBL_MATCHS.".*, "
+    $q = "SELECT DISTINCT ".TBL_MATCHS.".*, "
     .TBL_USERS.".*"
     ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
     .TBL_USERS
     ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
     ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
     ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
     ." $pages->limit";
@@ -195,7 +195,7 @@ else
                 {
                     $players .= " (".$scores.") ";
                 }
-                $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\">View details</a>)";
+                $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\" title=\"Match $mID\">View details</a>)";
                 if (($time-$mTime) < INT_DAY )
                 {
                     $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";

@@ -184,9 +184,11 @@ function displayPastEvents(){
         $row = mysql_fetch_array($result_2);
         $nbrplayers = $row['NbrPlayers'];
         /* Nbr matches */
-        $q_2 = "SELECT COUNT(*) as NbrMatches"
-        ." FROM ".TBL_MATCHS
-        ." WHERE (Event = '$eid')";
+        $q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+        ." FROM ".TBL_MATCHS.", "
+        .TBL_SCORES
+        ." WHERE (Event = '$eid')"
+        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);
         $nbrmatches = $row['NbrMatches'];
