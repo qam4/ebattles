@@ -33,15 +33,17 @@ function displayRecentActivity(){
     // Add recent games
     $rowsPerPage = $pref['eb_default_items_per_page'];
     /* Stats/Results */
-    $q = "SELECT ".TBL_MATCHS.".*, "
+    $q = "SELECT DISTINCT ".TBL_MATCHS.".*, "
     .TBL_USERS.".*, "
     .TBL_EVENTS.".*, "
     .TBL_GAMES.".*"
     ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
     .TBL_USERS.", "
     .TBL_EVENTS.", "
     .TBL_GAMES
     ." WHERE (".TBL_MATCHS.".Event = ".TBL_EVENTS.".EventID)"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
     ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
     ." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
     ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
@@ -96,7 +98,7 @@ function displayRecentActivity(){
                 $players = '';
                 $scores = '';
 
-                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
+                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\" title=\"Match $mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
 
                 $rank = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
