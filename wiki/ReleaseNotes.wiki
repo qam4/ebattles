@@ -1,5 +1,14 @@
 #summary eBattles Release Notes.
 
+= Release 0.4.130 =
+== Features ==
+ * In Recent Activity menu, limit the number of recent events to show.
+== Bug fixes ==
+ * Cleanup HTML and CSS for W3C XHTML 1.1 compliance
+ * Fixed bug in matches lists.
+ In case a match is deleted, the match is still in the database, but its scores are deleted.
+ So when displaying matches lists or number of matches, we need to exclude matches with no scores.
+
 = Release 0.4.127 =
 == Features ==
  * Added Avatars support for event's players standing. (Fixes issue 39)
