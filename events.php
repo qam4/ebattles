@@ -114,7 +114,7 @@ function displayCurrentEvents(){
         $text .= '<option value="All">All</option>';
     }
     for($i=0; $i<$num_rows; $i++){
-        $gname  = mysql_result($result,$i, TBL_GAMES.".name");
+        $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
         $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
         if ($gameid == $gid)
         {
@@ -199,8 +199,7 @@ function displayCurrentEvents(){
         foreach($array as $opt=>$opt_array)	$items .= ($opt == $orderby) ? "<option selected=\"selected\" value=\"$opt\">$opt_array[0]</option>\n":"<option value=\"$opt\">$opt_array[0]</option>\n";
 
         // Paginate
-        $text .= $pages->display_pages();
-
+        $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
         $text .= '<span style="float:right">';
         // Sort By
         $text .= 'Sort by ';
@@ -227,17 +226,17 @@ function displayCurrentEvents(){
         $text .= $pages->display_items_per_page();
         $text .= '</span>';
         $text .= '</div>';
-        $text .= '</form><br/>';
+        $text .= '</form><br/><br/>';
 
         /* Display table contents */
         $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
         $text .= "<tr><td class=\"forumheader\">Event</td><td colspan=\"2\" class=\"forumheader\">Game</td><td class=\"forumheader\">Type</td><td class=\"forumheader\">Start</td><td class=\"forumheader\">End</td><td class=\"forumheader\">Players</td><td class=\"forumheader\">Games</td></tr>\n";
         for($i=0; $i<$num_rows; $i++){
-            $gname  = mysql_result($result,$i, TBL_GAMES.".name");
+            $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
             $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-            $eid  = mysql_result($result,$i, TBL_EVENTS.".eventid");
-            $ename  = mysql_result($result,$i, TBL_EVENTS.".name");
-            $etype = mysql_result($result,$i, TBL_EVENTS.".type");
+            $eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
+            $ename  = mysql_result($result,$i, TBL_EVENTS.".Name");
+            $etype = mysql_result($result,$i, TBL_EVENTS.".Type");
             $estart = mysql_result($result,$i, TBL_EVENTS.".Start_timestamp");
             $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
             if($estart!=0)

@@ -11,7 +11,7 @@ $ebattles_title = 'eBattles';
 $events_link    = e_PLUGIN.'ebattles/events.php';
 $teams_link     = e_PLUGIN.'ebattles/clans.php';
 $profile_link   = e_PLUGIN.'ebattles/userinfo.php?user='.USERID;
-$games_link   = e_PLUGIN.'ebattles/gamemanage.php';
+$games_link   = e_PLUGIN.'ebattles/gamesmanage.php';
 
 $text  = '<a href="'.$events_link.'">';
 $text .= EBATTLES_MENU_L2;

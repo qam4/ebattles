@@ -298,7 +298,7 @@ else
         $text .= '<td class="forumheader3"><b>Game</b></td>';
         $text .= '<td class="forumheader3"><select class="tbox" name="eventgame">';
         for($i=0; $i<$numGames; $i++){
-            $gname  = mysql_result($result,$i, TBL_GAMES.".name");
+            $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
             $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
             if ($egame == $gname)
             {

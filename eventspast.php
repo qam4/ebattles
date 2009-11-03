@@ -64,7 +64,7 @@ function displayPastEvents(){
     $text .= '<select class="tbox" name="gameid">';
     $text .= '<option value="All">All</option>';
     for($i=0; $i<$num_rows; $i++){
-        $gname  = mysql_result($result,$i, TBL_GAMES.".name");
+        $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
         $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
         $text .= "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
     }
@@ -137,7 +137,7 @@ function displayPastEvents(){
     }
 
     // Paginate
-    $text .= $pages->display_pages();
+    $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
     $text .= '<span style="float:right">';
     // Go To Page
     $text .= $pages->display_jump_menu();
@@ -150,11 +150,11 @@ function displayPastEvents(){
     $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
     $text .= "<tr><td class=\"forumheader\"><b>Event</b></td><td colspan=\"2\" class=\"forumheader\"><b>Game</b></td><td class=\"forumheader\"><b>Type</b></td><td class=\"forumheader\"><b>Start</b></td><td class=\"forumheader\"><b>End</b></td><td class=\"forumheader\"><b>Players</b></td><td class=\"forumheader\"><b>Games</b></td></tr>\n";
     for($i=0; $i<$num_rows; $i++){
-        $gname  = mysql_result($result,$i, TBL_GAMES.".name");
+        $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
         $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-        $eid  = mysql_result($result,$i, TBL_EVENTS.".eventid");
-        $ename  = mysql_result($result,$i, TBL_EVENTS.".name");
-        $etype = mysql_result($result,$i, TBL_EVENTS.".type");
+        $eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
+        $ename  = mysql_result($result,$i, TBL_EVENTS.".Name");
+        $etype = mysql_result($result,$i, TBL_EVENTS.".Type");
         $estart = mysql_result($result,$i, TBL_EVENTS.".Start_timestamp");
         $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
         if($estart!=0)
