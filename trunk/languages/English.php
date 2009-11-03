@@ -41,4 +41,12 @@ define("EBATTLES_ADMIN_L20", "Specify the max size and pages where users avatar 
 define("EBATTLES_ADMIN_L21", "Players Standings");
 define("EBATTLES_ADMIN_L22", "Default Avatar");
 define("EBATTLES_ADMIN_L23", "Select a remote icon using an external link or one of the icons in ebattles/images/avatars/");
+define("EBATTLES_ADMIN_L24", "Configuration");
+define("EBATTLES_ADMIN_L25", "Links");
+define("EBATTLES_ADMIN_L26", "Recent Activity");
+define("EBATTLES_ADMIN_L27", "Menu Heading");
+define("EBATTLES_ADMIN_L28", "Update Settings");
+define("EBATTLES_ADMIN_L29", "eBattles");
+define("EBATTLES_ADMIN_L30", "Number of Items to show");
+define("EBATTLES_ADMIN_L31", "Recent activity");
 ?>

@@ -11,7 +11,7 @@ $lan_file = e_PLUGIN."ebattles/languages/".e_LANGUAGE.".php";
 include_once(file_exists($lan_file) ? $lan_file : e_PLUGIN."ebattles/languages/English.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 
-$ebattles_title = "Recent activity";
+$ebattles_title = $pref['eb_activity_menuheading'];
 $text = displayRecentActivity();
 
 $ns->tablerender($ebattles_title,$text);
@@ -26,12 +26,12 @@ function displayRecentActivity(){
     global $sql;
     global $time;
     global $pref;
-
+    
     $events = array();
     $nbr_events = 0;
 
     // Add recent games
-    $rowsPerPage = $pref['eb_default_items_per_page'];
+    $rowsPerPage = $pref['eb_activity_number_of_items'];
     /* Stats/Results */
     $q = "SELECT DISTINCT ".TBL_MATCHS.".*, "
     .TBL_USERS.".*, "
@@ -167,14 +167,19 @@ function displayRecentActivity(){
                 }
 
                 $players .= " playing $mEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEventID\">$mEventName</a>)";
+                                
+                $players .= " <div class='smalltext'>";
+                $players .= "Reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a> ";
                 if (($time-$mTime) < INT_DAY )
                 {
-                    $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
+                    $players .= get_formatted_timediff($mTime, $time)." ago.";
                 }
                 else
                 {
-                    $players .= " <div class='smalltext'>".$date.".</div>";
+                    $players .= "on ".$date.".";
                 }
+                $players .= " <a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\" title=\"Match $mID\">".getCommentTotal("ebmatches", $mID)." comments.</a>";
+                $players .= "</div>";
 
                 $events[$nbr_events][0] = $mTime;
                 $events[$nbr_events][1] = $players;
@@ -248,15 +253,16 @@ function displayRecentActivity(){
             $award_string .= " <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$aUser\">$aUserNickName</a>";
             $award_string .= $award;
             $award_string .= " playing $aEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$aEventID\">$aEventName</a>)";
-
+            $award_string .= " <div class='smalltext'>";
             if (($time-$aTime) < INT_DAY )
             {
-                $award_string .= " <div class='smalltext'>".get_formatted_timediff($aTime, $time)." ago.</div>";
+                $award_string .= get_formatted_timediff($aTime, $time)." ago.";
             }
             else
             {
-                $award_string .= " <div class='smalltext'>".$date.".</div>";
+                $award_string .= $date;
             }
+            $award_string .= "</div>";
 
             $events[$nbr_events][0] = $aTime;
             $events[$nbr_events][1] = $award_string;

@@ -57,7 +57,10 @@ $eplug_prefs = array(
 "eb_default_items_per_page" => 25,
 "eb_max_avatar_size" => 32,
 "eb_avatar_enable_playersstandings" => 1,
-"eb_avatar_default_image" => 'anonymous.png'
+"eb_avatar_default_image" => 'anonymous.png',
+"eb_links_menuheading" => EBATTLES_ADMIN_L29,
+"eb_activity_menuheading" => EBATTLES_ADMIN_L31,
+"eb_activity_number_of_items" => 10
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -400,6 +403,16 @@ if ($revision < 122)
     "eb_max_avatar_size" => 32,
     "eb_avatar_enable_playersstandings" => 1,
     "eb_avatar_default_image" => 'anonymous.png'
+    );
+}
+
+if ($revision < 133)
+{
+    // To revision 133
+    $upgrade_add_prefs += array(
+    "eb_links_menuheading" => EBATTLES_ADMIN_L29,
+    "eb_activity_menuheading" => EBATTLES_ADMIN_L31,
+    "eb_activity_number_of_items" => 10
     );
 }
 
