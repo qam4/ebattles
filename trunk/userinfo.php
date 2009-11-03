@@ -504,7 +504,7 @@ else
     if ($num_rows>0)
     {
         // Paginate
-        $text .= $pages->display_pages();
+        $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
         $text .= '<span style="float:right">';
         // Go To Page
         $text .= $pages->display_jump_menu();

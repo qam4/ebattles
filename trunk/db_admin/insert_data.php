@@ -83,7 +83,7 @@
 	// Event 1 - 1v1 ladder test
 	$query = 
 	"INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Start_timestamp, End_timestamp, Rules, Description, AllowDraw, AllowScore)
-	 VALUES ('1v1 Ladder Test', '', '656', 'One Player Ladder',1, $time, ($time+7*86400), '...', 
+	 VALUES ('1v1 Ladder Test', '', '1', 'One Player Ladder',1, $time, ($time+7*86400), '...', 
 	 '<p style=\"text-align: center;\">This is a 1v1 test ladder.</p><p style=\"text-align: center;\">Feel free to join this event and use the \"Match Report\" system.</p><p style=\"text-align: center;\"><img src=\"http://www.visionfutur.com/img/linux/starcraft1.jpg\" border=\"0\" alt=\"Starcraft\" title=\"Starcraft\" width=\"640\" height=\"480\" /></p>',
 	 1,1)";
 	$sql->db_Query($query) or die ('Error, adding event 1<br />'. mysql_error());
@@ -180,7 +180,7 @@
     // Event 2 - team ladder test
 	$query = 
 	"INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Description)
-	 VALUES ('Team Ladder Test', '', '2', 'Team Ladder',1, '<p>This is a Team test ladder.<br />Feel free to join this event and use the &quot;Match Report&quot; system. </p>')";
+	 VALUES ('Team Ladder Test', '', '1', 'Team Ladder',1, '<p>This is a Team test ladder.<br />Feel free to join this event and use the &quot;Match Report&quot; system. </p>')";
 	$sql->db_Query($query) or die ('Error, adding event 3<br />'. mysql_error());
         $last_id = mysql_insert_id();
  	$query = 

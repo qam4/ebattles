@@ -40,7 +40,7 @@ $eplug_menu_name = 'ebattles_menu';
 $eplug_conffile = "admin_config.php";
 
 // Icon image and caption text ------------------------------------------------------------------------------------
-//$eplug_icon = $eplug_folder."/icon/list_32.png";
+$eplug_icon = $eplug_folder."/images/ebattles_32.ico";
 $eplug_icon_small = $eplug_folder."/images/ebattles_16.ico";
 //$eplug_caption =  EBATTLES_L3;
 
@@ -309,24 +309,11 @@ timestamp int(11) unsigned not null
 ) TYPE = MyISAM;"
 );
 
-// Insert Games in database
-if($file_handle = fopen(e_PLUGIN."ebattles/images/games_icons/Games List.csv", "r"))
-{
-    $line_of_text = fgetcsv($file_handle, 1024); // header
-    while (!feof($file_handle) ) {
-        $line_of_text = fgetcsv($file_handle, 1024);
-
-        $shortname = addslashes($line_of_text[0]);
-        $longname  = addslashes($line_of_text[1]);
-        $icon  = addslashes($line_of_text[2]);
-
-        $query =
-        "INSERT INTO ".TBL_GAMES."(Name, Icon)
-        VALUES ('$longname', '$icon')";
-        array_push($eplug_tables, $query);
-    }
-    fclose($file_handle);
-}
+// Insert "Unknown Game"
+$query =
+"INSERT INTO ".TBL_GAMES."(Name, Icon)
+VALUES ('Unknown Game', 'unknown.gif')";
+array_push($eplug_tables, $query);
 
 // Create a link in main menu (yes=TRUE, no=FALSE) -------------------------------------------------------------
 $eplug_link = FALSE;

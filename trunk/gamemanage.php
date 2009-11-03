@@ -93,7 +93,7 @@ $text .= '
 <tr>
 <td class="forumheader3"><b>Name</b></td>
 <td class="forumheader3">
-<input type="text" name="gameName" value="'.$game_name.'"/>
+<input class="tbox" type="text" name="gameName" value="'.$game_name.'"/>
 </td>
 </tr>
 ';
@@ -104,7 +104,7 @@ $text .= '
 <td class="forumheader3"><b>Icon</b></td>
 <td class="forumheader3">
 <img '.getGameIconResize($game_icon).'/>
-<input type="text" id="gameIcon" name="gameIcon" value="'.$game_icon.'"/>
+<input class="tbox" type="text" id="gameIcon" name="gameIcon" value="'.$game_icon.'"/>
 <div class="smalltext">Icon can be an external link or must be placed in ebattles/images/games_icons/</div>';
 
 $text .= "<div>";

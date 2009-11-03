@@ -40,7 +40,7 @@ $HEADER = "
 	<table cellpadding='0' cellspacing='3' class='topborder' style='width:100%'>
 		<tr>
             <td style='width:50%; text-align:left'>
-            ".EB_CUSTOM_LOGIN."
+            
             </td>
             <td style='width:25%; text-align:right'>
             {CUSTOM=clock}
