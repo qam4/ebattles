@@ -173,10 +173,16 @@ else
     }
     $text .= "</tbody></table><br />\n";
 
-    $text .= "<p>";
-    $text .= "Comments:<br />\n";
-    $text .= "$comments<br />\n";
-    $text .= "</p>";
+    if ($comments)
+    {
+        $text .= "<p>";
+        $text .= "Reporter Comments:<br />\n";
+        $text .= "$comments<br />\n";
+        $text .= "</p>";
+    }
+
+    $text .= getComment("ebmatches", $match_id);
+
     $text .= "</div>";
 
     $text .= "</div>";

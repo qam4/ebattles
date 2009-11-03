@@ -9,6 +9,7 @@ include(e_PLUGIN."ebattles/include/time.php");
 
 global $pref;
 global $sql;
+global $time;
 
 $time = GMT_time();
 
@@ -168,5 +169,107 @@ function floatToSQL($number)
 {
     return number_format($number, 5, ".", "");
 }
+
+// ************************************************
+// Miscellaneous Helper Functions
+// ************************************************
+
+/**
+* @return true if current version of e107 is v0.7, otherwise false
+*/
+function isV07() {
+    return true;
+}
+
+// ************************************************
+// Comment Helper Functions
+// ************************************************
+
+/**
+* Get number of comments for an item.
+* <p>This method returns the number of comments for the supplied plugin/item id.</p>
+* @param   string   a unique ID for this plugin, maximum of 10 character
+* @param   int      id of the item comments are allowed for
+* @return  int      number of comments for the supplied parameters
+*/
+function getCommentTotal($pluginid, $id) {
+    global $pref, $e107cache, $tp;
+    $query = "where comment_item_id='$id' AND comment_type='$pluginid'";
+    $mysql = new db();
+    return $mysql->db_Count("comments", "(*)", $query);
+}
+
+/**
+* Add comments to a plugins
+* <p>This method returns the HTML for a comment form. In addition, it will post comments to the e107v7
+* comments database and get any existing comments for the current item.</p>
+* @param   string   a unique ID for this plugin, maximum of 10 character
+* @param   int      id of the item comments are allowed for
+* @return  string   HTML for existing comments for an item and the comments form to allow new comments to be posted
+*/
+function getComment($pluginid, $id) {
+    global $pref, $e107cache, $tp;
+
+    // Include the comment class. Normally, this file is included at a global level, so we need to make the variable
+    // it decalares global so it is available inside the comment class
+    require_once(e_HANDLER."comment_class.php");
+    require(e_FILE."shortcode/batch/comment_shortcodes.php");
+    $GLOBALS["comment_shortcodes"] = $comment_shortcodes;
+
+    $pid = 0; // What is this w.r.t. comment table? Parent ID?
+
+    // Define a comment object
+    $cobj = new comment();
+
+    // See if we need to post a comment to the database
+    if (isset($_POST['commentsubmit'])) {
+        $cobj->enter_comment($_POST['author_name'], $_POST['comment'], $pluginid, $id, $pid, $_POST['subject']);
+        if ($pref['cachestatus']){
+            $e107cache->clear("comment.$pluginid.{$sub_action}");
+        }
+    }
+
+    // Specific e107 0.617 processing to render existing comments
+    if (!isV07()) {
+        $query = $pref['nested_comments'] ?
+        "comment_item_id='$id' AND comment_type='$pluginid' AND comment_pid='0' ORDER BY comment_datestamp" :
+        "comment_item_id='$id' AND comment_type='$pluginid' ORDER BY comment_datestamp";
+        unset($text);
+        $mysql = new db();
+        if ($comment_total = $mysql->db_Select("comments", "*", $query)) {
+            $width = 0;
+            while ($row = $mysql->db_Fetch()) {
+                // ** Need to sort out how to do nested comments here
+                if ($pref['nested_comments']) {
+                    $text .= $cobj->render_comment($row, $pluginid, "comment", $id, $width, $subject, true);
+                } else {
+                    $text .= $cobj->render_comment($row, $pluginid, "comment", $id, $width, $subject, true);
+                }
+            }
+            if (ADMIN && getperms("B")) {
+                $text .= "<div style='text-align:right'><a href='".e_ADMIN."modcomment.php?$pluginid.$id'>".LAN_314."</a></div>";
+            }
+        }
+    }
+
+    // Get comment form - e107 sends this to the output buffer so we must grab it and assign to our return string
+    ob_start();
+    if (isV07()) {
+        // e107 0.7
+        $cobj->compose_comment($pluginid, "comment", $id, $width, $subject, false);
+    } else {
+        // e107 0.617
+        if (strlen($text) > 0) {
+            $ns = new e107table();
+            $ns->tablerender(LAN_5, $text);
+        }
+        $cobj->form_comment("comment", $pluginid, $id, $subject, $content_type);
+    }
+    $text = ob_get_contents();
+    ob_end_clean();
+
+    return $text;
+}
+
 
 ?>

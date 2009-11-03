@@ -70,13 +70,14 @@ function get_formatted_timediff($then, $now = false)
         $str .= ($mins > 1) ? ' minutes' : ' minute';
     }
 
+/*
     if ( $sec )
     {
         $str .= ($str) ? ', ' : '';
         $str .= intval($sec);
         $str .= ($sec > 1) ? ' seconds' : ' second';
     }
-
+*/
     if ( !$weeks && !$days && !$hours && !$mins && !$sec )
     {
         $str .= '0 seconds';

@@ -7,7 +7,7 @@ global $PLUGINS_DIRECTORY;
 $lan_file = e_PLUGIN."ebattles/languages/".e_LANGUAGE.".php";
 include_once(file_exists($lan_file) ? $lan_file : e_PLUGIN."ebattles/languages/English.php");
 
-$ebattles_title = 'eBattles';
+$ebattles_title = $pref['eb_links_menuheading'];
 $events_link    = e_PLUGIN.'ebattles/events.php';
 $teams_link     = e_PLUGIN.'ebattles/clans.php';
 $profile_link   = e_PLUGIN.'ebattles/userinfo.php?user='.USERID;

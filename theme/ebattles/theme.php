@@ -74,7 +74,7 @@ $FOOTER = "
 {MENU=3}
 </td>
 <td class='right_menu'>
-{MENU=4}
+{MENU=2}
 </td>
 <td class='rightr5'><img src='".THEME."images/blank.gif' width='1' alt='' class='ffimgfix' />
 </td>
@@ -241,4 +241,38 @@ $CHATBOXSTYLE = "
 </div>";
 
 
+//[commentstyle]
+
+$COMMENTSTYLE = "
+	<div style='text-align:center'>
+		<table style='width:100%'>
+			<tr>
+				<td colspan='2' class='alttd'>
+					{SUBJECT}
+					<b>
+						{USERNAME}
+					</b>
+ 					| 
+ 					{TIMEDATE}
+				</td>
+			</tr>
+			<tr>
+				<td style='width:30%; vertical-align:top'>
+					<div class='spacer'>
+						{AVATAR}
+					</div>
+					<span class='smalltext'>
+						{LEVEL}
+						{COMMENTS}
+						{JOINED}
+						{REPLY}
+					</span>
+				</td>
+				<td style='width:70%; vertical-align:top'>
+					{COMMENT}
+				</td>
+			</tr>
+		</table>
+	</div>
+<br />";
 ?>
