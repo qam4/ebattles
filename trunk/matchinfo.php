@@ -84,7 +84,7 @@ else
         $comments  = mysql_result($result,0, TBL_MATCHS.".Comments");
         $time_reported  = mysql_result($result,0, TBL_MATCHS.".TimeReported");
         $time_reported_local = $time_reported + GMT_TIMEOFFSET;
-        $date = date("d M Y, h:i:s A",$time_reported_local);
+        $date = date("d M Y, h:i A",$time_reported_local);
 
         $text .= "Match reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$reported_by\">$reported_by_name</a> ($date)<br />";
     }

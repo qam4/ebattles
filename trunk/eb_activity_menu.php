@@ -67,7 +67,7 @@ function displayRecentActivity(){
             $mEventAllowScore = mysql_result($result,$i, TBL_EVENTS.".AllowScore");
             $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
             $mTime_local = $mTime + GMT_TIMEOFFSET;
-            $date = date("d M Y, h:i:s A",$mTime_local);
+            $date = date("d M Y, h:i A",$mTime_local);
             $q2 = "SELECT DISTINCT ".TBL_MATCHS.".*, "
             .TBL_SCORES.".Player_Rank"
             ." FROM ".TBL_MATCHS.", "
@@ -170,7 +170,11 @@ function displayRecentActivity(){
                                 
                 $players .= " <div class='smalltext'>";
                 $players .= "Reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a> ";
-                if (($time-$mTime) < INT_DAY )
+                if (($time-$mTime) < INT_MINUTE )
+                {
+                    $players .= "a few seconds ago";
+                }
+                else if (($time-$mTime) < INT_DAY )
                 {
                     $players .= get_formatted_timediff($mTime, $time)." ago.";
                 }
@@ -224,7 +228,7 @@ function displayRecentActivity(){
             $aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
             $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
             $aTime_local = $aTime + GMT_TIMEOFFSET;
-            $date = date("d M Y, h:i:s A",$aTime_local);
+            $date = date("d M Y, h:i A",$aTime_local);
 
             switch ($aType) {
                 case 'PlayerTookFirstPlace':
@@ -253,8 +257,13 @@ function displayRecentActivity(){
             $award_string .= " <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$aUser\">$aUserNickName</a>";
             $award_string .= $award;
             $award_string .= " playing $aEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$aEventID\">$aEventName</a>)";
+
             $award_string .= " <div class='smalltext'>";
-            if (($time-$aTime) < INT_DAY )
+            if (($time-$aTime) < INT_MINUTE )
+            {
+                $award_string .= "a few seconds ago";
+            }
+            else if (($time-$aTime) < INT_DAY )
             {
                 $award_string .= get_formatted_timediff($aTime, $time)." ago.";
             }
