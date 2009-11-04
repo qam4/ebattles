@@ -97,7 +97,7 @@ else
             $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
             $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
             $mTime_local = $mTime + GMT_TIMEOFFSET;
-            $date = date("d M Y, h:i:s A",$mTime_local);
+            $date = date("d M Y, h:i A",$mTime_local);
             $q2 = "SELECT DISTINCT ".TBL_MATCHS.".*, "
             .TBL_SCORES.".Player_Rank"
             ." FROM ".TBL_MATCHS.", "
@@ -196,14 +196,23 @@ else
                     $players .= " (".$scores.") ";
                 }
                 $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\" title=\"Match $mID\">View details</a>)";
-                if (($time-$mTime) < INT_DAY )
+
+                $players .= " <div class='smalltext'>";
+                $players .= "Reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a> ";
+                if (($time-$mTime) < INT_MINUTE )
                 {
-                    $players .= " <div class='smalltext'>".get_formatted_timediff($mTime, $time)." ago.</div>";
+                    $players .= "a few seconds ago";
+                }
+                else if (($time-$mTime) < INT_DAY )
+                {
+                    $players .= get_formatted_timediff($mTime, $time)." ago.";
                 }
                 else
                 {
-                    $players .= " <div class='smalltext'>".$date.".</div>";
+                    $players .= "on ".$date.".";
                 }
+                $players .= " <a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\" title=\"Match $mID\">".getCommentTotal("ebmatches", $mID)." comments.</a>";
+                $players .= "</div>";
             }
             $text .= "$players<br />";
         }

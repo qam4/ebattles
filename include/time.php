@@ -77,7 +77,6 @@ function get_formatted_timediff($then, $now = false)
         $str .= intval($sec);
         $str .= ($sec > 1) ? ' seconds' : ' second';
     }
-*/
     if ( !$weeks && !$days && !$hours && !$mins && !$sec )
     {
         $str .= '0 seconds';
@@ -86,6 +85,7 @@ function get_formatted_timediff($then, $now = false)
     {
         $str .= '';
     }
+*/
 
     return $str;
 }
