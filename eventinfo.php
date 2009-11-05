@@ -849,7 +849,7 @@ else
                 $players = '';
                 $scores = '';
 
-                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
+                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?matchid=$mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
 
                 $rank = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
@@ -917,7 +917,7 @@ else
                     $players .= " (".$scores.") ";
                 }
 
-                $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\" title=\"Match $mID\">View details</a>)";
+                $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?matchid=$mID\" title=\"Match $mID\">View details</a>)";
 
                 $players .= " <div class='smalltext'>";
                 $players .= "Reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a> ";
@@ -933,7 +933,10 @@ else
                 {
                     $players .= "on ".$date.".";
                 }
-                $players .= " <a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$event_id&amp;matchid=$mID\" title=\"Match $mID\">".getCommentTotal("ebmatches", $mID)." comments.</a>";
+                $nbr_comments = getCommentTotal("ebmatches", $mID);
+                $players .= " <a href=\"".e_PLUGIN."ebattles/matchinfo.php?matchid=$mID\" title=\"Match $mID\">".$nbr_comments." comment";
+                $players .= ($nbr_comments > 1) ? "s" : "";
+                $players .= "</a>";
                 $players .= "</div>";
                 $text .= "$players<br />";
            }

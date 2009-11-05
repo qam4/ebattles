@@ -98,7 +98,7 @@ function displayRecentActivity(){
                 $players = '';
                 $scores = '';
 
-                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\" title=\"Match $mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
+                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?matchid=$mID\" title=\"Match $mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
 
                 $rank = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
@@ -182,7 +182,10 @@ function displayRecentActivity(){
                 {
                     $players .= "on ".$date.".";
                 }
-                $players .= " <a href=\"".e_PLUGIN."ebattles/matchinfo.php?eventid=$mEventID&amp;matchid=$mID\" title=\"Match $mID\">".getCommentTotal("ebmatches", $mID)." comments.</a>";
+                $nbr_comments = getCommentTotal("ebmatches", $mID);
+                $players .= " <a href=\"".e_PLUGIN."ebattles/matchinfo.php?matchid=$mID\" title=\"Match $mID\">".$nbr_comments." comment";
+                $players .= ($nbr_comments > 1) ? "s" : "";
+                $players .= "</a>";
                 $players .= "</div>";
 
                 $events[$nbr_events][0] = $mTime;

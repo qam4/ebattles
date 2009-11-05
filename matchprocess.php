@@ -217,7 +217,7 @@ if(isset($_POST['qrsubmitloss']))
     $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
     $result = $sql->db_Query($q);
 
-    header("Location: matchinfo.php?eventid=$event_id&matchid=$match_id");
+    header("Location: matchinfo.php?matchid=$match_id");
 }
 else
 {

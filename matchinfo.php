@@ -20,11 +20,9 @@ $text .='
 
 global $sql;
 
-/* Event Name */
-$event_id = $_GET['eventid'];
 $match_id = $_GET['matchid'];
 
-if (!$event_id)
+if (!$match_id)
 {
     header("Location: ./events.php");
     exit();
@@ -36,30 +34,28 @@ else
     $text .="<div class=\"tab\">Match details</div>";
 
     $q = "SELECT ".TBL_EVENTS.".*, "
-    .TBL_GAMES.".*"
+    .TBL_GAMES.".*, "
+    .TBL_MATCHS.".*, "
+    .TBL_USERS.".*"
     ." FROM ".TBL_EVENTS.", "
-    .TBL_GAMES
-    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')"
-    ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
+    .TBL_GAMES.", "
+    .TBL_MATCHS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+    ."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)"
+    ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+    ."   AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)";
 
     $result = $sql->db_Query($q);
+    $event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
     $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
     $egame = mysql_result($result,0 , TBL_GAMES.".Name");
     $eowner = mysql_result($result,0 , TBL_EVENTS.".Owner");
     $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
     $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-
-    $q = "SELECT ".TBL_MATCHS.".*, "
-    .TBL_USERS.".*"
-    ." FROM ".TBL_MATCHS.", "
-    .TBL_USERS
-    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-    ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)";
-    $result = $sql->db_Query($q);
     $reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
     $reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
-
 
     $q = "SELECT ".TBL_MATCHS.".*, "
     .TBL_SCORES.".*, "
@@ -181,8 +177,6 @@ else
         $text .= "</p>";
     }
 
-    $text .= getComment("ebmatches", $match_id);
-
     $text .= "</div>";
 
     $text .= "</div>";
@@ -193,6 +187,12 @@ else
     $text .= "</p>";
 
     $ns->tablerender("$ename ($egame - $etype)", $text);
+
+	unset($text);
+	
+    $text .= getComment("ebmatches", $match_id);
+    echo $text;
+
 }
 require_once(FOOTERF);
 exit;
