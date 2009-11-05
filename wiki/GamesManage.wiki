@@ -7,6 +7,14 @@
   # Game Manage page is accessible from
     * "Games" link in eBattles Menu
 == Manage the games ==
+  # In the Games page, the admin is presented with the paginated list of all the games.
+  From there, he can
+    * "Add Games": Add games listed in GamesList.csv in the database.
+    * Delete one (cross button), all or selected games
+    * Update all or selected games: Update games in database with info from GamesList.csv
+    * Go to Game Edit page
+== Edit one game ==
+  # To edit a specific game, go to the Games page, click on the game's name, or the pencil button.
   # List of things that can be customized in games
     * Name
     * Icon (internal or external link to image)
