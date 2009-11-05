@@ -1,5 +1,22 @@
 #summary eBattles Release Notes.
 
+= Release 0.4.135 =
+== Features ==
+ * Added support for Matches comments using e107 comments system.
+  * Show a link to matches comments in all matches lists.
+  * Added support for eBattles matches comments display in user info and list_new plugin comments lists.
+ * Improved Games management page.
+  * Now, admin is presented with the paginated list of all the games.
+  * From there, he can add/delect/update/edit one, all or selected games.
+ * Added Admin configuration for eBattles links menu and Recent Activity menu.
+  * eBattles links preference: Menu Heading
+  * Recent Activity preferences: Menu Heading and number of items to be shown.
+ * Added eBattles 32x32 icon.
+ * Added poker and chess to the games list.
+ * Changed time display in all matches lists.
+== Bug fixes ==
+ * Fixed vertical alignment issue in pagination items with Internet Explorer.
+
 = Release 0.4.130 =
 == Features ==
  * In Recent Activity menu, limit the number of recent events to show.
