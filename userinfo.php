@@ -55,13 +55,6 @@ else
     $text .= "User Profile: <a href='".e_BASE."user.php?id.$req_user'>$uname</a>";
     $text .= "</p>";
 
-    /* Display requested user information */
-    //$req_user_info = $sql->getUserInfo($req_user);
-
-    /* Username */
-    //$text .= "<b>Username: ".$req_user_info['username']."</b><br />";
-    /* Username */
-    //$text .= "<b>Nickname: ".$req_user_info['name']."</b><br />";
     $text .= "</div>";
 
     /* Display list of events */
@@ -651,8 +644,103 @@ else
             $text .= "$players";
         }
     }
-
     $text .= "</div>";
+
+    /* Display list of awards */
+    $text .= '
+    <div class="tab-page">
+    <div class="tab">Awards</div>
+    ';
+
+    /* Stats/Results */
+    $q = "SELECT ".TBL_AWARDS.".*, "
+    .TBL_EVENTS.".*, "
+    .TBL_PLAYERS.".*, "
+    .TBL_GAMES.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_AWARDS.", "
+    .TBL_PLAYERS.", "
+    .TBL_EVENTS.", "
+    .TBL_GAMES.", "
+    .TBL_USERS
+    ." WHERE (".TBL_USERS.".user_id = $req_user)"
+    ." AND (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
+    ." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
+    ." AND (".TBL_PLAYERS.".Event = ".TBL_EVENTS.".EventID)"
+    ." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+    ." ORDER BY ".TBL_AWARDS.".timestamp DESC";
+
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+
+    $text .= "<br />";
+    if ($num_rows>0)
+    {
+        /* Display table contents */
+        for($i=0; $i<$num_rows; $i++)
+        {
+            $aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
+            $aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
+            $aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
+            $aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
+            $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
+            $aTime_local = $aTime + GMT_TIMEOFFSET;
+            $aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
+            $aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
+            $aEventgame = mysql_result($result,$i , TBL_GAMES.".Name");
+            $aEventgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
+            $date = date("d M Y, h:i A",$aTime_local);
+
+            switch ($aType) {
+                case 'PlayerTookFirstPlace':
+                $award = " took 1st place";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"/> ";
+                break;
+                case 'PlayerInTopTen':
+                $award = " entered top 10";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"/> ";
+                break;
+                case 'PlayerStreak5':
+                $award = " won 5 games in a row";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_bronze_3.png\" alt=\"1st place\" title=\"5 in a row\"/> ";
+                break;
+                case 'PlayerStreak10':
+                $award = " won 10 games in a row";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_silver_3.png\" alt=\"1st place\" title=\"10 in a row\"/> ";
+                break;
+                case 'PlayerStreak25':
+                $award = " won 25 games in a row";
+                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_gold_3.png\" alt=\"1st place\" title=\"25 in a row\"/> ";
+                break;
+            }
+
+            $award_string = $icon;
+            $award_string .= " <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$aUser\">$aUserNickName</a>";
+            $award_string .= $award;
+
+            $award_string .= " playing $aEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$aEventID\">$aEventName</a>)";
+
+            $award_string .= " <div class='smalltext'>";
+            if (($time-$aTime) < INT_MINUTE )
+            {
+                $award_string .= "a few seconds ago";
+            }
+            else if (($time-$aTime) < INT_DAY )
+            {
+                $award_string .= get_formatted_timediff($aTime, $time)." ago.";
+            }
+            else
+            {
+                $award_string .= $date;
+            }
+            $award_string .= "</div>";
+
+            $text .= "$award_string";
+        }
+    }
+    $text .= "<br />";
+    $text .="</div>";
+
     $text .= "</div>";
 
     $text .= '
