@@ -179,6 +179,7 @@ if (isset($_POST['submit']))
         $row = mysql_fetch_array($result);
         $puid = $row['user_id'];
         $pTeam = $row['Team'];
+        $pMatchTeam = $_POST['team'.$i];
 
         if ($pid == $players_name[0])
         $error_str .= '<li>Player #'.$i.' not selected</li>';
@@ -198,10 +199,11 @@ if (isset($_POST['submit']))
             $row = mysql_fetch_array($result);
             $pjuid = $row['user_id'];
             $pjTeam = $row['Team'];
+            $pjMatchTeam = $_POST['team'.$j];
 
             if ($puid == $pjuid)
             $error_str .= '<li>Player #'.$i.' is the same as Player #'.$j.'</li>';
-            if ($pTeam == $pjTeam)
+            if (($pTeam == $pjTeam)&&($pMatchTeam != $pjMatchTeam)&&($pTeam != 0))
             $error_str .= '<li>Player #'.$i.' and Player #'.$j.' are in the same team division</li>';
         }
     }

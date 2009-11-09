@@ -27,7 +27,6 @@ else
     $q = "SELECT ".TBL_EVENTS.".*"
     ." FROM ".TBL_EVENTS
     ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
-
     $result = $sql->db_Query($q);
     $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
     $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
@@ -37,9 +36,17 @@ else
     ." FROM ".TBL_PLAYERS.", "
     .TBL_USERS
     ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+    ."   AND (".TBL_USERS.".user_id = '".USERID."')";
+    $result = $sql->db_Query($q);
+    $uteam = mysql_result($result,0 , TBL_PLAYERS.".Team");
+    
+    $q = "SELECT ".TBL_PLAYERS.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
     ."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
     ." ORDER BY ".TBL_USERS.".user_name";
-
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
 
@@ -85,7 +92,7 @@ else
             }
         }
 
-        if($puid != USERID)
+        if(($puid != USERID)&&(($uteam == 0)||($uteam != $pteam)))
         {
             if ($prank==0)
             $prank_txt = "Not ranked";
