@@ -19,10 +19,10 @@ global $e_wysiwyg;
 // Enable WYSIWYG
 if ($pref['wysiwyg'])
 {
-// Specify if we use WYSIWYG for text areas
-$e_wysiwyg	= "elm1";
-define(e_WYSIWYG, TRUE);
-$WYSIWYG = TRUE;
+    // Specify if we use WYSIWYG for text areas
+    $e_wysiwyg	= "elm1";
+    define(e_WYSIWYG, TRUE);
+    $WYSIWYG = TRUE;
 }
 
 /*******************************************************************
@@ -178,6 +178,7 @@ if (isset($_POST['submit']))
         $result = $sql->db_Query($q);
         $row = mysql_fetch_array($result);
         $puid = $row['user_id'];
+        $pTeam = $row['Team'];
 
         if ($pid == $players_name[0])
         $error_str .= '<li>Player #'.$i.' not selected</li>';
@@ -196,9 +197,12 @@ if (isset($_POST['submit']))
             $result = $sql->db_Query($q);
             $row = mysql_fetch_array($result);
             $pjuid = $row['user_id'];
+            $pjTeam = $row['Team'];
 
             if ($puid == $pjuid)
             $error_str .= '<li>Player #'.$i.' is the same as Player #'.$j.'</li>';
+            if ($pTeam == $pjTeam)
+            $error_str .= '<li>Player #'.$i.' and Player #'.$j.' are in the same team division</li>';
         }
     }
 
@@ -584,7 +588,7 @@ if (isset($_POST['submit']))
 
             // Update database.
             // Reset rank delta after a match.
-            $q_3 = "UPDATE ".TBL_PLAYERS 
+            $q_3 = "UPDATE ".TBL_PLAYERS
             ." SET ELORanking = $pELO,"
             ."     TS_mu = $pTS_mu,"
             ."     TS_sigma = $pTS_sigma,"
@@ -601,7 +605,7 @@ if (isset($_POST['submit']))
             ."     RankDelta = 0"
             ." WHERE (PlayerID = '$pid')";
             $result_3 = $sql->db_Query($q_3);
-            
+
             if ($etype == "Team Ladder")
             {
                 // Reset rank delta after a match.
@@ -637,7 +641,7 @@ if (isset($_POST['submit']))
     {
         // the form has not been submitted, let's show it
         user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore);
-}
+    }
 }
 
 $text .= '
