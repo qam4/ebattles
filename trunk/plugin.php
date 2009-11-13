@@ -60,7 +60,9 @@ $eplug_prefs = array(
     "eb_avatar_default_image" => 'anonymous.png',
     "eb_links_menuheading" => EBATTLES_ADMIN_L29,
     "eb_activity_menuheading" => EBATTLES_ADMIN_L31,
-    "eb_activity_number_of_items" => 10
+    "eb_activity_number_of_items" => 10,
+    "eb_activity_max_image_size_check" => 1,
+    "eb_activity_max_image_size" => 8
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -437,9 +439,9 @@ if ($revision < 133)
     );
 }
 
-if ($revision < 136)
+if ($revision < 141)
 {
-    // To revision 136
+    // To revision 141
     $upgrade_alter_tables += array(
         "ALTER TABLE ".TBL_PLAYERS_RESULTS." ADD Display varchar(63) NOT NULL default ''",
         "ALTER TABLE ".TBL_GAMES." DROP Style",
@@ -462,6 +464,10 @@ if ($revision < 136)
         FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
         Platform varchar(63)
         ) TYPE = MyISAM;"
+    );
+    $upgrade_add_prefs += array(
+        "eb_activity_max_image_size_check" => 1,
+        "eb_activity_max_image_size" => 8
     );
 }
 

@@ -10,7 +10,7 @@ $text = '';
 
 if ((!isset($_POST['createevent']))||(!check_class($pref['eb_events_create_class'])))
 {
-   $text .= "<br />You are not authorized to create an event.<br />";
+   $text .= '<br />You are not authorized to create an event.<br />';
 }
 else
 {

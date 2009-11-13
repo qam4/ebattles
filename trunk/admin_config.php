@@ -41,6 +41,8 @@ if (isset($_POST['updatelinks'])) {
 if (isset($_POST['update_activity'])) {
     $pref['eb_activity_menuheading'] = $_POST['eb_activity_menuheading'];
     $pref['eb_activity_number_of_items'] = $_POST['eb_activity_number_of_items'];
+    $pref['eb_activity_max_image_size_check'] = $_POST['eb_activity_max_image_size_check'];
+    $pref['eb_activity_max_image_size'] = $_POST['eb_activity_max_image_size'];
     save_prefs();
     $message = EBATTLES_ADMIN_L1;
 }
@@ -122,6 +124,15 @@ if((isset($qs[0]) && $qs[0] == "eb_activity"))
     </tr>
     ";
     
+    $text .= "<tr>
+    <td class='forumheader3' style='width:40%'>".EBATTLES_ADMIN_L15.":  <div class='smalltext'>".EBATTLES_ADMIN_L16."</div></td>
+    <td class='forumheader3' style='width:60%'>
+    <input class='tbox' type='text' name='eb_activity_max_image_size' size='8' value='".$pref['eb_activity_max_image_size']."' maxlength='3' /> px<br />
+    <input class='tbox' type='checkbox' name='eb_activity_max_image_size_check' value='1' ".($pref['eb_activity_max_image_size_check'] == 1 ? "checked='checked'" :"")."/>".EBATTLES_ADMIN_L17."
+    </td>
+    </tr>
+    ";
+
     $text .= "<tr>
     <td  class='forumheader' colspan='3' style='text-align:center'>
     <input class='button' type='submit' name='update_activity' value='".EBATTLES_ADMIN_L28."' />

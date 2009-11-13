@@ -563,9 +563,9 @@ for($player=0; $player<$numPlayers; $player++)
     {
         if($avatar[$index])
         {
-            $image = '<img src="'.avatar($avatar[$index]).'" alt="" '.imageResize(avatar($avatar[$index]), $pref['eb_max_avatar_size']).' style="vertical-align:middle"/>';
+            $image = '<img '.getAvatarResize(avatar($avatar[$index])).' style="vertical-align:middle"/>';
         } else if ($pref['eb_avatar_default_image'] != ''){
-            $image = '<img src="'.getAvatar($pref['eb_avatar_default_image']).'" alt="" style="vertical-align:middle" width="'.$pref['eb_max_avatar_size'].'"/>';
+            $image = '<img '.getAvatarResize(getAvatar($pref['eb_avatar_default_image'])).' style="vertical-align:middle"/>';
         }
     }
 

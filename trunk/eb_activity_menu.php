@@ -95,11 +95,14 @@ function displayRecentActivity(){
                 $result2 = $sql->db_Query($q2);
                 $numPlayers = mysql_numrows($result2);
                 $pname = '';
-                $players = '';
+                $players = '<tr>';
                 $scores = '';
 
-                $players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?matchid=$mID\" title=\"Match $mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
+                $players .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">';
+                $players .= '<img '.getActivityGameIconResize($mEventgameicon).'/>';
+                $players .= '</a></td>';
 
+                $players .= '<td>';
                 $rank = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
                 {
@@ -157,36 +160,36 @@ function displayRecentActivity(){
                         $scores .= $pscore;
                     }
 
-                    $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
+                    $players .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$pid.'">'.$pclantag.$pname.'</a>';
                 }
 
                 //score here
                 if ($mEventAllowScore == TRUE)
                 {
-                    $players .= " (".$scores.") ";
+                    $players .= ' ('.$scores.') ';
                 }
 
-                $players .= " playing $mEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$mEventID\">$mEventName</a>)";
+                $players .= ' playing '.$mEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>)';
                                 
-                $players .= " <div class='smalltext'>";
-                $players .= "Reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a> ";
+                $players .= ' <div class="smalltext">';
+                $players .= 'Reported by <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
                 if (($time-$mTime) < INT_MINUTE )
                 {
-                    $players .= "a few seconds ago";
+                    $players .= 'a few seconds ago';
                 }
                 else if (($time-$mTime) < INT_DAY )
                 {
-                    $players .= get_formatted_timediff($mTime, $time)." ago.";
+                    $players .= get_formatted_timediff($mTime, $time).' ago.';
                 }
                 else
                 {
-                    $players .= "on ".$date.".";
+                    $players .= 'on '.$date.'.';
                 }
                 $nbr_comments = getCommentTotal("ebmatches", $mID);
-                $players .= " <a href=\"".e_PLUGIN."ebattles/matchinfo.php?matchid=$mID\" title=\"Match $mID\">".$nbr_comments." comment";
+                $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">'.$nbr_comments.' comment';
                 $players .= ($nbr_comments > 1) ? "s" : "";
-                $players .= "</a>";
-                $players .= "</div>";
+                $players .= '</a>';
+                $players .= '</div></td></tr>';
 
                 $events[$nbr_events][0] = $mTime;
                 $events[$nbr_events][1] = $players;
@@ -232,49 +235,49 @@ function displayRecentActivity(){
             $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
             $aTime_local = $aTime + GMT_TIMEOFFSET;
             $date = date("d M Y, h:i A",$aTime_local);
-
+            
             switch ($aType) {
                 case 'PlayerTookFirstPlace':
-                $award = " took 1st place";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"/> ";
+                $award = ' took 1st place';
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="1st place" title="1st place"/> ';
                 break;
                 case 'PlayerInTopTen':
-                $award = " entered top 10";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"/> ";
+                $award = ' entered top 10';
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="top 10" title="top 10"/> ';
                 break;
                 case 'PlayerStreak5':
-                $award = " won 5 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_bronze_3.png\" alt=\"1st place\" title=\"5 in a row\"/> ";
+                $award = ' won 5 games in a row';
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="1st place" title="5 in a row"/> ';
                 break;
                 case 'PlayerStreak10':
-                $award = " won 10 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_silver_3.png\" alt=\"1st place\" title=\"10 in a row\"/> ";
+                $award = ' won 10 games in a row';
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="1st place" title="10 in a row"/> ';
                 break;
                 case 'PlayerStreak25':
-                $award = " won 25 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_gold_3.png\" alt=\"1st place\" title=\"25 in a row\"/> ";
+                $award = ' won 25 games in a row';
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="1st place" title="25 in a row"/> ';
                 break;
             }
 
-            $award_string = $icon;
-            $award_string .= " <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$aUser\">$aUserNickName</a>";
+            $award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
+            $award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
             $award_string .= $award;
             $award_string .= " playing $aEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$aEventID\">$aEventName</a>)";
 
-            $award_string .= " <div class='smalltext'>";
+            $award_string .= ' <div class="smalltext">';
             if (($time-$aTime) < INT_MINUTE )
             {
-                $award_string .= "a few seconds ago";
+                $award_string .= 'a few seconds ago';
             }
             else if (($time-$aTime) < INT_DAY )
             {
-                $award_string .= get_formatted_timediff($aTime, $time)." ago.";
+                $award_string .= get_formatted_timediff($aTime, $time).' ago.';
             }
             else
             {
                 $award_string .= $date;
             }
-            $award_string .= "</div>";
+            $award_string .= '</div></td></tr>';
 
             $events[$nbr_events][0] = $aTime;
             $events[$nbr_events][1] = $award_string;
@@ -282,11 +285,13 @@ function displayRecentActivity(){
         }
     }
 
+    $text = '<table style="margin-left: 0px; margin-right: auto;">';
     multi2dSortAsc($events, 0, SORT_DESC);
     for ($index = 0; $index<min($nbr_events, $rowsPerPage); $index++)
     {
         $text .= $events[$index][1];
     }
+    $text .= '</table>';
 
     return $text;
 }
