@@ -125,11 +125,11 @@ function displayCurrentEvents(){
             $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
         }
     }
-    $text .= "</select>\n";
-    $text .= "</td>\n";
-    $text .= "</tr>\n";
-    $text .= "</table>\n";
-    $text .= "<br />\n";
+    $text .= '</select>';
+    $text .= '</td>';
+    $text .= '</tr>';
+    $text .= '</table>';
+    $text .= '<br />';
 
     if ($gameid == "All")
     {
@@ -184,19 +184,19 @@ function displayCurrentEvents(){
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
     if(!$result || ($num_rows < 0)){
-        $text .= "Error displaying info";
+        $text .= 'Error displaying info';
         return;
     }
     if($num_rows == 0){
-        $text .= "No events</div>";
-        $text .= "</form><br/>";
+        $text .= 'No events</div>';
+        $text .= '</form><br/>';
     }
     else
     {
 
         // Paginate & Sorting
         $items = '';
-        foreach($array as $opt=>$opt_array)	$items .= ($opt == $orderby) ? "<option selected=\"selected\" value=\"$opt\">$opt_array[0]</option>\n":"<option value=\"$opt\">$opt_array[0]</option>\n";
+        foreach($array as $opt=>$opt_array)	$items .= ($opt == $orderby) ? '<option selected="selected" value="'.$opt.'">'.$opt_array[0].'</option>':'<option value="'.$opt.'">'.$opt_array[0].'</option>';
 
         // Paginate
         $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
@@ -205,7 +205,7 @@ function displayCurrentEvents(){
         $text .= 'Sort by ';
         $text .= '<select class="tbox" name="orderby" onchange="this.form.submit()">';
         $text .= $items;
-        $text .= "</select>\n";
+        $text .= '</select>';
         // Up/Down arrow
         $text .= '<input type="hidden" id="sort" name="sort" value=""/>';
         if ($sort =="ASC")
@@ -229,8 +229,8 @@ function displayCurrentEvents(){
         $text .= '</form><br/><br/>';
 
         /* Display table contents */
-        $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
-        $text .= "<tr><td class=\"forumheader\">Event</td><td colspan=\"2\" class=\"forumheader\">Game</td><td class=\"forumheader\">Type</td><td class=\"forumheader\">Start</td><td class=\"forumheader\">End</td><td class=\"forumheader\">Players</td><td class=\"forumheader\">Games</td></tr>\n";
+        $text .= '<table class="fborder" style="width:95%"><tbody>';
+        $text .= '<tr><td class="forumheader">Event</td><td colspan="2" class="forumheader">Game</td><td class="forumheader">Type</td><td class="forumheader">Start</td><td class="forumheader">End</td><td class="forumheader">Players</td><td class="forumheader">Games</td></tr>';
         for($i=0; $i<$num_rows; $i++){
             $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
             $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -280,25 +280,34 @@ function displayCurrentEvents(){
             ||($eend>=$time)
             )
             {
-                $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img ".getGameIconResize($gicon)."/></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
+                $text .= '<tr>
+                <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></td>
+                <td class="forumheader3"><img '.getGameIconResize($gicon).'/></td>
+                <td class="forumheader3">'.$gname.'</td>
+                <td class="forumheader3">'.$etype.'</td>
+                <td class="forumheader3">'.$date_start.'</td>
+                <td class="forumheader3">'.$date_end.'</td>
+                <td class="forumheader3">'.$nbrplayers.'</td>
+                <td class="forumheader3">'.$nbrmatches.'</td>
+                </tr>';
             }
         }
-        $text .= "</tbody></table><br />\n";
+        $text .= '</tbody></table><br />';
     }
 
     if(check_class($pref['eb_events_create_class']))
     {
-        $text .= "<form action=\"".e_PLUGIN."ebattles/eventcreate.php\" method=\"post\">";
-        $text .= "<div>";
-        $text .= "<input type=\"hidden\" name=\"userid\" value=\"".USERID."\"/>";
-        $text .= "<input type=\"hidden\" name=\"username\" value=\"".USERNAME."\"/>";
-        $text .= "<input class=\"button\" type=\"submit\" name=\"createevent\" value=\"Create new event\"/>";
-        $text .= "</div>";
-        $text .= "</form>";
+        $text .= '<form action="'.e_PLUGIN.'ebattles/eventcreate.php" method="post">';
+        $text .= '<div>';
+        $text .= '<input type="hidden" name="userid" value="'.USERID.'"/>';
+        $text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
+        $text .= '<input class="button" type="submit" name="createevent" value="Create new event"/>';
+        $text .= '</div>';
+        $text .= '</form>';
     }
     else
     {
-        //$text .= "<div>You are not authorized to create an event.</div>";
+        //$text .= '<div>You are not authorized to create an event.</div>';
     }
 }
 
@@ -348,12 +357,12 @@ function displayRecentEvents(){
             $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
         }
     }
-    $text .= "</select>\n";
-    $text .= "</td>\n";
-    $text .= "</tr>\n";
-    $text .= "</table>\n";
-    $text .= "</form>\n";
-    $text .= "<br />\n";
+    $text .= '</select>';
+    $text .= '</td>';
+    $text .= '</tr>';
+    $text .= '</table>';
+    $text .= '</form>';
+    $text .= '<br />';
 
     if ($gameid == "All")
     {
@@ -383,16 +392,24 @@ function displayRecentEvents(){
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
     if(!$result || ($num_rows < 0)){
-        $text .= "Error displaying info";
+        $text .= 'Error displaying info';
         return;
     }
     if($num_rows == 0){
-        $text .= "<div>No events</div>";
+        $text .= '<div>No events</div>';
         return;
     }
     /* Display table contents */
-    $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
-    $text .= "<tr><td class=\"forumheader\">Event</td><td colspan=\"2\" class=\"forumheader\">Game</td><td class=\"forumheader\">Type</td><td class=\"forumheader\">Start</td><td class=\"forumheader\">End</td><td class=\"forumheader\">Players</td><td class=\"forumheader\">Games</td></tr>\n";
+    $text .= '<table class="fborder" style="width:95%"><tbody>';
+    $text .= '<tr>
+    <td class="forumheader">Event</td>
+    <td colspan="2" class="forumheader">Game</td>
+    <td class="forumheader">Type</td>
+    <td class="forumheader">Start</td>
+    <td class="forumheader">End</td>
+    <td class="forumheader">Players</td>
+    <td class="forumheader">Games</td>
+    </tr>';
     for($i=0; $i<$num_rows; $i++){
         $gname  = mysql_result($result,$i, TBL_GAMES.".name");
         $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -440,14 +457,23 @@ function displayRecentEvents(){
         &&($eend<$time)
         )
         {
-            $text .= "<tr><td class=\"forumheader3\"><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$eid\">$ename</a></td><td class=\"forumheader3\"><img ".getGameIconResize($gicon)."/></td><td class=\"forumheader3\">$gname</td><td class=\"forumheader3\">$etype</td><td class=\"forumheader3\">$date_start</td><td class=\"forumheader3\">$date_end</td><td class=\"forumheader3\">$nbrplayers</td><td class=\"forumheader3\">$nbrmatches</td></tr>\n";
+            $text .= '<tr>
+            <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></td>
+            <td class="forumheader3"><img '.getGameIconResize($gicon).'/></td>
+            <td class="forumheader3">'.$gname.'</td>
+            <td class="forumheader3">'.$etype.'</td>
+            <td class="forumheader3">'.$date_start.'</td>
+            <td class="forumheader3">'.$date_end.'</td>
+            <td class="forumheader3">'.$nbrplayers.'</td>
+            <td class="forumheader3">'.$nbrmatches.'</td>
+            </tr>';
         }
     }
-    $text .= "</tbody></table><br />\n";
+    $text .= '</tbody></table><br />';
 
-    $text .= "<p>";
-    $text .= "[<a href=\"".e_PLUGIN."ebattles/eventspast.php\">Show all past events</a>]";
-    $text .= "</p>";
+    $text .= '<p>';
+    $text .= '[<a href="'.e_PLUGIN.'ebattles/eventspast.php">Show all past events</a>]';
+    $text .= '</p>';
 }
 ?>
 

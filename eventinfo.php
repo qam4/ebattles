@@ -5,7 +5,6 @@
 */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
-
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 include_once(e_PLUGIN."ebattles/include/show_array.php");
 
@@ -180,22 +179,22 @@ else
 
     if ($etype == "Team Ladder")
     {
-        $text .="<div class=\"tab-pane\" id=\"tab-pane-1-team\">";
+        $text .= '<div class="tab-pane" id="tab-pane-1-team">';
     }
     else
     {
-        $text .="<div class=\"tab-pane\" id=\"tab-pane-1\">";
+        $text .= '<div class="tab-pane" id="tab-pane-1">';
     }
 
-    $text .="<div class=\"tab-page\">";
-    $text .="<div class=\"tab\">Event</div>";
+    $text .= '<div class="tab-page">';
+    $text .= '<div class="tab">Event</div>';
     $text .= $edescription;
-    $text .="</div>";
+    $text .= '</div>';
 
     /* Join/Quit Event */
-    $text .="<div class=\"tab-page\">";
-    $text .="<div class=\"tab\">Signup</div>";
-    $text .= "<table style=\"width:95%\"><tbody>";
+    $text .= '<div class="tab-page">';
+    $text .= '<div class="tab">Signup</div>';
+    $text .= '<table style="width:95%"><tbody>';
     if(check_class(e_UC_MEMBER))
     {
         // If logged in
@@ -237,7 +236,7 @@ else
                         $result_2 = $sql->db_Query($q_2);
                         $num_rows_2 = mysql_numrows($result_2);
 
-                        $text .= "<tr>";
+                        $text .= '<tr>';
                         $text .= '<td>You are the captain of '.$div_name.'.</td>';
                         if( $num_rows_2 == 0)
                         {
@@ -481,38 +480,38 @@ else
         $text .= '<td></td></tr>';
     }
     $text .= '</tbody></table>';
-    $text .="</div>";
+    $text .= '</div>';
 
-    $text .="<div class=\"tab-page\">";
-    $text .="<div class=\"tab\">Info</div>";
+    $text .= '<div class="tab-page">';
+    $text .= '<div class="tab">Info</div>';
 
-    $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+    $text .= '<table class="fborder" style="width:95%"><tbody>';
 
-    $text .= "<tr>";
+    $text .= '<tr>';
     $text .= '<td class="forumheader3">Ladder</td>';
     $text .= '<td class="forumheader3"><b>'.$ename.'</b></td>';
-    $text .= "</tr>";
+    $text .= '</tr>';
 
-    $text .= "<tr>";
+    $text .= '<tr>';
     $text .= '<td class="forumheader3">Type</td>';
     $text .= '<td class="forumheader3">'.$etype.'</td>';
-    $text .= "</tr>";
+    $text .= '</tr>';
 
-    $text .= "<tr>";
+    $text .= '<tr>';
     $text .= '<td class="forumheader3">Game</td>';
     $text .= '<td class="forumheader3"><img '.getGameIconResize($egameicon).'/> '.$egame.'</td>';
-    $text .= "</tr>";
+    $text .= '</tr>';
 
-    $text .= "<tr>";
-    $text .='<td class="forumheader3">Owner</td><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
+    $text .= '<tr>';
+    $text .= '<td class="forumheader3">Owner</td><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
     $can_manage = 0;
     if (check_class($pref['eb_mod_class'])) $can_manage = 1;
     if (USERID==$eowner) $can_manage = 1;
     if ($can_manage == 1)
-    $text .="<br /><a href=\"".e_PLUGIN."ebattles/eventmanage.php?eventid=$event_id\">Click here to Manage event</a>";
-    $text .="</td></tr>";
+    $text .= '<br /><a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'">Click here to Manage event</a>';
+    $text .= '</td></tr>';
 
-    $text .= "<tr>";
+    $text .= '<tr>';
     $q = "SELECT ".TBL_EVENTMODS.".*, "
     .TBL_USERS.".*"
     ." FROM ".TBL_EVENTMODS.", "
@@ -529,7 +528,7 @@ else
         for($i=0; $i<$num_rows; $i++){
             $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
             $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
-            $text .= "<li><a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$modid\">$modname</a></li>";
+            $text .= '<li><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$modid.'">'.$modname.'</a></li>';
         }
         $text .= '</ul>';
     }
@@ -547,8 +546,8 @@ else
 
     if ($etype == "Team Ladder")
     {
-        $text .="<div class=\"tab-page\">";
-        $text .="<div class=\"tab\">Teams Standings</div>";
+        $text .= '<div class="tab-page">';
+        $text .= '<div class="tab">Teams Standings</div>';
 
         /* Update Stats */
         if ($eneedupdate == 1)
@@ -558,7 +557,7 @@ else
 
         if (($time < $enextupdate) && ($eischanged == 1))
         {
-            $text .="Next Update: $date_nextupdate<br />";
+            $text .= 'Next Update: '.$date_nextupdate.'<br />';
         }
         /* Nbr Teams */
         $q = "SELECT COUNT(*) as NbrTeams"
@@ -567,11 +566,11 @@ else
         $result = $sql->db_Query($q);
         $row = mysql_fetch_array($result);
         $nbrteams = $row['NbrTeams'];
-        $text .="<div class=\"spacer\">";
-        $text .="<p>";
-        $text .="$nbrteams teams<br />";
-        $text .="Minimum $eminteamgames team matches to rank.<br /><br />";
-        $text .="</p>";
+        $text .= '<div class="spacer">';
+        $text .= '<p>';
+        $text .= $nbrteams.' teams<br />';
+        $text .= 'Minimum '.$eminteamgames.' team matches to rank.<br /><br />';
+        $text .= '</p>';
 
         $stats = unserialize(implode('',file($file_team)));
         // debug print array
@@ -579,8 +578,8 @@ else
         $nbr_rows = count($stats);
         $text .= html_show_table($stats, $nbr_rows, $num_columns);
 
-        $text .= "</div>";
-        $text .= "</div>";
+        $text .= '</div>';
+        $text .= '</div>';
     }
     // Players standings stats
     $stats = unserialize(implode('',file($file)));
@@ -607,24 +606,24 @@ else
     multi2dSortAsc($stats, $orderby, $sort_type);
     $stats = array_merge($header, $stats);
 
-    $text .="<div class=\"tab-page\">";
-    $text .="<div class=\"tab\">Players Standings</div>";
+    $text .= '<div class="tab-page">';
+    $text .= '<div class="tab">Players Standings</div>';
 
     if (($time < $enextupdate) && ($eischanged == 1))
     {
-        $text .="Next Update: $date_nextupdate<br />";
+        $text .= 'Next Update: '.$date_nextupdate.'<br />';
     }
 
+    /* set pagination variables */
     $totalItems = $nbrplayers;
     $pages->items_total = $totalItems;
     $pages->mid_range = eb_PAGINATION_MIDRANGE;
     $pages->paginate();
 
-    $text .="<div class=\"spacer\">";
-    $text .="<p>";
-    $text .="$nbrplayers players<br />";
-    $text .="Minimum $emingames matches to rank.<br />";
-    $text .="</p>";
+    $text .= '<p>';
+    $text .= $nbrplayers.' players<br />';
+    $text .= 'Minimum '.$emingames.' matches to rank.<br />';
+    $text .= '</p>';
 
     /* My Position */
     $q = "SELECT *"
@@ -653,9 +652,9 @@ else
 
         ($search_user) ? $link_page = ceil($search_user[0]/$pages->items_per_page) : $link_page = 1;
 
-        $text .= "<p>";
+        $text .= '<p>';
         $text .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">Show My Position $prank_txt</a><br />";
-        $text .= "</p>";
+        $text .= '</p>';
         // Is the event started, and not ended
         if (  ($eend == 0)
         ||(  ($eend >= $time)
@@ -722,28 +721,28 @@ else
 
     if(($can_report_quickloss != 0)||($can_report != 0))
     {
-        $text .= "<table>";
-        $text .= "<tr>";
+        $text .= '<table>';
+        $text .= '<tr>';
         if($can_report_quickloss != 0)
         {
             $text .= '<td>';
-            $text .= "<form action=\"".e_PLUGIN."ebattles/quickreport.php?eventid=$event_id\" method=\"post\">";
-            $text .= "<div><input class=\"button\" type=\"submit\" name=\"quicklossreport\" value=\"Quick Loss Report\"/></div>";
-            $text .= "</form>";
-            $text .= "</td>";
+            $text .= '<form action="'.e_PLUGIN.'ebattles/quickreport.php?eventid='.$event_id.'" method="post">';
+            $text .= '<div><input class="button" type="submit" name="quicklossreport" value="Quick Loss Report"/></div>';
+            $text .= '</form>';
+            $text .= '</td>';
         }
         if($can_report != 0)
         {
             $text .= '<td>';
-            $text .= "<form action=\"".e_PLUGIN."ebattles/matchreport.php?eventid=$event_id\" method=\"post\">";
-            $text .= "<div><input class=\"button\" type=\"submit\" name=\"matchreport\" value=\"Match Report\"/></div>";
-            $text .= "</form>";
-            $text .= "</td>";
+            $text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'" method="post">';
+            $text .= '<div><input class="button" type="submit" name="matchreport" value="Match Report"/></div>';
+            $text .= '</form>';
+            $text .= '</td>';
         }
-        $text .= "</tr>";
-        $text .= "</table>";
+        $text .= '</tr>';
+        $text .= '</table>';
     }
-    $text .= "<br />";
+    $text .= '<br />';
 
     // Paginate
     $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
@@ -770,8 +769,7 @@ else
     }
     $text .= html_show_table($stats_paginate, $nbr_rows, $num_columns);
 
-    $text .= "</div>";
-    $text .= "</div>";
+    $text .= '</div>';
 
     $text .= '
     <div class="tab-page">
@@ -789,10 +787,11 @@ else
 
     $row = mysql_fetch_array($result);
     $nbrmatches = $row['NbrMatches'];
-    $text .="<p>";
-    $text .="$nbrmatches matches played";
-    $text .="</p>";
-    $text .="<br />";
+    $text .= '<p>';
+    $text .= $nbrmatches.' matches played';
+    $text .= ' [<a href="'.e_PLUGIN.'ebattles/eventmatchs.php?eventid='.$event_id.'">Show all Matches</a>]';
+    $text .= '</p>';
+    $text .= '<br />';
 
     $rowsPerPage = $pref['eb_default_items_per_page'];
     /* Stats/Results */
@@ -806,11 +805,13 @@ else
     ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
     ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
     ." LIMIT 0, $rowsPerPage";
+
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
     if ($num_rows>0)
     {
         /* Display table contents */
+        $text .= '<table class="table_left">';
         for($i=0; $i<$num_rows; $i++)
         {
             $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
@@ -846,11 +847,16 @@ else
                 $result2 = $sql->db_Query($q2);
                 $numPlayers = mysql_numrows($result2);
                 $pname = '';
-                $players = '';
+                $players = '<tr>';
                 $scores = '';
 
-                //$players .= "<a href=\"".e_PLUGIN."ebattles/matchinfo.php?matchid=$mID\"><img ".getGameIconResize($mEventgameicon)."/></a> ";
+                /*
+                $players .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">';
+                $players .= '<img '.getActivityGameIconResize($mEventgameicon).'/>';
+                $players .= '</a></td>';
+                */
 
+                $players .= '<td>';
                 $rank = 1;
                 for ($index = 0; $index < $numPlayers; $index++)
                 {
@@ -908,47 +914,46 @@ else
                         $scores .= $pscore;
                     }
 
-                    $players .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$pid\">$pclantag$pname</a>";
+                    $players .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$pid.'">'.$pclantag.$pname.'</a>';
                 }
 
                 //score here
                 if ($mEventAllowScore == TRUE)
                 {
-                    $players .= " (".$scores.") ";
+                    $players .= ' ('.$scores.') ';
                 }
 
-                $players .= " (<a href=\"".e_PLUGIN."ebattles/matchinfo.php?matchid=$mID\" title=\"Match $mID\">View details</a>)";
+                $players .= ' (<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">View details</a>)';
 
-                $players .= " <div class='smalltext'>";
-                $players .= "Reported by <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$mReportedBy\">$mReportedByNickName</a> ";
+                $players .= ' <div class="smalltext">';
+                $players .= 'Reported by <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
                 if (($time-$mTime) < INT_MINUTE )
                 {
-                    $players .= "a few seconds ago";
+                    $players .= 'a few seconds ago';
                 }
                 else if (($time-$mTime) < INT_DAY )
                 {
-                    $players .= get_formatted_timediff($mTime, $time)." ago.";
+                    $players .= get_formatted_timediff($mTime, $time).' ago.';
                 }
                 else
                 {
-                    $players .= "on ".$date.".";
+                    $players .= 'on '.$date.'.';
                 }
                 $nbr_comments = getCommentTotal("ebmatches", $mID);
-                $players .= " <a href=\"".e_PLUGIN."ebattles/matchinfo.php?matchid=$mID\" title=\"Match $mID\">".$nbr_comments." comment";
+                $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">'.$nbr_comments.' comment';
                 $players .= ($nbr_comments > 1) ? "s" : "";
-                $players .= "</a>";
-                $players .= "</div>";
-                $text .= "$players<br />";
+                $players .= '</a>';
+                $players .= '</div><br /></td></tr>';
+
+                $text .= $players;
            }
         }
+        $text .= '</table>';
     }
-    $text .= "[<a href=\"".e_PLUGIN."ebattles/eventmatchs.php?eventid=$event_id\">Show all Matches</a>]";
+    $text .= '</div>';
 
-    $text .= "<br />";
-    $text .="</div>";
-
-    $text .="<div class=\"tab-page\">";
-    $text .="<div class=\"tab\">Latest Awards</div>";
+    $text .= '<div class="tab-page">';
+    $text .= '<div class="tab">Latest Awards</div>';
 
     $rowsPerPage = $pref['eb_default_items_per_page'];
     /* Stats/Results */
@@ -967,9 +972,9 @@ else
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
 
-    $text .= "<br />";
     if ($num_rows>0)
     {
+        $text .= '<table class="table_left">';
         /* Display table contents */
         for($i=0; $i<$num_rows; $i++)
         {
@@ -983,56 +988,57 @@ else
 
             switch ($aType) {
                 case 'PlayerTookFirstPlace':
-                $award = " took 1st place";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_gold_3.png\" alt=\"1st place\" title=\"1st place\"/> ";
+                $award = ' took 1st place';
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="1st place" title="1st place"/> ';
                 break;
                 case 'PlayerInTopTen':
-                $award = " entered top 10";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png\" alt=\"top 10\" title=\"top 10\"/> ";
+                $award = ' entered top 10';
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="top 10" title="top 10"/> ';
                 break;
                 case 'PlayerStreak5':
-                $award = " won 5 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_bronze_3.png\" alt=\"1st place\" title=\"5 in a row\"/> ";
+                $award = ' won 5 games in a row';
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="1st place" title="5 in a row"/> ';
                 break;
                 case 'PlayerStreak10':
-                $award = " won 10 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_silver_3.png\" alt=\"1st place\" title=\"10 in a row\"/> ";
+                $award = ' won 10 games in a row';
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="1st place" title="10 in a row"/> ';
                 break;
                 case 'PlayerStreak25':
-                $award = " won 25 games in a row";
-                $icon = "<img src=\"".e_PLUGIN."ebattles/images/awards/medal_gold_3.png\" alt=\"1st place\" title=\"25 in a row\"/> ";
+                $award = ' won 25 games in a row';
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="1st place" title="25 in a row"/> ';
                 break;
             }
 
-            $award_string = $icon;
-            $award_string .= " <a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$aUser\">$aUserNickName</a>";
+            $award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
+            $award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
             $award_string .= $award;
 
-            $award_string .= " <div class='smalltext'>";
+            $award_string .= ' <div class="smalltext">';
             if (($time-$aTime) < INT_MINUTE )
             {
-                $award_string .= "a few seconds ago";
+                $award_string .= 'a few seconds ago';
             }
             else if (($time-$aTime) < INT_DAY )
             {
-                $award_string .= get_formatted_timediff($aTime, $time)." ago.";
+                $award_string .= get_formatted_timediff($aTime, $time).' ago.';
             }
             else
             {
                 $award_string .= $date;
             }
-            $award_string .= "</div>";
+            $award_string .= '</div><br /></td></tr>';
 
-            $text .= "$award_string<br />";
+            $text .= $award_string;
         }
+        $text .= '</table><br />';
     }
-    $text .= "<br />";
-    $text .="</div>";
+    $text .= '<br />';
+    $text .= '</div>';
 
     $text .= '
     </div>
 
-    <script type="$text/javascript">
+    <script type="text/javascript">
     //<![CDATA[
     setupAllTabs();
     //]]>

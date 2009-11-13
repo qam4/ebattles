@@ -37,6 +37,7 @@ switch ($pref['eb_tab_theme'])
 $eplug_css = array(
 "js/calendar/calendar-blue.css",
 "css/paginate.css",
+"css/ebattles.css",
 $tab_theme
 );
 
@@ -112,7 +113,7 @@ function getAvatar($name)
     }
 }
 
-function imageResize($image, $target) {
+function imageResize($image, $target, $force_resize=FALSE) {
     // Resize image so it does not exceeds the max size.
     $image_dims = getimagesize($image);
 
@@ -121,12 +122,11 @@ function imageResize($image, $target) {
         $width  = $image_dims[0];
         $height = $image_dims[1];
 
-        if(max($width,$height)>$target)
+        if((max($width,$height)>$target)||($force_resize==TRUE))
         {
             //takes the larger size of the width and height and applies the
             //formula accordingly...this is so this script will work
             //dynamically with any size image
-
             if ($width > $height) {
                 $percentage = ($target / $width);
             } else {
@@ -152,17 +152,37 @@ function imageResize($image, $target) {
     }
 }
 
-function getGameIconResize($gicon) {
+function getIconResize($icon, $max_size, $enable_max_resize=TRUE, $force_resize=FALSE) {
     global $pref;
 
-    if ($pref['eb_max_image_size_check'] == 1)
+    if (($enable_max_resize == TRUE)||($force_resize==TRUE))
     {
-        return 'src="'.getGameIcon($gicon).'" alt="'.$gicon.'" '.imageResize(getGameIcon($gicon), $pref['eb_max_image_size']);
+        return 'src="'.$icon.'" '.imageResize($icon, $max_size, $force_resize);
     }
     else
     {
-        return 'src="'.getGameIcon($gicon).'" alt="'.$gicon.'"';
+        return 'src="'.$icon.'"';
     }
+}
+
+function getGameIconResize($gicon) {
+    global $pref;
+    return getIconResize(getGameIcon($gicon), $pref['eb_max_image_size'], $pref['eb_max_image_size_check']).' alt="'.$gicon.'"';
+}
+
+function getActivityIconResize($icon) {
+    global $pref;
+    return getIconResize($icon, $pref['eb_activity_max_image_size'], $pref['eb_activity_max_image_size_check']);
+}
+
+function getActivityGameIconResize($gicon) {
+    global $pref;
+    return getIconResize(getGameIcon($gicon), $pref['eb_activity_max_image_size'], $pref['eb_activity_max_image_size_check']).' alt="'.$gicon.'"';
+}
+
+function getAvatarResize($icon) {
+    global $pref;
+    return getIconResize($icon, $pref['eb_max_avatar_size']).' alt="'.$icon.'"';
 }
 
 function floatToSQL($number)

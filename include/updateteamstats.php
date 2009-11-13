@@ -371,7 +371,7 @@ for($category=0; $category<$numCategories; $category++)
             $stat_display[$cat_index] = $oppscore;
             break;
             case "ScoreDiff":
-            $cat_header = "<b title=\"Score Difference Average\">Score Diff.</b>";
+            $cat_header = '<b title="Score Difference Average">Score Diff.</b>';
             $min = min($scorediff_score);
             $max = max($scorediff_score);
             $stat_score[$cat_index] = $scorediff_score;
