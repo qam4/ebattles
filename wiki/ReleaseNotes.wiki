@@ -1,5 +1,24 @@
 #summary eBattles Release Notes.
 
+= Release 0.4.144 =
+== Features ==
+ * Added an Event Stats re-calculation" in Event Manage page (Fixes issue 54)
+  * This function resets players stats and awards and re-compute all stats match by match.
+  * This function is helpful if the players data needs to be recalculated.
+ * Added "Images max size" admin preference for "Recent Activity" menu. (Fixes issue 48)
+ * For matches/awards lists, use left aligned tables, with 1 row per item.
+ * Use more single quotes to output HTML text. (Issue 20)
+ * Match report, prevent players of the same team to play against each other. (Fixes issue 4)
+ * Added awards list in Players profiles (userinfo). (Fixes issue 16)
+== Bug fixes ==
+ * Fixed bug in Trueskill calculation (Fixes issue 55)
+  * Problem: (reported by planettoon) The calculation of scores can be erroneous, with wrong ELO and Trueskill.
+  * Cause: the erf (Gauss error function) approximation was not accurate enough
+   * That lead to a negative value as the input of a square root.
+   * That will interrupt the TS and scores calculation.
+  * Fix: Use Rational Chebyshev Approximations for the Error Function.
+ * Time/date was not handled properly (Fixes issue 56)
+
 = Release 0.4.135 =
 == Features ==
  * Added support for Matches comments using e107 comments system.
