@@ -344,16 +344,16 @@ function match_scores_update($match_id, $update_stats)
             ."     RankDelta = 0"
             ." WHERE (PlayerID = '$pid')";
             $result_3 = $sql->db_Query($q_3);
-            if ($update_stats) updateStats($event_id, $time_reported, FALSE);
 
             if ($etype == "Team Ladder")
             {
                 // Reset rank delta after a match.
                 $q_3 = "UPDATE ".TBL_TEAMS." SET RankDelta = 0 WHERE (TeamID = '$pteam')";
                 $result_3 = $sql->db_Query($q_3);
-                if ($update_stats) updateTeamStats($event_id, $time_reported, FALSE);
             }
         }
+        if ($update_stats) updateStats($event_id, $time_reported, FALSE);
+        if ($update_stats && ($etype == "Team Ladder")) updateTeamStats($event_id, $time_reported, FALSE);
         //echo $output;
         //exit;
     }
