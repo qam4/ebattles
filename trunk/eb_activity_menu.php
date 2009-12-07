@@ -66,7 +66,7 @@ function displayRecentActivity(){
             $mEventType  = mysql_result($result,$i, TBL_EVENTS.".Type");
             $mEventAllowScore = mysql_result($result,$i, TBL_EVENTS.".AllowScore");
             $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-            $mTime_local = $mTime + GMT_TIMEOFFSET;
+            $mTime_local = $mTime + TIMEOFFSET;
             $date = date("d M Y, h:i A",$mTime_local);
             $q2 = "SELECT DISTINCT ".TBL_MATCHS.".*, "
             .TBL_SCORES.".Player_Rank"
@@ -233,7 +233,7 @@ function displayRecentActivity(){
             $aEventgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
             $aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
             $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
-            $aTime_local = $aTime + GMT_TIMEOFFSET;
+            $aTime_local = $aTime + TIMEOFFSET;
             $date = date("d M Y, h:i A",$aTime_local);
             
             switch ($aType) {

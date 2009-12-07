@@ -241,7 +241,7 @@ function displayCurrentEvents(){
             $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
             if($estart!=0)
             {
-                $estart_local = $estart + GMT_TIMEOFFSET;
+                $estart_local = $estart + TIMEOFFSET;
                 $date_start = date("d M Y",$estart_local);
             }
             else
@@ -250,7 +250,7 @@ function displayCurrentEvents(){
             }
             if($eend!=0)
             {
-                $eend_local = $eend + GMT_TIMEOFFSET;
+                $eend_local = $eend + TIMEOFFSET;
                 $date_end = date("d M Y",$eend_local);
             }
             else
@@ -420,7 +420,7 @@ function displayRecentEvents(){
         $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
         if($estart!=0)
         {
-            $estart_local = $estart + GMT_TIMEOFFSET;
+            $estart_local = $estart + TIMEOFFSET;
             $date_start = date("d M Y",$estart_local);
         }
         else
@@ -429,7 +429,7 @@ function displayRecentEvents(){
         }
         if($eend!=0)
         {
-            $eend_local = $eend + GMT_TIMEOFFSET;
+            $eend_local = $eend + TIMEOFFSET;
             $date_end = date("d M Y",$eend_local);
         }
         else

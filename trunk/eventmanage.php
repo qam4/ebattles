@@ -105,7 +105,7 @@ else
 
     if($estart!=0)
     {
-        $estart_local = $estart + GMT_TIMEOFFSET;
+        $estart_local = $estart + TIMEOFFSET;
         $date_start = date("m/d/Y h:i A",$estart_local);
     }
     else
@@ -114,7 +114,7 @@ else
     }
     if($eend!=0)
     {
-        $eend_local = $eend + GMT_TIMEOFFSET;
+        $eend_local = $eend + TIMEOFFSET;
         $date_end = date("m/d/Y h:i A",$eend_local);
     }
     else

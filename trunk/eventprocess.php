@@ -212,7 +212,7 @@ else
             if ($new_eventstartdate != '')
             {
                 $new_eventstart_local = strtotime($new_eventstartdate);
-                $new_eventstart = $new_eventstart_local - GMT_TIMEOFFSET;	// Convert to GMT time
+                $new_eventstart = $new_eventstart_local - TIMEOFFSET;	// Convert to GMT time
             }
             else
             {
@@ -227,7 +227,7 @@ else
             if ($new_eventenddate != '')
             {
                 $new_eventend_local = strtotime($new_eventenddate);
-                $new_eventend = $new_eventend_local - GMT_TIMEOFFSET;	// Convert to GMT time
+                $new_eventend = $new_eventend_local - TIMEOFFSET;	// Convert to GMT time
             }
             else
             {

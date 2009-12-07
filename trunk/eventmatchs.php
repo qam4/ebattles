@@ -98,7 +98,7 @@ else
             $mReportedBy  = mysql_result($result,$i, TBL_USERS.".user_id");
             $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
             $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-            $mTime_local = $mTime + GMT_TIMEOFFSET;
+            $mTime_local = $mTime + TIMEOFFSET;
             $date = date("d M Y, h:i A",$mTime_local);
             $q2 = "SELECT DISTINCT ".TBL_MATCHS.".*, "
             .TBL_SCORES.".Player_Rank"

@@ -256,7 +256,7 @@ function displayTeamDivisions($clan_id){
                 $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
                 $mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
                 $mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
-                $mjoined_local = $mjoined + GMT_TIMEOFFSET;
+                $mjoined_local = $mjoined + TIMEOFFSET;
                 $date = date("d M Y",$mjoined_local);
 
                 $text .= "<tr>\n";
