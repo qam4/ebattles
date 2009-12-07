@@ -585,9 +585,9 @@ else
         $text .='
         <table class="fborder" style="width:95%">
         <tbody>
-        <tr>
         ';
         $text .= '
+        <tr>
         <td class="forumheader3"><b>Reset Players/Teams.</b><br />
         - Reset Players and Teams Statistics (Rank, Score, ELO, Skill, Games Played, Wins, Losses)<br />
         - Delete all Matches
@@ -598,9 +598,9 @@ else
         $text .= '
         </td>
         </tr>
-        <tr>
         ';
         $text .= '
+        <tr>
         <td class="forumheader3"><b>Reset Event.</b><br />
         - Delete all Players and Teams.<br />
         - Delete all Matches.
@@ -611,15 +611,27 @@ else
         $text .= '
         </td>
         </tr>
-        <tr>
         ';
         $text .= '
+        <tr>
         <td class="forumheader3"><b>Delete Event.</b><br />
         - Delete Event.<br />
         </td>
         <td class="forumheader3">
         ';
         $text .= "<input class=\"button\" type=\"submit\" name=\"eventdelete\" value=\"Delete Event\" onclick=\"return confirm('Are you sure you want to delete this event?');\"/>";
+        $text .= '
+        </td>
+        </tr>
+        ';
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>Recalculate Event Stats.</b><br />
+        - Reset and recalculate players stats.<br />
+        </td>
+        <td class="forumheader3">
+        ';
+        $text .= "<input class=\"button\" type=\"submit\" name=\"eventupdatescores\" value=\"Recalculate Event Stats\" onclick=\"return confirm('Are you sure you want to recalculate all scores?');\"/>";
         $text .= '
         </td>
         </tr>

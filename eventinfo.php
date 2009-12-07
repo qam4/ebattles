@@ -7,6 +7,8 @@ require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 include_once(e_PLUGIN."ebattles/include/show_array.php");
+include_once(e_PLUGIN."ebattles/include/updatestats.php");
+include_once(e_PLUGIN."ebattles/include/updateteamstats.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -152,15 +154,12 @@ else
     $row = mysql_fetch_array($result);
     $nbrplayers = $row['NbrPlayers'];
 
-
     "SELECT ".TBL_PLAYERS.".*, "
     .TBL_USERS.".*"
     ." FROM ".TBL_PLAYERS.", "
     .TBL_USERS
     ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
     ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
-
-
 
     /* Update Stats */
     if ($eneedupdate == 1)
@@ -174,7 +173,7 @@ else
         $result = $sql->db_Query($q);
         $eischanged = 0;
 
-        include_once(e_PLUGIN."ebattles/include/updatestats.php");
+        updateStats($event_id, $time, TRUE);
     }
 
     if ($etype == "Team Ladder")
@@ -552,7 +551,7 @@ else
         /* Update Stats */
         if ($eneedupdate == 1)
         {
-            include_once(e_PLUGIN."ebattles/include/updateteamstats.php");
+            updateTeamStats($event_id, $time, TRUE);
         }
 
         if (($time < $enextupdate) && ($eischanged == 1))

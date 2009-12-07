@@ -5,12 +5,25 @@
 */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
+require_once e_PLUGIN.'ebattles/include/event.php';
 
 /*******************************************************************
 ********************************************************************/
-require_once(HEADERF);
-$text = '';
-
+echo '
+<html>
+<head>
+<style type="text/css">
+<!--
+.percents {
+background: #FFF;
+position:absolute;
+text-align: center;
+}
+-->
+</style>
+</head>
+<body>
+';
 
 //dbg- print_r($_POST);
 //dbg- exit;
@@ -67,8 +80,6 @@ else
         }
         if(isset($_POST['eventaddmod']))
         {
-            $event_id = $_GET['eventid'];
-
             $eventmod = $_POST['mod'];
 
             $q2 = "SELECT ".TBL_EVENTMODS.".*"
@@ -89,7 +100,6 @@ else
 
         if(isset($_POST['eventsettingssave']))
         {
-            $event_id = $_GET['eventid'];
             $q2 = "SELECT ".TBL_EVENTS.".*"
             ." FROM ".TBL_EVENTS
             ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
@@ -248,8 +258,6 @@ else
         }
         if(isset($_POST['eventrulessave']))
         {
-            $event_id = $_GET['eventid'];
-
             /* Event Rules */
             $allowedTags='<p><strong><em><u><b><b><h3><h4><h5><h6><img>';
             $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
@@ -264,22 +272,18 @@ else
         }
         if(isset($_POST['eventresetscores']))
         {
-            $event_id = $_GET['eventid'];
             resetPlayers($event_id);
             resetTeams($event_id);
             deleteMatches($event_id);
-
 
             //echo "-- eventresetscores --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
         }
         if(isset($_POST['eventresetevent']))
         {
-            $event_id = $_GET['eventid'];
             deleteMatches($event_id);
             deletePlayers($event_id);
             deleteTeams($event_id);
-
 
             //echo "-- eventresetevent --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
@@ -292,12 +296,15 @@ else
             //echo "-- eventdelete --<br />";
             header("Location: events.php");
         }
+        if(isset($_POST['eventupdatescores']))
+        {
 
-
+            eventScoresUpdate($event_id);
+            //header("Location: {$_SERVER['HTTP_REFERER']}");
+            echo '<META HTTP-EQUIV="Refresh" Content="0; URL=eventmanage.php?eventid='.$event_id.'">';
+        }
         if(isset($_POST['eventstatssave']))
         {
-            $event_id = $_GET['eventid'];
-
             //echo "-- eventstatssave --<br />";
             $cat_index = 0;
 
@@ -367,151 +374,5 @@ else
 
 header("Location: eventmanage.php?eventid=$event_id");
 exit;
-
-/***************************************************************************************
-Functions
-***************************************************************************************/
-function resetPlayers($event_id)
-{
-    global $sql;
-    $q2 = "SELECT ".TBL_EVENTS.".*"
-    ." FROM ".TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
-    $result2 = $sql->db_Query($q2);
-    $eELOdefault = mysql_result($result2,0 , TBL_EVENTS.".ELO_default");
-    $eTS_default_mu  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_mu");
-    $eTS_default_sigma  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_sigma");
-
-    $q2 = "SELECT ".TBL_PLAYERS.".*"
-    ." FROM ".TBL_PLAYERS
-    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
-    $result2 = $sql->db_Query($q2);
-    $num_rows_2 = mysql_numrows($result2);
-    if ($num_rows_2!=0)
-    {
-        for($j=0; $j<$num_rows_2; $j++)
-        {
-            $pID  = mysql_result($result2,$j, TBL_PLAYERS.".PlayerID");
-            $q3 = "UPDATE ".TBL_PLAYERS
-            ." SET ELORanking = '$eELOdefault',"
-            ."     TS_mu = '$eTS_default_mu',"
-            ."     TS_sigma = '$eTS_default_sigma',"
-            ."     GamesPlayed = 0,"
-            ."     Loss = 0,"
-            ."     Win = 0,"
-            ."     Draw = 0,"
-            ."     Score = 0,"
-            ."     ScoreAgainst = 0,"
-            ."     Points = 0,"
-            ."     Streak = 0,"
-            ."     Streak_Best = 0,"
-            ."     Streak_Worst = 0"
-            ." WHERE (PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
-        }
-    }
-}
-function resetTeams($event_id)
-{
-    global $sql;
-    $q2 = "SELECT ".TBL_EVENTS.".*"
-    ." FROM ".TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
-    $result2 = $sql->db_Query($q2);
-    $eELOdefault = mysql_result($result2,0 , TBL_EVENTS.".ELO_default");
-    $eTS_default_mu  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_mu");
-    $eTS_default_sigma  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_sigma");
-
-    $q2 = "SELECT ".TBL_TEAMS.".*"
-    ." FROM ".TBL_TEAMS
-    ." WHERE (".TBL_TEAMS.".Event = '$event_id')";
-    $result2 = $sql->db_Query($q2);
-    $num_rows_2 = mysql_numrows($result2);
-    if ($num_rows_2!=0)
-    {
-        for($j=0; $j<$num_rows_2; $j++)
-        {
-            $tID  = mysql_result($result2,$j, TBL_TEAMS.".PlayerID");
-            $q3 = "UPDATE ".TBL_TEAMS
-            ." SET ELORanking = '$eELOdefault',"
-            ."     TS_mu = '$eTS_default_mu',"
-            ."     TS_sigma = '$eTS_default_sigma',"
-            ."     GamesPlayed = 0,"
-            ."     Loss = 0,"
-            ."     Win = 0,"
-            ."     Draws = 0,"
-            ."     Score = 0,"
-            ."     ScoreAgainst = 0,"
-            ."     Points = 0,"
-            ."     Streak = 0,"
-            ."     Streak_Best = 0,"
-            ."     Streak_Worst = 0"
-            ." WHERE (TeamID = '$tID')";
-            $result3 = $sql->db_Query($q3);
-        }
-    }
-}
-function deleteMatches($event_id)
-{
-    global $sql;
-    $q2 = "SELECT ".TBL_MATCHS.".*"
-    ." FROM ".TBL_MATCHS
-    ." WHERE (".TBL_MATCHS.".Event = '$event_id')";
-    $result2 = $sql->db_Query($q2);
-    $num_rows_2 = mysql_numrows($result2);
-    if ($num_rows_2!=0)
-    {
-        for($j=0; $j<$num_rows_2; $j++)
-        {
-            $mID  = mysql_result($result2,$j, TBL_MATCHS.".MatchID");
-            $q3 = "DELETE FROM ".TBL_SCORES
-            ." WHERE (".TBL_SCORES.".MatchID = '$mID')";
-            $result3 = $sql->db_Query($q3);
-            $q3 = "DELETE FROM ".TBL_MATCHS
-            ." WHERE (".TBL_MATCHS.".MatchID = '$mID')";
-            $result3 = $sql->db_Query($q3);
-        }
-    }
-}
-function deletePlayers($event_id)
-{
-    global $sql;
-    $q3 = "DELETE FROM ".TBL_PLAYERS
-    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
-    $result3 = $sql->db_Query($q3);
-}
-function deleteTeams($event_id)
-{
-    global $sql;
-    $q3 = "DELETE FROM ".TBL_TEAMS
-    ." WHERE (".TBL_TEAMS.".Event = '$event_id')";
-    $result3 = $sql->db_Query($q3);
-}
-function deleteMods($event_id)
-{
-    global $sql;
-    $q3 = "DELETE FROM ".TBL_EVENTMODS
-    ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')";
-    $result3 = $sql->db_Query($q3);
-}
-function deleteStatsCats($event_id)
-{
-    global $sql;
-    $q3 = "DELETE FROM ".TBL_STATSCATEGORIES
-    ." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
-    $result3 = $sql->db_Query($q3);
-}
-function deleteEvent($event_id)
-{
-    global $sql;
-    deleteMatches($event_id);
-    deletePlayers($event_id);
-    deleteTeams($event_id);
-    deleteMods($event_id);
-    deleteStatsCats($event_id);
-    $q3 = "DELETE FROM ".TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
-    $result3 = $sql->db_Query($q3);
-}
 
 ?>
