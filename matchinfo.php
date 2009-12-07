@@ -93,8 +93,6 @@ else
 
     // Can I delete the game
     //-----------------------
-    $time = GMT_time();
-
     // Is the user a moderator?
     $q_2 = "SELECT ".TBL_EVENTMODS.".*"
     ." FROM ".TBL_EVENTMODS

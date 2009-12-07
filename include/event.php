@@ -38,6 +38,9 @@ function resetPlayers($event_id)
             ."     Score = 0,"
             ."     ScoreAgainst = 0,"
             ."     Points = 0,"
+            ."     Rank = 0,"
+            ."     RankDelta = 0,"
+            ."     OverallScore = 0,"
             ."     Streak = 0,"
             ."     Streak_Best = 0,"
             ."     Streak_Worst = 0"
@@ -177,8 +180,17 @@ function eventScoresUpdate($event_id)
 {
     global $sql;
 
+    /* Event Info */
+    $q = "SELECT ".TBL_EVENTS.".*"
+    ." FROM ".TBL_EVENTS
+    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+    $result = $sql->db_Query($q);
+    $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
+        
     // Reset players stats
     resetPlayers($event_id);
+    updateStats($event_id, $estart, FALSE);
+    if ($etype == "Team Ladder") updateTeamStats($event_id, $estart, FALSE);
 
     // Update each match scores
     $q = "SELECT ".TBL_MATCHS.".*"
@@ -191,9 +203,11 @@ function eventScoresUpdate($event_id)
     {
         for($j=0; $j<$num_matches; $j++)
         {
+            set_time_limit(10);
             $mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
             
             match_scores_update($mID, TRUE);
+            //fm echo '<div class="percents">match ' . $j . '</div>';
             echo '<div class="percents">' . number_format(100*($j+1)/$num_matches, 0, '.', '') . '%&nbsp;complete</div>';
             echo str_pad('',4096)."\n";
             ob_flush();

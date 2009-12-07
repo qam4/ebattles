@@ -230,6 +230,7 @@ function updateAllGames()
     $num_rows = mysql_numrows($result);
     for ($i = 0; $i<$num_rows; $i++)
     {
+        set_time_limit(10);
         $gname  = mysql_result($result,$i , TBL_GAMES.".Name");
         $gid  = mysql_result($result,$i , TBL_GAMES.".GameID");
 

@@ -7,7 +7,6 @@
 function updateTeamStats($event_id, $time, $serialize = TRUE)
 {
     global $sql;
-    global $time;
 
     $file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
 
