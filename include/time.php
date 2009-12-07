@@ -10,23 +10,9 @@ define('INT_HOUR', 3600);
 define('INT_DAY', 86400);
 define('INT_WEEK', 604800);
 
-/*
-GMT_TIMEOFFSET = client - gmt
-  = (client - server) + (server - gmt)
-  = TIMEOFFSET (from e107) + date("z")
-*/
-$gmt_timezone_offset = TIMEOFFSET + date("Z");
-define("GMT_TIMEOFFSET", $gmt_timezone_offset);
-
-
 /***************************************************************************************
 Time Functions
 ***************************************************************************************/
-function GMT_time() {
-$gm_time = time() - date('Z', time());
-return $gm_time;
-}
-
 function get_formatted_timediff($then, $now = false)
 {
     $now      = (!$now) ? time() : $now;

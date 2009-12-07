@@ -11,7 +11,7 @@ global $pref;
 global $sql;
 global $time;
 
-$time = GMT_time();
+$time = time();
 
 switch ($pref['eb_tab_theme'])
 {

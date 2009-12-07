@@ -107,7 +107,7 @@ else
 
     if($estart!=0)
     {
-        $estart_local = $estart + GMT_TIMEOFFSET;
+        $estart_local = $estart + TIMEOFFSET;
         $date_start = date("d M Y, h:i A",$estart_local);
     }
     else
@@ -116,7 +116,7 @@ else
     }
     if($eend!=0)
     {
-        $eend_local = $eend + GMT_TIMEOFFSET;
+        $eend_local = $eend + TIMEOFFSET;
         $date_end = date("d M Y, h:i A",$eend_local);
     }
     else
@@ -540,7 +540,7 @@ else
     $text .= '</tbody></table>';
     $text .= '</div>';
 
-    $enextupdate_local = $enextupdate + GMT_TIMEOFFSET;
+    $enextupdate_local = $enextupdate + TIMEOFFSET;
     $date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
 
     if ($etype == "Team Ladder")
@@ -817,7 +817,7 @@ else
             $mReportedBy  = mysql_result($result,$i, TBL_USERS.".user_id");
             $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
             $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-            $mTime_local = $mTime + GMT_TIMEOFFSET;
+            $mTime_local = $mTime + TIMEOFFSET;
             $date = date("d M Y, h:i A",$mTime_local);
             $q2 = "SELECT DISTINCT ".TBL_MATCHS.".*, "
             .TBL_SCORES.".Player_Rank"
@@ -982,7 +982,7 @@ else
             $aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
             $aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
             $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
-            $aTime_local = $aTime + GMT_TIMEOFFSET;
+            $aTime_local = $aTime + TIMEOFFSET;
             $date = date("d M Y, h:i A",$aTime_local);
 
             switch ($aType) {

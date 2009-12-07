@@ -519,7 +519,7 @@ else
             $mEventType  = mysql_result($result,$i, TBL_EVENTS.".Type");
             $mEventAllowScore = mysql_result($result,$i, TBL_EVENTS.".AllowScore");
             $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-            $mTime_local = $mTime + GMT_TIMEOFFSET;
+            $mTime_local = $mTime + TIMEOFFSET;
             $date = date("d M Y, h:i A",$mTime_local);
             $q2 = "SELECT DISTINCT ".TBL_MATCHS.".*, "
             .TBL_SCORES.".Player_Rank"
@@ -689,7 +689,7 @@ else
             $aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
             $aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
             $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
-            $aTime_local = $aTime + GMT_TIMEOFFSET;
+            $aTime_local = $aTime + TIMEOFFSET;
             $aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
             $aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
             $aEventgame = mysql_result($result,$i , TBL_GAMES.".Name");
