@@ -176,44 +176,75 @@ function deleteEvent($event_id)
 /**
 * eventScoresUpdate - Re-calculate the scores and players of an event
 */
-function eventScoresUpdate($event_id)
+function eventScoresUpdate($event_id, $current_match)
 {
     global $sql;
 
-    /* Event Info */
-    $q = "SELECT ".TBL_EVENTS.".*"
-    ." FROM ".TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
-    $result = $sql->db_Query($q);
-    $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
-        
-    // Reset players stats
-    resetPlayers($event_id);
-    updateStats($event_id, $estart, FALSE);
-    if ($etype == "Team Ladder") updateTeamStats($event_id, $estart, FALSE);
+    $numMatchsPerUpdate = 10;
 
-    // Update each match scores
     $q = "SELECT ".TBL_MATCHS.".*"
     ." FROM ".TBL_MATCHS
     ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
     ." ORDER BY TimeReported";
     $result = $sql->db_Query($q);
     $num_matches = mysql_numrows($result);
-    if ($num_matches!=0)
+
+    if ($current_match >= $num_matches)
     {
-        for($j=0; $j<$num_matches; $j++)
-        {
-            set_time_limit(10);
-            $mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
-            
-            match_scores_update($mID, TRUE);
-            //fm echo '<div class="percents">match ' . $j . '</div>';
-            echo '<div class="percents">' . number_format(100*($j+1)/$num_matches, 0, '.', '') . '%&nbsp;complete</div>';
-            echo str_pad('',4096)."\n";
-            ob_flush();
-        }
+        echo "Done.";
+        echo '<META HTTP-EQUIV="Refresh" Content="0; URL=eventmanage.php?eventid='.$event_id.'">';
     }
-    echo "<br>Done.";
-    ob_end_flush();
+    else
+    {
+        $next_match = 1;
+        if ($current_match == 0)
+        {
+            /* Event Info */
+            $q = "SELECT ".TBL_EVENTS.".*"
+            ." FROM ".TBL_EVENTS
+            ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+            $result = $sql->db_Query($q);
+            $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
+
+            // Reset players stats
+            resetPlayers($event_id);
+            updateStats($event_id, $estart, FALSE);
+            if ($etype == "Team Ladder") updateTeamStats($event_id, $estart, FALSE);
+        }
+        else
+        {
+            if (ob_get_level() == 0) {
+                ob_start();
+            }
+            // Output a 'waiting message'
+            echo str_pad('Please wait while this task completes... ',4096)."<br />\n";
+
+            // Update matchs scores
+            for($j=$current_match - 1; $j < min($current_match + $numMatchsPerUpdate - 1, $num_matches); $j++)
+            {
+                set_time_limit(10);
+
+                $next_match = $j + 2;
+                $mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
+
+                match_scores_update($mID, TRUE);
+                //echo 'match '.$j.': '.$mID.'<br>';
+                //echo '<div class="percents">match '.$j.': '.$mID.'</div>';
+                echo '<div class="percents">' . number_format(100*($j+1)/$num_matches, 0, '.', '') . '%&nbsp;complete</div>';
+                echo str_pad('',4096)."\n";
+                ob_flush();
+                flush();
+            }
+        }
+
+        echo '<form name="updateform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        echo '<input type="hidden" name="match" value="'.$next_match.'"/>';
+        echo '<input type="hidden" name="eventupdatescores" value="1"/>';
+        echo '</form>';
+        echo '<script language="javascript">document.updateform.submit()</script>';
+
+        ob_end_flush();
+    }
+    exit;
 }
 ?>

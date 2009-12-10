@@ -62,7 +62,7 @@ $eplug_prefs = array(
     "eb_activity_menuheading" => EBATTLES_ADMIN_L31,
     "eb_activity_number_of_items" => 10,
     "eb_activity_max_image_size_check" => 1,
-    "eb_activity_max_image_size" => 8
+    "eb_activity_max_image_size" => 16
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -467,7 +467,7 @@ if ($revision < 141)
     );
     $upgrade_add_prefs += array(
         "eb_activity_max_image_size_check" => 1,
-        "eb_activity_max_image_size" => 8
+        "eb_activity_max_image_size" => 16
     );
 }
 
