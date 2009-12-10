@@ -290,7 +290,6 @@ else
         }
         if(isset($_POST['eventdelete']))
         {
-            $event_id = $_GET['eventid'];
             deleteEvent($event_id);
 
             //echo "-- eventdelete --<br />";
@@ -298,10 +297,9 @@ else
         }
         if(isset($_POST['eventupdatescores']))
         {
-
-            eventScoresUpdate($event_id);
-            //header("Location: {$_SERVER['HTTP_REFERER']}");
-            echo '<META HTTP-EQUIV="Refresh" Content="0; URL=eventmanage.php?eventid='.$event_id.'">';
+            if (!isset($_POST['match'])) $_POST['match'] = 0;
+            $current_match = $_POST['match'];
+            eventScoresUpdate($event_id, $current_match);
         }
         if(isset($_POST['eventstatssave']))
         {

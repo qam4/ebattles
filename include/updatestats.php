@@ -9,6 +9,7 @@ require_once(e_HANDLER."avatar_handler.php");
 function updateStats($event_id, $time, $serialize = TRUE)
 {
     global $sql;
+    global $pref;
 
     $file = 'cache/sql_cache_event_'.$event_id.'.txt';
 
