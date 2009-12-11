@@ -170,8 +170,8 @@ else
     if ($comments)
     {
         $text .= "<p>";
-        $text .= "Reporter Comments:<br />\n";
-        $text .= "$comments<br />\n";
+        $text .= "Reporter comments:<br />\n";
+        $text .= $tp->toHTML($comments, true)."<br />\n";
         $text .= "</p>";
     }
 

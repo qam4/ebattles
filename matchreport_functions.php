@@ -2,23 +2,27 @@
 // function to output form and hold previously entered values.
 function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore) {
     global $text;
+    global $tp;
 
-
+    if (e_WYSIWYG)
+    {
+        $insertjs = "rows='15'";
+    }
+    else
+    {
+        require_once(e_HANDLER."ren_help.php");
+        $insertjs = "rows='5' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
+    }
     //dbg form
     //print_r($_POST);    // show $_POST
     //print_r($_GET);     // show $_GET
 
     $reported_by = USERID;
-    $allowedTags='<p><strong><em><u><b><b><h3><h4><h5><h6><img>';
-    $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
-    if(isset($_POST['elm1'])) {
-        $sHeader = '<b>Ah, content is king.</b><br />';
-        $sContent = strip_tags(stripslashes($_POST['elm1']),$allowedTags);
-        //remove html bbcode (the html bbcode would not be parsed)
-		$sContent = preg_replace("/\\[html\](.*?)\[\/html\]/si", '\1', $sContent);
+    if(isset($_POST['match_comment']))
+    {
+        $comment = $tp->toDB($_POST['match_comment']);
     } else {
-        $sHeader = '<b>Nothing submitted yet</b><br />';
-        $sContent = '';
+        $comment = '';
     }
 
     $max_nbr_players = count($players_id)-1;
@@ -104,7 +108,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
         $text .= '<td><input class="button_disabled" type="submit" value="Remove Player" name="removePlayer" disabled="disabled"/></td>';
     }
     $text .= '</tr>';
-    
+
     // Teams
     $text .= '<tr><td>'.$nbr_teams.' teams</td>';
     $text .= '<td><input type="hidden" name="nbr_teams" value="'.$_POST['nbr_teams'].'"/>';
@@ -170,7 +174,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     if ($allowScore == TRUE) $text .= '<td>Score</td>';
     if ($allowDraw == TRUE) $text .= '<td>Draw?</td>';
     $text .= '</tr>';
-    
+
     for($i=1;$i<=$nbr_teams;$i++)
     {
         $text .= '<tr>';
@@ -209,7 +213,11 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     $text .= '<br />';
     $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';
     $text .= 'Your comments:<br />';
-    $text .= '<textarea class="tbox" id="elm1" name="elm1" style="width:500px" cols="70" rows="4">'.$sContent.'</textarea>';
+    $text .= '<textarea class="tbox" id="match_comment" name="match_comment" style="width:500px" cols="70" '.$insertjs.'>'.$comment.'</textarea>';
+    if (!e_WYSIWYG)
+    {
+        $text .= "<br />".display_help("helpb","comment");
+    }
     $text .= '</div>';
     $text .= '<br />';
     $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';

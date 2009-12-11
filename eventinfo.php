@@ -187,7 +187,7 @@ else
 
     $text .= '<div class="tab-page">';
     $text .= '<div class="tab">Event</div>';
-    $text .= $edescription;
+    $text .= $tp->toHTML($edescription, true);
     $text .= '</div>';
 
     /* Join/Quit Event */
@@ -536,7 +536,7 @@ else
     $text .= '<tr><td class="forumheader3">Starts</td><td class="forumheader3">'.$date_start.'</td></tr>';
     $text .= '<tr><td class="forumheader3">Ends</td><td class="forumheader3">'.$date_end.'</td></tr>';
     $text .= '<tr><td class="forumheader3"></td><td class="forumheader3">'.$time_comment.'</td></tr>';
-    $text .= '<tr><td class="forumheader3">Rules</td><td class="forumheader3">'.$erules.'</td></tr>';
+    $text .= '<tr><td class="forumheader3">Rules</td><td class="forumheader3">'.$tp->toHTML($erules, true).'</td></tr>';
     $text .= '</tbody></table>';
     $text .= '</div>';
 
