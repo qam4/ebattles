@@ -12,20 +12,11 @@ require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 require_once e_PLUGIN.'ebattles/include/match.php';
 
-//these have to be set for the tinymce wysiwyg
-global $e_wysiwyg;
-
-// Enable WYSIWYG
-if ($pref['wysiwyg'])
-{
-    // Specify if we use WYSIWYG for text areas
-    $e_wysiwyg	= "elm1";
-    define(e_WYSIWYG, TRUE);
-    $WYSIWYG = TRUE;
-}
-
 /*******************************************************************
 ********************************************************************/
+// Specify if we use WYSIWYG for text areas
+global $e_wysiwyg;
+$e_wysiwyg = "match_comment";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
 
 $text = '';
@@ -158,9 +149,7 @@ if (isset($_POST['submit']))
     $reported_by = $_POST['reported_by'];
     //$text .= "reported by: $reported_by<br />";
 
-    $allowedTags='<p><strong><em><u><b><b><h3><h4><h5><h6><img>';
-    $allowedTags.='<li><ol><ul><span><div><br /><ins><del>';
-    $comments = strip_tags(stripslashes($_POST['elm1']),$allowedTags);
+    $comments = $tp->toDB($_POST['match_comment']);
 
     $nbr_players = $_POST['nbr_players'];
     $nbr_teams = $_POST['nbr_teams'];
@@ -254,7 +243,7 @@ if (isset($_POST['submit']))
 
         $text .= '--------------------<br />';
 
-        $text .= 'Comments: '.$comments.'<br />';
+        $text .= 'Comments: '.$tp->toHTML($comments).'<br />';
 
         // Create Match ------------------------------------------
         $q =
