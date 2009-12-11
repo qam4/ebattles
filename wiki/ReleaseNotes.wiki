@@ -1,5 +1,23 @@
 #summary eBattles Release Notes.
 
+= Release 0.4.147 =
+== Features ==
+ * Changed default image size for recent activity menu from 8 to 16 px
+== Bug fixes ==
+ * Fixed Avatars not showing in Event Player Standings.
+  * Was broken since revision 144.
+  * Fix: added global access to $pref in updateStats()
+ * Fixed issue in Event stats recalculation.
+  * On servers where flush() does not work, the calculation may timeout if the number of matches is great.
+  * Split recalculation into batches of 10 matches to avoid timeouts.
+ * Improved handling of textareas in forms. (Fixes issue 9 and issue 58)
+  * There were several issues with textareas:
+   * line breaks were not saved to database
+   * input containing quotes may cause an error when saving data.
+   * data was not properly filtered before it was saved to database, or displayed as HTML.
+   * no support for BBcode.
+  * Now we use the e107 functions to handle textareas.
+
 = Release 0.4.144 =
 == Features ==
  * Added an Event Stats re-calculation" in Event Manage page (Fixes issue 54)
