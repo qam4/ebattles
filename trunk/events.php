@@ -74,11 +74,11 @@ function displayCurrentEvents(){
     $pages = new Paginator;
 
     $array = array(
-    'latest' => array('Latest','EventID'),
-    'name'   => array('Name', TBL_EVENTS.'.Name'),
-    'game'   => array('Game', TBL_GAMES.'.Name'),
-    'type'   => array('Type', TBL_EVENTS.'.Type'),
-    'start'  => array('Start date', TBL_EVENTS.'.Start_timestamp')
+        'latest' => array('Latest','EventID'),
+        'name'   => array('Name', TBL_EVENTS.'.Name'),
+        'game'   => array('Game', TBL_GAMES.'.Name'),
+        'type'   => array('Type', TBL_EVENTS.'.Type'),
+        'start'  => array('Start date', TBL_EVENTS.'.Start_timestamp')
     );
     if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
     $gameid = $_GET['gameid'];
@@ -113,7 +113,8 @@ function displayCurrentEvents(){
     {
         $text .= '<option value="All">All</option>';
     }
-    for($i=0; $i<$num_rows; $i++){
+    for($i=0; $i<$num_rows; $i++)
+    {
         $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
         $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
         if ($gameid == $gid)
@@ -183,11 +184,13 @@ function displayCurrentEvents(){
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
-    if(!$result || ($num_rows < 0)){
+    if(!$result || ($num_rows < 0))
+    {
         $text .= 'Error displaying info';
         return;
     }
-    if($num_rows == 0){
+    if($num_rows == 0)
+    {
         $text .= 'No events</div>';
         $text .= '</form><br/>';
     }
@@ -231,7 +234,8 @@ function displayCurrentEvents(){
         /* Display table contents */
         $text .= '<table class="fborder" style="width:95%"><tbody>';
         $text .= '<tr><td class="forumheader">Event</td><td colspan="2" class="forumheader">Game</td><td class="forumheader">Type</td><td class="forumheader">Start</td><td class="forumheader">End</td><td class="forumheader">Players</td><td class="forumheader">Games</td></tr>';
-        for($i=0; $i<$num_rows; $i++){
+        for($i=0; $i<$num_rows; $i++)
+        {
             $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
             $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
             $eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
@@ -276,8 +280,8 @@ function displayCurrentEvents(){
             $nbrmatches = $row['NbrMatches'];
 
             if(
-            ($eend==0)
-            ||($eend>=$time)
+                ($eend==0)
+                ||($eend>=$time)
             )
             {
                 $text .= '<tr>
@@ -345,7 +349,8 @@ function displayRecentEvents(){
     {
         $text .= '<option value="All">All</option>';
     }
-    for($i=0; $i<$num_rows; $i++){
+    for($i=0; $i<$num_rows; $i++)
+    {
         $gname  = mysql_result($result,$i, TBL_GAMES.".name");
         $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
         if ($gameid == $gid)
@@ -391,11 +396,13 @@ function displayRecentEvents(){
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
-    if(!$result || ($num_rows < 0)){
+    if(!$result || ($num_rows < 0))
+    {
         $text .= 'Error displaying info';
         return;
     }
-    if($num_rows == 0){
+    if($num_rows == 0)
+    {
         $text .= '<div>No events</div>';
         return;
     }
@@ -410,7 +417,8 @@ function displayRecentEvents(){
     <td class="forumheader">Players</td>
     <td class="forumheader">Games</td>
     </tr>';
-    for($i=0; $i<$num_rows; $i++){
+    for($i=0; $i<$num_rows; $i++)
+    {
         $gname  = mysql_result($result,$i, TBL_GAMES.".name");
         $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
         $eid  = mysql_result($result,$i, TBL_EVENTS.".eventid");
@@ -445,16 +453,18 @@ function displayRecentEvents(){
         $row = mysql_fetch_array($result_2);
         $nbrplayers = $row['NbrPlayers'];
         /* Nbr matches */
-        $q_2 = "SELECT COUNT(*) as NbrMatches"
-        ." FROM ".TBL_MATCHS
-        ." WHERE (Event = '$eid')";
+        $q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+        ." FROM ".TBL_MATCHS.", "
+        .TBL_SCORES
+        ." WHERE (Event = '$eid')"
+        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);
         $nbrmatches = $row['NbrMatches'];
 
         if(
-        ($eend!=0)
-        &&($eend<$time)
+            ($eend!=0)
+            &&($eend<$time)
         )
         {
             $text .= '<tr>
