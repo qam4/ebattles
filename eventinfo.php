@@ -715,7 +715,7 @@ else
     if ($eallowscore==TRUE)
     $can_report_quickloss = 0;
 
-    if($userclass <= $ematch_report_userclass) $can_report = 0;
+    if($userclass < $ematch_report_userclass) $can_report = 0;
     if($equick_loss_report==FALSE) $can_report_quickloss = 0;
 
     if(($can_report_quickloss != 0)||($can_report != 0))
