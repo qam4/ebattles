@@ -135,7 +135,7 @@ $eplug_tables = array(
     PointsPerWin int default '".PointsPerWin_DEFAULT."',
     PointsPerDraw int default '".PointsPerDraw_DEFAULT."',
     PointsPerLoss int default '".PointsPerLoss_DEFAULT."',
-    match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '0',
+    match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."',
     quick_loss_report tinyint(1) DEFAULT '1',
     hide_ratings_column tinyint(1) DEFAULT '0'
     ) TYPE = MyISAM;",
@@ -371,7 +371,7 @@ if ($revision < 98)
         "ALTER TABLE ".TBL_GAMES." ADD OfficialWebsite varchar(63) NOT NULL default ''",
         "ALTER TABLE ".TBL_GAMES." ADD ESRB varchar(63) NOT NULL default ''",
         "ALTER TABLE ".TBL_GAMES." ADD Banner varchar(63) NOT NULL default ''",
-        "ALTER TABLE ".TBL_EVENTS." ADD match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '0'",
+        "ALTER TABLE ".TBL_EVENTS." ADD match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."'",
         "ALTER TABLE ".TBL_EVENTS." ADD quick_loss_report tinyint(1) DEFAULT '1'",
         "ALTER TABLE ".TBL_EVENTS." ADD hide_ratings_column tinyint(1) DEFAULT '0'",
         "ALTER TABLE ".TBL_CLANS." ADD password varchar(32)",
