@@ -1,7 +1,9 @@
 <?php
 // functions for events.
 //___________________________________________________________________
-require_once e_PLUGIN.'ebattles/include/match.php';
+require_once(e_PLUGIN.'ebattles/include/match.php');
+include_once(e_PLUGIN."ebattles/include/updatestats.php");
+include_once(e_PLUGIN."ebattles/include/updateteamstats.php");
 
 /***************************************************************************************
 Functions
@@ -113,6 +115,30 @@ function deleteMatches($event_id)
         }
     }
 }
+function deletePlayerMatches($player_id)
+{
+    global $sql;
+
+    $q = "SELECT ".TBL_MATCHS.".*, "
+    .TBL_SCORES.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES
+    ." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_SCORES.".Player = '$player_id')";
+    $result = $sql->db_Query($q);
+    $num_matches = mysql_numrows($result);
+    echo "<br>player_id $player_id";
+    echo "<br>num_matches $num_matches";
+    if ($num_matches!=0)
+    {
+        for($j=0; $j<$num_matches; $j++)
+        {
+            set_time_limit(10);
+            $mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
+            deleteMatchScores($mID);
+        }
+    }
+}
 function deletePlayers($event_id)
 {
     global $sql;
@@ -127,12 +153,18 @@ function deletePlayers($event_id)
         {
             $pID  = mysql_result($result2,$j, TBL_PLAYERS.".PlayerID");
             deleteAwards($pID);
-            $q3 = "DELETE FROM ".TBL_PLAYERS
-            ." WHERE (".TBL_PLAYERS.".PlayerID = '$pID')";
-            $result3 = $sql->db_Query($q3);
+            deletePlayer($pID);
         }
     }
 }
+function deletePlayer($pID)
+{
+    global $sql;
+    $q = "DELETE FROM ".TBL_PLAYERS
+    ." WHERE (".TBL_PLAYERS.".PlayerID = '$pID')";
+    $result = $sql->db_Query($q);
+}
+
 function deleteTeams($event_id)
 {
     global $sql;
@@ -179,6 +211,7 @@ function deleteEvent($event_id)
 function eventScoresUpdate($event_id, $current_match)
 {
     global $sql;
+    global $time;
 
     $numMatchsPerUpdate = 10;
 
@@ -191,6 +224,7 @@ function eventScoresUpdate($event_id, $current_match)
 
     if ($current_match >= $num_matches)
     {
+        updateStats($event_id, $time, TRUE);
         echo "Done.";
         echo '<META HTTP-EQUIV="Refresh" Content="0; URL=eventmanage.php?eventid='.$event_id.'">';
     }
@@ -213,38 +247,123 @@ function eventScoresUpdate($event_id, $current_match)
         }
         else
         {
-            if (ob_get_level() == 0) {
-                ob_start();
-            }
-            // Output a 'waiting message'
-            echo str_pad('Please wait while this task completes... ',4096)."<br />\n";
-
-            // Update matchs scores
-            for($j=$current_match - 1; $j < min($current_match + $numMatchsPerUpdate - 1, $num_matches); $j++)
-            {
-                set_time_limit(10);
-
-                $next_match = $j + 2;
-                $mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
-
-                match_scores_update($mID, TRUE);
-                //echo 'match '.$j.': '.$mID.'<br>';
-                //echo '<div class="percents">match '.$j.': '.$mID.'</div>';
-                echo '<div class="percents">' . number_format(100*($j+1)/$num_matches, 0, '.', '') . '%&nbsp;complete</div>';
-                echo str_pad('',4096)."\n";
-                ob_flush();
-                flush();
-            }
+        if (ob_get_level() == 0) {
+            ob_start();
         }
+        // Output a 'waiting message'
+        echo str_pad('Please wait while this task completes... ',4096)."<br />\n";
 
-        echo '<form name="updateform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-        echo '<input type="hidden" name="match" value="'.$next_match.'"/>';
-        echo '<input type="hidden" name="eventupdatescores" value="1"/>';
-        echo '</form>';
-        echo '<script language="javascript">document.updateform.submit()</script>';
+        // Update matchs scores
+        for($j=$current_match - 1; $j < min($current_match + $numMatchsPerUpdate - 1, $num_matches); $j++)
+        {
+            set_time_limit(10);
 
-        ob_end_flush();
+            $next_match = $j + 2;
+            $mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
+
+            match_scores_update($mID);
+            match_players_update($mID);
+            if ($update_stats) updateStats($event_id, $time_reported, FALSE);
+            if ($update_stats && ($etype == "Team Ladder")) updateTeamStats($event_id, $time_reported, FALSE);
+
+
+            //echo 'match '.$j.': '.$mID.'<br>';
+            //echo '<div class="percents">match '.$j.': '.$mID.'</div>';
+            echo '<div class="percents">' . number_format(100*($j+1)/$num_matches, 0, '.', '') . '%&nbsp;complete</div>';
+            echo str_pad('',4096)."\n";
+            ob_flush();
+            flush();
+        }
     }
-    exit;
+
+    echo '<form name="updateform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+    echo '<input type="hidden" name="match" value="'.$next_match.'"/>';
+    echo '<input type="hidden" name="eventupdatescores" value="1"/>';
+    echo '</form>';
+    echo '<script language="javascript">document.updateform.submit()</script>';
+
+    ob_end_flush();
 }
+exit;
+}
+/**
+* eventAddPlayer - add a user to an event
+*/
+function eventAddPlayer($event_id, $user, $team = 0)
+{
+    global $sql;
+
+    $q = "SELECT ".TBL_EVENTS.".*"
+    ." FROM ".TBL_EVENTS
+    ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
+    $result = $sql->db_Query($q);
+    $eELOdefault = mysql_result($result, 0, TBL_EVENTS.".ELO_default");
+    $eTS_default_mu  = mysql_result($result, 0, TBL_EVENTS.".TS_default_mu");
+    $eTS_default_sigma  = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
+
+    // Is the user already signed up for the team?
+    $q = "SELECT ".TBL_PLAYERS.".*"
+    ." FROM ".TBL_PLAYERS
+    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+    ."   AND (".TBL_PLAYERS.".Team = '$team')"
+    ."   AND (".TBL_PLAYERS.".User = '$user')";
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+    if ($num_rows==0)
+    {
+        $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
+        VALUES ($event_id,$user,$team,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
+        $sql->db_Query($q);
+        $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+        $sql->db_Query($q);
+    }
+}
+
+
+/**
+* eventAddDivision - add a division to an event
+*/
+function eventAddDivision($event_id, $div_id)
+{
+    global $sql;
+
+    // Is the division signed up
+    $q = "SELECT ".TBL_TEAMS.".*"
+    ." FROM ".TBL_TEAMS
+    ." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+    ." AND (".TBL_TEAMS.".Division = '$div_id')";
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+    if($num_rows == 0)
+    {
+        $q = " INSERT INTO ".TBL_TEAMS."(Event,Division)
+        VALUES ($event_id,$div_id)";
+        $sql->db_Query($q);
+        $team_id =  mysql_insert_id();
+
+        // All members of this division will automatically be signed up to this event
+        $q_2 = "SELECT ".TBL_DIVISIONS.".*, "
+        .TBL_MEMBERS.".*, "
+        .TBL_USERS.".*"
+        ." FROM ".TBL_DIVISIONS.", "
+        .TBL_USERS.", "
+        .TBL_MEMBERS
+        ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+        ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+        ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)";
+        $result_2 = $sql->db_Query($q_2);
+        $num_rows_2 = mysql_numrows($result_2);
+        if($num_rows_2 > 0)
+        {
+            for($j=0; $j<$num_rows_2; $j++)
+            {
+                $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+                eventAddPlayer ($event_id, $mid, $team_id);
+            }
+            $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+            $result = $sql->db_Query($q4);
+        }
+    }
+}
+
 ?>

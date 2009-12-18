@@ -3,6 +3,8 @@
 * ClanInfo_process.php
 *
 */
+require_once(e_PLUGIN.'ebattles/include/clan.php');
+
 if(isset($_POST['joindivision']))
 {
     $div_id = $_POST['division'];
@@ -93,47 +95,4 @@ if(isset($_POST['quitdivision']))
     }
     header("Location: claninfo.php?clanid=$clan_id");
 }
-
-//----------------------------------------------------------
-function deleteMemberPlayers($div_id)
-{
-    global $sql;
-
-    $q_MemberPlayers = "SELECT ".TBL_MEMBERS.".*, "
-    .TBL_TEAMS.".*, "
-    .TBL_PLAYERS.".*"
-    ." FROM ".TBL_MEMBERS.", "
-    .TBL_TEAMS.", "
-    .TBL_PLAYERS
-    ." WHERE (".TBL_MEMBERS.".User = ".USERID.")"
-    ." AND (".TBL_MEMBERS.".Division = '$div_id')"
-    ." AND (".TBL_TEAMS.".Division = '$div_id')"
-    ." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)";
-    $result_MemberPlayers = $sql->db_Query($q_MemberPlayers);
-    $numMemberPlayers = mysql_numrows($result_MemberPlayers);
-    if ($numMemberPlayers != 0)
-    {
-        for($j=0; $j<$numMemberPlayers; $j++)
-        {
-            $pID  = mysql_result($result_MemberPlayers,$j, TBL_PLAYERS.".PlayerID");
-            $q = "DELETE FROM ".TBL_PLAYERS
-            ." WHERE (".TBL_PLAYERS.".PlayerID = '$pID')";
-            $result = $sql->db_Query($q);
-        }
-    }
-}
-function deleteMember($div_id)
-{
-    global $sql;
-
-    $q = " DELETE FROM ".TBL_MEMBERS
-    ." WHERE (Division = '$div_id')"
-    ."   AND (User = ".USERID.")";
-    $sql->db_Query($q);
-}
-
-
-
-
-
 ?>

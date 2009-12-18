@@ -171,3 +171,6 @@ Regression:
 - Should not be able to report a game as a guest
   To reproduce this, go to the match report page in a tab, and logout in another tab.
   When you Submit, the match, it will be as a Guest.
+
+- to-do
+. send PM on add player.

@@ -34,6 +34,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     $oppscore = array();
     $scorediff = array();
     $points = array();
+    $banned = array();
 
     $games_played_score = array();
     $ELO_score = array();
@@ -61,7 +62,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
     $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
     $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
-    
+
     // Update Players stats
     $q_Players = "SELECT ".TBL_PLAYERS.".*, "
     .TBL_USERS.".*"
@@ -99,6 +100,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $pscore = mysql_result($result_Players,$player, TBL_PLAYERS.".Score");
         $poppscore = mysql_result($result_Players,$player, TBL_PLAYERS.".ScoreAgainst");
         $ppoints = mysql_result($result_Players,$player, TBL_PLAYERS.".Points");
+        $pbanned  = mysql_result($result_Players,$player, TBL_PLAYERS.".Banned");
 
         $popponentsELO = 0;
         $popponents = 0;
@@ -185,9 +187,10 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $oppscore[] = ($pgames_played>0) ? number_format($poppscore/$pgames_played,2) : 0;
         $scorediff[] = ($pgames_played>0) ? number_format(($pscore - $poppscore)/$pgames_played,2) : 0;
         $points[] = $ppoints;
-
+        $banned[] = $pbanned;
+        
         // Actual score (not for display)
-        if ($pgames_played >= $emingames)
+        if (($pgames_played >= $emingames)&&($pbanned == 0))
         {
             $games_played_score[] = $pgames_played;
             $ELO_score[] = $pELO;
@@ -374,7 +377,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
 
     $stats = array
     (
-    "0"=>array("header","<b>Rank</b>","<b>Player</b>")
+        "0"=>array("header","<b>Rank</b>","<b>Player</b>")
     );
 
     if ($ehide_ratings_column == FALSE)
@@ -390,7 +393,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     for($player=0; $player<$numPlayers; $player++)
     {
         $OverallScore[$player]=0;
-        if ($games_played[$player] >= $emingames)
+        if (($games_played[$player] >= $emingames)&&($banned[$player] == 0))
         {
             for ($category=0; $category<$numDisplayedCategories; $category++)
             {
@@ -418,7 +421,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     $q_Players = "SELECT *"
     ." FROM ".TBL_PLAYERS
     ." WHERE (Event = '$event_id')"
-    ." ORDER BY ".TBL_PLAYERS.".OverallScore DESC, ".TBL_PLAYERS.".GamesPlayed DESC, ".TBL_PLAYERS.".ELORanking DESC";
+    ." ORDER BY ".TBL_PLAYERS.".OverallScore DESC, ".TBL_PLAYERS.".GamesPlayed DESC, ".TBL_PLAYERS.".ELORanking DESC, ".TBL_PLAYERS.".Banned ASC";
     $result_Players = $sql->db_Query($q_Players);
     $ranknumber = 1;
     for($player=0; $player<$numPlayers; $player++)
@@ -433,10 +436,19 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $index = array_search($pid,$id);
 
         $prank_side_image = "";
-        if($OverallScore[$index]==0)
+        if($banned[$index]==1)
+        {
+            $rank = '<span title="Banned"><img src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="Banned" title="Banned"/></span>';
+            $prankdelta_string = "";
+            $q_update = "UPDATE ".TBL_PLAYERS." SET Rank = 0 WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
+            $result_update = $sql->db_Query($q_update);
+        }
+        elseif($OverallScore[$index]==0)
         {
             $rank = '<span title="Not ranked">-</span>';
             $prankdelta_string = "";
+            $q_update = "UPDATE ".TBL_PLAYERS." SET Rank = 0 WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
+            $result_update = $sql->db_Query($q_update);
         }
         else
         {
@@ -545,7 +557,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
             ." WHERE (".TBL_TEAMS.".TeamID = '$team[$index]')"
             ." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
             ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-            $result_Clans  = $sql->db_Query($q_Clans );
+            $result_Clans = $sql->db_Query($q_Clans );
             $numClans = mysql_numrows($result_Clans );
             if ($numClans == 1)
             {
@@ -558,14 +570,14 @@ function updateStats($event_id, $time, $serialize = TRUE)
         {
             $stats_row = array
             (
-            "row_highlight"
+                "row_highlight"
             );
         }
         else
         {
             $stats_row = array
             (
-            "row"
+                "row"
             );
         }
 
@@ -616,20 +628,20 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $OUTPUT = serialize($stats);
         $fp = fopen($file,"w"); // open file with Write permission
 
-        if ($fp == FALSE) {
-            // handle error
-            $error .= "Could not write to cache directory, please verify cache direcory is writable";
-        }
-
-        fputs($fp, $OUTPUT);
-        fclose($fp);
-        /*
-        $stats = unserialize(implode('',file($file)));
-        foreach ($stats as $id=>$row)
-        {
-        print $row['category_name']."<br />";
-        }
-        */
+    if ($fp == FALSE) {
+        // handle error
+        $error .= "Could not write to cache directory, please verify cache direcory is writable";
     }
+
+    fputs($fp, $OUTPUT);
+    fclose($fp);
+    /*
+    $stats = unserialize(implode('',file($file)));
+    foreach ($stats as $id=>$row)
+    {
+    print $row['category_name']."<br />";
+    }
+    */
+}
 }
 ?>
