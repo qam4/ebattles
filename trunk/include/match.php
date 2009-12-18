@@ -1,12 +1,10 @@
 <?php
 // functions for matchs score updates.
 //___________________________________________________________________
-require_once e_PLUGIN.'ebattles/include/ELO.php';
-require_once e_PLUGIN.'ebattles/include/trueskill.php';
-include_once(e_PLUGIN."ebattles/include/updatestats.php");
-include_once(e_PLUGIN."ebattles/include/updateteamstats.php");
+require_once(e_PLUGIN.'ebattles/include/ELO.php');
+require_once(e_PLUGIN.'ebattles/include/trueskill.php');
 
-function match_scores_update($match_id, $update_stats)
+function match_scores_update($match_id)
 {
     global $sql;
 
@@ -18,10 +16,6 @@ function match_scores_update($match_id, $update_stats)
     ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
     ."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)";
     $result = $sql->db_Query($q);
-
-    $event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
-    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
-    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
     $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
     $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
     $eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
@@ -29,8 +23,6 @@ function match_scores_update($match_id, $update_stats)
     $ePointPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
     $ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
     $ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
-    $eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
-    $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
 
     // Initialize scores ELO/TrueSkill
     $deltaELO = 0;
@@ -233,130 +225,229 @@ function match_scores_update($match_id, $update_stats)
             $result_1 = $sql->db_Query($q_1);
         }
         $output .= '<br />';
-
-        // Update Players with scores
-        $q = "SELECT ".TBL_MATCHS.".*, "
-        .TBL_SCORES.".*, "
-        .TBL_PLAYERS.".*, "
-        .TBL_USERS.".*"
-        ." FROM ".TBL_MATCHS.", "
-        .TBL_SCORES.", "
-        .TBL_PLAYERS.", "
-        .TBL_USERS
-        ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-        ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-        ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
-        $result = $sql->db_Query($q);
-        $num_players = mysql_numrows($result);
-        for($i=0;$i<$num_players;$i++)
-        {
-            $time_reported = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-
-            $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
-            $pdeltaTS_mu = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
-            $pdeltaTS_sigma = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
-            $pid= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-            $puid= mysql_result($result,$i, TBL_USERS.".user_id");
-            $pName= mysql_result($result,$i, TBL_USERS.".user_name");
-            $pteam= mysql_result($result,$i, TBL_PLAYERS.".Team");
-            $pELO= mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
-            $pTS_mu= mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
-            $pTS_sigma= mysql_result($result,$i, TBL_PLAYERS.".TS_sigma");
-            $pGamesPlayed= mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
-            $pWins= mysql_result($result,$i, TBL_PLAYERS.".Win");
-            $pDraws= mysql_result($result,$i, TBL_PLAYERS.".Draw");
-            $pLosses= mysql_result($result,$i, TBL_PLAYERS.".Loss");
-            $pStreak= mysql_result($result,$i, TBL_PLAYERS.".Streak");
-            $pStreak_Best= mysql_result($result,$i, TBL_PLAYERS.".Streak_Best");
-            $pStreak_Worst= mysql_result($result,$i, TBL_PLAYERS.".Streak_Worst");
-            $pPoints= mysql_result($result,$i, TBL_PLAYERS.".Points");
-            $pScore= mysql_result($result,$i, TBL_PLAYERS.".Score");
-            $pOppScore= mysql_result($result,$i, TBL_PLAYERS.".ScoreAgainst");
-
-            $pWins += mysql_result($result,$i, TBL_SCORES.".Player_Win");
-            $pDraws += mysql_result($result,$i, TBL_SCORES.".Player_Draw");
-            $pLosses += mysql_result($result,$i, TBL_SCORES.".Player_Loss");
-            $pPoints += mysql_result($result,$i, TBL_SCORES.".Player_Points");
-            $pScore += mysql_result($result,$i, TBL_SCORES.".Player_Score");
-            $pOppScore += mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
-
-            $pELO += $pdeltaELO;
-            $pTS_mu += $pdeltaTS_mu;
-            $pTS_sigma *= $pdeltaTS_sigma;
-            $pGamesPlayed += 1;
-
-            $output .= "Player: $pName, new ELO:$pELO<br />";
-
-            $gain = mysql_result($result,$i, TBL_SCORES.".Player_Win") - mysql_result($result,$i, TBL_SCORES.".Player_Loss");
-            if ($gain * $pStreak > 0)
-            {
-                // same sign
-                $pStreak += $gain;
-            }
-            else
-            {
-                // opposite sign
-                $pStreak = $gain;
-            }
-
-            if ($pStreak > $pStreak_Best) $pStreak_Best = $pStreak;
-            if ($pStreak < $pStreak_Worst) $pStreak_Worst = $pStreak;
-
-            if ($pStreak == 5)
-            {
-                // Award: player wins 5 games in a row
-                $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-                VALUES ($pid,'PlayerStreak5',$time_reported)";
-                $result4 = $sql->db_Query($q4);
-            }
-            if ($pStreak == 10)
-            {
-                // Award: player wins 10 games in a row
-                $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-                VALUES ($pid,'PlayerStreak10',$time_reported)";
-                $result4 = $sql->db_Query($q4);
-            }
-            if ($pStreak == 25)
-            {
-                // Award: player wins 25 games in a row
-                $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-                VALUES ($pid,'PlayerStreak25',$time_reported)";
-                $result4 = $sql->db_Query($q4);
-            }
-
-            // Update database.
-            // Reset rank delta after a match.
-            $q_3 = "UPDATE ".TBL_PLAYERS
-            ." SET ELORanking = $pELO,"
-            ."     TS_mu = $pTS_mu,"
-            ."     TS_sigma = $pTS_sigma,"
-            ."     GamesPlayed = $pGamesPlayed,"
-            ."     Loss = $pLosses,"
-            ."     Win = $pWins,"
-            ."     Draw = $pDraws,"
-            ."     Score = $pScore,"
-            ."     ScoreAgainst = $pOppScore,"
-            ."     Points = $pPoints,"
-            ."     Streak = $pStreak,"
-            ."     Streak_Best = $pStreak_Best,"
-            ."     Streak_Worst = $pStreak_Worst,"
-            ."     RankDelta = 0"
-            ." WHERE (PlayerID = '$pid')";
-            $result_3 = $sql->db_Query($q_3);
-
-            if ($etype == "Team Ladder")
-            {
-                // Reset rank delta after a match.
-                $q_3 = "UPDATE ".TBL_TEAMS." SET RankDelta = 0 WHERE (TeamID = '$pteam')";
-                $result_3 = $sql->db_Query($q_3);
-            }
-        }
-        if ($update_stats) updateStats($event_id, $time_reported, FALSE);
-        if ($update_stats && ($etype == "Team Ladder")) updateTeamStats($event_id, $time_reported, FALSE);
-        //echo $output;
-        //exit;
     }
+}
+
+function match_players_update($match_id)
+{
+    global $sql;
+
+    // Get event info
+    $q = "SELECT ".TBL_EVENTS.".*, "
+    .TBL_MATCHS.".*"
+    ." FROM ".TBL_EVENTS.", "
+    .TBL_MATCHS
+    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+    ."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)";
+    $result = $sql->db_Query($q);
+    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+
+    // Update Players with scores
+    $q = "SELECT ".TBL_MATCHS.".*, "
+    .TBL_SCORES.".*, "
+    .TBL_PLAYERS.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
+    .TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+    ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+    $result = $sql->db_Query($q);
+    $num_players = mysql_numrows($result);
+    for($i=0;$i<$num_players;$i++)
+    {
+        $time_reported = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
+
+        $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
+        $pdeltaTS_mu = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
+        $pdeltaTS_sigma = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
+        $pid= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+        $puid= mysql_result($result,$i, TBL_USERS.".user_id");
+        $pName= mysql_result($result,$i, TBL_USERS.".user_name");
+        $pteam= mysql_result($result,$i, TBL_PLAYERS.".Team");
+        $pELO= mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
+        $pTS_mu= mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
+        $pTS_sigma= mysql_result($result,$i, TBL_PLAYERS.".TS_sigma");
+        $pGamesPlayed= mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
+        $pWins= mysql_result($result,$i, TBL_PLAYERS.".Win");
+        $pDraws= mysql_result($result,$i, TBL_PLAYERS.".Draw");
+        $pLosses= mysql_result($result,$i, TBL_PLAYERS.".Loss");
+        $pStreak= mysql_result($result,$i, TBL_PLAYERS.".Streak");
+        $pStreak_Best= mysql_result($result,$i, TBL_PLAYERS.".Streak_Best");
+        $pStreak_Worst= mysql_result($result,$i, TBL_PLAYERS.".Streak_Worst");
+        $pPoints= mysql_result($result,$i, TBL_PLAYERS.".Points");
+        $pScore= mysql_result($result,$i, TBL_PLAYERS.".Score");
+        $pOppScore= mysql_result($result,$i, TBL_PLAYERS.".ScoreAgainst");
+
+        $pWins += mysql_result($result,$i, TBL_SCORES.".Player_Win");
+        $pDraws += mysql_result($result,$i, TBL_SCORES.".Player_Draw");
+        $pLosses += mysql_result($result,$i, TBL_SCORES.".Player_Loss");
+        $pPoints += mysql_result($result,$i, TBL_SCORES.".Player_Points");
+        $pScore += mysql_result($result,$i, TBL_SCORES.".Player_Score");
+        $pOppScore += mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
+
+        $pELO += $pdeltaELO;
+        $pTS_mu += $pdeltaTS_mu;
+        $pTS_sigma *= $pdeltaTS_sigma;
+        $pGamesPlayed += 1;
+
+        $output .= "Player: $pName, new ELO:$pELO<br />";
+
+        $gain = mysql_result($result,$i, TBL_SCORES.".Player_Win") - mysql_result($result,$i, TBL_SCORES.".Player_Loss");
+        if ($gain * $pStreak > 0)
+        {
+            // same sign
+            $pStreak += $gain;
+        }
+        else
+        {
+            // opposite sign
+            $pStreak = $gain;
+        }
+
+        if ($pStreak > $pStreak_Best) $pStreak_Best = $pStreak;
+        if ($pStreak < $pStreak_Worst) $pStreak_Worst = $pStreak;
+
+        if ($pStreak == 5)
+        {
+            // Award: player wins 5 games in a row
+            $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+            VALUES ($pid,'PlayerStreak5',$time_reported)";
+            $result4 = $sql->db_Query($q4);
+        }
+        if ($pStreak == 10)
+        {
+            // Award: player wins 10 games in a row
+            $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+            VALUES ($pid,'PlayerStreak10',$time_reported)";
+            $result4 = $sql->db_Query($q4);
+        }
+        if ($pStreak == 25)
+        {
+            // Award: player wins 25 games in a row
+            $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+            VALUES ($pid,'PlayerStreak25',$time_reported)";
+            $result4 = $sql->db_Query($q4);
+        }
+
+        // Update database.
+        // Reset rank delta after a match.
+        $q_3 = "UPDATE ".TBL_PLAYERS
+        ." SET ELORanking = $pELO,"
+        ."     TS_mu = $pTS_mu,"
+        ."     TS_sigma = $pTS_sigma,"
+        ."     GamesPlayed = $pGamesPlayed,"
+        ."     Loss = $pLosses,"
+        ."     Win = $pWins,"
+        ."     Draw = $pDraws,"
+        ."     Score = $pScore,"
+        ."     ScoreAgainst = $pOppScore,"
+        ."     Points = $pPoints,"
+        ."     Streak = $pStreak,"
+        ."     Streak_Best = $pStreak_Best,"
+        ."     Streak_Worst = $pStreak_Worst,"
+        ."     RankDelta = 0"
+        ." WHERE (PlayerID = '$pid')";
+        $result_3 = $sql->db_Query($q_3);
+
+        if ($etype == "Team Ladder")
+        {
+            // Reset rank delta after a match.
+            $q_3 = "UPDATE ".TBL_TEAMS." SET RankDelta = 0 WHERE (TeamID = '$pteam')";
+            $result_3 = $sql->db_Query($q_3);
+        }
+    }
+    //echo $output;
+    //exit;
+}
+
+function deleteMatchScores($match_id)
+{
+    global $sql;
+    
+    // Update Players with scores
+    $q = "SELECT ".TBL_MATCHS.".*, "
+    .TBL_SCORES.".*, "
+    .TBL_PLAYERS.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
+    .TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+    ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+    for($i=0;$i<$num_rows;$i++)
+    {
+        $pID= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+        $puid= mysql_result($result,$i, TBL_USERS.".user_id");
+        $pname= mysql_result($result,$i, TBL_USERS.".user_name");
+        $pELO= mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
+        $pTS_mu= mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
+        $pTS_sigma= mysql_result($result,$i, TBL_PLAYERS.".TS_sigma");
+        $pGamesPlayed= mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
+        $pWins= mysql_result($result,$i, TBL_PLAYERS.".Win");
+        $pDraws= mysql_result($result,$i, TBL_PLAYERS.".Draw");
+        $pLosses= mysql_result($result,$i, TBL_PLAYERS.".Loss");
+        $pScore= mysql_result($result,$i, TBL_PLAYERS.".Score");
+        $pOppScore= mysql_result($result,$i, TBL_PLAYERS.".ScoreAgainst");
+        $pPoints= mysql_result($result,$i, TBL_PLAYERS.".Points");
+        $scoreid = mysql_result($result,$i, TBL_SCORES.".ScoreID");
+        $pdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
+        $pdeltaTS_mu = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
+        $pdeltaTS_sigma = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
+        $psWins = mysql_result($result,$i, TBL_SCORES.".Player_Win");
+        $psDraws = mysql_result($result,$i, TBL_SCORES.".Player_Draw");
+        $psLosses = mysql_result($result,$i, TBL_SCORES.".Player_Loss");
+        $psScore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
+        $psOppScore = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
+        $psPoints = mysql_result($result,$i, TBL_SCORES.".Player_Points");
+
+        $pELO -= $pdeltaELO;
+        $pTS_mu -= $pdeltaTS_mu;
+        $pTS_sigma /= $pdeltaTS_sigma;
+        $pWins -= $psWins;
+        $pDraws -= $psDraws;
+        $pLosses -= $psLosses;
+        $pScore -= $psScore;
+        $pOppScore -= $psOppScore;
+        $pPoints -= $psPoints;
+        $pGamesPlayed -= 1;
+
+        $output .= "<br>Player $pname, new ELO:$pELO<br />";
+
+        $q = "UPDATE ".TBL_PLAYERS
+        ." SET ELORanking = $pELO,"
+        ."     TS_mu = $pTS_mu,"
+        ."     TS_sigma = $pTS_sigma,"
+        ."     GamesPlayed = $pGamesPlayed,"
+        ."     Loss = $pLosses,"
+        ."     Win = $pWins,"
+        ."     Draw = $pDraws,"
+        ."     Score = $pScore,"
+        ."     ScoreAgainst = $pOppScore,"
+        ."     Points = $pPoints"
+        ." WHERE (PlayerID = '$pID')";
+        $result2 = $sql->db_Query($q);
+        $output .= "<br>$q";
+
+        // fmarc- Can not reverse "streak" information here :(
+
+        // Delete Score
+        $q = "DELETE FROM ".TBL_SCORES." WHERE (ScoreID = '$scoreid')";
+        $result2 = $sql->db_Query($q);
+        $output .= "<br>$q";
+
+        // The match itself is kept in database, only the scores are deleted.
+    }
+    echo $output;
+    //exit;
 }
 
 ?>

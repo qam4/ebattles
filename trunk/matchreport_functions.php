@@ -1,6 +1,6 @@
 <?php
 // function to output form and hold previously entered values.
-function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore) {
+function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore, $userclass) {
     global $text;
     global $tp;
 
@@ -221,6 +221,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     $text .= '</div>';
     $text .= '<br />';
     $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';
+    $text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
     $text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
     $text .= '<input class="button" type="submit" value="Submit Match" name="submit"/>';
     $text .= '</div>';

@@ -5,7 +5,7 @@
 */
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
-require_once e_PLUGIN.'ebattles/include/event.php';
+require_once(e_PLUGIN.'ebattles/include/event.php');
 
 /*******************************************************************
 ********************************************************************/
@@ -27,7 +27,6 @@ text-align: center;
 
 //dbg- print_r($_POST);
 //dbg- exit;
-
 $event_id = $_GET['eventid'];
 if (!$event_id)
 {
@@ -42,6 +41,9 @@ else
     $result = $sql->db_Query($q);
     $eowner = mysql_result($result,0 , TBL_EVENTS.".Owner");
     $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+    $eELOdefault = mysql_result($result, 0, TBL_EVENTS.".ELO_default");
+    $eTS_default_mu  = mysql_result($result, 0, TBL_EVENTS.".TS_default_mu");
+    $eTS_default_sigma  = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
 
     $can_manage = 0;
     if (check_class($pref['eb_mod_class'])) $can_manage = 1;
@@ -49,7 +51,6 @@ else
     if ($can_manage == 0)
     {
         header("Location: ./eventinfo.php?eventid=$event_id");
-        exit();
     }
     else{
 
@@ -259,6 +260,58 @@ else
             $result2 = $sql->db_Query($q2);
 
             //echo "-- eventrulessave --<br />";
+            header("Location: eventmanage.php?eventid=$event_id");
+        }
+        if(isset($_POST['eventaddplayer']))
+        {
+            $player = $_POST['player'];
+            eventAddPlayer($event_id, $player);
+
+            //echo "-- eventaddplayer --<br />";
+            header("Location: eventmanage.php?eventid=$event_id");
+        }
+        if(isset($_POST['eventaddteam']))
+        {
+            $division = $_POST['division'];
+            eventAddDivision($event_id, $division);
+
+            //echo "-- eventaddteam --<br />";
+            header("Location: eventmanage.php?eventid=$event_id");
+        }
+        if(isset($_POST['ban_player']) && $_POST['ban_player']!="")
+        {
+            $playerid = $_POST['ban_player'];
+            $q2 = "UPDATE ".TBL_PLAYERS." SET Banned = '1' WHERE (PlayerID = '$playerid')";
+            $result2 = $sql->db_Query($q2);
+            updateStats($event_id, $time, TRUE);
+            header("Location: eventmanage.php?eventid=$event_id");
+        }
+        if(isset($_POST['unban_player']) && $_POST['unban_player']!="")
+        {
+            $playerid = $_POST['unban_player'];
+            $q2 = "UPDATE ".TBL_PLAYERS." SET Banned = '0' WHERE (PlayerID = '$playerid')";
+            $result2 = $sql->db_Query($q2);
+            updateStats($event_id, $time, TRUE);
+            header("Location: eventmanage.php?eventid=$event_id");
+        }
+        if(isset($_POST['kick_player']) && $_POST['kick_player']!="")
+        {
+            $playerid = $_POST['kick_player'];
+            deletePlayer($playerid);
+            updateStats($event_id, $time, TRUE);
+            header("Location: eventmanage.php?eventid=$event_id");
+        }
+        if(isset($_POST['del_player_games']) && $_POST['del_player_games']!="")
+        {
+            $playerid = $_POST['del_player_games'];
+            deletePlayerMatches($playerid);
+            updateStats($event_id, $time, TRUE);
+            header("Location: eventmanage.php?eventid=$event_id");
+        }
+        if(isset($_POST['del_player_awards']) && $_POST['del_player_awards']!="")
+        {
+            $playerid = $_POST['del_player_awards'];
+            deleteAwards($playerid);
             header("Location: eventmanage.php?eventid=$event_id");
         }
         if(isset($_POST['eventresetscores']))
