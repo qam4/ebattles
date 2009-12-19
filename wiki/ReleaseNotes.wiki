@@ -1,5 +1,33 @@
 #summary eBattles Release Notes.
 
+= Release 0.5.152 =
+== Features ==
+ * Added support for event players management with add/kick/ban functions (Fixes issue 1 and issue 51)
+  * Added new "Event Players" tab is event management page
+  * "Add Player" or "Add Team" (for team events) button with a player/team drop-down selector and PM notification checkbox.
+   * Note: PM notification is not yet implemented.
+  * Paginated list of players with actions:
+   * Ban: 
+    * You can temporarily ban/unban a player.
+    * A banned player can no longer play in the event or sign up to the event during the duration of the ban.
+   * Delete players games
+   * Delete players awards
+   * Kick:
+    * Admin can kick (delete) a player who has no games played and no awards.
+    * A kicked player can re-signup to the event.
+ * Match Info added a column to show the players "Points"
+== Bug fixes ==
+ * Fix: Players should be able to submit a game only if they participated in that game. (Fixes issue 61)
+ * Fix: Number of games played wrong in "Recent Events", when one or more matches have been deleted from the event (Fixes issue 60)
+ * Fixed bug: "Match Report" button not visible to event players (Fixes issue 59)
+  * Problem: 
+   * "Match Report" button should be visible to event players in the PLayer 
+   * Standings tab of the event, when the event is on going.
+   * This is broken for events created after release 107 when "userclass for match report" was introduced.
+  * Fix: 
+   * Fixed the match report userclass check
+   * Set default match userclass check to "Event Player" (1) instead of 0.
+
 = Release 0.4.147 =
 == Features ==
  * Changed default image size for recent activity menu from 8 to 16 px
