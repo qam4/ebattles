@@ -645,11 +645,11 @@ $q = "SELECT *"
 ." FROM ".TBL_PLAYERS
 ." WHERE (Event = '$event_id')"
 ."   AND (User = ".USERID.")";
-
 $result = $sql->db_Query($q);
 $can_report = 0;
 $can_report_quickloss = 0;
 $userclass = 0;
+$pbanned=0;
 if(mysql_numrows($result) == 1)
 {
     $userclass |= eb_UC_EVENT_PLAYER;
@@ -657,6 +657,7 @@ if(mysql_numrows($result) == 1)
     // Show link to my position
     $row = mysql_fetch_array($result);
     $prank = $row['Rank'];
+    $pbanned = $row['Banned'];
 
     if ($prank==0)
     $prank_txt = "(Not ranked)";
@@ -708,7 +709,7 @@ if ($num_rows_2>0)
     $can_report = 1;
 }
 
-if ($nbrplayersNotBanned < 2)
+if (($nbrplayersNotBanned < 2)||($pbanned))
 {
     $can_report = 0;
     $can_report_quickloss = 0;
