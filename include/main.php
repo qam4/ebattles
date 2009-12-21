@@ -291,5 +291,66 @@ function getComment($pluginid, $id) {
     return $text;
 }
 
+/**
+* Send a notification to one or more users.
+* <p>Current implementation just sends a Private Message, so the PM plugin must be enabled.</p>
+* @param   sendto      an array of userid(s) or a sinle userclass (not array) to send notifications to
+* @param   subject     the subject of the message
+* @param   message     the message itself
+* @param   fromid      id of user sending PM (they will get a copy in theor outbox), defaults to 0 (no user)
+* @return  TBC
+* @TODO add option to PM multiple users
+* @TODO add option to PM a userclass
+* @TODO proper return values
+* @TODO localization
+*/
+function sendNotification($sendto, $subject, $message, $fromid=0) {
+    global $sql, $pm_prefs, $pm, $pref, $sysprefs, $tp;
+
+    // Include Private Message class if not already defined
+    if (!class_exists("private_message")) {
+        if (file_exists(e_PLUGIN."pm/pm_class.php")) {
+            require_once(e_PLUGIN."pm/pm_class.php");
+            include_lan(e_PLUGIN.'pm/languages/'.e_LANGUAGE.'.php');
+        } else {
+            return;
+        }
+    }
+
+    // Check user is allowed to send PMs
+    $pm_prefs = $sysprefs->getArray("pm_prefs");
+    if (!check_class($pm_prefs['pm_class'])) {
+        return NOT_AUTHORIZED;
+    }
+
+    /*
+    // Annotate message with senders details
+    if (USERID !== false) {
+    $message = "Notification from ".USERNAME."\n\n".$message;
+    } else {
+    $message = "Notification from Guest\n\n".$message;
+    }
+    */
+
+    $pm = new private_message();
+    // Array of userids to PM
+    if (!$sql->db_Select("user", "user_id, user_name, user_class, user_email", "user_id=$sendto")) {
+        return USER_NOT_FOUND;
+    }
+    $touser = $sql->db_Fetch();
+
+    $vars = array(
+    "pm_subject"      => $subject,
+    "pm_message"      => $message,
+    "from_id"         => $fromid,
+    "to_info"         => array(
+    "user_id"      => $touser["user_id"],
+    "user_name"    => $touser["user_name"],
+    "user_email"   => $touser["user_email"]
+    )
+    );
+    return $pm->add($vars);
+}
+
 
 ?>

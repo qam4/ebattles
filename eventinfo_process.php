@@ -27,7 +27,7 @@ if(isset($_POST['quitevent'])){
 if(isset($_POST['joinevent'])){
     if ($_POST['joinEventPassword'] == $epassword)
     {
-        eventAddPlayer ($event_id, USERID);
+        eventAddPlayer($event_id, USERID, 0, FALSE);
     }
     header("Location: eventinfo.php?eventid=$event_id");
 }
@@ -35,13 +35,13 @@ if(isset($_POST['teamjoinevent'])){
     if ($_POST['joinEventPassword'] == $epassword)
     {
         $div_id = $_POST['division'];
-        eventAddDivision($event_id, $div_id);
+        eventAddDivision($event_id, $div_id, FALSE);
     }
     header("Location: eventinfo.php?eventid=$event_id");
 }
 if(isset($_POST['jointeamevent'])){
     $team_id = $_POST['team'];
-    eventAddPlayer ($event_id, USERID, $team_id);
+    eventAddPlayer ($event_id, USERID, $team_id, FALSE);
     header("Location: eventinfo.php?eventid=$event_id");
 }
 

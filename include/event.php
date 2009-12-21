@@ -1,6 +1,7 @@
 <?php
 // functions for events.
 //___________________________________________________________________
+require_once(e_PLUGIN.'ebattles/include/main.php');
 require_once(e_PLUGIN.'ebattles/include/match.php');
 include_once(e_PLUGIN."ebattles/include/updatestats.php");
 include_once(e_PLUGIN."ebattles/include/updateteamstats.php");
@@ -247,49 +248,49 @@ function eventScoresUpdate($event_id, $current_match)
         }
         else
         {
-        if (ob_get_level() == 0) {
-            ob_start();
+            if (ob_get_level() == 0) {
+                ob_start();
+            }
+            // Output a 'waiting message'
+            echo str_pad('Please wait while this task completes... ',4096)."<br />\n";
+
+            // Update matchs scores
+            for($j=$current_match - 1; $j < min($current_match + $numMatchsPerUpdate - 1, $num_matches); $j++)
+            {
+                set_time_limit(10);
+
+                $next_match = $j + 2;
+                $mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
+
+                match_scores_update($mID);
+                match_players_update($mID);
+                if ($update_stats) updateStats($event_id, $time_reported, FALSE);
+                if ($update_stats && ($etype == "Team Ladder")) updateTeamStats($event_id, $time_reported, FALSE);
+
+
+                //echo 'match '.$j.': '.$mID.'<br>';
+                //echo '<div class="percents">match '.$j.': '.$mID.'</div>';
+                echo '<div class="percents">' . number_format(100*($j+1)/$num_matches, 0, '.', '') . '%&nbsp;complete</div>';
+                echo str_pad('',4096)."\n";
+                ob_flush();
+                flush();
+            }
         }
-        // Output a 'waiting message'
-        echo str_pad('Please wait while this task completes... ',4096)."<br />\n";
 
-        // Update matchs scores
-        for($j=$current_match - 1; $j < min($current_match + $numMatchsPerUpdate - 1, $num_matches); $j++)
-        {
-            set_time_limit(10);
+        echo '<form name="updateform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        echo '<input type="hidden" name="match" value="'.$next_match.'"/>';
+        echo '<input type="hidden" name="eventupdatescores" value="1"/>';
+        echo '</form>';
+        echo '<script language="javascript">document.updateform.submit()</script>';
 
-            $next_match = $j + 2;
-            $mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
-
-            match_scores_update($mID);
-            match_players_update($mID);
-            if ($update_stats) updateStats($event_id, $time_reported, FALSE);
-            if ($update_stats && ($etype == "Team Ladder")) updateTeamStats($event_id, $time_reported, FALSE);
-
-
-            //echo 'match '.$j.': '.$mID.'<br>';
-            //echo '<div class="percents">match '.$j.': '.$mID.'</div>';
-            echo '<div class="percents">' . number_format(100*($j+1)/$num_matches, 0, '.', '') . '%&nbsp;complete</div>';
-            echo str_pad('',4096)."\n";
-            ob_flush();
-            flush();
-        }
+        ob_end_flush();
     }
-
-    echo '<form name="updateform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-    echo '<input type="hidden" name="match" value="'.$next_match.'"/>';
-    echo '<input type="hidden" name="eventupdatescores" value="1"/>';
-    echo '</form>';
-    echo '<script language="javascript">document.updateform.submit()</script>';
-
-    ob_end_flush();
-}
-exit;
+    exit;
 }
 /**
 * eventAddPlayer - add a user to an event
 */
-function eventAddPlayer($event_id, $user, $team = 0)
+function eventAddPlayer($event_id, $user, $team = 0, $notify)
 {
     global $sql;
 
@@ -298,8 +299,15 @@ function eventAddPlayer($event_id, $user, $team = 0)
     ." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
     $result = $sql->db_Query($q);
     $eELOdefault = mysql_result($result, 0, TBL_EVENTS.".ELO_default");
-    $eTS_default_mu  = mysql_result($result, 0, TBL_EVENTS.".TS_default_mu");
-    $eTS_default_sigma  = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
+    $eTS_default_mu = mysql_result($result, 0, TBL_EVENTS.".TS_default_mu");
+    $eTS_default_sigma = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
+    $ename = mysql_result($result, 0, TBL_EVENTS.".Name");
+
+    $q = "SELECT ".TBL_USERS.".*"
+    ." FROM ".TBL_USERS
+    ." WHERE (".TBL_USERS.".user_id = '$user')";
+    $result = $sql->db_Query($q);
+    $username = mysql_result($result, 0, TBL_USERS.".user_name");
 
     // Is the user already signed up for the team?
     $q = "SELECT ".TBL_PLAYERS.".*"
@@ -316,6 +324,22 @@ function eventAddPlayer($event_id, $user, $team = 0)
         $sql->db_Query($q);
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $sql->db_Query($q);
+
+        if ($notify)
+        {
+            $sendto = $user;
+            $subject = "$ename";
+            $message = 
+            "Hello $username,
+            
+            You are invited to participate in the \"$ename\" ladder.
+            Please click the following link to view the ladder details:
+            <a href='".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id'>$ename</a>.
+            
+            Cordially,
+            ".USERNAME." (ladder admin)";
+            sendNotification($sendto, $subject, $message, $fromid=0);
+        }
     }
 }
 
@@ -323,7 +347,7 @@ function eventAddPlayer($event_id, $user, $team = 0)
 /**
 * eventAddDivision - add a division to an event
 */
-function eventAddDivision($event_id, $div_id)
+function eventAddDivision($event_id, $div_id, $notify)
 {
     global $sql;
 
@@ -336,7 +360,7 @@ function eventAddDivision($event_id, $div_id)
     $num_rows = mysql_numrows($result);
     if($num_rows == 0)
     {
-        $q = " INSERT INTO ".TBL_TEAMS."(Event,Division)
+        $q = "INSERT INTO ".TBL_TEAMS."(Event,Division)
         VALUES ($event_id,$div_id)";
         $sql->db_Query($q);
         $team_id =  mysql_insert_id();
@@ -358,7 +382,7 @@ function eventAddDivision($event_id, $div_id)
             for($j=0; $j<$num_rows_2; $j++)
             {
                 $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
-                eventAddPlayer ($event_id, $mid, $team_id);
+                eventAddPlayer ($event_id, $mid, $team_id, $notify);
             }
             $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
             $result = $sql->db_Query($q4);

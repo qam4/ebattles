@@ -651,10 +651,6 @@ $result = $sql->db_Query($q);
 $row = mysql_fetch_array($result);
 $numPlayers = $row['NbrPlayers'];
 
-/*
-require_once(e_PLUGIN."ebattles/include/show_db_results.php");
-show_db_results($result);
-*/
 $totalItems = $numPlayers;
 $pages->items_total = $totalItems;
 $pages->mid_range = eb_PAGINATION_MIDRANGE;
@@ -698,7 +694,7 @@ if ($etype == "Team Ladder")
     $text .= '
     </select>
     <input class="button" type="submit" name="eventaddteam" value="Add Team"/>
-    <input class="tbox" type="checkbox" name="eventaddteamnotify"/>Notify the team captain by PM. (TBD)
+    <input class="tbox" type="checkbox" name="eventaddteamnotify"/>Notify the team captain by PM.
     </td>
     </tr>
     </tbody>
@@ -734,7 +730,7 @@ else
     $text .= '
     </select>
     <input class="button" type="submit" name="eventaddplayer" value="Add Player"/>
-    <input class="tbox" type="checkbox" name="eventaddplayernotify"/>Notify the user by PM. (TBD)
+    <input class="tbox" type="checkbox" name="eventaddplayernotify"/>Notify the user by PM.
     </td>
     </tr>
     </tbody>
