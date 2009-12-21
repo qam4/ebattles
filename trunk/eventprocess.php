@@ -265,7 +265,8 @@ else
         if(isset($_POST['eventaddplayer']))
         {
             $player = $_POST['player'];
-            eventAddPlayer($event_id, $player);
+            $notify = (isset($_POST['eventaddplayernotify'])? TRUE: FALSE);
+            eventAddPlayer($event_id, $player, 0, $notify);
 
             //echo "-- eventaddplayer --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
@@ -273,8 +274,12 @@ else
         if(isset($_POST['eventaddteam']))
         {
             $division = $_POST['division'];
-            eventAddDivision($event_id, $division);
-
+            echo "1";
+            $notify = (isset($_POST['eventaddteamnotify'])? TRUE: FALSE);
+            echo "2";
+            eventAddDivision($event_id, $division, $notify);
+            echo "3";
+            
             //echo "-- eventaddteam --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
         }

@@ -38,4 +38,10 @@ function show_db_results($result){
         echo "Error in running query :". mysql_error();
     }
 }
+
+/*
+require_once(e_PLUGIN."ebattles/include/show_db_results.php");
+show_db_results($result);
+*/
+
 ?>

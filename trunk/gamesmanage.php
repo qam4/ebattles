@@ -99,10 +99,6 @@ function displayGames(){
     ." FROM ".TBL_GAMES;
     $result = $sql->db_Query($q);
 
-    /*
-    require_once(e_PLUGIN."ebattles/include/show_db_results.php");
-    show_db_results($result);
-    */
     $numGames = mysql_result($result, 0);
     $totalItems = $numGames;
     $pages->items_total = $totalItems;
