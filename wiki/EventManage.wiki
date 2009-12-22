@@ -23,13 +23,23 @@ List of things that can be customized in events
      * Password to join
      * Game
      * Type: 1v1 or team ladder
+     * Match report userclass
+     * Enable/disable quick loss report
      * Enable/disable scoring, and draws
+     * Points per win/draw/loss   
      * Dates (start/end)
      * Description
   # Event Rules
      * Rules
+  # Event Players
+     * Add Player/Team (with or without PM notification)
+     * Players management:
+       * Delete players games/awards
+       * Kick: You can kick (delete) a player who has no games played and no awards. A kicked player can re-signup to the event.
+       * Ban: You can temporarily ban/unban a player. A banned player can no longer play in the event or sign up to the event during the duration of the ban.
   # Event Reset
      * reset players/teams, reset scores, delete event
+     * Recalculate Event Stats: Reset and recalculate players stats.
   # Event Stats
      * Number of games to rank, number of team games to rank
      * Max points for each stats categorie
