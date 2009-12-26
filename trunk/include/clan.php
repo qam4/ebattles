@@ -88,4 +88,28 @@ function deleteClan($clan_id)
     ." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
     $result3 = $sql->db_Query($q3);
 }
+function getClanName($teamID)
+{
+    global $sql;
+    $pclan = '';
+    $pclantag = '';
+    $q = "SELECT ".TBL_CLANS.".*, "
+    .TBL_DIVISIONS.".*, "
+    .TBL_TEAMS.".* "
+    ." FROM ".TBL_CLANS.", "
+    .TBL_DIVISIONS.", "
+    .TBL_TEAMS
+    ." WHERE (".TBL_TEAMS.".TeamID = '$teamID')"
+    ."   AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
+    ."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+    if ($num_rows == 1)
+    {
+        $pclan  = mysql_result($result,0, TBL_CLANS.".Name");
+        $pclantag  = mysql_result($result,0, TBL_CLANS.".Tag") ."&nbsp;";
+    }
+    return array($pclan, $pclantag);
+}
+
 ?>

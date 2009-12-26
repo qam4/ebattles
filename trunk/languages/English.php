@@ -49,4 +49,12 @@ define("EBATTLES_ADMIN_L28", "Update Settings");
 define("EBATTLES_ADMIN_L29", "eBattles");
 define("EBATTLES_ADMIN_L30", "Number of Items to show");
 define("EBATTLES_ADMIN_L31", "Recent activity");
+
+define("EBATTLES_RATELAN_0", "vote");
+define("EBATTLES_RATELAN_1", "votes");
+define("EBATTLES_RATELAN_2", "How do you rate this player?");
+define("EBATTLES_RATELAN_3", "Thank you for your vote");
+define("EBATTLES_RATELAN_4", "Not rated");
+define("EBATTLES_RATELAN_5", "Rate");
+
 ?>

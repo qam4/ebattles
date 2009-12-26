@@ -9,12 +9,15 @@
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
+require_once(e_HANDLER."rate_class.php");
+include_once(e_PLUGIN."ebattles/include/clan.php");
 
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
 
 $pages = new Paginator;
+$rater = new rater();
 
 $text .= '';
 
@@ -99,6 +102,9 @@ else
         $text .= 'W/L';
         $text .= '</td>';
         $text .= '<td class="forumheader3">';
+        $text .= 'Player Rating';
+        $text .= '</td>';
+        $text .= '<td class="forumheader3">';
         $text .= 'Status';
         $text .= '</td>';
         $text .= '</tr>';
@@ -108,10 +114,39 @@ else
             $ename  = mysql_result($result,$i, TBL_EVENTS.".Name");
             $egame  = mysql_result($result,$i, TBL_GAMES.".Name");
             $egameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
-            $eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
-            $eowner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
+            $eid = mysql_result($result,$i, TBL_EVENTS.".EventID");
+            $eowner = mysql_result($result,$i, TBL_EVENTS.".Owner");
+            $pid =  mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
             $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
             $pwinloss  = mysql_result($result,$i, TBL_PLAYERS.".Win")."/".mysql_result($result,$i, TBL_PLAYERS.".Draw")."/".mysql_result($result,$i, TBL_PLAYERS.".Loss");
+
+            $q_Scores = "SELECT ".TBL_SCORES.".*, "
+            .TBL_PLAYERS.".*"
+            ." FROM ".TBL_SCORES.", "
+            .TBL_PLAYERS
+            ." WHERE (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+            ." AND (".TBL_PLAYERS.".PlayerID = '$pid')";
+
+            $result_Scores = $sql->db_Query($q_Scores);
+            $numScores = mysql_numrows($result_Scores);
+            $prating = 0;
+            $prating_votes = 0;
+            for($scoreIndex=0; $scoreIndex<$numScores; $scoreIndex++)
+            {
+                $sid  = mysql_result($result_Scores,$scoreIndex, TBL_SCORES.".ScoreID");
+
+                // Get user rating.
+                $rate = $rater->getrating("ebscores", $sid);
+
+                $prating += $rate[0]*($rate[1] + $rate[2]/10);
+                $prating_votes += $rate[0];
+            }
+        if ($prating_votes !=0)
+        {
+            $prating /= $prating_votes;
+        }
+                    $rating = displayRating($prating, $prating_votes);
+
             $text .= '<tr>';
             $text .= '<td class="forumheader3">';
             $text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a><br />';
@@ -122,6 +157,9 @@ else
             $text .= '</td>';
             $text .= '<td class="forumheader3">';
             $text .= $pwinloss;
+            $text .= '</td>';
+            $text .= '<td class="forumheader3">';
+            $text .= $rating;
             $text .= '</td>';
             $text .= '<td class="forumheader3">';
             if($eowner == $req_user)
@@ -564,27 +602,7 @@ else
                     $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
                     $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
                     $pscore = mysql_result($result2,$index , TBL_SCORES.".Player_Score");
-                    $pclan = '';
-                    $pclantag = '';
-                    if ($mEventType == "Team Ladder")
-                    {
-                        $q_3 = "SELECT ".TBL_CLANS.".*, "
-                        .TBL_DIVISIONS.".*, "
-                        .TBL_TEAMS.".* "
-                        ." FROM ".TBL_CLANS.", "
-                        .TBL_DIVISIONS.", "
-                        .TBL_TEAMS
-                        ." WHERE (".TBL_TEAMS.".TeamID = '$pteam')"
-                        ."   AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
-                        ."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-                        $result_3 = $sql->db_Query($q_3);
-                        $num_rows_3 = mysql_numrows($result_3);
-                        if ($num_rows_3 == 1)
-                        {
-                            $pclan  = mysql_result($result_3,0, TBL_CLANS.".Name");
-                            $pclantag  = mysql_result($result_3,0, TBL_CLANS.".Tag") ."_";
-                        }
-                    }
+                    list($pclan, $pclantag) = getClanName($pteam);
 
                     if($index>0)
                     {

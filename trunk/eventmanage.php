@@ -8,6 +8,7 @@
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
+include_once(e_PLUGIN."ebattles/include/clan.php");
 
 // Specify if we use WYSIWYG for text areas
 global $e_wysiwyg;
@@ -801,27 +802,7 @@ else
         $pbanned = mysql_result($result,$i, TBL_PLAYERS.".Banned");
         $pgames = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
         $pteam = mysql_result($result,$i, TBL_PLAYERS.".Team");
-        $pclan = '';
-        $pclantag = '';
-        if ($etype == "Team Ladder")
-        {
-            $q_Clans = "SELECT ".TBL_CLANS.".*, "
-            .TBL_DIVISIONS.".*, "
-            .TBL_TEAMS.".* "
-            ." FROM ".TBL_CLANS.", "
-            .TBL_DIVISIONS.", "
-            .TBL_TEAMS
-            ." WHERE (".TBL_TEAMS.".TeamID = '$pteam')"
-            ." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
-            ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-            $result_Clans = $sql->db_Query($q_Clans );
-            $numClans = mysql_numrows($result_Clans );
-            if ($numClans == 1)
-            {
-                $pclan  = mysql_result($result_Clans ,0, TBL_CLANS.".Name");
-                $pclantag  = mysql_result($result_Clans ,0, TBL_CLANS.".Tag")."_";
-            }
-        }
+        list($pclan, $pclantag) = getClanName($pteam);
 
         $q_awards = "SELECT COUNT(*) as NbrAwards"
         ." FROM ".TBL_AWARDS

@@ -11,6 +11,7 @@
 require_once("../../class2.php");
 include_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN.'ebattles/include/match.php');
+include_once(e_PLUGIN."ebattles/include/clan.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -101,28 +102,7 @@ for($i=0; $i<$num_rows; $i++){
     $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
     $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
     $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-
-    $pclan = '';
-    $pclantag = '';
-    if ($etype == "Team Ladder")
-    {
-        $q_2 = "SELECT ".TBL_CLANS.".*, "
-        .TBL_DIVISIONS.".*, "
-        .TBL_TEAMS.".* "
-        ." FROM ".TBL_CLANS.", "
-        .TBL_DIVISIONS.", "
-        .TBL_TEAMS
-        ." WHERE (".TBL_TEAMS.".TeamID = '$pteam')"
-        ." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
-        ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-        $result_2 = $sql->db_Query($q_2);
-        $num_rows_2 = mysql_numrows($result_2);
-        if ($num_rows_2 == 1)
-        {
-            $pclan  = mysql_result($result_2,0, TBL_CLANS.".Name");
-            $pclantag  = mysql_result($result_2,0, TBL_CLANS.".Tag") ."_";
-        }
-    }
+    list($pclan, $pclantag) = getClanName($pteam);
     if ($prank==0)
     $prank_txt = "Not ranked";
     else
