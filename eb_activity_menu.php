@@ -27,7 +27,7 @@ function displayRecentActivity(){
     global $sql;
     global $time;
     global $pref;
-    
+
     $events = array();
     $nbr_events = 0;
 
@@ -105,18 +105,20 @@ function displayRecentActivity(){
 
                 $players .= '<td>';
                 $rank = 1;
+                $matchteam = 0;
                 for ($index = 0; $index < $numPlayers; $index++)
                 {
-                    $pid  = mysql_result($result2,$index , TBL_USERS.".user_id");
+                    $puid  = mysql_result($result2,$index , TBL_USERS.".user_id");
                     $pname  = mysql_result($result2,$index , TBL_USERS.".user_name");
                     $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
-                    $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
+                    $pteam  = mysql_result($result2,$index , TBL_PLAYERS.".Team");
+                    $pmatchteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
                     $pscore = mysql_result($result2,$index , TBL_SCORES.".Player_Score");
                     list($pclan, $pclantag) = getClanName($pteam);
 
                     if($index>0)
                     {
-                        if ($pteam == $team)
+                        if ($pmatchteam == $matchteam)
                         {
                             $players .= " & ";
                         }
@@ -132,16 +134,16 @@ function displayRecentActivity(){
                             }
                             $scores .= "-".$pscore;
                             $players .= $str;
-                            $team++;
+                            $matchteam++;
                         }
                     }
                     else
                     {
-                        $team = $pteam;
+                        $matchteam = $pmatchteam;
                         $scores .= $pscore;
                     }
 
-                    $players .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$pid.'">'.$pclantag.$pname.'</a>';
+                    $players .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a>';
                 }
 
                 //score here
@@ -151,7 +153,7 @@ function displayRecentActivity(){
                 }
 
                 $players .= ' playing '.$mEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>)';
-                                
+
                 $players .= ' <div class="smalltext">';
                 $players .= 'Reported by <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
                 if (($time-$mTime) < INT_MINUTE )
@@ -216,7 +218,7 @@ function displayRecentActivity(){
             $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
             $aTime_local = $aTime + TIMEOFFSET;
             $date = date("d M Y, h:i A",$aTime_local);
-            
+
             switch ($aType) {
                 case 'PlayerTookFirstPlace':
                 $award = ' took 1st place';
