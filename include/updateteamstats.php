@@ -184,8 +184,6 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                 }
                 $punique_opponents = count(array_unique($players));
 
-                $tTS_mu += $pTS_mu;
-                $tTS_sigma2 += pow($pTS_sigma,2);
                 $twin += $pwin;
                 $tdraw += $pdraw;
                 $tloss += $ploss;
@@ -204,7 +202,9 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                 if ($pgames_played>=$emingames)
                 {
                     $tnbrplayers_rated++;
-                    $tELO += mysql_result($result_Players,$player, TBL_PLAYERS.".ELORanking");
+                    $tELO += $pELO;
+                    $tTS_mu += $pTS_mu;
+                    $tTS_sigma2 += pow($pTS_sigma,2);
                 }
             }
 

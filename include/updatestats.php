@@ -5,12 +5,15 @@
 */
 
 require_once(e_HANDLER."avatar_handler.php");
+require_once(e_HANDLER."rate_class.php");
+include_once(e_PLUGIN."ebattles/include/clan.php");
 
 function updateStats($event_id, $time, $serialize = TRUE)
 {
     global $sql;
     global $pref;
 
+    $rater = new rater();
     $file = 'cache/sql_cache_event_'.$event_id.'.txt';
 
     $id = array();
@@ -35,6 +38,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     $scorediff = array();
     $points = array();
     $banned = array();
+    $rating = array();
 
     $games_played_score = array();
     $ELO_score = array();
@@ -104,6 +108,8 @@ function updateStats($event_id, $time, $serialize = TRUE)
 
         $popponentsELO = 0;
         $popponents = 0;
+        $prating = 0;
+        $prating_votes = 0;
         // Unique Opponents
         // Find all matches played by current player
         $q_Matches = "SELECT ".TBL_MATCHS.".*, "
@@ -146,6 +152,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
                 $numScores = mysql_numrows($result_Scores);
                 for($scoreIndex=0; $scoreIndex<$numScores; $scoreIndex++)
                 {
+                    $osid  = mysql_result($result_Scores,$scoreIndex, TBL_SCORES.".ScoreID");
                     $ouid  = mysql_result($result_Scores,$scoreIndex, TBL_USERS.".user_id");
                     $oplayermatchteam  = mysql_result($result_Scores,$scoreIndex, TBL_SCORES.".Player_MatchTeam");
                     $oELO  = mysql_result($result_Scores,$scoreIndex, TBL_PLAYERS.".ELORanking");
@@ -155,14 +162,26 @@ function updateStats($event_id, $time, $serialize = TRUE)
                         $popponentsELO += $oELO;
                         $popponents += 1;
                     }
+                    if ($ouid == $puid)
+                    {
+                        // Get user rating.
+                        $rate = $rater->getrating("ebscores", $osid);
+
+                        $prating += $rate[0]*($rate[1] + $rate[2]/10);
+                        $prating_votes += $rate[0];
+                    }
                 }
             }
         }
-        $punique_opponents = count(array_unique($players));
 
+        $punique_opponents = count(array_unique($players));
         if ($popponents !=0)
         {
             $popponentsELO /= $popponents;
+        }
+        if ($prating_votes !=0)
+        {
+            $prating /= $prating_votes;
         }
 
         // For display
@@ -188,7 +207,8 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $scorediff[] = ($pgames_played>0) ? number_format(($pscore - $poppscore)/$pgames_played,2) : 0;
         $points[] = $ppoints;
         $banned[] = $pbanned;
-        
+        $rating[] = displayRating($prating, $prating_votes);
+
         // Actual score (not for display)
         if (($pgames_played >= $emingames)&&($pbanned == 0))
         {
@@ -377,8 +397,11 @@ function updateStats($event_id, $time, $serialize = TRUE)
 
     $stats = array
     (
-        "0"=>array("header","<b>Rank</b>","<b>Player</b>")
+    "0"=>array("header","<b>Rank</b>","<b>Player</b>")
     );
+
+    // user rating not shown
+    // $stats[0][] = '<b>User Rating</b>';
 
     if ($ehide_ratings_column == FALSE)
     $stats[0][] = '<b title="Rating">Rating</b><br /><div class="smalltext">['.number_format ($rating_max,2).' max]</div>';
@@ -416,6 +439,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $q_update = "UPDATE ".TBL_PLAYERS." SET OverallScore = $OverallScore[$player] WHERE (PlayerID = '$id[$player]') AND (Event = '$event_id')";
         $result_update = $sql->db_Query($q_update);
     }
+    
     // Build results table
     //--------------------
     $q_Players = "SELECT *"
@@ -544,40 +568,20 @@ function updateStats($event_id, $time, $serialize = TRUE)
             }
         }
 
-        $pclan = '';
-        $pclantag = '';
-        if ($etype == "Team Ladder")
-        {
-            $q_Clans = "SELECT ".TBL_CLANS.".*, "
-            .TBL_DIVISIONS.".*, "
-            .TBL_TEAMS.".* "
-            ." FROM ".TBL_CLANS.", "
-            .TBL_DIVISIONS.", "
-            .TBL_TEAMS
-            ." WHERE (".TBL_TEAMS.".TeamID = '$team[$index]')"
-            ." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
-            ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-            $result_Clans = $sql->db_Query($q_Clans );
-            $numClans = mysql_numrows($result_Clans );
-            if ($numClans == 1)
-            {
-                $pclan  = mysql_result($result_Clans ,0, TBL_CLANS.".Name");
-                $pclantag  = mysql_result($result_Clans ,0, TBL_CLANS.".Tag")."_";
-            }
-        }
+        list($pclan, $pclantag) = getClanName($team[$index]);
 
         if(strcmp(USERID,$puid) == 0)
         {
             $stats_row = array
             (
-                "row_highlight"
+            "row_highlight"
             );
         }
         else
         {
             $stats_row = array
             (
-                "row"
+            "row"
             );
         }
 
@@ -596,6 +600,9 @@ function updateStats($event_id, $time, $serialize = TRUE)
         }
 
         $stats_row[] = $image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$uid[$index].'"><b>'.$pclantag.$name[$index].'</b></a>';
+
+        // user rating not shown
+        //$stats_row[] = $rating[$index];
 
         if ($ehide_ratings_column == FALSE)
         $stats_row[] = number_format ($OverallScore[$index],2);
@@ -628,20 +635,20 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $OUTPUT = serialize($stats);
         $fp = fopen($file,"w"); // open file with Write permission
 
-    if ($fp == FALSE) {
-        // handle error
-        $error .= "Could not write to cache directory, please verify cache direcory is writable";
-    }
+        if ($fp == FALSE) {
+            // handle error
+            $error .= "Could not write to cache directory, please verify cache direcory is writable";
+        }
 
-    fputs($fp, $OUTPUT);
-    fclose($fp);
-    /*
-    $stats = unserialize(implode('',file($file)));
-    foreach ($stats as $id=>$row)
-    {
-    print $row['category_name']."<br />";
+        fputs($fp, $OUTPUT);
+        fclose($fp);
+        /*
+        $stats = unserialize(implode('',file($file)));
+        foreach ($stats as $id=>$row)
+        {
+        print $row['category_name']."<br />";
+        }
+        */
     }
-    */
-}
 }
 ?>

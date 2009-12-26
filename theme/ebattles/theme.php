@@ -13,6 +13,7 @@ $themeinfo = "Theme eBattles";
 $xhtmlcompliant = TRUE;	// If set to TRUE will display an XHTML compliant logo in theme manager
 $csscompliant = TRUE;	// If set to TRUE will display a CSS compliant logo in theme manager
 
+define("IMODE", "light");
 require_once(THEME."eb_custom_login.php"); // DEFINE EB_CUSTOM_LOGIN
 require_once(THEME."comment_template.php");
 

@@ -6,6 +6,7 @@
 
 include(e_PLUGIN."ebattles/include/constants.php");
 include(e_PLUGIN."ebattles/include/time.php");
+require_once(e_HANDLER."rate_class.php");
 
 global $pref;
 global $sql;
@@ -288,6 +289,103 @@ function getComment($pluginid, $id) {
     $text = ob_get_contents();
     ob_end_clean();
 
+    return $text;
+}
+
+/**
+* Add ratings to a plugins
+* <p>This method returns the HTML for a ratings form. In addition, it will post ratings to the e107v7
+* ratings database and get any existing ratings for the current item.</p>
+* @param   string   a unique ID for this plugin, maximum of 10 character
+* @param   int      id of the item comments are allowed for
+* @param   boolean  true to show the rating selection drop down if user not already rated this item
+* @return  string   HTML for existing comments for an item and the comments form to allow new comments to be posted
+*/
+function getRating($pluginid, $id, $allowrating=true, $notext=false, $userid=false) {
+    $rater = new rater();
+
+    $text = "";
+    $ratearray = $rater->getrating($pluginid, $id, $userid);
+    if ($ratearray)
+    {
+        if ($ratearray[0] == 0)
+        {
+            if($ratearray[1] > 0)
+            {
+                for ($c=1; $c<=$ratearray[1]; $c++) {
+                    $text .= "<img src='".e_IMAGE."rate/".IMODE."/star.png' alt='' />";
+                }
+                $text .= "&nbsp;".$ratearray[1];
+            }
+            else
+            {
+                $text .= EBATTLES_RATELAN_4;
+            }
+        }
+        else
+        {
+            for ($c=1; $c<=$ratearray[1]; $c++) {
+                $text .= "<img src='".e_IMAGE."rate/".IMODE."/star.png' alt='' />";
+            }
+            if ($ratearray[2]) {
+                $text .= "<img src='".e_IMAGE."rate/".IMODE."/".$ratearray[2].".png'  alt='' />";
+            }
+            if ($ratearray[2] == "") {
+                $ratearray[2] = 0;
+            }
+            $text .= "&nbsp;".$ratearray[1].".".$ratearray[2];
+            if (!$notext) {
+                $text .= " - ".$ratearray[0]."&nbsp;" . ($ratearray[0] == 1 ? EBATTLES_RATELAN_0 : EBATTLES_RATELAN_1);
+            }
+        }
+    } else {
+        $text .= EBATTLES_RATELAN_4;
+    }
+
+    if ($allowrating) {
+        if (!$rater->checkrated($pluginid, $id) && USER) {
+            $ratetext = $rater->rateselect("&nbsp;&nbsp;&nbsp;&nbsp;<b>".EBATTLES_RATELAN_2, $pluginid, $id)."</b>";
+            $ratetext = str_replace("../../rate.php", e_PLUGIN."ebattles/rate.php", $ratetext);
+            if ($userid)
+            {
+                $text = $ratetext;
+                }
+            else
+            {
+                $text .= $ratetext;
+            }
+        } else if (!USER) {
+            $text .= "&nbsp;";
+        } else {
+            //$text .= "&nbsp;-&nbsp;".EBATTLES_RATELAN_3;
+        }
+    }
+
+    return $text;
+}
+
+
+function displayRating($rate, $votes) {
+    $text = "";
+    $ratearray[0]=$votes;
+    $ratearray[1]=floor($rate);
+    $ratearray[2]=floor(($rate-$ratearray[1])*10);
+
+    if ($ratearray[0]>0) {
+        for ($c=1; $c<=$ratearray[1]; $c++) {
+            $text .= "<img src='".e_IMAGE."rate/".IMODE."/star.png' alt='' />";
+        }
+        if ($ratearray[2]) {
+            $text .= "<img src='".e_IMAGE."rate/".IMODE."/".$ratearray[2].".png'  alt='' />";
+        }
+        if ($ratearray[2] == "") {
+            $ratearray[2] = 0;
+        }
+        $text .= "<div class='smalltext'>&nbsp;".$ratearray[1].".".$ratearray[2]." - ".$ratearray[0]."&nbsp;";
+        $text .= ($ratearray[0] == 1 ? EBATTLES_RATELAN_0 : EBATTLES_RATELAN_1)."</div>";
+    } else {
+        $text .= "<div class='smalltext'>".EBATTLES_RATELAN_4."</div>";
+    }
     return $text;
 }
 

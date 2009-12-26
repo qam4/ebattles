@@ -8,6 +8,7 @@ include_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 include_once(e_PLUGIN."ebattles/include/show_array.php");
 include_once(e_PLUGIN."ebattles/include/event.php");
+include_once(e_PLUGIN."ebattles/include/clan.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -884,27 +885,7 @@ if ($num_rows>0)
                 $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
                 $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
                 $pscore = mysql_result($result2,$index , TBL_SCORES.".Player_Score");
-                $pclan = '';
-                $pclantag = '';
-                if ($mEventType == "Team Ladder")
-                {
-                    $q_3 = "SELECT ".TBL_CLANS.".*, "
-                    .TBL_DIVISIONS.".*, "
-                    .TBL_TEAMS.".* "
-                    ." FROM ".TBL_CLANS.", "
-                    .TBL_DIVISIONS.", "
-                    .TBL_TEAMS
-                    ." WHERE (".TBL_TEAMS.".TeamID = '$pteam')"
-                    ."   AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
-                    ."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-                    $result_3 = $sql->db_Query($q_3);
-                    $num_rows_3 = mysql_numrows($result_3);
-                    if ($num_rows_3 == 1)
-                    {
-                        $pclan  = mysql_result($result_3,0, TBL_CLANS.".Name");
-                        $pclantag  = mysql_result($result_3,0, TBL_CLANS.".Tag") ."_";
-                    }
-                }
+                list($pclan, $pclantag) = getClanName($pteam);
 
                 if($index>0)
                 {
