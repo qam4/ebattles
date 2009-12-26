@@ -320,6 +320,9 @@ function admin_config_adminmenu()
     $var['eb_activity']['text'] = EBATTLES_ADMIN_L26;
     $var['eb_activity']['link'] ="admin_config.php?eb_activity";
 
+    $var['eb_activity']['text'] = EBATTLES_ADMIN_L32;
+    $var['eb_activity']['link'] ="admin_vupdate.php";
+
     show_admin_menu(EBATTLES_L1, $action, $var);
 }
 ?>
