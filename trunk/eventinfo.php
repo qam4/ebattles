@@ -878,18 +878,20 @@ if ($num_rows>0)
 
             $players .= '<td>';
             $rank = 1;
+            $matchteam = 0;
             for ($index = 0; $index < $numPlayers; $index++)
             {
                 $puid  = mysql_result($result2,$index , TBL_USERS.".user_id");
                 $pname  = mysql_result($result2,$index , TBL_USERS.".user_name");
                 $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
-                $pteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
+                $pteam  = mysql_result($result2,$index , TBL_PLAYERS.".Team");
+                $pmatchteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
                 $pscore = mysql_result($result2,$index , TBL_SCORES.".Player_Score");
                 list($pclan, $pclantag) = getClanName($pteam);
 
                 if($index>0)
                 {
-                    if ($pteam == $team)
+                    if ($pmatchteam == $matchteam)
                     {
                         $players .= " & ";
                     }
@@ -905,12 +907,12 @@ if ($num_rows>0)
                         }
                         $scores .= "-".$pscore;
                         $players .= $str;
-                        $team++;
+                        $matchteam++;
                     }
                 }
                 else
                 {
-                    $team = $pteam;
+                    $matchteam = $pmatchteam;
                     $scores .= $pscore;
                 }
 
