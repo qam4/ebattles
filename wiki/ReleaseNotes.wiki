@@ -1,5 +1,19 @@
 #summary eBattles Release Notes.
 
+= Release 0.5.161 =
+== Features ==
+ * Added "Check for plugin update" support for admin. (Issue 65)
+  * Using [http://wiki.e107.org/?title=Eversion e_version] plugin from Father Barry
+  * Now admins can check if their installation of eBattles plugin is the up-to-date directly from the plugin admin menu.
+ * Added "Opponent Rating" for events players. (Issue 52)
+  * Use e107 star rating system.
+  * A player can now go to a match page and rate his opponents.
+  * The player's Opponent Rating can be seen in the player's profile on the "Events" tab.
+ * Added getClanName() function to get a clan's name/tag from the player's team id.
+  * Also replaced underscore by space to separate clan tag and player's name in teams events.
+== Bug fixes ==
+ * Fixed bug: clan tag was displayed in matches lists for non team events.
+
 = Release 0.5.152 =
 == Features ==
  * Added support for event players management with add/kick/ban functions (Fixes issue 1 and issue 51)
