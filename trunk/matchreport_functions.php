@@ -83,52 +83,52 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     $text .= '<div>';
     // TABLE - Player/Teams Add/Remove
     //----------------------------------
-    $text .= 'Select the number of players and teams:';
+    $text .= EB_MATCHR_L15;
     $text .= '<table id="matchresult_nbrPlayersTeams"><tbody>';
     $text .= '<tr><td><input type="hidden" name="matchreport" value="1"/></td></tr>';
     // Players
-    $text .= '<tr><td>'.$nbr_players.' players</td>';
+    $text .= '<tr><td>'.$nbr_players.'&nbsp;'.EB_MATCHR_L21.'</td>';
     $text .= '<td><input type="hidden" name="nbr_players" value="'.$_POST['nbr_players'].'"/>';
     // Add Player
     if ($nbr_players < $max_nbr_players)
     {
-        $text .= '<input class="button" type="submit" value="Add Player" name="addPlayer"/></td>';
+        $text .= '<input class="button" type="submit" value="'.EB_MATCHR_L16.'" name="addPlayer"/></td>';
     }
     else
     {
-        $text .= '<input class="button_disabled" type="submit" value="Add Player" name="addPlayer" disabled="disabled"/></td>';
+        $text .= '<input class="button_disabled" type="submit" value="'.EB_MATCHR_L16.'" name="addPlayer" disabled="disabled"/></td>';
     }
     // Remove Player
     if ($nbr_players>2)
     {
-        $text .= '<td><input class="button" type="submit" value="Remove Player" name="removePlayer"/></td>';
+        $text .= '<td><input class="button" type="submit" value="'.EB_MATCHR_L17.'" name="removePlayer"/></td>';
     }
     else
     {
-        $text .= '<td><input class="button_disabled" type="submit" value="Remove Player" name="removePlayer" disabled="disabled"/></td>';
+        $text .= '<td><input class="button_disabled" type="submit" value="'.EB_MATCHR_L17.'" name="removePlayer" disabled="disabled"/></td>';
     }
     $text .= '</tr>';
 
     // Teams
-    $text .= '<tr><td>'.$nbr_teams.' teams</td>';
+    $text .= '<tr><td>'.$nbr_teams.'&nbsp;'.EB_MATCHR_L22.'</td>';
     $text .= '<td><input type="hidden" name="nbr_teams" value="'.$_POST['nbr_teams'].'"/>';
     // Add Team
     if ($nbr_teams<$nbr_players)
     {
-        $text .= '<input class="button" type="submit" value="Add Team" name="addTeam"/></td>';
+        $text .= '<input class="button" type="submit" value="'.EB_MATCHR_L18.'" name="addTeam"/></td>';
     }
     else
     {
-        $text .= '<input class="button_disabled" type="submit" value="Add Team" name="addTeam" disabled="disabled"/></td>';
+        $text .= '<input class="button_disabled" type="submit" value="'.EB_MATCHR_L18.'" name="addTeam" disabled="disabled"/></td>';
     }
     // Remove Team
     if ($nbr_teams>2)
     {
-        $text .= '<td><input class="button" type="submit" value="Remove Team" name="removeTeam"/></td>';
+        $text .= '<td><input class="button" type="submit" value="'.EB_MATCHR_L19.'" name="removeTeam"/></td>';
     }
     else
     {
-        $text .= '<td><input class="button_disabled" type="submit" value="Remove Team" name="removeTeam" disabled="disabled"/></td>';
+        $text .= '<td><input class="button_disabled" type="submit" value="'.EB_MATCHR_L19.'" name="removeTeam" disabled="disabled"/></td>';
     }
     $text .= "</tr>";
     $text .= '</tbody></table>';
@@ -138,11 +138,11 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
 
     // TABLE - Players/Teams Selection
     //----------------------------------
-    $text .= 'Select the players and their respective team:';
+    $text .= EB_MATCHR_L20;
     $text .= '<table id="matchresult_selectPlayersTeams"><tbody>';
     for($i=1;$i<=$nbr_players;$i++)
     {
-        $text .= '<tr><td>Player #'.$i.':</td>';
+        $text .= '<tr><td>'.EB_MATCHR_L23.$i.':</td>';
 
         $text .= '<td><select class="tbox" name="player'.$i.'">';
         for($j=1;$j <= $max_nbr_players+1;$j++)
@@ -158,7 +158,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
         {
             $text .= '<option value="Team #'.$j.'"';
             if (strtolower($_POST['team'.$i]) == 'team #'.$j) $text .= ' selected="selected"';
-            $text .= '>Team #'.$j.'</option>';
+            $text .= '>'.EB_MATCHR_L29.$j.'</option>';
         }
         $text .= '</select></td>';
         $text .= '</tr>';
@@ -168,25 +168,25 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
 
     // TABLE - Teams Rank Selection
     //----------------------------------
-    $text .= 'Select the rank of each team:';
+    $text .= EB_MATCHR_L24;
     $text .= '<table id="matchresult_rankTeams"><tbody>';
-    $text .= '<tr><td></td><td>Team</td>';
-    if ($allowScore == TRUE) $text .= '<td>Score</td>';
-    if ($allowDraw == TRUE) $text .= '<td>Draw?</td>';
+    $text .= '<tr><td></td><td>'.EB_MATCHR_L25.'</td>';
+    if ($allowScore == TRUE) $text .= '<td>'.EB_MATCHR_L26.'</td>';
+    if ($allowDraw == TRUE) $text .= '<td>'.EB_MATCHR_L27.'</td>';
     $text .= '</tr>';
 
     for($i=1;$i<=$nbr_teams;$i++)
     {
         $text .= '<tr>';
         $text .= '<td>';
-        $text .= 'Rank #'.$i.':';
+        $text .= EB_MATCHR_L28.$i.':';
         $text .= '</td>';
         $text .= '<td><select class="tbox" name="rank'.$i.'" id="rank'.$i.'" onchange = "SwitchSelected('.$i.')">';
         for($j=1;$j<=$nbr_teams;$j++)
         {
             $text .= '<option value="Team #'.$j.'"';
             if (strtolower($_POST['rank'.$i]) == 'team #'.$j) $text .= ' selected="selected"';
-            $text .= '>Team #'.$j.'</option>';
+            $text .= '>'.EB_MATCHR_L29.$j.'</option>';
         }
         $text .= '</select></td>';
         if ($allowScore == TRUE)
@@ -212,7 +212,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
 
     $text .= '<br />';
     $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';
-    $text .= 'Your comments:<br />';
+    $text .= EB_MATCHR_L30.'<br />';
     $text .= '<textarea class="tbox" id="match_comment" name="match_comment" style="width:500px" cols="70" '.$insertjs.'>'.$comment.'</textarea>';
     if (!e_WYSIWYG)
     {
@@ -223,7 +223,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';
     $text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
     $text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
-    $text .= '<input class="button" type="submit" value="Submit Match" name="submit"/>';
+    $text .= '<input class="button" type="submit" value="'.EB_MATCHR_L31.'" name="submit"/>';
     $text .= '</div>';
     $text .= '<br /><br />';
     $text .= '</div>';

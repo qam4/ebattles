@@ -6,9 +6,10 @@
 */
 
 require_once("../../class2.php");
-include_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
-include_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
 
 // Specify if we use WYSIWYG for text areas
 global $e_wysiwyg;
@@ -1154,7 +1155,7 @@ setupAllTabs();
 }
 }
 
-$ns->tablerender("$ename ($egame - $etype) - Manage", $text);
+$ns->tablerender("$ename ($egame - ".eventType($etype).") - Manage", $text);
 require_once(FOOTERF);
 exit;
 ?>

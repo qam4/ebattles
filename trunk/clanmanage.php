@@ -9,7 +9,7 @@
 *
 */
 require_once("../../class2.php");
-include_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
 
 /*******************************************************************
 ********************************************************************/

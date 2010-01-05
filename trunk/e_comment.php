@@ -8,7 +8,7 @@
 *
 */
 if (!defined('e107_INIT')) { exit; }
-include_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
 
 /*
 $e_plug_table = "ebmatches"; //This is set to the table name you have decided to use.
@@ -16,12 +16,12 @@ $reply_location= e_PLUGIN."ebattles/matchinfo.php?matchid={NID}"; //This is set 
 $db_table = TBL_MATCHS_SHORT; //This is the name of your plugins database table.
 $link_name = "MatchID"; //This is the name of the field in your plugin's db table that corresponds to it's name or title.
 $db_id = "MatchID"; // This is the name of the field in your plugin's db table that correspond to it's unique id number.
-$plugin_name = EBATTLES_L1; // A name for your plugin. It will be used in links to comments, in list_new/new.php.
+$plugin_name = EB_L1; // A name for your plugin. It will be used in links to comments, in list_new/new.php.
 */
 
 $e_comment['eplug_comment_ids'] = "ebmatches"; //TBL_MATCHS_SHORT; //This is set to the table name you have decided to use.
 $e_comment['plugin_path'] = "ebattles"; //The path of your plugin
-$e_comment['plugin_name'] = EBATTLES_L1; //A name for your plugin. It will be used in links to comments, in list_new/new.php.
+$e_comment['plugin_name'] = EB_L1; //A name for your plugin. It will be used in links to comments, in list_new/new.php.
 
 //This is set to the location you'd like the user to return to after replying to a comment. NID will be replaced by your unique id
 $e_comment['reply_location'] = e_PLUGIN."ebattles/matchinfo.php?matchid={NID}"; 

@@ -31,41 +31,41 @@ function get_formatted_timediff($then, $now = false)
     $str = '';
     if ( $weeks )
     {
-        $str .= intval($weeks);
-        $str .= ($weeks > 1) ? ' weeks' : ' week';
+        $str .= intval($weeks).'&nbsp;';
+        $str .= ($weeks > 1) ? EB_TIME_L1 : EB_TIME_L2;
     }
 
     if ( $days )
     {
         $str .= ($str) ? ', ' : '';
-        $str .= intval($days);
-        $str .= ($days > 1) ? ' days' : ' day';
+        $str .= intval($days).'&nbsp;';
+        $str .= ($days > 1) ? EB_TIME_L3 : EB_TIME_L4;
     }
 
     if ( $hours )
     {
         $str .= ($str) ? ', ' : '';
-        $str .= intval($hours);
-        $str .= ($hours > 1) ? ' hours' : ' hour';
+        $str .= intval($hours).'&nbsp;';
+        $str .= ($hours > 1) ? EB_TIME_L5 : EB_TIME_L6;
     }
 
     if ( $mins )
     {
         $str .= ($str) ? ', ' : '';
-        $str .= intval($mins);
-        $str .= ($mins > 1) ? ' minutes' : ' minute';
+        $str .= intval($mins).'&nbsp;';
+        $str .= ($mins > 1) ? EB_TIME_L7 : EB_TIME_L8;
     }
 
 /*
     if ( $sec )
     {
         $str .= ($str) ? ', ' : '';
-        $str .= intval($sec);
-        $str .= ($sec > 1) ? ' seconds' : ' second';
+        $str .= intval($sec).'&nbsp;';
+        $str .= ($sec > 1) ? EB_TIME_L9 : EB_TIME_L10;
     }
     if ( !$weeks && !$days && !$hours && !$mins && !$sec )
     {
-        $str .= '0 seconds';
+        $str .= '0'.EB_TIME_L10;
     }
     else
     {

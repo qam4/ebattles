@@ -9,8 +9,9 @@
 *
 */
 require_once("../../class2.php");
-include_once(e_PLUGIN."ebattles/include/main.php");
-include_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
@@ -198,11 +199,11 @@ else
             if ($oMatchTeam != $pMatchTeam)
             {
                 $rating = getRating("ebscores", $pscoreid, $can_rate, true, $ouid);
-                if (preg_match("/".EBATTLES_RATELAN_2."/", $rating))
+                if (preg_match("/".EB_RATELAN_2."/", $rating))
                 {
                     $text .= '<tr><td>'.$rating.'</td></tr>';
                 }
-                else if ($rating != EBATTLES_RATELAN_4)
+                else if ($rating != EB_RATELAN_4)
                 {
                     $text .= '<tr><td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$ouid.'">'.$oclantag.$ouname.'&nbsp</a></td><td>'.$rating.'</td></tr>';
                 }
@@ -230,7 +231,7 @@ else
     $text .= '<br />Back to [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]<br />';
     $text .= '</p>';
 
-    $ns->tablerender("$ename ($egame - $etype)", $text);
+    $ns->tablerender("$ename ($egame - ".eventType($etype).")", $text);
 
     unset($text);
 

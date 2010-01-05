@@ -7,8 +7,8 @@
 *
 */
 require_once("../../class2.php");
-include_once(e_PLUGIN."ebattles/include/main.php");
-include_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(HEADERF);
 
 $text = '';
@@ -77,10 +77,10 @@ else
         if(($puid != USERID)&&(($uteam == 0)||($uteam != $pteam)))
         {
             if ($prank==0)
-            $prank_txt = "Not ranked";
+            $prank_txt = EB_EVENT_L54;
             else
             $prank_txt = "#$prank";
-            $text .= "<option value=\"$pid\">$pclantag$pname ($prank_txt)</option>";
+            $text .= '<option value="'.$pid.'">'.$pclantag.$pname.' ('.$prank_txt.')</option>';
         }
     }
 
@@ -108,7 +108,7 @@ else
     ';
 }
 
-$ns->tablerender("$ename ($egame - $etype) - Quick Loss Report", $text);
+$ns->tablerender("$ename ($egame - ".eventType($etype).") - Quick Loss Report", $text);
 require_once(FOOTERF);
 exit;
 ?>

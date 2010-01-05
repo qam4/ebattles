@@ -4,11 +4,11 @@
 *
 */
 require_once("../../class2.php");
-include_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
-include_once(e_PLUGIN."ebattles/include/show_array.php");
-include_once(e_PLUGIN."ebattles/include/event.php");
-include_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/show_array.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -53,7 +53,7 @@ else
     $eTS_default_sigma  = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
     $epassword = mysql_result($result, 0, TBL_EVENTS.".Password");
 
-    include_once(e_PLUGIN."ebattles/eventinfo_process.php");
+    require_once(e_PLUGIN."ebattles/eventinfo_process.php");
 
     $q = "SELECT ".TBL_EVENTS.".*, "
     .TBL_GAMES.".*, "
@@ -129,19 +129,19 @@ else
         &&($time <= $estart)
     )
     {
-        $time_comment = 'Event starts in '.get_formatted_timediff($time, $estart);
+        $time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $estart);
     }
     else if (  ($eend != 0)
         &&($time <= $eend)
     )
     {
-        $time_comment = 'Event ends in '.get_formatted_timediff($time, $eend);
+        $time_comment = EB_EVENT_L3.'&nbsp;'.get_formatted_timediff($time, $eend);
     }
     else if (  ($eend != 0)
         &&($time > $eend)
     )
     {
-        $time_comment = 'Event is over';
+        $time_comment = EB_EVENT_L4;
     }
 
     /* Nbr players */
@@ -185,13 +185,13 @@ else
     }
 
     $text .= '<div class="tab-page">';
-    $text .= '<div class="tab">Event</div>';
+    $text .= '<div class="tab">'.EB_EVENT_L5.'</div>';
     $text .= $tp->toHTML($edescription, true);
     $text .= '</div>';
 
     /* Join/Quit Event */
     $text .= '<div class="tab-page">';
-    $text .= '<div class="tab">Signup</div>';
+    $text .= '<div class="tab">'.EB_EVENT_L6.'</div>';
     $text .= '<table style="width:95%"><tbody>';
     if(check_class(e_UC_MEMBER))
     {
@@ -235,19 +235,19 @@ else
                         $num_rows_2 = mysql_numrows($result_2);
 
                         $text .= '<tr>';
-                        $text .= '<td>You are the captain of '.$div_name.'.</td>';
+                        $text .= '<td>'.EB_EVENT_L7.'&nbsp;'.$div_name.'</td>';
                         if( $num_rows_2 == 0)
                         {
 
                             if ($epassword != "")
                             {
-                                $text .= '<td>Enter the password and click here to let your team participate to this event.</td>';
+                                $text .= '<td>'.EB_EVENT_L8.'</td>';
                                 $text .= '<td>
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                 <div>
-                                <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"/>
+                                <input class="tbox" type="password" title="'.EB_EVENT_L9.'" name="joinEventPassword"/>
                                 <input type="hidden" name="division" value="'.$div_id.'"/>
-                                <input class="button" type="submit" name="teamjoinevent" value="Sign up this team!"/>
+                                <input class="button" type="submit" name="teamjoinevent" value="'.EB_EVENT_L10.'"/>
                                 </div>
                                 ';
                                 $text .= '</form>';
@@ -255,13 +255,13 @@ else
                             }
                             else
                             {
-                                $text .= '<td>Click here to let your team participate to this event.</td>';
+                                $text .= '<td>'.EB_EVENT_L11.'</td>';
                                 $text .= '<td>
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                 <div>
                                 <input type="hidden" name="joinEventPassword" value=""/>
                                 <input type="hidden" name="division" value="'.$div_id.'"/>
-                                <input class="button" type="submit" name="teamjoinevent" value="Sign up this team!"/>
+                                <input class="button" type="submit" name="teamjoinevent" value="'.EB_EVENT_L12.'"/>
                                 </div>
                                 ';
                                 $text .= '</form>';
@@ -271,7 +271,7 @@ else
                         else
                         {
                             // Team signed up.
-                            $text .= '<td>This team is signed up.</td>';
+                            $text .= '<td>'.EB_EVENT_L13.'</td>';
                         }
                         $text .= '</tr>';
                     }
@@ -302,7 +302,7 @@ else
                 $num_rows_2 = mysql_numrows($result_2);
                 if(!$result_2 || ( $num_rows_2 == 0))
                 {
-                    $text .= '<tr><td>You are not a member of any team for this game.</td>';
+                    $text .= '<tr><td>'.EB_EVENT_L14.'</td>';
                     $text .= '<td></td></tr>';
                 }
                 else
@@ -339,14 +339,14 @@ else
                         {
                             if ($captain_id != USERID)
                             {
-                                $text .= '<tr><td>Your team '.$clan_name.' has not signed up to this event.</td>';
-                                $text .= '<td>Please contact your captain <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
+                                $text .= '<tr><td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L16.'</td>';
+                                $text .= '<td>'.EB_EVENT_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
                             }
                         }
                         else
                         {
                             $team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-                            $text .= '<tr><td>Your team '.$clan_name.' has signed up to this event.</td>';
+                            $text .= '<tr><td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L18.'</td>';
 
                             // Is the user already signed up with that team?
                             $q = "SELECT ".TBL_PLAYERS.".*"
@@ -361,7 +361,7 @@ else
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                 <div>
                                 <input type="hidden" name="team" value="'.$team_id.'"/>
-                                <input class="button" type="submit" name="jointeamevent" value="Sign up!"/>
+                                <input class="button" type="submit" name="jointeamevent" value="'.EB_EVENT_L19.'"/>
                                 </div>
                                 </form></td>
                                 ';
@@ -373,13 +373,13 @@ else
 
                                 if ($user_banned)
                                 {
-                                    $text .= '<td>You are currently banned from this event.<br />
-                                    Please contact the event mods for more info.</td>';
+                                    $text .= '<td>'.EB_EVENT_L20.'<br />
+                                    '.EB_EVENT_L21.'</td>';
                                 }
                                 else
                                 {
                                     // Player signed up
-                                    $text .= '<td>You are signed up.</td>';
+                                    $text .= '<td>'.EB_EVENT_L22.'</td>';
 
                                     // Player can quit an event if he has not played yet
                                     $q = "SELECT ".TBL_PLAYERS.".*"
@@ -395,7 +395,7 @@ else
                                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                         <div>
                                         <input type="hidden" name="player" value="'.$user_pid.'"/>
-                                        <input class="button" type="submit" name="quitevent" value="Quit this event" onclick="return confirm(\'Are you sure you want to quit this event?\');"/>
+                                        <input class="button" type="submit" name="quitevent" value="'.EB_EVENT_L23.'" onclick="return confirm(\''.EB_EVENT_L24.'\');"/>
                                         </div>
                                         </form></td>
                                         ';
@@ -423,26 +423,26 @@ else
                 {
                     if ($epassword != "")
                     {
-                        $text .= '<tr><td>Enter the password and click here to participate to this event.</td>';
-                        $text .= '<td>Event Password</td>';
+                        $text .= '<tr><td>'.EB_EVENT_L25.'</td>';
+                        $text .= '<td>'.EB_EVENT_L26.'</td>';
                         $text .= '<td>';
                         $text .= '
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                         <div>
-                        <input class="tbox" type="password" title="Enter the password" name="joinEventPassword"/>
-                        <input class="button" type="submit" name="joinevent" value="Sign up!"/>
+                        <input class="tbox" type="password" title="'.EB_EVENT_L27.'" name="joinEventPassword"/>
+                        <input class="button" type="submit" name="joinevent" value="'.EB_EVENT_L19.'"/>
                         </div>
                         </form></td></tr>
                         ';
                     }
                     else
                     {
-                        $text .= '<tr><td>Click here to participate to this event.</td>';
+                        $text .= '<tr><td>'.EB_EVENT_L28.'</td>';
                         $text .= '<td>
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                         <div>
                         <input type="hidden" name="joinEventPassword" value=""/>
-                        <input class="button" type="submit" name="joinevent" value="Sign up!"/>
+                        <input class="button" type="submit" name="joinevent" value="'.EB_EVENT_L19.'"/>
                         </div>
                         </form></td></tr>
                         ';
@@ -455,12 +455,12 @@ else
 
                     if ($user_banned)
                     {
-                        $text .= '<tr><td>You are currently banned from this event.<br />
-                        Please contact the event mods for more info.</td><td></td></tr>';
+                        $text .= '<tr><td>'.EB_EVENT_L29.'<br />
+                        '.EB_EVENT_L30.'</td><td></td></tr>';
                     }
                     else
                     {
-                        $text .= '<tr><td>You are signed up.</td>';
+                        $text .= '<tr><td>'.EB_EVENT_L31.'</td>';
 
                         // Player can quit an event if he has not played yet
                         $q = "SELECT ".TBL_PLAYERS.".*"
@@ -476,7 +476,7 @@ else
                             <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                             <div>
                             <input type="hidden" name="player" value="'.$user_pid.'"/>
-                            <input class="button" type="submit" name="quitevent" value="Quit this event" onclick="return confirm(\'Are you sure you want to quit this event?\');"/>
+                            <input class="button" type="submit" name="quitevent" value="'.EB_EVENT_L32.'" onclick="return confirm(\''.EB_EVENT_L33.'\');"/>
                             </div>
                             </form></td></tr>
                             ';
@@ -492,39 +492,40 @@ else
     }
     else
     {
-        $text .= '<tr><td>Please log in to participate to this event.</td>';
+        $text .= '<tr><td>'.EB_EVENT_L34.'</td>';
         $text .= '<td></td></tr>';
     }
     $text .= '</tbody></table>';
     $text .= '</div>';
 
     $text .= '<div class="tab-page">';
-    $text .= '<div class="tab">Info</div>';
+    $text .= '<div class="tab">'.EB_EVENT_L35.'</div>';
 
     $text .= '<table class="fborder" style="width:95%"><tbody>';
 
     $text .= '<tr>';
-    $text .= '<td class="forumheader3">Ladder</td>';
+    $text .= '<td class="forumheader3">'.EB_EVENT_L36.'</td>';
     $text .= '<td class="forumheader3"><b>'.$ename.'</b></td>';
     $text .= '</tr>';
 
     $text .= '<tr>';
-    $text .= '<td class="forumheader3">Type</td>';
-    $text .= '<td class="forumheader3">'.$etype.'</td>';
+    $text .= '<td class="forumheader3">'.EB_EVENT_L37.'</td>';
+    $text .= '<td class="forumheader3">'.eventType($etype).'</td>';
     $text .= '</tr>';
 
     $text .= '<tr>';
-    $text .= '<td class="forumheader3">Game</td>';
+    $text .= '<td class="forumheader3">'.EB_EVENT_L38.'</td>';
     $text .= '<td class="forumheader3"><img '.getGameIconResize($egameicon).'/> '.$egame.'</td>';
     $text .= '</tr>';
 
     $text .= '<tr>';
-    $text .= '<td class="forumheader3">Owner</td><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
+    $text .= '<td class="forumheader3">'.EB_EVENT_L39.'</td>';
+    $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
     $can_manage = 0;
     if (check_class($pref['eb_mod_class'])) $can_manage = 1;
     if (USERID==$eowner) $can_manage = 1;
     if ($can_manage == 1)
-    $text .= '<br /><a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'">Click here to Manage event</a>';
+    $text .= '<br /><a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'">'.EB_EVENT_L40.'</a>';
     $text .= '</td></tr>';
 
     $text .= '<tr>';
@@ -536,7 +537,7 @@ else
     ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".User)";
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
-    $text .= '<td class="forumheader3">Moderator(s)</td>';
+    $text .= '<td class="forumheader3">'.EB_EVENT_L41.'</td>';
     $text .= '<td class="forumheader3">';
     if ($num_rows>0)
     {
@@ -550,10 +551,10 @@ else
 }
 $text .= '</td></tr>';
 
-$text .= '<tr><td class="forumheader3">Starts</td><td class="forumheader3">'.$date_start.'</td></tr>';
-$text .= '<tr><td class="forumheader3">Ends</td><td class="forumheader3">'.$date_end.'</td></tr>';
+$text .= '<tr><td class="forumheader3">'.EB_EVENT_L42.'</td><td class="forumheader3">'.$date_start.'</td></tr>';
+$text .= '<tr><td class="forumheader3">'.EB_EVENT_L43.'</td><td class="forumheader3">'.$date_end.'</td></tr>';
 $text .= '<tr><td class="forumheader3"></td><td class="forumheader3">'.$time_comment.'</td></tr>';
-$text .= '<tr><td class="forumheader3">Rules</td><td class="forumheader3">'.$tp->toHTML($erules, true).'</td></tr>';
+$text .= '<tr><td class="forumheader3">'.EB_EVENT_L44.'</td><td class="forumheader3">'.$tp->toHTML($erules, true).'</td></tr>';
 $text .= '</tbody></table>';
 $text .= '</div>';
 
@@ -563,7 +564,7 @@ $date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
 if ($etype == "Team Ladder")
 {
     $text .= '<div class="tab-page">';
-    $text .= '<div class="tab">Teams Standings</div>';
+    $text .= '<div class="tab">'.EB_EVENT_L45.'</div>';
 
     /* Update Stats */
     if ($eneedupdate == 1)
@@ -573,7 +574,7 @@ if ($etype == "Team Ladder")
 
     if (($time < $enextupdate) && ($eischanged == 1))
     {
-        $text .= 'Next Update: '.$date_nextupdate.'<br />';
+        $text .= EB_EVENT_L46.'&nbsp;'.$date_nextupdate.'<br />';
     }
     /* Nbr Teams */
     $q = "SELECT COUNT(*) as NbrTeams"
@@ -585,7 +586,7 @@ if ($etype == "Team Ladder")
     $text .= '<div class="spacer">';
     $text .= '<p>';
     $text .= $nbrteams.' teams<br />';
-    $text .= 'Minimum '.$eminteamgames.' team matches to rank.<br /><br />';
+    $text .= EB_EVENT_L47.'&nbsp;'.$eminteamgames.'&nbsp;'.EB_EVENT_L48.'<br /><br />';
     $text .= '</p>';
 
     $stats = unserialize(implode('',file($file_team)));
@@ -623,11 +624,11 @@ multi2dSortAsc($stats, $orderby, $sort_type);
 $stats = array_merge($header, $stats);
 
 $text .= '<div class="tab-page">';
-$text .= '<div class="tab">Players Standings</div>';
+$text .= '<div class="tab">'.EB_EVENT_L49.'</div>';
 
 if (($time < $enextupdate) && ($eischanged == 1))
 {
-    $text .= 'Next Update: '.$date_nextupdate.'<br />';
+    $text .= EB_EVENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
 }
 
 /* set pagination variables */
@@ -637,8 +638,8 @@ $pages->mid_range = eb_PAGINATION_MIDRANGE;
 $pages->paginate();
 
 $text .= '<p>';
-$text .= $nbrplayers.' players<br />';
-$text .= 'Minimum '.$emingames.' matches to rank.<br />';
+$text .= $nbrplayers.'&nbsp;'.EB_EVENT_L51.'<br />';
+$text .= EB_EVENT_L52.'&nbsp;'.$emingames.'&nbsp;'.EB_EVENT_L53.'<br />';
 $text .= '</p>';
 
 /* My Position */
@@ -661,7 +662,7 @@ if(mysql_numrows($result) == 1)
     $pbanned = $row['Banned'];
 
     if ($prank==0)
-    $prank_txt = "(Not ranked)";
+    $prank_txt = EB_EVENT_L54;
     else
     $prank_txt = "#$prank";
 
@@ -670,7 +671,7 @@ if(mysql_numrows($result) == 1)
     ($search_user) ? $link_page = ceil($search_user[0]/$pages->items_per_page) : $link_page = 1;
 
     $text .= '<p>';
-    $text .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">Show My Position $prank_txt</a><br />";
+    $text .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">".EB_EVENT_L55." $prank_txt</a><br />";
     $text .= '</p>';
     // Is the event started, and not ended
     if (  ($eend == 0)
@@ -744,7 +745,7 @@ if(($can_report_quickloss != 0)||($can_report != 0))
     {
         $text .= '<td>';
         $text .= '<form action="'.e_PLUGIN.'ebattles/quickreport.php?eventid='.$event_id.'" method="post">';
-        $text .= '<div><input class="button" type="submit" name="quicklossreport" value="Quick Loss Report"/></div>';
+        $text .= '<div><input class="button" type="submit" name="quicklossreport" value="'.EB_EVENT_L56.'"/></div>';
         $text .= '</form>';
         $text .= '</td>';
     }
@@ -754,7 +755,7 @@ if(($can_report_quickloss != 0)||($can_report != 0))
         $text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'" method="post">';
         $text .= '<div>';
         $text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
-        $text .= '<input class="button" type="submit" name="matchreport" value="Match Report"/>';
+        $text .= '<input class="button" type="submit" name="matchreport" value="'.EB_EVENT_L57.'"/>';
         $text .= '</div>';
         $text .= '</form>';
         $text .= '</td>';
@@ -793,7 +794,7 @@ $text .= '</div>';
 
 $text .= '
 <div class="tab-page">
-<div class="tab">Latest Matches</div>
+<div class="tab">'.EB_EVENT_L58.'</div>
 ';
 
 $mEventType  = $etype;
@@ -808,8 +809,8 @@ $result = $sql->db_Query($q);
 $row = mysql_fetch_array($result);
 $nbrmatches = $row['NbrMatches'];
 $text .= '<p>';
-$text .= $nbrmatches.' matches played';
-$text .= ' [<a href="'.e_PLUGIN.'ebattles/eventmatchs.php?eventid='.$event_id.'">Show all Matches</a>]';
+$text .= $nbrmatches.'&nbsp;'.EB_EVENT_L59;
+$text .= ' [<a href="'.e_PLUGIN.'ebattles/eventmatchs.php?eventid='.$event_id.'">'.EB_EVENT_L60.'</a>]';
 $text .= '</p>';
 $text .= '<br />';
 
@@ -893,17 +894,17 @@ if ($num_rows>0)
                 {
                     if ($pmatchteam == $matchteam)
                     {
-                        $players .= " & ";
+                        $players .= ' & ';
                     }
                     else
                     {
                         if ($prank == $rank)
                         {
-                            $str = " tied ";
+                            $str = '&nbsp;'.EB_MATCH_L2.'&nbsp;';
                         }
                         else
                         {
-                            $str = " defeated ";
+                            $str = '&nbsp;'.EB_MATCH_L3.'&nbsp;';
                         }
                         $scores .= "-".$pscore;
                         $players .= $str;
@@ -925,25 +926,25 @@ if ($num_rows>0)
                 $players .= ' ('.$scores.') ';
             }
 
-            $players .= ' (<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">View details</a>)';
+            $players .= ' (<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'" '.$mID.'">'.EB_MATCH_L5.'</a>)';
 
             $players .= ' <div class="smalltext">';
-            $players .= 'Reported by <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
+            $players .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
             if (($time-$mTime) < INT_MINUTE )
             {
-                $players .= 'a few seconds ago';
+                $players .= EB_MATCH_L7;
             }
             else if (($time-$mTime) < INT_DAY )
             {
-                $players .= get_formatted_timediff($mTime, $time).' ago.';
+                $players .= get_formatted_timediff($mTime, $time).'&nbsp;'.EB_MATCH_L8;
             }
             else
             {
-                $players .= 'on '.$date.'.';
+                $players .= EB_MATCH_L9.'&nbsp;'.$date.'.';
             }
             $nbr_comments = getCommentTotal("ebmatches", $mID);
-            $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">'.$nbr_comments.' comment';
-            $players .= ($nbr_comments > 1) ? "s" : "";
+            $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.$nbr_comments.'&nbsp;';
+            $players .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
             $players .= '</a>';
             $players .= '</div><br /></td></tr>';
 
@@ -955,7 +956,7 @@ if ($num_rows>0)
 $text .= '</div>';
 
 $text .= '<div class="tab-page">';
-$text .= '<div class="tab">Latest Awards</div>';
+$text .= '<div class="tab">'.EB_EVENT_L63.'</div>';
 
 $rowsPerPage = $pref['eb_default_items_per_page'];
 /* Stats/Results */
@@ -990,39 +991,39 @@ if ($num_rows>0)
 
     switch ($aType) {
         case 'PlayerTookFirstPlace':
-        $award = ' took 1st place';
-        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="1st place" title="1st place"/> ';
+        $award = EB_AWARD_L2;
+        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/> ';
         break;
         case 'PlayerInTopTen':
-        $award = ' entered top 10';
-        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="top 10" title="top 10"/> ';
+        $award = EB_AWARD_L4;
+        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/> ';
         break;
         case 'PlayerStreak5':
-        $award = ' won 5 games in a row';
-        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="1st place" title="5 in a row"/> ';
+        $award = EB_AWARD_L6;
+        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/> ';
         break;
         case 'PlayerStreak10':
-        $award = ' won 10 games in a row';
-        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="1st place" title="10 in a row"/> ';
+        $award = EB_AWARD_L8;
+        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/> ';
         break;
         case 'PlayerStreak25':
-        $award = ' won 25 games in a row';
-        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="1st place" title="25 in a row"/> ';
+        $award = EB_AWARD_L10;
+        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
         break;
     }
 
     $award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
     $award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
-    $award_string .= $award;
+    $award_string .= '&nbsp;'.$award;
 
     $award_string .= ' <div class="smalltext">';
     if (($time-$aTime) < INT_MINUTE )
     {
-        $award_string .= 'a few seconds ago';
+        $award_string .= EB_MATCH_L7;
     }
     else if (($time-$aTime) < INT_DAY )
     {
-        $award_string .= get_formatted_timediff($aTime, $time).' ago.';
+        $award_string .= get_formatted_timediff($aTime, $time).'&nbsp;'.EB_MATCH_L8;
     }
     else
     {
@@ -1048,7 +1049,7 @@ setupAllTabs();
 ';
 }
 
-$ns->tablerender("$ename ($egame - $etype)", $text);
+$ns->tablerender("$ename ($egame - ".eventType($etype).")", $text);
 require_once(FOOTERF);
 exit;
 

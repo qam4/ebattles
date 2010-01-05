@@ -4,8 +4,12 @@
 *
 */
 
-include(e_PLUGIN."ebattles/include/constants.php");
-include(e_PLUGIN."ebattles/include/time.php");
+global $PLUGINS_DIRECTORY;
+$lan_file = e_PLUGIN."ebattles/languages/".e_LANGUAGE.".php";
+require_once(file_exists($lan_file) ? $lan_file : e_PLUGIN."ebattles/languages/English.php");
+
+require_once(e_PLUGIN."ebattles/include/constants.php");
+require_once(e_PLUGIN."ebattles/include/time.php");
 require_once(e_HANDLER."rate_class.php");
 
 global $pref;
@@ -319,7 +323,7 @@ function getRating($pluginid, $id, $allowrating=true, $notext=false, $userid=fal
             }
             else
             {
-                $text .= EBATTLES_RATELAN_4;
+                $text .= EB_RATELAN_4;
             }
         }
         else
@@ -335,16 +339,16 @@ function getRating($pluginid, $id, $allowrating=true, $notext=false, $userid=fal
             }
             $text .= "&nbsp;".$ratearray[1].".".$ratearray[2];
             if (!$notext) {
-                $text .= " - ".$ratearray[0]."&nbsp;" . ($ratearray[0] == 1 ? EBATTLES_RATELAN_0 : EBATTLES_RATELAN_1);
+                $text .= " - ".$ratearray[0]."&nbsp;" . ($ratearray[0] == 1 ? EB_RATELAN_0 : EB_RATELAN_1);
             }
         }
     } else {
-        $text .= EBATTLES_RATELAN_4;
+        $text .= EB_RATELAN_4;
     }
 
     if ($allowrating) {
         if (!$rater->checkrated($pluginid, $id) && USER) {
-            $ratetext = $rater->rateselect("&nbsp;&nbsp;&nbsp;&nbsp;<b>".EBATTLES_RATELAN_2, $pluginid, $id)."</b>";
+            $ratetext = $rater->rateselect("&nbsp;&nbsp;&nbsp;&nbsp;<b>".EB_RATELAN_2, $pluginid, $id)."</b>";
             $ratetext = str_replace("../../rate.php", e_PLUGIN."ebattles/rate.php", $ratetext);
             if ($userid)
             {
@@ -357,7 +361,7 @@ function getRating($pluginid, $id, $allowrating=true, $notext=false, $userid=fal
         } else if (!USER) {
             $text .= "&nbsp;";
         } else {
-            //$text .= "&nbsp;-&nbsp;".EBATTLES_RATELAN_3;
+            //$text .= "&nbsp;-&nbsp;".EB_RATELAN_3;
         }
     }
 
@@ -382,9 +386,9 @@ function displayRating($rate, $votes) {
             $ratearray[2] = 0;
         }
         $text .= "<div class='smalltext'>&nbsp;".$ratearray[1].".".$ratearray[2]." - ".$ratearray[0]."&nbsp;";
-        $text .= ($ratearray[0] == 1 ? EBATTLES_RATELAN_0 : EBATTLES_RATELAN_1)."</div>";
+        $text .= ($ratearray[0] == 1 ? EB_RATELAN_0 : EB_RATELAN_1)."</div>";
     } else {
-        $text .= "<div class='smalltext'>".EBATTLES_RATELAN_4."</div>";
+        $text .= "<div class='smalltext'>".EB_RATELAN_4."</div>";
     }
     return $text;
 }

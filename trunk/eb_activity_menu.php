@@ -6,11 +6,8 @@
 
 if (!defined('e107_INIT')) { exit; }
 
-global $PLUGINS_DIRECTORY;
-$lan_file = e_PLUGIN."ebattles/languages/".e_LANGUAGE.".php";
-include_once(file_exists($lan_file) ? $lan_file : e_PLUGIN."ebattles/languages/English.php");
-include_once(e_PLUGIN."ebattles/include/main.php");
-include_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
 
 $ebattles_title = $pref['eb_activity_menuheading'];
 $text = displayRecentActivity();
@@ -120,17 +117,17 @@ function displayRecentActivity(){
                     {
                         if ($pmatchteam == $matchteam)
                         {
-                            $players .= " & ";
+                        $players .= ' & ';
                         }
                         else
                         {
                             if ($prank == $rank)
                             {
-                                $str = " tied ";
+                                $str = '&nbsp;'.EB_MATCH_L2.'&nbsp;';
                             }
                             else
                             {
-                                $str = " defeated ";
+                                $str = '&nbsp;'.EB_MATCH_L3.'&nbsp;';
                             }
                             $scores .= "-".$pscore;
                             $players .= $str;
@@ -152,25 +149,25 @@ function displayRecentActivity(){
                     $players .= ' ('.$scores.') ';
                 }
 
-                $players .= ' playing '.$mEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>)';
+                $players .= '&nbsp;'.EB_MATCH_L12.'&nbsp;'.$mEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>)';
 
                 $players .= ' <div class="smalltext">';
-                $players .= 'Reported by <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
+                $players .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
                 if (($time-$mTime) < INT_MINUTE )
                 {
-                    $players .= 'a few seconds ago';
+                    $players .= EB_MATCH_L7;
                 }
                 else if (($time-$mTime) < INT_DAY )
                 {
-                    $players .= get_formatted_timediff($mTime, $time).' ago.';
+                    $players .= get_formatted_timediff($mTime, $time).'&nbsp;'.EB_MATCH_L8;
                 }
                 else
                 {
-                    $players .= 'on '.$date.'.';
+                    $players .= EB_MATCH_L9.'&nbsp;'.$date.'.';
                 }
                 $nbr_comments = getCommentTotal("ebmatches", $mID);
-                $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">'.$nbr_comments.' comment';
-                $players .= ($nbr_comments > 1) ? "s" : "";
+                $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.$nbr_comments.'&nbsp;';
+                $players .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
                 $players .= '</a>';
                 $players .= '</div></td></tr>';
 
@@ -221,40 +218,40 @@ function displayRecentActivity(){
 
             switch ($aType) {
                 case 'PlayerTookFirstPlace':
-                $award = ' took 1st place';
-                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="1st place" title="1st place"/> ';
+                $award = EB_AWARD_L2;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/> ';
                 break;
                 case 'PlayerInTopTen':
-                $award = ' entered top 10';
-                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="top 10" title="top 10"/> ';
+                $award = EB_AWARD_L4;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/> ';
                 break;
                 case 'PlayerStreak5':
-                $award = ' won 5 games in a row';
-                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="1st place" title="5 in a row"/> ';
+                $award = EB_AWARD_L6;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/> ';
                 break;
                 case 'PlayerStreak10':
-                $award = ' won 10 games in a row';
-                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="1st place" title="10 in a row"/> ';
+                $award = EB_AWARD_L8;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/> ';
                 break;
                 case 'PlayerStreak25':
-                $award = ' won 25 games in a row';
-                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="1st place" title="25 in a row"/> ';
+                $award = EB_AWARD_L10;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
                 break;
             }
 
             $award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
             $award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
-            $award_string .= $award;
-            $award_string .= " playing $aEventgame (<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$aEventID\">$aEventName</a>)";
+            $award_string .= '&nbsp;'.$award;
+            $award_string .= '&nbsp;'.EB_MATCH_L12.'&nbsp;'.$aEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a>)';
 
             $award_string .= ' <div class="smalltext">';
             if (($time-$aTime) < INT_MINUTE )
             {
-                $award_string .= 'a few seconds ago';
+                $award_string .= EB_MATCH_L7;
             }
             else if (($time-$aTime) < INT_DAY )
             {
-                $award_string .= get_formatted_timediff($aTime, $time).' ago.';
+                $award_string .= get_formatted_timediff($aTime, $time).'&nbsp;'.EB_MATCH_L8;
             }
             else
             {
