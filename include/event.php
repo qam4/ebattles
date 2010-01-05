@@ -3,8 +3,8 @@
 //___________________________________________________________________
 require_once(e_PLUGIN.'ebattles/include/main.php');
 require_once(e_PLUGIN.'ebattles/include/match.php');
-include_once(e_PLUGIN."ebattles/include/updatestats.php");
-include_once(e_PLUGIN."ebattles/include/updateteamstats.php");
+require_once(e_PLUGIN."ebattles/include/updatestats.php");
+require_once(e_PLUGIN."ebattles/include/updateteamstats.php");
 
 /***************************************************************************************
 Functions
@@ -390,4 +390,18 @@ function eventAddDivision($event_id, $div_id, $notify)
     }
 }
 
+function eventType($type)
+{
+	switch($type)
+	{
+		case "One Player Ladder":
+		return EB_EVENTS_L22;
+		break;
+		case "Team Ladder":
+		return EB_EVENTS_L23;
+		break;
+		default:
+		return $type;
+	}
+}
 ?>

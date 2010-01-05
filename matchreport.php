@@ -9,9 +9,10 @@
 *
 */
 require_once("../../class2.php");
-include_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN.'ebattles/include/match.php');
-include_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -93,9 +94,9 @@ $q = "SELECT ".TBL_PLAYERS.".*, "
 $result = $sql->db_Query($q);
 $num_rows = mysql_numrows($result);
 
-$players_id[0] = '-- select --';
-$players_uid[0] = '-- select --';
-$players_name[0] = '-- select --';
+$players_id[0] = EB_MATCHR_L1;
+$players_uid[0] = EB_MATCHR_L1;
+$players_name[0] = EB_MATCHR_L1;
 for($i=0; $i<$num_rows; $i++){
     $pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
     $puid  = mysql_result($result,$i, TBL_USERS.".user_id");
@@ -104,7 +105,7 @@ for($i=0; $i<$num_rows; $i++){
     $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
     list($pclan, $pclantag) = getClanName($pteam);
     if ($prank==0)
-    $prank_txt = "Not ranked";
+    $prank_txt = EB_EVENT_L54;
     else
     $prank_txt = "#$prank";
 
@@ -156,7 +157,7 @@ if (isset($_POST['submit']))
         $userIsPlaying = 1;
 
         if ($pid == $players_name[0])
-        $error_str .= '<li>Player #'.$i.' not selected</li>';
+        $error_str .= '<li>'.EB_MATCHR_L2.$i.'&nbsp;'.EB_MATCHR_L3.'</li>';
 
         for($j=$i+1;$j<=$nbr_players;$j++)
         {
@@ -176,13 +177,13 @@ if (isset($_POST['submit']))
             $pjMatchTeam = $_POST['team'.$j];
 
             if ($puid == $pjuid)
-            $error_str .= '<li>Player #'.$i.' is the same as Player #'.$j.'</li>';
+            $error_str .= '<li>'.EB_MATCHR_L4.$i.'&nbsp;'.EB_MATCHR_L5.$j.'</li>';
             if (($pTeam == $pjTeam)&&($pMatchTeam != $pjMatchTeam)&&($pTeam != 0))
-            $error_str .= '<li>Player #'.$i.' and Player #'.$j.' are in the same team division</li>';
+            $error_str .= '<li>'.EB_MATCHR_L6.$i.'&nbsp;'.EB_MATCHR_L7.$j.' '.EB_MATCHR_L8.'</li>';
         }
     }
     if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
-    $error_str .= '<li>You are only allowed to report matches you\'ve played</li>';
+    $error_str .= '<li>'.EB_MATCHR_L9.'</li>';
     
     for($i=1;$i<=$nbr_teams;$i++)
     {
@@ -194,9 +195,9 @@ if (isset($_POST['submit']))
             $team_players ++;
         }
         if ($team_players == 0)
-        $error_str .= '<li>Team #'.$i.' has no player</li>';
+        $error_str .= '<li>'.EB_MATCHR_L10.$i.'&nbsp;'.EB_MATCHR_L11.'</li>';
         if(!preg_match("/^\d+$/", $_POST['score'.$i]))
-        $error_str .= '<li>Score #'.$i.' is not a number: '.$_POST['score'.$i].'</li>';
+        $error_str .= '<li>'.EB_MATCHR_L12.$i.'&nbsp;'.EB_MATCHR_L13.'&nbsp;'.$_POST['score'.$i].'</li>';
     }
 
     // we could do more data checks, but you get the idea.
@@ -209,7 +210,7 @@ if (!empty($error_str)) {
     // show form again
     user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore,$userclass);
     // errors have occured, halt execution and show form again.
-    $text .= '<p style="color:red">There were errors in the information you entered, they are listed below:';
+    $text .= '<p style="color:red">'.EB_MATCHR_L14;
     $text .= '<ul style="color:red">'.$error_str.'</ul></p>';
 }
 else
@@ -319,7 +320,7 @@ $text .= '
 </div>
 ';
 
-$ns->tablerender("$ename ($etype) - Match Report", $text);
+$ns->tablerender("$ename (".eventType($etype).") - Match Report", $text);
 require_once(FOOTERF);
 exit;
 ?>

@@ -7,20 +7,17 @@
 
 if (!defined('e107_INIT')) { exit; }
 
-global $PLUGINS_DIRECTORY;
-$lan_file = e_PLUGIN."ebattles/languages/".e_LANGUAGE.".php";
-include_once(file_exists($lan_file) ? $lan_file : e_PLUGIN."ebattles/languages/English.php");
-include_once(e_PLUGIN."ebattles/include/main.php");
-include(e_PLUGIN."ebattles/include/revision.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/revision.php");
 
 // Plugin info -------------------------------------------------------------------------------------------------------
-$eplug_name = EBATTLES_L1;
+$eplug_name = EB_L1;
 $eplug_version = "$majorRevision.$minorRevision.$svnRevision";
 $eplug_author = "Frederic Marchais (qam4)";
 $eplug_logo = "";
 $eplug_url = "http://ebattles.freehostia.com";
 $eplug_email = "frederic.marchais@gmail.com";
-$eplug_description = EBATTLES_L2;
+$eplug_description = EB_L2;
 $eplug_compatible = "e107v0.7+";
 $eplug_readme = "";        // leave blank if no readme file
 
@@ -42,7 +39,7 @@ $eplug_conffile = "admin_config.php";
 // Icon image and caption text ------------------------------------------------------------------------------------
 $eplug_icon = $eplug_folder."/images/ebattles_32.ico";
 $eplug_icon_small = $eplug_folder."/images/ebattles_16.ico";
-//$eplug_caption =  EBATTLES_L3;
+//$eplug_caption =  EB_L3;
 
 // List of preferences -----------------------------------------------------------------------------------------------
 $eplug_prefs = array(
@@ -58,8 +55,8 @@ $eplug_prefs = array(
     "eb_max_avatar_size" => 32,
     "eb_avatar_enable_playersstandings" => 1,
     "eb_avatar_default_image" => 'anonymous.png',
-    "eb_links_menuheading" => EBATTLES_ADMIN_L29,
-    "eb_activity_menuheading" => EBATTLES_ADMIN_L31,
+    "eb_links_menuheading" => EB_ADMIN_L29,
+    "eb_activity_menuheading" => EB_ADMIN_L31,
     "eb_activity_number_of_items" => 10,
     "eb_activity_max_image_size_check" => 1,
     "eb_activity_max_image_size" => 16
@@ -348,7 +345,7 @@ $eplug_link_url = "";
 
 
 // Text to display after plugin successfully installed ------------------------------------------------------------------
-$eplug_done = EBATTLES_L4;
+$eplug_done = EB_L4;
 
 // upgrading ... //
 $upgrade_add_prefs = array();
@@ -433,8 +430,8 @@ if ($revision < 133)
 {
     // To revision 133
     $upgrade_add_prefs += array(
-        "eb_links_menuheading" => EBATTLES_ADMIN_L29,
-        "eb_activity_menuheading" => EBATTLES_ADMIN_L31,
+        "eb_links_menuheading" => EB_ADMIN_L29,
+        "eb_activity_menuheading" => EB_ADMIN_L31,
         "eb_activity_number_of_items" => 10
     );
 }

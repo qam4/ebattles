@@ -7,10 +7,10 @@
 *
 */
 require_once("../../class2.php");
-include_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 require_once(e_HANDLER."rate_class.php");
-include_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -51,11 +51,11 @@ else
     <div class="tab-pane" id="tab-pane-5">
 
     <div class="tab-page">
-    <div class="tab">Profile</div>
+    <div class="tab">'.EB_USER_L2.'</div>
     ';
 
     $text .= '<p>';
-    $text .= 'User Profile: <a href="'.e_BASE.'user.php?id.'.$req_user.'">'.$uname.'</a>';
+    $text .= EB_USER_L7.': <a href="'.e_BASE.'user.php?id.'.$req_user.'">'.$uname.'</a>';
     $text .= '</p>';
 
     $text .= '</div>';
@@ -63,19 +63,19 @@ else
     /* Display list of events */
     $text .= '
     <div class="tab-page">
-    <div class="tab">Events</div>
+    <div class="tab">'.EB_USER_L3.'</div>
     ';
     if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_events_create_class'])))
     {
         $text .= '<form action="'.e_PLUGIN.'ebattles/eventcreate.php" method="post">';
         $text .= '<div>';
         $text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
-        $text .= '<input class="button" type="submit" name="createevent" value="Create new event"/>';
+        $text .= '<input class="button" type="submit" name="createevent" value="'.EB_EVENTS_L20.'"/>';
         $text .= '</div>';
         $text .= '</form>';
     }
-    $text .= '<b>Player</b><br />';
-    $text .= $uname.' plays in the following events';
+    $text .= '<b>'.EB_USER_L8.'</b><br />';
+    $text .= $uname.'&nbsp;'.EB_USER_L9;
     $q = " SELECT *"
     ." FROM ".TBL_PLAYERS.", "
     .TBL_EVENTS.", "
@@ -93,19 +93,19 @@ else
         $text .= '<table class="fborder" style="width:95%">';
         $text .= '<tr>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Name';
+        $text .= EB_USER_L10;
         $text .= '</td>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Rank';
+        $text .= EB_USER_L11;
         $text .= '</td>';
         $text .= '<td class="forumheader3">';
-        $text .= 'W/L';
+        $text .= EB_USER_L12;
         $text .= '</td>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Player Rating';
+        $text .= EB_USER_L13;
         $text .= '</td>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Status';
+        $text .= EB_USER_L14;
         $text .= '</td>';
         $text .= '</tr>';
 
@@ -164,15 +164,15 @@ else
             $text .= '<td class="forumheader3">';
             if($eowner == $req_user)
             {
-                $text .= "Owner";
+                $text .= EB_USER_L15;
                 if ($eowner == USERID)
                 {
-                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$eid.'">Manage</a>)';
+                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$eid.'">'.EB_USER_L16.'</a>)';
                 }
             }
             else
             {
-                $text .= 'Member';
+                $text .= EB_USER_L17;
             }
 
             $text .= '</td>';
@@ -181,8 +181,8 @@ else
         $text .= '</table>';
     }
 
-    $text .= '<br /><b>Owner</b><br />';
-    $text .= $uname.' owns in the following events';
+    $text .= '<br /><b>'.EB_USER_L18.'</b><br />';
+    $text .= $uname.'&nbsp;'.EB_USER_L19;
     $q = " SELECT *"
     ." FROM ".TBL_EVENTS.", "
     .TBL_GAMES
@@ -198,10 +198,10 @@ else
         $text .= '<table class="fborder" style="width:95%">';
         $text .= '<tr>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Name';
+        $text .= EB_USER_L10;
         $text .= '</td>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Status';
+        $text .= EB_USER_L14;
         $text .= '</td>';
         $text .= '</tr>';
 
@@ -220,15 +220,15 @@ else
             $text .= '<td class="forumheader3">';
             if($eowner == $req_user)
             {
-                $text .= "Owner";
+                $text .= EB_USER_L15;
                 if ($eowner == USERID)
                 {
-                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$eid.'">Manage</a>)';
+                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$eid.'">'.EB_USER_L16.'</a>)';
                 }
             }
             else
             {
-                $text .= 'Member';
+                $text .= EB_USER_L17;
             }
             $text .= '</td>';
             $text .= '</tr>';
@@ -236,8 +236,8 @@ else
         $text .= '</table>';
     }
 
-    $text .= '<br /><b>Moderator</b><br />';
-    $text .= $uname.' moderates in the following events';
+    $text .= '<br /><b>'.EB_USER_L20.'</b><br />';
+    $text .= $uname.'&nbsp;'.EB_USER_L21;
     $q = " SELECT *"
     ." FROM ".TBL_EVENTMODS.", "
     .TBL_EVENTS.", "
@@ -255,10 +255,10 @@ else
         $text .= '<table class="fborder" style="width:95%">';
         $text .= '<tr>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Name';
+        $text .= EB_USER_L10;
         $text .= '</td>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Status';
+        $text .= EB_USER_L14;
         $text .= '</td>';
         $text .= '</tr>';
 
@@ -277,15 +277,15 @@ else
             $text .= '<td class="forumheader3">';
             if($eowner == $req_user)
             {
-                $text .= "Owner";
+                $text .= EB_USER_L15;
                 if ($eowner == USERID)
                 {
-                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$eid.'">Manage</a>)';
+                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$eid.'">'.EB_USER_L16.'</a>)';
                 }
             }
             else
             {
-                $text .= 'Member';
+                $text .= EB_USER_L17;
             }
             $text .= '</td>';
             $text .= '</tr>';
@@ -297,7 +297,7 @@ else
     /* Display list of divisions */
     $text .= '
     <div class="tab-page">
-    <div class="tab">Teams membership</div>
+    <div class="tab">'.EB_USER_L4.'</div>
     ';
     if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_teams_create_class'])))
     {
@@ -305,13 +305,13 @@ else
         $text .= '<div>';
         $text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
         $text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
-        $text .= '<input class="button" type="submit" name="createteam" value="Create new team"/>';
+        $text .= '<input class="button" type="submit" name="createteam" value="'.EB_CLANS_L7.'"/>';
         $text .= '</div>';
         $text .= '</form>';
     }
 
-    $text .= '<b>Member</b><br />';
-    $text .= $uname.' is member of the following divisions';
+    $text .= '<b>'.EB_USER_L22.'</b><br />';
+    $text .= $uname.'&nbsp;'.EB_USER_L23;
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_DIVISIONS.".*, "
     .TBL_MEMBERS.".*, "
@@ -336,10 +336,10 @@ else
         $text .= '<table class="fborder" style="width:95%">';
         $text .= '<tr>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Division';
+        $text .= EB_USER_L24;
         $text .= '</td>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Status';
+        $text .= EB_USER_L25;
         $text .= '</td>';
         $text .= '</tr>';
         /* Display table contents */
@@ -358,15 +358,15 @@ else
             $text .= '<td class="forumheader3">';
             if($cowner == $req_user)
             {
-                $text .= "Owner";
+                $text .= EB_USER_L15;
                 if ($cowner == USERID)
                 {
-                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">Manage</a>)';
+                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">'.EB_USER_L16.'</a>)';
                 }
             }
             else
             {
-                $text .= 'Member';
+                $text .= EB_USER_L17;
             }
             $text .= '</td>';
             $text .= '</tr>';
@@ -375,8 +375,8 @@ else
         $text .= '</table>';
     }
 
-    $text .= '<br /><b>Owner</b><br />';
-    $text .= $uname.' is owner of the following teams';
+    $text .= '<br /><b>'.EB_USER_L26.'</b><br />';
+    $text .= $uname.'&nbsp;'.EB_USER_L27;
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_USERS.".*"
     ." FROM ".TBL_CLANS.", "
@@ -392,10 +392,10 @@ else
         $text .= '<table class="fborder" style="width:95%">';
         $text .= '<tr>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Team';
+        $text .= EB_USER_L28;
         $text .= '</td>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Status';
+        $text .= EB_USER_L14;
         $text .= '</td>';
         $text .= '</tr>';
         /* Display table contents */
@@ -411,15 +411,15 @@ else
             $text .= '<td class="forumheader3">';
             if($cowner == $req_user)
             {
-                $text .= "Owner";
+                $text .= EB_USER_L15;
                 if ($cowner == USERID)
                 {
-                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">Manage</a>)';
+                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">'.EB_USER_L14.'</a>)';
                 }
             }
             else
             {
-                $text .= 'Member';
+                $text .= EB_USER_L17;
             }
             $text .= '</td>';
             $text .= '</tr>';
@@ -428,8 +428,8 @@ else
         $text .= '</table>';
     }
 
-    $text .= '<br /><b>Captain</b><br />';
-    $text .= $uname.' is captain of the following divisions';
+    $text .= '<br /><b>'.EB_USER_L29.'</b><br />';
+    $text .= $uname.'&nbsp;'.EB_USER_L30;
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_DIVISIONS.".*, "
     .TBL_GAMES.".*"
@@ -448,10 +448,10 @@ else
         $text .= '<table class="fborder" style="width:95%">';
         $text .= '<tr>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Division';
+        $text .= EB_USER_L24;
         $text .= '</td>';
         $text .= '<td class="forumheader3">';
-        $text .= 'Status';
+        $text .= EB_USER_L14;
         $text .= '</td>';
         $text .= '</tr>';
         /* Display table contents */
@@ -470,15 +470,15 @@ else
             $text .= '<td class="forumheader3">';
             if($cowner == $req_user)
             {
-                $text .= "Owner";
+                $text .= EB_USER_L15;
                 if ($cowner == USERID)
                 {
-                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">Manage</a>)';
+                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">'.EB_USER_L16.'</a>)';
                 }
             }
             else
             {
-                $text .= 'Member';
+                $text .= EB_USER_L17;
             }
             $text .= '</td>';
             $text .= '</tr>';
@@ -490,7 +490,7 @@ else
 
     $text .= '
     <div class="tab-page">
-    <div class="tab">Matches</div>
+    <div class="tab">'.EB_USER_L5.'</div>
     ';
 
     /* Stats/Results */
@@ -610,17 +610,17 @@ else
                     {
                         if ($pmatchteam == $matchteam)
                         {
-                            $players .= " & ";
+                        $players .= ' & ';
                         }
                         else
                         {
                             if ($prank == $rank)
                             {
-                                $str = " tied ";
+                            $str = '&nbsp;'.EB_MATCH_L2.'&nbsp;';
                             }
                             else
                             {
-                                $str = " defeated ";
+                            $str = '&nbsp;'.EB_MATCH_L3.'&nbsp;';
                             }
                             $scores .= "-".$pscore;
                             $players .= $str;
@@ -639,30 +639,31 @@ else
                 //score here
                 if ($mEventAllowScore == TRUE)
                 {
-                    $players .= ' ('.$scores.') ';
+                    $players .= '&nbsp;('.$scores.')&nbsp;';
                 }
 
-                $players .= ' playing '.$mEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>)';
+                $players .= '&nbsp;'.EB_MATCH_L12.'&nbsp;'.$mEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>)';
 
                 $players .= ' <div class="smalltext">';
-                $players .= 'Reported by <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
+                $players .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
                 if (($time-$mTime) < INT_MINUTE )
                 {
-                    $players .= 'a few seconds ago';
+                $players .= EB_MATCH_L7;
                 }
                 else if (($time-$mTime) < INT_DAY )
                 {
-                    $players .= get_formatted_timediff($mTime, $time).' ago.';
+                $players .= get_formatted_timediff($mTime, $time).'&nbsp;'.EB_MATCH_L8;
                 }
                 else
                 {
-                    $players .= 'on '.$date.'.';
+                $players .= EB_MATCH_L9.'&nbsp;'.$date.'.';
                 }
                 $nbr_comments = getCommentTotal("ebmatches", $mID);
-                $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">'.$nbr_comments.' comment';
-                $players .= ($nbr_comments > 1) ? "s" : "";
+            $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.$nbr_comments.'&nbsp;';
+            $players .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
                 $players .= '</a>';
                 $players .= '</div><br /></td></tr>';
+
                 $text .= $players;
             }
         }
@@ -673,7 +674,7 @@ else
     /* Display list of awards */
     $text .= '
     <div class="tab-page">
-    <div class="tab">Awards</div>
+    <div class="tab">'.EB_USER_L6.'</div>
     ';
 
     /* Stats/Results */
@@ -697,7 +698,7 @@ else
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
 
-    $text .= "<br />";
+    $text .= '<br />';
     if ($num_rows>0)
     {
         $text .= '<table class="table_left">';
@@ -707,52 +708,51 @@ else
             $aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
             $aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
             $aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
-            $aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
-            $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
-            $aTime_local = $aTime + TIMEOFFSET;
             $aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
             $aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
             $aEventgame = mysql_result($result,$i , TBL_GAMES.".Name");
             $aEventgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
+            $aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
+            $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
+            $aTime_local = $aTime + TIMEOFFSET;
             $date = date("d M Y, h:i A",$aTime_local);
 
             switch ($aType) {
                 case 'PlayerTookFirstPlace':
-                $award = ' took 1st place';
-                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="1st place" title="1st place"/> ';
+                $award = EB_AWARD_L2;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/> ';
                 break;
                 case 'PlayerInTopTen':
-                $award = ' entered top 10';
-                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="top 10" title="top 10"/> ';
+                $award = EB_AWARD_L4;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/> ';
                 break;
                 case 'PlayerStreak5':
-                $award = ' won 5 games in a row';
-                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="1st place" title="5 in a row"/> ';
+                $award = EB_AWARD_L6;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/> ';
                 break;
                 case 'PlayerStreak10':
-                $award = ' won 10 games in a row';
-                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="1st place" title="10 in a row"/> ';
+                $award = EB_AWARD_L8;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/> ';
                 break;
                 case 'PlayerStreak25':
-                $award = ' won 25 games in a row';
-                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="1st place" title="25 in a row"/> ';
+                $award = EB_AWARD_L10;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
                 break;
             }
 
             $award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
             $award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
-            $award_string .= $award;
-
-            $award_string .= ' playing '.$aEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a>)';
+            $award_string .= '&nbsp;'.$award;
+            $award_string .= '&nbsp;'.EB_MATCH_L12.'&nbsp;'.$aEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a>)';
 
             $award_string .= ' <div class="smalltext">';
             if (($time-$aTime) < INT_MINUTE )
             {
-                $award_string .= 'a few seconds ago';
+                $award_string .= EB_MATCH_L7;
             }
             else if (($time-$aTime) < INT_DAY )
             {
-                $award_string .= get_formatted_timediff($aTime, $time).' ago.';
+                $award_string .= get_formatted_timediff($aTime, $time).'&nbsp;'.EB_MATCH_L8;
             }
             else
             {
@@ -777,7 +777,7 @@ else
     </script>
     ';
 }
-$ns->tablerender('Player Information', $text);
+$ns->tablerender(EB_USER_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>
