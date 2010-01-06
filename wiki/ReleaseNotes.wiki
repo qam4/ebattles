@@ -1,5 +1,9 @@
 #summary eBattles Release Notes.
 
+= Release 0.6.164 =
+== Features ==
+ * Multi-language support and French translation (Fixes issue 63)
+
 = Release 0.5.161 =
 == Features ==
  * Added "Check for plugin update" support for admin. (Issue 65)
