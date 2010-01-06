@@ -23,7 +23,7 @@ $text .='
 $text .= '
 <div class="tab-pane" id="tab-pane-9">
 <div class="tab-page">
-<div class="tab">Past Events</div>
+<div class="tab">'.EB_EVENTP_L2.'</div>
 ';
 displayPastEvents();
 $text .='
@@ -31,7 +31,7 @@ $text .='
 </div>
 ';
 
-$ns->tablerender('Past Events', $text);
+$ns->tablerender(EB_EVENTP_L1, $text);
 require_once(FOOTERF);
 exit;
 
@@ -61,24 +61,24 @@ function displayPastEvents(){
     $text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="post">';
     $text .= '<table>';
     $text .= '<tr><td>';
-    $text .= 'Games:<br />';
+    $text .= EB_EVENTS_L9.'<br />';
     $text .= '<select class="tbox" name="gameid">';
-    $text .= '<option value="All">All</option>';
+    $text .= '<option value="All">'.EB_EVENTS_L10.'</option>';
     for($i=0; $i<$num_rows; $i++){
         $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
         $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
-        $text .= "<option value=\"$gid\">".htmlspecialchars($gname)."</option>\n";
+        $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
     }
-    $text .= "</select>\n";
-    $text .= "</td>\n";
-    $text .= "<td>\n";
-    $text .= "<br />\n";
-    $text .= "<input class=\"button\" type=\"submit\" name=\"subgameselect\" value=\"Filter\"/>\n";
-    $text .= "</td>\n";
-    $text .= "</tr>\n";
-    $text .= "</table>\n";
-    $text .= "</form>\n";
-    $text .= "<br />\n";
+    $text .= '</select>';
+    $text .= '</td>';
+    $text .= '<td>';
+    $text .= '<br />';
+    $text .= '<input class="button" type="submit" name="subgameselect" value="'.EB_EVENTS_L24.'"/>';
+    $text .= '</td>';
+    $text .= '</tr>';
+    $text .= '</table>';
+    $text .= '</form>';
+    $text .= '<br />';
 
     if ($_POST['gameid'] == "All")
     {
@@ -129,11 +129,11 @@ function displayPastEvents(){
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
     if(!$result || ($num_rows < 0)){
-        $text .= "Error displaying info";
+        $text .= EB_EVENTS_L11;
         return;
     }
     if($num_rows == 0){
-        $text .= "<div>No old events.</div>";
+        $text .= '<div>'.EB_EVENTS_L12.'</div>';
         return;
     }
 
@@ -148,8 +148,16 @@ function displayPastEvents(){
     $text .= '</span><br /><br />';
 
     /* Display table contents */
-    $text .= "<table class=\"fborder\" style=\"width:95%\"><tbody>";
-    $text .= "<tr><td class=\"forumheader\"><b>Event</b></td><td colspan=\"2\" class=\"forumheader\"><b>Game</b></td><td class=\"forumheader\"><b>Type</b></td><td class=\"forumheader\"><b>Start</b></td><td class=\"forumheader\"><b>End</b></td><td class=\"forumheader\"><b>Players</b></td><td class=\"forumheader\"><b>Games</b></td></tr>\n";
+    $text .= '<table class="fborder" style="width:95%"><tbody>';
+    $text .= '<tr>
+    <td class="forumheader"><b>'.EB_EVENTS_L13.'</b></td>
+    <td colspan="2" class="forumheader"><b>'.EB_EVENTS_L14.'</b></td>
+    <td class="forumheader"><b>'.EB_EVENTS_L15.'</b></td>
+    <td class="forumheader"><b>'.EB_EVENTS_L16.'</b></td>
+    <td class="forumheader"><b>'.EB_EVENTS_L17.'</b></td>
+    <td class="forumheader"><b>'.EB_EVENTS_L18.'</b></td>
+    <td class="forumheader"><b>'.EB_EVENTS_L19.'</b></td>
+    </tr>';
     for($i=0; $i<$num_rows; $i++){
         $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
         $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
@@ -211,9 +219,9 @@ function displayPastEvents(){
             </tr>';
         }
     }
-    $text .= "</tbody></table>\n";
+    $text .= '</tbody></table>';
 
-    $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/events.php\">Events</a>]<br />";
+    $text .= '<br />'.EB_EVENTP_L3.' [<a href="'.e_PLUGIN.'ebattles/events.php">'.EB_EVENTP_L4.'</a>]<br />';
 }
 
 ?>

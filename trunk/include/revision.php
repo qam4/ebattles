@@ -1,8 +1,8 @@
 <?php
 
-require_once(e_PLUGIN."ebattles/include/SVNrevision.php");
+include(e_PLUGIN."ebattles/include/SVNrevision.php");
 $majorRevision = 0;
-$minorRevision = 5;
+$minorRevision = 6;
 $svnRevision = $svnRevision;
 
 ?>

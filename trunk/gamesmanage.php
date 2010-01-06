@@ -50,7 +50,7 @@ $text .= '
 */
 $text .= '
 <div class="tab-page">
-<div class="tab">Games</div>
+<div class="tab">'.EB_GAMES_L2.'</div>
 ';
 displayGames();
 $text .= '</div>
@@ -63,7 +63,7 @@ setupAllTabs();
 </script>
 ';
 
-$ns->tablerender('Games', $text);
+$ns->tablerender(EB_GAMES_L1, $text);
 require_once(FOOTERF);
 exit;
 
@@ -81,9 +81,9 @@ function displayGames(){
     $pages = new Paginator;
 
     $array = array(
-    'id'   => array('ID', TBL_GAMES.'.GameID'),
-    'icon'   => array('Icon', TBL_GAMES.'.Icon'),
-    'game'   => array('Game', TBL_GAMES.'.Name')
+    'id'   => array(EB_GAMES_L3, TBL_GAMES.'.GameID'),
+    'icon'   => array(EB_GAMES_L4, TBL_GAMES.'.Icon'),
+    'game'   => array(EB_GAMES_L5, TBL_GAMES.'.Name')
     );
 
     if (!isset($_GET['orderby'])) $_GET['orderby'] = 'game';
@@ -105,11 +105,11 @@ function displayGames(){
     $pages->mid_range = eb_PAGINATION_MIDRANGE;
     $pages->paginate();
 
-    $text .="<div class=\"spacer\">";
-    $text .="<p>";
-    $text .="$numGames games<br />";
-    $text .="</p>";
-    $text .="</div>";
+    $text .= '<div class="spacer">';
+    $text .= '<p>';
+    $text .= $numGames.' '.EB_GAMES_L6.'<br />';
+    $text .= '</p>';
+    $text .= '</div>';
 
     $orderby_array = $array["$orderby"];
     $q = "SELECT ".TBL_GAMES.".*"
@@ -119,11 +119,11 @@ function displayGames(){
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
     if(!$result || ($num_rows < 0)){
-        $text .= "Error displaying info";
+        $text .= EB_GAMES_L7;
         return;
     }
     if($num_rows == 0){
-        $text .= "No Games";
+        $text .= EB_GAMES_L8;
     }
     else
     {
@@ -142,10 +142,10 @@ function displayGames(){
         $text .= '<form id="gamesform" action="'.e_PLUGIN.'ebattles/gameprocess.php" method="post">';
         $text .= '<table class="fborder" style="width:95%"><tbody>';
         $text .= '<tr>';
-        $text .= '<td class="forumheader"><input class="tbox" type="checkbox" name="sAll" onclick="selectAll(this)" /> (Select all)</td>';
+        $text .= '<td class="forumheader"><input class="tbox" type="checkbox" name="sAll" onclick="selectAll(this)" /> ('.EB_GAMES_L9.')</td>';
         foreach($array as $opt=>$opt_array)
         $text .= '<td class="forumheader"><a href="'.e_PLUGIN.'ebattles/gamesmanage.php?orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
-        $text .= '<td class="forumheader">Options';
+        $text .= '<td class="forumheader">'.EB_GAMES_L10;
         $text .= '<input type="hidden" id="delete_game" name="delete_game" value=""/></td></tr>';
         for($i=0; $i<$num_rows; $i++){
             $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -157,8 +157,8 @@ function displayGames(){
             $text .= '<td class="forumheader3">'.$gid.'</td>';
             $text .= '<td class="forumheader3"><img '.getGameIconResize($gicon).' title="'.$gicon.'"/></td>';
             $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/gamemanage.php?gameid='.$gid.'">'.$gname.'</a></td>';
-            $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/gamemanage.php?gameid='.$gid.'"><img src="'.e_PLUGIN.'ebattles/images/pencil.png" alt="Edit Game" title="Edit Game"/></a>';
-            $text .= '<a href="javascript:buttonval(\''.$gid.'\');" title="Delete Game" onclick="return confirm(\'Are you sure you want to delete this game?\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="Delete Game"/></a>';
+            $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/gamemanage.php?gameid='.$gid.'"><img src="'.e_PLUGIN.'ebattles/images/pencil.png" alt="'.EB_GAMES_L11.'" title="'.EB_GAMES_L11.'"/></a>';
+            $text .= '<a href="javascript:buttonval(\''.$gid.'\');" title="'.EB_GAMES_L12.'" onclick="return confirm(\''.EB_GAMES_L13.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_GAMES_L12.'"/></a>';
             $text .= '</td>';
             $text .= '</tr>';
         }
@@ -166,19 +166,19 @@ function displayGames(){
 
         $text .= '<table><tr>
         <td>
-        <input class="button" type="submit" name="delete_selected_games" value="Delete selected" onclick="return confirm(\'Are you sure you want to delete these games?\')"/>
+        <input class="button" type="submit" name="delete_selected_games" value="'.EB_GAMES_L14.'" onclick="return confirm(\''.EB_GAMES_L15.'\')"/>
         </td>
         <td>
-        <input class="button" type="submit" name="delete_all_games" value="Delete all Games" onclick="return confirm(\'Are you sure you want to delete all the games?\')"/>
+        <input class="button" type="submit" name="delete_all_games" value="'.EB_GAMES_L16.'" onclick="return confirm(\''.EB_GAMES_L17.'\')"/>
         </td>
         <td>
-        <input class="button" type="submit" name="update_selected_games" value="Update selected"/>
+        <input class="button" type="submit" name="update_selected_games" value="'.EB_GAMES_L18.'"/>
         </td>
         <td>
-        <input class="button" type="submit" name="update_all_games" value="Update all Games"/>
+        <input class="button" type="submit" name="update_all_games" value="'.EB_GAMES_L19.'"/>
         </td>
         <td>
-        <input class="button" type="submit" name="add_games" value="Add Games"/>
+        <input class="button" type="submit" name="add_games" value="'.EB_GAMES_L20.'"/>
         </td>
         </tr>
         </table>

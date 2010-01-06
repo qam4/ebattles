@@ -33,7 +33,7 @@ else
 {
     $text .= '<div class="tab-pane" id="tab-pane-12">';
     $text .= '<div class="tab-page">';
-    $text .= '<div class="tab">Match details</div>';
+    $text .= '<div class="tab">'.EB_MATCHD_L1.'</div>';
 
     // Did the user play in that match
     $q = "SELECT DISTINCT ".TBL_SCORES.".*"
@@ -102,13 +102,13 @@ else
         $time_reported_local = $time_reported + TIMEOFFSET;
         $date = date("d M Y, h:i A",$time_reported_local);
 
-        $text .= 'Match reported by <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$reported_by.'">'.$reported_by_name.'</a> ('.$date.')<br />';
+        $text .= EB_MATCHD_L2.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$reported_by.'">'.$reported_by_name.'</a> ('.$date.')<br />';
     }
     else
     {
         $date_reported  = '';
         $reported_by  = '';
-        $comments  = 'Match deleted';
+        $comments  = EB_MATCHD_L3;
     }
 
     // Can I delete the game
@@ -136,7 +136,7 @@ else
         $text .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?eventid='.$event_id.'" method="post">';
         $text .= '<div>';
         $text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
-        $text .= '<input class="button" type="submit" name="deletematch" value="Delete this match" onclick="return confirm(\'Are you sure you want to delete this match?\');"/>';
+        $text .= '<input class="button" type="submit" name="deletematch" value="'.EB_MATCHD_L4.'" onclick="return confirm(\''.EB_MATCHD_L5.'\');"/>';
         $text .= '</div>';
         $text .= '</form>';
     }
@@ -145,14 +145,14 @@ else
 
     $text .= '<table class="fborder" style="width:95%"><tbody>';
     $text .= '<tr>
-    <td class="forumheader"><b>Rank</b></td>
-    <td class="forumheader"><b>Team</b></td>
-    <td class="forumheader"><b>Player</b></td>
-    <td class="forumheader"><b>Score</b></td>
-    <td class="forumheader"><b>Points</b></td>
-    <td class="forumheader"><b>ELO</b></td>
-    <td class="forumheader"><b>Skill</b></td>
-    <td class="forumheader"><b>Opponent Rating</b></td>
+    <td class="forumheader"><b>'.EB_MATCHD_L6.'</b></td>
+    <td class="forumheader"><b>'.EB_MATCHD_L7.'</b></td>
+    <td class="forumheader"><b>'.EB_MATCHD_L8.'</b></td>
+    <td class="forumheader"><b>'.EB_MATCHD_L9.'</b></td>
+    <td class="forumheader"><b>'.EB_MATCHD_L10.'</b></td>
+    <td class="forumheader"><b>'.EB_MATCHD_L11.'</b></td>
+    <td class="forumheader"><b>'.EB_MATCHD_L12.'</b></td>
+    <td class="forumheader"><b>'.EB_MATCHD_L13.'</b></td>
     </tr>';
     for($i=0; $i < $numScores; $i++)
     {
@@ -183,33 +183,44 @@ else
         <td class="forumheader3">'.$pdeltaTS_mu.'</td>
         ';
 
-        // Find all opponents ratings
-        $text .= '<td class="forumheader3"><table style="margin-left: 0px; margin-right: auto;">';
-        for($opponentIndex=0; $opponentIndex < $numScores; $opponentIndex++)
+        $text .= '<td class="forumheader3">';
+        if ($numScores>0)
         {
-            $can_rate = FALSE;
-            $opid = mysql_result($result,$opponentIndex, TBL_PLAYERS.".PlayerID");
-            $oMatchTeam = mysql_result($result,$opponentIndex, TBL_SCORES.".Player_MatchTeam");
-            $ouid = mysql_result($result,$opponentIndex, TBL_USERS.".user_id");
-            $ouname = mysql_result($result,$opponentIndex, TBL_USERS.".user_name");
-            $oteam  = mysql_result($result,$opponentIndex, TBL_PLAYERS.".Team");
-            list($oclan, $oclantag) = getClanName($oteam);
-
-            if (($numPlayers>0)&&($ouid == USERID)&&($uteam!=$pMatchTeam)) $can_rate = TRUE;
-            if ($oMatchTeam != $pMatchTeam)
+            // Find all opponents ratings
+            $text .= '<table style="margin-left: 0px; margin-right: auto;">';
+            for($opponentIndex=0; $opponentIndex < $numScores; $opponentIndex++)
             {
-                $rating = getRating("ebscores", $pscoreid, $can_rate, true, $ouid);
-                if (preg_match("/".EB_RATELAN_2."/", $rating))
+                $can_rate = FALSE;
+                $opid = mysql_result($result,$opponentIndex, TBL_PLAYERS.".PlayerID");
+                $oMatchTeam = mysql_result($result,$opponentIndex, TBL_SCORES.".Player_MatchTeam");
+                $ouid = mysql_result($result,$opponentIndex, TBL_USERS.".user_id");
+                $ouname = mysql_result($result,$opponentIndex, TBL_USERS.".user_name");
+                $oteam  = mysql_result($result,$opponentIndex, TBL_PLAYERS.".Team");
+                list($oclan, $oclantag) = getClanName($oteam);
+
+                if (($numPlayers>0)&&($ouid == USERID)&&($uteam!=$pMatchTeam)) $can_rate = TRUE;
+                if ($oMatchTeam != $pMatchTeam)
                 {
-                    $text .= '<tr><td>'.$rating.'</td></tr>';
-                }
-                else if ($rating != EB_RATELAN_4)
-                {
-                    $text .= '<tr><td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$ouid.'">'.$oclantag.$ouname.'&nbsp</a></td><td>'.$rating.'</td></tr>';
+                    $text .= '<tr>';
+                    $rating = getRating("ebscores", $pscoreid, $can_rate, true, $ouid);
+                    if (preg_match("/".EB_RATELAN_2."/", $rating))
+                    {
+                        $text .= '<td>'.$rating.'</td><td></td>';
+                    }
+                    else if ($rating != EB_RATELAN_4)
+                    {
+                        $text .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$ouid.'">'.$oclantag.$ouname.'&nbsp;</a></td><td>'.$rating.'</td>';
+                    }
+                    else
+                    {
+                        $text .= '<td></td><td></td>';
+                    }
+                    $text .= '</tr>';
                 }
             }
+            $text .= '</table>';
         }
-        $text .= '</table></td>';
+        $text .= '</td>';
         $text .= '</tr>';
     }
     $text .= '</tbody></table><br />';
@@ -217,7 +228,7 @@ else
     if ($comments)
     {
         $text .= '<p>';
-        $text .= 'Reporter comments:<br />';
+        $text .= EB_MATCHD_L14.':<br />';
         $text .= $tp->toHTML($comments, true).'<br />';
         $text .= '</p>';
     }
@@ -228,7 +239,7 @@ else
     $text .= '</div>';
 
     $text .= '<p>';
-    $text .= '<br />Back to [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]<br />';
+    $text .= '<br />'.EB_MATCHD_L15.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHD_L16.'</a>]<br />';
     $text .= '</p>';
 
     $ns->tablerender("$ename ($egame - ".eventType($etype).")", $text);

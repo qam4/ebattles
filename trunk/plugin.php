@@ -8,7 +8,7 @@
 if (!defined('e107_INIT')) { exit; }
 
 require_once(e_PLUGIN."ebattles/include/main.php");
-require_once(e_PLUGIN."ebattles/include/revision.php");
+include(e_PLUGIN."ebattles/include/revision.php");
 
 // Plugin info -------------------------------------------------------------------------------------------------------
 $eplug_name = EB_L1;
@@ -335,7 +335,7 @@ $eplug_tables = array(
 // Insert "Unknown Game"
 $query =
 "INSERT INTO ".TBL_GAMES."(Name, Icon)
-VALUES ('Unknown Game', 'unknown.gif')";
+VALUES ('".EB_GAME_L1."', 'unknown.gif')";
 array_push($eplug_tables, $query);
 
 // Create a link in main menu (yes=TRUE, no=FALSE) -------------------------------------------------------------

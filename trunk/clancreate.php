@@ -22,7 +22,7 @@ else
    $result2 = $sql->db_Query($q2);
    $last_id = mysql_insert_id();
 
-   $q2 = "UPDATE ".TBL_CLANS." SET Name = 'Team $last_id - $username' WHERE (ClanID = '$last_id')";
+   $q2 = "UPDATE ".TBL_CLANS." SET Name = '".EB_CLAN_L1." $last_id - $username' WHERE (ClanID = '$last_id')";
    $result2 = $sql->db_Query($q2);
    header("Location: clanmanage.php?clanid=".$last_id);
 }

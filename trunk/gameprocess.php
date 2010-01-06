@@ -66,7 +66,7 @@ if (isset($_POST['gamecreate']))
     $result = $sql->db_Query($q);
     $last_id = mysql_insert_id();
 
-    $q = "UPDATE ".TBL_GAMES." SET Name = '$last_id - Game' WHERE (GameID = '$last_id')";
+    $q = "UPDATE ".TBL_GAMES." SET Name = '".EB_GAME_L1." - $last_id' WHERE (GameID = '$last_id')";
     $result = $sql->db_Query($q);
 
     header("Location: gamemanage.php?gameid=".$last_id);

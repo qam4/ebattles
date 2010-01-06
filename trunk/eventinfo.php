@@ -671,7 +671,7 @@ if(mysql_numrows($result) == 1)
     ($search_user) ? $link_page = ceil($search_user[0]/$pages->items_per_page) : $link_page = 1;
 
     $text .= '<p>';
-    $text .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">".EB_EVENT_L55." $prank_txt</a><br />";
+    $text .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">".EB_EVENT_L55.": $prank_txt</a><br />";
     $text .= '</p>';
     // Is the event started, and not ended
     if (  ($eend == 0)
@@ -926,7 +926,7 @@ if ($num_rows>0)
                 $players .= ' ('.$scores.') ';
             }
 
-            $players .= ' (<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'" '.$mID.'">'.EB_MATCH_L5.'</a>)';
+            $players .= ' (<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.EB_MATCH_L5.'</a>)';
 
             $players .= ' <div class="smalltext">';
             $players .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
