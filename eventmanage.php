@@ -173,7 +173,7 @@ else
         <div class="tab-pane" id="tab-pane-3">
 
         <div class="tab-page">
-        <div class="tab">Event Summary</div>
+        <div class="tab">'.EB_EVENTM_L2.'</div>
         ';
 
         $text .= '
@@ -182,12 +182,12 @@ else
         <tbody>
         ';
         $text .= '<tr>';
-        $text .= '<td class="forumheader3"><b>Ladder</b></td>';
+        $text .= '<td class="forumheader3"><b>'.EB_EVENTM_L8.'</b></td>';
         $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$ename.'</a></td>';
         $text .= '</tr>';
 
         $text .= '<tr>';
-        $text .= '<td class="forumheader3"><b>Owner</b><br />';
+        $text .= '<td class="forumheader3"><b>'.EB_EVENTM_L9.'</b><br />';
         $text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
         $text .= '</td>';
 
@@ -218,7 +218,7 @@ else
         $text .= '</select>';
         $text .= '</td>';
         $text .= '<td>';
-        $text .= '<input class="button" type="submit" name="eventchangeowner" value="Change Owner"/>';
+        $text .= '<input class="button" type="submit" name="eventchangeowner" value="'.EB_EVENTM_L10.'"/>';
         $text .= '</td>';
         $text .= '</tr>';
         $text .= '</table>';
@@ -236,926 +236,912 @@ else
         $text .= '
         <tr>
         ';
-        $text .= '<td class="forumheader3"><b>Moderators</b></td>';
+        $text .= '<td class="forumheader3"><b>'.EB_EVENTM_L11.'</b></td>';
         $text .= '<td class="forumheader3">';
         if ($numMods>0)
         {
             $text .= '<table>';
-        for($i=0; $i<$numMods; $i++){
-            $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
-            $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
-            $text .= '<tr>';
-            $text .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$modid.'">'.$modname.'</a></td>';
-            $text .= '<td>';
-            $text .= '<div>';
-            $text .= '<input type="hidden" name="eventmod" value="'.$modid.'"/>';
-            $text .= '<input class="button" type="submit" name="eventdeletemod" value="Remove Moderator" onclick="return confirm(\'Are you sure you want to remove this moderator?\');"/>';
-            $text .= '</div>';
-            $text .= '</td>';
-            $text .= '</tr>';
+            for($i=0; $i<$numMods; $i++){
+                $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
+                $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
+                $text .= '<tr>';
+                $text .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$modid.'">'.$modname.'</a></td>';
+                $text .= '<td>';
+                $text .= '<div>';
+                $text .= '<input type="hidden" name="eventmod" value="'.$modid.'"/>';
+                $text .= '<input class="button" type="submit" name="eventdeletemod" value="'.EB_EVENTM_L12.'" onclick="return confirm(\''.EB_EVENTM_L13.'\');"/>';
+                $text .= '</div>';
+                $text .= '</td>';
+                $text .= '</tr>';
+            }
+            $text .= "</table>";
         }
-        $text .= "</table>";
-    }
-    $q = "SELECT ".TBL_USERS.".*"
-    ." FROM ".TBL_USERS;
-    $result = $sql->db_Query($q);
-    /* Error occurred, return given name by default */
-    $numUsers = mysql_numrows($result);
-    $text .= '
-    <table>
-    <tr>
-    <td>
-    <select class="tbox" name="mod">
-    ';
-    for($i=0; $i<$numUsers; $i++)
-    {
-        $uid  = mysql_result($result,$i, TBL_USERS.".user_id");
-        $uname  = mysql_result($result,$i, TBL_USERS.".user_name");
-        $text .= '<option value="'.$uid.'">'.$uname.'</option>';
-    }
-    $text .= '
-    </select>
-    </td>
-    <td>
-    <div>
-    <input class="button" type="submit" name="eventaddmod" value="Add Moderator"/>
-    </div>
-    </td>
-    </tr>
-    </table>
-    ';
-    $text .= '
-    </td>
-    </tr>
-    </tbody>
-    </table>
-    </form>
-    </div>
-    ';
-
-    //***************************************************************************************
-    $text .= '
-    <div class="tab-page">
-    <div class="tab">Event Settings</div>
-    ';
-    $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-    $text .= '
-    <table class="fborder" style="width:95%">
-    <tbody>
-    ';
-    //<!-- Event Name -->
-    $text .= '
-    <tr>
-    <td class="forumheader3"><b>Name</b></td>
-    <td class="forumheader3">
-    <div><input class="tbox" type="text" size="40" name="eventname" value="'.$ename.'"/></div>
-    </td>
-    </tr>
-    ';
-
-    //<!-- Event Password -->
-    $text .= '
-    <tr>
-    <td class="forumheader3"><b>Join Event Password</b></td>
-    <td class="forumheader3">
-    <div><input class="tbox" type="text" size="40" name="eventpassword" value="'.$epassword.'"/></div>
-    </td>
-    </tr>
-    ';
-    //<!-- Event Game -->
-
-    $q = "SELECT ".TBL_GAMES.".*"
-    ." FROM ".TBL_GAMES
-    ." ORDER BY Name";
-    $result = $sql->db_Query($q);
-    /* Error occurred, return given name by default */
-    $numGames = mysql_numrows($result);
-    $text .= '<tr>';
-    $text .= '<td class="forumheader3"><b>Game</b></td>';
-    $text .= '<td class="forumheader3"><select class="tbox" name="eventgame">';
-for($i=0; $i<$numGames; $i++){
-    $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
-    $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
-    if ($egame == $gname)
-    {
-        $text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
-    }
-    else
-    {
-        $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
-    }
-}
-$text .= '</select>';
-$text .= '</td></tr>';
-
-//<!-- Type -->
-$text .= '
-<tr>
-<td class="forumheader3"><b>Type</b></td>
-<td class="forumheader3">
-<div>
-';
-if ($etype == "Team Ladder")
-{
-    $text .= '<input class="tbox" type="radio" size="40" name="eventtype" value="Individual" />Individual';
-    $text .= '<input class="tbox" type="radio" size="40" name="eventtype" checked="checked" value="Team" />Team';
-}
-else
-{
-    $text .= '<input class="tbox" type="radio" size="40" name="eventtype" checked="checked" value="Individual" />Individual';
-    $text .= '<input class="tbox" type="radio" size="40" name="eventtype" value="Team" />Team';
-}
-$text .='
-</div>
-</td>
-</tr>
-';
-
-//<!-- Match report userclass -->
-$text .= '
-<tr>
-<td class="forumheader3"><b>Match report userclass</b></td>
-<td class="forumheader3"><select class="tbox" name="eventmatchreportuserclass">';
-$text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.($ematch_report_userclass == eb_UC_EVENT_PLAYER ? 'selected="selected"' : '') .'>Event Player</option>';
-$text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.($ematch_report_userclass == eb_UC_EVENT_MODERATOR ? 'selected="selected"' : '') .'>Event Moderator</option>';
-$text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.($ematch_report_userclass == eb_UC_EVENT_OWNER ? 'selected="selected"' : '') .'>Event Owner</option>';
-$text .= '</select>
-</td>
-</tr>
-';
-
-//<!-- Allow Quick Loss Report -->
-$text .= '
-<tr>
-<td class="forumheader3"><b>Allow Quick Loss</b></td>
-<td class="forumheader3">
-<div>
-';
-$text .= '<input class="tbox" type="checkbox" name="eventallowquickloss"';
-if ($equick_loss_report == TRUE)
-{
-    $text .= ' checked="checked"/>';
-}
-else
-{
-    $text .= '/>';
-}
-$text .='
-</div>
-</td>
-</tr>
-';
-
-//<!-- Allow Score -->
-$text .= '
-<tr>
-<td class="forumheader3"><b>Allow Scoring</b></td>
-<td class="forumheader3">
-<div>
-';
-$text .= '<input class="tbox" type="checkbox" name="eventallowscore"';
-if ($eAllowScore == TRUE)
-{
-    $text .= ' checked="checked"/>';
-}
-else
-{
-    $text .= '/>';
-}
-$text .='
-</div>
-</td>
-</tr>
-';
-
-//<!-- Allow Draws -->
-$text .= '
-<tr>
-<td class="forumheader3"><b>Allow Draws</b></td>
-<td class="forumheader3">
-<div>
-';
-$text .= '<input class="tbox" type="checkbox" name="eventallowdraw"';
-if ($eAllowDraw == TRUE)
-{
-    $text .= ' checked="checked"/>';
-}
-else
-{
-    $text .= '/>';
-}
-$text .='
-</div>
-</td>
-</tr>
-';
-
-//<!-- Points -->
-$text .= '
-<tr>
-<td class="forumheader3"><b>Points</b></td>
-<td class="forumheader3">
-<table>
-<tr>
-<td>per win</td><td>per draw</td><td>per loss</td>
-</tr>
-<tr>
-<td>
-<div><input class="tbox" type="text" name="eventpointsperwin" value="'.$ePointPerWin.'"/></div>
-</td>
-<td>
-<div><input class="tbox" type="text" name="eventpointsperdraw" value="'.$ePointPerDraw.'"/></div>
-</td>
-<td>
-<div><input class="tbox" type="text" name="eventpointsperloss" value="'.$ePointPerLoss.'"/></div>
-</td>
-</tr>
-</table>
-';
-$text .= '
-</td>
-</tr>
-';
-
-//<!-- Start Date -->
-$text .= '
-<tr>
-<td class="forumheader3"><b>Start Date</b></td>
-<td class="forumheader3">
-<table>
-<tr>
-<td>
-<div><input class="tbox" type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
-</td>
-<td>
-<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="Date selector"
-';
-$text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
-$text .= '
-</td>
-<td>
-<div><input class="button" type="button" value="Reset" onclick="clearStartDate(this.form);"/></div>
-</td>
-</tr>
-</table>
-';
-$text .= '
-<script type="text/javascript">
-Calendar.setup({
-inputField     :    "f_date_start",      // id of the input field
-ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
-showsTime      :    true,            // will display a time selector
-button         :    "f_trigger_start",   // trigger for the calendar (button ID)
-singleClick    :    true,           // single-click mode
-step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-});
-</script>
-</td>
-</tr>
-';
-
-//<!-- End Date -->
-$text .= '
-<tr>
-<td class="forumheader3"><b>End Date</b></td>
-<td class="forumheader3">
-<table>
-<tr>
-<td>
-<div><input class="tbox" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
-</td>
-<td>
-<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="Date selector"
-';
-$text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
-$text .= '
-</td>
-<td>
-<div><input class="button" type="button" value="Reset" onclick="clearEndDate(this.form);"/></div>
-</td>
-</tr>
-</table>
-';
-$text .= '
-<script type="text/javascript">
-Calendar.setup({
-inputField     :    "f_date_end",      // id of the input field
-ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
-showsTime      :    true,            // will display a time selector
-button         :    "f_trigger_end",   // trigger for the calendar (button ID)
-singleClick    :    true,           // single-click mode
-step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-});
-</script>
-</td>
-</tr>
-';
-
-//<!-- Description -->
-$text .= '
-<tr>
-<td class="forumheader3"><b>Description</b></td>
-<td class="forumheader3">
-';
-$text .= '<textarea class="tbox" id="eventdescription" name="eventdescription" cols="70" '.$insertjs.'>'.$edescription.'</textarea>';
-if (!e_WYSIWYG)
-{
-    $text .= "<br />".display_help("helpb",1);
-}
-$text .= '
-</td>
-</tr>
-</tbody>
-</table>
-';
-
-//<!-- Save Button -->
-$text .= '
-<table><tr><td>
-<div>
-<input class="button" type="submit" name="eventsettingssave" value="Save"/>
-</div>
-</td></tr></table>
-
-</form>
-</div>
-';
-//***************************************************************************************
-$text .= '
-<div class="tab-page">
-<div class="tab">Event Rules</div>
-';
-$text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-
-$text .= '
-<table class="fborder" style="width:95%">
-<tbody>
-';
-//<!-- Rules -->
-$text .= '
-<tr>
-<td class="forumheader3"><b>Rules</b></td>
-<td class="forumheader3">
-';
-$text .= '<textarea class="tbox" id="eventrules" name="eventrules" cols="70" '.$insertjs.'>'.$erules.'</textarea>';
-if (!e_WYSIWYG)
-{
-    $text .= "<br />".display_help("helpb",1);
-}
-$text .= '
-</td>
-</tr>
-</tbody>
-</table>
-';
-//<!-- Save Button -->
-$text .= '
-<table><tr><td>
-<div>
-<input class="button" type="submit" name="eventrulessave" value="Save"/>
-</div>
-</td></tr></table>
-
-</form>
-</div>
-';
-
-//***************************************************************************************
-$text .= '
-<div class="tab-page">
-<div class="tab">Event Players</div>
-';
-
-$pages = new Paginator;
-
-$array = array(
-    'name'   => array('Name', TBL_USERS.'.user_name'),
-    'rank'   => array('Rank', TBL_PLAYERS.'.OverallScore'),
-    'games'  => array('Games', TBL_PLAYERS.'.GamesPlayed'),
-    'awards' => array('Awards', '')
-);
-
-if (!isset($_GET['orderby'])) $_GET['orderby'] = 'rank';
-$orderby=$_GET['orderby'];
-
-$sort = "DESC";
-if(isset($_GET["sort"]) && !empty($_GET["sort"]))
-{
-    $sort = ($_GET["sort"]=="ASC") ? "DESC" : "ASC";
-}
-
-$q = "SELECT COUNT(*) as NbrPlayers"
-." FROM ".TBL_PLAYERS.", "
-.TBL_USERS
-." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
-$result = $sql->db_Query($q);
-$row = mysql_fetch_array($result);
-$numPlayers = $row['NbrPlayers'];
-
-$totalItems = $numPlayers;
-$pages->items_total = $totalItems;
-$pages->mid_range = eb_PAGINATION_MIDRANGE;
-$pages->paginate();
-
-$text .= '<div class="spacer">';
-$text .= '<p>';
-$text .= $numPlayers.' players<br />';
-$text .= '</p>';
-$text .= '</div>';
-
-if ($etype == "Team Ladder")
-{
-    // Form to add a team's divisionr to the event
-    $q = "SELECT ".TBL_DIVISIONS.".*, "
-    .TBL_CLANS.".*"
-    ." FROM ".TBL_DIVISIONS.", "
-    .TBL_CLANS
-    ." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
-    ."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-    $result = $sql->db_Query($q);
-    /* Error occurred, return given name by default */
-    $numDivisions = mysql_numrows($result);
-    $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-    $text .= '
-    <table class="fborder" style="width:95%">
-    <tbody>
-    <tr>
-    <td class="forumheader3">
-    <b>Add a Team</b>
-    </td>
-    <td class="forumheader3">
-    <select class="tbox" name="division">
-    ';
-    for($i=0; $i<$numDivisions; $i++)
-    {
-        $did  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
-        $dname  = mysql_result($result,$i, TBL_CLANS.".Name");
-        $text .= '<option value="'.$did.'">'.$dname.'</option>';
-    }
-    $text .= '
-    </select>
-    <input class="button" type="submit" name="eventaddteam" value="Add Team"/>
-    <input class="tbox" type="checkbox" name="eventaddteamnotify"/>Notify the team captain by PM.
-    </td>
-    </tr>
-    </tbody>
-    </table>
-    </form>
-    ';
-}
-else
-{
-    // Form to add a player to the event
-    $q = "SELECT ".TBL_USERS.".*"
-    ." FROM ".TBL_USERS;
-    $result = $sql->db_Query($q);
-    /* Error occurred, return given name by default */
-    $numUsers = mysql_numrows($result);
-    $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-    $text .= '
-    <table class="fborder" style="width:95%">
-    <tbody>
-    <tr>
-    <td class="forumheader3">
-    <b>Add a Player</b>
-    </td>
-    <td class="forumheader3">
-    <select class="tbox" name="player">
-    ';
-    for($i=0; $i<$numUsers; $i++)
-    {
-        $uid  = mysql_result($result,$i, TBL_USERS.".user_id");
-        $uname  = mysql_result($result,$i, TBL_USERS.".user_name");
-        $text .= '<option value="'.$uid.'">'.$uname.'</option>';
-    }
-    $text .= '
-    </select>
-    <input class="button" type="submit" name="eventaddplayer" value="Add Player"/>
-    <input class="tbox" type="checkbox" name="eventaddplayernotify"/>Notify the user by PM.
-    </td>
-    </tr>
-    </tbody>
-    </table>
-    </form>
-    ';
-}
-
-$text .= '<br /><table>';
-$text .= '<tr><td style="vertical-align:top">Kick:</td>';
-$text .= '<td>You can kick (delete) a player who has no games played and no awards.<br />
-A kicked player can re-signup to the event.</td></tr>';
-$text .= '<tr><td style="vertical-align:top">Ban:</td>';
-$text .= '<td>You can temporarily ban/unban a player.<br />
-A banned player can no longer play in the event or sign up to the event during the duration of the ban.</td></tr>';
-$text .= '</table>';
-
-$orderby_array = $array["$orderby"];
-$q_Players = "SELECT ".TBL_PLAYERS.".*, "
-.TBL_USERS.".*"
-." FROM ".TBL_PLAYERS.", "
-.TBL_USERS
-." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-." ORDER BY $orderby_array[1] $sort"
-." $pages->limit";
-$result = $sql->db_Query($q_Players);
-$num_rows = mysql_numrows($result);
-if(!$result || ($num_rows < 0)){
-    $text .= "Error displaying info<br />";
-}
-if($num_rows == 0){
-    $text .= "No Players<br />";
-}
-else
-{
-    // Paginate
-    $text .= "<br />";
-    $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
-    $text .= '<span style="float:right">';
-    // Go To Page
-    $text .= $pages->display_jump_menu();
-    $text .= '&nbsp;&nbsp;&nbsp;';
-    // Items per page
-    $text .= $pages->display_items_per_page();
-    $text .= '</span><br /><br />';
-    /* Display table contents */
-    $text .= '<form id="playersform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-    $text .= '<table class="fborder" style="width:95%"><tbody>';
-    $text .= '<tr>';
-    foreach($array as $opt=>$opt_array)
-    {
-        $text .= '<td class="forumheader"><a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
-    }
-    $text .= '<td class="forumheader">Actions';
-    $text .= '<input type="hidden" id="ban_player" name="ban_player" value=""/>';
-    $text .= '<input type="hidden" id="unban_player" name="unban_player" value=""/>';
-    $text .= '<input type="hidden" id="kick_player" name="kick_player" value=""/>';
-    $text .= '<input type="hidden" id="del_player_games" name="del_player_games" value=""/>';
-    $text .= '<input type="hidden" id="del_player_awards" name="del_player_awards" value=""/>';
-    $text .= '</td></tr>';
-    for($i=0; $i<$num_rows; $i++)
-    {
-        $pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-        $puid = mysql_result($result,$i, TBL_USERS.".user_id");
-        $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
-        $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-        $pbanned = mysql_result($result,$i, TBL_PLAYERS.".Banned");
-        $pgames = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
-        $pteam = mysql_result($result,$i, TBL_PLAYERS.".Team");
-        list($pclan, $pclantag) = getClanName($pteam);
-
-        $q_awards = "SELECT COUNT(*) as NbrAwards"
-        ." FROM ".TBL_AWARDS
-        ." WHERE (".TBL_AWARDS.".Player = '$pid')";
-        $result_awards = $sql->db_Query($q_awards);
-        $row = mysql_fetch_array($result_awards);
-        $pawards = $row['NbrAwards'];
-
-        if ($prank == 0) $prank = "Not Ranked";
-
-        $text .= '<tr>';
-        $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
-        $text .= '<td class="forumheader3">'.(($pbanned) ? "Banned" : $prank).'</td>';
-        $text .= '<td class="forumheader3">'.$pgames.'</td>';
-        $text .= '<td class="forumheader3">'.$pawards.'</td>';
-        $text .= '<td class="forumheader3">';
-        if ($pbanned)
+        $q = "SELECT ".TBL_USERS.".*"
+        ." FROM ".TBL_USERS;
+        $result = $sql->db_Query($q);
+        /* Error occurred, return given name by default */
+        $numUsers = mysql_numrows($result);
+        $text .= '
+        <table>
+        <tr>
+        <td>
+        <select class="tbox" name="mod">
+        ';
+        for($i=0; $i<$numUsers; $i++)
         {
-            $text .= ' <a href="javascript:unban_player(\''.$pid.'\');" title="Un-ban Player" onclick="return confirm(\'Are you sure you want to un-ban this player?\')"><img src="'.e_PLUGIN.'ebattles/images/user_go.ico" alt="Un-ban Player"/></a>';
+            $uid  = mysql_result($result,$i, TBL_USERS.".user_id");
+            $uname  = mysql_result($result,$i, TBL_USERS.".user_name");
+            $text .= '<option value="'.$uid.'">'.$uname.'</option>';
+        }
+        $text .= '
+        </select>
+        </td>
+        <td>
+        <div>
+        <input class="button" type="submit" name="eventaddmod" value="'.EB_EVENTM_L14.'"/>
+        </div>
+        </td>
+        </tr>
+        </table>
+        ';
+        $text .= '
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </form>
+        </div>
+        ';
+
+        //***************************************************************************************
+        $text .= '
+        <div class="tab-page">
+        <div class="tab">'.EB_EVENTM_L3.'</div>
+        ';
+        $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        $text .= '
+        <table class="fborder" style="width:95%">
+        <tbody>
+        ';
+        //<!-- Event Name -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L15.'</b></td>
+        <td class="forumheader3">
+        <div><input class="tbox" type="text" size="40" name="eventname" value="'.$ename.'"/></div>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Event Password -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L16.'</b></td>
+        <td class="forumheader3">
+        <div><input class="tbox" type="text" size="40" name="eventpassword" value="'.$epassword.'"/></div>
+        </td>
+        </tr>
+        ';
+        //<!-- Event Game -->
+
+        $q = "SELECT ".TBL_GAMES.".*"
+        ." FROM ".TBL_GAMES
+        ." ORDER BY Name";
+        $result = $sql->db_Query($q);
+        /* Error occurred, return given name by default */
+        $numGames = mysql_numrows($result);
+        $text .= '<tr>';
+        $text .= '<td class="forumheader3"><b>'.EB_EVENTM_L17.'</b></td>';
+        $text .= '<td class="forumheader3"><select class="tbox" name="eventgame">';
+        for($i=0; $i<$numGames; $i++){
+            $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
+            $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
+            if ($egame == $gname)
+            {
+                $text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
+            }
+            else
+            {
+                $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
+            }
+        }
+        $text .= '</select>';
+        $text .= '</td></tr>';
+
+        //<!-- Type -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L18.'</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        if ($etype == "Team Ladder")
+        {
+            $text .= '<input class="tbox" type="radio" size="40" name="eventtype" value="Individual" />'.EB_EVENTM_L19;
+            $text .= '<input class="tbox" type="radio" size="40" name="eventtype" checked="checked" value="Team" />'.EB_EVENTM_L20;
         }
         else
         {
-            $text .= ' <a href="javascript:ban_player(\''.$pid.'\');" title="Ban Player" onclick="return confirm(\'Are you sure you want to ban this player?\')"><img src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="Ban Player"/></a>';
+            $text .= '<input class="tbox" type="radio" size="40" name="eventtype" checked="checked" value="Individual" />'.EB_EVENTM_L19;
+            $text .= '<input class="tbox" type="radio" size="40" name="eventtype" value="Team" />'.EB_EVENTM_L20;
         }
-        if (($pgames == 0)&&($pawards == 0))
+        $text .='
+        </div>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Match report userclass -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L21.'</b></td>
+        <td class="forumheader3"><select class="tbox" name="eventmatchreportuserclass">';
+        $text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.($ematch_report_userclass == eb_UC_EVENT_PLAYER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L22.'</option>';
+        $text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.($ematch_report_userclass == eb_UC_EVENT_MODERATOR ? 'selected="selected"' : '') .'>'.EB_EVENTM_L23.'</option>';
+        $text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.($ematch_report_userclass == eb_UC_EVENT_OWNER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L24.'</option>';
+        $text .= '</select>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Allow Quick Loss Report -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L25.'</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input class="tbox" type="checkbox" name="eventallowquickloss"';
+        if ($equick_loss_report == TRUE)
         {
-            $text .= ' <a href="javascript:kick_player(\''.$pid.'\');" title="Kick Player" onclick="return confirm(\'Are you sure you want to delete this player?\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="Kick Player"/></a>';
+            $text .= ' checked="checked"/>';
         }
-        if ($pgames != 0)
+        else
         {
-            $text .= ' <a href="javascript:del_player_games(\''.$pid.'\');" title="Delete Player Games" onclick="return confirm(\'Are you sure you want to delete this player games?\')"><img src="'.e_PLUGIN.'ebattles/images/controller_delete.ico" alt="Delete Player Games"/></a>';
+            $text .= '/>';
         }
-        if ($pawards != 0)
+        $text .='
+        </div>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Allow Score -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L26.'</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input class="tbox" type="checkbox" name="eventallowscore"';
+        if ($eAllowScore == TRUE)
         {
-            $text .= ' <a href="javascript:del_player_awards(\''.$pid.'\');" title="Delete Player Awards" onclick="return confirm(\'Are you sure you want to delete this player awards?\')"><img src="'.e_PLUGIN.'ebattles/images/award_star_delete.ico" alt="Delete Player Awards"/></a>';
+            $text .= ' checked="checked"/>';
         }
-        $text .= '</td>';
-        $text .= '</tr>';
+        else
+        {
+            $text .= '/>';
+        }
+        $text .='
+        </div>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Allow Draws -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L27.'</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input class="tbox" type="checkbox" name="eventallowdraw"';
+        if ($eAllowDraw == TRUE)
+        {
+            $text .= ' checked="checked"/>';
+        }
+        else
+        {
+            $text .= '/>';
+        }
+        $text .='
+        </div>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Points -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L28.'</b></td>
+        <td class="forumheader3">
+        <table>
+        <tr>
+        <td>'.EB_EVENTM_L29.'</td>
+        <td>'.EB_EVENTM_L30.'</td>
+        <td>'.EB_EVENTM_L31.'</td>
+        </tr>
+        <tr>
+        <td>
+        <div><input class="tbox" type="text" name="eventpointsperwin" value="'.$ePointPerWin.'"/></div>
+        </td>
+        <td>
+        <div><input class="tbox" type="text" name="eventpointsperdraw" value="'.$ePointPerDraw.'"/></div>
+        </td>
+        <td>
+        <div><input class="tbox" type="text" name="eventpointsperloss" value="'.$ePointPerLoss.'"/></div>
+        </td>
+        </tr>
+        </table>
+        ';
+        $text .= '
+        </td>
+        </tr>
+        ';
+
+        //<!-- Start Date -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L32.'</b></td>
+        <td class="forumheader3">
+        <table>
+        <tr>
+        <td>
+        <div><input class="tbox" type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
+        </td>
+        <td>
+        <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="'.EB_EVENTM_L33.'"
+        ';
+        $text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
+        $text .= '
+        </td>
+        <td>
+        <div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearStartDate(this.form);"/></div>
+        </td>
+        </tr>
+        </table>
+        ';
+        $text .= '
+        <script type="text/javascript">
+        Calendar.setup({
+        inputField     :    "f_date_start",      // id of the input field
+        ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
+        showsTime      :    true,            // will display a time selector
+        button         :    "f_trigger_start",   // trigger for the calendar (button ID)
+        singleClick    :    true,           // single-click mode
+        step           :    1                // show all years in drop-down boxes (instead of every other year as default)
+        });
+        </script>
+        </td>
+        </tr>
+        ';
+
+        //<!-- End Date -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L35.'</b></td>
+        <td class="forumheader3">
+        <table>
+        <tr>
+        <td>
+        <div><input class="tbox" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
+        </td>
+        <td>
+        <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="'.EB_EVENTM_L33.'"
+        ';
+        $text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
+        $text .= '
+        </td>
+        <td>
+        <div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearEndDate(this.form);"/></div>
+        </td>
+        </tr>
+        </table>
+        ';
+        $text .= '
+        <script type="text/javascript">
+        Calendar.setup({
+        inputField     :    "f_date_end",      // id of the input field
+        ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
+        showsTime      :    true,            // will display a time selector
+        button         :    "f_trigger_end",   // trigger for the calendar (button ID)
+        singleClick    :    true,           // single-click mode
+        step           :    1                // show all years in drop-down boxes (instead of every other year as default)
+        });
+        </script>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Description -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L36.'</b></td>
+        <td class="forumheader3">
+        ';
+        $text .= '<textarea class="tbox" id="eventdescription" name="eventdescription" cols="70" '.$insertjs.'>'.$edescription.'</textarea>';
+        if (!e_WYSIWYG)
+        {
+            $text .= "<br />".display_help("helpb",1);
+        }
+        $text .= '
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        ';
+
+        //<!-- Save Button -->
+        $text .= '
+        <table><tr><td>
+        <div>
+        <input class="button" type="submit" name="eventsettingssave" value="'.EB_EVENTM_L37.'"/>
+        </div>
+        </td></tr></table>
+
+        </form>
+        </div>
+        ';
+        //***************************************************************************************
+        $text .= '
+        <div class="tab-page">
+        <div class="tab">'.EB_EVENTM_L4.'</div>
+        ';
+        $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+
+        $text .= '
+        <table class="fborder" style="width:95%">
+        <tbody>
+        ';
+        //<!-- Rules -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L38.'</b></td>
+        <td class="forumheader3">
+        ';
+        $text .= '<textarea class="tbox" id="eventrules" name="eventrules" cols="70" '.$insertjs.'>'.$erules.'</textarea>';
+        if (!e_WYSIWYG)
+        {
+            $text .= "<br />".display_help("helpb",1);
+        }
+        $text .= '
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        ';
+        //<!-- Save Button -->
+        $text .= '
+        <table><tr><td>
+        <div>
+        <input class="button" type="submit" name="eventrulessave" value="'.EB_EVENTM_L39.'"/>
+        </div>
+        </td></tr></table>
+
+        </form>
+        </div>
+        ';
+
+        //***************************************************************************************
+        $text .= '
+        <div class="tab-page">
+        <div class="tab">'.EB_EVENTM_L5.'</div>
+        ';
+
+        $pages = new Paginator;
+
+        $array = array(
+        'name'   => array(EB_EVENTM_L55, TBL_USERS.'.user_name'),
+        'rank'   => array(EB_EVENTM_L56, TBL_PLAYERS.'.OverallScore'),
+        'games'  => array(EB_EVENTM_L57, TBL_PLAYERS.'.GamesPlayed'),
+        'awards' => array(EB_EVENTM_L58, '')
+        );
+
+        if (!isset($_GET['orderby'])) $_GET['orderby'] = 'rank';
+        $orderby=$_GET['orderby'];
+
+        $sort = "DESC";
+        if(isset($_GET["sort"]) && !empty($_GET["sort"]))
+        {
+            $sort = ($_GET["sort"]=="ASC") ? "DESC" : "ASC";
+        }
+
+        $q = "SELECT COUNT(*) as NbrPlayers"
+        ." FROM ".TBL_PLAYERS.", "
+        .TBL_USERS
+        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+        ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+        $result = $sql->db_Query($q);
+        $row = mysql_fetch_array($result);
+        $numPlayers = $row['NbrPlayers'];
+
+        $totalItems = $numPlayers;
+        $pages->items_total = $totalItems;
+        $pages->mid_range = eb_PAGINATION_MIDRANGE;
+        $pages->paginate();
+
+        $text .= '<div class="spacer">';
+        $text .= '<p>';
+        $text .= $numPlayers.' '.EB_EVENTM_L40.'<br />';
+        $text .= '</p>';
+        $text .= '</div>';
+
+        if ($etype == "Team Ladder")
+        {
+            // Form to add a team's divisionr to the event
+            $q = "SELECT ".TBL_DIVISIONS.".*, "
+            .TBL_CLANS.".*"
+            ." FROM ".TBL_DIVISIONS.", "
+            .TBL_CLANS
+            ." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
+            ."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
+            $result = $sql->db_Query($q);
+            /* Error occurred, return given name by default */
+            $numDivisions = mysql_numrows($result);
+            $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+            $text .= '
+            <table class="fborder" style="width:95%">
+            <tbody>
+            <tr>
+            <td class="forumheader3">
+            <b>'.EB_EVENTM_L41.'</b>
+            </td>
+            <td class="forumheader3">
+            <select class="tbox" name="division">
+            ';
+            for($i=0; $i<$numDivisions; $i++)
+            {
+                $did  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
+                $dname  = mysql_result($result,$i, TBL_CLANS.".Name");
+                $text .= '<option value="'.$did.'">'.$dname.'</option>';
+            }
+            $text .= '
+            </select>
+            <input class="button" type="submit" name="eventaddteam" value="'.EB_EVENTM_L42.'"/>
+            <input class="tbox" type="checkbox" name="eventaddteamnotify"/>'.EB_EVENTM_L43.'
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            </form>
+            ';
+        }
+        else
+        {
+            // Form to add a player to the event
+            $q = "SELECT ".TBL_USERS.".*"
+            ." FROM ".TBL_USERS;
+            $result = $sql->db_Query($q);
+            /* Error occurred, return given name by default */
+            $numUsers = mysql_numrows($result);
+            $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+            $text .= '
+            <table class="fborder" style="width:95%">
+            <tbody>
+            <tr>
+            <td class="forumheader3">
+            <b>'.EB_EVENTM_L44.'</b>
+            </td>
+            <td class="forumheader3">
+            <select class="tbox" name="player">
+            ';
+            for($i=0; $i<$numUsers; $i++)
+            {
+                $uid  = mysql_result($result,$i, TBL_USERS.".user_id");
+                $uname  = mysql_result($result,$i, TBL_USERS.".user_name");
+                $text .= '<option value="'.$uid.'">'.$uname.'</option>';
+            }
+            $text .= '
+            </select>
+            <input class="button" type="submit" name="eventaddplayer" value="'.EB_EVENTM_L45.'"/>
+            <input class="tbox" type="checkbox" name="eventaddplayernotify"/>'.EB_EVENTM_L46.'
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            </form>
+            ';
+        }
+
+        $text .= '<br /><table>';
+        $text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L47.':</td>';
+        $text .= '<td>'.EB_EVENTM_L48.'</td></tr>';
+        $text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L49.':</td>';
+        $text .= '<td>'.EB_EVENTM_L50.'</td></tr>';
+        $text .= '</table>';
+
+        $orderby_array = $array["$orderby"];
+        $q_Players = "SELECT ".TBL_PLAYERS.".*, "
+        .TBL_USERS.".*"
+        ." FROM ".TBL_PLAYERS.", "
+        .TBL_USERS
+        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+        ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+        ." ORDER BY $orderby_array[1] $sort"
+        ." $pages->limit";
+        $result = $sql->db_Query($q_Players);
+        $num_rows = mysql_numrows($result);
+        if(!$result || ($num_rows < 0)){
+            $text .= EB_EVENTM_L51.'<br />';
+        }
+        if($num_rows == 0){
+            $text .= EB_EVENTM_L52.'<br />';
+        }
+        else
+        {
+            // Paginate
+            $text .= "<br />";
+            $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
+            $text .= '<span style="float:right">';
+            // Go To Page
+            $text .= $pages->display_jump_menu();
+            $text .= '&nbsp;&nbsp;&nbsp;';
+            // Items per page
+            $text .= $pages->display_items_per_page();
+            $text .= '</span><br /><br />';
+            /* Display table contents */
+            $text .= '<form id="playersform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+            $text .= '<table class="fborder" style="width:95%"><tbody>';
+            $text .= '<tr>';
+            foreach($array as $opt=>$opt_array)
+            {
+                $text .= '<td class="forumheader"><a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
+            }
+            $text .= '<td class="forumheader">'.EB_EVENTM_L59;
+            $text .= '<input type="hidden" id="ban_player" name="ban_player" value=""/>';
+            $text .= '<input type="hidden" id="unban_player" name="unban_player" value=""/>';
+            $text .= '<input type="hidden" id="kick_player" name="kick_player" value=""/>';
+            $text .= '<input type="hidden" id="del_player_games" name="del_player_games" value=""/>';
+            $text .= '<input type="hidden" id="del_player_awards" name="del_player_awards" value=""/>';
+            $text .= '</td></tr>';
+            for($i=0; $i<$num_rows; $i++)
+            {
+                $pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+                $puid = mysql_result($result,$i, TBL_USERS.".user_id");
+                $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+                $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
+                $pbanned = mysql_result($result,$i, TBL_PLAYERS.".Banned");
+                $pgames = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
+                $pteam = mysql_result($result,$i, TBL_PLAYERS.".Team");
+                list($pclan, $pclantag) = getClanName($pteam);
+
+                $q_awards = "SELECT COUNT(*) as NbrAwards"
+                ." FROM ".TBL_AWARDS
+                ." WHERE (".TBL_AWARDS.".Player = '$pid')";
+                $result_awards = $sql->db_Query($q_awards);
+                $row = mysql_fetch_array($result_awards);
+                $pawards = $row['NbrAwards'];
+
+                if ($prank == 0) $prank = EB_EVENTM_L53;
+
+                $text .= '<tr>';
+                $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
+                $text .= '<td class="forumheader3">'.(($pbanned) ? EB_EVENTM_L54 : $prank).'</td>';
+                $text .= '<td class="forumheader3">'.$pgames.'</td>';
+                $text .= '<td class="forumheader3">'.$pawards.'</td>';
+                $text .= '<td class="forumheader3">';
+                if ($pbanned)
+                {
+                    $text .= ' <a href="javascript:unban_player(\''.$pid.'\');" title="'.EB_EVENTM_L60.'" onclick="return confirm(\''.EB_EVENTM_L61.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_go.ico" alt="'.EB_EVENTM_L60.'"/></a>';
+                }
+                else
+                {
+                    $text .= ' <a href="javascript:ban_player(\''.$pid.'\');" title="'.EB_EVENTM_L62.'" onclick="return confirm(\''.EB_EVENTM_L63.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="'.EB_EVENTM_L62.'"/></a>';
+                }
+                if (($pgames == 0)&&($pawards == 0))
+                {
+                    $text .= ' <a href="javascript:kick_player(\''.$pid.'\');" title="'.EB_EVENTM_L64.'" onclick="return confirm(\''.EB_EVENTM_L65.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_EVENTM_L64.'"/></a>';
+                }
+                if ($pgames != 0)
+                {
+                    $text .= ' <a href="javascript:del_player_games(\''.$pid.'\');" title="'.EB_EVENTM_L66.'" onclick="return confirm(\''.EB_EVENTM_L67.'\')"><img src="'.e_PLUGIN.'ebattles/images/controller_delete.ico" alt="'.EB_EVENTM_L66.'"/></a>';
+                }
+                if ($pawards != 0)
+                {
+                    $text .= ' <a href="javascript:del_player_awards(\''.$pid.'\');" title="'.EB_EVENTM_L68.'" onclick="return confirm(\''.EB_EVENTM_L69.'\')"><img src="'.e_PLUGIN.'ebattles/images/award_star_delete.ico" alt="'.EB_EVENTM_L68.'"/></a>';
+                }
+                $text .= '</td>';
+                $text .= '</tr>';
+            }
+            $text .= '</tbody></table>';
+            $text .= '</form>';
+        }
+
+        $text .= '
+        </div>
+        ';
+
+        //***************************************************************************************
+        $text .='
+        <div class="tab-page">
+        <div class="tab">'.EB_EVENTM_L6.'</div>
+        ';
+        $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        $text .='
+        <table class="fborder" style="width:95%">
+        <tbody>
+        ';
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L70.'</b><br />'.EB_EVENTM_L71.'</td>
+        <td class="forumheader3">
+        ';
+        $text .= '<input class="button" type="submit" name="eventresetscores" value="'.EB_EVENTM_L72.'" onclick="return confirm(\''.EB_EVENTM_L73.'\');"/>';
+        $text .= '
+        </td>
+        </tr>
+        ';
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L74.'</b><br />'.EB_EVENTM_L75.'</td>
+        <td class="forumheader3">
+        ';
+        $text .= '<input class="button" type="submit" name="eventresetevent" value="'.EB_EVENTM_L76.'" onclick="return confirm(\''.EB_EVENTM_L77.'\');"/>';
+        $text .= '
+        </td>
+        </tr>
+        ';
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L78.'</b><br />'.EB_EVENTM_L79.'</td>
+        <td class="forumheader3">
+        ';
+        $text .= '<input class="button" type="submit" name="eventdelete" value="'.EB_EVENTM_L80.'" onclick="return confirm(\''.EB_EVENTM_L81.'\');"/>';
+        $text .= '
+        </td>
+        </tr>
+        ';
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L82.'</b><br />'.EB_EVENTM_L83.'</td>
+        <td class="forumheader3">
+        ';
+        $text .= '<input class="button" type="submit" name="eventupdatescores" value="'.EB_EVENTM_L84.'" onclick="return confirm(\''.EB_EVENTM_L85.'\');"/>';
+        $text .= '
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </form>
+        </div>
+        ';
+        //***************************************************************************************
+        $cat_index = 0;
+        $text .= '
+        <div class="tab-page">
+        <div class="tab">'.EB_EVENTM_L7.'</div>
+        ';
+        $text .= EB_EVENTM_L86;
+        $text .= "
+        <script type='text/javascript'>
+        var A_TPL = {
+        'b_vertical' : false,
+        'b_watch': true,
+        'n_controlWidth': 100,
+        'n_controlHeight': 16,
+        'n_sliderWidth': 17,
+        'n_sliderHeight': 16,
+        'n_pathLeft' : 0,
+        'n_pathTop' : 0,
+        'n_pathLength' : 83,
+        's_imgControl': 'images/slider/sldr3h_bg.gif',
+        's_imgSlider': 'images/slider/sldr3h_sl.gif',
+        'n_zIndex': 1
+        }
+        </script>
+        ";
+
+        $text .= '<form id="eventstatsform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        $text .= '
+        <table class="fborder" style="width:95%"><tbody>
+        <tr>
+        <td class="forumheader">'.EB_EVENTM_L87.'</td>
+        <td class="forumheader" colspan="2">'.EB_EVENTM_L88.'</td>
+        <td class="forumheader">'.EB_EVENTM_L89.'</td>
+        </tr>
+        <tr>
+        <td class="forumheader3">'.EB_EVENTM_L90.'</td>
+        <td class="forumheader3">
+        <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
+        </td>
+        <td class="forumheader3">
+        ';
+        $text .= "
+        <script type='text/javascript'>
+        var A_INIT = {
+        's_form' : 'eventstatsform',
+        's_name': 'sliderValue".$cat_index."',
+        'n_minValue' : 0,
+        'n_maxValue' : 10,
+        'n_value' : ".$emingames.",
+        'n_step' : 1
+        }
+
+        new slider(A_INIT, A_TPL);
+        </script>
+        ";
+        $text .= '
+        </td>
+        <td class="forumheader3"></td>
+        </tr>
+        ';
+        $cat_index ++;
+
+        if ($etype == "Team Ladder")
+        {
+            $text .= '
+            <tr>
+            <td class="forumheader3">'.EB_EVENTM_L91.'</td>
+            <td class="forumheader3">
+            <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
+            </td>
+            <td class="forumheader3">
+            ';
+            $text .= "
+            <script type='text/javascript'>
+            var A_INIT = {
+            's_form' : 'eventstatsform',
+            's_name': 'sliderValue".$cat_index."',
+            'n_minValue' : 0,
+            'n_maxValue' : 10,
+            'n_value' : ".$eminteamgames.",
+            'n_step' : 1
+            }
+
+            new slider(A_INIT, A_TPL);
+            </script>
+            ";
+            $text .= '
+            </td>
+            <td class="forumheader3"></td>
+            </tr>
+            ';
+            $cat_index ++;
+        }
+
+        $q_1 = "SELECT ".TBL_STATSCATEGORIES.".*"
+        ." FROM ".TBL_STATSCATEGORIES
+        ." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
+
+        $result_1 = $sql->db_Query($q_1);
+        $numCategories = mysql_numrows($result_1);
+
+        $rating_max=0;
+        for($i=0; $i<$numCategories; $i++)
+        {
+            $cat_name = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryName");
+            $cat_min = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryMinValue");
+            $cat_max = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryMaxValue");
+            $cat_InfoOnly = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".InfoOnly");
+
+            switch ($cat_name)
+            {
+
+                case "ELO":
+                $cat_name_display = EB_EVENTM_L92;
+                break;
+                case "GamesPlayed":
+                $cat_name_display = EB_EVENTM_L93;
+                break;
+                case "VictoryRatio":
+                $cat_name_display = EB_EVENTM_L94;
+                break;
+                case "VictoryPercent":
+                $cat_name_display = EB_EVENTM_L95;
+                break;
+                case "WinDrawLoss":
+                $cat_name_display = EB_EVENTM_L96;
+                break;
+                case "UniqueOpponents":
+                $cat_name_display = EB_EVENTM_L97;
+                break;
+                case "OpponentsELO":
+                $cat_name_display = EB_EVENTM_L98;
+                break;
+                case "Streaks":
+                $cat_name_display = EB_EVENTM_L99;
+                break;
+                case "Skill":
+                $cat_name_display = EB_EVENTM_L100;
+                break;
+                case "Score":
+                $cat_name_display = EB_EVENTM_L101;
+                break;
+                case "ScoreAgainst":
+                $cat_name_display = EB_EVENTM_L102;
+                break;
+                case "ScoreDiff":
+                $cat_name_display = EB_EVENTM_L103;
+                break;
+                case "Points":
+                $cat_name_display = EB_EVENTM_L104;
+                break;
+                default:
+            }
+
+            //---------------------------------------------------
+            $text .= '
+            <tr>
+            <td class="forumheader3">'.$cat_name_display.'</td>
+            <td class="forumheader3">
+            <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
+            </td>
+            <td class="forumheader3">
+            ';
+            $text .= "
+            <script type='text/javascript'>
+            var A_INIT = {
+            's_form' : 'eventstatsform',
+            's_name': 'sliderValue".$cat_index."',
+            'n_minValue' : 0,
+            'n_maxValue' : 100,
+            'n_value' : ".$cat_max.",
+            'n_step' : 1
+            }
+
+            new slider(A_INIT, A_TPL);
+            </script>
+            ";
+            $text .= '</td>';
+
+            $text .= '
+            <td class="forumheader3">
+            <input class="tbox" type="checkbox" name="infoonly'.$i.'" value="1"
+            ';
+            if ($cat_InfoOnly == TRUE)
+            {
+                $text .= ' checked="checked"';
+            }
+            else
+            {
+                $rating_max+=$cat_max;
+
+            }
+            $text .= '/></td>';
+
+            $text .= '</tr>';
+            //----------------------------------------
+
+            $cat_index++;
+        }
+
+        $text .= '
+        <tr>
+        <td class="forumheader3">'.EB_EVENTM_L105.'</td>
+        <td class="forumheader3">'.$rating_max.'</td>
+        <td class="forumheader3" colspan="2">
+        <input class="tbox" type="checkbox" name="hideratings" value="1"
+        ';
+        if ($ehide_ratings_column == TRUE)
+        {
+            $text .= ' checked="checked"';
+        }
+        $text .= '/>&nbsp;'.EB_EVENTM_L106.'</td>';
+
+        $text .= '
+        </tr></tbody></table>
+
+        <!-- Save Button -->
+        <table><tr><td>
+        <div>
+        <input class="button" type="submit" name="eventstatssave" value="'.EB_EVENTM_L107.'"/>
+        </div>
+        </td></tr></table>
+        </form>
+        </div>
+        </div>
+        <script type="text/javascript">
+        //<![CDATA[
+
+        setupAllTabs();
+
+        //]]>
+        </script>
+        ';
     }
-    $text .= '</tbody></table>';
-    $text .= '</form>';
 }
 
-$text .= '
-</div>
-';
-
-//***************************************************************************************
-$text .='
-<div class="tab-page">
-<div class="tab">Event Reset</div>
-';
-$text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-$text .='
-<table class="fborder" style="width:95%">
-<tbody>
-';
-$text .= '
-<tr>
-<td class="forumheader3"><b>Reset Players/Teams.</b><br />
-- Reset Players and Teams Statistics (Rank, Score, ELO, Skill, Games Played, Wins, Losses)<br />
-- Delete all Matches
-</td>
-<td class="forumheader3">
-';
-$text .= '<input class="button" type="submit" name="eventresetscores" value="Reset Scores" onclick="return confirm(\'Are you sure you want to delete this event scores?\');"/>';
-$text .= '
-</td>
-</tr>
-';
-$text .= '
-<tr>
-<td class="forumheader3"><b>Reset Event.</b><br />
-- Delete all Players and Teams.<br />
-- Delete all Matches.
-</td>
-<td class="forumheader3">
-';
-$text .= '<input class="button" type="submit" name="eventresetevent" value="Reset Event" onclick="return confirm(\'Are you sure you want to reset this event?\');"/>';
-$text .= '
-</td>
-</tr>
-';
-$text .= '
-<tr>
-<td class="forumheader3"><b>Delete Event.</b><br />
-- Delete Event.<br />
-</td>
-<td class="forumheader3">
-';
-$text .= '<input class="button" type="submit" name="eventdelete" value="Delete Event" onclick="return confirm(\'Are you sure you want to delete this event?\');"/>';
-$text .= '
-</td>
-</tr>
-';
-$text .= '
-<tr>
-<td class="forumheader3"><b>Recalculate Event Stats.</b><br />
-- Reset and recalculate players stats.<br />
-</td>
-<td class="forumheader3">
-';
-$text .= '<input class="button" type="submit" name="eventupdatescores" value="Recalculate Event Stats" onclick="return confirm(\'Are you sure you want to recalculate all scores?\');"/>';
-$text .= '
-</td>
-</tr>
-</tbody>
-</table>
-</form>
-</div>
-';
-//***************************************************************************************
-$cat_index = 0;
-$text .= '
-<div class="tab-page">
-<div class="tab">Event Stats</div>
-';
-$text .= 'Enter stats maximum ratings for each category.<br />';
-$text .= 'Categories will be displayed in order of max rating.<br />';
-$text .= 'Categories with max=0 will not be displayed.<br />';
-$text .= "
-<script type='text/javascript'>
-var A_TPL = {
-'b_vertical' : false,
-'b_watch': true,
-'n_controlWidth': 100,
-'n_controlHeight': 16,
-'n_sliderWidth': 17,
-'n_sliderHeight': 16,
-'n_pathLeft' : 0,
-'n_pathTop' : 0,
-'n_pathLength' : 83,
-'s_imgControl': 'images/slider/sldr3h_bg.gif',
-'s_imgSlider': 'images/slider/sldr3h_sl.gif',
-'n_zIndex': 1
-}
-</script>
-";
-
-$text .= '<form id="eventstatsform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-$text .= '
-<table class="fborder" style="width:95%"><tbody>
-<tr>
-<td class="forumheader">Stat</td>
-<td class="forumheader" colspan="2">Max</td>
-<td class="forumheader">Info Only</td>
-</tr>
-<tr>
-<td class="forumheader3">
-Number of Matches to Rank
-</td>
-<td class="forumheader3">
-<input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
-</td>
-<td class="forumheader3">
-';
-$text .= "
-<script type='text/javascript'>
-var A_INIT = {
-'s_form' : 'eventstatsform',
-'s_name': 'sliderValue".$cat_index."',
-'n_minValue' : 0,
-'n_maxValue' : 10,
-'n_value' : ".$emingames.",
-'n_step' : 1
-}
-
-new slider(A_INIT, A_TPL);
-</script>
-";
-$text .= '
-</td>
-<td class="forumheader3"></td>
-</tr>
-';
-$cat_index ++;
-
-if ($etype == "Team Ladder")
-{
-    $text .= '
-    <tr>
-    <td class="forumheader3">Number of Team Matches to Rank</td>
-    <td class="forumheader3">
-    <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
-    </td>
-    <td class="forumheader3">
-    ';
-    $text .= "
-    <script type='text/javascript'>
-    var A_INIT = {
-    's_form' : 'eventstatsform',
-    's_name': 'sliderValue".$cat_index."',
-    'n_minValue' : 0,
-    'n_maxValue' : 10,
-    'n_value' : ".$eminteamgames.",
-    'n_step' : 1
-    }
-
-    new slider(A_INIT, A_TPL);
-    </script>
-    ";
-    $text .= '
-    </td>
-    <td class="forumheader3"></td>
-    </tr>
-    ';
-    $cat_index ++;
-}
-
-$q_1 = "SELECT ".TBL_STATSCATEGORIES.".*"
-." FROM ".TBL_STATSCATEGORIES
-." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
-
-$result_1 = $sql->db_Query($q_1);
-$numCategories = mysql_numrows($result_1);
-
-$rating_max=0;
-for($i=0; $i<$numCategories; $i++)
-{
-    $cat_name = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryName");
-    $cat_min = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryMinValue");
-    $cat_max = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".CategoryMaxValue");
-    $cat_InfoOnly = mysql_result($result_1,$i, TBL_STATSCATEGORIES.".InfoOnly");
-
-    switch ($cat_name)
-    {
-
-        case "ELO":
-        $cat_name_display = "ELO";
-        break;
-        case "GamesPlayed":
-        $cat_name_display = "Games Played";
-        break;
-        case "VictoryRatio":
-        $cat_name_display = "Win/Loss";
-        break;
-        case "VictoryPercent":
-        $cat_name_display = "Victory Percent";
-        break;
-        case "WinDrawLoss":
-        $cat_name_display = "Win/Draw/Loss";
-        break;
-        case "UniqueOpponents":
-        $cat_name_display = "Unique Opponents";
-        break;
-        case "OpponentsELO":
-        $cat_name_display = "Opponents Avg ELO";
-        break;
-        case "Streaks":
-        $cat_name_display = "Streaks";
-        break;
-        case "Skill":
-        $cat_name_display = "Skill";
-        break;
-        case "Score":
-        $cat_name_display = "Score";
-        break;
-        case "ScoreAgainst":
-        $cat_name_display = "Opponents Score";
-        break;
-        case "ScoreDiff":
-        $cat_name_display = "Score Difference";
-        break;
-        case "Points":
-        $cat_name_display = "Points";
-        break;
-        default:
-    }
-
-    //---------------------------------------------------
-    $text .= '
-    <tr>
-    <td class="forumheader3">'.$cat_name_display.'</td>
-    <td class="forumheader3">
-    <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
-    </td>
-    <td class="forumheader3">
-    ';
-    $text .= "
-    <script type='text/javascript'>
-    var A_INIT = {
-    's_form' : 'eventstatsform',
-    's_name': 'sliderValue".$cat_index."',
-    'n_minValue' : 0,
-    'n_maxValue' : 100,
-    'n_value' : ".$cat_max.",
-    'n_step' : 1
-    }
-
-    new slider(A_INIT, A_TPL);
-    </script>
-    ";
-    $text .= '</td>';
-
-    $text .= '
-    <td class="forumheader3">
-    <input class="tbox" type="checkbox" name="infoonly'.$i.'" value="1"
-    ';
-    if ($cat_InfoOnly == TRUE)
-    {
-        $text .= ' checked="checked"';
-    }
-    else
-    {
-        $rating_max+=$cat_max;
-
-    }
-    $text .= '/></td>';
-
-    $text .= '</tr>';
-    //----------------------------------------
-
-    $cat_index++;
-}
-
-$text .= '
-<tr>
-<td class="forumheader3">Rating Max</td>
-<td class="forumheader3">'.$rating_max.'</td>
-<td class="forumheader3" colspan="2">
-<input class="tbox" type="checkbox" name="hideratings" value="1"
-';
-if ($ehide_ratings_column == TRUE)
-{
-    $text .= ' checked="checked"';
-}
-$text .= '/> hide ratings column if checked</td>';
-
-$text .= '
-</tr></tbody></table>
-
-<!-- Save Button -->
-<table><tr><td>
-<div>
-<input class="button" type="submit" name="eventstatssave" value="Save"/>
-</div>
-</td></tr></table>
-</form>
-</div>
-</div>
-<script type="text/javascript">
-//<![CDATA[
-
-setupAllTabs();
-
-//]]>
-</script>
-';
-}
-}
-
-$ns->tablerender("$ename ($egame - ".eventType($etype).") - Manage", $text);
+$ns->tablerender("$ename ($egame - ".eventType($etype).") - ".EB_EVENTM_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

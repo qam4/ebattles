@@ -7,6 +7,7 @@ require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -43,9 +44,9 @@ else
     $mEventType  = mysql_result($result,0 , TBL_EVENTS.".Type");
     $mEventAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
 
-    $text .="<div class=\"tab-pane\" id=\"tab-pane-11\">";
-    $text .="<div class=\"tab-page\">";
-    $text .="<div class=\"tab\">All Matches</div>";
+    $text .= '<div class="tab-pane" id="tab-pane-11">';
+    $text .= '<div class="tab-page">';
+    $text .= '<div class="tab">'.EB_MATCHS_L1.'</div>';
     $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
     ." FROM ".TBL_MATCHS.", "
     .TBL_SCORES
@@ -55,7 +56,7 @@ else
     $row = mysql_fetch_array($result);
     $nbrmatches = $row['NbrMatches'];
     $text .= '<p>';
-    $text .= $nbrmatches.' matches played';
+    $text .= $nbrmatches.' '.EB_MATCHS_L2;
     $text .= '</p>';
     $text .= '<br />';
 
@@ -154,17 +155,17 @@ else
                     {
                         if ($pmatchteam == $matchteam)
                         {
-                            $players .= " & ";
+                            $players .= ' & ';
                         }
                         else
                         {
                             if ($prank == $rank)
                             {
-                                $str = " tied ";
+                                $str = '&nbsp;'.EB_MATCH_L2.'&nbsp;';
                             }
                             else
                             {
-                                $str = " defeated ";
+                                $str = '&nbsp;'.EB_MATCH_L3.'&nbsp;';
                             }
                             $scores .= "-".$pscore;
                             $players .= $str;
@@ -186,27 +187,28 @@ else
                     $players .= ' ('.$scores.') ';
                 }
 
-                $players .= ' (<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">View details</a>)';
+                $players .= ' (<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.EB_MATCH_L5.'</a>)';
 
                 $players .= ' <div class="smalltext">';
-                $players .= 'Reported by <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
+                $players .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
                 if (($time-$mTime) < INT_MINUTE )
                 {
-                    $players .= 'a few seconds ago';
+                    $players .= EB_MATCH_L7;
                 }
                 else if (($time-$mTime) < INT_DAY )
                 {
-                    $players .= get_formatted_timediff($mTime, $time).' ago.';
+                    $players .= get_formatted_timediff($mTime, $time).'&nbsp;'.EB_MATCH_L8;
                 }
                 else
                 {
-                    $players .= 'on '.$date.'.';
+                    $players .= EB_MATCH_L9.'&nbsp;'.$date.'.';
                 }
                 $nbr_comments = getCommentTotal("ebmatches", $mID);
-                $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">'.$nbr_comments.' comment';
-                $players .= ($nbr_comments > 1) ? "s" : "";
+                $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.$nbr_comments.'&nbsp;';
+                $players .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
                 $players .= '</a>';
                 $players .= '</div><br /></td></tr>';
+
                 $text .= $players;
             }
         }
@@ -215,13 +217,13 @@ else
     $text .= '<br />';
 
     $text .= '<p>';
-    $text .= 'Back to [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]<br />';
+    $text .= EB_MATCHS_L3.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHS_L4.'</a>]<br />';
     $text .= '</p>';
 
     $text .= '</div>';
     $text .= '</div>';
 }
-$ns->tablerender("$mEventName ($mEventgame - $mEventType)", $text);
+$ns->tablerender("$mEventName ($mEventgame - ".eventType($mEventType).")", $text);
 require_once(FOOTERF);
 exit;
 ?>

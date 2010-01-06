@@ -10,7 +10,7 @@ $text = '';
 
 if ((!isset($_POST['createevent']))||(!check_class($pref['eb_events_create_class'])))
 {
-   $text .= '<br />You are not authorized to create an event.<br />';
+   $text .= '<br />'.EB_EVENTC_L2.'<br />';
 }
 else
 {
@@ -18,7 +18,7 @@ else
    $username = $_POST['username'];
 
    $q2 = "INSERT INTO ".TBL_EVENTS."(Name,Password,Game,Type,Owner, Description)"
-       ." VALUES ('Event', '', '1', 'One Player Ladder','$userid', 'Put a description for your event here')";   
+       ." VALUES ('".EB_EVENTC_L3."', '', '1', 'One Player Ladder','$userid', '".EB_EVENTC_L4."')";   
    $result2 = $sql->db_Query($q2);
    $last_id = mysql_insert_id();
    $q2 = 
@@ -74,14 +74,14 @@ else
     VALUES ('$last_id', 'Points')";
    $result2 = $sql->db_Query($q2);
 
-   $q2 = "UPDATE ".TBL_EVENTS." SET Name = 'Event $last_id - $username' WHERE (EventID = '$last_id')";
+   $q2 = "UPDATE ".TBL_EVENTS." SET Name = '".EB_EVENTC_L4." $last_id - $username' WHERE (EventID = '$last_id')";
    $result2 = $sql->db_Query($q2);
 
    header("Location: eventmanage.php?eventid=".$last_id);
    exit;
 }
 
-$ns->tablerender('Create Event', $text);
+$ns->tablerender(EB_EVENTC_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

@@ -7,12 +7,9 @@
 */
 	
 define('EB_L1', 'eBattles');
-define('EB_L2', 'eBattles is a plugin for e107 CMS written in PHP.
-
-It lets you organize your own free Gaming Ladders!
+define('EB_L2', 'eBattles lets you organize your own free Gaming Ladders!
 
 eBattles features:
-
 Fully automated Ladder Ranking System.
 Suitable for all types of multiplayer games especially action, card, board and strategy games.
 Teams or Individual Ladders.
@@ -91,6 +88,7 @@ define('EB_EVENTS_L20', 'Create new event');
 define('EB_EVENTS_L21', 'Show all past events');
 define('EB_EVENTS_L22', 'Individual Ladder');
 define('EB_EVENTS_L23', 'Team Ladder');
+define('EB_EVENTS_L24', 'Filter');
 
 define('EB_EVENT_L1', 'Events');
 define('EB_EVENT_L2', 'Event starts in');
@@ -155,6 +153,126 @@ define('EB_EVENT_L60', 'Show all Matches');
 define('EB_EVENT_L61', 'Match');
 define('EB_EVENT_L62', 'View details');
 define('EB_EVENT_L63', 'Latest Awards');
+
+define('EB_EVENTM_L1', 'Manage');
+define('EB_EVENTM_L2', 'Event Summary');
+define('EB_EVENTM_L3', 'Event Settings');
+define('EB_EVENTM_L4', 'Event Rules');
+define('EB_EVENTM_L5', 'Event Players');
+define('EB_EVENTM_L6', 'Event Reset');
+define('EB_EVENTM_L7', 'Event Stats');
+define('EB_EVENTM_L8', 'Ladder');
+define('EB_EVENTM_L9', 'Owner');
+define('EB_EVENTM_L10', 'Change Owner');
+define('EB_EVENTM_L11', 'Moderators');
+define('EB_EVENTM_L12', 'Remove Moderator');
+define('EB_EVENTM_L13', 'Are you sure you want to remove this moderator?');
+define('EB_EVENTM_L14', 'Add Moderator');
+define('EB_EVENTM_L15', 'Name');
+define('EB_EVENTM_L16', 'Join Event Password');
+define('EB_EVENTM_L17', 'Game');
+define('EB_EVENTM_L18', 'Type');
+define('EB_EVENTM_L19', 'Individual');
+define('EB_EVENTM_L20', 'Team');
+define('EB_EVENTM_L21', 'Match report userclass');
+define('EB_EVENTM_L22', 'Event Player');
+define('EB_EVENTM_L23', 'Event Moderator');
+define('EB_EVENTM_L24', 'Event Owner');
+define('EB_EVENTM_L25', 'Allow Quick Loss');
+define('EB_EVENTM_L26', 'Allow Scoring');
+define('EB_EVENTM_L27', 'Allow Draws');
+define('EB_EVENTM_L28', 'Points');
+define('EB_EVENTM_L29', 'per win');
+define('EB_EVENTM_L30', 'per draw');
+define('EB_EVENTM_L31', 'per loss');
+define('EB_EVENTM_L32', 'Start Date');
+define('EB_EVENTM_L33', 'Date selector');
+define('EB_EVENTM_L34', 'Reset');
+define('EB_EVENTM_L35', 'End Date');
+define('EB_EVENTM_L36', 'Description');
+define('EB_EVENTM_L37', 'Save');
+define('EB_EVENTM_L38', 'Rules');
+define('EB_EVENTM_L39', 'Save');
+define('EB_EVENTM_L40', 'players');
+define('EB_EVENTM_L41', 'Add a Team');
+define('EB_EVENTM_L42', 'Add Team');
+define('EB_EVENTM_L43', 'Notify the team captain by PM.');
+define('EB_EVENTM_L44', 'Add a Player');
+define('EB_EVENTM_L45', 'Add Player');
+define('EB_EVENTM_L46', 'Notify the user by PM.');
+define('EB_EVENTM_L47', 'Kick');
+define('EB_EVENTM_L48', 'You can kick (delete) a player who has no games played and no awards.<br />
+A kicked player can re-signup to the event.');
+define('EB_EVENTM_L49', 'Ban');
+define('EB_EVENTM_L50', 'You can temporarily ban/unban a player.<br />
+A banned player can no longer play in the event or sign up to the event during the duration of the ban.');
+define('EB_EVENTM_L51', 'Error displaying info');
+define('EB_EVENTM_L52', 'No Players');
+define('EB_EVENTM_L53', 'Not Ranked');
+define('EB_EVENTM_L54', 'Banned');
+define('EB_EVENTM_L55', 'Name');
+define('EB_EVENTM_L56', 'Rank');
+define('EB_EVENTM_L57', 'Games');
+define('EB_EVENTM_L58', 'Awards');
+define('EB_EVENTM_L59', 'Actions');
+define('EB_EVENTM_L60', 'Un-ban Player');
+define('EB_EVENTM_L61', 'Are you sure you want to un-ban this player?');
+define('EB_EVENTM_L62', 'Ban Player');
+define('EB_EVENTM_L63', 'Are you sure you want to ban this player?');
+define('EB_EVENTM_L64', 'Kick Player');
+define('EB_EVENTM_L65', 'Are you sure you want to delete this player?');
+define('EB_EVENTM_L66', 'Delete Player Games');
+define('EB_EVENTM_L67', 'Are you sure you want to delete this player games?');
+define('EB_EVENTM_L68', 'Delete Player Awards');
+define('EB_EVENTM_L69', 'Are you sure you want to delete this player awards?');
+define('EB_EVENTM_L70', 'Reset Players/Teams.');
+define('EB_EVENTM_L71', '- Reset Players and Teams Statistics (Rank, Score, ELO, Skill, Games Played, Wins, Losses)<br />- Delete all Matches');
+define('EB_EVENTM_L72', 'Reset Scores');
+define('EB_EVENTM_L73', 'Are you sure you want to delete this event scores?');
+define('EB_EVENTM_L74', 'Reset Event.');
+define('EB_EVENTM_L75', '- Delete all Players and Teams.<br />- Delete all Matches.');
+define('EB_EVENTM_L76', 'Reset Event');
+define('EB_EVENTM_L77', 'Are you sure you want to reset this event?');
+define('EB_EVENTM_L78', 'Delete Event.');
+define('EB_EVENTM_L79', '- Delete Event.<br />');
+define('EB_EVENTM_L80', 'Delete Event');
+define('EB_EVENTM_L81', 'Are you sure you want to delete this event?');
+define('EB_EVENTM_L82', 'Recalculate Event Stats.');
+define('EB_EVENTM_L83', '- Reset and recalculate players stats.<br />');
+define('EB_EVENTM_L84', 'Recalculate Event Stats');
+define('EB_EVENTM_L85', 'Are you sure you want to recalculate all scores?');
+define('EB_EVENTM_L86', 'Enter stats maximum ratings for each category.<br />Categories will be displayed in order of max rating.<br />Categories with max=0 will not be displayed.<br />');
+define('EB_EVENTM_L87', 'Stat');
+define('EB_EVENTM_L88', 'Max');
+define('EB_EVENTM_L89', 'Info Only');
+define('EB_EVENTM_L90', 'Number of Matches to Rank');
+define('EB_EVENTM_L91', 'Number of Team Matches to Rank');
+define('EB_EVENTM_L92', 'ELO');
+define('EB_EVENTM_L93', 'Games Played');
+define('EB_EVENTM_L94', 'Win/Loss');
+define('EB_EVENTM_L95', 'Victory Percent');
+define('EB_EVENTM_L96', 'Win/Draw/Loss');
+define('EB_EVENTM_L97', 'Unique Opponents');
+define('EB_EVENTM_L98', 'Opponents Avg ELO');
+define('EB_EVENTM_L99', 'Streaks');
+define('EB_EVENTM_L100', 'Skill');
+define('EB_EVENTM_L101', 'Score');
+define('EB_EVENTM_L102', 'Opponents Score');
+define('EB_EVENTM_L103', 'Score Difference');
+define('EB_EVENTM_L104', 'Points');
+define('EB_EVENTM_L105', 'Rating Max');
+define('EB_EVENTM_L106', 'hide ratings column if checked');
+define('EB_EVENTM_L107', 'Save');
+
+define('EB_EVENTP_L1', 'Past Events');
+define('EB_EVENTP_L2', 'Past Events');
+define('EB_EVENTP_L3', 'Back to');
+define('EB_EVENTP_L4', 'Events');
+
+define('EB_EVENTC_L1', 'Create Event');
+define('EB_EVENTC_L2', 'You are not authorized to create an event.');
+define('EB_EVENTC_L3', 'Event');
+define('EB_EVENTC_L4', 'Put a description for your event here');
 
 define('EB_STATS_L1', 'ELO');
 define('EB_STATS_L2', 'ELO');
@@ -230,6 +348,36 @@ define('EB_CLAN_L21', 'Event');
 define('EB_CLAN_L22', 'Rank');
 define('EB_CLAN_L23', 'No old events');
 define('EB_CLAN_L24', 'old event(s)');
+define('EB_CLAN_L25', 'Are you sure you want to quit this division?');
+
+define('EB_CLANM_L1', 'Manage');
+define('EB_CLANM_L2', 'Team Summary');
+define('EB_CLANM_L3', 'Team Divisions');
+define('EB_CLANM_L4', 'Team');
+define('EB_CLANM_L5', 'Delete Team');
+define('EB_CLANM_L6', 'Are you sure you want to delete this team?');
+define('EB_CLANM_L7', 'Owner');
+define('EB_CLANM_L8', 'Change Owner');
+define('EB_CLANM_L9', 'Name');
+define('EB_CLANM_L10', 'Tag (shortname)');
+define('EB_CLANM_L11', 'Password');
+define('EB_CLANM_L12', 'Save');
+define('EB_CLANM_L13', 'Create a division for each game your team plays in');
+define('EB_CLANM_L14', 'Add Division');
+define('EB_CLANM_L15', 'Captain');
+define('EB_CLANM_L16', 'Delete Division');
+define('EB_CLANM_L17', 'Are you sure you want to delete this division?');
+define('EB_CLANM_L18', 'No members');
+define('EB_CLANM_L19', 'Change Captain');
+define('EB_CLANM_L20', 'member(s)');
+define('EB_CLANM_L21', 'Name');
+define('EB_CLANM_L22', 'Status');
+define('EB_CLANM_L23', 'Joined');
+define('EB_CLANM_L24', 'Kick');
+define('EB_CLANM_L25', 'Member');
+define('EB_CLANM_L26', 'Kick Selected');
+define('EB_CLANM_L27', 'Back to');
+define('EB_CLANM_L28', 'Teams');
 
 define('EB_MATCH_L1', 'Match');
 define('EB_MATCH_L2', 'tied');
@@ -243,6 +391,28 @@ define('EB_MATCH_L9', 'on');
 define('EB_MATCH_L10', 'comments');
 define('EB_MATCH_L11', 'comment');
 define('EB_MATCH_L12', 'playing');
+
+define('EB_MATCHD_L1', 'Match details');
+define('EB_MATCHD_L2', 'Match reported by');
+define('EB_MATCHD_L3', 'Match deleted');
+define('EB_MATCHD_L4', 'Delete this match');
+define('EB_MATCHD_L5', 'Are you sure you want to delete this match?');
+define('EB_MATCHD_L6', 'Rank');
+define('EB_MATCHD_L7', 'Team');
+define('EB_MATCHD_L8', 'Player');
+define('EB_MATCHD_L9', 'Score');
+define('EB_MATCHD_L10', 'Points');
+define('EB_MATCHD_L11', 'ELO');
+define('EB_MATCHD_L12', 'Skill');
+define('EB_MATCHD_L13', 'Opponent Rating');
+define('EB_MATCHD_L14', 'Reporter comments');
+define('EB_MATCHD_L15', 'Back to');
+define('EB_MATCHD_L16', 'Event');
+
+define('EB_MATCHS_L1', 'All Matches');
+define('EB_MATCHS_L2', 'matche(s) played');
+define('EB_MATCHS_L3', 'Back to');
+define('EB_MATCHS_L4', 'Event');
 
 define('EB_MATCHR_L1', '-- select --');
 define('EB_MATCHR_L2', 'Player #');
@@ -275,6 +445,38 @@ define('EB_MATCHR_L28', 'Rank #');
 define('EB_MATCHR_L29', 'Team #');
 define('EB_MATCHR_L30', 'Your comments:');
 define('EB_MATCHR_L31', 'Submit Match');
+
+define('EB_GAME_L1', 'Unknown Game');
+define('EB_GAME_L2', 'Manage Game');
+define('EB_GAME_L3', 'Game');
+define('EB_GAME_L4', 'Name');
+define('EB_GAME_L5', 'Icon');
+define('EB_GAME_L6', 'Icon can be an external link or must be placed in ebattles/images/games_icons/');
+define('EB_GAME_L7', 'Save Changes');
+define('EB_GAME_L8', 'Create new Game');
+define('EB_GAME_L9', 'Delete Game');
+define('EB_GAME_L10', 'Are you sure you want to delete this game?');
+
+define('EB_GAMES_L1', 'Games');
+define('EB_GAMES_L2', 'Games');
+define('EB_GAMES_L3', 'ID');
+define('EB_GAMES_L4', 'Icon');
+define('EB_GAMES_L5', 'Game');
+define('EB_GAMES_L6', 'game(s)');
+define('EB_GAMES_L7', 'Error displaying info');
+define('EB_GAMES_L8', 'No Games');
+define('EB_GAMES_L9', 'Select all');
+define('EB_GAMES_L10', 'Options');
+define('EB_GAMES_L11', 'Edit Game');
+define('EB_GAMES_L12', 'Delete Game');
+define('EB_GAMES_L13', 'Are you sure you want to delete this game?');
+define('EB_GAMES_L14', 'Delete selected');
+define('EB_GAMES_L15', 'Are you sure you want to delete these games?');
+define('EB_GAMES_L16', 'Delete all Games');
+define('EB_GAMES_L17', 'Are you sure you want to delete all the games?');
+define('EB_GAMES_L18', 'Update selected');
+define('EB_GAMES_L19', 'Update all Games');
+define('EB_GAMES_L20', 'Add Games');
 
 define('EB_AWARD_L1', 'Award');
 define('EB_AWARD_L2', 'took 1st place');
@@ -336,6 +538,5 @@ define('EB_TIME_L7', 'minutes');
 define('EB_TIME_L8', 'minute');
 define('EB_TIME_L9', 'seconds');
 define('EB_TIME_L10', 'second');
-
-
 ?>
+
