@@ -7,7 +7,9 @@
 function updateTeamStats($event_id, $time, $serialize = TRUE)
 {
     global $sql;
+    global $pref;
 
+    $rater = new rater();
     $file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
 
     /* Event Info */
@@ -19,7 +21,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
     $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
     $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
     $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
-    
+
     //Update Teams stats
     $q_Teams = "SELECT ".TBL_TEAMS.".*, "
     .TBL_DIVISIONS.".*, "
@@ -36,9 +38,12 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
     $teams_rated = 0;
 
     $id = array();
+    $uid = array();
+    $team = array();
     $clan = array();
     $clantag = array();
     $name = array();
+    $avatar = array();
     $nbr_players = array();
     $games_played = array();
     $ELO = array();
@@ -116,9 +121,9 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                 // For each player
                 $pid = mysql_result($result_Players,$player, TBL_PLAYERS.".PlayerID");
                 $puid = mysql_result($result_Players,$player, TBL_PLAYERS.".User");
-        $pname  = mysql_result($result_Players,$player, TBL_USERS.".user_name");
-        $pavatar = mysql_result($result_Players,$player, TBL_USERS.".user_image");
-        $pteam = mysql_result($result_Players,$player, TBL_PLAYERS.".Team");
+                $pname  = mysql_result($result_Players,$player, TBL_USERS.".user_name");
+                $pavatar = mysql_result($result_Players,$player, TBL_USERS.".user_image");
+                $pteam = mysql_result($result_Players,$player, TBL_PLAYERS.".Team");
                 $pgames_played = mysql_result($result_Players,$player, TBL_PLAYERS.".GamesPlayed");
                 $pELO = mysql_result($result_Players,$player, TBL_PLAYERS.".ELORanking");
                 $pTS_mu = mysql_result($result_Players,$player, TBL_PLAYERS.".TS_mu");
@@ -127,22 +132,22 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                 $pwin = mysql_result($result_Players,$player, TBL_PLAYERS.".Win");
                 $pdraw = mysql_result($result_Players,$player, TBL_PLAYERS.".Draw");
                 $ploss = mysql_result($result_Players,$player, TBL_PLAYERS.".Loss");
-        $pstreak = mysql_result($result_Players,$player, TBL_PLAYERS.".Streak");
-        $pstreak_worst = mysql_result($result_Players,$player, TBL_PLAYERS.".Streak_Worst");
-        $pstreak_best = mysql_result($result_Players,$player, TBL_PLAYERS.".Streak_Best");
-        $pwindrawloss = $pwin."/".$pdraw."/".$ploss;
-        $pwinloss = $pwin."/".$ploss;
-        $pvictory_ratio = ($ploss>0) ? ($pwin/$ploss) : $pwin; //fm- draw here???
-        $pvictory_percent = ($pgames_played>0) ? ((100 * $pwin)/($pwin+$ploss)) : 0;
+                $pstreak = mysql_result($result_Players,$player, TBL_PLAYERS.".Streak");
+                $pstreak_worst = mysql_result($result_Players,$player, TBL_PLAYERS.".Streak_Worst");
+                $pstreak_best = mysql_result($result_Players,$player, TBL_PLAYERS.".Streak_Best");
+                $pwindrawloss = $pwin."/".$pdraw."/".$ploss;
+                $pwinloss = $pwin."/".$ploss;
+                $pvictory_ratio = ($ploss>0) ? ($pwin/$ploss) : $pwin; //fm- draw here???
+                $pvictory_percent = ($pgames_played>0) ? ((100 * $pwin)/($pwin+$ploss)) : 0;
                 $pscore = mysql_result($result_Players,$player, TBL_PLAYERS.".Score");
                 $poppscore = mysql_result($result_Players,$player, TBL_PLAYERS.".ScoreAgainst");
                 $ppoints = mysql_result($result_Players,$player, TBL_PLAYERS.".Points");
-        $pbanned  = mysql_result($result_Players,$player, TBL_PLAYERS.".Banned");
+                $pbanned  = mysql_result($result_Players,$player, TBL_PLAYERS.".Banned");
 
                 $popponentsELO = 0;
                 $popponents = 0;
-        $prating = 0;
-        $prating_votes = 0;
+                $prating = 0;
+                $prating_votes = 0;
                 // Unique Opponents
                 // Find all matches played by current player
                 $q_Matches = "SELECT ".TBL_MATCHS.".*, "
@@ -185,7 +190,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                         $numScores = mysql_numrows($result_Scores);
                         for($scoreIndex=0; $scoreIndex<$numScores; $scoreIndex++)
                         {
-                    $osid  = mysql_result($result_Scores,$scoreIndex, TBL_SCORES.".ScoreID");
+                            $osid  = mysql_result($result_Scores,$scoreIndex, TBL_SCORES.".ScoreID");
                             $ouid  = mysql_result($result_Scores,$scoreIndex, TBL_USERS.".user_id");
                             $oplayermatchteam  = mysql_result($result_Scores,$scoreIndex, TBL_SCORES.".Player_MatchTeam");
                             $oELO  = mysql_result($result_Scores,$scoreIndex, TBL_PLAYERS.".ELORanking");
@@ -195,14 +200,14 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                                 $popponentsELO += $oELO;
                                 $popponents += 1;
                             }
-                    if ($ouid == $puid)
-                    {
-                        // Get user rating.
-                        $rate = $rater->getrating("ebscores", $osid);
+                            if ($ouid == $puid)
+                            {
+                                // Get user rating.
+                                $rate = $rater->getrating("ebscores", $osid);
 
-                        $prating += $rate[0]*($rate[1] + $rate[2]/10);
-                        $prating_votes += $rate[0];
-                    }
+                                $prating += $rate[0]*($rate[1] + $rate[2]/10);
+                                $prating_votes += $rate[0];
+                            }
                         }
                     }
                 }

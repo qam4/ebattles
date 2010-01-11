@@ -410,7 +410,7 @@ define('EB_MATCHD_L15', 'Back to');
 define('EB_MATCHD_L16', 'Event');
 
 define('EB_MATCHS_L1', 'All Matches');
-define('EB_MATCHS_L2', 'matche(s) played');
+define('EB_MATCHS_L2', 'match(es) played');
 define('EB_MATCHS_L3', 'Back to');
 define('EB_MATCHS_L4', 'Event');
 
