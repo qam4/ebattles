@@ -376,7 +376,7 @@ function displayTeamEvents($clan_id){
             }
             $text .= '</tbody></table>';
         }
-        $text .= '</div>';
+        $text .= '</div><br />';
     }
 }
 

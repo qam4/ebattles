@@ -47,9 +47,14 @@ else
     $uid  = mysql_result($result2,0, TBL_USERS.".user_id");
     $uname  = mysql_result($result2,0, TBL_USERS.".user_name");
 
-    $text .= '
-    <div class="tab-pane" id="tab-pane-5">
+    $text .= '<div class="tab-pane" id="tab-pane-5">';
 
+    /*
+    --------------------- 
+    Player Profile
+    ---------------------
+    */
+    $text .= '
     <div class="tab-page">
     <div class="tab">'.EB_USER_L2.'</div>
     ';
@@ -60,7 +65,11 @@ else
 
     $text .= '</div>';
 
-    /* Display list of events */
+    /*
+    --------------------- 
+    Events 
+    ---------------------
+    */
     $text .= '
     <div class="tab-page">
     <div class="tab">'.EB_USER_L3.'</div>
@@ -72,10 +81,11 @@ else
         $text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
         $text .= '<input class="button" type="submit" name="createevent" value="'.EB_EVENTS_L20.'"/>';
         $text .= '</div>';
-        $text .= '</form>';
+        $text .= '</form><br />';
     }
-    $text .= '<b>'.EB_USER_L8.'</b><br />';
-    $text .= $uname.'&nbsp;'.EB_USER_L9;
+    /* Display list of events where the user is a player */
+    $text .= '<div class="spacer"><b>'.EB_USER_L8.'</b></div>';
+    $text .= '<div>'.$uname.'&nbsp;'.EB_USER_L9.'</div>';
     $q = " SELECT *"
     ." FROM ".TBL_PLAYERS.", "
     .TBL_EVENTS.", "
@@ -181,8 +191,9 @@ else
         $text .= '</table>';
     }
 
-    $text .= '<br /><b>'.EB_USER_L18.'</b><br />';
-    $text .= $uname.'&nbsp;'.EB_USER_L19;
+    /* Display list of events where the user is the owner */
+    $text .= '<br /><div class="spacer"><b>'.EB_USER_L18.'</b></div>';
+    $text .= '<div>'.$uname.'&nbsp;'.EB_USER_L19.'</div>';
     $q = " SELECT *"
     ." FROM ".TBL_EVENTS.", "
     .TBL_GAMES
@@ -236,8 +247,9 @@ else
         $text .= '</table>';
     }
 
-    $text .= '<br /><b>'.EB_USER_L20.'</b><br />';
-    $text .= $uname.'&nbsp;'.EB_USER_L21;
+    /* Display list of events where the user is a moderator */
+    $text .= '<br /><div class="spacer"><b>'.EB_USER_L20.'</b></div>';
+    $text .= '<div>'.$uname.'&nbsp;'.EB_USER_L21.'</div>';
     $q = " SELECT *"
     ." FROM ".TBL_EVENTMODS.", "
     .TBL_EVENTS.", "
@@ -294,7 +306,11 @@ else
     }
     $text .= '</div>';
 
-    /* Display list of divisions */
+    /*
+    --------------------- 
+    Divisions
+    ---------------------
+    */
     $text .= '
     <div class="tab-page">
     <div class="tab">'.EB_USER_L4.'</div>
@@ -307,11 +323,12 @@ else
         $text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
         $text .= '<input class="button" type="submit" name="createteam" value="'.EB_CLANS_L7.'"/>';
         $text .= '</div>';
-        $text .= '</form>';
+        $text .= '</form><br />';
     }
 
-    $text .= '<b>'.EB_USER_L22.'</b><br />';
-    $text .= $uname.'&nbsp;'.EB_USER_L23;
+    /* Display list of divisions where the user is a member */
+    $text .= '<div class="spacer"><b>'.EB_USER_L22.'</b></div>';
+    $text .= '<div>'.$uname.'&nbsp;'.EB_USER_L23.'</div>';
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_DIVISIONS.".*, "
     .TBL_MEMBERS.".*, "
@@ -375,8 +392,9 @@ else
         $text .= '</table>';
     }
 
-    $text .= '<br /><b>'.EB_USER_L26.'</b><br />';
-    $text .= $uname.'&nbsp;'.EB_USER_L27;
+    /* Display list of teams where the user is te owner */
+    $text .= '<br /><div class="spacer"><b>'.EB_USER_L26.'</b></div>';
+    $text .= '<div>'.$uname.'&nbsp;'.EB_USER_L27.'</div>';
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_USERS.".*"
     ." FROM ".TBL_CLANS.", "
@@ -428,8 +446,9 @@ else
         $text .= '</table>';
     }
 
-    $text .= '<br /><b>'.EB_USER_L29.'</b><br />';
-    $text .= $uname.'&nbsp;'.EB_USER_L30;
+    /* Display list of divisions where the user is the captain */
+    $text .= '<br /><div class="spacer"><b>'.EB_USER_L29.'</b></div>';
+    $text .= '<div>'.$uname.'&nbsp;'.EB_USER_L30.'</div>';
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_DIVISIONS.".*, "
     .TBL_GAMES.".*"
@@ -488,6 +507,11 @@ else
     }
     $text .= '</div>';
 
+    /*
+    --------------------- 
+    Matches
+    ---------------------
+    */
     $text .= '
     <div class="tab-page">
     <div class="tab">'.EB_USER_L5.'</div>
@@ -671,7 +695,11 @@ else
     }
     $text .= '</div>';
 
-    /* Display list of awards */
+    /*
+    --------------------- 
+    Awards
+    ---------------------
+    */
     $text .= '
     <div class="tab-page">
     <div class="tab">'.EB_USER_L6.'</div>
