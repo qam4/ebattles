@@ -4,6 +4,10 @@
 *
 */
 
+require_once(e_HANDLER."avatar_handler.php");
+require_once(e_HANDLER."rate_class.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
+
 function updateTeamStats($event_id, $time, $serialize = TRUE)
 {
     global $sql;
