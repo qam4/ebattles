@@ -1,5 +1,9 @@
 #summary eBattles Release Notes.
 
+= Release 0.6.165 =
+== Bug fixes ==
+ * Bug fix: Error in Team Events stats update was preventing Team events page to be displayed.
+
 = Release 0.6.164 =
 == Features ==
  * Multi-language support and French translation (Fixes issue 63)
