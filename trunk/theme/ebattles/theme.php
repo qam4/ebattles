@@ -114,9 +114,9 @@ $NEWSSTYLE = "
 	    <tr>
 	        <td class='mt1'><img src='".THEME."images/blank.gif' width='7' height='35' alt='' class='ffimgfix' /></td>
 			<td class='mtm' style='width:100%;white-space:nowrap'>
-			    {NEWSTITLE}
-				</td>
-			<td class='mt2'><img src='".THEME."images/blank.gif' width='19' height='35' alt='' class='ffimgfix' /></td>
+			{NEWSICON}&nbsp;{STICKY_ICON}{NEWSTITLE}
+			</td>
+		<td class='mt2'><img src='".THEME."images/blank.gif' width='19' height='35' alt='' class='ffimgfix' /></td>
 	    </tr>
 	</table>
 	</div>
@@ -127,15 +127,17 @@ $NEWSSTYLE = "
 			<td class='mleft'><img src='".THEME."images/blank.gif' width='7' alt='' />
 			</td>
 			<td class='middlemiddle' style='width:100%'>
+				{NEWSIMAGE}
 				{NEWSBODY}
 				{EXTENDED}
-				<div class='divide_news' style='width:100%;white-space:nowrap'>
-					<img src='".THEME."images/blank.gif' width='10' height='12' alt='' />
+				<div class='newscomments'>
+				<img class='news_comments_icon' src='".THEME_ABS."images/comments_16.png' alt='' />&nbsp;
+					{NEWSCOMMENTS}{TRACKBACK}
 				</div>
 				<div class='newscomments' style='text-align:center'>
-					<span style='white-space:nowrap'>Posted by {NEWSAUTHOR} on </span>
-					<span style='white-space:nowrap'>{NEWSDATE}</span>&nbsp;&nbsp;<img src='".e_IMAGE."admin_images/userclass_16.png' alt='' style='vertical-align: top;'/>
-					<span style='white-space:nowrap'> | {NEWSCOMMENTS}</span>
+					<span style='white-space:nowrap'> ".LAN_THEME_5." {NEWSAUTHOR} ".LAN_THEME_6." </span>
+					<span style='white-space:nowrap'>{NEWSDATE}</span>
+					<span style='white-space:nowrap'>&nbsp;&nbsp;{EMAILICON}{PRINTICON}{PDFICON}{ADMINOPTIONS}</span>
 				</div>
 			</td>
 			<td class='mright'><img src='".THEME."images/blank.gif' width='7' alt='' />
@@ -148,15 +150,16 @@ $NEWSSTYLE = "
 
 
 //[newsbits]
+// Define attributes associated with news style.
 
-define("ICONSTYLE", "float: left; border:0");
-define("COMMENTLINK", "Add/Read Comments: ");
-define("COMMENTOFFSTRING", "Comments are Off");
-define("PRE_EXTENDEDSTRING", "<br /><br />[ ");
-define("EXTENDEDSTRING", "Read the rest ...");
-define("POST_EXTENDEDSTRING", " ]<br />");
-define("ICONMAIL", "iconmail.png");
-define("ICONPRINT", "iconprint.png");
+define('ICONMAIL', 'email_16.png');
+define('ICONPRINT', 'print_16.png');
+define('ICONSTYLE', 'float: left; border:0');
+define('COMMENTOFFSTRING', LAN_THEME_1);
+define('COMMENTLINK', LAN_THEME_2);
+define('PRE_EXTENDEDSTRING', '<br /><br />[ ');
+define('EXTENDEDSTRING', LAN_THEME_3);
+define('POST_EXTENDEDSTRING', ' ]<br />');
 
 
 //[mainlinkstyle]
