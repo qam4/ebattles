@@ -17,8 +17,8 @@
 +----------------------------------------------------------------------------+
 */
 	
-@require_once(e_PLUGIN.'forum/languages/'.e_LANGUAGE.'/lan_forum_viewforum.php');
-@require_once(e_PLUGIN.'forum/languages/English/lan_forum_viewforum.php');
+@include_once(e_PLUGIN.'forum/languages/'.e_LANGUAGE.'/lan_forum_viewforum.php');
+@include_once(e_PLUGIN.'forum/languages/English/lan_forum_viewforum.php');
 
 define("IMAGE_e", "<img src='".THEME."forum/e.png' alt='' title='' style='border:0' />");
 define("IMAGE_new", "<img src='".img_path('new.png')."' alt='".LAN_199."' title='".LAN_199."' style='border:0' />");

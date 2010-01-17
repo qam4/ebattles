@@ -74,7 +74,7 @@ else
     VALUES ('$last_id', 'Points')";
    $result2 = $sql->db_Query($q2);
 
-   $q2 = "UPDATE ".TBL_EVENTS." SET Name = '".EB_EVENTC_L4." $last_id - $username' WHERE (EventID = '$last_id')";
+   $q2 = "UPDATE ".TBL_EVENTS." SET Name = '".EB_EVENTC_L3." $last_id - $username' WHERE (EventID = '$last_id')";
    $result2 = $sql->db_Query($q2);
 
    header("Location: eventmanage.php?eventid=".$last_id);

@@ -104,11 +104,11 @@ td {
 	text-align:left;
 }
 .alttd {
-	background-color:#333333;
-	border: 1px solid #CCCCCC;
+	background-color:#CCCCCC;
+	color: #365689;
+	border: 1px solid #365689;
 	margin:2px;
 	padding:3px;
-	border-bottom: 1px solid White;
 }
 .bodytable {
 	padding: 8px;
@@ -270,14 +270,10 @@ td {
 	padding: 2px;
 }
 .nextprev {
-	border: 2px solid #000;
-	margin: 10px 4px 0px 4px;
-	color: #333333;
-	text-decoration: none;
-	font-style: normal;
-	text-align:center;
-	padding : 2px 2px 2px 2px;
-	background-color: white;
+	border: 0px;
+	text-align: center;
+	padding: 2px;
+	background-color: #f7f7f9;
 }
 .nforumcaption {
 	padding: 8px 4px 8px 4px;
