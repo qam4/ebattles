@@ -110,6 +110,13 @@ if(isset($_POST['clansettingssave']))
         $q2 = "UPDATE ".TBL_CLANS." SET Name = '$new_clanname' WHERE (ClanID = '$clan_id')";
         $result2 = $sql->db_Query($q2);
     }
+    /* Clan Avatar */
+    $new_clanavatar = htmlspecialchars($_POST['clanavatar']);
+    if ($new_clanavatar != '')
+    {
+        $q2 = "UPDATE ".TBL_CLANS." SET Image = '$new_clanavatar' WHERE (ClanID = '$clan_id')";
+        $result2 = $sql->db_Query($q2);
+    }
     /* Clan Tag */
     $new_clantag = htmlspecialchars($_POST['clantag']);
     if ($new_clantag != '')

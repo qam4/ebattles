@@ -55,6 +55,9 @@ $eplug_prefs = array(
     "eb_max_avatar_size" => 32,
     "eb_avatar_enable_playersstandings" => 1,
     "eb_avatar_default_image" => 'anonymous.png',
+    "eb_avatar_enable_teamsstandings" => 1,
+    "eb_avatar_enable_teamslist" => 1,
+    "eb_avatar_default_team_image" => 'default_group_avatar.png',
     "eb_links_menuheading" => EB_ADMIN_L29,
     "eb_activity_menuheading" => EB_ADMIN_L31,
     "eb_activity_number_of_items" => 10,
@@ -157,7 +160,8 @@ $eplug_tables = array(
     Owner int(10) unsigned NOT NULL,
     INDEX (Owner),
     FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id),
-    password varchar(32)
+    password varchar(32),
+    Image varchar(100) NOT NULL default ''
     ) TYPE = MyISAM;",
     "CREATE TABLE ".TBL_DIVISIONS."
     (
@@ -468,6 +472,18 @@ if ($revision < 141)
     );
 }
 
+if ($revision < 171)
+{
+    // To revision 171
+    $upgrade_alter_tables += array(
+        "ALTER TABLE ".TBL_CLANS." ADD Image varchar(100) NOT NULL default ''"
+    );
+    $upgrade_add_prefs += array(
+    "eb_avatar_enable_teamsstandings" => 1,
+    "eb_avatar_enable_teamslist" => 1,
+    "eb_avatar_default_team_image" => 'default_group_avatar.png'
+    );
+}
 /* dbg
 echo "<br>Prefs upgrade:";
 print_r($upgrade_add_prefs);
