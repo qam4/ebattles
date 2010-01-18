@@ -26,7 +26,16 @@ if (!$clan_id)
 }
 else
 {
-    $text .='<script type="text/javascript" src="./js/tabpane.js"></script>';
+    $text .= "
+    <script type='text/javascript' src='./js/tabpane.js'></script>
+    <script type='text/javascript'>
+    <!--//
+    function changeteamtext(v)
+    {
+    document.getElementById('clanavatar').value=v;
+    }    //-->
+    </script>
+    ";
 
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_USERS.".*"
@@ -43,6 +52,8 @@ else
     $clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
     $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
     $clan_password    = mysql_result($result,0, TBL_CLANS.".password");
+    $clan_avatar    = mysql_result($result,0, TBL_CLANS.".Image");
+    if ($clan_avatar == '' && $pref['eb_avatar_default_team_image'] != '') $clan_avatar = $pref['eb_avatar_default_team_image'];
 
     $can_manage = 0;
     if (check_class($pref['eb_mod_class'])) $can_manage = 1;
@@ -138,6 +149,41 @@ else
         <td class="forumheader3"><b>'.EB_CLANM_L9.'</b></td>
         <td class="forumheader3">
         <input class="tbox" type="text" size="40" name="clanname" value="'.$clan_name.'"/>
+        </td>
+        </tr>
+
+        <!-- Clan Avatar -->
+        <tr>
+        <td class="forumheader3"><b>'.EB_CLANM_L29.'</b><div class="smalltext">'.EB_CLANM_L30.'</div></td>
+        <td class="forumheader3">';
+        if ($clan_avatar != '')
+        {
+            $text .= '<img '.getAvatarResize(getTeamAvatar($clan_avatar)).'" alt="Team Avatar" style="vertical-align:middle"/>&nbsp;';
+        }
+        $text .= "<input class='tbox' type='text' id='clanavatar' name='clanavatar' size='20' value='".$clan_avatar."'/>";
+
+        $text .= "<div><br />";
+        $avatarlist = array();
+        $avatarlist[0] = "";
+        $handle = opendir(e_PLUGIN."ebattles/images/team_avatars/");
+        while ($file = readdir($handle))
+        {
+            if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn" && $file != "Thumbs.db")
+            {
+                $avatarlist[] = $file;
+            }
+        }
+        closedir($handle);
+
+        for($c = 1; $c <= (count($avatarlist)-1); $c++)
+        {
+            $text .= '<a href="javascript:changeteamtext(\''.$avatarlist[$c].'\')"><img src="'.e_PLUGIN.'ebattles/images/team_avatars/'.$avatarlist[$c].'" alt="'.$avatarlist[$c].'" style="border:0"/></a> ';
+        }
+        $text .= "
+        </div>
+        ";
+
+        $text .= '
         </td>
         </tr>
 

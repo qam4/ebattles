@@ -95,9 +95,21 @@ function displayClans(){
             $clanid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
             $cname  = mysql_result($result,$i, TBL_CLANS.".Name");
             $ctag  = mysql_result($result,$i, TBL_CLANS.".Tag");
+            $cavatar  = mysql_result($result,$i, TBL_CLANS.".Image");
             $cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
 
-            $text .= '<tr><td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
+            $image = "";
+            if ($pref['eb_avatar_enable_teamslist'] == 1)
+            {            if($cavatar)
+                {
+                    $image = '<img '.getAvatarResize(getTeamAvatar($cavatar)).' style="vertical-align:middle"/>';
+                } else if ($pref['eb_avatar_default_team_image'] != ''){
+                    $image = '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).' style="vertical-align:middle"/>';
+                }
+            }
+
+            $text .= '<tr>
+            <td class="forumheader3">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
             <td class="forumheader3">'.$ctag.'</td></tr>';
         }
         $text .= '</tbody></table><br />';

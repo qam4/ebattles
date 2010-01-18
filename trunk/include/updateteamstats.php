@@ -91,6 +91,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         $tname = mysql_result($result_Teams,$team, TBL_CLANS.".Name");
         $tclan = mysql_result($result_Teams,$team, TBL_CLANS.".ClanID");
         $tclantag = mysql_result($result_Teams,$team, TBL_CLANS.".Tag");
+        $tavatar = mysql_result($result_Teams,$team, TBL_CLANS.".Image");
 
         // Find all players for that event and that team
         $q_Players = "SELECT * "
@@ -261,6 +262,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         $name[]  = $tname;
         $clan[]  = $tclan;
         $clantag[]  = $tclantag;
+        $avatar[] = $tavatar;
         $nbr_players[]  = $tPlayers;
         $games_played[] = $tgames_played;
         $ELO[] = $tELO;
@@ -594,7 +596,19 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         }
 
         $stats_row[] = "<b>$rank</b> $trank_side_image";
-        $stats_row[] = '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan[$index].'"><b>'.$name[$index].' ('.$clantag[$index].')</b></a>';
+
+        $image = "";
+        if ($pref['eb_avatar_enable_teamsstandings'] == 1)
+        {
+            if($avatar[$index])
+            {
+                $image = '<img '.getAvatarResize(getTeamAvatar($avatar[$index])).' style="vertical-align:middle"/>';
+            } else if ($pref['eb_avatar_default_team_image'] != ''){
+                $image = '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).' style="vertical-align:middle"/>';
+            }
+        }
+
+        $stats_row[] = $image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan[$index].'"><b>'.$name[$index].' ('.$clantag[$index].')</b></a>';
         $stats_row[] = "$nbr_players[$index]";
 
         if ($ehide_ratings_column == FALSE)

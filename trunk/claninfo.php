@@ -110,6 +110,16 @@ function displayTeamSummary($clan_id){
     $clan_owner  = mysql_result($result,0, TBL_USERS.".user_id");
     $clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
     $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
+    $clan_avatar    = mysql_result($result,0, TBL_CLANS.".Image");
+
+    $image = "";
+    if($clan_avatar)
+    {
+        $image = '<img '.getAvatarResize(getTeamAvatar($clan_avatar)).' style="vertical-align:middle"/>';
+    } else if ($pref['eb_avatar_default_team_image'] != ''){
+        $image = '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).' style="vertical-align:middle"/>';
+    }
+    $text .= $image.'<br />';
 
     $text .= '<b>'.$clan_name.' ('.$clan_tag.')</b><br />';
 

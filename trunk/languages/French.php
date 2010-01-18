@@ -55,6 +55,10 @@ define('EB_ADMIN_L29', 'eBattles');
 define('EB_ADMIN_L30', 'Nombre d’items à montrer');
 define('EB_ADMIN_L31', 'Activité Récente');
 define('EB_ADMIN_L32', 'Vérifier les mises à jour');
+define('EB_ADMIN_L33', 'Classement des Équipes');
+define('EB_ADMIN_L34', 'Avatar d’Équipe par défaut');
+define('EB_ADMIN_L35', 'Séléctionez un avatar distant en utilsant un lien externe ou un des icons se trouvant dans ebattles/images/team_avatars/');
+define('EB_ADMIN_L36', 'Liste des Équipes');
 
 define('EB_RATELAN_0', 'vote');
 define('EB_RATELAN_1', 'votes');
@@ -376,6 +380,8 @@ define('EB_CLANM_L25', 'Membre');
 define('EB_CLANM_L26', 'Kick les Membres selectionnés');
 define('EB_CLANM_L27', 'Retour vers ');
 define('EB_CLANM_L28', 'Équipes');
+define('EB_CLANM_L29', 'Avatar');
+define('EB_CLANM_L30', 'Séléctionez un avatar distant en utilsant un lien externe ou un des icons pré-défini');
 
 define('EB_MATCH_L1', 'Match');
 define('EB_MATCH_L2', 'a mis en échec');

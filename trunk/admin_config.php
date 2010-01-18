@@ -25,7 +25,9 @@ if (isset($_POST['updatesettings'])) {
     $pref['eb_max_avatar_size'] = $_POST['eb_max_avatar_size'];
     $pref['eb_avatar_enable_playersstandings'] = $_POST['eb_avatar_enable_playersstandings'];
     $pref['eb_avatar_default_image'] = $_POST['eb_avatar_default_image'];
-    $pref['eb_avatar_default_image'] = $_POST['eb_avatar_default_image'];
+    $pref['eb_avatar_enable_teamsstandings'] = $_POST['eb_avatar_enable_teamsstandings'];
+    $pref['eb_avatar_enable_teamslist'] = $_POST['eb_avatar_enable_teamslist'];
+    $pref['eb_avatar_default_team_image'] = $_POST['eb_avatar_default_team_image'];
     save_prefs();
     $message = EB_ADMIN_L1;
 }
@@ -155,7 +157,10 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
     {
     document.getElementById('eb_avatar_default_image').value=v;
     }
-    //-->
+    function changeteamtext(v)
+    {
+    document.getElementById('eb_avatar_default_team_image').value=v;
+    }    //-->
     </script>
     ";
 
@@ -223,6 +228,8 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
     <td class='forumheader3' style='width:60%'>
     <input class='tbox' type='text' name='eb_max_avatar_size' size='8' value='".$pref['eb_max_avatar_size']."' maxlength='3' /> px<br />
     <input class='tbox' type='checkbox' name='eb_avatar_enable_playersstandings' value='1' ".($pref['eb_avatar_enable_playersstandings'] == 1 ? "checked='checked'" :"")."/>".EB_ADMIN_L21."
+    <input class='tbox' type='checkbox' name='eb_avatar_enable_teamsstandings' value='1' ".($pref['eb_avatar_enable_teamsstandings'] == 1 ? "checked='checked'" :"")."/>".EB_ADMIN_L33."
+    <input class='tbox' type='checkbox' name='eb_avatar_enable_teamslist' value='1' ".($pref['eb_avatar_enable_teamslist'] == 1 ? "checked='checked'" :"")."/>".EB_ADMIN_L36."
     </td>
     </tr>
     ";
@@ -233,16 +240,17 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
     ";
     if ($pref['eb_avatar_default_image'] != '')
     {
-        $text .= '<img src="'.getAvatar($pref['eb_avatar_default_image']).'" alt="Default Avatar" style="vertical-align:middle"/>&nbsp;';
+        $text .= '<img '.getAvatarResize(getAvatar($pref['eb_avatar_default_image'])).'" alt="Default Avatar" style="vertical-align:middle"/>&nbsp;';
     }
     $text .= "<input class='tbox' type='text' id='eb_avatar_default_image' name='eb_avatar_default_image' size='20' value='".$pref['eb_avatar_default_image']."'/>";
 
-    $text .= "<div>";
+    $text .= "<div><br />";
+    $avatarlist = array();
     $avatarlist[0] = "";
     $handle = opendir(e_PLUGIN."ebattles/images/avatars/");
     while ($file = readdir($handle))
     {
-        if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn")
+        if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn" && $file != "Thumbs.db")
         {
             $avatarlist[] = $file;
         }
@@ -261,6 +269,41 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
     </tr>
     ";
 
+    $text .= "<tr>
+    <td class='forumheader3' style='width:40%'>".EB_ADMIN_L34.":  <div class='smalltext'>".EB_ADMIN_L35."</div></td>
+    <td class='forumheader3' style='width:60%'>
+    ";
+    if ($pref['eb_avatar_default_team_image'] != '')
+    {
+        $text .= '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).'" alt="Default Team Avatar" style="vertical-align:middle"/>&nbsp;';
+    }
+    $text .= "<input class='tbox' type='text' id='eb_avatar_default_team_image' name='eb_avatar_default_team_image' size='20' value='".$pref['eb_avatar_default_team_image']."'/>";
+
+    $text .= "<div><br />";
+    $avatarlist = array();
+    $avatarlist[0] = "";
+    $handle = opendir(e_PLUGIN."ebattles/images/team_avatars/");
+    while ($file = readdir($handle))
+    {
+        if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn" && $file != "Thumbs.db")
+        {
+            $avatarlist[] = $file;
+        }
+    }
+    closedir($handle);
+
+    for($c = 1; $c <= (count($avatarlist)-1); $c++)
+    {
+        $text .= '<a href="javascript:changeteamtext(\''.$avatarlist[$c].'\')"><img src="'.e_PLUGIN.'ebattles/images/team_avatars/'.$avatarlist[$c].'" alt="'.$avatarlist[$c].'" style="border:0"/></a> ';
+    }
+    $text .= "
+    </div>
+    ";
+
+    $text .= "</td>
+    </tr>
+    ";
+    
     $items = '';
     $ipp_array = array(5,10,25,50,100,'All');
     foreach($ipp_array as $ipp_opt)
