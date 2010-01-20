@@ -192,9 +192,9 @@ define('EB_EVENTM_L33', 'Sélecteur de Date');
 define('EB_EVENTM_L34', 'Réinitialiser');
 define('EB_EVENTM_L35', 'Date de fin');
 define('EB_EVENTM_L36', 'Description');
-define('EB_EVENTM_L37', 'Sauver');
+define('EB_EVENTM_L37', 'Sauver les Paramètres');
 define('EB_EVENTM_L38', 'Règles');
-define('EB_EVENTM_L39', 'Sauver');
+define('EB_EVENTM_L39', 'Sauver les Règles');
 define('EB_EVENTM_L40', 'joueurs');
 define('EB_EVENTM_L41', 'Ajouter une Équipe');
 define('EB_EVENTM_L42', 'Ajouter l’Équipe');
@@ -264,7 +264,7 @@ define('EB_EVENTM_L103', 'Différence des Score');
 define('EB_EVENTM_L104', 'Points');
 define('EB_EVENTM_L105', 'Total Max');
 define('EB_EVENTM_L106', 'cache la colonne "Total" si activé');
-define('EB_EVENTM_L107', 'Sauver');
+define('EB_EVENTM_L107', 'Sauver les Statistiques');
 
 define('EB_EVENTP_L1', 'Ladders passés');
 define('EB_EVENTP_L2', 'Ladders passés');
@@ -363,7 +363,7 @@ define('EB_CLANM_L8', 'Changer l’Admin');
 define('EB_CLANM_L9', 'Nom');
 define('EB_CLANM_L10', 'Tag (nom court)');
 define('EB_CLANM_L11', 'Mot de Passe');
-define('EB_CLANM_L12', 'Sauver');
+define('EB_CLANM_L12', 'Sauver les Changements');
 define('EB_CLANM_L13', 'Créer une division pour chaque jeu auquel votre équipe joue');
 define('EB_CLANM_L14', 'Ajouter une Division');
 define('EB_CLANM_L15', 'Capitaine');
@@ -543,4 +543,3 @@ define('EB_TIME_L8', 'minute');
 define('EB_TIME_L9', 'secondes');
 define('EB_TIME_L10', 'seconde');
 ?>
-

@@ -155,7 +155,7 @@ else
                     {
                         if ($pmatchteam == $matchteam)
                         {
-                            $players .= ' & ';
+                            $players .= ' &amp; ';
                         }
                         else
                         {

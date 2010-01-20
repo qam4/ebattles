@@ -894,7 +894,7 @@ if ($num_rows>0)
                 {
                     if ($pmatchteam == $matchteam)
                     {
-                        $players .= ' & ';
+                        $players .= ' &amp; ';
                     }
                     else
                     {

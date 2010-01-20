@@ -62,6 +62,18 @@ define('EB_ADMIN_L34', 'Default Team Avatar');
 define('EB_ADMIN_L35', 'Select a remote icon using an external link or one of the icons in ebattles/images/team_avatars/');
 define('EB_ADMIN_L36', 'Teams List');
 
+define('EB_ADMINHELP_L1', 'eBattles Help');
+define('EB_ADMINHELP_L2', 'Version');
+define('EB_ADMINHELP_L3', 'Homepage: <a href="http://ebattles.freehostia.com" title="ebattles.freehostia.com">eBattles</a>');
+define('EB_ADMINHELP_L4', 'Forum: <a href="http://ebattles.freehostia.com/e107_plugins/forum/forum.php" title="eBattles Forum">eBattles Forum</a>');
+define('EB_ADMINHELP_L5', 'Wiki: <a href="http://code.google.com/p/ebattles/wiki/TableOfContents?tm=6" title="eBattles Wiki">eBattles Wiki</a>');
+define('EB_ADMINHELP_L6', 'Support: <a href="http://ebattles.freehostia.com/e107_plugins/forum/forum.php" title="eBattles Support">eBattles Support</a>');
+define('EB_ADMINHELP_L7', 'SVN repository: <a href="http://code.google.com/p/ebattles/source/checkout" title="eBattles Source code">eBattles Source code</a>');
+define('EB_ADMINHELP_L8', '');
+define('EB_ADMINHELP_L9', '');
+define('EB_ADMINHELP_L10', '');
+define('EB_ADMINHELP_L11', '');
+
 define('EB_RATELAN_0', 'vote');
 define('EB_RATELAN_1', 'votes');
 define('EB_RATELAN_2', 'How do you rate this player?');
@@ -194,9 +206,9 @@ define('EB_EVENTM_L33', 'Date selector');
 define('EB_EVENTM_L34', 'Reset');
 define('EB_EVENTM_L35', 'End Date');
 define('EB_EVENTM_L36', 'Description');
-define('EB_EVENTM_L37', 'Save');
+define('EB_EVENTM_L37', 'Save Settings');
 define('EB_EVENTM_L38', 'Rules');
-define('EB_EVENTM_L39', 'Save');
+define('EB_EVENTM_L39', 'Save Rules');
 define('EB_EVENTM_L40', 'players');
 define('EB_EVENTM_L41', 'Add a Team');
 define('EB_EVENTM_L42', 'Add Team');
@@ -266,7 +278,7 @@ define('EB_EVENTM_L103', 'Score Difference');
 define('EB_EVENTM_L104', 'Points');
 define('EB_EVENTM_L105', 'Rating Max');
 define('EB_EVENTM_L106', 'hide ratings column if checked');
-define('EB_EVENTM_L107', 'Save');
+define('EB_EVENTM_L107', 'Save Stats');
 
 define('EB_EVENTP_L1', 'Past Events');
 define('EB_EVENTP_L2', 'Past Events');
@@ -365,7 +377,7 @@ define('EB_CLANM_L8', 'Change Owner');
 define('EB_CLANM_L9', 'Name');
 define('EB_CLANM_L10', 'Tag (shortname)');
 define('EB_CLANM_L11', 'Password');
-define('EB_CLANM_L12', 'Save');
+define('EB_CLANM_L12', 'Save Changes');
 define('EB_CLANM_L13', 'Create a division for each game your team plays in');
 define('EB_CLANM_L14', 'Add Division');
 define('EB_CLANM_L15', 'Captain');
@@ -545,4 +557,3 @@ define('EB_TIME_L8', 'minute');
 define('EB_TIME_L9', 'seconds');
 define('EB_TIME_L10', 'second');
 ?>
-

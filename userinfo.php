@@ -79,6 +79,7 @@ else
         $text .= '<form action="'.e_PLUGIN.'ebattles/eventcreate.php" method="post">';
         $text .= '<div>';
         $text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
+        $text .= '<input type="hidden" name="username" value="'.$uname.'"/>';
         $text .= '<input class="button" type="submit" name="createevent" value="'.EB_EVENTS_L20.'"/>';
         $text .= '</div>';
         $text .= '</form><br />';
@@ -320,7 +321,7 @@ else
         $text .= '<form action="'.e_PLUGIN.'ebattles/clancreate.php" method="post">';
         $text .= '<div>';
         $text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
-        $text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
+        $text .= '<input type="hidden" name="username" value="'.$uname.'"/>';
         $text .= '<input class="button" type="submit" name="createteam" value="'.EB_CLANS_L7.'"/>';
         $text .= '</div>';
         $text .= '</form><br />';
@@ -634,7 +635,7 @@ else
                     {
                         if ($pmatchteam == $matchteam)
                         {
-                        $players .= ' & ';
+                        $players .= ' &amp; ';
                         }
                         else
                         {
