@@ -19,6 +19,7 @@ $eplug_url = "http://ebattles.freehostia.com";
 $eplug_email = "frederic.marchais@gmail.com";
 $eplug_description = EB_L2;
 $eplug_compatible = "e107v0.7+";
+$eplug_compliant = TRUE; // indicator if plugin is XHTML compliant, shows icon
 $eplug_readme = "";        // leave blank if no readme file
 
 $eb_SQL = new db;

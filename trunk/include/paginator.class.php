@@ -55,7 +55,7 @@ class Paginator{
 
         if($this->num_pages > 10)
         {
-            $this->return = ($this->current_page != 1 And $this->items_total >= 10) ? "<a class=\"paginate\" href=\"$_SERVER[PHP_SELF]?page=$prev_page&amp;ipp=$this->items_per_page$this->querystring\">&laquo; ".EB_PGN_L2."</a> ":"<span class=\"inactive\" href=\"#\">&laquo; ".EB_PGN_L2."</span> ";
+            $this->return = ($this->current_page != 1 And $this->items_total >= 10) ? "<a class=\"paginate\" href=\"$_SERVER[PHP_SELF]?page=$prev_page&amp;ipp=$this->items_per_page$this->querystring\">&laquo; ".EB_PGN_L2."</a> ":"<span class=\"inactive\">&laquo; ".EB_PGN_L2."</span> ";
 
             $this->start_range = $this->current_page - floor($this->mid_range/2);
             $this->end_range = $this->current_page + floor($this->mid_range/2);
@@ -82,7 +82,7 @@ class Paginator{
                 }
                 if($this->range[$this->mid_range-1] < $this->num_pages-1 And $i == $this->range[$this->mid_range-1]) $this->return .= " ... ";
             }
-            $this->return .= (($this->current_page != $this->num_pages And $this->items_total >= 10) And ($_GET['page'] != 'All')) ? "<a class=\"paginate\" href=\"$_SERVER[PHP_SELF]?page=$next_page&amp;ipp=$this->items_per_page$this->querystring\">".EB_PGN_L3." &raquo;</a>\n":"<span class=\"inactive\" href=\"#\">&raquo; ".EB_PGN_L3."</span>\n";
+            $this->return .= (($this->current_page != $this->num_pages And $this->items_total >= 10) And ($_GET['page'] != 'All')) ? "<a class=\"paginate\" href=\"$_SERVER[PHP_SELF]?page=$next_page&amp;ipp=$this->items_per_page$this->querystring\">".EB_PGN_L3." &raquo;</a>\n":"<span class=\"inactive\">&raquo; ".EB_PGN_L3."</span>\n";
             //fm $this->return .= ($_GET['page'] == 'All') ? "<a class=\"current\" style=\"margin-left:10px\" href=\"#\">".EB_PGN_L4."</a> \n":"<a class=\"paginate\" style=\"margin-left:10px\" href=\"$_SERVER[PHP_SELF]?page=1&amp;ipp=All$this->querystring\">".EB_PGN_L4."</a> \n";
         }
         else

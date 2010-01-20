@@ -158,7 +158,7 @@ else
         <td class="forumheader3">';
         if ($clan_avatar != '')
         {
-            $text .= '<img '.getAvatarResize(getTeamAvatar($clan_avatar)).'" alt="Team Avatar" style="vertical-align:middle"/>&nbsp;';
+            $text .= '<img '.getAvatarResize(getTeamAvatar($clan_avatar)).' style="vertical-align:middle"/>&nbsp;';
         }
         $text .= "<input class='tbox' type='text' id='clanavatar' name='clanavatar' size='20' value='".$clan_avatar."'/>";
 
@@ -294,10 +294,11 @@ else
             $numDivScores = mysql_numrows($result_DivScores);
             if ($numDivScores == 0)
             {
-                $text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
-                $text .= '<br /><input type="hidden" name="clandiv" value="'.$div_id.'"/>';
+                $text .= '<br /><form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
+                $text .= '<div>';
+                $text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"/>';
                 $text .= '<input class="button" type="submit" name="clandeletediv" value="'.EB_CLANM_L16.'" onclick="return confirm(\''.EB_CLANM_L17.'\');"/>';
-                $text .= '</form>';
+                $text .= '</div></form>';
             }
 
             $text .= '</td>';

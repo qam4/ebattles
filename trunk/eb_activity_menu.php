@@ -117,7 +117,7 @@ function displayRecentActivity(){
                     {
                         if ($pmatchteam == $matchteam)
                         {
-                        $players .= ' & ';
+                        $players .= ' &amp; ';
                         }
                         else
                         {
