@@ -1,5 +1,20 @@
 #summary eBattles Release Notes.
 
+= Release 0.6.172 =
+== Features ==
+ * Add support for Team's avatar (Fixes issue 50)
+  * eBattles admin can: 
+   * enable/disable Teams avatars in "Teams Standings" (Teams event info page) and "Teams list" page.
+   * choose the default Team avatar
+  * Team owners can choose an avatar for their team.
+ * Added Admin Help Panel (with plugin logo, version and important links)
+ * Improved eBattles theme news style.
+== Bug fixes ==
+ * Fixed "Event Name" when event is created.
+  * Was using a wrong language define.
+ * Fixed "Sometimes Username does not show up in the name of newly created events." (Fixes issue 66)
+ * Fixed some W3C XHTML 1.1 compliance problems
+
 = Release 0.6.167 =
 == Bug fixes ==
  * Bug fix: Error in Team Events stats update was preventing Team events page to be displayed.
