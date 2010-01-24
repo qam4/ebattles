@@ -48,7 +48,11 @@ displayRecentEvents();
 $text .= '
 </div>
 </div>
+';
 
+$text .= disclaimer();
+
+$text .= '
 <script type="text/javascript">
 //<![CDATA[
 setupAllTabs();

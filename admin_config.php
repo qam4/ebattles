@@ -28,6 +28,7 @@ if (isset($_POST['updatesettings'])) {
     $pref['eb_avatar_enable_teamsstandings'] = $_POST['eb_avatar_enable_teamsstandings'];
     $pref['eb_avatar_enable_teamslist'] = $_POST['eb_avatar_enable_teamslist'];
     $pref['eb_avatar_default_team_image'] = $_POST['eb_avatar_default_team_image'];
+    $pref['eb_disclaimer'] = $_POST['eb_disclaimer'];
     save_prefs();
     $message = EB_ADMIN_L1;
 }
@@ -324,6 +325,14 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
     </tr>
     ";
 
+    $text .= "<tr>
+    <td class='forumheader3' style='width:40%'>".EB_ADMIN_L38.":</td>
+    <td class='forumheader3' style='width:60%'>
+    <textarea class='tbox' name='eb_disclaimer' cols='60' rows='2'/>".$pref['eb_disclaimer']."</textarea>
+    </td>
+    </tr>
+    ";
+    
     $text .= "<tr>
     <td  class='forumheader' colspan='3' style='text-align:center'>
     <input class='button' type='submit' name='updatesettings' value='".EB_ADMIN_L9."' />

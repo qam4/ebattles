@@ -1036,11 +1036,14 @@ if ($num_rows>0)
 $text .= '</table><br />';
 }
 $text .= '<br />';
-$text .= '</div>';
-
 $text .= '
 </div>
+</div>
+';
 
+$text .= disclaimer();
+
+$text .= '
 <script type="text/javascript">
 //<![CDATA[
 setupAllTabs();
