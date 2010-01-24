@@ -59,6 +59,8 @@ define('EB_ADMIN_L33', 'Classement des Équipes');
 define('EB_ADMIN_L34', 'Avatar d’Équipe par défaut');
 define('EB_ADMIN_L35', 'Séléctionez un avatar distant en utilsant un lien externe ou un des icons se trouvant dans ebattles/images/team_avatars/');
 define('EB_ADMIN_L36', 'Liste des Équipes');
+define('EB_ADMIN_L37', 'Powered by <a href=&quot;http://ebattles.freehostia.com/&quot; rel=&quot;external&quot;>eBattles</a>');
+define('EB_ADMIN_L38', 'Plugin Copyright');
 
 define('EB_RATELAN_0', 'vote');
 define('EB_RATELAN_1', 'votes');

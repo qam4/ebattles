@@ -63,7 +63,8 @@ $eplug_prefs = array(
     "eb_activity_menuheading" => EB_ADMIN_L31,
     "eb_activity_number_of_items" => 10,
     "eb_activity_max_image_size_check" => 1,
-    "eb_activity_max_image_size" => 16
+    "eb_activity_max_image_size" => 16,
+    "eb_disclaimer" => EB_ADMIN_L37
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -344,9 +345,9 @@ VALUES ('".EB_GAME_L1."', 'unknown.gif')";
 array_push($eplug_tables, $query);
 
 // Create a link in main menu (yes=TRUE, no=FALSE) -------------------------------------------------------------
-$eplug_link = FALSE;
-$eplug_link_name = "";
-$eplug_link_url = "";
+$eplug_link = TRUE;
+$eplug_link_name = EB_L5;
+$eplug_link_url = e_PLUGIN."ebattles/events.php";
 
 
 // Text to display after plugin successfully installed ------------------------------------------------------------------
@@ -485,6 +486,14 @@ if ($revision < 171)
     "eb_avatar_default_team_image" => 'default_group_avatar.png'
     );
 }
+if ($revision < 173)
+{
+    // To revision 173
+    $upgrade_add_prefs += array(
+    "eb_disclaimer" => EB_ADMIN_L37
+    );
+}
+
 /* dbg
 echo "<br>Prefs upgrade:";
 print_r($upgrade_add_prefs);

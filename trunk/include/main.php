@@ -468,5 +468,10 @@ function sendNotification($sendto, $subject, $message, $fromid=0) {
     return $pm->add($vars);
 }
 
-
+function disclaimer()
+{
+    global $pref;
+    
+    return '<span class="smalltext" style="float:right">'.$pref['eb_disclaimer'].'</span>';
+}
 ?>
