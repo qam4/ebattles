@@ -74,6 +74,8 @@ else
     $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
     $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+    $eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
+    $mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
     $reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
     $reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
 
@@ -119,8 +121,17 @@ else
     ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
     ."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
     $result_2 = $sql->db_Query($q_2);
-    $num_rows_2 = mysql_numrows($result_2);
+    $numMods = mysql_numrows($result_2);
 
+    // Is the user an opponent of the reporter?
+    $q_2 = "SELECT ".TBL_EVENTMODS.".*"
+    ." FROM ".TBL_EVENTMODS
+    ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
+    ."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
+    $result_2 = $sql->db_Query($q_2);
+    $numMods = mysql_numrows($result_2);
+
+    $can_approve = 0;
     $can_delete = 0;
     if (  (USERID==$reported_by)
     &&(  ($eend==0)
@@ -128,8 +139,30 @@ else
     &&($estart<=$time))))
     $can_delete = 1;
     if (check_class($pref['eb_mod_class']))  $can_delete = 1;
-    if (USERID==$eowner)  $can_delete = 1;
-    if ($num_rows_2>0)  $can_delete = 1;
+    if (USERID==$eowner)
+    {
+        $userclass |= eb_UC_EVENT_OWNER;
+        $can_delete = 1;
+        $can_approve = 1;
+    }
+    if ($numMods>0)
+    {
+        $userclass |= eb_UC_EB_MODERATOR;
+        $can_delete = 1;
+        $can_approve = 1;
+    }
+    if (check_class($pref['eb_mod_class']))
+    {
+        $userclass |= eb_UC_EB_MODERATOR;
+        $can_approve = 1;
+    }
+    if($userclass < $eMatchesApproval) $can_approve = 0;
+    if($eMatchesApproval == eb_UC_NONE) $can_approve = 0;
+    if ($mStatus == 'active') $can_approve = 0;  
+
+    if ($mStatus == 'pending')
+        $text .= '<div>'.EB_MATCHD_L18.'</div';
+
 
     if($can_delete != 0)
     {
@@ -140,7 +173,16 @@ else
         $text .= '</div>';
         $text .= '</form>';
     }
-
+    if($can_approve != 0)
+    {
+        $text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
+        $text .= '<div>';
+        $text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+        $text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
+        $text .= '<input class="button" type="submit" name="approvematch" value="'.EB_MATCHD_L17.'"/>';
+        $text .= '</div>';
+        $text .= '</form>';
+    }
     $text .= '<br />';
 
     $text .= '<table class="fborder" style="width:95%"><tbody>';

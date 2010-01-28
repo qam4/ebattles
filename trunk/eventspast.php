@@ -197,6 +197,7 @@ function displayPastEvents(){
         ." FROM ".TBL_MATCHS.", "
         .TBL_SCORES
         ." WHERE (Event = '$eid')"
+        ." AND (".TBL_MATCHS.".Status = 'active')"
         ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);

@@ -9,6 +9,7 @@ require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 require_once(e_PLUGIN."ebattles/include/show_array.php");
 require_once(e_PLUGIN."ebattles/include/event.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/match.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -86,6 +87,7 @@ else
     $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
     $ematch_report_userclass = mysql_result($result,0 , TBL_EVENTS.".match_report_userclass");
     $equick_loss_report = mysql_result($result,0 , TBL_EVENTS.".quick_loss_report");
+    $eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
 
     if ($pref['eb_events_update_delay_enable'] == 1)
     {
@@ -98,8 +100,8 @@ else
     }
 
     if (  (($time > $enextupdate) && ($eischanged == 1))
-        ||(file_exists($file) == FALSE)
-        ||((file_exists($file_team) == FALSE) && (($etype == "Team Ladder")))
+    ||(file_exists($file) == FALSE)
+    ||((file_exists($file_team) == FALSE) && (($etype == "Team Ladder")))
     )
     {
         $eneedupdate = 1;
@@ -126,19 +128,19 @@ else
 
     $time_comment = '';
     if (  ($estart != 0)
-        &&($time <= $estart)
+    &&($time <= $estart)
     )
     {
         $time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $estart);
     }
     else if (  ($eend != 0)
-        &&($time <= $eend)
+    &&($time <= $eend)
     )
     {
         $time_comment = EB_EVENT_L3.'&nbsp;'.get_formatted_timediff($time, $eend);
     }
     else if (  ($eend != 0)
-        &&($time > $eend)
+    &&($time > $eend)
     )
     {
         $time_comment = EB_EVENT_L4;
@@ -218,10 +220,10 @@ else
                 ." AND (".TBL_DIVISIONS.".Captain = ".USERID.")";
 
                 $result = $sql->db_Query($q);
-                $num_rows = mysql_numrows($result);
-                if($num_rows > 0)
+                $numDivs = mysql_numrows($result);
+                if($numDivs > 0)
                 {
-                    for($i=0;$i < $num_rows;$i++)
+                    for($i=0;$i < $numDivs;$i++)
                     {
                         $div_name  = mysql_result($result,$i, TBL_CLANS.".Name");
                         $div_id    = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
@@ -232,11 +234,11 @@ else
                         ." WHERE (".TBL_TEAMS.".Event = '$event_id')"
                         ." AND (".TBL_TEAMS.".Division = '$div_id')";
                         $result_2 = $sql->db_Query($q_2);
-                        $num_rows_2 = mysql_numrows($result_2);
+                        $numTeams = mysql_numrows($result_2);
 
                         $text .= '<tr>';
                         $text .= '<td>'.EB_EVENT_L7.'&nbsp;'.$div_name.'</td>';
-                        if( $num_rows_2 == 0)
+                        if( $numTeams == 0)
                         {
 
                             if ($epassword != "")
@@ -299,15 +301,15 @@ else
                 ." AND (".TBL_MEMBERS.".User = ".USERID.")";
 
                 $result_2 = $sql->db_Query($q_2);
-                $num_rows_2 = mysql_numrows($result_2);
-                if(!$result_2 || ( $num_rows_2 == 0))
+                $numMembers = mysql_numrows($result_2);
+                if(!$result_2 || ( $numMembers == 0))
                 {
                     $text .= '<tr><td>'.EB_EVENT_L14.'</td>';
                     $text .= '<td></td></tr>';
                 }
                 else
                 {
-                    for($i=0;$i < $num_rows_2;$i++)
+                    for($i=0;$i < $numMembers;$i++)
                     {
                         $clan_name  = mysql_result($result_2,$i , TBL_CLANS.".Name");
                         $div_id  = mysql_result($result_2,$i , TBL_DIVISIONS.".DivisionID");
@@ -536,520 +538,459 @@ else
     ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
     ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".User)";
     $result = $sql->db_Query($q);
-    $num_rows = mysql_numrows($result);
+    $numMods = mysql_numrows($result);
     $text .= '<td class="forumheader3">'.EB_EVENT_L41.'</td>';
     $text .= '<td class="forumheader3">';
-    if ($num_rows>0)
+    if ($numMods>0)
     {
         $text .= '<ul>';
-    for($i=0; $i<$num_rows; $i++){
-        $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
-        $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
-        $text .= '<li><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$modid.'">'.$modname.'</a></li>';
+        for($i=0; $i< $numMods; $i++){
+            $modid  = mysql_result($result,$i, TBL_USERS.".user_id");
+            $modname  = mysql_result($result,$i, TBL_USERS.".user_name");
+            $text .= '<li><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$modid.'">'.$modname.'</a></li>';
+        }
+        $text .= '</ul>';
     }
-    $text .= '</ul>';
-}
-$text .= '</td></tr>';
+    $text .= '</td></tr>';
 
-$text .= '<tr><td class="forumheader3">'.EB_EVENT_L42.'</td><td class="forumheader3">'.$date_start.'</td></tr>';
-$text .= '<tr><td class="forumheader3">'.EB_EVENT_L43.'</td><td class="forumheader3">'.$date_end.'</td></tr>';
-$text .= '<tr><td class="forumheader3"></td><td class="forumheader3">'.$time_comment.'</td></tr>';
-$text .= '<tr><td class="forumheader3">'.EB_EVENT_L44.'</td><td class="forumheader3">'.$tp->toHTML($erules, true).'</td></tr>';
-$text .= '</tbody></table>';
-$text .= '</div>';
+    $text .= '<tr><td class="forumheader3">'.EB_EVENT_L42.'</td><td class="forumheader3">'.$date_start.'</td></tr>';
+    $text .= '<tr><td class="forumheader3">'.EB_EVENT_L43.'</td><td class="forumheader3">'.$date_end.'</td></tr>';
+    $text .= '<tr><td class="forumheader3"></td><td class="forumheader3">'.$time_comment.'</td></tr>';
+    $text .= '<tr><td class="forumheader3">'.EB_EVENT_L44.'</td><td class="forumheader3">'.$tp->toHTML($erules, true).'</td></tr>';
+    $text .= '</tbody></table>';
+    $text .= '</div>';
 
-$enextupdate_local = $enextupdate + TIMEOFFSET;
-$date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
+    $enextupdate_local = $enextupdate + TIMEOFFSET;
+    $date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
 
-if ($etype == "Team Ladder")
-{
-    $text .= '<div class="tab-page">';
-    $text .= '<div class="tab">'.EB_EVENT_L45.'</div>';
-
-    /* Update Stats */
-    if ($eneedupdate == 1)
+    if ($etype == "Team Ladder")
     {
-        updateTeamStats($event_id, $time, TRUE);
+        $text .= '<div class="tab-page">';
+        $text .= '<div class="tab">'.EB_EVENT_L45.'</div>';
+
+        /* Update Stats */
+        if ($eneedupdate == 1)
+        {
+            updateTeamStats($event_id, $time, TRUE);
+        }
+
+        if (($time < $enextupdate) && ($eischanged == 1))
+        {
+            $text .= EB_EVENT_L46.'&nbsp;'.$date_nextupdate.'<br />';
+        }
+        /* Nbr Teams */
+        $q = "SELECT COUNT(*) as NbrTeams"
+        ." FROM ".TBL_TEAMS
+        ." WHERE (Event = '$event_id')";
+        $result = $sql->db_Query($q);
+        $row = mysql_fetch_array($result);
+        $nbrteams = $row['NbrTeams'];
+        $text .= '<div class="spacer">';
+        $text .= '<p>';
+        $text .= $nbrteams.' teams<br />';
+        $text .= EB_EVENT_L47.'&nbsp;'.$eminteamgames.'&nbsp;'.EB_EVENT_L48.'<br /><br />';
+        $text .= '</p>';
+
+        $stats = unserialize(implode('',file($file_team)));
+        // debug print array
+        $num_columns = count($stats[0]) - 1;
+        $nbr_rows = count($stats);
+        $text .= html_show_table($stats, $nbr_rows, $num_columns);
+
+        $text .= '</div>';
+        $text .= '</div>';
     }
+    // Players standings stats
+    $stats = unserialize(implode('',file($file)));
+    $num_columns = count($stats[0]) - 1;
+    //print_r($stats);
+
+    // Sorting the stats table
+    $header = $stats[0];
+
+    $new_header = array();
+    $column = 0;
+    foreach ($header as $header_cell)
+    {
+        //fm echo "column $column: $header_cell<br>";
+        $pieces = explode("<br />", $header_cell);
+
+        $new_header[] = '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&amp;orderby='.$column.'&amp;sort='.$sort.'">'.$pieces[0].'</a>'.$pieces[1];
+        $column++;
+    }
+    $header = array($new_header);
+    $header[0][0] = "header";
+
+    array_splice($stats,0,1);
+    multi2dSortAsc($stats, $orderby, $sort_type);
+    $stats = array_merge($header, $stats);
+
+    $text .= '<div class="tab-page">';
+    $text .= '<div class="tab">'.EB_EVENT_L49.'</div>';
 
     if (($time < $enextupdate) && ($eischanged == 1))
     {
-        $text .= EB_EVENT_L46.'&nbsp;'.$date_nextupdate.'<br />';
+        $text .= EB_EVENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
     }
-    /* Nbr Teams */
-    $q = "SELECT COUNT(*) as NbrTeams"
-    ." FROM ".TBL_TEAMS
-    ." WHERE (Event = '$event_id')";
+
+    /* set pagination variables */
+    $totalItems = $nbrplayers;
+    $pages->items_total = $totalItems;
+    $pages->mid_range = eb_PAGINATION_MIDRANGE;
+    $pages->paginate();
+
+    $text .= '<p>';
+    $text .= $nbrplayers.'&nbsp;'.EB_EVENT_L51.'<br />';
+    $text .= EB_EVENT_L52.'&nbsp;'.$emingames.'&nbsp;'.EB_EVENT_L53.'<br />';
+    $text .= '</p>';
+
+    /* My Position */
+    $q = "SELECT *"
+    ." FROM ".TBL_PLAYERS
+    ." WHERE (Event = '$event_id')"
+    ."   AND (User = ".USERID.")";
     $result = $sql->db_Query($q);
-    $row = mysql_fetch_array($result);
-    $nbrteams = $row['NbrTeams'];
-    $text .= '<div class="spacer">';
-    $text .= '<p>';
-    $text .= $nbrteams.' teams<br />';
-    $text .= EB_EVENT_L47.'&nbsp;'.$eminteamgames.'&nbsp;'.EB_EVENT_L48.'<br /><br />';
-    $text .= '</p>';
-
-    $stats = unserialize(implode('',file($file_team)));
-    // debug print array
-    $num_columns = count($stats[0]) - 1;
-    $nbr_rows = count($stats);
-    $text .= html_show_table($stats, $nbr_rows, $num_columns);
-
-    $text .= '</div>';
-    $text .= '</div>';
-}
-// Players standings stats
-$stats = unserialize(implode('',file($file)));
-$num_columns = count($stats[0]) - 1;
-//print_r($stats);
-
-// Sorting the stats table
-$header = $stats[0];
-
-$new_header = array();
-$column = 0;
-foreach ($header as $header_cell)
-{
-    //fm echo "column $column: $header_cell<br>";
-    $pieces = explode("<br />", $header_cell);
-
-    $new_header[] = '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&amp;orderby='.$column.'&amp;sort='.$sort.'">'.$pieces[0].'</a>'.$pieces[1];
-    $column++;
-}
-$header = array($new_header);
-$header[0][0] = "header";
-
-array_splice($stats,0,1);
-multi2dSortAsc($stats, $orderby, $sort_type);
-$stats = array_merge($header, $stats);
-
-$text .= '<div class="tab-page">';
-$text .= '<div class="tab">'.EB_EVENT_L49.'</div>';
-
-if (($time < $enextupdate) && ($eischanged == 1))
-{
-    $text .= EB_EVENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
-}
-
-/* set pagination variables */
-$totalItems = $nbrplayers;
-$pages->items_total = $totalItems;
-$pages->mid_range = eb_PAGINATION_MIDRANGE;
-$pages->paginate();
-
-$text .= '<p>';
-$text .= $nbrplayers.'&nbsp;'.EB_EVENT_L51.'<br />';
-$text .= EB_EVENT_L52.'&nbsp;'.$emingames.'&nbsp;'.EB_EVENT_L53.'<br />';
-$text .= '</p>';
-
-/* My Position */
-$q = "SELECT *"
-." FROM ".TBL_PLAYERS
-." WHERE (Event = '$event_id')"
-."   AND (User = ".USERID.")";
-$result = $sql->db_Query($q);
-$can_report = 0;
-$can_report_quickloss = 0;
-$userclass = 0;
-$pbanned=0;
-if(mysql_numrows($result) == 1)
-{
-    $userclass |= eb_UC_EVENT_PLAYER;
-
-    // Show link to my position
-    $row = mysql_fetch_array($result);
-    $prank = $row['Rank'];
-    $pbanned = $row['Banned'];
-
-    if ($prank==0)
-    $prank_txt = EB_EVENT_L54;
-    else
-    $prank_txt = "#$prank";
-
-    $search_user = array_searchRecursive( 'user='.USERID.'"', $stats, false);
-
-    ($search_user) ? $link_page = ceil($search_user[0]/$pages->items_per_page) : $link_page = 1;
-
-    $text .= '<p>';
-    $text .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">".EB_EVENT_L55.": $prank_txt</a><br />";
-    $text .= '</p>';
-    // Is the event started, and not ended
-    if (  ($eend == 0)
-        ||(  ($eend >= $time)
-            &&($estart <= $time)
-        )
-    )
-    {
-        $can_report = 1;
-        $can_report_quickloss = 1;
-    }
-}
-
-// Check if user can report
-// Is the user admin?
-if (check_class($pref['eb_mod_class']))
-{
-    $userclass |= eb_UC_EB_MODERATOR;
-    $can_report = 1;
-}
-// Is the user event owner?
-if (USERID==$eowner)
-{
-    $userclass |= eb_UC_EVENT_OWNER;
-    $can_report = 1;
-}
-// Is the user a moderator?
-$q_2 = "SELECT ".TBL_EVENTMODS.".*"
-." FROM ".TBL_EVENTMODS
-." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
-."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
-$result_2 = $sql->db_Query($q_2);
-$num_rows_2 = mysql_numrows($result_2);
-if ($num_rows_2>0)
-{
-    $userclass |= eb_UC_EVENT_MODERATOR;
-    $can_report = 1;
-}
-
-if (($nbrplayersNotBanned < 2)||($pbanned))
-{
+    $can_approve = 0;
     $can_report = 0;
     $can_report_quickloss = 0;
-}
-
-// check if only 1 player with this userid
-$q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
-.TBL_USERS.".*"
-." FROM ".TBL_PLAYERS.", "
-.TBL_USERS
-." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-."   AND (".TBL_USERS.".user_id = ".USERID.")";
-$result = $sql->db_Query($q);
-$num_rows = mysql_numrows($result);
-if ($num_rows>1)
-$can_report_quickloss = 0;
-
-// Check if AllowScore is set
-if ($eallowscore==TRUE)
-$can_report_quickloss = 0;
-
-if($userclass < $ematch_report_userclass) $can_report = 0;
-if($equick_loss_report==FALSE) $can_report_quickloss = 0;
-
-if(($can_report_quickloss != 0)||($can_report != 0))
-{
-    $text .= '<table>';
-    $text .= '<tr>';
-    if($can_report_quickloss != 0)
+    $userclass = 0;
+    $pbanned=0;
+    if(mysql_numrows($result) == 1)
     {
-        $text .= '<td>';
-        $text .= '<form action="'.e_PLUGIN.'ebattles/quickreport.php?eventid='.$event_id.'" method="post">';
-        $text .= '<div><input class="button" type="submit" name="quicklossreport" value="'.EB_EVENT_L56.'"/></div>';
-        $text .= '</form>';
-        $text .= '</td>';
-    }
-    if($can_report != 0)
-    {
-        $text .= '<td>';
-        $text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'" method="post">';
-        $text .= '<div>';
-        $text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
-        $text .= '<input class="button" type="submit" name="matchreport" value="'.EB_EVENT_L57.'"/>';
-        $text .= '</div>';
-        $text .= '</form>';
-        $text .= '</td>';
-    }
-    $text .= '</tr>';
-    $text .= '</table>';
-}
-$text .= '<br />';
+        $userclass |= eb_UC_EVENT_PLAYER;
 
-// Paginate
-$text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
-$text .= '<span style="float:right">';
-// Go To Page
-$text .= $pages->display_jump_menu();
-$text .= '&nbsp;&nbsp;&nbsp;';
-// Items per page
-$text .= $pages->display_items_per_page();
-$text .= '</span><br /><br />';
+        // Show link to my position
+        $row = mysql_fetch_array($result);
+        $prank = $row['Rank'];
+        $pbanned = $row['Banned'];
 
-// Paginate the statistics array
-$max_row = count($stats);
-$stats_paginate = array($stats[0]);
-$nbr_rows = 1;
+        if ($prank==0)
+        $prank_txt = EB_EVENT_L54;
+        else
+        $prank_txt = "#$prank";
 
-for ($i = $pages->low + 1; $i <= $pages->high + 1; $i++)
-{
-    if ($i < $max_row)
-    {
-        $stats_paginate[] = $stats[$i];
-        $nbr_rows ++;
-    }
-}
-$text .= html_show_table($stats_paginate, $nbr_rows, $num_columns);
+        $search_user = array_searchRecursive( 'user='.USERID.'"', $stats, false);
 
-$text .= '</div>';
+        ($search_user) ? $link_page = ceil($search_user[0]/$pages->items_per_page) : $link_page = 1;
 
-$text .= '
-<div class="tab-page">
-<div class="tab">'.EB_EVENT_L58.'</div>
-';
-
-$mEventType  = $etype;
-$mEventAllowScore = $eallowscore;
-$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
-." FROM ".TBL_MATCHS.", "
-.TBL_SCORES
-." WHERE (Event = '$event_id')"
-." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
-$result = $sql->db_Query($q);
-
-$row = mysql_fetch_array($result);
-$nbrmatches = $row['NbrMatches'];
-$text .= '<p>';
-$text .= $nbrmatches.'&nbsp;'.EB_EVENT_L59;
-$text .= ' [<a href="'.e_PLUGIN.'ebattles/eventmatchs.php?eventid='.$event_id.'">'.EB_EVENT_L60.'</a>]';
-$text .= '</p>';
-$text .= '<br />';
-
-$rowsPerPage = $pref['eb_default_items_per_page'];
-/* Stats/Results */
-$q = "SELECT DISTINCT ".TBL_MATCHS.".*, "
-.TBL_USERS.".*"
-." FROM ".TBL_MATCHS.", "
-.TBL_SCORES.", "
-.TBL_USERS
-." WHERE (".TBL_MATCHS.".Event = '$event_id')"
-." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
-." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
-." LIMIT 0, $rowsPerPage";
-
-$result = $sql->db_Query($q);
-$num_rows = mysql_numrows($result);
-if ($num_rows>0)
-{
-    /* Display table contents */
-    $text .= '<table class="table_left">';
-    for($i=0; $i<$num_rows; $i++)
-    {
-        $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-        $mReportedBy  = mysql_result($result,$i, TBL_USERS.".user_id");
-        $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
-        $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-        $mTime_local = $mTime + TIMEOFFSET;
-        $date = date("d M Y, h:i A",$mTime_local);
-        $q2 = "SELECT DISTINCT ".TBL_MATCHS.".*, "
-        .TBL_SCORES.".Player_Rank"
-        ." FROM ".TBL_MATCHS.", "
-        .TBL_SCORES
-        ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
-        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
-        $result2 = $sql->db_Query($q2);
-        $numRanks = mysql_numrows($result2);
-        if ($numRanks > 0)
+        $text .= '<p>';
+        $text .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">".EB_EVENT_L55.": $prank_txt</a><br />";
+        $text .= '</p>';
+        // Is the event started, and not ended
+        if (  ($eend == 0)
+        ||(  ($eend >= $time)
+        &&($estart <= $time)
+        )
+        )
         {
-            $q2 = "SELECT ".TBL_MATCHS.".*, "
-            .TBL_SCORES.".*, "
-            .TBL_PLAYERS.".*, "
-            .TBL_USERS.".*"
-            ." FROM ".TBL_MATCHS.", "
-            .TBL_SCORES.", "
-            .TBL_PLAYERS.", "
-            .TBL_USERS
-            ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
-            ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-            ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-            ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-            ." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+            $can_report = 1;
+            $can_report_quickloss = 1;
+        }
+    }
 
-            $result2 = $sql->db_Query($q2);
-            $numPlayers = mysql_numrows($result2);
-            $pname = '';
-            $players = '<tr>';
-            $scores = '';
+    // Check if user can report
+    // Is the user admin?
+    if (check_class($pref['eb_mod_class']))
+    {
+        $userclass |= eb_UC_EB_MODERATOR;
+        $can_report = 1;
+        $can_approve = 1;
+    }
+    // Is the user event owner?
+    if (USERID==$eowner)
+    {
+        $userclass |= eb_UC_EVENT_OWNER;
+        $can_report = 1;
+        $can_approve = 1;
+    }
+    // Is the user a moderator?
+    $q_2 = "SELECT ".TBL_EVENTMODS.".*"
+    ." FROM ".TBL_EVENTMODS
+    ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
+    ."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
+    $result_2 = $sql->db_Query($q_2);
+    $numMods = mysql_numrows($result_2);
+    if ($numMods>0)
+    {
+        $userclass |= eb_UC_EVENT_MODERATOR;
+        $can_report = 1;
+        $can_approve = 1;
+    }
 
-            /*
-            $players .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">';
-            $players .= '<img '.getActivityGameIconResize($mEventgameicon).'/>';
-            $players .= '</a></td>';
-            */
+    if (($nbrplayersNotBanned < 2)||($pbanned))
+    {
+        $can_report = 0;
+        $can_report_quickloss = 0;
+    }
 
-            $players .= '<td>';
-            $rank = 1;
-            $matchteam = 0;
-            for ($index = 0; $index < $numPlayers; $index++)
-            {
-                $puid  = mysql_result($result2,$index , TBL_USERS.".user_id");
-                $pname  = mysql_result($result2,$index , TBL_USERS.".user_name");
-                $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
-                $pteam  = mysql_result($result2,$index , TBL_PLAYERS.".Team");
-                $pmatchteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
-                $pscore = mysql_result($result2,$index , TBL_SCORES.".Player_Score");
-                list($pclan, $pclantag) = getClanName($pteam);
+    // check if only 1 player with this userid
+    $q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+    ."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+    ."   AND (".TBL_USERS.".user_id = ".USERID.")";
+    $result = $sql->db_Query($q);
+    $numPlayers = mysql_numrows($result);
+    if ($numPlayers>1)
+    $can_report_quickloss = 0;
 
-                if($index>0)
-                {
-                    if ($pmatchteam == $matchteam)
-                    {
-                        $players .= ' &amp; ';
-                    }
-                    else
-                    {
-                        if ($prank == $rank)
-                        {
-                            $str = '&nbsp;'.EB_MATCH_L2.'&nbsp;';
-                        }
-                        else
-                        {
-                            $str = '&nbsp;'.EB_MATCH_L3.'&nbsp;';
-                        }
-                        $scores .= "-".$pscore;
-                        $players .= $str;
-                        $matchteam++;
-                    }
-                }
-                else
-                {
-                    $matchteam = $pmatchteam;
-                    $scores .= $pscore;
-                }
+    // Check if AllowScore is set
+    if ($eallowscore==TRUE)
+    $can_report_quickloss = 0;
 
-                $players .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a>';
+    if($equick_loss_report==FALSE) $can_report_quickloss = 0;
+    if($userclass < $ematch_report_userclass) $can_report = 0;
+    
+    if($userclass < $eMatchesApproval) $can_approve = 0;
+    if($eMatchesApproval == eb_UC_NONE) $can_approve = 0;
+
+    $text .= '<br />';
+    // Paginate
+    $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
+    $text .= '<span style="float:right">';
+    // Go To Page
+    $text .= $pages->display_jump_menu();
+    $text .= '&nbsp;&nbsp;&nbsp;';
+    // Items per page
+    $text .= $pages->display_items_per_page();
+    $text .= '</span><br /><br />';
+
+    // Paginate the statistics array
+    $max_row = count($stats);
+    $stats_paginate = array($stats[0]);
+    $nbr_rows = 1;
+
+    for ($i = $pages->low + 1; $i <= $pages->high + 1; $i++)
+    {
+        if ($i < $max_row)
+        {
+            $stats_paginate[] = $stats[$i];
+            $nbr_rows ++;
+        }
+    }
+    $text .= html_show_table($stats_paginate, $nbr_rows, $num_columns);
+
+    $text .= '</div>';
+    
+    $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES
+    ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_MATCHS.".Status = 'pending')";
+    $result = $sql->db_Query($q);
+    $row = mysql_fetch_array($result);
+    $nbrMatchesPending = $row['NbrMatches'];
+    if ($nbrMatchesPending == 0) $can_approve = 0;
+
+    $text .= '
+    <div class="tab-page">
+    <div class="tab" name="event_matches" id="event_matches">'.EB_EVENT_L58;
+    $text .= ($can_approve == 1) ? ' ('.$nbrMatchesPending.')' : '';
+    $text .= '</div>';
+
+    /* Display Match Report buttons */
+    if(($can_report_quickloss != 0)||($can_report != 0))
+    {
+        $text .= '<table>';
+        $text .= '<tr>';
+        if($can_report_quickloss != 0)
+        {
+            $text .= '<td>';
+            $text .= '<form action="'.e_PLUGIN.'ebattles/quickreport.php?eventid='.$event_id.'" method="post">';
+            $text .= '<div><input class="button" type="submit" name="quicklossreport" value="'.EB_EVENT_L56.'"/></div>';
+            $text .= '</form>';
+            $text .= '</td>';
+        }
+        if($can_report != 0)
+        {
+            $text .= '<td>';
+            $text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'" method="post">';
+            $text .= '<div>';
+            $text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
+            $text .= '<input class="button" type="submit" name="matchreport" value="'.EB_EVENT_L57.'"/>';
+            $text .= '</div>';
+            $text .= '</form>';
+            $text .= '</td>';
+        }
+        $text .= '</tr>';
+        $text .= '</table>';
+    }
+    $text .= '<br />';
+    
+    /* Display Active Matches */
+    $rowsPerPage = $pref['eb_default_items_per_page'];
+
+    $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES
+    ." WHERE (Event = '$event_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
+    $result = $sql->db_Query($q);
+
+    $row = mysql_fetch_array($result);
+    $numMatches = $row['NbrMatches'];
+
+    $text .= '<p>';
+    $text .= $numMatches.'&nbsp;'.EB_EVENT_L59;
+    $text .= ' [<a href="'.e_PLUGIN.'ebattles/eventmatchs.php?eventid='.$event_id.'">'.EB_EVENT_L60.'</a>]';
+    $text .= '</p>';
+    $text .= '<br />';
+
+    $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
+    .TBL_USERS
+    ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_MATCHS.".Status = 'active')"
+    ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
+    ." LIMIT 0, $rowsPerPage";
+    $result = $sql->db_Query($q);
+    $numMatches = mysql_numrows($result);
+
+    if ($numMatches>0)
+    {
+        /* Display table contents */
+        $text .= '<table class="table_left">';
+        for($i=0; $i < $numMatches; $i++)
+        {
+            $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+            $text .= displayMatchInfo($mID, 1);
+        }
+        $text .= '</table>';
+    }
+
+    $text .= '<br />';
+
+    /* Display Pending Matches */
+    $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
+    .TBL_USERS
+    ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_MATCHS.".Status = 'pending')"
+    ." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
+    $result = $sql->db_Query($q);
+    $numMatches = mysql_numrows($result);
+
+    $text .= '<p>';
+    $text .= $numMatches.'&nbsp;'.EB_EVENT_L64;
+    $text .= '</p>';
+    $text .= '<br />';
+
+    if ($numMatches>0)
+    {
+        /* Display table contents */
+        $text .= '<table class="table_left">';
+        for($i=0; $i < $numMatches; $i++)
+        {
+            $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+            $text .= displayMatchInfo($mID, 1);
+        }
+        $text .= '</table>';
+    }
+    $text .= '</div>';
+
+    $text .= '<div class="tab-page">';
+    $text .= '<div class="tab">'.EB_EVENT_L63.'</div>';
+
+    $rowsPerPage = $pref['eb_default_items_per_page'];
+
+    /* Stats/Results */
+    $q = "SELECT ".TBL_AWARDS.".*, "
+    .TBL_PLAYERS.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_AWARDS.", "
+    .TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
+    ." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
+    ." AND (".TBL_PLAYERS.".Event = '$event_id')"
+    ." ORDER BY ".TBL_AWARDS.".timestamp DESC"
+    ." LIMIT 0, $rowsPerPage";
+
+    $result = $sql->db_Query($q);
+    $numAwards = mysql_numrows($result);
+
+    if ($numAwards>0)
+    {
+        $text .= '<table class="table_left">';
+        /* Display table contents */
+        for($i=0; $i < $numAwards; $i++)
+        {
+            $aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
+            $aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
+            $aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
+            $aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
+            $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
+            $aTime_local = $aTime + TIMEOFFSET;
+            $date = date("d M Y, h:i A",$aTime_local);
+
+            switch ($aType) {
+                case 'PlayerTookFirstPlace':
+                $award = EB_AWARD_L2;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/> ';
+                break;
+                case 'PlayerInTopTen':
+                $award = EB_AWARD_L4;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/> ';
+                break;
+                case 'PlayerStreak5':
+                $award = EB_AWARD_L6;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/> ';
+                break;
+                case 'PlayerStreak10':
+                $award = EB_AWARD_L8;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/> ';
+                break;
+                case 'PlayerStreak25':
+                $award = EB_AWARD_L10;
+                $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
+                break;
             }
 
-            //score here
-            if ($mEventAllowScore == TRUE)
-            {
-                $players .= ' ('.$scores.') ';
-            }
+            $award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
+            $award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
+            $award_string .= '&nbsp;'.$award;
 
-            $players .= ' (<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.EB_MATCH_L5.'</a>)';
-
-            $players .= ' <div class="smalltext">';
-            $players .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
-            if (($time-$mTime) < INT_MINUTE )
+            $award_string .= ' <div class="smalltext">';
+            if (($time-$aTime) < INT_MINUTE )
             {
-                $players .= EB_MATCH_L7;
+                $award_string .= EB_MATCH_L7;
             }
-            else if (($time-$mTime) < INT_DAY )
+            else if (($time-$aTime) < INT_DAY )
             {
-                $players .= get_formatted_timediff($mTime, $time).'&nbsp;'.EB_MATCH_L8;
+                $award_string .= get_formatted_timediff($aTime, $time).'&nbsp;'.EB_MATCH_L8;
             }
             else
             {
-                $players .= EB_MATCH_L9.'&nbsp;'.$date.'.';
+                $award_string .= $date;
             }
-            $nbr_comments = getCommentTotal("ebmatches", $mID);
-            $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.$nbr_comments.'&nbsp;';
-            $players .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
-            $players .= '</a>';
-            $players .= '</div><br /></td></tr>';
+            $award_string .= '</div><br /></td></tr>';
 
-            $text .= $players;
+            $text .= $award_string;
         }
+        $text .= '</table><br />';
     }
-    $text .= '</table>';
-}
-$text .= '</div>';
+    $text .= '<br />';
+    $text .= '
+    </div>
+    </div>
+    ';
 
-$text .= '<div class="tab-page">';
-$text .= '<div class="tab">'.EB_EVENT_L63.'</div>';
+    $text .= disclaimer();
 
-$rowsPerPage = $pref['eb_default_items_per_page'];
-/* Stats/Results */
-$q = "SELECT ".TBL_AWARDS.".*, "
-.TBL_PLAYERS.".*, "
-.TBL_USERS.".*"
-." FROM ".TBL_AWARDS.", "
-.TBL_PLAYERS.", "
-.TBL_USERS
-." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
-." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
-." AND (".TBL_PLAYERS.".Event = '$event_id')"
-." ORDER BY ".TBL_AWARDS.".timestamp DESC"
-." LIMIT 0, $rowsPerPage";
-
-$result = $sql->db_Query($q);
-$num_rows = mysql_numrows($result);
-
-if ($num_rows>0)
-{
-    $text .= '<table class="table_left">';
-    /* Display table contents */
-    for($i=0; $i<$num_rows; $i++)
-    {
-        $aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
-        $aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
-        $aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
-        $aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
-        $aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
-        $aTime_local = $aTime + TIMEOFFSET;
-        $date = date("d M Y, h:i A",$aTime_local);
-
-    switch ($aType) {
-        case 'PlayerTookFirstPlace':
-        $award = EB_AWARD_L2;
-        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/> ';
-        break;
-        case 'PlayerInTopTen':
-        $award = EB_AWARD_L4;
-        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/> ';
-        break;
-        case 'PlayerStreak5':
-        $award = EB_AWARD_L6;
-        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/> ';
-        break;
-        case 'PlayerStreak10':
-        $award = EB_AWARD_L8;
-        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/> ';
-        break;
-        case 'PlayerStreak25':
-        $award = EB_AWARD_L10;
-        $icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
-        break;
-    }
-
-    $award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
-    $award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
-    $award_string .= '&nbsp;'.$award;
-
-    $award_string .= ' <div class="smalltext">';
-    if (($time-$aTime) < INT_MINUTE )
-    {
-        $award_string .= EB_MATCH_L7;
-    }
-    else if (($time-$aTime) < INT_DAY )
-    {
-        $award_string .= get_formatted_timediff($aTime, $time).'&nbsp;'.EB_MATCH_L8;
-    }
-    else
-    {
-        $award_string .= $date;
-    }
-    $award_string .= '</div><br /></td></tr>';
-
-    $text .= $award_string;
-}
-$text .= '</table><br />';
-}
-$text .= '<br />';
-$text .= '
-</div>
-</div>
-';
-
-$text .= disclaimer();
-
-$text .= '
-<script type="text/javascript">
-//<![CDATA[
-setupAllTabs();
-//]]>
-</script>
-';
+    $text .= '
+    <script type="text/javascript">
+    //<![CDATA[
+    setupAllTabs();
+    //]]>
+    </script>
+    ';
 }
 
 $ns->tablerender("$ename ($egame - ".eventType($etype).")", $text);

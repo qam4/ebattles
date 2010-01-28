@@ -119,6 +119,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
         .TBL_SCORES.", "
         .TBL_PLAYERS
         ." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+        ." AND (".TBL_MATCHS.".Status = 'active')"
         ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
         ." AND (".TBL_PLAYERS.".PlayerID = '$pid')";
 
