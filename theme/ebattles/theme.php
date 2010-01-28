@@ -1,8 +1,8 @@
 <?php
 
 // [multilanguage]
-@require_once(e_THEME."ebattles/languages/".e_LANGUAGE.".php");
-@require_once(e_THEME."ebattles/languages/English.php");
+$lan_file = e_PLUGIN."ebattles/languages/".e_LANGUAGE.".php";
+require_once(file_exists($lan_file) ? $lan_file : e_THEME."ebattles/languages/English.php");
 
 // Set theme info
 $themename = "eBattles";

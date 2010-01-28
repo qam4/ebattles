@@ -8,6 +8,7 @@ require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/match.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -51,6 +52,7 @@ else
     ." FROM ".TBL_MATCHS.", "
     .TBL_SCORES
     ." WHERE (Event = '$event_id')"
+    ." AND (".TBL_MATCHS.".Status = 'active')"
     ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
     $result = $sql->db_Query($q);
     $row = mysql_fetch_array($result);
@@ -77,14 +79,12 @@ else
     $text .= '</span><br /><br />';
 
     /* Stats/Results */
-    $q = "SELECT DISTINCT ".TBL_MATCHS.".*, "
-    .TBL_USERS.".*"
+    $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
     ." FROM ".TBL_MATCHS.", "
-    .TBL_SCORES.", "
-    .TBL_USERS
+    .TBL_SCORES
     ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
     ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-    ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
+    ." AND (".TBL_MATCHS.".Status = 'active')"
     ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
     ." $pages->limit";
 
@@ -97,120 +97,7 @@ else
         for($i=0; $i<$num_rows; $i++)
         {
             $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-            $mReportedBy  = mysql_result($result,$i, TBL_USERS.".user_id");
-            $mReportedByNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
-            $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-            $mTime_local = $mTime + TIMEOFFSET;
-            $date = date("d M Y, h:i A",$mTime_local);
-            $q2 = "SELECT DISTINCT ".TBL_MATCHS.".*, "
-            .TBL_SCORES.".Player_Rank"
-            ." FROM ".TBL_MATCHS.", "
-            .TBL_SCORES
-            ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
-            ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
-            $result2 = $sql->db_Query($q2);
-            $numRanks = mysql_numrows($result2);
-            if ($numRanks > 0)
-            {
-                $q2 = "SELECT ".TBL_MATCHS.".*, "
-                .TBL_SCORES.".*, "
-                .TBL_PLAYERS.".*, "
-                .TBL_USERS.".*"
-                ." FROM ".TBL_MATCHS.", "
-                .TBL_SCORES.", "
-                .TBL_PLAYERS.", "
-                .TBL_USERS
-                ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
-                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-                ." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
-
-                $result2 = $sql->db_Query($q2);
-                $numPlayers = mysql_numrows($result2);
-                $pname = '';
-                $players = '<tr>';
-                $scores = '';
-
-                /*
-                $players .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">';
-                $players .= '<img '.getActivityGameIconResize($mEventgameicon).'/>';
-                $players .= '</a></td>';
-                */
-
-                $players .= '<td>';
-                $rank = 1;
-                $matchteam = 0;
-                for ($index = 0; $index < $numPlayers; $index++)
-                {
-                    $puid  = mysql_result($result2,$index , TBL_USERS.".user_id");
-                    $pname  = mysql_result($result2,$index , TBL_USERS.".user_name");
-                    $prank  = mysql_result($result2,$index , TBL_SCORES.".Player_Rank");
-                    $pteam  = mysql_result($result2,$index , TBL_PLAYERS.".Team");
-                    $pmatchteam  = mysql_result($result2,$index , TBL_SCORES.".Player_MatchTeam");
-                    $pscore = mysql_result($result2,$index , TBL_SCORES.".Player_Score");
-                    list($pclan, $pclantag) = getClanName($pteam);
-
-                    if($index>0)
-                    {
-                        if ($pmatchteam == $matchteam)
-                        {
-                            $players .= ' &amp; ';
-                        }
-                        else
-                        {
-                            if ($prank == $rank)
-                            {
-                                $str = '&nbsp;'.EB_MATCH_L2.'&nbsp;';
-                            }
-                            else
-                            {
-                                $str = '&nbsp;'.EB_MATCH_L3.'&nbsp;';
-                            }
-                            $scores .= "-".$pscore;
-                            $players .= $str;
-                            $matchteam++;
-                        }
-                    }
-                    else
-                    {
-                        $matchteam = $pmatchteam;
-                        $scores .= $pscore;
-                    }
-
-                    $players .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a>';
-                }
-
-                //score here
-                if ($mEventAllowScore == TRUE)
-                {
-                    $players .= ' ('.$scores.') ';
-                }
-
-                $players .= ' (<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.EB_MATCH_L5.'</a>)';
-
-                $players .= ' <div class="smalltext">';
-                $players .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
-                if (($time-$mTime) < INT_MINUTE )
-                {
-                    $players .= EB_MATCH_L7;
-                }
-                else if (($time-$mTime) < INT_DAY )
-                {
-                    $players .= get_formatted_timediff($mTime, $time).'&nbsp;'.EB_MATCH_L8;
-                }
-                else
-                {
-                    $players .= EB_MATCH_L9.'&nbsp;'.$date.'.';
-                }
-                $nbr_comments = getCommentTotal("ebmatches", $mID);
-                $players .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.$nbr_comments.'&nbsp;';
-                $players .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
-                $players .= '</a>';
-                $players .= '</div><br /></td></tr>';
-
-                $text .= $players;
-            }
+            $text .= displayMatchInfo($mID, 1);
         }
         $text .= '</table>';
     }

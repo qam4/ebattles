@@ -219,6 +219,7 @@ function eventScoresUpdate($event_id, $current_match)
     $q = "SELECT ".TBL_MATCHS.".*"
     ." FROM ".TBL_MATCHS
     ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+    ." AND (".TBL_MATCHS.".Status = 'active')"
     ." ORDER BY TimeReported";
     $result = $sql->db_Query($q);
     $num_matches = mysql_numrows($result);

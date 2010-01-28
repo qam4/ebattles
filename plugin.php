@@ -139,7 +139,8 @@ $eplug_tables = array(
     PointsPerLoss int default '".PointsPerLoss_DEFAULT."',
     match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."',
     quick_loss_report tinyint(1) DEFAULT '1',
-    hide_ratings_column tinyint(1) DEFAULT '0'
+    hide_ratings_column tinyint(1) DEFAULT '0',
+    MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_MA_DISABLE."'
     ) TYPE = MyISAM;",
     "CREATE TABLE ".TBL_EVENTMODS."
     (
@@ -229,7 +230,8 @@ $eplug_tables = array(
     INDEX (ReportedBy),
     FOREIGN KEY (ReportedBy) REFERENCES ".TBL_USERS." (user_id),
     TimeReported int(11) unsigned not null,
-    Comments text NOT NULL
+    Comments text NOT NULL,
+    Status varchar(20) DEFAULT 'active'
     ) TYPE = MyISAM;",
     "CREATE TABLE ".TBL_PLAYERS."
     (
@@ -493,7 +495,14 @@ if ($revision < 173)
     "eb_disclaimer" => EB_ADMIN_L37
     );
 }
-
+if ($revision < 175)
+{
+    // To revision 175
+    $upgrade_alter_tables += array(
+        "ALTER TABLE ".TBL_EVENTS." ADD MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_MA_DISABLE."'",
+        "ALTER TABLE ".TBL_MATCHS." ADD Status varchar(20) DEFAULT 'active'"
+    );
+}
 /* dbg
 echo "<br>Prefs upgrade:";
 print_r($upgrade_add_prefs);

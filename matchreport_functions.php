@@ -79,7 +79,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     /////////////////
     /// MAIN FORM ///
     /////////////////
-    $text .= '<form id="f1" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$eventid.'" method="post">';
+    $text .= '<form id="matchreport" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$eventid.'" method="post">';
     $text .= '<div>';
     // TABLE - Player/Teams Add/Remove
     //----------------------------------

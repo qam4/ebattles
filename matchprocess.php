@@ -14,6 +14,13 @@ if(isset($_POST['qrsubmitloss']))
     $reported_by = $_POST['reported_by'];
     $pwinnerID = $_POST['Player'];
 
+    $q = "SELECT ".TBL_EVENTS.".*"
+    ." FROM ".TBL_EVENTS
+    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+    $result = $sql->db_Query($q);
+
+    $eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
+
     // Attention here, we use user_id, so there has to be 1 user for 1 player
     $plooserUser = $reported_by;
     $q = "SELECT *"
@@ -27,8 +34,8 @@ if(isset($_POST['qrsubmitloss']))
     // Create Match ------------------------------------------
     $comments = '';
     $q =
-    "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments)
-    VALUES ($event_id,'$reported_by',$time, '$comments')";
+    "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status)
+    VALUES ($event_id,'$reported_by',$time, '$comments', 'pending')";
     $result = $sql->db_Query($q);
 
     $last_id = mysql_insert_id();
@@ -49,17 +56,40 @@ if(isset($_POST['qrsubmitloss']))
 
     // Update scores stats
     match_scores_update($match_id);
-    match_players_update($match_id);
+
+    // Automatically Update Players stats only if Match Approval is Disabled
+    if ($eMatchesApproval == eb_MA_DISABLE)
+    {
+        match_players_update($match_id);
+
+        $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+        $result = $sql->db_Query($q);
+    }
 
     $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-    $result = $sql->db_Query($q);    
+    $result = $sql->db_Query($q);
 
     header("Location: matchinfo.php?matchid=$match_id");
+    exit;
 }
-else
+if (isset($_POST['approvematch']))
 {
-    // should not be here -> redirect
-    header("Location: events.php");
+    $event_id = $_POST['eventid'];
+    $match_id = $_POST['matchid'];
+
+    match_players_update($match_id);
+
+    $q = "UPDATE ".TBL_MATCHS." SET Status = 'active' WHERE (MatchID = '$match_id')";
+    $result = $sql->db_Query($q);
+
+    $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+    $result = $sql->db_Query($q);
+
+    header("Location: matchinfo.php?matchid=$match_id");
+    exit;
 }
+
+// should not be here -> redirect
+header("Location: events.php");
 
 ?>

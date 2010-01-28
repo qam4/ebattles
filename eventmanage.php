@@ -126,6 +126,7 @@ else
     $edescription = mysql_result($result,0 , TBL_EVENTS.".Description");
     $eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
     $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
+    $eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
     $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
     $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
     $eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
@@ -422,6 +423,38 @@ else
         {
             $text .= '/>';
         }
+        $text .='
+        </div>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Match Approval -->
+        $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+        ." FROM ".TBL_MATCHS.", "
+        .TBL_SCORES
+        ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+        ." AND (".TBL_MATCHS.".Status = 'pending')";
+        $result = $sql->db_Query($q);
+        $row = mysql_fetch_array($result);
+        $nbrMatchesPending = $row['NbrMatches'];
+
+
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L108.'</b><div class="smalltext">'.EB_EVENTM_L109.'</div></td>
+        <td class="forumheader3"><select class="tbox" name="eventmatchapprovaluserclass">';
+        $text .= '<option value="'.eb_UC_NONE.'" '.(($eMatchesApproval == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L113.'</option>';
+        //$text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.((($eMatchesApproval & eb_UC_EVENT_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L112.'</option>';
+        $text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.((($eMatchesApproval & eb_UC_EVENT_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L111.'</option>';
+        $text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.((($eMatchesApproval & eb_UC_EVENT_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L110.'</option>';
+        $text .= '</select>
+        </td>
+        </tr>
+        ';
+        $text .= ($nbrMatchesPending>0) ? '<div><b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
+
         $text .='
         </div>
         </td>

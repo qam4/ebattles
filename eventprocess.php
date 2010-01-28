@@ -183,6 +183,11 @@ else
                 $result2 = $sql->db_Query($q2);
             }
 
+            /* Event Match Approval */
+            $new_MatchesApproval = $_POST['eventmatchapprovaluserclass'];                        
+            $q2 = "UPDATE ".TBL_EVENTS." SET MatchesApproval = '$new_MatchesApproval' WHERE (EventID = '$event_id')";
+            $result2 = $sql->db_Query($q2);
+
             /* Points */
             $new_eventpointsperwin = htmlspecialchars($_POST['eventpointsperwin']);
             if (preg_match("/^\d+$/", $new_eventpointsperwin))

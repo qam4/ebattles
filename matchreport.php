@@ -81,7 +81,8 @@ $ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
 $ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
 $eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
 $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
-
+$eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
+$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
 $q = "SELECT ".TBL_PLAYERS.".*, "
 .TBL_USERS.".*"
 ." FROM ".TBL_PLAYERS.", "
@@ -184,7 +185,7 @@ if (isset($_POST['submit']))
     }
     if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
     $error_str .= '<li>'.EB_MATCHR_L9.'</li>';
-    
+
     for($i=1;$i<=$nbr_teams;$i++)
     {
         if (!isset($_POST['score'.$i])) $_POST['score'.$i] = 0;
@@ -206,96 +207,101 @@ if (isset($_POST['submit']))
 
     //$error_str = 'test';
 
-if (!empty($error_str)) {
-    // show form again
-    user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore,$userclass);
-    // errors have occured, halt execution and show form again.
-    $text .= '<p style="color:red">'.EB_MATCHR_L14;
-    $text .= '<ul style="color:red">'.$error_str.'</ul></p>';
-}
-else
-{
-    //$text .= "OK<br />";
-    $nbr_players = $_POST['nbr_players'];
-
-    $actual_rank[1] = 1;
-    for($i=1;$i<=$nbr_teams;$i++)
-    {
-        $text .= 'Rank #'.$i.': '.$_POST['rank'.$i];
-        $text .= '<br />';
-        // Calculate actual rank based on draws checkboxes
-        if ($_POST['draw'.$i] != "")
-        $actual_rank[$i] = $actual_rank[$i-1];
-        else
-        $actual_rank[$i] = $i;
+    if (!empty($error_str)) {
+        // show form again
+        user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore,$userclass);
+        // errors have occured, halt execution and show form again.
+        $text .= '<p style="color:red">'.EB_MATCHR_L14;
+        $text .= '<ul style="color:red">'.$error_str.'</ul></p>';
     }
-
-    $text .= '--------------------<br />';
-
-    $text .= 'Comments: '.$tp->toHTML($comments).'<br />';
-
-    // Create Match ------------------------------------------
-    $q =
-    "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments)
-    VALUES ($event_id,'$reported_by',$time, '$comments')";
-    $result = $sql->db_Query($q);
-
-    $last_id = mysql_insert_id();
-    $match_id = $last_id;
-
-    // Create Scores ------------------------------------------
-    for($i=1;$i<=$nbr_players;$i++)
+    else
     {
-        $pid = $_POST['player'.$i];
-        $pteam = str_replace("Team #","",$_POST['team'.$i]);
+        //$text .= "OK<br />";
+        $nbr_players = $_POST['nbr_players'];
 
-        $q =
-        "SELECT ".TBL_USERS.".*, "
-        .TBL_PLAYERS.".*"
-        ." FROM ".TBL_USERS.", "
-        .TBL_PLAYERS
-        ." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
-        ."   AND (".TBL_PLAYERS.".User     = ".TBL_USERS.".user_id)";
-        $result = $sql->db_Query($q);
-        $row = mysql_fetch_array($result);
-        $pname = $row['user_name'];
-        $puid = $row['user_id'];
-
-        for($j=1;$j<=$nbr_teams;$j++)
+        $actual_rank[1] = 1;
+        for($i=1;$i<=$nbr_teams;$i++)
         {
-            if( $_POST['rank'.$j] == "Team #".$pteam)
-            $prank = $actual_rank[$j];
+            $text .= 'Rank #'.$i.': '.$_POST['rank'.$i];
+            $text .= '<br />';
+            // Calculate actual rank based on draws checkboxes
+            if ($_POST['draw'.$i] != "")
+            $actual_rank[$i] = $actual_rank[$i-1];
+            else
+            $actual_rank[$i] = $i;
         }
 
-        for($j=1;$j<=$nbr_teams;$j++)
-        {
-            if( $_POST['rank'.$j] == "Team #".$pteam)
-            $pscore = $_POST['score'.$j];
-        }
+        $text .= '--------------------<br />';
 
+        $text .= 'Comments: '.$tp->toHTML($comments).'<br />';
+
+        // Create Match ------------------------------------------
         $q =
-        "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank)
-        VALUES ($match_id,$pid,$pteam,$pscore,$prank)
-        ";
+        "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status)
+        VALUES ($event_id,'$reported_by',$time, '$comments', 'pending')";
         $result = $sql->db_Query($q);
 
-        $text .= 'Player #'.$i.': '.$pname.' (user id:'.$puid.') (player id:'.$pid.')';
-        $text .= ' in team '.$pteam;
-        $text .= '<br />';
+        $last_id = mysql_insert_id();
+        $match_id = $last_id;
+
+        // Create Scores ------------------------------------------
+        for($i=1;$i<=$nbr_players;$i++)
+        {
+            $pid = $_POST['player'.$i];
+            $pteam = str_replace("Team #","",$_POST['team'.$i]);
+
+            $q =
+            "SELECT ".TBL_USERS.".*, "
+            .TBL_PLAYERS.".*"
+            ." FROM ".TBL_USERS.", "
+            .TBL_PLAYERS
+            ." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
+            ."   AND (".TBL_PLAYERS.".User     = ".TBL_USERS.".user_id)";
+            $result = $sql->db_Query($q);
+            $row = mysql_fetch_array($result);
+            $pname = $row['user_name'];
+            $puid = $row['user_id'];
+
+            for($j=1;$j<=$nbr_teams;$j++)
+            {
+                if( $_POST['rank'.$j] == "Team #".$pteam)
+                $prank = $actual_rank[$j];
+            }
+
+            for($j=1;$j<=$nbr_teams;$j++)
+            {
+                if( $_POST['rank'.$j] == "Team #".$pteam)
+                $pscore = $_POST['score'.$j];
+            }
+
+            $q =
+            "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank)
+            VALUES ($match_id,$pid,$pteam,$pscore,$prank)
+            ";
+            $result = $sql->db_Query($q);
+
+            $text .= 'Player #'.$i.': '.$pname.' (user id:'.$puid.') (player id:'.$pid.')';
+            $text .= ' in team '.$pteam;
+            $text .= '<br />';
+        }
+        $text .= '--------------------<br />';
+
+        // Update scores stats
+        match_scores_update($match_id);
+
+        // Automatically Update Players stats only if Match Approval is Disabled
+        if ($eMatchesApproval == eb_MA_DISABLE)
+        {
+            match_players_update($match_id);
+
+            $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+            $result = $sql->db_Query($q);
+        }
+
+        header("Location: matchinfo.php?matchid=$match_id");
+        exit();
     }
-    $text .= '--------------------<br />';
-
-    // Update scores stats
-    match_scores_update($match_id);
-    match_players_update($match_id);
-
-    $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-    $result = $sql->db_Query($q);
-
-    header("Location: matchinfo.php?matchid=$match_id");
-    exit();
-}
-// if we get here, all data checks were okay, process information as you wish.
+    // if we get here, all data checks were okay, process information as you wish.
 } else {
 
     if (!isset($_POST['matchreport']))
