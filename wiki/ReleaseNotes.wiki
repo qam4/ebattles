@@ -1,8 +1,22 @@
 #summary eBattles Release Notes.
 
+= Release 0.6.175 =
+== Features ==
+ * Added *Match Submission/Review/Approval* (Fixes issue 53)
+  * Now Event admin can choose to 
+   * enable/disable match approval
+   * who can review/approve pending matches (Event Admin/Event Mods/No One).
+  * If the feature is disabled, a match is "active" as soon as they are reported.
+  * If the feature is enabled, a match will be "pending" until a reviewer approves it.
+ * Added eBattles plugin disclaimer.
+ * Added plugin link for main menu.
+== Bug fixes ==
+ * Fixed eBattles theme issue
+  * When using French language, the page was blank, because the language file was required and missing.
+
 = Release 0.6.172 =
 == Features ==
- * Add support for Team's avatar (Fixes issue 50)
+ * Add support for *Team's avatar* (Fixes issue 50)
   * eBattles admin can: 
    * enable/disable Teams avatars in "Teams Standings" (Teams event info page) and "Teams list" page.
    * choose the default Team avatar
