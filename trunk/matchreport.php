@@ -290,7 +290,7 @@ if (isset($_POST['submit']))
         match_scores_update($match_id);
 
         // Automatically Update Players stats only if Match Approval is Disabled
-        if ($eMatchesApproval == eb_MA_DISABLE)
+        if ($eMatchesApproval == eb_UC_NONE)
         {
             match_players_update($match_id);
 

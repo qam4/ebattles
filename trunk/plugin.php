@@ -140,7 +140,7 @@ $eplug_tables = array(
     match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."',
     quick_loss_report tinyint(1) DEFAULT '1',
     hide_ratings_column tinyint(1) DEFAULT '0',
-    MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_MA_DISABLE."'
+    MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'
     ) TYPE = MyISAM;",
     "CREATE TABLE ".TBL_EVENTMODS."
     (
@@ -499,7 +499,7 @@ if ($revision < 175)
 {
     // To revision 175
     $upgrade_alter_tables += array(
-        "ALTER TABLE ".TBL_EVENTS." ADD MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_MA_DISABLE."'",
+        "ALTER TABLE ".TBL_EVENTS." ADD MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'",
         "ALTER TABLE ".TBL_MATCHS." ADD Status varchar(20) DEFAULT 'active'"
     );
 }
