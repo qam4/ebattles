@@ -83,17 +83,35 @@ if(isset($_POST['clanadddiv']))
     $clan_owner = $_POST['clanowner'];
     $div_game = $_POST['divgame'];
 
-    $q2 = "SELECT ".TBL_DIVISIONS.".*"
+    $q = "SELECT ".TBL_DIVISIONS.".*"
     ." FROM ".TBL_DIVISIONS
     ." WHERE (".TBL_DIVISIONS.".Clan = '$clan_id')"
     ."   AND (".TBL_DIVISIONS.".Game  = '$div_game')";
-    $result2 = $sql->db_Query($q2);
-    $num_rows_2 = mysql_numrows($result2);
-    if ($num_rows_2==0)
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+    if ($num_rows==0)
     {
-        $q2 = "INSERT INTO ".TBL_DIVISIONS."(Clan,Game,Captain)"
+        $q = "INSERT INTO ".TBL_DIVISIONS."(Clan,Game,Captain)"
         ." VALUES ('$clan_id','$div_game','$clan_owner')";
-        $result2 = $sql->db_Query($q2);
+        $result = $sql->db_Query($q);
+
+        $last_id = mysql_insert_id();
+        // Automatically add the clan owner to that divison, if he does not play for another team
+        $q = "SELECT ".TBL_MEMBERS.".*"
+        ." FROM ".TBL_MEMBERS.", "
+        .TBL_DIVISIONS
+        ." WHERE (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+        ." AND (".TBL_DIVISIONS.".Clan != '$clan_id')"
+        ." AND (".TBL_MEMBERS.".User = '$clan_owner')";
+        $result = $sql->db_Query($q);
+
+        if((!$result_3 || (mysql_numrows($result_3) < 1))
+        || (check_class($pref['eb_mod_class'])))
+        {
+            $q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
+            VALUES ($last_id,'$clan_owner',$time)";
+            $sql->db_Query($q);
+        }
     }
     //echo "-- clanadddiv --<br />";
     header("Location: clanmanage.php?clanid=$clan_id");
@@ -169,10 +187,10 @@ header("Location: clans.php");
 */
 if (isset($_POST['kick']))
 {
-//fm: Not good
-// We can not delete members w/o deleting the corresponding players.
-// And we can delete players only if they have not scored yet.
-// Therefore, we can only delete members if they have not played in a match yet.
+    //fm: Not good
+    // We can not delete members w/o deleting the corresponding players.
+    // And we can delete players only if they have not scored yet.
+    // Therefore, we can only delete members if they have not played in a match yet.
     $clan_id = $_GET['clanid'];
     if (count($_POST['del']) > 0)
     {
