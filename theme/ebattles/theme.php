@@ -1,7 +1,7 @@
 <?php
 
 // [multilanguage]
-$lan_file = e_PLUGIN."ebattles/languages/".e_LANGUAGE.".php";
+$lan_file = e_THEME."ebattles/languages/".e_LANGUAGE.".php";
 require_once(file_exists($lan_file) ? $lan_file : e_THEME."ebattles/languages/English.php");
 
 // Set theme info
@@ -41,7 +41,7 @@ $HEADER = "
 	<table cellpadding='0' cellspacing='3' class='topborder' style='width:100%'>
 		<tr>
             <td style='width:50%; text-align:left'>
-            
+		    {SITELINKS_ALT=no_icons+noclick}
             </td>
             <td style='width:25%; text-align:right'>
             {CUSTOM=clock}
@@ -57,18 +57,17 @@ $HEADER = "
 		</tr>
 		<tr>
 		    <td style='text-align:center; vertical-align:top' colspan='3'>
-		    {SITELINKS=flat}
 		    </td>
 		</tr>
 	</table>
 
 	<table cellpadding='0' cellspacing='0' border='0' style='width:100%; margin-top:5px'>
 		<tr>
-			<td style='width:10%; vertical-align:top;'>
+			<td class='left_menu'>
 				{MENU=1}
 			</td>
 
-			<td style='width:70%; vertical-align:top;'>
+			<td style='vertical-align:top;'>
 ";
 
 $FOOTER = "
@@ -112,11 +111,11 @@ $NEWSSTYLE = "
 	<div style='cursor:pointer' onclick=\"expandit('exp_news_{NEWSID}')\">
     <table cellpadding='0' cellspacing='0' border='0'>
 	    <tr>
-	        <td class='mt1'><img src='".THEME."images/blank.gif' width='7' height='35' alt='' class='ffimgfix' /></td>
+	        <td class='mt1'><img src='".THEME."images/blank.gif' width='7' height='20' alt='' class='ffimgfix' /></td>
 			<td class='mtm' style='width:100%;white-space:nowrap'>
 			{NEWSICON}&nbsp;{STICKY_ICON}{NEWSTITLE}
 			</td>
-		<td class='mt2'><img src='".THEME."images/blank.gif' width='19' height='35' alt='' class='ffimgfix' /></td>
+		<td class='mt2'><img src='".THEME."images/blank.gif' width='19' height='20' alt='' class='ffimgfix' /></td>
 	    </tr>
 	</table>
 	</div>
@@ -164,8 +163,8 @@ define('POST_EXTENDEDSTRING', ' ]<br />');
 
 //[mainlinkstyle]
 
-define(PRELINK, "<div>&raquo; ");
-define(POSTLINK, "</div>");
+//define(PRELINK, "<div>&raquo; ");
+//define(POSTLINK, "</div>");
 define(LINKSTART, "");
 //define(LINKEND, "<br /><img style='margin-top: 2px; margin-bottom: 2px;' width='190' height='1' src='".THEME."images/hr.png'><br />");
 define(LINKEND, "&raquo; ");
@@ -186,9 +185,9 @@ function tablestyle($caption, $text)
 	<div style='cursor:pointer' onclick=\"expandit('exp_menu_$expand_menu_counter')\">	
 	<table cellpadding='0' cellspacing='0'>
 	    <tr>
-	        <td class='mt1'><img src='".THEME."images/blank.gif' width='7' height='35' alt='' class='ffimgfix' /></td>
+	        <td class='mt1'><img src='".THEME."images/blank.gif' width='7' height='20' alt='' class='ffimgfix' /></td>
 			<td class='mtm' style='width:100%;white-space:nowrap'>".$caption."</td>
-			<td class='mt2'><img src='".THEME."images/blank.gif' width='19' height='35' alt='' class='ffimgfix' /></td>
+			<td class='mt2'><img src='".THEME."images/blank.gif' width='19' height='20' alt='' class='ffimgfix' /></td>
 	    </tr>
 	</table>
 	</div>

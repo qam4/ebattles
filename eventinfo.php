@@ -827,6 +827,7 @@ else
     ." FROM ".TBL_MATCHS.", "
     .TBL_SCORES
     ." WHERE (Event = '$event_id')"
+    ." AND (".TBL_MATCHS.".Status = 'active')"
     ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
     $result = $sql->db_Query($q);
 

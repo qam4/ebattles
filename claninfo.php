@@ -344,7 +344,7 @@ function displayTeamEvents($clan_id){
                 $erank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
                 $text .= '<tr>';
-                $text .= '<td class="forumheader3"><b><a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></b></td>
+                $text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></b></td>
                 <td class="forumheader3">'.$erank.'</td></tr>';
             }
             $text .= "</tbody></table>\n";

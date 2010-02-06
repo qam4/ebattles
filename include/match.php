@@ -360,6 +360,10 @@ function match_players_update($match_id)
             $result_3 = $sql->db_Query($q_3);
         }
     }
+    
+    $q = "UPDATE ".TBL_MATCHS." SET Status = 'active' WHERE (MatchID = '$match_id')";
+    $result = $sql->db_Query($q);
+    
     //echo $output;
     //exit;
 }
@@ -475,6 +479,7 @@ function displayMatchInfo($mID, $type = 0)
     ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
     ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
     ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
+    ." AND (".TBL_MATCHS.".Event = ".TBL_EVENTS.".EventID)"
     ." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
 
     $result = $sql->db_Query($q);
@@ -553,11 +558,11 @@ function displayMatchInfo($mID, $type = 0)
                     {
                         if ($prank == $rank)
                         {
-                            $str = '&nbsp;'.EB_MATCH_L2.'&nbsp;';
+                            $str = ' '.EB_MATCH_L2.' ';
                         }
                         else
                         {
-                            $str = '&nbsp;'.EB_MATCH_L3.'&nbsp;';
+                            $str = ' '.EB_MATCH_L3.' ';
                         }
                         $scores .= "-".$pscore;
                         $string .= $str;
@@ -581,7 +586,7 @@ function displayMatchInfo($mID, $type = 0)
 
             if ($type == 0)
             {
-                $string .= '&nbsp;'.EB_MATCH_L12.'&nbsp;'.$mEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>)';
+                $string .= ' '.EB_MATCH_L12.' '.$mEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>)';
             }
             else
             {

@@ -79,9 +79,6 @@ if (isset($_POST['approvematch']))
 
     match_players_update($match_id);
 
-    $q = "UPDATE ".TBL_MATCHS." SET Status = 'active' WHERE (MatchID = '$match_id')";
-    $result = $sql->db_Query($q);
-
     $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
     $result = $sql->db_Query($q);
 

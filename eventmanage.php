@@ -693,6 +693,22 @@ else
         $pages->mid_range = eb_PAGINATION_MIDRANGE;
         $pages->paginate();
 
+        if ($etype == "Team Ladder")
+        {
+            $q = "SELECT COUNT(*) as NbrTeams"
+            ." FROM ".TBL_TEAMS
+            ." WHERE (".TBL_TEAMS.".Event = '$event_id')";
+            $result = $sql->db_Query($q);
+            $row = mysql_fetch_array($result);
+            $numTeams = $row['NbrTeams'];
+
+            $text .= '<div class="spacer">';
+            $text .= '<p>';
+            $text .= $numTeams.' '.EB_EVENTM_L114.'<br />';
+            $text .= '</p>';
+            $text .= '</div>';
+        }
+
         $text .= '<div class="spacer">';
         $text .= '<p>';
         $text .= $numPlayers.' '.EB_EVENTM_L40.'<br />';
@@ -701,7 +717,7 @@ else
 
         if ($etype == "Team Ladder")
         {
-            // Form to add a team's divisionr to the event
+            // Form to add a team's division to the event
             $q = "SELECT ".TBL_DIVISIONS.".*, "
             .TBL_CLANS.".*"
             ." FROM ".TBL_DIVISIONS.", "
@@ -782,6 +798,56 @@ else
         $text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L49.':</td>';
         $text .= '<td>'.EB_EVENTM_L50.'</td></tr>';
         $text .= '</table>';
+
+        if ($etype == "Team Ladder")
+        {
+            // Show list of teams here
+            $q_Teams = "SELECT ".TBL_CLANS.".*, "
+            .TBL_TEAMS.".*, "
+            .TBL_DIVISIONS.".* "
+            ." FROM ".TBL_CLANS.", "
+            .TBL_TEAMS.", "
+            .TBL_DIVISIONS
+            ." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+            ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+            ." AND (".TBL_TEAMS.".Event = '$event_id')";
+            $result = $sql->db_Query($q_Teams);
+            $num_rows = mysql_numrows($result);
+            if(!$result || ($num_rows < 0)){
+                $text .= EB_EVENTM_L51.'<br />';
+            }
+            if($num_rows == 0){
+                $text .= EB_EVENTM_L115.'<br />';
+            }
+            else
+            {
+                $text .= '<table class="fborder" style="width:95%"><tbody>';
+                $text .= '<tr><td class="forumheader"><b>'.EB_CLANS_L5.'</b></td>
+                <td class="forumheader"><b>'.EB_CLANS_L6.'</b></td></tr>';
+                for($i=0; $i < $num_rows; $i++){
+                    $clanid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
+                    $cname  = mysql_result($result,$i, TBL_CLANS.".Name");
+                    $ctag  = mysql_result($result,$i, TBL_CLANS.".Tag");
+                    $cavatar  = mysql_result($result,$i, TBL_CLANS.".Image");
+                    $cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
+
+                    $image = "";
+                    if ($pref['eb_avatar_enable_teamslist'] == 1)
+                    {            if($cavatar)
+                        {
+                            $image = '<img '.getAvatarResize(getTeamAvatar($cavatar)).' style="vertical-align:middle"/>';
+                        } else if ($pref['eb_avatar_default_team_image'] != ''){
+                            $image = '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).' style="vertical-align:middle"/>';
+                        }
+                    }
+
+                    $text .= '<tr>
+                    <td class="forumheader3">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
+                    <td class="forumheader3">'.$ctag.'</td></tr>';
+                }
+                $text .= '</tbody></table>';
+            }
+        }
 
         $orderby_array = $array["$orderby"];
         $q_Players = "SELECT ".TBL_PLAYERS.".*, "

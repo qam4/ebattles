@@ -7,6 +7,7 @@ require_once(e_PLUGIN.'ebattles/include/event.php');
 
 if(isset($_POST['quitevent'])){
     $pid = $_POST['player'];
+
     // Player can quit an event if he has not played yet
     $q = "SELECT ".TBL_PLAYERS.".*"
     ." FROM ".TBL_PLAYERS.", "
@@ -17,7 +18,6 @@ if(isset($_POST['quitevent'])){
     $nbrscores = mysql_numrows($result);
     if ($nbrscores == 0)
     {
-        $pid = mysql_result($result, 0, TBL_PLAYERS.".PlayerID");
         deletePlayer($pid);
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q);
