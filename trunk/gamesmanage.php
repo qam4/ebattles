@@ -14,7 +14,7 @@ require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
-$text .="
+$text .= "
 <script type='text/javascript' src='./js/tabpane.js'></script>
 <script type='text/javascript'>
 <!--//
@@ -128,7 +128,7 @@ function displayGames(){
     else
     {
         // Paginate
-        $text .= "<br />";
+        $text .= '<br />';
         $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
         $text .= '<span style="float:right">';
         // Go To Page

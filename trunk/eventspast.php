@@ -13,7 +13,7 @@ require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 ********************************************************************/
 require_once(HEADERF);
 
-$text .='
+$text .= '
 <script type="text/javascript" src="./js/tabpane.js"></script>
 ';
 
@@ -26,7 +26,7 @@ $text .= '
 <div class="tab">'.EB_EVENTP_L2.'</div>
 ';
 displayPastEvents();
-$text .='
+$text .= '
 </div>
 </div>
 ';

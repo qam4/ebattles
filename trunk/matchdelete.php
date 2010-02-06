@@ -32,8 +32,7 @@ else
 {
     if (!isset($_POST['deletematch']))
     {
-        $text .= "<br />You are not authorized to delete this match.<br />";
-        $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+        $text .= '<br />'.EB_MATCHDEL_L2.'<br />';
     }
     else
     {
@@ -43,11 +42,11 @@ else
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q);
 
-        $text .= "<br />Match deleted<br />";
-        $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+        $text .= '<br />'.EB_MATCHDEL_L3.'<br />';
     }
+    $text .= '<br />'.EB_MATCHDEL_L4.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHDEL_L5.'</a>]<br />';
 }
-$ns->tablerender('Match Delete', $text);
+$ns->tablerender(EB_MATCHDEL_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

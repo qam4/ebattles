@@ -58,7 +58,7 @@ frm.enddate.value = ""
 //-->
 </script>
 ';
-$text .="
+$text .= "
 <script type='text/javascript'>
 <!--//
 function kick_player(v)
@@ -170,7 +170,7 @@ else
     else
     {
         //***************************************************************************************
-        $text .='
+        $text .= '
         <div class="tab-pane" id="tab-pane-3">
 
         <div class="tab-page">
@@ -255,7 +255,7 @@ else
                 $text .= '</td>';
                 $text .= '</tr>';
             }
-            $text .= "</table>";
+            $text .= '</table>';
         }
         $q = "SELECT ".TBL_USERS.".*"
         ." FROM ".TBL_USERS;
@@ -366,7 +366,7 @@ else
             $text .= '<input class="tbox" type="radio" size="40" name="eventtype" checked="checked" value="Individual" />'.EB_EVENTM_L19;
             $text .= '<input class="tbox" type="radio" size="40" name="eventtype" value="Team" />'.EB_EVENTM_L20;
         }
-        $text .='
+        $text .= '
         </div>
         </td>
         </tr>
@@ -401,7 +401,7 @@ else
         {
             $text .= '/>';
         }
-        $text .='
+        $text .= '
         </div>
         </td>
         </tr>
@@ -423,7 +423,7 @@ else
         {
             $text .= '/>';
         }
-        $text .='
+        $text .= '
         </div>
         </td>
         </tr>
@@ -455,7 +455,7 @@ else
         ';
         $text .= ($nbrMatchesPending>0) ? '<div><b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
 
-        $text .='
+        $text .= '
         </div>
         </td>
         </tr>
@@ -477,7 +477,7 @@ else
         {
             $text .= '/>';
         }
-        $text .='
+        $text .= '
         </div>
         </td>
         </tr>
@@ -595,7 +595,7 @@ else
         $text .= '<textarea class="tbox" id="eventdescription" name="eventdescription" cols="70" '.$insertjs.'>'.$edescription.'</textarea>';
         if (!e_WYSIWYG)
         {
-            $text .= "<br />".display_help("helpb",1);
+            $text .= '<br />'.display_help("helpb",1);
         }
         $text .= '
         </td>
@@ -635,7 +635,7 @@ else
         $text .= '<textarea class="tbox" id="eventrules" name="eventrules" cols="70" '.$insertjs.'>'.$erules.'</textarea>';
         if (!e_WYSIWYG)
         {
-            $text .= "<br />".display_help("helpb",1);
+            $text .= '<br />'.display_help("helpb",1);
         }
         $text .= '
         </td>
@@ -869,7 +869,7 @@ else
         else
         {
             // Paginate
-            $text .= "<br />";
+            $text .= '<br />';
             $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
             $text .= '<span style="float:right">';
             // Go To Page
@@ -951,12 +951,12 @@ else
         ';
 
         //***************************************************************************************
-        $text .='
+        $text .= '
         <div class="tab-page">
         <div class="tab">'.EB_EVENTM_L6.'</div>
         ';
         $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-        $text .='
+        $text .= '
         <table class="fborder" style="width:95%">
         <tbody>
         ';
