@@ -494,6 +494,8 @@ define('EB_MATCHQL_L1', 'Informe de perdidas');
 define('EB_MATCHQL_L2', 'Usted no esta autorizado para informar el partido.');
 define('EB_MATCHQL_L3', 'Volver a');
 define('EB_MATCHQL_L4', 'Evento');
+define('EB_MATCHQL_L5', 'Seleccione el jugador');
+define('EB_MATCHQL_L6', 'Presentar la pérdida');
 
 define('EB_GAME_L1', 'Juego desconocido');
 define('EB_GAME_L2', 'Gestionar Juego');

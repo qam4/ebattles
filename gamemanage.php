@@ -107,7 +107,7 @@ $text .= '
 <input class="tbox" type="text" id="gameIcon" name="gameIcon" value="'.$game_icon.'"/>
 <div class="smalltext">'.EB_GAME_L6.'</div>';
 
-$text .= "<div>";
+$text .= '<div>';
 $avatarlist[0] = "";
 $handle = opendir(e_PLUGIN."ebattles/images/games_icons/");
 while ($file = readdir($handle))
@@ -123,9 +123,9 @@ for($c = 1; $c <= (count($avatarlist)-1); $c++)
 {
     $text .= '<a href="javascript:changetext(\''.$avatarlist[$c].'\')"><img src="'.e_PLUGIN.'ebattles/images/games_icons/'.$avatarlist[$c].'" style="border:0" alt="" /></a> ';
 }
-$text .= "
+$text .= '
 </div>
-";
+';
 
 $text .= '
 </td>

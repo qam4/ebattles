@@ -668,8 +668,8 @@ else
         }
         $text .= '</table><br />';
     }
-    $text .= "<br />";
-    $text .="</div>";
+    $text .= '<br />';
+    $text .= '</div>';
 
     $text .= '
     </div>

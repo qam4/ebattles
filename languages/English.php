@@ -379,6 +379,7 @@ define('EB_CLAN_L25', 'Are you sure you want to quit this division?');
 
 define('EB_CLANC_L1', 'Create Team');
 define('EB_CLANC_L2', 'You are not authorized to create a team.');
+define('EB_CLANC_L3', 'You can not be the admin of more than one team.');
 
 define('EB_CLANM_L1', 'Manage');
 define('EB_CLANM_L2', 'Team Summary');
@@ -496,6 +497,8 @@ define('EB_MATCHQL_L1', 'Quick Loss Report');
 define('EB_MATCHQL_L2', 'You are not authorized to report a match.');
 define('EB_MATCHQL_L3', 'Back to');
 define('EB_MATCHQL_L4', 'Event');
+define('EB_MATCHQL_L5', 'Select the player');
+define('EB_MATCHQL_L6', 'Submit Loss');
 
 define('EB_GAME_L1', 'Unknown Game');
 define('EB_GAME_L2', 'Manage Game');

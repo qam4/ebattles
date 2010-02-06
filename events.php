@@ -325,7 +325,7 @@ function displayCurrentEvents(){
     }
     else
     {
-        //$text .= '<div>You are not authorized to create an event.</div>';
+        //$text .= '<div>'.EB_EVENTC_L2.'</div>';
     }
 }
 

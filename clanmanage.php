@@ -72,7 +72,7 @@ else
         <div class="tab">'.EB_CLANM_L2.'</div>
         ';
 
-        $text .= "<form action=\"".e_PLUGIN."ebattles/clanprocess.php?clanid=$clan_id\" method=\"post\">";
+        $text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
         $text .= '<table class="fborder" style="width:95%">';
         $text .= '<tbody>';
         $text .= '<!-- Clan -->';
@@ -105,7 +105,7 @@ else
         $text .= '<!-- Clan Owner -->';
         $text .= '<tr>';
         $text .= '<td class="forumheader3"><b>'.EB_CLANM_L7.'</b><br />';
-        $text .= "<a href=\"".e_PLUGIN."ebattles/userinfo.php?user=$clan_owner\">$clan_owner_name</a>";
+        $text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a>';
         $text .= '</td>';
 
         $q_2 = "SELECT ".TBL_USERS.".*"
@@ -160,9 +160,9 @@ else
         {
             $text .= '<img '.getAvatarResize(getTeamAvatar($clan_avatar)).' style="vertical-align:middle"/>&nbsp;';
         }
-        $text .= "<input class='tbox' type='text' id='clanavatar' name='clanavatar' size='20' value='".$clan_avatar."'/>";
+        $text .= '<input class="tbox" type="text" id="clanavatar" name="clanavatar" size="20" value="'.$clan_avatar.'"/>';
 
-        $text .= "<div><br />";
+        $text .= '<div><br />';
         $avatarlist = array();
         $avatarlist[0] = "";
         $handle = opendir(e_PLUGIN."ebattles/images/team_avatars/");
@@ -179,9 +179,9 @@ else
         {
             $text .= '<a href="javascript:changeteamtext(\''.$avatarlist[$c].'\')"><img src="'.e_PLUGIN.'ebattles/images/team_avatars/'.$avatarlist[$c].'" alt="'.$avatarlist[$c].'" style="border:0"/></a> ';
         }
-        $text .= "
+        $text .= '
         </div>
-        ";
+        ';
 
         $text .= '
         </td>

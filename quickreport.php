@@ -18,12 +18,12 @@ $event_id = $_GET['eventid'];
 
 if ( (!isset($_POST['quicklossreport'])) || (!isset($_GET['eventid'])))
 {
-    $text .= "<br />You are not authorized to report a quick loss.<br />";
-    $text .= "<br />Back to [<a href=\"".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id\">Event</a>]<br />";
+    $text .= '<br />'.EB_MATCHQL_L2.'<br />';
+    $text .= '<br />'.EB_MATCHQL_L3.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHQL_L4.'</a>]<br />';
 }
 else
 {
-    $text .= 'Select the player';
+    $text .= EB_MATCHQL_L5;
 
     $q = "SELECT ".TBL_EVENTS.".*"
     ." FROM ".TBL_EVENTS
@@ -54,7 +54,7 @@ else
     <div class="spacer">
     ';
 
-    $text .= "<form action=\"".e_PLUGIN."ebattles/matchprocess.php\" method=\"post\">";
+    $text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
     $text .= '
     <table>
     <tr>
@@ -91,12 +91,12 @@ else
     ';
 
     $reported_by = USERID;
-    $text .= "<div>";
-    $text .= "<input type=\"hidden\" name=\"eventid\" value=\"$event_id\"/>";
-    $text .= "<input type=\"hidden\" name=\"reported_by\" value=\"$reported_by\"/>";
+    $text .= '<div>';
+    $text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+    $text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 
     $text .= '
-    <input class="button" type="submit" name="qrsubmitloss" value="Submit Loss"/>
+    <input class="button" type="submit" name="qrsubmitloss" value="'.EB_MATCHQL_L6.'"/>
     </div>
     </td>
     </tr>
@@ -106,7 +106,7 @@ else
     ';
 }
 
-$ns->tablerender("$ename ($egame - ".eventType($etype).") - Quick Loss Report", $text);
+$ns->tablerender("$ename ($egame - ".eventType($etype).") - ".EB_MATCHQL_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

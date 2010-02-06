@@ -16,7 +16,7 @@ require_once(e_PLUGIN."ebattles/include/event.php");
 ********************************************************************/
 require_once(HEADERF);
 
-$text .='
+$text .= '
 <script type="text/javascript" src="./js/tabpane.js"></script>
 ';
 

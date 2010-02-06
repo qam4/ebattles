@@ -130,11 +130,11 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     {
         $text .= '<td><input class="button_disabled" type="submit" value="'.EB_MATCHR_L19.'" name="removeTeam" disabled="disabled"/></td>';
     }
-    $text .= "</tr>";
+    $text .= '</tr>';
     $text .= '</tbody></table>';
 
     //$text .= '<p><input class="inspector" type="button" value="Inspect" onclick="junkdrawer.inspectListOrder(\'matchresultlist\')"/></p>';
-    $text .= "<br />";
+    $text .= '<br />';
 
     // TABLE - Players/Teams Selection
     //----------------------------------
@@ -164,7 +164,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
         $text .= '</tr>';
     }
     $text .= '</tbody></table>';
-    $text .= "<br />";
+    $text .= '<br />';
 
     // TABLE - Teams Rank Selection
     //----------------------------------
@@ -216,7 +216,7 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     $text .= '<textarea class="tbox" id="match_comment" name="match_comment" style="width:500px" cols="70" '.$insertjs.'>'.$comment.'</textarea>';
     if (!e_WYSIWYG)
     {
-        $text .= "<br />".display_help("helpb","comment");
+        $text .= '<br />'.display_help("helpb","comment");
     }
     $text .= '</div>';
     $text .= '<br />';

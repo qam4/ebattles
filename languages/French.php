@@ -482,6 +482,8 @@ define('EB_MATCHQL_L1', 'Rapport rapide de défaite');
 define('EB_MATCHQL_L2', 'Vous n’êtes pas authorisé a soumettre un match.');
 define('EB_MATCHQL_L3', 'Retour vers');
 define('EB_MATCHQL_L4', 'Ladder');
+define('EB_MATCHQL_L5', 'Selectonnez le joueur');
+define('EB_MATCHQL_L6', 'Soumettre la Perte');
 
 define('EB_GAME_L1', 'Jeu Inconnu');
 define('EB_GAME_L2', 'Gérer le Jeu');
