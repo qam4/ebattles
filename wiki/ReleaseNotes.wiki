@@ -1,5 +1,26 @@
 #summary eBattles Release Notes.
 
+= Release 0.6.179 =
+== Features ==
+ * Added table listing the event's Teams in the Event Admin page, "Event Players" tab for Team Ladders
+ * Added Spanish language pack (courtesy of DelTree)
+ * Added some missing strings translations.
+== Bug fixes ==
+ * Fix issue 67: HTML Error in Match Info
+  * A "div" tag was not properly closed.
+ * Fix issue 68: Plugin uninstall does not delete comments and ratings
+  * Added uninstall functions purgeComments() and purgeRatings() to clean up comments/ratings during plugin uninstall
+ * Fix issue 69: Wrong link in Events tab on Team Info page
+  * Syntax error in link to event.
+ * Fix issue 70: Event Matches counter is wrong
+  * Event info match counter was counting "pending" games.
+ * Fix bug: Match display function was showing a link to a wrong event.
+ * Fix bug: When match approval is disable, matches status were not set to "active" automatically after submission.
+ * Fix bug: "Quit Event" button is not working
+ * Fix "Recent Activity" text non wrapping correctly on narrow menus.
+  * Replaced non-breaking spaces by regular spaces so text can wrap.
+ * Fix bug: Quick match report players drop-down list did not always show the correct players.
+
 = Release 0.6.175 =
 == Features ==
  * Added *Match Submission/Review/Approval* (Fixes issue 53)
