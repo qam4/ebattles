@@ -513,4 +513,17 @@ echo "<br>";
 
 $eplug_upgrade_done = $eplug_name.' successfully upgraded, now using version: '.$eplug_version;
 
+if(!function_exists("ebattles_uninstall"))
+{
+	function ebattles_uninstall()
+	{
+		global $sql;
+		$sql->db_Delete("menus", "menu_name = 'eb_activity_menu'");
+		$sql->db_Delete("menus", "menu_name = 'eb_activity_menu'");
+
+  	    //Remove comments and ratings during uninstall
+	    purgeComments("ebmatches");
+	    purgeRatings("ebscores");
+	}
+}
 ?>

@@ -32,12 +32,10 @@ else
     $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
     $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
 
-    $q = "SELECT ".TBL_PLAYERS.".*, "
-    .TBL_USERS.".*"
-    ." FROM ".TBL_PLAYERS.", "
-    .TBL_USERS
+    $q = "SELECT ".TBL_PLAYERS.".*"
+    ." FROM ".TBL_PLAYERS
     ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-    ."   AND (".TBL_USERS.".user_id = '".USERID."')";
+    ."   AND (".TBL_PLAYERS.".User = '".USERID."')";
     $result = $sql->db_Query($q);
     $uteam = mysql_result($result,0 , TBL_PLAYERS.".Team");
     

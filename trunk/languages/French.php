@@ -198,7 +198,7 @@ define('EB_EVENTM_L36', 'Description');
 define('EB_EVENTM_L37', 'Sauver les Paramètres');
 define('EB_EVENTM_L38', 'Règles');
 define('EB_EVENTM_L39', 'Sauver les Règles');
-define('EB_EVENTM_L40', 'joueurs');
+define('EB_EVENTM_L40', 'joueur(s)');
 define('EB_EVENTM_L41', 'Ajouter une Équipe');
 define('EB_EVENTM_L42', 'Ajouter l’Équipe');
 define('EB_EVENTM_L43', 'Aviser les joueurs de l’équipe par PM.');
@@ -274,6 +274,8 @@ define('EB_EVENTM_L110', 'Admin du Ladder');
 define('EB_EVENTM_L111', 'Moderateur du Ladder');
 define('EB_EVENTM_L112', 'Adversaire du Rapporteur du Match');
 define('EB_EVENTM_L113', 'Désactiver');
+define('EB_EVENTM_L114', 'équipe(s)');
+define('EB_EVENTM_L115', 'Pas d’Équipes');
 
 define('EB_EVENTP_L1', 'Ladders passés');
 define('EB_EVENTP_L2', 'Ladders passés');
@@ -361,6 +363,9 @@ define('EB_CLAN_L23', 'Pas de ladders passés');
 define('EB_CLAN_L24', 'ladder(s) passé(s)');
 define('EB_CLAN_L25', 'Etes-vous sûr de vouloir quitter cette division?');
 
+define('EB_CLANC_L1', 'Créer une Équipe');
+define('EB_CLANC_L2', 'Vous n’êtes pas autorisé à créer une équipe.');
+
 define('EB_CLANM_L1', 'Gérer');
 define('EB_CLANM_L2', 'Sommaire');
 define('EB_CLANM_L3', 'Divisions');
@@ -409,7 +414,7 @@ define('EB_MATCHD_L1', 'Détails du Match');
 define('EB_MATCHD_L2', 'Match rapporté par');
 define('EB_MATCHD_L3', 'Match effacé');
 define('EB_MATCHD_L4', 'Supprimer ce match');
-define('EB_MATCHD_L5', 'Etes-vous sûr de vouloir supprimer ce match?');
+define('EB_MATCHD_L5', 'Etes-vous sûr de vouloir effacer ce match?');
 define('EB_MATCHD_L6', 'Classement');
 define('EB_MATCHD_L7', 'Équipe');
 define('EB_MATCHD_L8', 'Joueur');
@@ -423,6 +428,12 @@ define('EB_MATCHD_L15', 'Retour vers');
 define('EB_MATCHD_L16', 'Ladder');
 define('EB_MATCHD_L17', 'Approuver ce match');
 define('EB_MATCHD_L18', 'Ce match est en attente d’homologation');
+
+define('EB_MATCHDEL_L1', 'Match');
+define('EB_MATCHDEL_L2', 'Vous n’êtes pas autorisé à effacer ce match.');
+define('EB_MATCHDEL_L3', 'Match effacé');
+define('EB_MATCHDEL_L4', 'Retour vers');
+define('EB_MATCHDEL_L5', 'Ladder');
 
 define('EB_MATCHS_L1', 'Tous les Matchs');
 define('EB_MATCHS_L2', 'match(s) joué(s)');
@@ -460,6 +471,17 @@ define('EB_MATCHR_L28', 'Classement #');
 define('EB_MATCHR_L29', 'Équipe #');
 define('EB_MATCHR_L30', 'Vos commentaires:');
 define('EB_MATCHR_L31', 'Soumettre le Match');
+
+define('EB_MATCHR_L32', 'Rapport de match');
+define('EB_MATCHR_L33', 'Vous n’êtes pas authorisé a soumettre un match.');
+define('EB_MATCHR_L34', 'Retour vers');
+define('EB_MATCHR_L35', 'Ladder');
+define('EB_MATCHR_L36', 'Vous n’êtes pas connecté.');
+
+define('EB_MATCHQL_L1', 'Rapport rapide de défaite');
+define('EB_MATCHQL_L2', 'Vous n’êtes pas authorisé a soumettre un match.');
+define('EB_MATCHQL_L3', 'Retour vers');
+define('EB_MATCHQL_L4', 'Ladder');
 
 define('EB_GAME_L1', 'Jeu Inconnu');
 define('EB_GAME_L2', 'Gérer le Jeu');

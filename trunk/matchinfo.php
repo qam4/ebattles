@@ -161,7 +161,7 @@ else
     if ($mStatus == 'active') $can_approve = 0;  
 
     if ($mStatus == 'pending')
-        $text .= '<div>'.EB_MATCHD_L18.'</div';
+        $text .= '<div>'.EB_MATCHD_L18.'</div>';
 
 
     if($can_delete != 0)

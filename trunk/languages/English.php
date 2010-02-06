@@ -196,7 +196,7 @@ define('EB_EVENTM_L20', 'Team');
 define('EB_EVENTM_L21', 'Match report userclass');
 define('EB_EVENTM_L22', 'Event Player');
 define('EB_EVENTM_L23', 'Event Moderator');
-define('EB_EVENTM_L24', 'Event Owner');
+define('EB_EVENTM_L24', 'Event Admin');
 define('EB_EVENTM_L25', 'Allow Quick Loss');
 define('EB_EVENTM_L26', 'Allow Scoring');
 define('EB_EVENTM_L27', 'Allow Draws');
@@ -212,7 +212,7 @@ define('EB_EVENTM_L36', 'Description');
 define('EB_EVENTM_L37', 'Save Settings');
 define('EB_EVENTM_L38', 'Rules');
 define('EB_EVENTM_L39', 'Save Rules');
-define('EB_EVENTM_L40', 'players');
+define('EB_EVENTM_L40', 'player(s)');
 define('EB_EVENTM_L41', 'Add a Team');
 define('EB_EVENTM_L42', 'Add Team');
 define('EB_EVENTM_L43', 'Notify the team captain by PM.');
@@ -288,6 +288,8 @@ define('EB_EVENTM_L110', 'Event Admin');
 define('EB_EVENTM_L111', 'Event Moderator');
 define('EB_EVENTM_L112', 'Match Reporter Opponent');
 define('EB_EVENTM_L113', 'Disable');
+define('EB_EVENTM_L114', 'team(s)');
+define('EB_EVENTM_L115', 'No Teams');
 
 define('EB_EVENTP_L1', 'Past Events');
 define('EB_EVENTP_L2', 'Past Events');
@@ -375,6 +377,9 @@ define('EB_CLAN_L23', 'No old events');
 define('EB_CLAN_L24', 'old event(s)');
 define('EB_CLAN_L25', 'Are you sure you want to quit this division?');
 
+define('EB_CLANC_L1', 'Create Team');
+define('EB_CLANC_L2', 'You are not authorized to create a team.');
+
 define('EB_CLANM_L1', 'Manage');
 define('EB_CLANM_L2', 'Team Summary');
 define('EB_CLANM_L3', 'Team Divisions');
@@ -438,6 +443,12 @@ define('EB_MATCHD_L16', 'Event');
 define('EB_MATCHD_L17', 'Approve this match');
 define('EB_MATCHD_L18', 'This match is pending review');
 
+define('EB_MATCHDEL_L1', 'Match Delete');
+define('EB_MATCHDEL_L2', 'You are not authorized to delete this match.');
+define('EB_MATCHDEL_L3', 'Match deleted');
+define('EB_MATCHDEL_L4', 'Back to');
+define('EB_MATCHDEL_L5', 'Event');
+
 define('EB_MATCHS_L1', 'All Matches');
 define('EB_MATCHS_L2', 'match(es) played');
 define('EB_MATCHS_L3', 'Back to');
@@ -474,6 +485,17 @@ define('EB_MATCHR_L28', 'Rank #');
 define('EB_MATCHR_L29', 'Team #');
 define('EB_MATCHR_L30', 'Your comments:');
 define('EB_MATCHR_L31', 'Submit Match');
+
+define('EB_MATCHR_L32', 'Match Report');
+define('EB_MATCHR_L33', 'You are not authorized to report a match.');
+define('EB_MATCHR_L34', 'Back to');
+define('EB_MATCHR_L35', 'Event');
+define('EB_MATCHR_L36', 'You are not logged in.');
+
+define('EB_MATCHQL_L1', 'Quick Loss Report');
+define('EB_MATCHQL_L2', 'You are not authorized to report a match.');
+define('EB_MATCHQL_L3', 'Back to');
+define('EB_MATCHQL_L4', 'Event');
 
 define('EB_GAME_L1', 'Unknown Game');
 define('EB_GAME_L2', 'Manage Game');

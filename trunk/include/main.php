@@ -367,7 +367,7 @@ function getRating($pluginid, $id, $allowrating=true, $notext=false, $userid=fal
             if ($userid)
             {
                 $text = $ratetext;
-                }
+            }
             else
             {
                 $text .= $ratetext;
@@ -405,6 +405,54 @@ function displayRating($rate, $votes) {
         $text .= "<div class='smalltext'>".EB_RATELAN_4."</div>";
     }
     return $text;
+}
+
+function purgeComments($table)
+{
+    global $sql, $tp;
+
+    // Delete any related comments
+    require_once(e_HANDLER."comment_class.php");
+    $_com = new comment;
+    
+    $q = "SELECT DISTINCT ".MPREFIX."comments.comment_item_id"
+    ." FROM ".MPREFIX."comments "
+    ." WHERE (comment_type='$table')";
+    $text .= $q.'<br>';
+
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+    for($i=0; $i<$num_rows; $i++)
+    {
+
+	    $id = mysql_result($result,$i, "comment_item_id");
+        $text .= "comment id: $id<br>";    
+        $num = $_com->delete_comments($table, $id);
+	}
+}
+
+function purgeRatings($table)
+{
+    global $sql, $tp;
+
+    // Delete any related ratings
+    require_once(e_HANDLER."rate_class.php");
+    $_rate = new rater;
+
+    $q = "SELECT DISTINCT ".MPREFIX."rate.rate_itemid"
+    ." FROM ".MPREFIX."rate "
+    ." WHERE (rate_table='$table')";
+    $text .= $q.'<br>';
+
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+    for($i=0; $i<$num_rows; $i++)
+    {
+
+	    $id = mysql_result($result,$i, "rate_itemid");
+        $text .= "rate id: $id<br>";    
+        $num = $_rate->delete_ratings($table, $id);
+	}
 }
 
 /**
@@ -471,7 +519,7 @@ function sendNotification($sendto, $subject, $message, $fromid=0) {
 function disclaimer()
 {
     global $pref;
-    
+
     return '<span class="smalltext" style="float:right">'.$pref['eb_disclaimer'].'</span>';
 }
 ?>

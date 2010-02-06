@@ -67,9 +67,9 @@ h2 {
 }
 
 body {
-	font-size: 13px;
+	font-size: 11px;
 	color: #333333;
-	font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+	font-family: 'lucida sans unicode','lucida grande',tahoma,verdana,arial,sans-serif;
 	background-color: white;
 	margin:0px 0px;
 	padding:0px;
@@ -98,7 +98,6 @@ p {
 	margin-bottom: 0px
 }
 td {
-	font-size: 11px;
 	color: #333333;
 	padding: 0px;
 	text-align:left;
@@ -112,18 +111,15 @@ td {
 }
 .bodytable {
 	padding: 8px;
-	font-size: 11px;
 	color: #333333;
 }
 .bodytable2 {
 	border: #000 1px solid;
 	padding: 8px;
-	font-size: 11px;
 	color: #000;
 }
 .bodytable3 {
 	padding: 8px;
-	font-size: 11px;
 	color: #000;
 }
 .border {
@@ -260,7 +256,6 @@ td {
 	border-top: #151515 1px solid;
 }
 .mediumtext {
-	font-size: 11px;
 	color: #333333;
 }
 .newscomments{
@@ -283,7 +278,6 @@ td {
 }
 .nforumcaption2 {
 	padding: 8px 0px 8px 4px;
-	font-size: 11px;
 	color: #333333;
 	font-weight: bold;
 	background-image: url(images/fcaption3.jpg);
@@ -292,7 +286,6 @@ td {
 	border: 1px solid #CCCCCC;
 	padding: 4px;
 	background-color: #333333;
-	font-size: 11px;
 	font-weight: bold;
 }
 .nforumdisclaimer {
@@ -334,7 +327,6 @@ td {
 	border: 1px solid #CCCCCC;
 	padding: 4px;
 	background-color: #7D7D7D;
-	font-size: 11px;
 }
 .nforumview2 {
 	border: 1px solid #CCCCCC;
@@ -386,12 +378,111 @@ td {
 	width: 0%;
 	vertical-align:top;
 	border-right: 1px dotted #ccc;
+	width: 100px;
 }
 
 .right_menu {
 	padding:0px;
-	width: 10%;
+	width: 240px;
 	vertical-align:top;
 	/*border-left: 1px solid #000;*/
 	}
+	/* Brainjar Nav Menu Classes {SITELINS_ALT} */
+/*
+If you do not use {SITELINS_ALT} and switch to the standard {SITELINKS} instead, 
+all of the below can be deleted.
+*/
+/*----------------------------------------------------------------------------*/
 	
+div.menuBar, div.menuBar a.menuButton, div.menuButton, div.menuButton_over, div.menu, div.menu a.menuItem {
+	font-size:11px;
+	font-weight: bold;
+	color: #365689;
+	text-align: left;
+}
+
+div.menuBar {
+	background-color: #fff;
+	border-top: 1px solid #fff;
+	padding: 4px 0px;
+	text-align: right;
+}
+
+div.emenuBar {
+	background-color: #F7F9FA;
+	border-top: 1px solid #fff;
+	text-align: left;
+}
+
+div.menuBar a.menuButton, div.menuButton, div.menuButton_over {
+	background-color: transparent;
+	border: 1px solid;
+	border-color: transparent !important;
+	border-color: #fff #fff #fff #fff;
+	left: 0px;
+	margin: 0px;
+	padding: 2px 6px 2px 6px;
+	position: relative;
+	text-decoration: none;
+	top: 0px;
+	z-index: 100;
+}
+
+div.menuBar a.menuButton:hover, div.menuButton:hover, div.menuButton_over {
+	background-color: #365689;
+	border-color: #fff #fff #fff #fff !important;
+	color: #fff;
+}
+
+div.menuBar a.menuButtonActive, div.menuButtonActive, div.menuButtonActive:hover, div.menuBar a.menuButtonActive:hover {
+	background-color: #126CA3;
+	border-color: #fff #fff #fff #fff !important;
+	left: 1px;
+	top: 1px;
+	color: #fff;
+}
+
+div.menu {
+	background-color: #FCFDFF;
+	border: 1px solid;
+	border-color: #fff #a5a5a5 #a5a5a5 #fff;
+	left: 0px;
+	padding: 1px;
+	position: absolute;
+	top: 0px;
+	visibility: hidden;
+	z-index: 101;
+}
+
+div.menu a.menuItem {
+	display: block;
+	padding: 2px 11px 2px 0px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+div.menu a.menuItem:hover, div.menu a.menuItemHighlight {
+	background-color: #F2F4FF;
+}
+
+div.menu a.menuItem span.menuItemBuffer, div.menu a.menuItem:hover span.menuItemBuffer {
+	padding: 0px 2px;
+}
+
+div.menu a.menuItem span.menuItemText {
+	padding: 0px 0px 0px 3px;
+}
+
+div.menu a.menuItem span.menuItemArrow {
+	margin-right: -.75em;
+}
+
+div.menu div.menuItemSep {
+	border-top: 1px solid #a5a5a5;
+	border-bottom: 1px solid #fff;
+	margin: 4px 2px;
+}
+
+a.menuItem.header {
+	border-bottom: 1px solid #b3b3b3;
+}
