@@ -48,6 +48,7 @@ function displayRecentActivity(){
         for($i=0; $i<$num_rows; $i++)
         {
             $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+            $mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
             $events[$nbr_events][0] = $mTime;
             $events[$nbr_events][1] = displayMatchInfo($mID);
             $nbr_events ++;
@@ -117,8 +118,8 @@ function displayRecentActivity(){
 
             $award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
             $award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
-            $award_string .= '&nbsp;'.$award;
-            $award_string .= '&nbsp;'.EB_MATCH_L12.'&nbsp;'.$aEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a>)';
+            $award_string .= ' '.$award;
+            $award_string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a> ('.$aEventgame.')';
 
             $award_string .= ' <div class="smalltext">';
             if (($time-$aTime) < INT_MINUTE )
