@@ -434,7 +434,7 @@ else
                 $text .= EB_USER_L15;
                 if ($cowner == USERID)
                 {
-                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">'.EB_USER_L14.'</a>)';
+                    $text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">'.EB_USER_L16.'</a>)';
                 }
             }
             else
@@ -519,7 +519,7 @@ else
     <div class="tab">'.EB_USER_L5.'</div>
     ';
 
-    /* Stats/Results */
+    /* Display Active Matches */
     /* set pagination variables */
     $q = "SELECT count(*) "
     ." FROM ".TBL_MATCHS.", "
@@ -535,6 +535,10 @@ else
     $pages->mid_range = eb_PAGINATION_MIDRANGE;
     $pages->paginate();
 
+    $text .= '<p>';
+    $text .= $totalItems.'&nbsp;'.EB_EVENT_L59;
+    $text .= '</p>';
+    
     $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
     ." FROM ".TBL_MATCHS.", "
     .TBL_SCORES.", "
@@ -550,6 +554,7 @@ else
     $num_rows = mysql_numrows($result);
     if ($num_rows>0)
     {
+        $text .= '<br />';
         // Paginate
         $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
         $text .= '<span style="float:right">';
@@ -569,6 +574,47 @@ else
         }
         $text .= '</table>';
     }
+    /* Display Pending Matches */
+/* fm
+ Need to add the user's pending matches. (done)
+ And highlight them if they need his approval (replace details icon with a thumbs up icon?)
+ Maybe do this in the displayMatchInfo() function.
+ i.e:
+  - if his userclass is enough 
+  - he is not in the reporter's matchteam
+*/
+
+    $text .= '<br />';
+
+    $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
+    .TBL_PLAYERS
+    ." WHERE (".TBL_MATCHS.".Status = 'pending')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+    ." AND (".TBL_PLAYERS.".User = '$req_user')"
+    ." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
+    $result = $sql->db_Query($q);
+    $numMatches = mysql_numrows($result);
+
+    $text .= '<p>';
+    $text .= $numMatches.'&nbsp;'.EB_EVENT_L64;
+    $text .= '</p>';
+    $text .= '<br />';
+
+    if ($numMatches>0)
+    {
+        /* Display table contents */
+        $text .= '<table class="table_left">';
+        for($i=0; $i < $numMatches; $i++)
+        {
+            $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+            $text .= displayMatchInfo($mID, 1);
+        }
+        $text .= '</table>';
+    }
+
     $text .= '</div>';
 
     /*
@@ -646,8 +692,8 @@ else
 
             $award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
             $award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
-            $award_string .= '&nbsp;'.$award;
-            $award_string .= '&nbsp;'.EB_MATCH_L12.'&nbsp;'.$aEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a>)';
+            $award_string .= ' '.$award;
+            $award_string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a> ('.$aEventgame.')';
 
             $award_string .= ' <div class="smalltext">';
             if (($time-$aTime) < INT_MINUTE )

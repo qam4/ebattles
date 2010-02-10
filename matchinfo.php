@@ -123,13 +123,36 @@ else
     $result_2 = $sql->db_Query($q_2);
     $numMods = mysql_numrows($result_2);
 
-    // Is the user an opponent of the reporter?
-    $q_2 = "SELECT ".TBL_EVENTMODS.".*"
-    ." FROM ".TBL_EVENTMODS
-    ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
-    ."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
+    $reporter_matchteam = 0;
+    $q_2 = "SELECT DISTINCT ".TBL_SCORES.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
+    .TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+    ." AND (".TBL_PLAYERS.".User = '$reported_by')";
     $result_2 = $sql->db_Query($q_2);
-    $numMods = mysql_numrows($result_2);
+    $numRows = mysql_numrows($result_2);
+    if ($numRows>0)
+    {
+      $reporter_matchteam = mysql_result($result_2,0, TBL_SCORES.".Player_MatchTeam");
+    }
+
+    // Is the user an opponent of the reporter?
+    $q_2 = "SELECT DISTINCT ".TBL_SCORES.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
+    .TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+    ." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
+    ." AND (".TBL_PLAYERS.".User = ".USERID.")";
+    $result_2 = $sql->db_Query($q_2);
+    $numOpps = mysql_numrows($result_2);
 
     $can_approve = 0;
     $can_delete = 0;
@@ -154,6 +177,11 @@ else
     if (check_class($pref['eb_mod_class']))
     {
         $userclass |= eb_UC_EB_MODERATOR;
+        $can_approve = 1;
+    }
+    if ($numOpps>0)
+    {
+        $userclass |= eb_UC_EVENT_PLAYER;
         $can_approve = 1;
     }
     if($userclass < $eMatchesApproval) $can_approve = 0;
@@ -201,6 +229,7 @@ else
         $pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
         $puid  = mysql_result($result,$i, TBL_USERS.".user_id");
         $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+        $pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
         $pscoreid  = mysql_result($result,$i, TBL_SCORES.".ScoreID");
         $prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
         $pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
@@ -213,12 +242,23 @@ else
 
         $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
         list($pclan, $pclantag) = getClanName($pteam);
+        
+        $image = "";
+        if ($pref['eb_avatar_enable_playersstandings'] == 1)
+        {
+            if($pavatar)
+            {
+                $image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
+            } else if ($pref['eb_avatar_default_image'] != ''){
+                $image = '<img '.getAvatarResize(getAvatar($pref['eb_avatar_default_image'])).' style="vertical-align:middle"/>';
+            }
+        }
 
         //$text .= "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
         $text .= '<tr>';
         $text .= '<td class="forumheader3"><b>'.$prank.'</b></td>
         <td class="forumheader3">'.$pMatchTeam.'</td>
-        <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>
+        <td class="forumheader3">'.$image.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>
         <td class="forumheader3">'.$pscore.'</td>
         <td class="forumheader3">'.$ppoints.'</td>
         <td class="forumheader3">'.$pdeltaELO.'</td>

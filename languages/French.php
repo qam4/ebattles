@@ -409,6 +409,7 @@ define('EB_MATCH_L9', 'le');
 define('EB_MATCH_L10', 'commentaires');
 define('EB_MATCH_L11', 'commentaire');
 define('EB_MATCH_L12', 'en jouant');
+define('EB_MATCH_L13', 'A besoin de votre approbation');
 
 define('EB_MATCHD_L1', 'Détails du Match');
 define('EB_MATCHD_L2', 'Match rapporté par');

@@ -446,7 +446,7 @@ else
         <td class="forumheader3"><b>'.EB_EVENTM_L108.'</b><div class="smalltext">'.EB_EVENTM_L109.'</div></td>
         <td class="forumheader3"><select class="tbox" name="eventmatchapprovaluserclass">';
         $text .= '<option value="'.eb_UC_NONE.'" '.(($eMatchesApproval == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L113.'</option>';
-        //$text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.((($eMatchesApproval & eb_UC_EVENT_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L112.'</option>';
+        $text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.((($eMatchesApproval & eb_UC_EVENT_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L112.'</option>';
         $text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.((($eMatchesApproval & eb_UC_EVENT_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L111.'</option>';
         $text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.((($eMatchesApproval & eb_UC_EVENT_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L110.'</option>';
         $text .= '</select>
