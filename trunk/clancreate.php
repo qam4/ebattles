@@ -26,7 +26,7 @@ else
     $result = $sql->db_Query($q);
     header("Location: clanmanage.php?clanid=".$last_id);
 }
-$ns->tablerender(EB_CLANC_L2, $text);
+$ns->tablerender(EB_CLANC_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>
