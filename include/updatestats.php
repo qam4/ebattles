@@ -437,7 +437,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
             }
         }
 
-        $q_update = "UPDATE ".TBL_PLAYERS." SET OverallScore = $OverallScore[$player] WHERE (PlayerID = '$id[$player]') AND (Event = '$event_id')";
+        $q_update = "UPDATE ".TBL_PLAYERS." SET OverallScore = '".floatToSQL($OverallScore[$player])."' WHERE (PlayerID = '$id[$player]') AND (Event = '$event_id')";
         $result_update = $sql->db_Query($q_update);
     }
     
