@@ -25,7 +25,9 @@ List of things that can be customized in events
      * Type: 1v1 or team ladder
      * Match report userclass
      * Enable/disable quick loss report
-     * Enable/disable scoring, and draws
+     * Enable/disable scoring
+     * Match approval userclass
+     * Enable/disable draws
      * Points per win/draw/loss   
      * Dates (start/end)
      * Description
@@ -38,7 +40,14 @@ List of things that can be customized in events
        * Kick: You can kick (delete) a player who has no games played and no awards. A kicked player can re-signup to the event.
        * Ban: You can temporarily ban/unban a player. A banned player can no longer play in the event or sign up to the event during the duration of the ban.
   # Event Reset
-     * reset players/teams, reset scores, delete event
+     * Reset players/teams
+       * Reset players/teams stats
+       * Delete all Matches
+       * Delete all Awards. 
+     * Reset Event
+       * Delete all Players and Teams.
+       * Delete all Matches.
+     * Delete Event
      * Recalculate Event Stats: Reset and recalculate players stats.
   # Event Stats
      * Number of games to rank, number of team games to rank
