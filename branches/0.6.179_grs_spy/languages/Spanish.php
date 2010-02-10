@@ -423,6 +423,7 @@ define('EB_MATCH_L9', 'en');
 define('EB_MATCH_L10', 'comentarios');
 define('EB_MATCH_L11', 'comentario');
 define('EB_MATCH_L12', 'Jugando');
+define('EB_MATCH_L13', 'Las necesidades de su aprobación');
 
 define('EB_MATCHD_L1', 'Detalles del Partido');
 define('EB_MATCHD_L2', 'Partido informado por');

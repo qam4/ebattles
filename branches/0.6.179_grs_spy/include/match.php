@@ -360,10 +360,10 @@ function match_players_update($match_id)
             $result_3 = $sql->db_Query($q_3);
         }
     }
-    
+
     $q = "UPDATE ".TBL_MATCHS." SET Status = 'active' WHERE (MatchID = '$match_id')";
     $result = $sql->db_Query($q);
-    
+
     //echo $output;
     //exit;
 }
@@ -461,10 +461,11 @@ function deleteMatchScores($match_id)
     //exit;
 }
 
-function displayMatchInfo($mID, $type = 0)
+function displayMatchInfo($match_id, $type = 0)
 {
     global $time;
     global $sql;
+    global $pref;
 
     $string ='';
     $q = "SELECT ".TBL_MATCHS.".*, "
@@ -476,7 +477,7 @@ function displayMatchInfo($mID, $type = 0)
     .TBL_USERS.", "
     .TBL_EVENTS.", "
     .TBL_GAMES
-    ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
+    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
     ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
     ." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
     ." AND (".TBL_MATCHS.".Event = ".TBL_EVENTS.".EventID)"
@@ -490,10 +491,13 @@ function displayMatchInfo($mID, $type = 0)
         $mReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
         $mEventID  = mysql_result($result, 0, TBL_EVENTS.".EventID");
         $mEventName  = mysql_result($result, 0, TBL_EVENTS.".Name");
+        $mEventOwner  = mysql_result($result, 0, TBL_EVENTS.".Owner");
         $mEventgame = mysql_result($result, 0, TBL_GAMES.".Name");
         $mEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
         $mEventType  = mysql_result($result, 0, TBL_EVENTS.".Type");
         $mEventAllowScore = mysql_result($result, 0, TBL_EVENTS.".AllowScore");
+        $mEventMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
+        $mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
         $mTime  = mysql_result($result, 0, TBL_MATCHS.".TimeReported");
         $mTime_local = $mTime + TIMEOFFSET;
         $date = date("d M Y, h:i A",$mTime_local);
@@ -502,12 +506,71 @@ function displayMatchInfo($mID, $type = 0)
         .TBL_SCORES.".Player_Rank"
         ." FROM ".TBL_MATCHS.", "
         .TBL_SCORES
-        ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
+        ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
         ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
         $result2 = $sql->db_Query($q2);
         $numRanks = mysql_numrows($result2);
         if ($numRanks > 0)
         {
+            $can_approve = 0;
+            $userclass = 0;
+
+            $reporter_matchteam = 0;
+            $q_2 = "SELECT DISTINCT ".TBL_SCORES.".*"
+            ." FROM ".TBL_MATCHS.", "
+            .TBL_SCORES.", "
+            .TBL_PLAYERS.", "
+            .TBL_USERS
+            ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+            ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+            ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+            ." AND (".TBL_PLAYERS.".User = '$mReportedBy')";
+            $result_2 = $sql->db_Query($q_2);
+            $numRows = mysql_numrows($result_2);
+            if ($numRows>0)
+            {
+                $reporter_matchteam = mysql_result($result_2,0, TBL_SCORES.".Player_MatchTeam");
+            }
+
+            // Is the user an opponent of the reporter?
+            $q_2 = "SELECT DISTINCT ".TBL_SCORES.".*"
+            ." FROM ".TBL_MATCHS.", "
+            .TBL_SCORES.", "
+            .TBL_PLAYERS.", "
+            .TBL_USERS
+            ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+            ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+            ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+            ." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
+            ." AND (".TBL_PLAYERS.".User = ".USERID.")";
+            $result_2 = $sql->db_Query($q_2);
+            $numOpps = mysql_numrows($result_2);
+
+            $can_approve = 0;
+            if (USERID==$mEventOwner)
+            {
+                $userclass |= eb_UC_EVENT_OWNER;
+                $can_approve = 1;
+            }
+            if ($numMods>0)
+            {
+                $userclass |= eb_UC_EB_MODERATOR;
+                $can_approve = 1;
+            }
+            if (check_class($pref['eb_mod_class']))
+            {
+                $userclass |= eb_UC_EB_MODERATOR;
+                $can_approve = 1;
+            }
+            if ($numOpps>0)
+            {
+                $userclass |= eb_UC_EVENT_PLAYER;
+                $can_approve = 1;
+            }
+            if($userclass < $mEventMatchesApproval) $can_approve = 0;
+            if($mEventMatchesApproval == eb_UC_NONE) $can_approve = 0;
+            if ($mStatus == 'active') $can_approve = 0;
+
             $q2 = "SELECT ".TBL_MATCHS.".*, "
             .TBL_SCORES.".*, "
             .TBL_PLAYERS.".*, "
@@ -516,7 +579,7 @@ function displayMatchInfo($mID, $type = 0)
             .TBL_SCORES.", "
             .TBL_PLAYERS.", "
             .TBL_USERS
-            ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
+            ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
             ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
             ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
             ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
@@ -530,7 +593,7 @@ function displayMatchInfo($mID, $type = 0)
 
             if ($type == 0)
             {
-                $string .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="Match '.$mID.'">';
+                $string .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'" title="'.$mEventgame.'">';
                 $string .= '<img '.getActivityGameIconResize($mEventgameicon).'/>';
                 $string .= '</a></td>';
             }
@@ -586,15 +649,19 @@ function displayMatchInfo($mID, $type = 0)
 
             if ($type == 0)
             {
-                $string .= ' '.EB_MATCH_L12.' '.$mEventgame.' (<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>)';
+                $string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>';
+            }
+            if ($can_approve == 1)
+            {
+                $string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/></a>';
             }
             else
             {
-                $string .= ' (<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.EB_MATCH_L5.'</a>)';
+                $string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img src="'.e_PLUGIN.'ebattles/images/magnify.png" alt="'.EB_MATCH_L5.'" title="'.EB_MATCH_L5.'" style="vertical-align:text-top;"/></a>';
             }
             $string .= ' <div class="smalltext">';
             $string .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
-            
+
             if (($time-$mTime) < INT_MINUTE )
             {
                 $string .= EB_MATCH_L7;
@@ -607,8 +674,8 @@ function displayMatchInfo($mID, $type = 0)
             {
                 $string .= EB_MATCH_L9.'&nbsp;'.$date.'.';
             }
-            $nbr_comments = getCommentTotal("ebmatches", $mID);
-            $string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$mID.'" title="'.EB_MATCH_L4.'&nbsp;'.$mID.'">'.$nbr_comments.'&nbsp;';
+            $nbr_comments = getCommentTotal("ebmatches", $match_id);
+            $string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'" title="'.EB_MATCH_L4.'&nbsp;'.$match_id.'">'.$nbr_comments.'&nbsp;';
             $string .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
             $string .= '</a>';
             $string .= '</div></td></tr>';
