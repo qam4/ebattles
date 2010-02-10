@@ -1,5 +1,18 @@
 #summary eBattles Release Notes.
 
+= Release 0.6.180 =
+== Features ==
+ * Added new userclass option for Match Approval: "*Match Reporter Opponent*"
+  * If this option is chosen in the event admin panel, any opponent of the reporter of a match can approve the match.
+ * Improved match info display.
+  * Added a "magnify" icon with a link to the match details page.
+  * Added an "exclamation" icon with a link to the match details page if the match is pending and the user is allowed to approve it.
+ * Added avatars in match details page.
+== Bug fixes ==
+ * Fix bug: in "Recent Activity" menu, matches were not shown in the list because the match time was not retrieved properly.
+ * Fixed typo: In User profile page, "Events" tab, "Owner" table, changed the text of the link to event manage page from "Status" to "Manage".
+ * Fix title of Clan Create page.
+
 = Release 0.6.179 =
 == Features ==
  * Added table listing the event's Teams in the Event Admin page, "Event Players" tab for Team Ladders
