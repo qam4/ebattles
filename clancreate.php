@@ -24,9 +24,20 @@ else
     $row = mysql_fetch_array($result); 
     $userNbrClans = $row['UserNbrClans']; 
 
+    $q = "SELECT COUNT(*) as UserNbrMembers" 
+    ." FROM ".TBL_MEMBERS 
+    ." WHERE (".TBL_MEMBERS.".User = '$userid')"; 
+    $result = $sql->db_Query($q); 
+    $row = mysql_fetch_array($result); 
+    $userNbrMembers = $row['UserNbrMembers']; 
+
     if (($userNbrClans > 0)&&(!check_class($pref['eb_mod_class'])))
     { 
         $text .= '<br />'.EB_CLANC_L3.'<br />'; 
+    } 
+    else if (($userNbrMembers > 0)&&(!check_class($pref['eb_mod_class'])))
+    { 
+        $text .= '<br />'.EB_CLANC_L4.'<br />'; 
     } 
     else 
     { 

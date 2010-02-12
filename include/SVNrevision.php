@@ -6,25 +6,24 @@
 // which writes: /include/SVNrevision.php
 //
 
-$svnRevision = "183";
+$svnRevision = "186";
 $svnModified = "Modified";
-$svnDate = "2010/02/06 15:55:21";
-$svnRevRange = "185";
+$svnDate = "2010/02/10 00:50:28";
+$svnRevRange = "191";
 $svnMixed = "Not mixed";
 $svnURL = "https://ebattles.googlecode.com/svn/branches/0.6.179_grs_spy/include";
 
 $thisRevRange = explode(':', $svnRevRange);
 $startRange = $thisRevRange[0];
-$endRange = '';
+$endRange = $startRange;
+$svnRevRange = $startRange;
 if(isset($thisRevRange[1]))
 {
-  $endRange = $thisRevRange[1];
+    $endRange = $thisRevRange[1];
+    $svnRevRange = $startRange . ":" . $endRange;
 }
 
-$endRange = $endRange + 1;
-$svnRevRange = $startRange . ":" . $endRange;
-
-$svnRevision = $svnRevision + 1;
+$svnRevision = $endRange + 1;
 
 $now = date("F j, Y, g:i a");
 echo " \n";

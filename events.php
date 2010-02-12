@@ -98,8 +98,10 @@ function displayCurrentEvents(){
     }
 
     // Drop down list to select Games to display
-    $q = "SELECT ".TBL_GAMES.".*"
-    ." FROM ".TBL_GAMES
+    $q = "SELECT DISTINCT ".TBL_GAMES.".*"
+    ." FROM ".TBL_GAMES.", "
+    . TBL_EVENTS
+    ." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
     ." ORDER BY Name";
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
@@ -344,8 +346,10 @@ function displayRecentEvents(){
     if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
     $gameid = $_GET['gameid'];
 
-    $q = "SELECT ".TBL_GAMES.".*"
-    ." FROM ".TBL_GAMES
+    $q = "SELECT DISTINCT ".TBL_GAMES.".*"
+    ." FROM ".TBL_GAMES.", "
+    . TBL_EVENTS
+    ." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
     ." ORDER BY Name";
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
