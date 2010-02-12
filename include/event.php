@@ -32,8 +32,8 @@ function resetPlayers($event_id)
             $pID  = mysql_result($result2,$j, TBL_PLAYERS.".PlayerID");
             $q3 = "UPDATE ".TBL_PLAYERS
             ." SET ELORanking = '$eELOdefault',"
-            ."     TS_mu = '$eTS_default_mu',"
-            ."     TS_sigma = '$eTS_default_sigma',"
+            ."     TS_mu = '".floatToSQL($eTS_default_mu)."',"
+            ."     TS_sigma = '".floatToSQL($eTS_default_sigma)."',"
             ."     GamesPlayed = 0,"
             ."     Loss = 0,"
             ."     Win = 0,"
@@ -77,8 +77,8 @@ function resetTeams($event_id)
             $tID  = mysql_result($result2,$j, TBL_TEAMS.".PlayerID");
             $q3 = "UPDATE ".TBL_TEAMS
             ." SET ELORanking = '$eELOdefault',"
-            ."     TS_mu = '$eTS_default_mu',"
-            ."     TS_sigma = '$eTS_default_sigma',"
+            ."     TS_mu = '".floatToSQL($eTS_default_mu)."',"
+            ."     TS_sigma = '".floatToSQL($eTS_default_sigma)."',"
             ."     GamesPlayed = 0,"
             ."     Loss = 0,"
             ."     Win = 0,"
@@ -214,6 +214,8 @@ function eventScoresUpdate($event_id, $current_match)
     global $sql;
     global $time;
 
+    //echo "dbg: current_match $current_match<br>";
+
     $numMatchsPerUpdate = 10;
 
     $q = "SELECT ".TBL_MATCHS.".*"
@@ -223,8 +225,9 @@ function eventScoresUpdate($event_id, $current_match)
     ." ORDER BY TimeReported";
     $result = $sql->db_Query($q);
     $num_matches = mysql_numrows($result);
-
-    if ($current_match >= $num_matches)
+    //echo "dbg: num_matches $num_matches<br>";
+    
+    if ($current_match > $num_matches)
     {
         updateStats($event_id, $time, TRUE);
         echo "Done.";
@@ -262,11 +265,12 @@ function eventScoresUpdate($event_id, $current_match)
 
                 $next_match = $j + 2;
                 $mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
+                $time_reported  = mysql_result($result,$j, TBL_MATCHS.".TimeReported");
 
                 match_scores_update($mID);
                 match_players_update($mID);
-                if ($update_stats) updateStats($event_id, $time_reported, FALSE);
-                if ($update_stats && ($etype == "Team Ladder")) updateTeamStats($event_id, $time_reported, FALSE);
+                updateStats($event_id, $time_reported, FALSE);
+                if ($etype == "Team Ladder") updateTeamStats($event_id, $time_reported, FALSE);
 
 
                 //echo 'match '.$j.': '.$mID.'<br>';
