@@ -380,6 +380,7 @@ define('EB_CLAN_L25', 'Are you sure you want to quit this division?');
 define('EB_CLANC_L1', 'Create Team');
 define('EB_CLANC_L2', 'You are not authorized to create a team.');
 define('EB_CLANC_L3', 'You can not be the admin of more than one team.');
+define('EB_CLANC_L4', 'You can not create a team if you are already member of another team.');
 
 define('EB_CLANM_L1', 'Manage');
 define('EB_CLANM_L2', 'Team Summary');

@@ -15,16 +15,15 @@ $svnURL = "$WCURL$";
 
 $thisRevRange = explode(':', $svnRevRange);
 $startRange = $thisRevRange[0];
-$endRange = '';
+$endRange = $startRange;
+$svnRevRange = $startRange;
 if(isset($thisRevRange[1]))
 {
-  $endRange = $thisRevRange[1];
+    $endRange = $thisRevRange[1];
+    $svnRevRange = $startRange . ":" . $endRange;
 }
 
-$endRange = $endRange + 1;
-$svnRevRange = $startRange . ":" . $endRange;
-
-$svnRevision = $svnRevision + 1;
+$svnRevision = $endRange + 1; // Next revision number
 
 $now = date("F j, Y, g:i a");
 echo " \n";

@@ -2,3 +2,4 @@
 SET path=%path%;C:\Programs\TortoiseSVN\bin\
 
 subWcRev.exe "." ".\SVNrevisionTemplate.php" ".\SVNrevision.php" 
+pause
