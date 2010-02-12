@@ -305,8 +305,8 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
         $q_update = "UPDATE ".TBL_TEAMS
         ." SET ELORanking = $tELO,"
-        ."     TS_mu = $tTS_mu,"
-        ."     TS_sigma = $tTS_sigma,"
+        ."     TS_mu = '".floatToSQL($tTS_mu)."',"
+        ."     TS_sigma = '".floatToSQL($tTS_sigma)."',"
         ."     Loss = $tloss,"
         ."     Win = $twin,"
         ."     Draw = $tdraw,"
@@ -518,7 +518,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         }
 
         $q_update = "UPDATE ".TBL_TEAMS
-        ." SET OverallScore = $OverallScore[$team]"
+        ." SET OverallScore = '".floatToSQL($OverallScore[$team])."'"
         ." WHERE (TeamID = '$id[$team]')"
         ."   AND (Event = '$event_id')";
         $result_update = $sql->db_Query($q_update);
