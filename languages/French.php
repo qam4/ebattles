@@ -62,6 +62,18 @@ define('EB_ADMIN_L36', 'Liste des Équipes');
 define('EB_ADMIN_L37', 'Powered by <a href=&quot;http://ebattles.freehostia.com/&quot; rel=&quot;external&quot;>eBattles</a>');
 define('EB_ADMIN_L38', 'Plugin Copyright');
 
+define('EB_ADMINHELP_L1', 'eBattles Aide');
+define('EB_ADMINHELP_L2', 'Version');
+define('EB_ADMINHELP_L3', 'Homepage: <a href="http://ebattles.freehostia.com" title="ebattles.freehostia.com">eBattles</a>');
+define('EB_ADMINHELP_L4', 'Forum: <a href="http://ebattles.freehostia.com/e107_plugins/forum/forum.php" title="eBattles Forum">eBattles Forum</a>');
+define('EB_ADMINHELP_L5', 'Wiki: <a href="http://code.google.com/p/ebattles/wiki/TableOfContents?tm=6" title="eBattles Wiki">eBattles Wiki</a>');
+define('EB_ADMINHELP_L6', 'Support: <a href="http://ebattles.freehostia.com/e107_plugins/forum/forum.php" title="eBattles Support">eBattles Support</a>');
+define('EB_ADMINHELP_L7', 'SVN repository: <a href="http://code.google.com/p/ebattles/source/checkout" title="eBattles Source code">eBattles Source code</a>');
+define('EB_ADMINHELP_L8', '');
+define('EB_ADMINHELP_L9', '');
+define('EB_ADMINHELP_L10', '');
+define('EB_ADMINHELP_L11', '');
+
 define('EB_RATELAN_0', 'vote');
 define('EB_RATELAN_1', 'votes');
 define('EB_RATELAN_2', 'Comment évaluez-vous ce joueur?');
@@ -365,6 +377,8 @@ define('EB_CLAN_L25', 'Etes-vous sûr de vouloir quitter cette division?');
 
 define('EB_CLANC_L1', 'Créer une Équipe');
 define('EB_CLANC_L2', 'Vous n’êtes pas autorisé à créer une équipe.');
+define('EB_CLANC_L3', 'Vous ne pouvez pas être l’admin de plus d’une équipe.');
+define('EB_CLANC_L4', 'Vous ne pouvez pas créer une équipe si vous faites déjà parti d’une équipe.');
 
 define('EB_CLANM_L1', 'Gérer');
 define('EB_CLANM_L2', 'Sommaire');

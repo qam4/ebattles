@@ -378,6 +378,8 @@ define('EB_CLAN_L25', '&iquest;Estas seguro de que desea salir desta division?')
 
 define('EB_CLANC_L1', 'Crear equipo');
 define('EB_CLANC_L2', 'Usted no esta autorizado a crear un equipo.');
+define('EB_CLANC_L3', 'Usted no puede ser el administrador de más de un equipo.');
+
 define('EB_CLANM_L1', 'Gestionar');
 define('EB_CLANM_L2', 'Resume del Equipo');
 define('EB_CLANM_L3', 'Division de Equipos');
