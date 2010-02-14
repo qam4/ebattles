@@ -6,25 +6,24 @@
 // which writes: /include/SVNrevision.php
 //
 
-$svnRevision = "184";
+$svnRevision = "187";
 $svnModified = "Modified";
-$svnDate = "2010/02/09 20:38:58";
-$svnRevRange = "183:184";
-$svnMixed = "Mixed revision WC";
-$svnURL = "https://ebattles.googlecode.com/svn/trunk";
+$svnDate = "2010/02/10 16:30:23";
+$svnRevRange = "193";
+$svnMixed = "Not mixed";
+$svnURL = "https://ebattles.googlecode.com/svn/trunk/include";
 
 $thisRevRange = explode(':', $svnRevRange);
 $startRange = $thisRevRange[0];
-$endRange = '';
+$endRange = $startRange;
+$svnRevRange = $startRange;
 if(isset($thisRevRange[1]))
 {
   $endRange = $thisRevRange[1];
+    $svnRevRange = $startRange . ":" . $endRange;
 }
 
-$endRange = $endRange + 1;
-$svnRevRange = $startRange . ":" . $endRange;
-
-$svnRevision = $svnRevision + 1;
+$svnRevision = $endRange + 1; // Next revision number
 
 $now = date("F j, Y, g:i a");
 echo " \n";

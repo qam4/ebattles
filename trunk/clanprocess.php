@@ -83,17 +83,23 @@ if(isset($_POST['clanadddiv']))
     $clan_owner = $_POST['clanowner'];
     $div_game = $_POST['divgame'];
 
-    $q2 = "SELECT ".TBL_DIVISIONS.".*"
+    $q = "SELECT ".TBL_DIVISIONS.".*"
     ." FROM ".TBL_DIVISIONS
     ." WHERE (".TBL_DIVISIONS.".Clan = '$clan_id')"
     ."   AND (".TBL_DIVISIONS.".Game  = '$div_game')";
-    $result2 = $sql->db_Query($q2);
-    $num_rows_2 = mysql_numrows($result2);
-    if ($num_rows_2==0)
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+    if ($num_rows==0)
     {
-        $q2 = "INSERT INTO ".TBL_DIVISIONS."(Clan,Game,Captain)"
+        $q = "INSERT INTO ".TBL_DIVISIONS."(Clan,Game,Captain)"
         ." VALUES ('$clan_id','$div_game','$clan_owner')";
-        $result2 = $sql->db_Query($q2);
+        $result = $sql->db_Query($q);
+
+        $last_id = mysql_insert_id();
+        // Automatically add the clan owner to that divison
+        $q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
+        VALUES ($last_id,'$clan_owner',$time)";
+        $sql->db_Query($q);
     }
     //echo "-- clanadddiv --<br />";
     header("Location: clanmanage.php?clanid=$clan_id");
