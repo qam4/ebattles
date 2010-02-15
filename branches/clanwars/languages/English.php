@@ -107,6 +107,7 @@ define('EB_EVENTS_L21', 'Show all past events');
 define('EB_EVENTS_L22', 'Individual Ladder');
 define('EB_EVENTS_L23', 'Team Ladder');
 define('EB_EVENTS_L24', 'Filter');
+define('EB_EVENTS_L25', 'Clan War');
 
 define('EB_EVENT_L1', 'Events');
 define('EB_EVENT_L2', 'Event starts in');
@@ -177,7 +178,7 @@ define('EB_EVENTM_L1', 'Manage');
 define('EB_EVENTM_L2', 'Event Summary');
 define('EB_EVENTM_L3', 'Event Settings');
 define('EB_EVENTM_L4', 'Event Rules');
-define('EB_EVENTM_L5', 'Event Players');
+define('EB_EVENTM_L5', 'Event Players/Teams');
 define('EB_EVENTM_L6', 'Event Reset');
 define('EB_EVENTM_L7', 'Event Stats');
 define('EB_EVENTM_L8', 'Ladder');
@@ -290,6 +291,7 @@ define('EB_EVENTM_L112', 'Match Reporter Opponent');
 define('EB_EVENTM_L113', 'Disable');
 define('EB_EVENTM_L114', 'team(s)');
 define('EB_EVENTM_L115', 'No Teams');
+define('EB_EVENTM_L116', 'Clan War');
 
 define('EB_EVENTP_L1', 'Past Events');
 define('EB_EVENTP_L2', 'Past Events');

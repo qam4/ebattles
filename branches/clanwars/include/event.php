@@ -226,7 +226,7 @@ function eventScoresUpdate($event_id, $current_match)
     $result = $sql->db_Query($q);
     $num_matches = mysql_numrows($result);
     //echo "dbg: num_matches $num_matches<br>";
-    
+
     if ($current_match > $num_matches)
     {
         updateStats($event_id, $time, TRUE);
@@ -334,13 +334,13 @@ function eventAddPlayer($event_id, $user, $team = 0, $notify)
         {
             $sendto = $user;
             $subject = "$ename";
-            $message = 
+            $message =
             "Hello $username,
-            
+
             You are invited to participate in the \"$ename\" ladder.
             Please click the following link to view the ladder details:
             <a href='".e_PLUGIN."ebattles/eventinfo.php?eventid=$event_id'>$ename</a>.
-            
+
             Cordially,
             ".USERNAME." (ladder admin)";
             sendNotification($sendto, $subject, $message, $fromid=0);
@@ -356,57 +356,75 @@ function eventAddDivision($event_id, $div_id, $notify)
 {
     global $sql;
 
+    /* Event Info */
+    $q = "SELECT ".TBL_EVENTS.".*"
+    ." FROM ".TBL_EVENTS
+    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+    $result = $sql->db_Query($q);
+    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+    $eELOdefault = mysql_result($result, 0, TBL_EVENTS.".ELO_default");
+    $eTS_default_mu = mysql_result($result, 0, TBL_EVENTS.".TS_default_mu");
+    $eTS_default_sigma = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
+
+    $add_players = ( $etype == "ClanWar" ? FALSE : TRUE);
+
     // Is the division signed up
     $q = "SELECT ".TBL_TEAMS.".*"
     ." FROM ".TBL_TEAMS
     ." WHERE (".TBL_TEAMS.".Event = '$event_id')"
     ." AND (".TBL_TEAMS.".Division = '$div_id')";
     $result = $sql->db_Query($q);
-    $num_rows = mysql_numrows($result);
-    if($num_rows == 0)
+    $numTeams = mysql_numrows($result);
+    if($numTeams == 0)
     {
-        $q = "INSERT INTO ".TBL_TEAMS."(Event,Division)
-        VALUES ($event_id,$div_id)";
+        $q = "INSERT INTO ".TBL_TEAMS."(Event,Division,ELORanking,TS_mu,TS_sigma)
+        VALUES ($event_id,$div_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
         $sql->db_Query($q);
         $team_id =  mysql_insert_id();
 
-        // All members of this division will automatically be signed up to this event
-        $q_2 = "SELECT ".TBL_DIVISIONS.".*, "
-        .TBL_MEMBERS.".*, "
-        .TBL_USERS.".*"
-        ." FROM ".TBL_DIVISIONS.", "
-        .TBL_USERS.", "
-        .TBL_MEMBERS
-        ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
-        ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-        ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)";
-        $result_2 = $sql->db_Query($q_2);
-        $num_rows_2 = mysql_numrows($result_2);
-        if($num_rows_2 > 0)
+        if ($add_players == TRUE)
         {
-            for($j=0; $j<$num_rows_2; $j++)
+            // All members of this division will automatically be signed up to this event
+            $q_2 = "SELECT ".TBL_DIVISIONS.".*, "
+            .TBL_MEMBERS.".*, "
+            .TBL_USERS.".*"
+            ." FROM ".TBL_DIVISIONS.", "
+            .TBL_USERS.", "
+            .TBL_MEMBERS
+            ." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+            ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+            ." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)";
+            $result_2 = $sql->db_Query($q_2);
+            $num_rows_2 = mysql_numrows($result_2);
+            if($num_rows_2 > 0)
             {
-                $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
-                eventAddPlayer ($event_id, $mid, $team_id, $notify);
+                for($j=0; $j<$num_rows_2; $j++)
+                {
+                    $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+                    eventAddPlayer ($event_id, $mid, $team_id, $notify);
+                }
+                $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+                $result = $sql->db_Query($q4);
             }
-            $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-            $result = $sql->db_Query($q4);
         }
     }
 }
 
 function eventType($type)
 {
-	switch($type)
-	{
-		case "One Player Ladder":
-		return EB_EVENTS_L22;
-		break;
-		case "Team Ladder":
-		return EB_EVENTS_L23;
-		break;
-		default:
-		return $type;
-	}
+    switch($type)
+    {
+        case "One Player Ladder":
+        return EB_EVENTS_L22;
+        break;
+        case "Team Ladder":
+        return EB_EVENTS_L23;
+        break;
+        case "ClanWar":
+        return EB_EVENTS_L25;
+        break;
+        default:
+        return $type;
+    }
 }
 ?>
