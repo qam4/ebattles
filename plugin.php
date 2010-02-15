@@ -274,6 +274,9 @@ $eplug_tables = array(
     Player int NOT NULL,
     INDEX (Player),
     FOREIGN KEY (Player) REFERENCES ".TBL_PLAYERS." (PlayerID),
+    Team int NOT NULL,
+    INDEX (Team),
+    FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID),
     Player_MatchTeam int DEFAULT '0',
     Player_deltaELO int DEFAULT '0',
     Player_deltaTS_mu float DEFAULT '0',
@@ -503,6 +506,17 @@ if ($revision < 175)
         "ALTER TABLE ".TBL_MATCHS." ADD Status varchar(20) DEFAULT 'active'"
     );
 }
+if ($revision < 196)
+{
+    // To revision 196
+    $upgrade_alter_tables += array(
+        "ALTER TABLE ".TBL_SCORES." ADD Team int NOT NULL",
+        "ALTER TABLE ".TBL_SCORES." CREATE INDEX Team ON ".TBL_TEAMS,
+        "ALTER TABLE ".TBL_SCORES." ADD FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID)"
+    );
+}
+
+
 /* dbg
 echo "<br>Prefs upgrade:";
 print_r($upgrade_add_prefs);

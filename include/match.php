@@ -23,6 +23,7 @@ function match_scores_update($match_id)
     $ePointPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
     $ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
     $ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
+    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
 
     // Initialize scores ELO/TrueSkill
     $deltaELO = 0;
@@ -51,135 +52,270 @@ function match_scores_update($match_id)
             {
                 $output .= "Team $i vs. Team $j<br />";
 
-                $q = "SELECT ".TBL_MATCHS.".*, "
-                .TBL_SCORES.".*, "
-                .TBL_PLAYERS.".*, "
-                .TBL_USERS.".*"
-                ." FROM ".TBL_MATCHS.", "
-                .TBL_SCORES.", "
-                .TBL_PLAYERS.", "
-                .TBL_USERS
-                ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-                ." AND (".TBL_SCORES.".Player_MatchTeam = '$i')";
-                $resultA = $sql->db_Query($q);
-                $NbrPlayersTeamA = mysql_numrows($resultA);
-                $teamA_Rank= mysql_result($resultA,0, TBL_SCORES.".Player_Rank");
-                $teamA_ELO=0;
-                $teamA_TS_mu=0;
-                $teamA_TS_sigma2=0;
-                for ($k=0;$k<$NbrPlayersTeamA;$k++)
+                switch($etype)
                 {
-                    $teamA_ELO += mysql_result($resultA,$k, TBL_PLAYERS.".ELORanking");
-                    $teamA_TS_mu += mysql_result($resultA,$k, TBL_PLAYERS.".TS_mu");
-                    $teamA_TS_sigma2 += pow(mysql_result($resultA,$k, TBL_PLAYERS.".TS_sigma"),2);
-                }
-                $teamA_TS_sigma = sqrt($teamA_TS_sigma2);
-                $output .= "Team $i ELO: $teamA_ELO, rank: $teamA_Rank<br />";
-                $output .= "Team $i TS: mu = $teamA_TS_mu, sigma= $teamA_TS_sigma<br />";
+                    case "One Player Ladder":
+                    case "Team Ladder":
+                    $q = "SELECT ".TBL_MATCHS.".*, "
+                    .TBL_SCORES.".*, "
+                    .TBL_PLAYERS.".*"
+                    ." FROM ".TBL_MATCHS.", "
+                    .TBL_SCORES.", "
+                    .TBL_PLAYERS
+                    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+                    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+                    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+                    ." AND (".TBL_SCORES.".Player_MatchTeam = '$i')";
+                    $resultA = $sql->db_Query($q);
+                    $NbrPlayersTeamA = mysql_numrows($resultA);
+                    $teamA_Rank= mysql_result($resultA,0, TBL_SCORES.".Player_Rank");
+                    $teamA_ELO=0;
+                    $teamA_TS_mu=0;
+                    $teamA_TS_sigma2=0;
+                    for ($k=0;$k<$NbrPlayersTeamA;$k++)
+                    {
+                        $teamA_ELO += mysql_result($resultA,$k, TBL_PLAYERS.".ELORanking");
+                        $teamA_TS_mu += mysql_result($resultA,$k, TBL_PLAYERS.".TS_mu");
+                        $teamA_TS_sigma2 += pow(mysql_result($resultA,$k, TBL_PLAYERS.".TS_sigma"),2);
+                    }
+                    $teamA_TS_sigma = sqrt($teamA_TS_sigma2);
+                    $output .= "Team $i ELO: $teamA_ELO, rank: $teamA_Rank<br />";
+                    $output .= "Team $i TS: mu = $teamA_TS_mu, sigma= $teamA_TS_sigma<br />";
 
-                $q = "SELECT ".TBL_MATCHS.".*, "
-                .TBL_SCORES.".*, "
-                .TBL_PLAYERS.".*, "
-                .TBL_USERS.".*"
-                ." FROM ".TBL_MATCHS.", "
-                .TBL_SCORES.", "
-                .TBL_PLAYERS.", "
-                .TBL_USERS
-                ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-                ." AND (".TBL_SCORES.".Player_MatchTeam = '$j')";
-                $resultB = $sql->db_Query($q);
-                $NbrPlayersTeamB = mysql_numrows($resultB);
-                $teamB_Rank= mysql_result($resultB,0, TBL_SCORES.".Player_Rank");
-                $teamB_ELO=0;
-                $teamB_TS_mu=0;
-                $teamB_TS_sigma2=0;
-                for ($k=0;$k<$NbrPlayersTeamB;$k++)
-                {
-                    $teamB_ELO += mysql_result($resultB,$k, TBL_PLAYERS.".ELORanking");
-                    $teamB_TS_mu += mysql_result($resultB,$k, TBL_PLAYERS.".TS_mu");
-                    $teamB_TS_sigma2 += pow(mysql_result($resultB,$k, TBL_PLAYERS.".TS_sigma"),2);
-                }
-                $teamB_TS_sigma = sqrt($teamB_TS_sigma2);
-                $output .= "Team $j ELO: $teamB_ELO, rank: $teamB_Rank<br />";
-                $output .= "Team $j TS: mu = $teamB_TS_mu, sigma= $teamB_TS_sigma<br />";
+                    $q = "SELECT ".TBL_MATCHS.".*, "
+                    .TBL_SCORES.".*, "
+                    .TBL_PLAYERS.".*"
+                    ." FROM ".TBL_MATCHS.", "
+                    .TBL_SCORES.", "
+                    .TBL_PLAYERS
+                    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+                    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+                    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+                    ." AND (".TBL_SCORES.".Player_MatchTeam = '$j')";
+                    $resultB = $sql->db_Query($q);
+                    $NbrPlayersTeamB = mysql_numrows($resultB);
+                    $teamB_Rank= mysql_result($resultB,0, TBL_SCORES.".Player_Rank");
+                    $teamB_ELO=0;
+                    $teamB_TS_mu=0;
+                    $teamB_TS_sigma2=0;
+                    for ($k=0;$k<$NbrPlayersTeamB;$k++)
+                    {
+                        $teamB_ELO += mysql_result($resultB,$k, TBL_PLAYERS.".ELORanking");
+                        $teamB_TS_mu += mysql_result($resultB,$k, TBL_PLAYERS.".TS_mu");
+                        $teamB_TS_sigma2 += pow(mysql_result($resultB,$k, TBL_PLAYERS.".TS_sigma"),2);
+                    }
+                    $teamB_TS_sigma = sqrt($teamB_TS_sigma2);
+                    $output .= "Team $j ELO: $teamB_ELO, rank: $teamB_Rank<br />";
+                    $output .= "Team $j TS: mu = $teamB_TS_mu, sigma= $teamB_TS_sigma<br />";
 
-                // New ELO ------------------------------------------
-                $M=min($NbrPlayersTeamA,$NbrPlayersTeamB)*$eELO_M;      // Span
-                $K=$eELO_K;	// Max adjustment per game
-                $deltaELO = ELO($M, $K, $teamA_ELO, $teamB_ELO, $teamA_Rank, $teamB_Rank);
-                $output .= "deltaELO: $deltaELO<br />";
+                    // New ELO ------------------------------------------
+                    $M=min($NbrPlayersTeamA,$NbrPlayersTeamB)*$eELO_M;      // Span
+                    $K=$eELO_K;	// Max adjustment per game
+                    $deltaELO = ELO($M, $K, $teamA_ELO, $teamB_ELO, $teamA_Rank, $teamB_Rank);
+                    $output .= "deltaELO: $deltaELO<br />";
 
-                // New TrueSkill ------------------------------------------
-                $beta=$eTS_beta;          // beta
-                $epsilon=$eTS_epsilon;    // draw probability
-                $update = Trueskill_update($epsilon,$beta, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Rank, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Rank);
+                    // New TrueSkill ------------------------------------------
+                    $beta=$eTS_beta;          // beta
+                    $epsilon=$eTS_epsilon;    // draw probability
+                    $update = Trueskill_update($epsilon,$beta, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Rank, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Rank);
 
-                $teamA_deltaTS_mu = $update[0];
-                $teamA_deltaTS_sigma = $update[1];
-                $teamB_deltaTS_mu = $update[2];
-                $teamB_deltaTS_sigma = $update[3];
-                $output .= "Team $i TS: delta mu = $teamA_deltaTS_mu, delta sigma= $teamA_deltaTS_sigma<br />";
-                $output .= "Team $j TS: delta mu = $teamB_deltaTS_mu, delta sigma= $teamB_deltaTS_sigma<br />";
+                    $teamA_deltaTS_mu = $update[0];
+                    $teamA_deltaTS_sigma = $update[1];
+                    $teamB_deltaTS_mu = $update[2];
+                    $teamB_deltaTS_sigma = $update[3];
+                    $output .= "Team $i TS: delta mu = $teamA_deltaTS_mu, delta sigma= $teamA_deltaTS_sigma<br />";
+                    $output .= "Team $j TS: delta mu = $teamB_deltaTS_mu, delta sigma= $teamB_deltaTS_sigma<br />";
 
-                // Update Scores ------------------------------------------
-                for ($k=0;$k<$NbrPlayersTeamA;$k++)
-                {
-                    $scoreELO = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaELO");
-                    $scoreTS_mu = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_mu");
-                    $scoreTS_sigma = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_sigma");
-                    $pid = mysql_result($resultA,$k, TBL_PLAYERS.".PlayerID");
-                    $scoreELO += $deltaELO/$NbrPlayersTeamA;
-                    $scoreTS_mu += $teamA_deltaTS_mu/$NbrPlayersTeamA;
-                    $scoreTS_sigma *= $teamA_deltaTS_sigma;
-                    $q = "UPDATE ".TBL_SCORES
-                    ." SET Player_deltaELO = $scoreELO,"
-                    ."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
-                    ."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."'"
-                    ." WHERE (MatchID = '$match_id')"
-                    ."   AND (Player = '$pid')";
-                    $result = $sql->db_Query($q);
-                }
-                for ($k=0;$k<$NbrPlayersTeamB;$k++)
-                {
-                    $scoreELO = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaELO");
-                    $scoreTS_mu = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_mu");
-                    $scoreTS_sigma = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_sigma");
-                    $pid = mysql_result($resultB,$k, TBL_PLAYERS.".PlayerID");
-                    $scoreELO -= $deltaELO/$NbrPlayersTeamB;
-                    $scoreTS_mu += $teamB_deltaTS_mu/$NbrPlayersTeamB;
-                    $scoreTS_sigma *= $teamB_deltaTS_sigma;
-                    $q = "UPDATE ".TBL_SCORES
-                    ." SET Player_deltaELO = $scoreELO,"
-                    ."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
-                    ."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."'"
-                    ." WHERE (MatchID = '$match_id')"
-                    ." AND (Player = '$pid')";
-                    $result = $sql->db_Query($q);
+                    // Update Scores ------------------------------------------
+                    for ($k=0;$k<$NbrPlayersTeamA;$k++)
+                    {
+                        $scoreELO = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaELO");
+                        $scoreTS_mu = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_mu");
+                        $scoreTS_sigma = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_sigma");
+                        $pid = mysql_result($resultA,$k, TBL_PLAYERS.".PlayerID");
+                        $scoreELO += $deltaELO/$NbrPlayersTeamA;
+                        $scoreTS_mu += $teamA_deltaTS_mu/$NbrPlayersTeamA;
+                        $scoreTS_sigma *= $teamA_deltaTS_sigma;
+                        $q = "UPDATE ".TBL_SCORES
+                        ." SET Player_deltaELO = $scoreELO,"
+                        ."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
+                        ."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."'"
+                        ." WHERE (MatchID = '$match_id')"
+                        ."   AND (Player = '$pid')";
+                        $result = $sql->db_Query($q);
+                    }
+                    for ($k=0;$k<$NbrPlayersTeamB;$k++)
+                    {
+                        $scoreELO = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaELO");
+                        $scoreTS_mu = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_mu");
+                        $scoreTS_sigma = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_sigma");
+                        $pid = mysql_result($resultB,$k, TBL_PLAYERS.".PlayerID");
+                        $scoreELO -= $deltaELO/$NbrPlayersTeamB;
+                        $scoreTS_mu += $teamB_deltaTS_mu/$NbrPlayersTeamB;
+                        $scoreTS_sigma *= $teamB_deltaTS_sigma;
+                        $q = "UPDATE ".TBL_SCORES
+                        ." SET Player_deltaELO = $scoreELO,"
+                        ."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
+                        ."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."'"
+                        ." WHERE (MatchID = '$match_id')"
+                        ." AND (Player = '$pid')";
+                        $result = $sql->db_Query($q);
+                    }
+                    break;
+                    case "ClanWar":
+                    $q = "SELECT ".TBL_MATCHS.".*, "
+                    .TBL_SCORES.".*, "
+                    .TBL_TEAMS.".*"
+                    ." FROM ".TBL_MATCHS.", "
+                    .TBL_SCORES.", "
+                    .TBL_TEAMS
+                    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+                    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+                    ." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+                    ." AND (".TBL_SCORES.".Player_MatchTeam = '$i')";
+                    $resultA = $sql->db_Query($q);
+                    $NbrPlayersTeamA = mysql_numrows($resultA);
+                    $teamA_Rank= mysql_result($resultA,0, TBL_SCORES.".Player_Rank");
+                    $teamA_ELO=0;
+                    $teamA_TS_mu=0;
+                    $teamA_TS_sigma2=0;
+                    for ($k=0;$k<$NbrPlayersTeamA;$k++)
+                    {
+                        $teamA_ELO += mysql_result($resultA,$k, TBL_TEAMS.".ELORanking");
+                        $teamA_TS_mu += mysql_result($resultA,$k, TBL_TEAMS.".TS_mu");
+                        $teamA_TS_sigma2 += pow(mysql_result($resultA,$k, TBL_TEAMS.".TS_sigma"),2);
+                    }
+                    $teamA_TS_sigma = sqrt($teamA_TS_sigma2);
+                    $output .= "Team $i ELO: $teamA_ELO, rank: $teamA_Rank<br />";
+                    $output .= "Team $i TS: mu = $teamA_TS_mu, sigma= $teamA_TS_sigma<br />";
+
+                    $q = "SELECT ".TBL_MATCHS.".*, "
+                    .TBL_SCORES.".*, "
+                    .TBL_TEAMS.".*"
+                    ." FROM ".TBL_MATCHS.", "
+                    .TBL_SCORES.", "
+                    .TBL_TEAMS
+                    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+                    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+                    ." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+                    ." AND (".TBL_SCORES.".Player_MatchTeam = '$j')";
+                    $resultB = $sql->db_Query($q);
+                    $NbrPlayersTeamB = mysql_numrows($resultB);
+                    $teamB_Rank= mysql_result($resultB,0, TBL_SCORES.".Player_Rank");
+                    $teamB_ELO=0;
+                    $teamB_TS_mu=0;
+                    $teamB_TS_sigma2=0;
+                    for ($k=0;$k<$NbrPlayersTeamB;$k++)
+                    {
+                        $teamB_ELO += mysql_result($resultB,$k, TBL_TEAMS.".ELORanking");
+                        $teamB_TS_mu += mysql_result($resultB,$k, TBL_TEAMS.".TS_mu");
+                        $teamB_TS_sigma2 += pow(mysql_result($resultB,$k, TBL_TEAMS.".TS_sigma"),2);
+                    }
+                    $teamB_TS_sigma = sqrt($teamB_TS_sigma2);
+                    $output .= "Team $j ELO: $teamB_ELO, rank: $teamB_Rank<br />";
+                    $output .= "Team $j TS: mu = $teamB_TS_mu, sigma= $teamB_TS_sigma<br />";
+
+                    // New ELO ------------------------------------------
+                    $M=min($NbrPlayersTeamA,$NbrPlayersTeamB)*$eELO_M;      // Span
+                    $K=$eELO_K;	// Max adjustment per game
+                    $deltaELO = ELO($M, $K, $teamA_ELO, $teamB_ELO, $teamA_Rank, $teamB_Rank);
+                    $output .= "deltaELO: $deltaELO<br />";
+
+                    // New TrueSkill ------------------------------------------
+                    $beta=$eTS_beta;          // beta
+                    $epsilon=$eTS_epsilon;    // draw probability
+                    $update = Trueskill_update($epsilon,$beta, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Rank, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Rank);
+
+                    $teamA_deltaTS_mu = $update[0];
+                    $teamA_deltaTS_sigma = $update[1];
+                    $teamB_deltaTS_mu = $update[2];
+                    $teamB_deltaTS_sigma = $update[3];
+                    $output .= "Team $i TS: delta mu = $teamA_deltaTS_mu, delta sigma= $teamA_deltaTS_sigma<br />";
+                    $output .= "Team $j TS: delta mu = $teamB_deltaTS_mu, delta sigma= $teamB_deltaTS_sigma<br />";
+
+                    // Update Scores ------------------------------------------
+                    for ($k=0;$k<$NbrPlayersTeamA;$k++)
+                    {
+                        $scoreELO = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaELO");
+                        $scoreTS_mu = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_mu");
+                        $scoreTS_sigma = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_sigma");
+                        $pid = mysql_result($resultA,$k, TBL_TEAMS.".TeamID");
+                        $scoreELO += $deltaELO/$NbrPlayersTeamA;
+                        $scoreTS_mu += $teamA_deltaTS_mu/$NbrPlayersTeamA;
+                        $scoreTS_sigma *= $teamA_deltaTS_sigma;
+                        $q = "UPDATE ".TBL_SCORES
+                        ." SET Player_deltaELO = $scoreELO,"
+                        ."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
+                        ."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."'"
+                        ." WHERE (MatchID = '$match_id')"
+                        ."   AND (Team = '$pid')";
+                        $result = $sql->db_Query($q);
+                    }
+                    for ($k=0;$k<$NbrPlayersTeamB;$k++)
+                    {
+                        $scoreELO = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaELO");
+                        $scoreTS_mu = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_mu");
+                        $scoreTS_sigma = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_sigma");
+                        $pid = mysql_result($resultB,$k, TBL_TEAMS.".TeamID");
+                        $scoreELO -= $deltaELO/$NbrPlayersTeamB;
+                        $scoreTS_mu += $teamB_deltaTS_mu/$NbrPlayersTeamB;
+                        $scoreTS_sigma *= $teamB_deltaTS_sigma;
+                        $q = "UPDATE ".TBL_SCORES
+                        ." SET Player_deltaELO = $scoreELO,"
+                        ."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
+                        ."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."'"
+                        ." WHERE (MatchID = '$match_id')"
+                        ." AND (Team = '$pid')";
+                        $result = $sql->db_Query($q);
+                    }
+                    break;
+                    default:
                 }
             }
         }
         $output .= '<br />';
 
         // Update scores Wins, Draws, Losses, points, score against
-        $q =
-        "SELECT ".TBL_SCORES.".*, "
-        .TBL_PLAYERS.".*"
-        ." FROM ".TBL_SCORES.", "
-        .TBL_PLAYERS
-        ." WHERE (".TBL_SCORES.".MatchID = '$match_id')"
-        ."   AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+        switch($etype)
+        {
+            case "One Player Ladder":
+            case "Team Ladder":
+            $q =
+            "SELECT ".TBL_SCORES.".*, "
+            .TBL_PLAYERS.".*"
+            ." FROM ".TBL_SCORES.", "
+            .TBL_PLAYERS
+            ." WHERE (".TBL_SCORES.".MatchID = '$match_id')"
+            ."   AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+            break;
+            case "ClanWar":
+            $q =
+            "SELECT ".TBL_SCORES.".*, "
+            .TBL_TEAMS.".*"
+            ." FROM ".TBL_SCORES.", "
+            .TBL_TEAMS
+            ." WHERE (".TBL_SCORES.".MatchID = '$match_id')"
+            ."   AND (".TBL_SCORES.".Team = ".TBL_TEAMS.".TeamID)";
+            break;
+            default:
+        }
+
         $result = $sql->db_Query($q);
         $nbr_players = mysql_numrows($result);
         for($i=0;$i<$nbr_players;$i++)
         {
+            switch($etype)
+            {
+                case "One Player Ladder":
+                case "Team Ladder":
+                $pid= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+                break;
+                case "ClanWar":
+                $pid= mysql_result($result,$i, TBL_TEAMS.".TeamID");
+                break;
+                default:
+            }
             $scoreid= mysql_result($result,$i, TBL_SCORES.".ScoreID");
-            $pid= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
             $prank= mysql_result($result,$i, TBL_SCORES.".Player_Rank");
             $pteam= mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
             $pwin = 0;
@@ -190,7 +326,6 @@ function match_scores_update($match_id)
 
             for($j=0;$j<$nbr_players;$j++)
             {
-                $oppid= mysql_result($result,$j, TBL_PLAYERS.".PlayerID");
                 $opprank= mysql_result($result,$j, TBL_SCORES.".Player_Rank");
                 $oppteam= mysql_result($result,$j, TBL_SCORES.".Player_MatchTeam");
                 $oppscore= mysql_result($result,$j, TBL_SCORES.".Player_Score");
@@ -214,14 +349,34 @@ function match_scores_update($match_id)
                 }
             }
             $pOppScore /= $pnbrOpps;
-            $q_1 = "UPDATE ".TBL_SCORES
-            ." SET Player_Win = $pwin,"
-            ."     Player_Draw = $pdraw,"
-            ."     Player_Loss = $ploss,"
-            ."     Player_Points = $pwin*$ePointPerWin + $pdraw*$ePointPerDraw + $ploss*$ePointPerLoss,"
-            ."     Player_ScoreAgainst = $pOppScore"
-            ." WHERE (MatchID = '$match_id')"
-            ." AND (Player = '$pid')";
+
+            switch($etype)
+            {
+                case "One Player Ladder":
+                case "Team Ladder":
+                $q_1 = "UPDATE ".TBL_SCORES
+                ." SET Player_Win = $pwin,"
+                ."     Player_Draw = $pdraw,"
+                ."     Player_Loss = $ploss,"
+                ."     Player_Points = $pwin*$ePointPerWin + $pdraw*$ePointPerDraw + $ploss*$ePointPerLoss,"
+                ."     Player_ScoreAgainst = $pOppScore"
+                ." WHERE (MatchID = '$match_id')"
+                ." AND (Player = '$pid')";
+                break;
+                case "ClanWar":
+                $q_1 = "UPDATE ".TBL_SCORES
+                ." SET Player_Win = $pwin,"
+                ."     Player_Draw = $pdraw,"
+                ."     Player_Loss = $ploss,"
+                ."     Player_Points = $pwin*$ePointPerWin + $pdraw*$ePointPerDraw + $ploss*$ePointPerLoss,"
+                ."     Player_ScoreAgainst = $pOppScore"
+                ." WHERE (MatchID = '$match_id')"
+                ." AND (Team = '$pid')";
+                break;
+                default:
+            }
+
+
             $result_1 = $sql->db_Query($q_1);
         }
         $output .= '<br />';
@@ -354,7 +509,7 @@ function match_players_update($match_id)
         ."     RankDelta = 0"
         ." WHERE (PlayerID = '$pid')";
         $result_3 = $sql->db_Query($q_3);
-        
+
         if ($etype == "Team Ladder")
         {
             // Reset rank delta after a match.

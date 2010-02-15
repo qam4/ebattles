@@ -176,7 +176,7 @@ define('EB_EVENTM_L1', 'Gestionar - EVENTO');
 define('EB_EVENTM_L2', 'Resumen');
 define('EB_EVENTM_L3', 'Configuracion');
 define('EB_EVENTM_L4', 'Reglas');
-define('EB_EVENTM_L5', 'Jugadores');
+define('EB_EVENTM_L5', 'Jugadores/Equipos');
 define('EB_EVENTM_L6', 'Reiniciar');
 define('EB_EVENTM_L7', 'Estadisticas');
 define('EB_EVENTM_L8', 'Evento');

@@ -229,27 +229,30 @@ else
         ." ORDER BY Name";
         $result = $sql->db_Query($q);
         /* Error occurred, return given name by default */
-        $num_rows = mysql_numrows($result);
-        $text .= '<tr>';
-        $text .= '<td class="forumheader3">';
-        $text .= EB_CLANM_L13;
-        $text .= '</td>';
-        $text .= '<td class="forumheader3">';
-        $text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
-        $text .= '<div>';
-        $text .= '<select class="tbox" name="divgame">';
-        for($i=0; $i<$num_rows; $i++){
-            $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
-            $gid  = mysql_result($result,$i, TBL_GAMES.".GameId");
-            $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
+        $numGames = mysql_numrows($result);
+        if ($numGames > 0)
+        {
+            $text .= '<tr>';
+            $text .= '<td class="forumheader3">';
+            $text .= EB_CLANM_L13;
+            $text .= '</td>';
+            $text .= '<td class="forumheader3">';
+            $text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
+            $text .= '<div>';
+            $text .= '<select class="tbox" name="divgame">';
+            for($i=0; $i < $numGames; $i++){
+                $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
+                $gid  = mysql_result($result,$i, TBL_GAMES.".GameId");
+                $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
+            }
+            $text .= '</select>';
+            $text .= '<input type="hidden" name="clanowner" value="'.$clan_owner.'"/>';
+            $text .= '<input class="button" type="submit" name="clanadddiv" value="'.EB_CLANM_L14.'"/>';
+            $text .= '</div>';
+            $text .= '</form>';
+            $text .= '</td>';
+            $text .= '</tr>';
         }
-        $text .= '</select>';
-        $text .= '<input type="hidden" name="clanowner" value="'.$clan_owner.'"/>';
-        $text .= '<input class="button" type="submit" name="clanadddiv" value="'.EB_CLANM_L14.'"/>';
-        $text .= '</div>';
-        $text .= '</form>';
-        $text .= '</td>';
-        $text .= '</tr>';
 
         $q = "SELECT ".TBL_CLANS.".*, "
         .TBL_DIVISIONS.".*, "

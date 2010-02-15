@@ -53,6 +53,7 @@ else
         $uteam = mysql_result($result,0 , TBL_SCORES.".Player_MatchTeam");
     }
 
+    // Get event information
     $q = "SELECT ".TBL_EVENTS.".*, "
     .TBL_GAMES.".*, "
     .TBL_MATCHS.".*, "
@@ -79,19 +80,45 @@ else
     $reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
     $reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
 
-    $q = "SELECT ".TBL_MATCHS.".*, "
-    .TBL_SCORES.".*, "
-    .TBL_PLAYERS.".*, "
-    .TBL_USERS.".*"
-    ." FROM ".TBL_MATCHS.", "
-    .TBL_SCORES.", "
-    .TBL_PLAYERS.", "
-    .TBL_USERS
-    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-    ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-    ." ORDER BY ".TBL_SCORES.".Player_Rank";
+    // Get the scores for this match
+    switch($etype)
+    {
+        case "One Player Ladder":
+        case "Team Ladder":
+        $q = "SELECT ".TBL_MATCHS.".*, "
+        .TBL_SCORES.".*, "
+        .TBL_PLAYERS.".*, "
+        .TBL_USERS.".*"
+        ." FROM ".TBL_MATCHS.", "
+        .TBL_SCORES.", "
+        .TBL_PLAYERS.", "
+        .TBL_USERS
+        ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+        ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+        ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+        ." ORDER BY ".TBL_SCORES.".Player_Rank";
+        break;
+        case "ClanWar":
+        $q = "SELECT ".TBL_MATCHS.".*, "
+        .TBL_SCORES.".*, "
+        .TBL_CLANS.".*, "
+        .TBL_TEAMS.".*, "
+        .TBL_DIVISIONS.".*"
+        ." FROM ".TBL_MATCHS.", "
+        .TBL_SCORES.", "
+        .TBL_CLANS.", "
+        .TBL_TEAMS.", "
+        .TBL_DIVISIONS
+        ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+        ." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+        ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+        ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+        ." ORDER BY ".TBL_SCORES.".Player_Rank";
+        break;
+        default:
+    }
 
     $result = $sql->db_Query($q);
     $numScores = mysql_numrows($result);
@@ -137,7 +164,7 @@ else
     $numRows = mysql_numrows($result_2);
     if ($numRows>0)
     {
-      $reporter_matchteam = mysql_result($result_2,0, TBL_SCORES.".Player_MatchTeam");
+        $reporter_matchteam = mysql_result($result_2,0, TBL_SCORES.".Player_MatchTeam");
     }
 
     // Is the user an opponent of the reporter?
@@ -186,10 +213,10 @@ else
     }
     if($userclass < $eMatchesApproval) $can_approve = 0;
     if($eMatchesApproval == eb_UC_NONE) $can_approve = 0;
-    if ($mStatus == 'active') $can_approve = 0;  
+    if ($mStatus == 'active') $can_approve = 0;
 
     if ($mStatus == 'pending')
-        $text .= '<div>'.EB_MATCHD_L18.'</div>';
+    $text .= '<div>'.EB_MATCHD_L18.'</div>';
 
 
     if($can_delete != 0)
@@ -226,10 +253,27 @@ else
     </tr>';
     for($i=0; $i < $numScores; $i++)
     {
-        $pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-        $puid  = mysql_result($result,$i, TBL_USERS.".user_id");
-        $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
-        $pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
+        switch($etype)
+        {
+            case "One Player Ladder":
+            case "Team Ladder":
+            $pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+            $puid  = mysql_result($result,$i, TBL_USERS.".user_id");
+            $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+            $pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
+            $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
+            list($pclan, $pclantag) = getClanName($pteam);
+            break;
+            case "ClanWar":
+            $pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+            $puid  = mysql_result($result,$i, TBL_CLANS.".ClanID"); // WRONG
+            $pname  = mysql_result($result,$i, TBL_CLANS.".Name");
+            $pavatar = mysql_result($result,$i, TBL_CLANS.".Image");
+            $pteam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+            list($pclan, $pclantag) = getClanName($pteam); // Use this function to get other clan info like clan id?
+            break;
+            default:
+        }
         $pscoreid  = mysql_result($result,$i, TBL_SCORES.".ScoreID");
         $prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
         $pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
@@ -240,69 +284,104 @@ else
         $pOppScore  = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
         $ppoints  = mysql_result($result,$i, TBL_SCORES.".Player_Points");
 
-        $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-        list($pclan, $pclantag) = getClanName($pteam);
-        
+
         $image = "";
         if ($pref['eb_avatar_enable_playersstandings'] == 1)
         {
-            if($pavatar)
+            switch($etype)
             {
-                $image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
-            } else if ($pref['eb_avatar_default_image'] != ''){
-                $image = '<img '.getAvatarResize(getAvatar($pref['eb_avatar_default_image'])).' style="vertical-align:middle"/>';
+                case "One Player Ladder":
+                case "Team Ladder":
+                if($pavatar)
+                {
+                    $image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
+                } else if ($pref['eb_avatar_default_image'] != ''){
+                    $image = '<img '.getAvatarResize(getAvatar($pref['eb_avatar_default_image'])).' style="vertical-align:middle"/>';
+                }
+                break;
+                case "ClanWar":
+                if($pavatar)
+                {
+                    $image = '<img '.getTeamAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
+                } else if ($pref['eb_avatar_default_image'] != ''){
+                    $image = '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).' style="vertical-align:middle"/>';
+                }
+                break;
+                default:
             }
         }
 
         //$text .= "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
         $text .= '<tr>';
         $text .= '<td class="forumheader3"><b>'.$prank.'</b></td>
-        <td class="forumheader3">'.$pMatchTeam.'</td>
-        <td class="forumheader3">'.$image.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>
+        <td class="forumheader3">'.$pMatchTeam.'</td>';
+        switch($etype)
+        {
+            case "One Player Ladder":
+            case "Team Ladder":
+            $text .= '<td class="forumheader3">'.$image.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
+            break;
+            case "ClanWar":
+            $text .= '<td class="forumheader3">'.$image.' <a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$puid.'">'.$pclan.'</a></td>';  // WRONG puid
+            break;
+            default:
+        }
+        $text .= '
         <td class="forumheader3">'.$pscore.'</td>
         <td class="forumheader3">'.$ppoints.'</td>
         <td class="forumheader3">'.$pdeltaELO.'</td>
         <td class="forumheader3">'.$pdeltaTS_mu.'</td>
         ';
 
+        // Opponent Ratings
         $text .= '<td class="forumheader3">';
-        if ($numScores>0)
+        switch($etype)
         {
-            // Find all opponents ratings
-            $text .= '<table style="margin-left: 0px; margin-right: auto;">';
-            for($opponentIndex=0; $opponentIndex < $numScores; $opponentIndex++)
+            case "One Player Ladder":
+            case "Team Ladder":
+            if ($numScores>0)
             {
-                $can_rate = FALSE;
-                $opid = mysql_result($result,$opponentIndex, TBL_PLAYERS.".PlayerID");
-                $oMatchTeam = mysql_result($result,$opponentIndex, TBL_SCORES.".Player_MatchTeam");
-                $ouid = mysql_result($result,$opponentIndex, TBL_USERS.".user_id");
-                $ouname = mysql_result($result,$opponentIndex, TBL_USERS.".user_name");
-                $oteam  = mysql_result($result,$opponentIndex, TBL_PLAYERS.".Team");
-                list($oclan, $oclantag) = getClanName($oteam);
-
-                if (($numPlayers>0)&&($ouid == USERID)&&($uteam!=$pMatchTeam)) $can_rate = TRUE;
-                if ($oMatchTeam != $pMatchTeam)
+                // Find all opponents ratings
+                $text .= '<table style="margin-left: 0px; margin-right: auto;">';
+                for($opponentIndex=0; $opponentIndex < $numScores; $opponentIndex++)
                 {
-                    $text .= '<tr>';
-                    $rating = getRating("ebscores", $pscoreid, $can_rate, true, $ouid);
-                    if (preg_match("/".EB_RATELAN_2."/", $rating))
+                    $can_rate = FALSE;
+                    $opid = mysql_result($result,$opponentIndex, TBL_PLAYERS.".PlayerID");
+                    $oMatchTeam = mysql_result($result,$opponentIndex, TBL_SCORES.".Player_MatchTeam");
+                    $ouid = mysql_result($result,$opponentIndex, TBL_USERS.".user_id");
+                    $ouname = mysql_result($result,$opponentIndex, TBL_USERS.".user_name");
+                    $oteam  = mysql_result($result,$opponentIndex, TBL_PLAYERS.".Team");
+                    list($oclan, $oclantag) = getClanName($oteam);
+
+                    if (($numPlayers>0)&&($ouid == USERID)&&($uteam!=$pMatchTeam)) $can_rate = TRUE;
+                    if ($oMatchTeam != $pMatchTeam)
                     {
-                        $text .= '<td>'.$rating.'</td><td></td>';
+                        $text .= '<tr>';
+                        $rating = getRating("ebscores", $pscoreid, $can_rate, true, $ouid);
+                        if (preg_match("/".EB_RATELAN_2."/", $rating))
+                        {
+                            $text .= '<td>'.$rating.'</td><td></td>';
+                        }
+                        else if ($rating != EB_RATELAN_4)
+                        {
+                            $text .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$ouid.'">'.$oclantag.$ouname.'&nbsp;</a></td><td>'.$rating.'</td>';
+                        }
+                        else
+                        {
+                            $text .= '<td></td><td></td>';
+                        }
+                        $text .= '</tr>';
                     }
-                    else if ($rating != EB_RATELAN_4)
-                    {
-                        $text .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$ouid.'">'.$oclantag.$ouname.'&nbsp;</a></td><td>'.$rating.'</td>';
-                    }
-                    else
-                    {
-                        $text .= '<td></td><td></td>';
-                    }
-                    $text .= '</tr>';
                 }
+                $text .= '</table>';
             }
-            $text .= '</table>';
+            break;
+            case "ClanWar":
+            break;
+            default:
         }
         $text .= '</td>';
+
         $text .= '</tr>';
     }
     $text .= '</tbody></table><br />';
