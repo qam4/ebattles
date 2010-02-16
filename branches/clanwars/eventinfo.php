@@ -199,6 +199,7 @@ else
     $text .= '<div class="tab-page">';
     $text .= '<div class="tab">'.EB_EVENT_L6.'</div>';
     $text .= '<table style="width:95%"><tbody>';
+    $userIsDivisionCaptain = FALSE;
     if(check_class(e_UC_MEMBER))
     {
         // If logged in
@@ -227,6 +228,7 @@ else
                 $numDivs = mysql_numrows($result);
                 if($numDivs > 0)
                 {
+                    $userIsDivisionCaptain = TRUE;
                     for($i=0;$i < $numDivs;$i++)
                     {
                         $div_name  = mysql_result($result,$i, TBL_CLANS.".Name");
@@ -598,6 +600,11 @@ else
         $can_report = 1;
         $can_approve = 1;
     }
+    if ($userIsDivisionCaptain == TRUE)
+    {
+        $userclass |= eb_UC_EVENT_PLAYER;
+        $can_report = 1;
+    }
 
     $enextupdate_local = $enextupdate + TIMEOFFSET;
     $date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
@@ -750,6 +757,7 @@ else
         if ($eallowscore==TRUE)
         $can_report_quickloss = 0;
 
+        if($etype == "ClanWar") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
         if($equick_loss_report==FALSE) $can_report_quickloss = 0;
         if($userclass < $ematch_report_userclass) $can_report = 0;
 

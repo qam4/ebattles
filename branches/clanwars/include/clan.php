@@ -108,7 +108,7 @@ function getClanName($teamID)
     {
         $clanid  = mysql_result($result,0, TBL_CLANS.".ClanID");
         $clanname  = mysql_result($result,0, TBL_CLANS.".Name");
-        $pclantag  = mysql_result($result,0, TBL_CLANS.".Tag") ."&nbsp;";
+        $clantag  = mysql_result($result,0, TBL_CLANS.".Tag") ."&nbsp;";
     }
     return array($clanname, $clantag, $clanid);
 }

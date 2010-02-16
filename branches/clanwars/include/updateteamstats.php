@@ -334,8 +334,8 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                         if ($oplayermatchteam != $mplayermatchteam)
                         {
                             $players[] = "$otid";
-                            $popponentsELO += $oELO;
-                            $popponents += 1;
+                            $topponentsELO += $oELO;
+                            $topponents += 1;
                         }
                         /* no opponent rating for clanwars yet
                         if ($ouid == $puid)
@@ -584,8 +584,16 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
     $stats = array
     (
-    "0"=>array('header','<b>'.EB_STATS_L28.'</b>','<b>'.EB_STATS_L39.'</b>','<b>'.EB_STATS_L40.'</b>')
+    "0"=>array('header','<b>'.EB_STATS_L28.'</b>','<b>'.EB_STATS_L39.'</b>')
     );
+
+    switch($etype)
+    {
+        case "Team Ladder":
+        $stats[0][] = '<b>'.EB_STATS_L40.'</b>';
+        break;
+        default:
+    }
 
     // user rating not shown
     // $stats[0][] = '<b>'.EB_STATS_L30.'</b>';
@@ -721,9 +729,6 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         {
             case "Team Ladder":
             $stats_row[] = "$nbr_players[$index]";
-            break;
-            case "ClanWar":
-            $stats_row[] = "-";
             break;
             default:
         }

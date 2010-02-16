@@ -737,7 +737,8 @@ else
             ."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
             $result = $sql->db_Query($q);
             /* Error occurred, return given name by default */
-            $numDivisions = mysql_numrows($result);
+            $numDivisions = mysql_numrows($result);            
+            
             $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
             $text .= '
             <table class="fborder" style="width:95%">
