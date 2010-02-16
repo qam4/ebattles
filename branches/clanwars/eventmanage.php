@@ -443,11 +443,12 @@ else
         $text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.((($eMatchesApproval & eb_UC_EVENT_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L112.'</option>';
         $text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.((($eMatchesApproval & eb_UC_EVENT_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L111.'</option>';
         $text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.((($eMatchesApproval & eb_UC_EVENT_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L110.'</option>';
-        $text .= '</select>
+        $text .= '</select>';
+        $text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
+        $text .= '
         </td>
         </tr>
         ';
-        $text .= ($nbrMatchesPending>0) ? '<div><b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
 
         $text .= '
         </div>
