@@ -244,6 +244,7 @@ function eventScoresUpdate($event_id, $current_match)
             ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
             $result = $sql->db_Query($q);
             $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
+            $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
 
             // Reset players stats
             resetPlayers($event_id);
@@ -268,7 +269,18 @@ function eventScoresUpdate($event_id, $current_match)
                 $time_reported  = mysql_result($result,$j, TBL_MATCHS.".TimeReported");
 
                 match_scores_update($mID);
-                match_players_update($mID);
+
+                switch($etype)
+                {
+                    case "One Player Ladder":
+                    case "Team Ladder":
+                    match_players_update($match_id);
+                    break;
+                    case "ClanWar":
+                    match_teams_update($match_id);
+                    break;
+                    default:
+                }
                 updateStats($event_id, $time_reported, FALSE);
                 if ($etype == "Team Ladder") updateTeamStats($event_id, $time_reported, FALSE);
 
