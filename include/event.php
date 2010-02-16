@@ -248,8 +248,22 @@ function eventScoresUpdate($event_id, $current_match)
 
             // Reset players stats
             resetPlayers($event_id);
-            updateStats($event_id, $estart, FALSE);
-            if ($etype == "Team Ladder") updateTeamStats($event_id, $estart, FALSE);
+
+            switch($etype)
+            {
+                case "One Player Ladder":
+                updateStats($event_id, $estart, FALSE);
+                break;
+                case "Team Ladder":
+                updateStats($event_id, $estart, FALSE);
+                updateTeamStats($event_id, $estart, FALSE);
+                break;
+                case "ClanWar":
+                updateTeamStats($event_id, $estart, FALSE);
+                break;
+                default:
+            }
+
         }
         else
         {
@@ -273,17 +287,20 @@ function eventScoresUpdate($event_id, $current_match)
                 switch($etype)
                 {
                     case "One Player Ladder":
+                    match_players_update($match_id);
+                    updateStats($event_id, $estart, FALSE);
+                    break;
                     case "Team Ladder":
                     match_players_update($match_id);
+                    updateStats($event_id, $estart, FALSE);
+                    updateTeamStats($event_id, $estart, FALSE);
                     break;
                     case "ClanWar":
                     match_teams_update($match_id);
+                    updateTeamStats($event_id, $estart, FALSE);
                     break;
                     default:
                 }
-                updateStats($event_id, $time_reported, FALSE);
-                if ($etype == "Team Ladder") updateTeamStats($event_id, $time_reported, FALSE);
-
 
                 //echo 'match '.$j.': '.$mID.'<br>';
                 //echo '<div class="percents">match '.$j.': '.$mID.'</div>';

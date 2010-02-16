@@ -208,6 +208,7 @@ $eplug_tables = array(
     ELORanking int DEFAULT '".ELO_DEFAULT."',
     TS_mu float DEFAULT '".floatToSQL(TS_Mu0)."',
     TS_sigma float DEFAULT '".floatToSQL(TS_sigma0)."',
+    GamesPlayed int DEFAULT '0',
     Win int DEFAULT '0',
     Draw int DEFAULT '0',
     Loss int DEFAULT '0',
@@ -510,6 +511,7 @@ if ($revision < 196)
 {
     // To revision 196
     $upgrade_alter_tables += array(
+        "ALTER TABLE ".TBL_TEAMS." ADD GamesPlayed int DEFAULT '0'",
         "ALTER TABLE ".TBL_SCORES." ADD Team int NOT NULL",
         "ALTER TABLE ".TBL_SCORES." ADD INDEX (Team)",
         "ALTER TABLE ".TBL_SCORES." ADD FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID)"

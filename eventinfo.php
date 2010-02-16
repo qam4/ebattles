@@ -610,7 +610,7 @@ else
         /* Update Stats */
         if ($eneedupdate == 1)
         {
-            if ($etype == "Team Ladder") updateTeamStats($event_id, $time, TRUE);
+            updateTeamStats($event_id, $time, TRUE);
         }
 
         if (($time < $enextupdate) && ($eischanged == 1))
