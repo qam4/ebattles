@@ -426,7 +426,7 @@ define('EB_MATCH_L8', 'ago.');
 define('EB_MATCH_L9', 'on');
 define('EB_MATCH_L10', 'comments');
 define('EB_MATCH_L11', 'comment');
-define('EB_MATCH_L12', 'playing');
+define('EB_MATCH_L12', 'in');
 define('EB_MATCH_L13', 'Needs your Approval');
 
 define('EB_MATCHD_L1', 'Match details');
@@ -490,12 +490,12 @@ define('EB_MATCHR_L28', 'Rank #');
 define('EB_MATCHR_L29', 'Team #');
 define('EB_MATCHR_L30', 'Your comments:');
 define('EB_MATCHR_L31', 'Submit Match');
-
 define('EB_MATCHR_L32', 'Match Report');
 define('EB_MATCHR_L33', 'You are not authorized to report a match.');
 define('EB_MATCHR_L34', 'Back to');
 define('EB_MATCHR_L35', 'Event');
 define('EB_MATCHR_L36', 'You are not logged in.');
+define('EB_MATCHR_L37', 'You are only allowed to report matches your team has played.');
 
 define('EB_MATCHQL_L1', 'Quick Loss Report');
 define('EB_MATCHQL_L2', 'You are not authorized to report a match.');

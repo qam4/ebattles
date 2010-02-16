@@ -179,9 +179,16 @@ if (isset($_POST['submit']))
     $nbr_players = $_POST['nbr_players'];
     $nbr_teams = $_POST['nbr_teams'];
     $userIsPlaying = 0;
+    $userIsCaptain = 0;
+    $userIsTeamMember = 0;
     for($i=1;$i<=$nbr_players;$i++)
     {
         $pid = $_POST['player'.$i];
+        $pMatchTeam = $_POST['team'.$i];
+
+        // Check if a player is not selected
+        if ($pid == $players_name[0])
+        $error_str .= '<li>'.EB_MATCHR_L2.$i.'&nbsp;'.EB_MATCHR_L3.'</li>';
 
         switch($etype)
         {
@@ -198,14 +205,8 @@ if (isset($_POST['submit']))
             $row = mysql_fetch_array($result);
             $puid = $row['user_id'];
             $pTeam = $row['Team'];
-            $pMatchTeam = $_POST['team'.$i];
 
-            if ($puid == $reported_by)
-            $userIsPlaying = 1;
-
-            // Check if a player is not selected
-            if ($pid == $players_name[0])
-            $error_str .= '<li>'.EB_MATCHR_L2.$i.'&nbsp;'.EB_MATCHR_L3.'</li>';
+            if ($puid == $reported_by) $userIsPlaying = 1;
 
             // Check if 2 players are the same user
             // Check if 2 players of same team are playing against each other
@@ -233,15 +234,58 @@ if (isset($_POST['submit']))
             }
             break;
             case "ClanWar":
+            // Check if user is the team captain
+            $q = "SELECT ".TBL_DIVISIONS.".*, "
+            .TBL_TEAMS.".*"
+            ." FROM ".TBL_DIVISIONS.", "
+            .TBL_TEAMS
+            ." WHERE (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
+            ." AND (".TBL_TEAMS.".TeamID = '$pid')";
+            $result = $sql->db_Query($q);
+            $row = mysql_fetch_array($result);
+            $dcaptain = $row['Captain'];
+            if ($dcaptain == $reported_by) $userIsCaptain = 1;
+                        
+            // Check if user is a team's member
+            $q = "SELECT ".TBL_DIVISIONS.".*, "
+            .TBL_MEMBERS.".*, "
+            .TBL_TEAMS.".*"
+            ." FROM ".TBL_DIVISIONS.", "
+            .TBL_MEMBERS.", "
+            .TBL_TEAMS
+            ." WHERE (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
+            ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+            ." AND (".TBL_TEAMS.".TeamID = '$pid')";
+            $result = $sql->db_Query($q);
+            $numMembers = mysql_numrows($result);    
+            for($member=0; $member < $numMembers; $member++)
+            {
+                $muid  = mysql_result($result,$member, TBL_MEMBERS.".User");
+                $dcaptain  = mysql_result($result,$member, TBL_DIVISIONS.".Captain");
 
-            //fm- Need to do some check here
-
+               if ($dcaptain == $reported_by) $userIsCaptain = 1;
+               if ($muid == $reported_by) $userIsTeamMember = 1;
+            }
             break;
             default:
         }
     }
-    if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
-    $error_str .= '<li>'.EB_MATCHR_L9.'</li>';
+    
+    switch($etype)
+    {
+        case "One Player Ladder":
+        case "Team Ladder":
+        // Check if the reporter played in the match
+        if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
+        $error_str .= '<li>'.EB_MATCHR_L9.'</li>';
+        break;
+        case "ClanWar":
+        // Check if the reporter's team played in the match
+        if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
+        $error_str .= '<li>'.EB_MATCHR_L37.'</li>';
+        break;
+        default:
+    }
 
     // Check if a team has no player
     // Check if a score is not a number
