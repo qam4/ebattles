@@ -70,7 +70,7 @@ else
         $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
         $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
         $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-        list($pclan, $pclantag) = getClanName($pteam);
+        list($pclan, $pclantag, $pclanid) = getClanName($pteam);
 
         if(($puid != USERID)&&(($uteam == 0)||($uteam != $pteam)))
         {

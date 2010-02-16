@@ -109,7 +109,7 @@ switch($etype)
         $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
         $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
         $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-        list($pclan, $pclantag) = getClanName($pteam);
+        list($pclan, $pclantag, $pclanid) = getClanName($pteam);
         if ($prank==0)
         $prank_txt = EB_EVENT_L54;
         else
@@ -233,9 +233,9 @@ if (isset($_POST['submit']))
             }
             break;
             case "ClanWar":
-            
+
             //fm- Need to do some check here
-            
+
             break;
             default:
         }
@@ -348,7 +348,17 @@ if (isset($_POST['submit']))
         // Automatically Update Players stats only if Match Approval is Disabled
         if ($eMatchesApproval == eb_UC_NONE)
         {
-            match_players_update($match_id);
+            switch($etype)
+            {
+                case "One Player Ladder":
+                case "Team Ladder":
+                match_players_update($match_id);
+                break;
+                case "ClanWar":
+                match_teams_update($match_id);
+                break;
+                default:
+            }
 
             $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
             $result = $sql->db_Query($q);

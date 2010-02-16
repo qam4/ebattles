@@ -569,7 +569,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
             }
         }
 
-        list($pclan, $pclantag) = getClanName($team[$index]);
+        list($pclan, $pclantag, $pclanid) = getClanName($team[$index]);
 
         if(strcmp(USERID,$puid) == 0)
         {

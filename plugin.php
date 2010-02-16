@@ -511,7 +511,7 @@ if ($revision < 196)
     // To revision 196
     $upgrade_alter_tables += array(
         "ALTER TABLE ".TBL_SCORES." ADD Team int NOT NULL",
-        "ALTER TABLE ".TBL_SCORES." CREATE INDEX Team ON ".TBL_TEAMS,
+        "ALTER TABLE ".TBL_SCORES." ADD INDEX (Team)",
         "ALTER TABLE ".TBL_SCORES." ADD FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID)"
     );
 }

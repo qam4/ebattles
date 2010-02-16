@@ -262,15 +262,14 @@ else
             $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
             $pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
             $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-            list($pclan, $pclantag) = getClanName($pteam);
+            list($pclan, $pclantag, $pclanid) = getClanName($pteam);
             break;
             case "ClanWar":
             $pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-            $puid  = mysql_result($result,$i, TBL_CLANS.".ClanID"); // WRONG
             $pname  = mysql_result($result,$i, TBL_CLANS.".Name");
             $pavatar = mysql_result($result,$i, TBL_CLANS.".Image");
             $pteam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-            list($pclan, $pclantag) = getClanName($pteam); // Use this function to get other clan info like clan id?
+            list($pclan, $pclantag, $pclanid) = getClanName($pteam); // Use this function to get other clan info like clan id?
             break;
             default:
         }
@@ -302,7 +301,7 @@ else
                 case "ClanWar":
                 if($pavatar)
                 {
-                    $image = '<img '.getTeamAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
+                    $image = '<img '.getAvatarResize(getTeamAvatar($pavatar)).' style="vertical-align:middle"/>';
                 } else if ($pref['eb_avatar_default_image'] != ''){
                     $image = '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).' style="vertical-align:middle"/>';
                 }
@@ -322,7 +321,7 @@ else
             $text .= '<td class="forumheader3">'.$image.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
             break;
             case "ClanWar":
-            $text .= '<td class="forumheader3">'.$image.' <a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$puid.'">'.$pclan.'</a></td>';  // WRONG puid
+            $text .= '<td class="forumheader3">'.$image.' <a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$pclanid.'">'.$pclan.'</a></td>';
             break;
             default:
         }
@@ -351,7 +350,7 @@ else
                     $ouid = mysql_result($result,$opponentIndex, TBL_USERS.".user_id");
                     $ouname = mysql_result($result,$opponentIndex, TBL_USERS.".user_name");
                     $oteam  = mysql_result($result,$opponentIndex, TBL_PLAYERS.".Team");
-                    list($oclan, $oclantag) = getClanName($oteam);
+                    list($oclan, $oclantag, $oclanid) = getClanName($oteam);
 
                     if (($numPlayers>0)&&($ouid == USERID)&&($uteam!=$pMatchTeam)) $can_rate = TRUE;
                     if ($oMatchTeam != $pMatchTeam)
