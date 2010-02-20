@@ -200,7 +200,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $streaks[] = $pstreak."|".$pstreak_best."|".$pstreak_worst;
         $windrawloss[] = $pwindrawloss;
         $victory_ratio[] = $pwinloss;
-        $victory_percent[] = number_format ($pvictory_percent,2)." %";
+        $victory_percent[] = number_format ($pvictory_percent,2)."%";
         $unique_opponents[] = $punique_opponents;
         $opponentsELO[] = floor($popponentsELO);
         $score[] = ($pgames_played>0) ? number_format($pscore/$pgames_played,2) : 0;
@@ -264,91 +264,104 @@ function updateStats($event_id, $time, $serialize = TRUE)
             switch ($cat_name)
             {
                 case "ELO":
-                $cat_header = '<b title="'.EB_STATS_L1.'">'.EB_STATS_L2.'</b>';
+                $cat_header_title = EB_STATS_L1;
+                $cat_header_text = EB_STATS_L2;
                 $min = min($ELO_score);
                 $max = max($ELO_score);
                 $stat_score[$cat_index] = $ELO_score;
                 $stat_display[$cat_index] = $ELO;
                 break;
                 case "Skill":
-                $cat_header = '<b title="'.EB_STATS_L3.'">'.EB_STATS_L4.'</b>';
+                $cat_header_title = EB_STATS_L3;
+                $cat_header_text = EB_STATS_L4;
                 $min = min($Skill_score);
                 $max = max($Skill_score);
                 $stat_score[$cat_index] = $Skill_score;
                 $stat_display[$cat_index] = $Skill;
                 break;
                 case "GamesPlayed":
-                $cat_header = '<b title="'.EB_STATS_L5.'">'.EB_STATS_L6.'</b>';
+                $cat_header_title = EB_STATS_L5;
+                $cat_header_text = EB_STATS_L6;
                 $min = 0; //min($games_played_score);
                 $max = max($games_played);
                 $stat_score[$cat_index] = $games_played_score;
                 $stat_display[$cat_index] = $games_played;
                 break;
                 case "VictoryRatio":
-                $cat_header = '<b title="'.EB_STATS_L7.'">'.EB_STATS_L8.'</b>';
+                $cat_header_title = EB_STATS_L7;
+                $cat_header_text = EB_STATS_L8;
                 $min = 0; //min($victory_ratio_score);
                 $max = max($victory_ratio_score);
                 $stat_score[$cat_index] = $victory_ratio_score;
                 $stat_display[$cat_index] = $victory_ratio;
                 break;
                 case "VictoryPercent":
-                $cat_header = '<b title="'.EB_STATS_L9.'">'.EB_STATS_L10.'</b>';
+                $cat_header_title = EB_STATS_L9;
+                $cat_header_text = EB_STATS_L10;
                 $min = 0; //min($victory_percent_score);
                 $max = max($victory_percent_score);
                 $stat_score[$cat_index] = $victory_percent_score;
                 $stat_display[$cat_index] = $victory_percent;
                 break;
                 case "WinDrawLoss":
-                $cat_header = '<b title="'.EB_STATS_L11.'">'.EB_STATS_L12.'</b>';
+                $cat_header_title = EB_STATS_L11;
+                $cat_header_text = EB_STATS_L12;
                 $min = min($windrawloss_score);
                 $max = max($windrawloss_score);
                 $stat_score[$cat_index] = $windrawloss_score;
                 $stat_display[$cat_index] = $windrawloss;
                 break;
                 case "UniqueOpponents":
-                $cat_header = '<b title="'.EB_STATS_L13.'">'.EB_STATS_L14.'</b>';
+                $cat_header_title = EB_STATS_L13;
+                $cat_header_text = EB_STATS_L14;
                 $min = 0; //min($unique_opponents_score);
                 $max = max($unique_opponents_score);
                 $stat_score[$cat_index] = $unique_opponents_score;
                 $stat_display[$cat_index] = $unique_opponents;
                 break;
                 case "OpponentsELO":
-                $cat_header = '<b title="'.EB_STATS_L15.'">'.EB_STATS_L16.'</b>';
+                $cat_header_title = EB_STATS_L15;
+                $cat_header_text = EB_STATS_L16;
                 $min = min($opponentsELO_score);
                 $max = max($opponentsELO_score);
                 $stat_score[$cat_index] = $opponentsELO_score;
                 $stat_display[$cat_index] = $opponentsELO;
                 break;
                 case "Streaks":
-                $cat_header = '<b title="'.EB_STATS_L17.'">'.EB_STATS_L18.'</b>';
+                $cat_header_title = EB_STATS_L17;
+                $cat_header_text = EB_STATS_L18;
                 $min = min($streaks_score);
                 $max = max($streaks_score);
                 $stat_score[$cat_index] = $streaks_score;
                 $stat_display[$cat_index] = $streaks;
                 break;
                 case "Score":
-                $cat_header = '<b title="'.EB_STATS_L19.'">'.EB_STATS_L20.'</b>';
+                $cat_header_title = EB_STATS_L19;
+                $cat_header_text = EB_STATS_L20;
                 $min = min($score_score);
                 $max = max($score_score);
                 $stat_score[$cat_index] = $score_score;
                 $stat_display[$cat_index] = $score;
                 break;
                 case "ScoreAgainst":
-                $cat_header = '<b title="'.EB_STATS_L21.'">'.EB_STATS_L22.'</b>';
+                $cat_header_title = EB_STATS_L21;
+                $cat_header_text = EB_STATS_L22;
                 $min = min($oppscore_score);
                 $max = max($oppscore_score);
                 $stat_score[$cat_index] = $oppscore_score;
                 $stat_display[$cat_index] = $oppscore;
                 break;
                 case "ScoreDiff":
-                $cat_header = '<b title="'.EB_STATS_L23.'">'.EB_STATS_L24.'</b>';
+                $cat_header_title = EB_STATS_L23;
+                $cat_header_text = EB_STATS_L24;
                 $min = min($scorediff_score);
                 $max = max($scorediff_score);
                 $stat_score[$cat_index] = $scorediff_score;
                 $stat_display[$cat_index] = $scorediff;
                 break;
                 case "Points":
-                $cat_header = '<b title="'.EB_STATS_L25.'">'.EB_STATS_L26.'</b>';
+                $cat_header_title = EB_STATS_L25;
+                $cat_header_text = EB_STATS_L26;
                 $min = min($points_score);
                 $max = max($points_score);
                 $stat_score[$cat_index] = $points_score;
@@ -363,11 +376,19 @@ function updateStats($event_id, $time, $serialize = TRUE)
                 $stat_InfoOnly[$cat_index] = $cat_InfoOnly;
                 if ($cat_InfoOnly == TRUE)
                 {
-                    $cat_header .= "";
+                    $cat_header = '<b title="'.$cat_header_title.'">'.$cat_header_text.'</b>';
                 }
                 else
                 {
-                    $cat_header .= '<br /><div class="smalltext">['.number_format ($cat_maxpoints,2).'&nbsp;'.EB_STATS_L27.']</div>';
+                    $cat_header = '
+                    <b title="'.$cat_header_title.' ['.number_format ($cat_maxpoints,2).' '.EB_STATS_L27.']">'.$cat_header_text.'</b>
+                    ';
+                    /*
+                    $cat_header = '
+                    <b title="'.$cat_header_title.'">'.$cat_header_text.'</b>
+                    <br /><div class="smalltext">['.number_format ($cat_maxpoints,2).'&nbsp;'.EB_STATS_L27.']</div>
+                    ';
+                    */
 
                     // a = (ymax-ymin)/(xmax-xmin)
                     // b = ymin - a.xmin
@@ -405,7 +426,8 @@ function updateStats($event_id, $time, $serialize = TRUE)
     // $stats[0][] = '<b>'.EB_STATS_L30.'</b>';
 
     if ($ehide_ratings_column == FALSE)
-    $stats[0][] = '<b title="'.EB_STATS_L31.'">'.EB_STATS_L32.'</b><br /><div class="smalltext">['.number_format ($rating_max,2).'&nbsp;'.EB_STATS_L27.']</div>';
+    $stats[0][] = '<b title="'.EB_STATS_L31.' ['.number_format ($rating_max,2).' '.EB_STATS_L27.']">'.EB_STATS_L32.'</b>';
+    //$stats[0][] = '<b title="'.EB_STATS_L31.'">'.EB_STATS_L32.'</b><br /><div class="smalltext">['.number_format ($rating_max,2).'&nbsp;'.EB_STATS_L27.']</div>';
 
     for ($category=0; $category<$numDisplayedCategories; $category++)
     {
@@ -629,6 +651,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     html_show_table($stats, $numPlayers+1, 7);
     echo "<br />";
     */
+    //print_r($stats);
 
     if ($serialize)
     {
