@@ -139,6 +139,7 @@ else
     $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
     $ematch_report_userclass = mysql_result($result,0 , TBL_EVENTS.".match_report_userclass");
     $equick_loss_report = mysql_result($result,0 , TBL_EVENTS.".quick_loss_report");
+    $eranking_type = mysql_result($result,0 , TBL_EVENTS.".RankingType");
 
     if($estart!=0)
     {
@@ -359,6 +360,22 @@ else
         $text .= '<input class="tbox" type="radio" size="40" name="eventtype" '.($etype == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" />'.EB_EVENTM_L19;
         $text .= '<input class="tbox" type="radio" size="40" name="eventtype" '.($etype == "Team Ladder" ? 'checked="checked"' : '').' value="Team" />'.EB_EVENTM_L20;
         $text .= '<input class="tbox" type="radio" size="40" name="eventtype" '.($etype == "ClanWar" ? 'checked="checked"' : '').' value="ClanWar" />'.EB_EVENTM_L116;
+
+        $text .= '
+        </div>
+        </td>
+        </tr>
+        ';
+
+        //<!-- Rating Type -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L117.'</b><div class="smalltext">'.EB_EVENTM_L118.'</div></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input class="tbox" type="radio" size="40" name="eventrankingtype" '.($eranking_type == "Classic" ? 'checked="checked"' : '').' value="Classic" />'.EB_EVENTM_L119;
+        $text .= '<input class="tbox" type="radio" size="40" name="eventrankingtype" '.($eranking_type == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" />'.EB_EVENTM_L120;
 
         $text .= '
         </div>
@@ -737,8 +754,8 @@ else
             ."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
             $result = $sql->db_Query($q);
             /* Error occurred, return given name by default */
-            $numDivisions = mysql_numrows($result);            
-            
+            $numDivisions = mysql_numrows($result);
+
             $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
             $text .= '
             <table class="fborder" style="width:95%">
@@ -1058,15 +1075,15 @@ else
         $text .= '
         <table class="fborder" style="width:95%"><tbody>';
 
+        $text .= '
+        <tr>
+        <td class="forumheader">'.EB_EVENTM_L87.'</td>
+        <td class="forumheader" colspan="2">'.EB_EVENTM_L88.'</td>
+        <td class="forumheader">'.EB_EVENTM_L89.'</td>
+        </tr>';
         if ($etype != "ClanWar")
         {
             $text .= '
-            <tr>
-            <td class="forumheader">'.EB_EVENTM_L87.'</td>
-            <td class="forumheader" colspan="2">'.EB_EVENTM_L88.'</td>
-            <td class="forumheader">'.EB_EVENTM_L89.'</td>
-            </tr>
-            <tr>
             <td class="forumheader3">'.EB_EVENTM_L90.'</td>
             <td class="forumheader3">
             <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>

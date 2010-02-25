@@ -105,6 +105,7 @@ define('EB_EVENTS_L21', 'Afficher tous les ladders passés');
 define('EB_EVENTS_L22', 'Ladder individuel');
 define('EB_EVENTS_L23', 'Ladder par équipe');
 define('EB_EVENTS_L24', 'Filtrer');
+define('EB_EVENTS_L25', 'Guerre de Clans');
 
 define('EB_EVENT_L1', 'Ladders');
 define('EB_EVENT_L2', 'Le ladder débute dans');
@@ -288,6 +289,12 @@ define('EB_EVENTM_L112', 'Adversaire du Rapporteur du Match');
 define('EB_EVENTM_L113', 'Désactiver');
 define('EB_EVENTM_L114', 'équipe(s)');
 define('EB_EVENTM_L115', 'Pas d’Équipes');
+define('EB_EVENTM_L116', 'Guerre de Clans');
+define('EB_EVENTM_L117', 'Type de Classement');
+define('EB_EVENTM_L118', 'Classique: Players are ranked based on their score in the first stats category, if 2 players are tied, they are ranked based on the second stats category, and so on<br />
+Combined Stats: Players are ranked based on a combination of their scores in each stats category');
+define('EB_EVENTM_L119', 'Classique');
+define('EB_EVENTM_L120', 'Stats combinées');
 
 define('EB_EVENTP_L1', 'Ladders passés');
 define('EB_EVENTP_L2', 'Ladders passés');
@@ -314,15 +321,15 @@ define('EB_STATS_L12', 'V/N/D');
 define('EB_STATS_L13', 'Adversaires uniques');
 define('EB_STATS_L14', 'Adversaires');
 define('EB_STATS_L15', 'ELO Moyen Adversaires');
-define('EB_STATS_L16', 'ELO Adv.');
+define('EB_STATS_L16', 'ELO&nbsp;Adv.');
 define('EB_STATS_L17', 'Séries Courante|Meilleure|Pire'); //fm
 define('EB_STATS_L18', 'Séries'); //fm
 define('EB_STATS_L19', 'Moyenne du Score');
 define('EB_STATS_L20', 'Score');
 define('EB_STATS_L21', 'Moyenne du Score des Adversaires');
-define('EB_STATS_L22', 'Score Adv.');
+define('EB_STATS_L22', 'Score&nbsp;Adv.');
 define('EB_STATS_L23', 'Moyenne de la différence de Score');
-define('EB_STATS_L24', 'Score Diff.');
+define('EB_STATS_L24', 'Score&nbsp;Diff.');
 define('EB_STATS_L25', 'Moyenne des Points');
 define('EB_STATS_L26', 'Points');
 define('EB_STATS_L27', 'max');
@@ -486,12 +493,12 @@ define('EB_MATCHR_L28', 'Classement #');
 define('EB_MATCHR_L29', 'Équipe #');
 define('EB_MATCHR_L30', 'Vos commentaires:');
 define('EB_MATCHR_L31', 'Soumettre le Match');
-
 define('EB_MATCHR_L32', 'Rapport de match');
 define('EB_MATCHR_L33', 'Vous n’êtes pas authorisé a soumettre un match.');
 define('EB_MATCHR_L34', 'Retour vers');
 define('EB_MATCHR_L35', 'Ladder');
 define('EB_MATCHR_L36', 'Vous n’êtes pas connecté.');
+define('EB_MATCHR_L37', 'Vous n’êtes authorisé qu’à rapporter des matchs que votre équipe a joué.');
 
 define('EB_MATCHQL_L1', 'Rapport rapide de défaite');
 define('EB_MATCHQL_L2', 'Vous n’êtes pas authorisé a soumettre un match.');

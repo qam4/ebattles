@@ -106,6 +106,7 @@ define('EB_EVENTS_L21', 'Mostrar todos los eventos pasados');
 define('EB_EVENTS_L22', 'Liga Individual');
 define('EB_EVENTS_L23', 'Liga por Equipos');
 define('EB_EVENTS_L24', 'Filtro');
+define('EB_EVENTS_L25', 'Clan War');
 
 define('EB_EVENT_L1', 'Eventos');
 define('EB_EVENT_L2', 'Comienza en');
@@ -289,6 +290,12 @@ define('EB_EVENTM_L112', 'Informacion del Partido Rival');
 define('EB_EVENTM_L113', 'Desactivar');
 define('EB_EVENTM_L114', 'Equipo(s)');
 define('EB_EVENTM_L115', 'Sin Equipos');
+define('EB_EVENTM_L116', 'Clan War');
+define('EB_EVENTM_L117', 'Ranking Type');
+define('EB_EVENTM_L118', 'Classic: Players are ranked based on their score in the first stats category, if 2 players are tied, they are ranked based on the second stats category, and so on<br />
+Combined Stats: Players are ranked based on a combination of their scores in each stats category');
+define('EB_EVENTM_L119', 'Classic');
+define('EB_EVENTM_L120', 'Combined Stats');
 
 define('EB_EVENTP_L1', 'Eventos anteriores');
 define('EB_EVENTP_L2', 'Eventos anteriores');
@@ -315,15 +322,15 @@ define('EB_STATS_L12', 'V/E/P');
 define('EB_STATS_L13', 'Rivales unicos');
 define('EB_STATS_L14', 'Rivales');
 define('EB_STATS_L15', 'Rivales Media ELO');
-define('EB_STATS_L16', 'Rivales ELO');
+define('EB_STATS_L16', 'Rivales&nbsp;ELO');
 define('EB_STATS_L17', 'Actual|Mejor|Peores');
 define('EB_STATS_L18', 'Rachas');
 define('EB_STATS_L19', 'Puntuacion media');
 define('EB_STATS_L20', 'Puntuacion');
 define('EB_STATS_L21', 'Puntuacion media de los Rivales');
-define('EB_STATS_L22', 'Puntos Rivales');
+define('EB_STATS_L22', 'Puntos&nbsp;Rivales');
 define('EB_STATS_L23', 'promedio de diferencia de la puntuacion');
-define('EB_STATS_L24', 'Dif.Puntuacion');
+define('EB_STATS_L24', 'Dif.&nbsp;Puntuacion');
 define('EB_STATS_L25', 'Media de Puntos');
 define('EB_STATS_L26', 'Puntos');
 define('EB_STATS_L27', 'max');
@@ -486,12 +493,12 @@ define('EB_MATCHR_L28', 'Rango #');
 define('EB_MATCHR_L29', 'Equipo #');
 define('EB_MATCHR_L30', 'Sus comentarios:');
 define('EB_MATCHR_L31', 'Guardar Partido');
-
 define('EB_MATCHR_L32', 'Informe del Partido');
 define('EB_MATCHR_L33', 'Usted no esta autorizado para informar el partido.');
 define('EB_MATCHR_L34', 'Volver a');
 define('EB_MATCHR_L35', 'Evento');
 define('EB_MATCHR_L36', 'Usted no se ha identificado.');
+define('EB_MATCHR_L37', 'You are only allowed to report matches your team has played.');
 
 define('EB_MATCHQL_L1', 'Informe de perdidas');
 define('EB_MATCHQL_L2', 'Usted no esta autorizado para informar el partido.');
