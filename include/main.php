@@ -62,6 +62,37 @@ function multi2dSortAsc(&$arr, $key, $sort)
     array_multisort($sort_col, $sort, SORT_NUMERIC, $arr);
 }
 
+function getRanking($arr, $keys)
+{
+    $rows = count($arr);
+    $columns = count($arr[0]);
+    
+    $out = array();
+    for ($i = 0; $i < $columns; $i++) $out[] = $i;
+    
+    $i=0;
+    foreach($keys as $key)
+    {
+        if($i>0){$sort.=',';}
+        $sort_col[$i] = $arr[$key];
+        $sort .= '$sort_col['.$i.'], SORT_ASC, SORT_NUMERIC';
+        $i++;
+    }
+    $sort .= ', &$out';
+
+    $sort='array_multisort('.$sort.');'; 
+    eval($sort);
+
+    // $out is an array of indexes
+    // The 1st value is the index of the player with rank last
+    // The 2nd value is the index of the player with rank 2nd to last
+    // ...
+    // The last value is the index of the player with rank 1st
+    // ...
+    return $out;
+
+}
+
 /**
 * Searches haystack for needle and
 * returns an array of the key path if

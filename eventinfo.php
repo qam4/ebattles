@@ -637,8 +637,29 @@ else
         $text .= EB_EVENT_L47.'&nbsp;'.$eminteamgames.'&nbsp;'.EB_EVENT_L48.'<br /><br />';
         $text .= '</p>';
 
+        // Players standings stats
         $stats = unserialize(implode('',file($file_team)));
-        // debug print array
+        //print_r($stats);
+
+        // Sorting the stats table
+        $header = $stats[0];
+
+        $new_header = array();
+        $column = 0;
+        foreach ($header as $header_cell)
+        {
+            //fm echo "column $column: $header_cell<br>";
+            $pieces = explode("<br />", $header_cell);
+
+            $new_header[] = '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&amp;orderby='.$column.'&amp;sort='.$sort.'">'.$pieces[0].'</a>'.$pieces[1];
+            $column++;
+        }
+        $header = array($new_header);
+        $header[0][0] = "header";
+
+        array_splice($stats,0,1);
+        multi2dSortAsc($stats, $orderby, $sort_type);
+        $stats = array_merge($header, $stats);
         $num_columns = count($stats[0]) - 1;
         $nbr_rows = count($stats);
         $text .= html_show_table($stats, $nbr_rows, $num_columns);
@@ -651,7 +672,6 @@ else
     {
         // Players standings stats
         $stats = unserialize(implode('',file($file)));
-        $num_columns = count($stats[0]) - 1;
         //print_r($stats);
 
         // Sorting the stats table
@@ -806,7 +826,7 @@ else
     $text .= '
     <div class="tab-page">
     <div class="tab" name="event_matches" id="event_matches">'.EB_EVENT_L58;
-    $text .= ($can_approve == 1) ? ' ('.$nbrMatchesPending.')' : '';
+    $text .= ($can_approve == 1) ? ' <span style="color:red">('.$nbrMatchesPending.')</span>' : '';
     $text .= '</div>';
 
     /* Display Match Report buttons */

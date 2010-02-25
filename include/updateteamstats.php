@@ -16,31 +16,6 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
     $rater = new rater();
     $file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
 
-    /* Event Info */
-    $q = "SELECT ".TBL_EVENTS.".*"
-    ." FROM ".TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
-    $result = $sql->db_Query($q);
-    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-    $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
-    $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
-    $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
-
-    //Update Teams stats
-    $q_Teams = "SELECT ".TBL_TEAMS.".*, "
-    .TBL_DIVISIONS.".*, "
-    .TBL_CLANS.".*"
-    ." FROM ".TBL_TEAMS.", "
-    .TBL_DIVISIONS.", "
-    .TBL_CLANS
-    ." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-    ." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
-    ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-
-    $result_Teams = $sql->db_Query($q_Teams);
-    $numTeams = mysql_numrows($result_Teams);
-    $teams_rated = 0;
-
     $id = array();
     $uid = array();
     $team = array();
@@ -85,7 +60,34 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
     $scorediff_score = array();
     $points_score = array();
 
-    for($team=0; $team<$numTeams; $team++)
+    /* Event Info */
+    $q = "SELECT ".TBL_EVENTS.".*"
+    ." FROM ".TBL_EVENTS
+    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+    $result = $sql->db_Query($q);
+    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+    $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
+    $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
+    $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
+    $eranking_type = mysql_result($result,0 , TBL_EVENTS.".RankingType");
+    if ($eranking_type == "Classic") $ehide_ratings_column = TRUE;
+
+    //Update Teams stats
+    $q_Teams = "SELECT ".TBL_TEAMS.".*, "
+    .TBL_DIVISIONS.".*, "
+    .TBL_CLANS.".*"
+    ." FROM ".TBL_TEAMS.", "
+    .TBL_DIVISIONS.", "
+    .TBL_CLANS
+    ." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+    ." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
+    ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
+
+    $result_Teams = $sql->db_Query($q_Teams);
+    $numTeams = mysql_numrows($result_Teams);
+    $teams_rated = 0;
+
+    for($team=0; $team < $numTeams; $team++)
     {
         $tid = mysql_result($result_Teams,$team, TBL_TEAMS.".TeamID");
         $tname = mysql_result($result_Teams,$team, TBL_CLANS.".Name");
@@ -120,11 +122,9 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
             $tPlayers = mysql_numrows($result_Players);
             $tnbrplayers_rated = 0;
 
-            $min_team_games = $eminteamgames;
-
             if ($tPlayers>0)
             {
-                for($player=0; $player<$tPlayers; $player++)
+                for($player=0; $player < $tPlayers; $player++)
                 {
                     // For each player
                     $pid = mysql_result($result_Players,$player, TBL_PLAYERS.".PlayerID");
@@ -175,7 +175,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                     $players = array();
                     if ($numMatches>0)
                     {
-                        for($match=0; $match<$numMatches; $match++)
+                        for($match=0; $match < $numMatches; $match++)
                         {
                             // For each match played by current player
                             $mID  = mysql_result($result_Matches,$match, TBL_MATCHS.".MatchID");
@@ -197,7 +197,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
                             $result_Scores = $sql->db_Query($q_Scores);
                             $numScores = mysql_numrows($result_Scores);
-                            for($scoreIndex=0; $scoreIndex<$numScores; $scoreIndex++)
+                            for($scoreIndex=0; $scoreIndex < $numScores; $scoreIndex++)
                             {
                                 $osid  = mysql_result($result_Scores,$scoreIndex, TBL_SCORES.".ScoreID");
                                 $ouid  = mysql_result($result_Scores,$scoreIndex, TBL_USERS.".user_id");
@@ -306,7 +306,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
             $players = array();
             if ($numMatches>0)
             {
-                for($match=0; $match<$numMatches; $match++)
+                for($match=0; $match < $numMatches; $match++)
                 {
                     // For each match played by current player
                     $mID  = mysql_result($result_Matches,$match, TBL_MATCHS.".MatchID");
@@ -325,7 +325,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
                     $result_Scores = $sql->db_Query($q_Scores);
                     $numScores = mysql_numrows($result_Scores);
-                    for($scoreIndex=0; $scoreIndex<$numScores; $scoreIndex++)
+                    for($scoreIndex=0; $scoreIndex < $numScores; $scoreIndex++)
                     {
                         $osid  = mysql_result($result_Scores,$scoreIndex, TBL_SCORES.".ScoreID");
                         $otid  = mysql_result($result_Scores,$scoreIndex, TBL_TEAMS.".TeamID");
@@ -382,7 +382,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         $score[] = ($tgames_played>0) ? number_format($tscore/$tgames_played,2) : 0;
         $oppscore[] = ($tgames_played>0) ? number_format($toppscore/$tgames_played,2) : 0;
         $scorediff[] = ($tgames_played>0) ? number_format(($tscore - $toppscore)/$tgames_played,2) : 0;
-        $points[] = $tpoints;
+        $points[] = $tpoints.' ('.($tgames_played>0 ? number_format($tpoints/$tgames_played,2) : 0).')';
 
         // Actual score (not for display)
         if ($tgames_played >= $eminteamgames)
@@ -441,7 +441,8 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
     $stat_score = array();
     $stat_display = array();
     $cat_index = 0;
-    for($category=0; $category<$numCategories; $category++)
+    $categories = array();
+    for($category=0; $category < $numCategories; $category++)
     {
         $cat_name = mysql_result($result_Categories,$category, TBL_STATSCATEGORIES.".CategoryName");
         $cat_minpoints = mysql_result($result_Categories,$category, TBL_STATSCATEGORIES.".CategoryMinValue");
@@ -450,6 +451,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
         if ($cat_maxpoints > 0)
         {
+            //dbg- echo "$cat_name<br>";
             $display_cat = 1;
             switch ($cat_name)
             {
@@ -559,48 +561,64 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
             if ($display_cat==1)
             {
                 $stat_InfoOnly[$cat_index] = $cat_InfoOnly;
-                if ($cat_InfoOnly == TRUE)
-                {
-                    $cat_header = '<b title="'.$cat_header_title.'">'.$cat_header_text.'</b>';
-                }
-                else
-                {
-                    $cat_header = '
-                    <b title="'.$cat_header_title.' ['.number_format ($cat_maxpoints,2).' '.EB_STATS_L27.']">'.$cat_header_text.'</b>
-                    ';
-                    /*
-                    $cat_header = '
-                    <b title="'.$cat_header_title.'">'.$cat_header_text.'</b>
-                    <br /><div class="smalltext">['.number_format ($cat_maxpoints,2).'&nbsp;'.EB_STATS_L27.']</div>
-                    ';
-                    */
 
-                    // a = (ymax-ymin)/(xmax-xmin)
-                    // b = ymin - a.xmin
-                    if ($max==$min)
+                switch($eranking_type)
+                {
+                    case "CombinedStats":
+                    if (($cat_InfoOnly == TRUE))
                     {
-                        $a = 0;
-                        $b = $cat_maxpoints;
+                        $cat_header = '<b title="'.$cat_header_title.'">'.$cat_header_text.'</b>';
                     }
                     else
                     {
-                        $a = ($cat_maxpoints-$cat_minpoints) / ($max-$min);
-                        $b = $cat_minpoints - $a * $min;
+                        $categories[] = $cat_index;
+                        $cat_header = '<b title="'.$cat_header_title.' ['.number_format ($cat_maxpoints,2).' '.EB_STATS_L27.']">'.$cat_header_text.'</b>';
+                        /*
+                        $cat_header = '
+                        <b title="'.$cat_header_title.'">'.$cat_header_text.'</b>
+                        <br /><div class="smalltext">['.number_format ($cat_maxpoints,2).'&nbsp;'.EB_STATS_L27.']</div>
+                        ';
+                        */
+
+                        // a = (ymax-ymin)/(xmax-xmin)
+                        // b = ymin - a.xmin
+                        if ($max==$min)
+                        {
+                            $a = 0;
+                            $b = $cat_maxpoints;
+                        }
+                        else
+                        {
+                            $a = ($cat_maxpoints-$cat_minpoints) / ($max-$min);
+                            $b = $cat_minpoints - $a * $min;
+                        }
+
+                        $stat_min[$cat_index] = $min;
+                        $stat_max[$cat_index] = $max;
+                        $stat_a[$cat_index] = $a;
+                        $stat_b[$cat_index] = $b;
+
+                        $rating_max += $cat_maxpoints;
                     }
-
-                    $stat_min[$cat_index] = $min;
-                    $stat_max[$cat_index] = $max;
-                    $stat_a[$cat_index] = $a;
-                    $stat_b[$cat_index] = $b;
-
-                    $rating_max += $cat_maxpoints;
+                    break;
+                    case "Classic";
+                    $cat_header = '<b title="'.$cat_header_title.'">'.$cat_header_text.'</b>';
+                    if (($cat_InfoOnly == FALSE))
+                    {
+                        $categories[] = $cat_index;
+                    }
+                    break;
+                    default:
                 }
+
                 $stat_cat_header[$cat_index] = $cat_header;
                 $cat_index++;
             }
         }
     }
     $numDisplayedCategories = $cat_index;
+
+    $ranks = getRanking($stat_score, $categories);
 
     $stats = array
     (
@@ -622,42 +640,68 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
     $stats[0][] = '<b title="'.EB_STATS_L31.' ['.number_format ($rating_max,2).' '.EB_STATS_L27.']">'.EB_STATS_L32.'</b>';
     //$stats[0][] = '<b title="'.EB_STATS_L31.'">'.EB_STATS_L32.'</b><br /><div class="smalltext">['.number_format ($rating_max,2).'&nbsp;'.EB_STATS_L27.']</div>';
 
-    for ($category=0; $category<$numDisplayedCategories; $category++)
+    for ($category=0; $category < $numDisplayedCategories; $category++)
     {
         $stats[0][] = $stat_cat_header[$category];
     }
 
-    $player_index=0;
-    $final_score = array();
-    for($team=0; $team<$numTeams; $team++)
+    switch($eranking_type)
     {
-        $OverallScore[$team]=0;
-        if ($games_played[$team] >= $emingames)
+        case "CombinedStats":
+        $player_index=0;
+        $final_score = array();
+        for($team=0; $team < $numTeams; $team++)
         {
-            for ($category=0; $category<$numDisplayedCategories; $category++)
+            $OverallScore[$team]=0;
+            if ($games_played[$team] >= $emingames)
             {
-                if ($stat_InfoOnly[$category] == FALSE)
+                for ($category=0; $category < $numDisplayedCategories; $category++)
                 {
-                    $final_score[$category][$team] = $stat_a[$category] * $stat_score[$category][$player_index] + $stat_b[$category];
-                    $OverallScore[$team]+=$final_score[$category][$team];
+                    if ($stat_InfoOnly[$category] == FALSE)
+                    {
+                        $final_score[$category][$team] = $stat_a[$category] * $stat_score[$category][$player_index] + $stat_b[$category];
+                        $OverallScore[$team]+=$final_score[$category][$team];
+                    }
+                }
+                $player_index++;
+            }
+            else
+            {
+                for ($category=0; $category < $numDisplayedCategories; $category++)
+                {
+                    $final_score[$category][$team] = 0;
                 }
             }
-            $player_index++;
-        }
-        else
-        {
-            for ($category=0; $category<$numDisplayedCategories; $category++)
-            {
-                $final_score[$category][$team] = 0;
-            }
-        }
 
-        $q_update = "UPDATE ".TBL_TEAMS
-        ." SET OverallScore = '".floatToSQL($OverallScore[$team])."'"
-        ." WHERE (TeamID = '$id[$team]')"
-        ."   AND (Event = '$event_id')";
-        $result_update = $sql->db_Query($q_update);
+            $q_update = "UPDATE ".TBL_TEAMS
+            ." SET OverallScore = '".floatToSQL($OverallScore[$team])."'"
+            ." WHERE (TeamID = '$id[$team]')"
+            ."   AND (Event = '$event_id')";
+            $result_update = $sql->db_Query($q_update);
+        }
+        break;
+        case "Classic";
+        for($team=0; $team < $numTeams; $team++)
+        {
+            if ($games_played[$team] >= $eminteamgames)
+            {
+                $OverallScore[$team] = array_search($team, $ranks, false) + 1;
+            }
+            else
+            {
+                $OverallScore[$team] = 0;
+            }
+
+            $q_update = "UPDATE ".TBL_TEAMS
+            ." SET OverallScore = '".floatToSQL($OverallScore[$team])."'"
+            ." WHERE (TeamID = '$id[$team]')"
+            ."   AND (Event = '$event_id')";
+            $result_update = $sql->db_Query($q_update);
+        }
+        break;
+        default:
     }
+
     // Build results table
     //--------------------
     $q_Teams = "SELECT *"
@@ -666,7 +710,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
     ." ORDER BY ".TBL_TEAMS.".OverallScore DESC, ".TBL_TEAMS.".ELORanking DESC";
     $result_Teams = $sql->db_Query($q_Teams);
     $ranknumber = 1;
-    for($team=0; $team<$numTeams; $team++)
+    for($team=0; $team < $numTeams; $team++)
     {
         $tid = mysql_result($result_Teams,$team, TBL_TEAMS.".TeamID");
         $trank = mysql_result($result_Teams,$team, TBL_TEAMS.".Rank");
@@ -746,7 +790,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
         $stats_row[] = $image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan[$index].'"><b>'.$name[$index].'</b></a>';
         //  ('.$clantag[$index].')
-        
+
         switch($etype)
         {
             case "Team Ladder":
@@ -757,9 +801,9 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         if ($ehide_ratings_column == FALSE)
         $stats_row[] = number_format ($OverallScore[$index],2);
 
-        for ($category=0; $category<$numDisplayedCategories; $category++)
+        for ($category=0; $category < $numDisplayedCategories; $category++)
         {
-            if ($stat_InfoOnly[$category] == TRUE)
+            if (($stat_InfoOnly[$category] == TRUE)||($eranking_type == "Classic"))
             {
                 $stats_row[] = $stat_display[$category][$index];
             }
