@@ -88,7 +88,7 @@ function displayCurrentEvents(){
     if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
     $gameid = $_GET['gameid'];
 
-    if (!isset($_GET['orderby'])) $_GET['orderby'] = 'latest';
+    if (!isset($_GET['orderby'])) $_GET['orderby'] = 'game';
     $orderby=$_GET['orderby'];
 
     $sort = "ASC";
@@ -284,6 +284,15 @@ function displayCurrentEvents(){
             $result_2 = $sql->db_Query($q_2);
             $row = mysql_fetch_array($result_2);
             $nbrplayers = $row['NbrPlayers'];
+
+            /* Nbr Teams */
+            $q_2 = "SELECT COUNT(*) as NbrTeams"
+            ." FROM ".TBL_TEAMS
+            ." WHERE (".TBL_TEAMS.".Event = '$eid')";
+            $result_2 = $sql->db_Query($q_2);
+            $row = mysql_fetch_array($result_2);
+            $nbrTeams = $row['NbrTeams'];
+
             /* Nbr matches */
             $q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
             ." FROM ".TBL_MATCHS.", "
@@ -294,6 +303,20 @@ function displayCurrentEvents(){
             $result_2 = $sql->db_Query($q_2);
             $row = mysql_fetch_array($result_2);
             $nbrmatches = $row['NbrMatches'];
+
+            switch($etype)
+            {
+                case "One Player Ladder":
+                $nbrTeamPlayers = $nbrplayers;
+                break;
+                case "Team Ladder":
+                $nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
+                break;
+                case "ClanWar":
+                $nbrTeamPlayers = $nbrTeams;
+                break;
+                default:
+            }
 
             if(
                 ($eend==0)
@@ -307,7 +330,7 @@ function displayCurrentEvents(){
                 <td class="forumheader3">'.eventType($etype).'</td>
                 <td class="forumheader3">'.$date_start.'</td>
                 <td class="forumheader3">'.$date_end.'</td>
-                <td class="forumheader3">'.$nbrplayers.'</td>
+                <td class="forumheader3">'.$nbrTeamPlayers.'</td>
                 <td class="forumheader3">'.$nbrmatches.'</td>
                 </tr>';
             }
@@ -470,6 +493,15 @@ function displayRecentEvents(){
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);
         $nbrplayers = $row['NbrPlayers'];
+
+        /* Nbr Teams */
+        $q_2 = "SELECT COUNT(*) as NbrTeams"
+        ." FROM ".TBL_TEAMS
+        ." WHERE (".TBL_TEAMS.".Event = '$eid')";
+        $result_2 = $sql->db_Query($q_2);
+        $row = mysql_fetch_array($result_2);
+        $nbrTeams = $row['NbrTeams'];
+            
         /* Nbr matches */
         $q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
         ." FROM ".TBL_MATCHS.", "
@@ -480,6 +512,20 @@ function displayRecentEvents(){
         $row = mysql_fetch_array($result_2);
         $nbrmatches = $row['NbrMatches'];
 
+        switch($etype)
+        {
+            case "One Player Ladder":
+            $nbrTeamPlayers = $nbrplayers;
+            break;
+            case "Team Ladder":
+            $nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
+            break;
+            case "ClanWar":
+            $nbrTeamPlayers = $nbrTeams;
+            break;
+            default:
+        }
+            
         if(
             ($eend!=0)
             &&($eend<$time)
@@ -492,7 +538,7 @@ function displayRecentEvents(){
             <td class="forumheader3">'.eventType($etype).'</td>
             <td class="forumheader3">'.$date_start.'</td>
             <td class="forumheader3">'.$date_end.'</td>
-            <td class="forumheader3">'.$nbrplayers.'</td>
+            <td class="forumheader3">'.$nbrTeamPlayers.'</td>
             <td class="forumheader3">'.$nbrmatches.'</td>
             </tr>';
         }

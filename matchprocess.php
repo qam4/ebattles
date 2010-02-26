@@ -20,6 +20,7 @@ if(isset($_POST['qrsubmitloss']))
     $result = $sql->db_Query($q);
 
     $eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
+    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
 
     // Attention here, we use user_id, so there has to be 1 user for 1 player
     $plooserUser = $reported_by;
@@ -60,8 +61,17 @@ if(isset($_POST['qrsubmitloss']))
     // Automatically Update Players stats only if Match Approval is Disabled
     if ($eMatchesApproval == eb_UC_NONE)
     {
-        match_players_update($match_id);
-
+        switch($etype)
+        {
+            case "One Player Ladder":
+            case "Team Ladder":
+            match_players_update($match_id);
+            break;
+            case "ClanWar":
+            match_teams_update($match_id);
+            break;
+            default:
+        }
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q);
     }
@@ -77,7 +87,23 @@ if (isset($_POST['approvematch']))
     $event_id = $_POST['eventid'];
     $match_id = $_POST['matchid'];
 
-    match_players_update($match_id);
+    $q = "SELECT ".TBL_EVENTS.".*"
+    ." FROM ".TBL_EVENTS
+    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+    $result = $sql->db_Query($q);
+
+    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+    switch($etype)
+    {
+        case "One Player Ladder":
+        case "Team Ladder":
+        match_players_update($match_id);
+        break;
+        case "ClanWar":
+        match_teams_update($match_id);
+        break;
+        default:
+    }
 
     $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
     $result = $sql->db_Query($q);

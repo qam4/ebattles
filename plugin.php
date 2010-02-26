@@ -140,7 +140,8 @@ $eplug_tables = array(
     match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."',
     quick_loss_report tinyint(1) DEFAULT '1',
     hide_ratings_column tinyint(1) DEFAULT '0',
-    MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'
+    MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
+    RankingType varchar(20) DEFAULT 'CombinedStats'
     ) TYPE = MyISAM;",
     "CREATE TABLE ".TBL_EVENTMODS."
     (
@@ -208,6 +209,7 @@ $eplug_tables = array(
     ELORanking int DEFAULT '".ELO_DEFAULT."',
     TS_mu float DEFAULT '".floatToSQL(TS_Mu0)."',
     TS_sigma float DEFAULT '".floatToSQL(TS_sigma0)."',
+    GamesPlayed int DEFAULT '0',
     Win int DEFAULT '0',
     Draw int DEFAULT '0',
     Loss int DEFAULT '0',
@@ -274,6 +276,9 @@ $eplug_tables = array(
     Player int NOT NULL,
     INDEX (Player),
     FOREIGN KEY (Player) REFERENCES ".TBL_PLAYERS." (PlayerID),
+    Team int NOT NULL,
+    INDEX (Team),
+    FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID),
     Player_MatchTeam int DEFAULT '0',
     Player_deltaELO int DEFAULT '0',
     Player_deltaTS_mu float DEFAULT '0',
@@ -503,6 +508,19 @@ if ($revision < 175)
         "ALTER TABLE ".TBL_MATCHS." ADD Status varchar(20) DEFAULT 'active'"
     );
 }
+if ($revision < 202)
+{
+    // To revision 202
+    $upgrade_alter_tables += array(
+        "ALTER TABLE ".TBL_EVENTS." ADD RankingType varchar(20) DEFAULT 'CombinedStats'",
+        "ALTER TABLE ".TBL_TEAMS." ADD GamesPlayed int DEFAULT '0'",
+        "ALTER TABLE ".TBL_SCORES." ADD Team int NOT NULL",
+        "ALTER TABLE ".TBL_SCORES." ADD INDEX (Team)",
+        "ALTER TABLE ".TBL_SCORES." ADD FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID)"
+    );
+}
+
+
 /* dbg
 echo "<br>Prefs upgrade:";
 print_r($upgrade_add_prefs);
