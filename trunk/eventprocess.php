@@ -130,16 +130,39 @@ else
             if ($num_rows_2==0)
             {
                 $new_eventtype = $_POST['eventtype'];
-                if ($new_eventtype == 'Individual')
+
+                switch($new_eventtype)
                 {
+                    case 'Individual':
                     $q2 = "UPDATE ".TBL_EVENTS." SET Type = 'One Player Ladder' WHERE (EventID = '$event_id')";
                     $result2 = $sql->db_Query($q2);
-                }
-                else
-                {
+                    break;
+                    case 'Team Ladder':
                     $q2 = "UPDATE ".TBL_EVENTS." SET Type = 'Team Ladder' WHERE (EventID = '$event_id')";
                     $result2 = $sql->db_Query($q2);
+                    break;
+                    case 'ClanWar':
+                    $q2 = "UPDATE ".TBL_EVENTS." SET Type = 'ClanWar' WHERE (EventID = '$event_id')";
+                    $result2 = $sql->db_Query($q2);
+                    break;
+                    default:
                 }
+            }
+
+            /* Event Ranking Type */
+            $new_eventrankingtype = $_POST['eventrankingtype'];
+
+            switch($new_eventrankingtype)
+            {
+                case 'Classic':
+                $q2 = "UPDATE ".TBL_EVENTS." SET RankingType = 'Classic' WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+                break;
+                case 'CombinedStats':
+                $q2 = "UPDATE ".TBL_EVENTS." SET RankingType = 'CombinedStats' WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+                break;
+                default:
             }
 
             /* Event Match report userclass */
@@ -184,7 +207,7 @@ else
             }
 
             /* Event Match Approval */
-            $new_MatchesApproval = $_POST['eventmatchapprovaluserclass'];                        
+            $new_MatchesApproval = $_POST['eventmatchapprovaluserclass'];
             $q2 = "UPDATE ".TBL_EVENTS." SET MatchesApproval = '$new_MatchesApproval' WHERE (EventID = '$event_id')";
             $result2 = $sql->db_Query($q2);
 
@@ -279,12 +302,9 @@ else
         if(isset($_POST['eventaddteam']))
         {
             $division = $_POST['division'];
-            echo "1";
             $notify = (isset($_POST['eventaddteamnotify'])? TRUE: FALSE);
-            echo "2";
             eventAddDivision($event_id, $division, $notify);
-            echo "3";
-            
+
             //echo "-- eventaddteam --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
         }

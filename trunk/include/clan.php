@@ -91,8 +91,8 @@ function deleteClan($clan_id)
 function getClanName($teamID)
 {
     global $sql;
-    $pclan = '';
-    $pclantag = '';
+    $clan = '';
+    $clantag = '';
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_DIVISIONS.".*, "
     .TBL_TEAMS.".* "
@@ -106,10 +106,11 @@ function getClanName($teamID)
     $num_rows = mysql_numrows($result);
     if ($num_rows == 1)
     {
-        $pclan  = mysql_result($result,0, TBL_CLANS.".Name");
-        $pclantag  = mysql_result($result,0, TBL_CLANS.".Tag") ."&nbsp;";
+        $clanid  = mysql_result($result,0, TBL_CLANS.".ClanID");
+        $clanname  = mysql_result($result,0, TBL_CLANS.".Name");
+        $clantag  = mysql_result($result,0, TBL_CLANS.".Tag") ."&nbsp;";
     }
-    return array($pclan, $pclantag);
+    return array($clanname, $clantag, $clanid);
 }
 
 ?>

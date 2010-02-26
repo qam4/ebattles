@@ -38,41 +38,62 @@ function show_array($array, $level, $sub){
 
 function html_show_array($array){
   $output = '';
-  $output .= "<table cellspacing=\"0\" border=\"2\">\n";
+  $output .= '<table cellspacing="0" border="2">';
   $output .= show_array($array, 1, 0);
-  $output .= "</table>\n";
+  $output .= '</table>';
   return $output;
+}
+
+function html_show_2d_table($array)
+{
+    $rows = count($array);
+    $columns = count($array[0]);
+    //echo "$rows, $columns<br>";
+
+    $output = '<table cellspacing="0" border="1"><tbody>';
+
+    for ($i=0; $i < $rows; $i++)
+    {
+        $output .= '<tr>';
+        for($j=0; $j <$columns; $j++)
+        {
+            $output .= '<td>'.$array[$i][$j].'</td>';
+        }
+        $output .= '</tr>';
+    }
+    $output .= '</tbody></table>';
+    return $output;
 }
 
 function html_show_table($array, $rows, $columns)
 {
-   $output = "<table class=\"fborder\" style=\"width:95%\"><tbody>";
+   $output = '<table class="fborder" style="width:95%"><tbody>';
       
    for ($i=0; $i<$rows; $i++)
    {
-     $output .= "<tr>\n";
+     $output .= '<tr>';
      for($j=1; $j<=$columns; $j++)
      {
        if (strcasecmp($array[$i][0],"header")==0)
        {
-            $output .= "<td class=\"forumheader\">".$array[$i][$j]."</td>";
+            $output .= '<td class="forumheader">'.$array[$i][$j].'</td>';
        }
        elseif (strcasecmp($array[$i][0],"row_highlight")==0)
        {
-            $output .= "<td class=\"forumheader3\">".$array[$i][$j]."</td>";
+            $output .= '<td class="forumheader3">'.$array[$i][$j].'</td>';
        }
        elseif ( $i % 2 == 1 )
        {
-            $output .= "<td class=\"forumheader3\">".$array[$i][$j]."</td>";
+            $output .= '<td class="forumheader3">'.$array[$i][$j].'</td>';
        }
        else
        {
-            $output .= "<td class=\"forumheader3\">".$array[$i][$j]."</td>";
+            $output .= '<td class="forumheader3">'.$array[$i][$j].'</td>';
        }
      }
-     $output .= "</tr>\n";
+     $output .= '</tr>';
    }
-   $output .= "</tbody></table>";
+   $output .= '</tbody></table>';
    return $output;
 }
 ?>
