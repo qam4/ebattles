@@ -51,6 +51,7 @@ else
     if ($can_manage == 0)
     {
         header("Location: ./eventinfo.php?eventid=$event_id");
+        exit();
     }
     else{
 
@@ -67,6 +68,7 @@ else
 
             //echo "-- eventchangeowner --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['eventdeletemod']))
         {
@@ -78,6 +80,7 @@ else
 
             //echo "-- eventdeletemod --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['eventaddmod']))
         {
@@ -97,6 +100,7 @@ else
             }
             //echo "-- eventaddmod --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
 
         if(isset($_POST['eventsettingssave']))
@@ -279,6 +283,7 @@ else
 
             //echo "-- eventsettingssave --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['eventrulessave']))
         {
@@ -289,6 +294,7 @@ else
 
             //echo "-- eventrulessave --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['eventaddplayer']))
         {
@@ -298,6 +304,7 @@ else
 
             //echo "-- eventaddplayer --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['eventaddteam']))
         {
@@ -307,6 +314,7 @@ else
 
             //echo "-- eventaddteam --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['ban_player']) && $_POST['ban_player']!="")
         {
@@ -315,6 +323,7 @@ else
             $result2 = $sql->db_Query($q2);
             updateStats($event_id, $time, TRUE);
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['unban_player']) && $_POST['unban_player']!="")
         {
@@ -323,6 +332,7 @@ else
             $result2 = $sql->db_Query($q2);
             updateStats($event_id, $time, TRUE);
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['kick_player']) && $_POST['kick_player']!="")
         {
@@ -330,6 +340,7 @@ else
             deletePlayer($playerid);
             updateStats($event_id, $time, TRUE);
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['del_player_games']) && $_POST['del_player_games']!="")
         {
@@ -337,12 +348,14 @@ else
             deletePlayerMatches($playerid);
             updateStats($event_id, $time, TRUE);
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['del_player_awards']) && $_POST['del_player_awards']!="")
         {
             $playerid = $_POST['del_player_awards'];
             deleteAwards($playerid);
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['eventresetscores']))
         {
@@ -352,6 +365,7 @@ else
 
             //echo "-- eventresetscores --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['eventresetevent']))
         {
@@ -361,6 +375,7 @@ else
 
             //echo "-- eventresetevent --<br />";
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
         if(isset($_POST['eventdelete']))
         {
@@ -368,6 +383,7 @@ else
 
             //echo "-- eventdelete --<br />";
             header("Location: events.php");
+            exit();
         }
         if(isset($_POST['eventupdatescores']))
         {
@@ -440,6 +456,7 @@ else
             $result = $sql->db_Query($q4);
 
             header("Location: eventmanage.php?eventid=$event_id");
+            exit();
         }
     }
 }

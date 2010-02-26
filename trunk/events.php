@@ -241,13 +241,13 @@ function displayCurrentEvents(){
         /* Display table contents */
         $text .= '<table class="fborder" style="width:95%"><tbody>';
         $text .= '<tr>
-        <td class="forumheader">'.EB_EVENTS_L13.'</td>
-        <td colspan="2" class="forumheader">'.EB_EVENTS_L14.'</td>
-        <td class="forumheader">'.EB_EVENTS_L15.'</td>
-        <td class="forumheader">'.EB_EVENTS_L16.'</td>
-        <td class="forumheader">'.EB_EVENTS_L17.'</td>
-        <td class="forumheader">'.EB_EVENTS_L18.'</td>
-        <td class="forumheader">'.EB_EVENTS_L19.'</td>
+        <td class="forumheader"><b>'.EB_EVENTS_L13.'</b></td>
+        <td colspan="2" class="forumheader"><b>'.EB_EVENTS_L14.'</b></td>
+        <td class="forumheader"><b>'.EB_EVENTS_L15.'</b></td>
+        <td class="forumheader"><b>'.EB_EVENTS_L16.'</b></td>
+        <td class="forumheader"><b>'.EB_EVENTS_L17.'</b></td>
+        <td class="forumheader"><b>'.EB_EVENTS_L18.'</b></td>
+        <td class="forumheader"><b>'.EB_EVENTS_L19.'</b></td>
         </tr>';
         for($i=0; $i<$num_rows; $i++)
         {
@@ -450,13 +450,13 @@ function displayRecentEvents(){
     /* Display table contents */
     $text .= '<table class="fborder" style="width:95%"><tbody>';
     $text .= '<tr>
-    <td class="forumheader">'.EB_EVENTS_L13.'</td>
-    <td colspan="2" class="forumheader">'.EB_EVENTS_L14.'</td>
-    <td class="forumheader">'.EB_EVENTS_L15.'</td>
-    <td class="forumheader">'.EB_EVENTS_L16.'</td>
-    <td class="forumheader">'.EB_EVENTS_L17.'</td>
-    <td class="forumheader">'.EB_EVENTS_L18.'</td>
-    <td class="forumheader">'.EB_EVENTS_L19.'</td>
+    <td class="forumheader"><b>'.EB_EVENTS_L13.'</b></td>
+    <td colspan="2" class="forumheader"><b>'.EB_EVENTS_L14.'</b></td>
+    <td class="forumheader"><b>'.EB_EVENTS_L15.'</b></td>
+    <td class="forumheader"><b>'.EB_EVENTS_L16.'</b></td>
+    <td class="forumheader"><b>'.EB_EVENTS_L17.'</b></td>
+    <td class="forumheader"><b>'.EB_EVENTS_L18.'</b></td>
+    <td class="forumheader"><b>'.EB_EVENTS_L19.'</b></td>
     </tr>';
     for($i=0; $i<$num_rows; $i++)
     {
