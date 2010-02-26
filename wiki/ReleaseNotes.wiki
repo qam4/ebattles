@@ -1,5 +1,38 @@
 #summary eBattles Release Notes.
 
+= Release 0.7.203 =
+== Features ==
+ * New Ladder type "Team"
+  * Details:
+   * This ladder type is for teams only.
+   * Unlike in Individual and Teams/Individual Ladders, in Team Ladder matches are not opposing players, but teams.
+   * This format is targeted to team sports leagues (Soccer, ...), and FPS games.
+ * Added new Ranking Type
+  * Now Event admins have the choice between 2 ranking types:
+   * Classic: Players are ranked based on their score in the first stats category, if 2 players are tied, they are ranked based on the second stats category, and so on<br />
+   * Combined Stats: Players are ranked based on a combination of their scores in each stats category
+    * This is the ranking type that was used in previous versions of the plugin.
+ * Automatically add the clan owner to the divisions he creates.
+ * For games drop-down list used in events, eventpast and clanmanage pages, only show games used in existing events.
+ * Improved SVN pre-commit batch to get latest commit revision correctly.
+ * Improved Players/Teams standings table headers.
+== Bug fixes ==
+ * Fix bug: In team admin page, only show the "Add division" button if there are games used in an event.
+ * Fix bug: Fixed position of matches pending in event admin page, "Settings" tab.
+
+= Release 0.6.185 =
+== Features ==
+ * Added new userclass option for Match Approval: "Match Reporter Opponent"
+  * If this option is chosen in the event admin panel, any opponent of the reporter of a match can approve the match.
+ * Improved match info display.
+  * Added a "magnify" icon with a link to the match details page.
+  * Added an "exclamation" icon with a link to the match details page if the match is pending and the user is allowed to approve it.
+ * Added avatars in match details page.
+== Bug fixes ==
+ * Fix bug: in "Recent Activity" menu, matches were not shown in the list because the match time was not retrieved properly.
+ * Fixed typo: In User profile page, "Events" tab, "Owner" table, changed the text of the link to event manage page from "Status" to "Manage".
+ * Fix title of Clan Create page.
+
 = Release 0.6.180 =
 == Features ==
  * Added new userclass option for Match Approval: "*Match Reporter Opponent*"
