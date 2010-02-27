@@ -24,15 +24,29 @@ Any number of teams and any number of players per team is allowed: 1v1, 2v2, 1v1
         * Check the draw checkbox if rank is same as previous team (if applicable) 
         * Add games comments
 
-==Players Standing==
-The rating calculation is based on each players score in a set of ranking categories.
-Each category is assigned a max value which is attributed to the player who scores best in that category.
-Other players get a portion of the max value, proportional to their score.
-Overall score is the sum of the categories scores. 
- 
-==Team Standing==
-In "Team" ladders, the score of each player goes toward his teams score.
-This type of ladder is perfect for clan wars.
+==Ladders types==
+There are 3 type of ladders available to event admins
+ * _Individual Ladder_: 
+  * Players vs. players matches
+ * _Team/Individual Ladder_:
+  * Players vs. players matches.
+  * Players must be member of a team to play.
+  * The score of each player goes toward his teams score.
+ * _Team Ladder_:
+  * Teams vs. teams matches.
+  * This ladder type is for teams only.
+  * Unlike in Individual and Teams/Individual Ladders, in Team Ladder matches are opposing teams, not players.
+  * This format is targeted to team sports leagues (Soccer, ...), and FPS games (clan wars).
+
+==Rankings==
+There are 2 types of ranking calculation available to event admins:
+ * _Classic_:
+  * Players are ranked based on their score in the first stats category, if 2 players are tied, they are ranked based on the second stats category, and so on.
+ * _Combined Stats_:  
+  * the rating calculation is based on each players score in a set of ranking categories.
+  * Each category is assigned a max value which is attributed to the player who scores best in that category.
+  * Other players get a portion of the max value, proportional to their score.
+  * Overall score is the sum of the categories scores. 
 
 ==List of supported statistics categories==
   * Requirements to rank
