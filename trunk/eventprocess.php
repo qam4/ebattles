@@ -141,7 +141,7 @@ else
                     $q2 = "UPDATE ".TBL_EVENTS." SET Type = 'One Player Ladder' WHERE (EventID = '$event_id')";
                     $result2 = $sql->db_Query($q2);
                     break;
-                    case 'Team Ladder':
+                    case 'Team':
                     $q2 = "UPDATE ".TBL_EVENTS." SET Type = 'Team Ladder' WHERE (EventID = '$event_id')";
                     $result2 = $sql->db_Query($q2);
                     break;
