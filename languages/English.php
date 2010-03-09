@@ -501,6 +501,7 @@ define('EB_MATCHR_L34', 'Back to');
 define('EB_MATCHR_L35', 'Event');
 define('EB_MATCHR_L36', 'You are not logged in.');
 define('EB_MATCHR_L37', 'You are only allowed to report matches your team has played.');
+define('EB_MATCHR_L38', 'Player');
 
 define('EB_MATCHQL_L1', 'Quick Loss Report');
 define('EB_MATCHQL_L2', 'You are not authorized to report a match.');

@@ -68,12 +68,12 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     for($i=1;$i<=$nbr_players;$i++)
     {
         if (!isset($_POST['team'.$i])) $_POST['team'.$i] = 'Team #'.$i;
+        if (!isset($_POST['score'.$i])) $_POST['score'.$i] = 0;
     }
 
     for($i=1;$i<=$nbr_teams;$i++)
     {
         if (!isset($_POST['rank'.$i])) $_POST['rank'.$i] = 'Team #'.$i;
-        if (!isset($_POST['score'.$i])) $_POST['score'.$i] = 0;
     }
 
     /////////////////
@@ -140,6 +140,10 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     //----------------------------------
     $text .= EB_MATCHR_L20;
     $text .= '<table id="matchresult_selectPlayersTeams"><tbody>';
+    $text .= '<tr><td></td><td>'.EB_MATCHR_L38.'</td>';
+    $text .= '<td>'.EB_MATCHR_L25.'</td>';
+    if ($allowScore == TRUE) $text .= '<td>'.EB_MATCHR_L26.'</td>';
+    $text .= '</tr>';
     for($i=1;$i<=$nbr_players;$i++)
     {
         $text .= '<tr><td>'.EB_MATCHR_L23.$i.':</td>';
@@ -161,6 +165,12 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
             $text .= '>'.EB_MATCHR_L29.$j.'</option>';
         }
         $text .= '</select></td>';
+        if ($allowScore == TRUE)
+        {
+            $text .= '<td>';
+            $text .= '<input class="tbox" type="text" name="score'.$i.'" value="'.$_POST['score'.$i].'"/>';
+            $text .= '</td>';
+        }
         $text .= '</tr>';
     }
     $text .= '</tbody></table>';
@@ -171,7 +181,6 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     $text .= EB_MATCHR_L24;
     $text .= '<table id="matchresult_rankTeams"><tbody>';
     $text .= '<tr><td></td><td>'.EB_MATCHR_L25.'</td>';
-    if ($allowScore == TRUE) $text .= '<td>'.EB_MATCHR_L26.'</td>';
     if ($allowDraw == TRUE) $text .= '<td>'.EB_MATCHR_L27.'</td>';
     $text .= '</tr>';
 
@@ -189,12 +198,6 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
             $text .= '>'.EB_MATCHR_L29.$j.'</option>';
         }
         $text .= '</select></td>';
-        if ($allowScore == TRUE)
-        {
-            $text .= '<td>';
-            $text .= '<input class="tbox" type="text" name="score'.$i.'" value="'.$_POST['score'.$i].'"/>';
-            $text .= '</td>';
-        }
         if ($allowDraw == TRUE)
         {
             $text .= '<td>';

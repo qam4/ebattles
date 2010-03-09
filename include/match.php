@@ -980,6 +980,7 @@ function displayMatchInfo($match_id, $type = 0)
 
                 if($index>0)
                 {
+                    $scores .= "-".$pscore;
                     if ($pmatchteam == $matchteam)
                     {
                         $string .= ' &amp; ';
@@ -994,7 +995,6 @@ function displayMatchInfo($match_id, $type = 0)
                         {
                             $str = ' '.EB_MATCH_L3.' ';
                         }
-                        $scores .= "-".$pscore;
                         $string .= $str;
                         $matchteam++;
                     }
