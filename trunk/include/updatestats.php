@@ -495,7 +495,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
         {
             if (($games_played[$player] >= $emingames)&&($banned[$player] == 0))
             {
-                $OverallScore[$player] = array_search($player, $ranks, false);
+                $OverallScore[$player] = array_search($player, $ranks, false) + 1;
             }
             else
             {
