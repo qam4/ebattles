@@ -499,6 +499,7 @@ define('EB_MATCHR_L34', 'Volver a');
 define('EB_MATCHR_L35', 'Evento');
 define('EB_MATCHR_L36', 'Usted no se ha identificado.');
 define('EB_MATCHR_L37', 'You are only allowed to report matches your team has played.');
+define('EB_MATCHR_L38', 'Jugador');
 
 define('EB_MATCHQL_L1', 'Informe de perdidas');
 define('EB_MATCHQL_L2', 'Usted no esta autorizado para informar el partido.');

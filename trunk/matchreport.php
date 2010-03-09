@@ -190,6 +190,11 @@ if (isset($_POST['submit']))
         if ($pid == $players_name[0])
         $error_str .= '<li>'.EB_MATCHR_L2.$i.'&nbsp;'.EB_MATCHR_L3.'</li>';
 
+        // Check if a score is not a number
+        if (!isset($_POST['score'.$i])) $_POST['score'.$i] = 0;
+        if(!preg_match("/^\d+$/", $_POST['score'.$i]))
+        $error_str .= '<li>'.EB_MATCHR_L12.$i.'&nbsp;'.EB_MATCHR_L13.'&nbsp;'.$_POST['score'.$i].'</li>';
+
         switch($etype)
         {
             case "One Player Ladder":
@@ -288,10 +293,8 @@ if (isset($_POST['submit']))
     }
 
     // Check if a team has no player
-    // Check if a score is not a number
     for($i=1;$i<=$nbr_teams;$i++)
     {
-        if (!isset($_POST['score'.$i])) $_POST['score'.$i] = 0;
         $team_players = 0;
         for($j=1;$j<=$nbr_players;$j++)
         {
@@ -300,8 +303,6 @@ if (isset($_POST['submit']))
         }
         if ($team_players == 0)
         $error_str .= '<li>'.EB_MATCHR_L10.$i.'&nbsp;'.EB_MATCHR_L11.'</li>';
-        if(!preg_match("/^\d+$/", $_POST['score'.$i]))
-        $error_str .= '<li>'.EB_MATCHR_L12.$i.'&nbsp;'.EB_MATCHR_L13.'&nbsp;'.$_POST['score'.$i].'</li>';
     }
 
     // we could do more data checks, but you get the idea.
@@ -359,11 +360,7 @@ if (isset($_POST['submit']))
                 $prank = $actual_rank[$j];
             }
 
-            for($j=1;$j<=$nbr_teams;$j++)
-            {
-                if( $_POST['rank'.$j] == "Team #".$pteam)
-                $pscore = $_POST['score'.$j];
-            }
+            $pscore = $_POST['score'.$i];
 
             switch($etype)
             {
