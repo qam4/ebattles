@@ -49,17 +49,24 @@ $tab_theme
 function multi2dSortAsc(&$arr, $key, $sort)
 {
     $sort_col = array();
+    $sort_type = SORT_NUMERIC;
     foreach ($arr as $sub)
     {
         $string = $sub[$key];
+                
         // remove html tags
         $string = preg_replace("/<[^>]*>/e","", $string);
-        $string = preg_split("/\/\s|\||(<br)/", $string);
-
-        //echo "$string[0]<br>";
+        // remove thousand separator & decimal point
+        $string = preg_replace("/[\,\.]/e","", $string);
+        if (!is_numeric($string[0])) $sort_type = SORT_REGULAR;
+        // split "/ " or "|" or "<br" or "[" or "%" or " ("
+        $string = preg_split("/\/\s|\||(<br)|\[|%|\s\(/", $string);
+        
+        //echo "$sub[$key] --> $string[0]<br>";
         $sort_col[] = $string[0];
     }
-    array_multisort($sort_col, $sort, SORT_NUMERIC, $arr);
+    //echo "sort_type: $sort_type<br>";
+    array_multisort($sort_col, $sort, $sort_type, $arr);
 }
 
 function getRanking($arr, $keys)

@@ -24,11 +24,11 @@ $text = '
 if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;
 $orderby=$_GET['orderby'];
 
-$sort = "ASC";
+$sort = "DESC";
 if(isset($_GET["sort"]) && !empty($_GET["sort"]))
 {
     $sort = ($_GET["sort"]=="ASC") ? "DESC" : "ASC";
-    $sort_type = ($_GET["sort"]=="ASC") ? SORT_DESC : SORT_ASC;
+    $sort_type = ($_GET["sort"]=="ASC") ? SORT_ASC : SORT_DESC;
 }
 
 /* Event Name */
