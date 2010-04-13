@@ -500,6 +500,8 @@ define('EB_MATCHR_L35', 'Ladder');
 define('EB_MATCHR_L36', 'Vous n’êtes pas connecté.');
 define('EB_MATCHR_L37', 'Vous n’êtes authorisé qu’à rapporter des matchs que votre équipe a joué.');
 define('EB_MATCHR_L38', 'Joueur');
+define('EB_MATCHR_L39', 'Équipe #');
+define('EB_MATCHR_L40', 'est la même qu’Équipe #');
 
 define('EB_MATCHQL_L1', 'Rapport rapide de défaite');
 define('EB_MATCHQL_L2', 'Vous n’êtes pas authorisé a soumettre un match.');

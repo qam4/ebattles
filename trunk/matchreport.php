@@ -271,6 +271,13 @@ if (isset($_POST['submit']))
                if ($dcaptain == $reported_by) $userIsCaptain = 1;
                if ($muid == $reported_by) $userIsTeamMember = 1;
             }
+            
+            // Check if 2 teams are the same
+            for($j=$i+1;$j<=$nbr_players;$j++)
+            {
+                if ($_POST['player'.$i] == $_POST['player'.$j])
+                $error_str .= '<li>'.EB_MATCHR_L39.$i.'&nbsp;'.EB_MATCHR_L40.$j.'</li>';
+            }
             break;
             default:
         }

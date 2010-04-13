@@ -36,8 +36,26 @@ else
     }
     else
     {
+        /* Event Info */
+        $q = "SELECT ".TBL_EVENTS.".*"
+        ." FROM ".TBL_EVENTS
+        ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+        $result = $sql->db_Query($q);
+        $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+
         $match_id = $_POST['matchid'];
-        deleteMatchScores($match_id);
+        
+        switch($etype)
+        {
+            case "One Player Ladder":
+            case "Team Ladder":
+                deletePlayersMatchScores($match_id);
+            break;
+            case "ClanWar":
+                deleteTeamsMatchScores($match_id);
+            break;
+            default:
+        }
 
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q);

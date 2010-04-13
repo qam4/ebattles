@@ -27,7 +27,7 @@ function resetPlayers($event_id)
     $num_players = mysql_numrows($result2);
     if ($num_players!=0)
     {
-        for($j=0; $j<$num_players; $j++)
+        for($j=0; $j< $num_players; $j++)
         {
             $pID  = mysql_result($result2,$j, TBL_PLAYERS.".PlayerID");
             $q3 = "UPDATE ".TBL_PLAYERS
@@ -72,9 +72,9 @@ function resetTeams($event_id)
     $num_teams = mysql_numrows($result2);
     if ($num_teams!=0)
     {
-        for($j=0; $j<$num_teams; $j++)
+        for($j=0; $j< $num_teams; $j++)
         {
-            $tID  = mysql_result($result2,$j, TBL_TEAMS.".PlayerID");
+            $tID  = mysql_result($result2,$j, TBL_TEAMS.".TeamID");
             $q3 = "UPDATE ".TBL_TEAMS
             ." SET ELORanking = '$eELOdefault',"
             ."     TS_mu = '".floatToSQL($eTS_default_mu)."',"
@@ -82,7 +82,7 @@ function resetTeams($event_id)
             ."     GamesPlayed = 0,"
             ."     Loss = 0,"
             ."     Win = 0,"
-            ."     Draws = 0,"
+            ."     Draw = 0,"
             ."     Score = 0,"
             ."     ScoreAgainst = 0,"
             ."     Points = 0,"
@@ -136,7 +136,7 @@ function deletePlayerMatches($player_id)
         {
             set_time_limit(10);
             $mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
-            deleteMatchScores($mID);
+            deletePlayersMatchScores($mID);
         }
     }
 }
@@ -233,11 +233,24 @@ function eventScoresUpdate($event_id, $current_match)
     ." ORDER BY TimeReported";
     $result = $sql->db_Query($q);
     $num_matches = mysql_numrows($result);
-    //echo "dbg: num_matches $num_matches<br>";
+    //echo "dbg: etype $etype, num_matches $num_matches, current_match $current_match<br>";
 
     if ($current_match > $num_matches)
     {
-        updateStats($event_id, $time, TRUE);
+        switch($etype)
+        {
+            case "One Player Ladder":
+            updateStats($event_id, $time, TRUE);
+            break;
+            case "Team Ladder":
+            updateStats($event_id, $time, TRUE);
+            updateTeamStats($event_id, $time, TRUE);
+            break;
+            case "ClanWar":
+            updateTeamStats($event_id, $time, TRUE);
+            break;
+            default:
+        }
         echo "Done.";
         echo '<META HTTP-EQUIV="Refresh" Content="0; URL=eventmanage.php?eventid='.$event_id.'">';
     }
@@ -248,7 +261,8 @@ function eventScoresUpdate($event_id, $current_match)
         {
             // Reset players stats
             resetPlayers($event_id);
-
+            resetTeams($event_id);
+            
             switch($etype)
             {
                 case "One Player Ladder":
@@ -263,7 +277,6 @@ function eventScoresUpdate($event_id, $current_match)
                 break;
                 default:
             }
-
         }
         else
         {
