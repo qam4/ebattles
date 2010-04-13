@@ -555,7 +555,7 @@ function match_teams_update($match_id)
     ." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
     ." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
     ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)";
-                
+
     $result = $sql->db_Query($q);
     $numTeams = mysql_numrows($result);
     for($i=0;$i < $numTeams;$i++)
@@ -617,24 +617,24 @@ function match_teams_update($match_id)
         /*
         if ($pStreak == 5)
         {
-            // Award: player wins 5 games in a row
-            $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-            VALUES ($pid,'PlayerStreak5',$time_reported)";
-            $result4 = $sql->db_Query($q4);
+        // Award: player wins 5 games in a row
+        $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+        VALUES ($pid,'PlayerStreak5',$time_reported)";
+        $result4 = $sql->db_Query($q4);
         }
         if ($pStreak == 10)
         {
-            // Award: player wins 10 games in a row
-            $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-            VALUES ($pid,'PlayerStreak10',$time_reported)";
-            $result4 = $sql->db_Query($q4);
+        // Award: player wins 10 games in a row
+        $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+        VALUES ($pid,'PlayerStreak10',$time_reported)";
+        $result4 = $sql->db_Query($q4);
         }
         if ($pStreak == 25)
         {
-            // Award: player wins 25 games in a row
-            $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-            VALUES ($pid,'PlayerStreak25',$time_reported)";
-            $result4 = $sql->db_Query($q4);
+        // Award: player wins 25 games in a row
+        $q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+        VALUES ($pid,'PlayerStreak25',$time_reported)";
+        $result4 = $sql->db_Query($q4);
         }
         */
 
@@ -666,7 +666,7 @@ function match_teams_update($match_id)
     //exit;
 }
 
-function deleteMatchScores($match_id)
+function deletePlayersMatchScores($match_id)
 {
     global $sql;
 
@@ -739,6 +739,95 @@ function deleteMatchScores($match_id)
             ."     ScoreAgainst = $pOppScore,"
             ."     Points = $pPoints"
             ." WHERE (PlayerID = '$pID')";
+            $result2 = $sql->db_Query($q);
+            $output .= "<br>$q";
+        }
+
+        // fmarc- Can not reverse "streak" information here :(
+
+        // Delete Score
+        $q = "DELETE FROM ".TBL_SCORES." WHERE (ScoreID = '$scoreid')";
+        $result2 = $sql->db_Query($q);
+        $output .= "<br>$q";
+
+    }
+    // The match itself is kept in database, only the scores are deleted.
+    $q = "UPDATE ".TBL_MATCHS." SET Status = 'deleted' WHERE (MatchID = '$match_id')";
+    $result = $sql->db_Query($q);
+
+    //echo $output;
+    //exit;
+}
+
+function deleteTeamsMatchScores($match_id)
+{
+    global $sql;
+
+    // Update Players with scores
+    $q = "SELECT ".TBL_MATCHS.".*, "
+    .TBL_SCORES.".*, "
+    .TBL_TEAMS.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
+    .TBL_TEAMS
+    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)";
+    $result = $sql->db_Query($q);
+    $numTeams = mysql_numrows($result);
+
+    for($i=0;$i < $numTeams;$i++)
+    {
+        $tID= mysql_result($result,$i, TBL_TEAMS.".TeamID");
+        $tELO= mysql_result($result,$i, TBL_TEAMS.".ELORanking");
+        $tTS_mu= mysql_result($result,$i, TBL_TEAMS.".TS_mu");
+        $tTS_sigma= mysql_result($result,$i, TBL_TEAMS.".TS_sigma");
+        $tGamesPlayed= mysql_result($result,$i, TBL_TEAMS.".GamesPlayed");
+        $tWins= mysql_result($result,$i, TBL_TEAMS.".Win");
+        $tDraws= mysql_result($result,$i, TBL_TEAMS.".Draw");
+        $tLosses= mysql_result($result,$i, TBL_TEAMS.".Loss");
+        $tScore= mysql_result($result,$i, TBL_TEAMS.".Score");
+        $tOppScore= mysql_result($result,$i, TBL_TEAMS.".ScoreAgainst");
+        $tPoints= mysql_result($result,$i, TBL_TEAMS.".Points");
+        $tcoreid = mysql_result($result,$i, TBL_SCORES.".ScoreID");
+        $tdeltaELO = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
+        $tdeltaTS_mu = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
+        $tdeltaTS_sigma = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
+        $tsWins = mysql_result($result,$i, TBL_SCORES.".Player_Win");
+        $tsDraws = mysql_result($result,$i, TBL_SCORES.".Player_Draw");
+        $tsLosses = mysql_result($result,$i, TBL_SCORES.".Player_Loss");
+        $tsScore = mysql_result($result,$i, TBL_SCORES.".Player_Score");
+        $tsOppScore = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
+        $tsPoints = mysql_result($result,$i, TBL_SCORES.".Player_Points");
+        $mStatus = mysql_result($result,$i, TBL_MATCHS.".Status");
+
+        $tELO -= $tdeltaELO;
+        $tTS_mu -= $tdeltaTS_mu;
+        $tTS_sigma /= $tdeltaTS_sigma;
+        $tWins -= $tsWins;
+        $tDraws -= $tsDraws;
+        $tLosses -= $tsLosses;
+        $tScore -= $tsScore;
+        $tOppScore -= $tsOppScore;
+        $tPoints -= $tsPoints;
+        $tGamesPlayed -= 1;
+
+        $output .= "<br>tid: $tid, tscore: $tsScore, telo: $tELO<br />";
+
+        if ($mStatus == 'active')
+        {
+            $q = "UPDATE ".TBL_TEAMS
+            ." SET ELORanking = $tELO,"
+            ."     TS_mu = '".floatToSQL($tTS_mu)."',"
+            ."     TS_sigma = '".floatToSQL($tTS_sigma)."',"
+            ."     GamesPlayed = $tGamesPlayed,"
+            ."     Loss = $tLosses,"
+            ."     Win = $tWins,"
+            ."     Draw = $tDraws,"
+            ."     Score = $tScore,"
+            ."     ScoreAgainst = $tOppScore,"
+            ."     Points = $tPoints"
+            ." WHERE (TeamID = '$tID')";
             $result2 = $sql->db_Query($q);
             $output .= "<br>$q";
         }
@@ -954,27 +1043,27 @@ function displayMatchInfo($match_id, $type = 0)
                 $image = '';
                 if ($pref['eb_avatar_enable_playersstandings'] == 1)
                 {
-                    switch($mEventType)
-                    {
-                        case "One Player Ladder":
-                        case "Team Ladder":
-                        if($pavatar)
-                        {
-                            $image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
-                        } else if ($pref['eb_avatar_default_image'] != ''){
-                            $image = '<img '.getAvatarResize(getAvatar($pref['eb_avatar_default_image'])).' style="vertical-align:middle"/>';
-                        }
-                        break;
-                        case "ClanWar":
-                        if($pavatar)
-                        {
-                            $image = '<img '.getAvatarResize(getTeamAvatar($pavatar)).' style="vertical-align:middle"/>';
-                        } else if ($pref['eb_avatar_default_image'] != ''){
-                            $image = '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).' style="vertical-align:middle"/>';
-                        }
-                        break;
-                        default:
-                    }
+                switch($mEventType)
+                {
+                case "One Player Ladder":
+                case "Team Ladder":
+                if($pavatar)
+                {
+                $image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
+                } else if ($pref['eb_avatar_default_image'] != ''){
+                $image = '<img '.getAvatarResize(getAvatar($pref['eb_avatar_default_image'])).' style="vertical-align:middle"/>';
+                }
+                break;
+                case "ClanWar":
+                if($pavatar)
+                {
+                $image = '<img '.getAvatarResize(getTeamAvatar($pavatar)).' style="vertical-align:middle"/>';
+                } else if ($pref['eb_avatar_default_image'] != ''){
+                $image = '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).' style="vertical-align:middle"/>';
+                }
+                break;
+                default:
+                }
                 }
                 */
 
