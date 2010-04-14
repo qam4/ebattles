@@ -1,5 +1,27 @@
 #summary eBattles Release Notes.
 
+= Release 0.7.210 =
+== Features ==
+ * Improved standings tables sorting (Fixes issue 74)
+ * Added: In Team ladder match report, check if 2 teams are the same
+== Bug fixes ==
+ * Fixed bug: In Team ladders, match delete was not working.
+   * Added deleteTeamsMatchScores() function to handle team ladders match delete.
+   * Renamed deleteMatchScores() to deletePlayersMatchScores() for other ladders
+ * Fixed bug: resetTeam() function was not working properly
+ * Fixed bug: In Team ladders, "Recalculate Event Stats" was not working properly
+
+= Release 0.7.208 =
+== Features ==
+ * In Match report, assign the score per player instead of per match team (Fixes issue 75)
+== Bug fixes ==
+ * Fixed bug: There was a bug in the players ranking calculation for events using "Classic" ranking type.
+   * The Player who should have the last position was set as "Not ranked"
+
+= Release 0.7.204 =
+== Bug fixes ==
+ * Fix bug: Event admin could not change the event type to "Team/Individual Ladder"
+
 = Release 0.7.203 =
 == Features ==
  * New Ladder type "Team"
