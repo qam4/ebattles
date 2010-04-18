@@ -1,5 +1,12 @@
 #summary eBattles Release Notes.
 
+= Release 0.7.212 =
+== Features ==
+ * Changed: Use Points instead of Points Average for ranking calculation
+== Bug fixes ==
+ * Fixed: Ranking of teams was not done properly for Team Ladders.
+ * Fixed: Event update was calling updateStats() function for Teams Ladders.
+
 = Release 0.7.210 =
 == Features ==
  * Improved standings tables sorting (Fixes issue 74)
