@@ -330,7 +330,7 @@ define('EB_STATS_L21', 'Moyenne du Score des Adversaires');
 define('EB_STATS_L22', 'Score&nbsp;Adv.');
 define('EB_STATS_L23', 'Moyenne de la différence de Score');
 define('EB_STATS_L24', 'Score&nbsp;Diff.');
-define('EB_STATS_L25', 'Moyenne des Points');
+define('EB_STATS_L25', 'Points');
 define('EB_STATS_L26', 'Points');
 define('EB_STATS_L27', 'max');
 define('EB_STATS_L28', 'Classement');

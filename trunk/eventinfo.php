@@ -175,7 +175,20 @@ else
         $result = $sql->db_Query($q);
         $eischanged = 0;
 
-        updateStats($event_id, $time, TRUE);
+        switch($etype)
+        {
+            case "One Player Ladder":
+            updateStats($event_id, $time, TRUE);
+            break;
+            case "Team Ladder":
+            updateStats($event_id, $time, TRUE);
+            updateTeamStats($event_id, $time, TRUE);
+            case "ClanWar":
+            updateTeamStats($event_id, $time, TRUE);
+            break;
+            default:
+        }
+
     }
 
     switch($etype)
@@ -184,8 +197,9 @@ else
         $text .= '<div class="tab-pane" id="tab-pane-1">';
         break;
         case "Team Ladder":
-        case "ClanWar":
         $text .= '<div class="tab-pane" id="tab-pane-1-team">';
+        case "ClanWar":
+        $text .= '<div class="tab-pane" id="tab-pane-1">';
         break;
         default:
     }
@@ -613,12 +627,6 @@ else
     {
         $text .= '<div class="tab-page">';
         $text .= '<div class="tab">'.EB_EVENT_L45.'</div>';
-
-        /* Update Stats */
-        if ($eneedupdate == 1)
-        {
-            updateTeamStats($event_id, $time, TRUE);
-        }
 
         if (($time < $enextupdate) && ($eischanged == 1))
         {

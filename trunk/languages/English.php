@@ -332,7 +332,7 @@ define('EB_STATS_L21', 'Opponents Score Average');
 define('EB_STATS_L22', 'Opp.&nbsp;Score');
 define('EB_STATS_L23', 'Score Difference Average');
 define('EB_STATS_L24', 'Score.&nbsp;Diff.');
-define('EB_STATS_L25', 'Points Average');
+define('EB_STATS_L25', 'Points');
 define('EB_STATS_L26', 'Points');
 define('EB_STATS_L27', 'max');
 define('EB_STATS_L28', 'Rank');
