@@ -382,27 +382,27 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         $score[] = ($tgames_played>0) ? number_format($tscore/$tgames_played,2) : 0;
         $oppscore[] = ($tgames_played>0) ? number_format($toppscore/$tgames_played,2) : 0;
         $scorediff[] = ($tgames_played>0) ? number_format(($tscore - $toppscore)/$tgames_played,2) : 0;
-        $points[] = $tpoints.' ('.($tgames_played>0 ? number_format($tpoints/$tgames_played,2) : 0).')';
+        $points[] = $tpoints;
 
         // Actual score (not for display)
+        $games_played_score[] = $tgames_played;
+        $ELO_score[] = $tELO;
+        $Skill_score[] = $tSkill;
+        $win_score[] = $twin;
+        $loss_score[] = $tloss;
+        $draw_score[] = $tdraw;
+        $windrawloss_score[] = $twin - $tloss; //fm - ???
+        $victory_ratio_score[] = $tvictory_ratio;
+        $victory_percent_score[] = $tvictory_percent;
+        $unique_opponents_score[] = $tunique_opponents;
+        $opponentsELO_score[] = $topponentsELO;
+        $score_score[] = ($tgames_played>0) ? $tscore/$tgames_played : 0;
+        $oppscore_score[] = ($tgames_played>0) ? -$toppscore/$tgames_played : 0;
+        $scorediff_score[] = ($tgames_played>0) ? ($tscore - $toppscore)/$tgames_played : 0;
+        $points_score[] = $tpoints;
+
         if ($tgames_played >= $eminteamgames)
         {
-            $games_played_score[] = $tgames_played;
-            $ELO_score[] = $tELO;
-            $Skill_score[] = $tSkill;
-            $win_score[] = $twin;
-            $loss_score[] = $tloss;
-            $draw_score[] = $tdraw;
-            $windrawloss_score[] = $twin - $tloss; //fm - ???
-            $victory_ratio_score[] = $tvictory_ratio;
-            $victory_percent_score[] = $tvictory_percent;
-            $unique_opponents_score[] = $tunique_opponents;
-            $opponentsELO_score[] = $topponentsELO;
-            $score_score[] = ($tgames_played>0) ? $tscore/$tgames_played : 0;
-            $oppscore_score[] = ($tgames_played>0) ? -$toppscore/$tgames_played : 0;
-            $scorediff_score[] = ($tgames_played>0) ? ($tscore - $toppscore)/$tgames_played : 0;
-            $points_score[] = ($tgames_played>0) ? $tpoints/$tgames_played : 0;
-
             $teams_rated++;
         }
 
@@ -648,7 +648,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
     switch($eranking_type)
     {
         case "CombinedStats":
-        $player_index=0;
+        $OverallScoreThreshold = 0;
         $final_score = array();
         for($team=0; $team < $numTeams; $team++)
         {
@@ -659,11 +659,10 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                 {
                     if ($stat_InfoOnly[$category] == FALSE)
                     {
-                        $final_score[$category][$team] = $stat_a[$category] * $stat_score[$category][$player_index] + $stat_b[$category];
+                        $final_score[$category][$team] = $stat_a[$category] * $stat_score[$category][$team] + $stat_b[$category];
                         $OverallScore[$team]+=$final_score[$category][$team];
                     }
                 }
-                $player_index++;
             }
             else
             {
@@ -681,16 +680,18 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         }
         break;
         case "Classic";
+        $OverallScoreThreshold = $numTeams;
         for($team=0; $team < $numTeams; $team++)
         {
             if ($games_played[$team] >= $eminteamgames)
             {
-                $OverallScore[$team] = array_search($team, $ranks, false) + 1;
+                $OverallScore[$team] = array_search($team, $ranks, false) + $numTeams + 1;
             }
             else
             {
-                $OverallScore[$team] = 0;
+                $OverallScore[$team] = array_search($team, $ranks, false);
             }
+            //dbg: echo "<br>Team $team ($name[$team]), os: $OverallScore[$team]";
 
             $q_update = "UPDATE ".TBL_TEAMS
             ." SET OverallScore = '".floatToSQL($OverallScore[$team])."'"
@@ -720,7 +721,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         $index = array_search($tid,$id);
 
         $trank_side_image = "";
-        if($OverallScore[$index]==0)
+        if($OverallScore[$index] <= $OverallScoreThreshold)
         {
             $rank = '<span title="'.EB_STATS_L35.'">'.EB_STATS_L36.'</span>';
             $trankdelta_string = "";

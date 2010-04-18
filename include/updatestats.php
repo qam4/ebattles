@@ -208,30 +208,30 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $score[] = ($pgames_played>0) ? number_format($pscore/$pgames_played,2) : 0;
         $oppscore[] = ($pgames_played>0) ? number_format($poppscore/$pgames_played,2) : 0;
         $scorediff[] = ($pgames_played>0) ? number_format(($pscore - $poppscore)/$pgames_played,2) : 0;
-        $points[] = $ppoints.' ('.($pgames_played>0 ? number_format($ppoints/$pgames_played,2) : 0).')';
+        $points[] = $ppoints;
         $banned[] = $pbanned;
         $rating[] = displayRating($prating, $prating_votes);
 
         // Actual score (not for display)
+        $games_played_score[] = $pgames_played;
+        $ELO_score[] = $pELO;
+        $Skill_score[] = $pSkill;
+        $win_score[] = $pwin;
+        $loss_score[] = $ploss;
+        $draw_score[] = $pdraw;
+        $windrawloss_score[] = $pwin - $ploss; //fm - ???
+        $victory_ratio_score[] = $pvictory_ratio;
+        $victory_percent_score[] = $pvictory_percent;
+        $unique_opponents_score[] = $punique_opponents;
+        $opponentsELO_score[] = $popponentsELO;
+        $streaks_score[] = $pstreak_best; //max(0,$pstreak_best + $pstreak_worst); //fmarc- TBD
+        $score_score[] = ($pgames_played>0) ? $pscore/$pgames_played : 0;
+        $oppscore_score[] = ($pgames_played>0) ? -$poppscore/$pgames_played : 0;
+        $scorediff_score[] = ($pgames_played>0) ? ($pscore - $poppscore)/$pgames_played : 0;
+        $points_score[] = $ppoints;
+
         if (($pgames_played >= $emingames)&&($pbanned == 0))
         {
-            $games_played_score[] = $pgames_played;
-            $ELO_score[] = $pELO;
-            $Skill_score[] = $pSkill;
-            $win_score[] = $pwin;
-            $loss_score[] = $ploss;
-            $draw_score[] = $pdraw;
-            $windrawloss_score[] = $pwin - $ploss; //fm - ???
-            $victory_ratio_score[] = $pvictory_ratio;
-            $victory_percent_score[] = $pvictory_percent;
-            $unique_opponents_score[] = $punique_opponents;
-            $opponentsELO_score[] = $popponentsELO;
-            $streaks_score[] = $pstreak_best; //max(0,$pstreak_best + $pstreak_worst); //fmarc- TBD
-            $score_score[] = ($pgames_played>0) ? $pscore/$pgames_played : 0;
-            $oppscore_score[] = ($pgames_played>0) ? -$poppscore/$pgames_played : 0;
-            $scorediff_score[] = ($pgames_played>0) ? ($pscore - $poppscore)/$pgames_played : 0;
-            $points_score[] = ($pgames_played>0) ? $ppoints/$pgames_played : 0;
-
             $players_rated++;
         }
     }
@@ -461,7 +461,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     switch($eranking_type)
     {
         case "CombinedStats":
-        $player_index=0;
+        $OverallScoreThreshold = 0;
         $final_score = array();
         for($player=0; $player < $numPlayers; $player++)
         {
@@ -472,11 +472,10 @@ function updateStats($event_id, $time, $serialize = TRUE)
                 {
                     if ($stat_InfoOnly[$category] == FALSE)
                     {
-                        $final_score[$category][$player] = $stat_a[$category] * $stat_score[$category][$player_index] + $stat_b[$category];
+                        $final_score[$category][$player] = $stat_a[$category] * $stat_score[$category][$player] + $stat_b[$category];
                         $OverallScore[$player]+=$final_score[$category][$player];
                     }
                 }
-                $player_index++;
             }
             else
             {
@@ -491,16 +490,18 @@ function updateStats($event_id, $time, $serialize = TRUE)
         }
         break;
         case "Classic";
+        $OverallScoreThreshold = $numPlayers;
         for($player=0; $player < $numPlayers; $player++)
         {
             if (($games_played[$player] >= $emingames)&&($banned[$player] == 0))
             {
-                $OverallScore[$player] = array_search($player, $ranks, false) + 1;
+                $OverallScore[$player] = array_search($player, $ranks, false) + $numPlayers + 1;
             }
             else
             {
-                $OverallScore[$player] = 0;
+                $OverallScore[$player] = array_search($player, $ranks, false);
             }
+            //dbg: echo "<br>Player $player ($name[$player]), os: $OverallScore[$player]";
 
             $q_update = "UPDATE ".TBL_PLAYERS." SET OverallScore = '".floatToSQL($OverallScore[$player])."' WHERE (PlayerID = '$id[$player]') AND (Event = '$event_id')";
             $result_update = $sql->db_Query($q_update);
@@ -536,7 +537,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
             $q_update = "UPDATE ".TBL_PLAYERS." SET Rank = 0 WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
             $result_update = $sql->db_Query($q_update);
         }
-        elseif($OverallScore[$index]==0)
+        elseif($OverallScore[$index] <= $OverallScoreThreshold)
         {
             $rank = '<span title="'.EB_STATS_L35.'">'.EB_STATS_L36.'</span>';
             $prankdelta_string = "";
@@ -696,7 +697,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     print_r($stat_score);
     echo "<br>";
     print_r($ranks);
-    */    
+    */
 
     if ($serialize)
     {

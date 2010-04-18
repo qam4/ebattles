@@ -331,7 +331,7 @@ define('EB_STATS_L21', 'Puntuacion media de los Rivales');
 define('EB_STATS_L22', 'Puntos&nbsp;Rivales');
 define('EB_STATS_L23', 'promedio de diferencia de la puntuacion');
 define('EB_STATS_L24', 'Dif.&nbsp;Puntuacion');
-define('EB_STATS_L25', 'Media de Puntos');
+define('EB_STATS_L25', 'Puntos');
 define('EB_STATS_L26', 'Puntos');
 define('EB_STATS_L27', 'max');
 define('EB_STATS_L28', 'Rank');
