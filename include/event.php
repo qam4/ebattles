@@ -74,7 +74,7 @@ function resetTeams($event_id)
     {
         for($j=0; $j<$num_teams; $j++)
         {
-            $tID  = mysql_result($result2,$j, TBL_TEAMS.".PlayerID");
+            $tID  = mysql_result($result2,$j, TBL_TEAMS.".TeamID");
             $q3 = "UPDATE ".TBL_TEAMS
             ." SET ELORanking = '$eELOdefault',"
             ."     TS_mu = '".floatToSQL($eTS_default_mu)."',"
@@ -82,7 +82,7 @@ function resetTeams($event_id)
             ."     GamesPlayed = 0,"
             ."     Loss = 0,"
             ."     Win = 0,"
-            ."     Draws = 0,"
+            ."     Draw = 0,"
             ."     Score = 0,"
             ."     ScoreAgainst = 0,"
             ."     Points = 0,"
