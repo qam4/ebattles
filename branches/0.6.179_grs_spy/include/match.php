@@ -137,6 +137,8 @@ function match_scores_update($match_id)
                 }
                 $teamA_Points = $teamA_win*$ePointPerWin + $teamA_draw*$ePointPerDraw + $teamA_loss*$ePointPerLoss;
                 $teamB_Points = $teamB_win*$ePointPerWin + $teamB_draw*$ePointPerDraw + $teamB_loss*$ePointPerLoss;
+                $output .= "Team A: $teamA_Points, $teamA_win, $teamA_draw, $teamA_loss, <br />";
+                $output .= "Team B: $teamB_Points, $teamB_win, $teamB_draw, $teamB_loss, <br />";
 
                 // New ELO ------------------------------------------
                 $M=min($NbrPlayersTeamA,$NbrPlayersTeamB)*$eELO_M;      // Span
@@ -177,7 +179,7 @@ function match_scores_update($match_id)
                     $scorePoints += $teamA_Points;
                     
                     $q = "UPDATE ".TBL_SCORES
-                    ." SET Player_deltaELO = $scoreELO,"
+                    ." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
                     ."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
                     ."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."',"
                     ."     Player_Win = $scoreWin,"
@@ -187,6 +189,7 @@ function match_scores_update($match_id)
                     ." WHERE (MatchID = '$match_id')"
                     ."   AND (Player = '$pid')";
                     $result = $sql->db_Query($q);
+                    $output .= "team A, Player $pid query: $q<br />";
                 }
                 for ($k=0;$k<$NbrPlayersTeamB;$k++)
                 {
@@ -208,7 +211,7 @@ function match_scores_update($match_id)
                     $scorePoints += $teamB_Points;
                     
                     $q = "UPDATE ".TBL_SCORES
-                    ." SET Player_deltaELO = $scoreELO,"
+                    ." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
                     ."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
                     ."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."',"
                     ."     Player_Win = $scoreWin,"
@@ -263,6 +266,8 @@ function match_scores_update($match_id)
             $result_1 = $sql->db_Query($q_1);
         }
         $output .= '<br />';
+        //echo $output;
+        //exit;
     }
 }
 
