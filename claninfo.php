@@ -276,7 +276,7 @@ function displayTeamDivisions($clan_id){
                 $text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
                 <td class="forumheader3">Member</td>
                 <td class="forumheader3">'.$date.'</td></tr>';
-
+// Need to remove hardcoded "Member" here
             }
             $text .= '</tbody></table>';
         }

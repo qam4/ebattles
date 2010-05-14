@@ -223,9 +223,7 @@ else
         $text .= '<tbody>';
 
         $q = "SELECT DISTINCT ".TBL_GAMES.".*"
-        ." FROM ".TBL_GAMES.", "
-        . TBL_EVENTS
-        ." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+        ." FROM ".TBL_GAMES
         ." ORDER BY Name";
         $result = $sql->db_Query($q);
         /* Error occurred, return given name by default */
