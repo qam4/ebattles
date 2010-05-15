@@ -53,7 +53,7 @@ function multi2dSortAsc(&$arr, $key, $sort)
     foreach ($arr as $sub)
     {
         $string = $sub[$key];
-                
+
         // remove html tags
         $string = preg_replace("/<[^>]*>/e","", $string);
         // remove thousand separator & decimal point
@@ -61,7 +61,7 @@ function multi2dSortAsc(&$arr, $key, $sort)
         if (!is_numeric($string[0])) $sort_type = SORT_REGULAR;
         // split "/ " or "|" or "<br" or "[" or "%" or " ("
         $string = preg_split("/\/\s|\||(<br)|\[|%|\s\(/", $string);
-        
+
         //echo "$sub[$key] --> $string[0]<br>";
         $sort_col[] = $string[0];
     }
@@ -73,22 +73,25 @@ function getRanking($arr, $keys)
 {
     $rows = count($arr);
     $columns = count($arr[0]);
-    
+
     $out = array();
     for ($i = 0; $i < $columns; $i++) $out[] = $i;
-    
-    $i=0;
-    foreach($keys as $key)
-    {
-        if($i>0){$sort.=',';}
-        $sort_col[$i] = $arr[$key];
-        $sort .= '$sort_col['.$i.'], SORT_ASC, SORT_NUMERIC';
-        $i++;
-    }
-    $sort .= ', &$out';
 
-    $sort='array_multisort('.$sort.');'; 
-    eval($sort);
+    if(!empty($keys))
+    {
+        $i=0;
+        foreach($keys as $key)
+        {
+            if($i>0){$sort.=',';}
+            $sort_col[$i] = $arr[$key];
+            $sort .= '$sort_col['.$i.'], SORT_ASC, SORT_NUMERIC';
+            $i++;
+        }
+        $sort .= ', &$out';
+
+        $sort='array_multisort('.$sort.');';
+        eval($sort);
+    }
 
     // $out is an array of indexes
     // The 1st value is the index of the player with rank last
@@ -452,7 +455,7 @@ function purgeComments($table)
     // Delete any related comments
     require_once(e_HANDLER."comment_class.php");
     $_com = new comment;
-    
+
     $q = "SELECT DISTINCT ".MPREFIX."comments.comment_item_id"
     ." FROM ".MPREFIX."comments "
     ." WHERE (comment_type='$table')";
@@ -463,10 +466,10 @@ function purgeComments($table)
     for($i=0; $i<$num_rows; $i++)
     {
 
-	    $id = mysql_result($result,$i, "comment_item_id");
-        $text .= "comment id: $id<br>";    
+        $id = mysql_result($result,$i, "comment_item_id");
+        $text .= "comment id: $id<br>";
         $num = $_com->delete_comments($table, $id);
-	}
+    }
 }
 
 function purgeRatings($table)
@@ -487,10 +490,10 @@ function purgeRatings($table)
     for($i=0; $i<$num_rows; $i++)
     {
 
-	    $id = mysql_result($result,$i, "rate_itemid");
-        $text .= "rate id: $id<br>";    
+        $id = mysql_result($result,$i, "rate_itemid");
+        $text .= "rate id: $id<br>";
         $num = $_rate->delete_ratings($table, $id);
-	}
+    }
 }
 
 /**
