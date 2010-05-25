@@ -223,6 +223,7 @@ function eventScoresUpdate($event_id, $current_match)
     ." FROM ".TBL_EVENTS
     ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
     $result = $sql->db_Query($q);
+    //fm: attention if estart is not set.
     $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
     $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
 

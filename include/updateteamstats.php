@@ -95,24 +95,33 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         $tclantag = mysql_result($result_Teams,$team, TBL_CLANS.".Tag");
         $tavatar = mysql_result($result_Teams,$team, TBL_CLANS.".Image");
 
-        $tOverallScore = 0;
-        $tELO = 0;
-        $tTS_mu = 0;
-        $tTS_sigma2 = 0;
-        $twin = 0;
-        $tloss = 0;
-        $tdraw = 0;
-        $tgames_played = 0;
-        $tscore = 0;
-        $toppscore = 0;
-        $tpoints = 0;
-        $tunique_opponents = 0;
-        $topponentsELO = 0;
-        $topponents = 0;
+        $tgames_played = mysql_result($result_Teams,$team, TBL_TEAMS.".GamesPlayed");
+        $tELO = mysql_result($result_Teams,$team, TBL_TEAMS.".ELORanking");
+        $tTS_mu = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_mu");
+        $tTS_sigma = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_sigma");
+        $tSkill = $tTS_mu - 3*$tTS_sigma;
+        $twin = mysql_result($result_Teams,$team, TBL_TEAMS.".Win");
+        $tdraw = mysql_result($result_Teams,$team, TBL_TEAMS.".Draw");
+        $tloss = mysql_result($result_Teams,$team, TBL_TEAMS.".Loss");
+        $tstreak = mysql_result($result_Teams,$team, TBL_TEAMS.".Streak");
+        $tstreak_worst = mysql_result($result_Teams,$team, TBL_TEAMS.".Streak_Worst");
+        $tstreak_best = mysql_result($result_Teams,$team, TBL_TEAMS.".Streak_Best");
+        $twindrawloss = $twin."/".$tdraw."/".$tloss;
+        $twinloss = $twin."/".$tloss;
+        $tvictory_ratio = ($tloss>0) ? ($twin/$tloss) : $twin; //fm- draw here???
+        $tvictory_percent = ($tgames_played>0) ? ((100 * $twin)/($twin+$tloss)) : 0;
+        $tscore = mysql_result($result_Teams,$team, TBL_TEAMS.".Score");
+        $toppscore = mysql_result($result_Teams,$team, TBL_TEAMS.".ScoreAgainst");
+        $tpoints = mysql_result($result_Teams,$team, TBL_TEAMS.".Points");
+        $tbanned  = mysql_result($result_Teams,$team, TBL_TEAMS.".Banned");
 
         switch($etype)
         {
             case "Team Ladder":
+            $tunique_opponents = 0;
+            $topponentsELO = 0;
+            $topponents = 0;
+
             // Find all players for that event and that team
             $q_Players = "SELECT * "
             ." FROM ".TBL_PLAYERS." "
@@ -128,30 +137,6 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                 {
                     // For each player
                     $pid = mysql_result($result_Players,$player, TBL_PLAYERS.".PlayerID");
-                    $puid = mysql_result($result_Players,$player, TBL_PLAYERS.".User");
-                    $pname  = mysql_result($result_Players,$player, TBL_USERS.".user_name");
-                    $pavatar = mysql_result($result_Players,$player, TBL_USERS.".user_image");
-                    $pteam = mysql_result($result_Players,$player, TBL_PLAYERS.".Team");
-                    $pgames_played = mysql_result($result_Players,$player, TBL_PLAYERS.".GamesPlayed");
-                    $pELO = mysql_result($result_Players,$player, TBL_PLAYERS.".ELORanking");
-                    $pTS_mu = mysql_result($result_Players,$player, TBL_PLAYERS.".TS_mu");
-                    $pTS_sigma = mysql_result($result_Players,$player, TBL_PLAYERS.".TS_sigma");
-                    $pSkill = $pTS_mu - 3*$pTS_sigma;
-                    $pwin = mysql_result($result_Players,$player, TBL_PLAYERS.".Win");
-                    $pdraw = mysql_result($result_Players,$player, TBL_PLAYERS.".Draw");
-                    $ploss = mysql_result($result_Players,$player, TBL_PLAYERS.".Loss");
-                    $pstreak = mysql_result($result_Players,$player, TBL_PLAYERS.".Streak");
-                    $pstreak_worst = mysql_result($result_Players,$player, TBL_PLAYERS.".Streak_Worst");
-                    $pstreak_best = mysql_result($result_Players,$player, TBL_PLAYERS.".Streak_Best");
-                    $pwindrawloss = $pwin."/".$pdraw."/".$ploss;
-                    $pwinloss = $pwin."/".$ploss;
-                    $pvictory_ratio = ($ploss>0) ? ($pwin/$ploss) : $pwin; //fm- draw here???
-                    $pvictory_percent = ($pgames_played>0) ? ((100 * $pwin)/($pwin+$ploss)) : 0;
-                    $pscore = mysql_result($result_Players,$player, TBL_PLAYERS.".Score");
-                    $poppscore = mysql_result($result_Players,$player, TBL_PLAYERS.".ScoreAgainst");
-                    $ppoints = mysql_result($result_Players,$player, TBL_PLAYERS.".Points");
-                    $pbanned  = mysql_result($result_Players,$player, TBL_PLAYERS.".Banned");
-
                     $popponentsELO = 0;
                     $popponents = 0;
                     $prating = 0;
@@ -223,66 +208,18 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
                     $punique_opponents = count(array_unique($players));
 
-                    $twin += $pwin;
-                    $tdraw += $pdraw;
-                    $tloss += $ploss;
-                    $tscore += $pscore;
-                    $toppscore += $poppscore;
-                    $tpoints += $ppoints;
-                    $tgames_played += $pgames_played;
                     $tunique_opponents += $punique_opponents;
                     $topponentsELO += $popponentsELO;
                     $topponents += $popponents;
-                    $twindrawloss = $twin."/".$tdraw."/".$tloss;
-                    $twinloss = $twin."/".$tloss;
-                    $tvictory_ratio = ($tloss>0) ? ($twin/$tloss) : $twin; //fm --> draws???
-                    $tvictory_percent = ($tgames_played>0) ? ((100 * $twin)/($twin+$tdraw+$tloss)) : 0;
-
-                    if ($pgames_played>=$emingames)
-                    {
-                        $tnbrplayers_rated++;
-                        $tELO += $pELO;
-                        $tTS_mu += $pTS_mu;
-                        $tTS_sigma2 += pow($pTS_sigma,2);
-                    }
                 }
 
                 if ($topponents !=0)
                 {
                     $topponentsELO /= $topponents;
                 }
-
-                if ($tnbrplayers_rated>0)
-                {
-                    $tELO /= $tnbrplayers_rated;
-                    $tTS_mu /= $tnbrplayers_rated;
-                    $tTS_sigma = sqrt($tTS_sigma2);
-
-                    $tSkill = $tTS_mu - 3*$tTS_sigma;
-                }
             }
             break;
             case "ClanWar":
-            $tgames_played = mysql_result($result_Teams,$team, TBL_TEAMS.".GamesPlayed");
-            $tELO = mysql_result($result_Teams,$team, TBL_TEAMS.".ELORanking");
-            $tTS_mu = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_mu");
-            $tTS_sigma = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_sigma");
-            $tSkill = $tTS_mu - 3*$tTS_sigma;
-            $twin = mysql_result($result_Teams,$team, TBL_TEAMS.".Win");
-            $tdraw = mysql_result($result_Teams,$team, TBL_TEAMS.".Draw");
-            $tloss = mysql_result($result_Teams,$team, TBL_TEAMS.".Loss");
-            $tstreak = mysql_result($result_Teams,$team, TBL_TEAMS.".Streak");
-            $tstreak_worst = mysql_result($result_Teams,$team, TBL_TEAMS.".Streak_Worst");
-            $tstreak_best = mysql_result($result_Teams,$team, TBL_TEAMS.".Streak_Best");
-            $twindrawloss = $twin."/".$tdraw."/".$tloss;
-            $twinloss = $twin."/".$tloss;
-            $tvictory_ratio = ($tloss>0) ? ($twin/$tloss) : $twin; //fm- draw here???
-            $tvictory_percent = ($tgames_played>0) ? ((100 * $twin)/($twin+$tloss)) : 0;
-            $tscore = mysql_result($result_Teams,$team, TBL_TEAMS.".Score");
-            $toppscore = mysql_result($result_Teams,$team, TBL_TEAMS.".ScoreAgainst");
-            $tpoints = mysql_result($result_Teams,$team, TBL_TEAMS.".Points");
-            $tbanned  = mysql_result($result_Teams,$team, TBL_TEAMS.".Banned");
-
             $topponentsELO = 0;
             $topponents = 0;
             $trating = 0;
@@ -404,23 +341,6 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         if ($tgames_played >= $eminteamgames)
         {
             $teams_rated++;
-        }
-
-        if ($etype == "Team Ladder")
-        {
-            $q_update = "UPDATE ".TBL_TEAMS
-            ." SET ELORanking = $tELO,"
-            ."     TS_mu = '".floatToSQL($tTS_mu)."',"
-            ."     TS_sigma = '".floatToSQL($tTS_sigma)."',"
-            ."     Loss = $tloss,"
-            ."     Win = $twin,"
-            ."     Draw = $tdraw,"
-            ."     Score = $tscore,"
-            ."     ScoreAgainst = $toppscore,"
-            ."     Points = $tpoints"
-            ." WHERE (TeamID = '$id[$team]')"
-            ."   AND (Event = '$event_id')";
-            $result_update = $sql->db_Query($q_update);
         }
     }
 
