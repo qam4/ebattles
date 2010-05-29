@@ -121,6 +121,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
             $tunique_opponents = 0;
             $topponentsELO = 0;
             $topponents = 0;
+            $tplayers = array();
 
             // Find all players for that event and that team
             $q_Players = "SELECT * "
@@ -191,6 +192,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                                 if ($oplayermatchteam != $mplayermatchteam)
                                 {
                                     $players[] = "$ouid";
+                                    $tplayers[] = "$ouid";
                                     $popponentsELO += $oELO;
                                     $popponents += 1;
                                 }
@@ -208,7 +210,6 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
                     $punique_opponents = count(array_unique($players));
 
-                    $tunique_opponents += $punique_opponents;
                     $topponentsELO += $popponentsELO;
                     $topponents += $popponents;
                 }
@@ -218,6 +219,8 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
                     $topponentsELO /= $topponents;
                 }
             }
+            $tunique_opponents = count(array_unique($tplayers));
+
             break;
             case "ClanWar":
             $topponentsELO = 0;
