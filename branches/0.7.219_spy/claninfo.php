@@ -138,6 +138,7 @@ function displayTeamSummary($clan_id){
 function displayTeamDivisions($clan_id){
     global $sql;
     global $text;
+    global $pref;
 
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_DIVISIONS.".*, "
@@ -157,6 +158,7 @@ function displayTeamDivisions($clan_id){
     for($i=0; $i<$num_rows; $i++)
     {
         $clan_password   = mysql_result($result,$i, TBL_CLANS.".password");
+        $clan_id   = mysql_result($result,$i, TBL_CLANS.".ClanID");
         $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
         $gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
         $div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
@@ -176,28 +178,49 @@ function displayTeamDivisions($clan_id){
             $result_2 = $sql->db_Query($q_2);
             if(!$result_2 || (mysql_numrows($result_2) < 1))
             {
-                if ($clan_password != "")
+                // Make sure this user is not playing for another team
+                $q_3 = "SELECT ".TBL_MEMBERS.".*"
+                ." FROM ".TBL_MEMBERS.", "
+                .TBL_DIVISIONS
+                ." WHERE (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+                ." AND (".TBL_DIVISIONS.".Clan != '$clan_id')"
+                ." AND (".TBL_MEMBERS.".User = ".USERID.")";
+                $result_3 = $sql->db_Query($q_3);
+
+                // Make sure this user is not admin of another team
+                $q_4 = "SELECT ".TBL_CLANS.".*"
+                ." FROM ".TBL_CLANS
+                ." WHERE (".TBL_CLANS.".ClanID != '$clan_id')"
+                ." AND (".TBL_CLANS.".Owner = ".USERID.")";
+                $result_4 = $sql->db_Query($q_4);
+
+                if(((!$result_3 || (mysql_numrows($result_3) < 1))
+                && (!$result_4 || (mysql_numrows($result_4) < 1)))
+                || (check_class($pref['eb_mod_class'])))
                 {
-                    $text .= '
-                    <form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
-                    <div>
-                    '.EB_CLAN_L10.':
-                    <input class="tbox" type="password" title="'.EB_CLAN_L11.'" name="joindivisionPassword"/>
-                    <input type="hidden" name="division" value="'.$div_id.'"/>
-                    <input class="button" type="submit" name="joindivision" value="'.EB_CLAN_L12.'"/>
-                    </div>
-                    </form>';
-                }
-                else
-                {
-                    $text .= '
-                    <form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
-                    <div>
-                    <input type="hidden" name="joindivisionPassword" value=""/>
-                    <input type="hidden" name="division" value="'.$div_id.'"/>
-                    <input class="button" type="submit" name="joindivision" value="'.EB_CLAN_L12.'"/>
-                    </div>
-                    </form>';
+                    if ($clan_password != "")
+                    {
+                        $text .= '
+                        <form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
+                        <div>
+                        '.EB_CLAN_L10.':
+                        <input class="tbox" type="password" title="'.EB_CLAN_L11.'" name="joindivisionPassword"/>
+                        <input type="hidden" name="division" value="'.$div_id.'"/>
+                        <input class="button" type="submit" name="joindivision" value="'.EB_CLAN_L12.'"/>
+                        </div>
+                        </form>';
+                    }
+                    else
+                    {
+                        $text .= '
+                        <form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
+                        <div>
+                        <input type="hidden" name="joindivisionPassword" value=""/>
+                        <input type="hidden" name="division" value="'.$div_id.'"/>
+                        <input class="button" type="submit" name="joindivision" value="'.EB_CLAN_L12.'"/>
+                        </div>
+                        </form>';
+                    }
                 }
             }
             else
