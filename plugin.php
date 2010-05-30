@@ -508,9 +508,9 @@ if ($revision < 175)
         "ALTER TABLE ".TBL_MATCHS." ADD Status varchar(20) DEFAULT 'active'"
     );
 }
-if ($revision < 202)
+if ($revision < 216)
 {
-    // To revision 202
+    // To revision 216
     $upgrade_alter_tables += array(
         "ALTER TABLE ".TBL_EVENTS." ADD RankingType varchar(20) DEFAULT 'CombinedStats'",
         "ALTER TABLE ".TBL_TEAMS." ADD GamesPlayed int DEFAULT '0'",
