@@ -1081,38 +1081,35 @@ else
         <td class="forumheader" colspan="2">'.EB_EVENTM_L88.'</td>
         <td class="forumheader">'.EB_EVENTM_L89.'</td>
         </tr>';
-        if ($etype != "ClanWar")
-        {
-            $text .= '
-            <td class="forumheader3">'.EB_EVENTM_L90.'</td>
-            <td class="forumheader3">
-            <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
-            </td>
-            <td class="forumheader3">
-            ';
-            $text .= "
-            <script type='text/javascript'>
-            var A_INIT = {
-            's_form' : 'eventstatsform',
-            's_name': 'sliderValue".$cat_index."',
-            'n_minValue' : 0,
-            'n_maxValue' : 10,
-            'n_value' : ".$emingames.",
-            'n_step' : 1
-            }
-
-            new slider(A_INIT, A_TPL);
-            </script>
-            ";
-            $text .= '
-            </td>
-            <td class="forumheader3"></td>
-            </tr>
-            ';
-            $cat_index ++;
+        $text .= '
+        <td class="forumheader3">'.EB_EVENTM_L90.'</td>
+        <td class="forumheader3">
+        <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
+        </td>
+        <td class="forumheader3">
+        ';
+        $text .= "
+        <script type='text/javascript'>
+        var A_INIT = {
+        's_form' : 'eventstatsform',
+        's_name': 'sliderValue".$cat_index."',
+        'n_minValue' : 0,
+        'n_maxValue' : 10,
+        'n_value' : ".$emingames.",
+        'n_step' : 1
         }
 
-        if (($etype == "Team Ladder")||($etype == "ClanWar"))
+        new slider(A_INIT, A_TPL);
+        </script>
+        ";
+        $text .= '
+        </td>
+        <td class="forumheader3"></td>
+        </tr>
+        ';
+        $cat_index ++;
+
+        if ($etype == "Team Ladder")
         {
             $text .= '
             <tr>
