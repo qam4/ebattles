@@ -198,6 +198,7 @@ else
         break;
         case "Team Ladder":
         $text .= '<div class="tab-pane" id="tab-pane-1-team">';
+        break;
         case "ClanWar":
         $text .= '<div class="tab-pane" id="tab-pane-1">';
         break;
@@ -207,7 +208,7 @@ else
     $text .= '<div class="tab-page">';
     $text .= '<div class="tab">'.EB_EVENT_L5.'</div>';
     $text .= $tp->toHTML($edescription, true);
-    $text .= '</div>';
+    $text .= '</div>';  // tab-page "Event"
 
     /* Join/Quit Event */
     $text .= '<div class="tab-page">';
@@ -520,7 +521,7 @@ else
         $text .= '<td></td></tr>';
     }
     $text .= '</tbody></table>';
-    $text .= '</div>';
+    $text .= '</div>';    // tab-page "Signup"
 
     $text .= '<div class="tab-page">';
     $text .= '<div class="tab">'.EB_EVENT_L35.'</div>';
@@ -580,7 +581,7 @@ else
     $text .= '<tr><td class="forumheader3"></td><td class="forumheader3">'.$time_comment.'</td></tr>';
     $text .= '<tr><td class="forumheader3">'.EB_EVENT_L44.'</td><td class="forumheader3">'.$tp->toHTML($erules, true).'</td></tr>';
     $text .= '</tbody></table>';
-    $text .= '</div>';
+    $text .= '</div>';    // tab-page "Info"
 
     $can_approve = 0;
     $can_report = 0;
@@ -673,7 +674,7 @@ else
         $text .= html_show_table($stats, $nbr_rows, $num_columns);
 
         $text .= '</div>';
-        $text .= '</div>';
+        $text .= '</div>';    // tab-page "Teams Standings"
     }
 
     if (($etype == "Team Ladder")||($etype == "One Player Ladder"))
@@ -820,7 +821,7 @@ else
         }
         $text .= html_show_table($stats_paginate, $nbr_rows, $num_columns);
 
-        $text .= '</div>';
+        $text .= '</div>';    // tab-page "Players Standings"
     }
     $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
     ." FROM ".TBL_MATCHS.", "
@@ -835,7 +836,7 @@ else
 
     $text .= '
     <div class="tab-page">
-    <div class="tab" name="event_matches" id="event_matches">'.EB_EVENT_L58;
+    <div class="tab" id="event_matches">'.EB_EVENT_L58;
     $text .= ($can_approve == 1) ? ' <span style="color:red">('.$nbrMatchesPending.')</span>' : '';
     $text .= '</div>';
 
@@ -942,7 +943,7 @@ else
         }
         $text .= '</table>';
     }
-    $text .= '</div>';
+    $text .= '</div>';    // tab-page "Teams Matches"
 
     $text .= '<div class="tab-page">';
     $text .= '<div class="tab">'.EB_EVENT_L63.'</div>';
@@ -1029,7 +1030,7 @@ else
     $text .= '
     </div>
     </div>
-    ';
+    ';    // tab-page "Latest Awards", tab-pane
 
     $text .= disclaimer();
 

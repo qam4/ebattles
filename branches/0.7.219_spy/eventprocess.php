@@ -397,15 +397,18 @@ else
             $cat_index = 0;
 
             /* Event Min games to rank */
-            $new_eventGamesToRank = htmlspecialchars($_POST['sliderValue'.$cat_index]);
-            if (is_numeric($new_eventGamesToRank))
+            if ($etype != "ClanWar")
             {
-                $q2 = "UPDATE ".TBL_EVENTS." SET nbr_games_to_rank = '$new_eventGamesToRank' WHERE (EventID = '$event_id')";
-                $result2 = $sql->db_Query($q2);
+                $new_eventGamesToRank = htmlspecialchars($_POST['sliderValue'.$cat_index]);
+                if (is_numeric($new_eventGamesToRank))
+                {
+                    $q2 = "UPDATE ".TBL_EVENTS." SET nbr_games_to_rank = '$new_eventGamesToRank' WHERE (EventID = '$event_id')";
+                    $result2 = $sql->db_Query($q2);
+                }
+                $cat_index++;
             }
-            $cat_index++;
 
-            if ($etype == "Team Ladder")
+            if (($etype == "Team Ladder")||($etype == "ClanWar"))
             {
                 /* Event Min Team games to rank */
                 $new_eventTeamGamesToRank = htmlspecialchars($_POST['sliderValue'.$cat_index]);

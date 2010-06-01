@@ -576,7 +576,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         for($team=0; $team < $numTeams; $team++)
         {
             $OverallScore[$team]=0;
-            if ($games_played[$team] >= $emingames)
+            if ($games_played[$team] >= $eminteamgames)
             {
                 for ($category=0; $category < $numDisplayedCategories; $category++)
                 {

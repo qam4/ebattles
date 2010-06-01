@@ -60,8 +60,9 @@ define('EB_ADMIN_L33', 'Clasificaciones de Equipos');
 define('EB_ADMIN_L34', 'Avatar de Equipos');
 define('EB_ADMIN_L35', 'Seleccione un icono de remoto a través de un enlace externo o uno de los iconos en ebattles ebattles/images/team_avatars/');
 define('EB_ADMIN_L36', 'Lista de Equipos');
-define('EB_ADMIN_L37', 'Hecho por <a href=&quot;http://ebattles.freehostia.com/&quot; rel=&quot;external&quot;>eBattles</a>');
+define('EB_ADMIN_L37', 'Hecho por <a href="http://ebattles.freehostia.com/" rel="external">eBattles</a>');
 define('EB_ADMIN_L38', 'Responsable por el Plugin');
+define('EB_ADMIN_L39', 'Juegos');
 
 define('EB_ADMINHELP_L1', 'eBattles Ayuda');
 define('EB_ADMINHELP_L2', 'Version');
@@ -540,7 +541,7 @@ define('EB_GAMES_L16', 'Eliminar todos los Juegos');
 define('EB_GAMES_L17', '&iquest;Estas seguro de que deseas eliminar todos los juegos?');
 define('EB_GAMES_L18', 'Actualizar seleccionado');
 define('EB_GAMES_L19', 'Atualizar todos selecionados');
-define('EB_GAMES_L20', 'A&ntilde;adir Juegos');
+define('EB_GAMES_L20', 'A&ntilde;adir Juegos Predefinidos');
 
 define('EB_AWARD_L1', 'Premio');
 define('EB_AWARD_L2', 'tomo 1er lugar');
