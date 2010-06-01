@@ -5,6 +5,7 @@ require_once(e_PLUGIN."ebattles/include/main.php");
 // Include page header stuff for admin pages
 require_once(e_ADMIN."auth.php");
 require_once(e_HANDLER."userclass_class.php");
+require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 
 // Check current user is an admin, redirect to main site if not
 if (!getperms("P")) {
@@ -65,7 +66,7 @@ if (isset($message)) {
 if((isset($qs[0]) && $qs[0] == "eb_links"))
 {
     $text .= "<div style='text-align:center'>
-    <form id='adminform' method='post' action='".e_SELF."'>
+    <form id='adminform' method='post' action='".e_SELF."?eb_links'>
     <table style='".ADMIN_WIDTH."' class='fborder'>
     <tbody>
     ";
@@ -93,12 +94,169 @@ if((isset($qs[0]) && $qs[0] == "eb_links"))
 }
 
 // ========================================================
+//				GAMES OPTIONS MENU
+// ========================================================
+if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))))))
+{
+$text .= "
+<script type='text/javascript'>
+<!--//
+function changetext(v)
+{
+document.getElementById('gameIcon').value=v;
+}
+//-->
+</script>
+<script type='text/javascript' src='./js/tabpane.js'></script>
+<script type='text/javascript'>
+<!--//
+function selectAll(x) {
+for(var i=0,l=x.form.length; i<l; i++)
+if(x.form[i].type == 'checkbox' && x.form[i].name != 'sAll')
+x.form[i].checked=x.form[i].checked?false:true
+}
+//-->
+<!--//
+function buttonval(v)
+{
+document.getElementById('delete_game').value=v;
+document.getElementById('gamesform').submit();
+}
+//-->
+</script>
+";
+
+$text .= '
+<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">
+<table>
+<tbody>
+';
+//<!-- Game Select -->
+// Drop down list to select Games to display
+$q = "SELECT ".TBL_GAMES.".*"
+." FROM ".TBL_GAMES
+." ORDER BY Name";
+$result = $sql->db_Query($q);
+$numGames = mysql_numrows($result);
+
+if (!isset($_GET['gameid'])) $_GET['gameid'] = mysql_result($result,0 , TBL_GAMES.".GameID");
+$game_id = $_GET['gameid'];
+
+$q2 = "SELECT ".TBL_GAMES.".*"
+." FROM ".TBL_GAMES
+." WHERE (".TBL_GAMES.".GameID = '$game_id')";
+
+$result2 = $sql->db_Query($q2);
+$game_name  = mysql_result($result2,0 , TBL_GAMES.".Name");
+$game_icon  = mysql_result($result2,0 , TBL_GAMES.".Icon");
+
+$text .= '
+<tr>
+<td><b>'.EB_GAME_L3.'</b></td>
+<td>
+<select class="tbox" name="gameid" onchange="this.form.submit()">';
+for($i=0; $i<$numGames; $i++)
+{
+    $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
+    $gid    = mysql_result($result,$i, TBL_GAMES.".GameID");
+
+    if ($game_id == $gid)
+    {
+        $text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
+    }
+    else
+    {
+        $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
+    }
+}
+$text .= '</select>';
+//$text .= '<input class="button" type="submit" value="Select"/>';
+$text .= '</td>';
+$text .= '</tr>';
+$text .= '</tbody>';
+$text .= '</table>';
+$text .= '</form>';
+
+$text .= '<form id="gameform" action="'.e_PLUGIN.'ebattles/gameprocess.php?gameid='.$game_id.'" method="post">';
+$text .= '<table class="fborder" style="width:95%">';
+$text .= '<tbody>';
+//<!-- Game Name -->
+$text .= '
+<tr>
+<td class="forumheader3"><b>'.EB_GAME_L4.'</b></td>
+<td class="forumheader3">
+<input class="tbox" type="text" name="gameName" value="'.$game_name.'"/>
+</td>
+</tr>
+';
+
+//<!-- Game Icon -->
+$text .= '
+<tr>
+<td class="forumheader3"><b>'.EB_GAME_L5.'</b></td>
+<td class="forumheader3">
+<img '.getGameIconResize($game_icon).'/>
+<input class="tbox" type="text" id="gameIcon" name="gameIcon" value="'.$game_icon.'"/>
+<div class="smalltext">'.EB_GAME_L6.'</div>';
+
+$text .= '<div>';
+$avatarlist[0] = "";
+$handle = opendir(e_PLUGIN."ebattles/images/games_icons/");
+while ($file = readdir($handle))
+{
+    if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn" && $file != "Games List.csv")
+    {
+        $avatarlist[] = $file;
+    }
+}
+closedir($handle);
+
+for($c = 1; $c <= (count($avatarlist)-1); $c++)
+{
+    $text .= '<a href="javascript:changetext(\''.$avatarlist[$c].'\')"><img src="'.e_PLUGIN.'ebattles/images/games_icons/'.$avatarlist[$c].'" style="border:0" alt="" /></a> ';
+}
+$text .= '
+</div>
+';
+
+$text .= '
+</td>
+</tr>
+</tbody>
+</table>
+';
+
+//<!-- Save, Add new Game, Delete Game Button -->
+$text .= '
+<table><tr>
+<td>
+<input class="button" type="submit" name="gamesettingssave" value="'.EB_GAME_L7.'"/>
+</td>
+<td>
+<input class="button" type="submit" name="gamecreate" value="'.EB_GAME_L8.'"/>
+</td>
+<td>
+<input class="button" type="submit" name="gamedelete" value="'.EB_GAME_L9.'" onclick="return confirm(\''.EB_GAME_L10.'\');"/>
+</td>
+</tr>
+</table>
+</form>
+';
+
+displayGames();
+
+
+    // The usual, tell e107 what to include on the page
+    $ns->tablerender(EB_ADMIN_L10, $text);
+}
+
+// ========================================================
 //				RECENT ACTIVITY OPTIONS MENU
 // ========================================================
 if((isset($qs[0]) && $qs[0] == "eb_activity"))
 {
     $text .= "<div style='text-align:center'>
-    <form id='adminform' method='post' action='".e_SELF."'>
+    <form id='adminform' method='post' action='".e_SELF."?eb_activity'>
     <table style='".ADMIN_WIDTH."' class='fborder'>
     <tbody>
     ";
@@ -166,7 +324,7 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
     ";
 
     $text .= "<div style='text-align:center'>
-    <form id='adminform' method='post' action='".e_SELF."'>
+    <form id='adminform' method='post' action='".e_SELF."?config'>
     <table style='".ADMIN_WIDTH."' class='fborder'>
     <tbody>
     ";
@@ -328,7 +486,7 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
     $text .= "<tr>
     <td class='forumheader3' style='width:40%'>".EB_ADMIN_L38.":</td>
     <td class='forumheader3' style='width:60%'>
-    <textarea class='tbox' name='eb_disclaimer' cols='60' rows='2'/>".$pref['eb_disclaimer']."</textarea>
+    <textarea class='tbox' name='eb_disclaimer' cols='60' rows='2'>".$pref['eb_disclaimer']."</textarea>
     </td>
     </tr>
     ";
@@ -362,6 +520,9 @@ function admin_config_adminmenu()
     $var['config']['text'] = EB_ADMIN_L24;
     $var['config']['link'] = "admin_config.php";
 
+    $var['eb_games']['text'] = EB_ADMIN_L39;
+    $var['eb_games']['link'] ="admin_config.php?eb_games";
+
     $var['eb_links']['text'] = EB_ADMIN_L25;
     $var['eb_links']['link'] ="admin_config.php?eb_links";
 
@@ -373,4 +534,128 @@ function admin_config_adminmenu()
 
     show_admin_menu(EB_L1, $action, $var);
 }
+
+/***************************************************************************************
+Functions
+***************************************************************************************/
+/**
+* displayGames - Displays the games database table
+*/
+function displayGames(){
+    global $pref;
+    global $sql;
+    global $text;
+    global $session;
+    $pages = new Paginator;
+
+    $array = array(
+    'id'   => array(EB_GAMES_L3, TBL_GAMES.'.GameID'),
+    'icon'   => array(EB_GAMES_L4, TBL_GAMES.'.Icon'),
+    'game'   => array(EB_GAMES_L5, TBL_GAMES.'.Name')
+    );
+
+    if (!isset($_GET['orderby'])) $_GET['orderby'] = 'game';
+    $orderby=$_GET['orderby'];
+
+    $sort = "ASC";
+    if(isset($_GET["sort"]) && !empty($_GET["sort"]))
+    {
+        $sort = ($_GET["sort"]=="ASC") ? "DESC" : "ASC";
+    }
+
+    $q = "SELECT count(*) "
+    ." FROM ".TBL_GAMES;
+    $result = $sql->db_Query($q);
+
+    $numGames = mysql_result($result, 0);
+    $totalItems = $numGames;
+    $pages->items_total = $totalItems;
+    $pages->mid_range = eb_PAGINATION_MIDRANGE;
+    $pages->paginate();
+
+    $text .= '<div class="spacer">';
+    $text .= '<p>';
+    $text .= $numGames.' '.EB_GAMES_L6.'<br />';
+    $text .= '</p>';
+    $text .= '</div>';
+
+    $orderby_array = $array["$orderby"];
+    $q = "SELECT ".TBL_GAMES.".*"
+    ." FROM ".TBL_GAMES
+    ." ORDER BY $orderby_array[1] $sort"
+    ." $pages->limit";
+    $result = $sql->db_Query($q);
+    $num_rows = mysql_numrows($result);
+    if(!$result || ($num_rows < 0)){
+        $text .= EB_GAMES_L7;
+        return;
+    }
+    if($num_rows == 0){
+        $text .= EB_GAMES_L8;
+    }
+    else
+    {
+        // Paginate
+        $text .= '<br />';
+        $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
+        $text .= '<span style="float:right">';
+        // Go To Page
+        $text .= $pages->display_jump_menu();
+        $text .= '&nbsp;&nbsp;&nbsp;';
+        // Items per page
+        $text .= $pages->display_items_per_page();
+        $text .= '</span><br /><br />';
+
+        /* Display table contents */
+        $text .= '<form id="gamesform" action="'.e_PLUGIN.'ebattles/gameprocess.php" method="post">';
+        $text .= '<table class="fborder" style="width:95%"><tbody>';
+        $text .= '<tr>';
+        $text .= '<td class="forumheader"><input class="tbox" type="checkbox" name="sAll" onclick="selectAll(this)" /> ('.EB_GAMES_L9.')</td>';
+        foreach($array as $opt=>$opt_array)
+        $text .= '<td class="forumheader"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
+        $text .= '<td class="forumheader">'.EB_GAMES_L10;
+        $text .= '<input type="hidden" id="delete_game" name="delete_game" value=""/></td></tr>';
+        for($i=0; $i<$num_rows; $i++){
+            $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
+            $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
+            $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
+
+            $text .= '<tr>';
+            $text .= '<td class="forumheader3"><input class="tbox" type="checkbox" name="game_sel[]" value="'.$gid.'" /></td>';
+            $text .= '<td class="forumheader3">'.$gid.'</td>';
+            $text .= '<td class="forumheader3"><img '.getGameIconResize($gicon).' title="'.$gicon.'"/></td>';
+            $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;gameid='.$gid.'">'.$gname.'</a></td>';
+            $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;gameid='.$gid.'"><img src="'.e_PLUGIN.'ebattles/images/pencil.png" alt="'.EB_GAMES_L11.'" title="'.EB_GAMES_L11.'"/></a>';
+            $text .= '<a href="javascript:buttonval(\''.$gid.'\');" title="'.EB_GAMES_L12.'" onclick="return confirm(\''.EB_GAMES_L13.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_GAMES_L12.'"/></a>';
+            $text .= '</td>';
+            $text .= '</tr>';
+        }
+        $text .= '</tbody></table>';
+
+        $text .= '<table><tr>
+        <td>
+        <input class="button" type="submit" name="delete_selected_games" value="'.EB_GAMES_L14.'" onclick="return confirm(\''.EB_GAMES_L15.'\')"/>
+        </td>
+        <td>
+        <input class="button" type="submit" name="delete_all_games" value="'.EB_GAMES_L16.'" onclick="return confirm(\''.EB_GAMES_L17.'\')"/>
+        </td>
+        <td>
+        <input class="button" type="submit" name="update_selected_games" value="'.EB_GAMES_L18.'"/>
+        </td>
+        <td>
+        <input class="button" type="submit" name="update_all_games" value="'.EB_GAMES_L19.'"/>
+        </td>
+        <td>
+        <input class="button" type="submit" name="add_games" value="'.EB_GAMES_L20.'"/>
+        </td>
+        </tr>
+        </table>
+        ';
+
+        $text .= '</form>';
+    }
+}
+
+?>
+
 ?>
