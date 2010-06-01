@@ -50,14 +50,15 @@ if(isset($_POST['gamesettingssave']))
         $q = "UPDATE ".TBL_GAMES." SET Icon = '$new_gameicon' WHERE (GameID = '$game_id')";
         $result = $sql->db_Query($q);
     }
-    header("Location: gamemanage.php?gameid=$game_id");
+    
+    header("Location: admin_config.php?eb_games&gameid=$game_id");
 }
 if(isset($_POST['gamedelete']))
 {
     $game_id = $_GET['gameid'];
     deleteGame($game_id);
 
-    header("Location: gamesmanage.php");
+    header("Location: admin_config.php?eb_games");
 }
 if (isset($_POST['gamecreate']))
 {
@@ -69,7 +70,7 @@ if (isset($_POST['gamecreate']))
     $q = "UPDATE ".TBL_GAMES." SET Name = '".EB_GAME_L1." - $last_id' WHERE (GameID = '$last_id')";
     $result = $sql->db_Query($q);
 
-    header("Location: gamemanage.php?gameid=".$last_id);
+    header("Location: admin_config.php?eb_games&gameid=".$last_id);
     exit;
 }
 // GamesManage Process
@@ -77,7 +78,7 @@ if(isset($_POST['delete_game']) && $_POST['delete_game']!="")
 {
     $game_id = $_POST['delete_game'];
     deleteGame($game_id);
-    header("Location: {$_SERVER['HTTP_REFERER']}");
+    header("Location: admin_config.php?eb_games");
 }
 
 if(isset($_POST['delete_selected_games']))
@@ -90,7 +91,7 @@ if(isset($_POST['delete_selected_games']))
             deleteGame($game_id);
         }
     }
-    header("Location: {$_SERVER['HTTP_REFERER']}");
+    header("Location: admin_config.php?eb_games");
 }
 
 if(isset($_POST['delete_all_games']))
@@ -104,7 +105,7 @@ if(isset($_POST['delete_all_games']))
         $game_id  = mysql_result($result,$i, TBL_GAMES.".GameID");
         deleteGame($game_id);
     }
-    header("Location: {$_SERVER['HTTP_REFERER']}");
+    header("Location: admin_config.php?eb_games");
 }
 
 if(isset($_POST['update_selected_games']))
@@ -117,20 +118,20 @@ if(isset($_POST['update_selected_games']))
             updateGame($game_id);
         }
     }
-    header("Location: {$_SERVER['HTTP_REFERER']}");
+    header("Location: admin_config.php?eb_games");
 }
 
 if(isset($_POST['update_all_games']))
 {
     updateAllGames();
     //header("Location: {$_SERVER['HTTP_REFERER']}");
-    echo '<META HTTP-EQUIV="Refresh" Content="0; URL=gamesmanage.php">';
+    echo '<META HTTP-EQUIV="Refresh" Content="0; URL=admin_config.php?eb_games">';
 }
 
 if(isset($_POST['add_games']))
 {
     insertGames();
-    header("Location: {$_SERVER['HTTP_REFERER']}");
+    header("Location: admin_config.php?eb_games");
 }
 
 exit;
