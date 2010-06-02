@@ -247,8 +247,6 @@ else
     <td class="forumheader"><b>'.EB_MATCHD_L8.'</b></td>
     <td class="forumheader"><b>'.EB_MATCHD_L9.'</b></td>
     <td class="forumheader"><b>'.EB_MATCHD_L10.'</b></td>
-    <td class="forumheader"><b>'.EB_MATCHD_L11.'</b></td>
-    <td class="forumheader"><b>'.EB_MATCHD_L12.'</b></td>
     <td class="forumheader"><b>'.EB_MATCHD_L13.'</b></td>
     </tr>';
     for($i=0; $i < $numScores; $i++)
@@ -328,8 +326,6 @@ else
         $text .= '
         <td class="forumheader3">'.$pscore.'</td>
         <td class="forumheader3">'.$ppoints.'</td>
-        <td class="forumheader3">'.$pdeltaELO.'</td>
-        <td class="forumheader3">'.$pdeltaTS_mu.'</td>
         ';
 
         // Opponent Ratings
