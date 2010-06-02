@@ -175,7 +175,7 @@ function getTeamAvatar($name)
 
 function imageResize($image, $target, $force_resize=FALSE) {
     // Resize image so it does not exceeds the max size.
-    $image_dims = getimagesize($image);
+    //fm (too slow): $image_dims = getimagesize($image);
 
     if ($image_dims != '')
     {

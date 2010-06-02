@@ -10,8 +10,10 @@ require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/match.php");
 
+$event_id = $_GET['eventid'];
+
 $ebattles_title = $pref['eb_activity_menuheading'];
-$text = displayRecentActivity();
+$text = displayRecentActivity($event_id);
 
 $ns->tablerender($ebattles_title,$text);
 
@@ -19,15 +21,21 @@ $ns->tablerender($ebattles_title,$text);
 Functions
 ***************************************************************************************/
 /**
-* displayLatestGames - Displays Latest Games
+* displayRecentActivity - Displays Recent Activity
 */
-function displayRecentActivity(){
+function displayRecentActivity($event_id){
     global $sql;
     global $time;
     global $pref;
 
     $events = array();
     $nbr_events = 0;
+    
+    if ($event_id != '')
+    {
+        $eventid_match = " AND (".TBL_MATCHS.".Event = '$event_id')";
+        $eventid_award = " AND (".TBL_EVENTS.".EventID = '$event_id')";
+}
 
     // Add recent games
     $rowsPerPage = $pref['eb_activity_number_of_items'];
@@ -37,6 +45,7 @@ function displayRecentActivity(){
     .TBL_SCORES
     ." WHERE (".TBL_MATCHS.".Status = 'active')"
     ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    .$eventid_match
     ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
     ." LIMIT 0, $rowsPerPage";
 
@@ -70,6 +79,7 @@ function displayRecentActivity(){
     ." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
     ." AND (".TBL_PLAYERS.".Event = ".TBL_EVENTS.".EventID)"
     ." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+    .$eventid_award
     ." ORDER BY ".TBL_AWARDS.".timestamp DESC"
     ." LIMIT 0, $rowsPerPage";
 
