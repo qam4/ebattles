@@ -382,6 +382,7 @@ define('EB_CLAN_L22', 'Classement');
 define('EB_CLAN_L23', 'Pas de ladders passés');
 define('EB_CLAN_L24', 'ladder(s) passé(s)');
 define('EB_CLAN_L25', 'Etes-vous sûr de vouloir quitter cette division?');
+define('EB_CLAN_L26', 'Membre');
 
 define('EB_CLANC_L1', 'Créer une Équipe');
 define('EB_CLANC_L2', 'Vous n’êtes pas autorisé à créer une équipe.');
