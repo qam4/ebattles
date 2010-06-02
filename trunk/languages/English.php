@@ -384,6 +384,7 @@ define('EB_CLAN_L22', 'Rank');
 define('EB_CLAN_L23', 'No old events');
 define('EB_CLAN_L24', 'old event(s)');
 define('EB_CLAN_L25', 'Are you sure you want to quit this division?');
+define('EB_CLAN_L26', 'Member');
 
 define('EB_CLANC_L1', 'Create Team');
 define('EB_CLANC_L2', 'You are not authorized to create a team.');

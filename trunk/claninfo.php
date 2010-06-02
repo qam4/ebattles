@@ -271,10 +271,12 @@ function displayTeamDivisions($clan_id){
                 $mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
                 $mjoined_local = $mjoined + TIMEOFFSET;
                 $date = date("d M Y",$mjoined_local);
+                
+                $status =  ($mid == $div_captain) ? EB_CLAN_L9 : EB_CLAN_L26; 
 
                 $text .= '<tr>';
                 $text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
-                <td class="forumheader3">Member</td>
+                <td class="forumheader3">'.$status.'</td>
                 <td class="forumheader3">'.$date.'</td></tr>';
 // Need to remove hardcoded "Member" here
             }

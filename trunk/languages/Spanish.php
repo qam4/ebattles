@@ -383,6 +383,7 @@ define('EB_CLAN_L22', 'Rango');
 define('EB_CLAN_L23', 'No ay eventos anteriores');
 define('EB_CLAN_L24', 'eventos(s) anteriores');
 define('EB_CLAN_L25', '&iquest;Estas seguro de que desea salir desta division?');
+define('EB_CLAN_L26', 'Miembro');
 
 define('EB_CLANC_L1', 'Crear equipo');
 define('EB_CLANC_L2', 'Usted no esta autorizado a crear un equipo.');
