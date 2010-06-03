@@ -1,5 +1,27 @@
 #summary eBattles Release Notes.
 
+= Release 0.7.229 =
+== Features ==
+ * Changed teams stats calculation for team ladders.
+  * Before, teams stats were calculated as the sum of the players stats.
+  * Now they are updated after each match based on the match results.
+  * So for example, if a team of 2 players wins a 2v2.
+  * Before, the team would have 2 games, 2 wins.
+  * Now, the team will have 1 game and 1 win.
+ * Moved Games management pages to eBattles admin area (Fixes issue 79)
+ * If the user is viewing a particular event information, the "Recent Activity" menu now only shows information about that event.
+== Changes ==
+ * Remove usage of getimagesize() function, which can be too slow for remote urls
+ * For teams division creation, show the list of all the available games, rather than only the games used in one or more events.
+== Bug fixes ==
+ * Fixed players wins/losses/draws/points calculation.
+  * Before, players would get one win for every player that is ranked below them. In a 2v2 match, that would result in players getting 2 wins or 2 losses.
+  * Now, players get one win for every match team that is ranked below them. In a 2v2 match, the players get 1 win or loss. In a 1v1v1, the first player gets 2 wins, the 2nd gets 1 win, 1 loss, the last player gets 2 losses.
+ * Replace hardcoded status "Member" in teams divisions tab with "Member" or "Captain".
+ * Fixed HTML div not properly closed in eventinfo page
+ * Fixed: Number of matches to be ranked stuck to 4 for Team ladders
+ * Fixed error messages in the event page when all the stats categories are set to "Info Only"
+
 = Release 0.7.212 =
 == Features ==
  * Changed: Use Points instead of Points Average for ranking calculation
