@@ -163,6 +163,14 @@ else
     $row = mysql_fetch_array($result);
     $nbrplayersNotBanned = $row['NbrPlayers'];
 
+    /* Nbr Teams */
+    $q = "SELECT COUNT(*) as NbrTeams"
+    ." FROM ".TBL_TEAMS
+    ." WHERE (Event = '$event_id')";
+    $result = $sql->db_Query($q);
+    $row = mysql_fetch_array($result);
+    $nbrteams = $row['NbrTeams'];
+
     /* Update Stats */
     if ($eneedupdate == 1)
     {
@@ -304,6 +312,7 @@ else
             switch($etype)
             {
                 case "Team Ladder":
+                case "ClanWar":
                 // Is user a member of a division for that game?
                 $q_2 = "SELECT ".TBL_CLANS.".*, "
                 .TBL_MEMBERS.".*, "
@@ -615,11 +624,101 @@ else
         $can_report = 1;
         $can_approve = 1;
     }
+    /*
     if ($userIsDivisionCaptain == TRUE)
     {
-        $userclass |= eb_UC_EVENT_PLAYER;
-        $can_report = 1;
+    $userclass |= eb_UC_EVENT_PLAYER;
+    $can_report = 1;
     }
+    */
+
+    // Is the user a player?
+    $q = "SELECT *"
+    ." FROM ".TBL_PLAYERS
+    ." WHERE (Event = '$event_id')"
+    ."   AND (User = ".USERID.")";
+    $result = $sql->db_Query($q);
+
+    $pbanned=0;
+    if(mysql_numrows($result) == 1)
+    {
+        $userclass |= eb_UC_EVENT_PLAYER;
+
+        // Show link to my position
+        $row = mysql_fetch_array($result);
+        $prank = $row['Rank'];
+        $pbanned = $row['Banned'];
+
+        /* My Position */
+        if ($prank==0)
+        $prank_txt = EB_EVENT_L54;
+        else
+        $prank_txt = "#$prank";
+
+        $search_user = array_searchRecursive( 'user='.USERID.'"', $stats, false);
+
+        ($search_user) ? $link_page = ceil($search_user[0]/$pages->items_per_page) : $link_page = 1;
+
+        $myPosition_txt = '<p>';
+        $myPosition_txt .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">".EB_EVENT_L55.": $prank_txt</a><br />";
+        $myPosition_txt .= '</p>';
+
+        // Is the event started, and not ended
+        if (  ($eend == 0)
+        ||(  ($eend >= $time)
+        &&($estart <= $time)
+        )
+        )
+        {
+            $can_report = 1;
+            $can_report_quickloss = 1;
+        }
+    }
+
+    switch($etype)
+    {
+        case "One Player Ladder":
+        case "Team Ladder":
+        if (($nbrplayersNotBanned < 2)||($pbanned))
+        {
+            $can_report = 0;
+            $can_report_quickloss = 0;
+        }
+        break;
+        case "ClanWar":
+        if ($nbrteams < 2)
+        {
+            $can_report = 0;
+            $can_report_quickloss = 0;
+        }
+        break;
+        default:
+    }
+
+    // check if only 1 player with this userid
+    $q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_PLAYERS.", "
+    .TBL_USERS
+    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+    ."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+    ."   AND (".TBL_USERS.".user_id = ".USERID.")";
+    $result = $sql->db_Query($q);
+    $numPlayers = mysql_numrows($result);
+    if ($numPlayers>1)
+    $can_report_quickloss = 0;
+
+    // Check if AllowScore is set
+    if ($eallowscore==TRUE)
+    $can_report_quickloss = 0;
+
+    if($etype == "ClanWar") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
+    if($equick_loss_report==FALSE) $can_report_quickloss = 0;
+    if($userclass < $ematch_report_userclass) $can_report = 0;
+
+    if($userclass < $eMatchesApproval) $can_approve = 0;
+    if($eMatchesApproval == eb_UC_NONE) $can_approve = 0;
+
 
     $enextupdate_local = $enextupdate + TIMEOFFSET;
     $date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
@@ -633,13 +732,6 @@ else
         {
             $text .= EB_EVENT_L46.'&nbsp;'.$date_nextupdate.'<br />';
         }
-        /* Nbr Teams */
-        $q = "SELECT COUNT(*) as NbrTeams"
-        ." FROM ".TBL_TEAMS
-        ." WHERE (Event = '$event_id')";
-        $result = $sql->db_Query($q);
-        $row = mysql_fetch_array($result);
-        $nbrteams = $row['NbrTeams'];
         $text .= '<div class="spacer">';
         $text .= '<p>';
         $text .= $nbrteams.' teams<br />';
@@ -723,76 +815,7 @@ else
         $text .= EB_EVENT_L52.'&nbsp;'.$emingames.'&nbsp;'.EB_EVENT_L53.'<br />';
         $text .= '</p>';
 
-        /* My Position */
-        $q = "SELECT *"
-        ." FROM ".TBL_PLAYERS
-        ." WHERE (Event = '$event_id')"
-        ."   AND (User = ".USERID.")";
-        $result = $sql->db_Query($q);
-
-        $pbanned=0;
-        if(mysql_numrows($result) == 1)
-        {
-            $userclass |= eb_UC_EVENT_PLAYER;
-
-            // Show link to my position
-            $row = mysql_fetch_array($result);
-            $prank = $row['Rank'];
-            $pbanned = $row['Banned'];
-
-            if ($prank==0)
-            $prank_txt = EB_EVENT_L54;
-            else
-            $prank_txt = "#$prank";
-
-            $search_user = array_searchRecursive( 'user='.USERID.'"', $stats, false);
-
-            ($search_user) ? $link_page = ceil($search_user[0]/$pages->items_per_page) : $link_page = 1;
-
-            $text .= '<p>';
-            $text .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">".EB_EVENT_L55.": $prank_txt</a><br />";
-            $text .= '</p>';
-            // Is the event started, and not ended
-            if (  ($eend == 0)
-            ||(  ($eend >= $time)
-            &&($estart <= $time)
-            )
-            )
-            {
-                $can_report = 1;
-                $can_report_quickloss = 1;
-            }
-        }
-
-        if (($nbrplayersNotBanned < 2)||($pbanned))
-        {
-            $can_report = 0;
-            $can_report_quickloss = 0;
-        }
-
-        // check if only 1 player with this userid
-        $q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
-        .TBL_USERS.".*"
-        ." FROM ".TBL_PLAYERS.", "
-        .TBL_USERS
-        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-        ."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-        ."   AND (".TBL_USERS.".user_id = ".USERID.")";
-        $result = $sql->db_Query($q);
-        $numPlayers = mysql_numrows($result);
-        if ($numPlayers>1)
-        $can_report_quickloss = 0;
-
-        // Check if AllowScore is set
-        if ($eallowscore==TRUE)
-        $can_report_quickloss = 0;
-
-        if($etype == "ClanWar") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
-        if($equick_loss_report==FALSE) $can_report_quickloss = 0;
-        if($userclass < $ematch_report_userclass) $can_report = 0;
-
-        if($userclass < $eMatchesApproval) $can_approve = 0;
-        if($eMatchesApproval == eb_UC_NONE) $can_approve = 0;
+        $text .= $myPosition_txt;
 
         $text .= '<br />';
         // Paginate
@@ -839,6 +862,8 @@ else
     <div class="tab" id="event_matches">'.EB_EVENT_L58;
     $text .= ($can_approve == 1) ? ' <span style="color:red">('.$nbrMatchesPending.')</span>' : '';
     $text .= '</div>';
+
+    //dbg: $text .= "Userclass: $userclass<br>";
 
     /* Display Match Report buttons */
     if(($can_report_quickloss != 0)||($can_report != 0))
