@@ -143,15 +143,15 @@ else
     // Can I delete the game
     //-----------------------
     // Is the user a moderator?
-    $q_2 = "SELECT ".TBL_EVENTMODS.".*"
+    $q_Mods = "SELECT ".TBL_EVENTMODS.".*"
     ." FROM ".TBL_EVENTMODS
     ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
     ."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
-    $result_2 = $sql->db_Query($q_2);
-    $numMods = mysql_numrows($result_2);
+    $result_Mods = $sql->db_Query($q_Mods);
+    $numMods = mysql_numrows($result_Mods);
 
     $reporter_matchteam = 0;
-    $q_2 = "SELECT DISTINCT ".TBL_SCORES.".*"
+    $q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
     ." FROM ".TBL_MATCHS.", "
     .TBL_SCORES.", "
     .TBL_PLAYERS.", "
@@ -160,26 +160,50 @@ else
     ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
     ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
     ." AND (".TBL_PLAYERS.".User = '$reported_by')";
-    $result_2 = $sql->db_Query($q_2);
-    $numRows = mysql_numrows($result_2);
+    $result_Reporter = $sql->db_Query($q_Reporter);
+    $numRows = mysql_numrows($result_Reporter);
     if ($numRows>0)
     {
-        $reporter_matchteam = mysql_result($result_2,0, TBL_SCORES.".Player_MatchTeam");
+        $reporter_matchteam = mysql_result($result,0, TBL_SCORES.".Player_MatchTeam");
     }
 
-    // Is the user an opponent of the reporter?
-    $q_2 = "SELECT DISTINCT ".TBL_SCORES.".*"
-    ." FROM ".TBL_MATCHS.", "
-    .TBL_SCORES.", "
-    .TBL_PLAYERS.", "
-    .TBL_USERS
-    ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-    ." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
-    ." AND (".TBL_PLAYERS.".User = ".USERID.")";
-    $result_2 = $sql->db_Query($q_2);
-    $numOpps = mysql_numrows($result_2);
+    switch($etype)
+    {
+        case "One Player Ladder":
+        case "Team Ladder":
+        // Is the user an opponent of the reporter?
+        $q_Opps = "SELECT DISTINCT ".TBL_SCORES.".*"
+        ." FROM ".TBL_MATCHS.", "
+        .TBL_SCORES.", "
+        .TBL_PLAYERS.", "
+        .TBL_USERS
+        ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+        ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+        ." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
+        ." AND (".TBL_PLAYERS.".User = ".USERID.")";
+        $result_Opps = $sql->db_Query($q_Opps);
+        $numOpps = mysql_numrows($result_Opps);
+        break;
+        case "ClanWar":
+        // Is the user an opponent of the reporter?
+        $q_Opps = "SELECT DISTINCT ".TBL_SCORES.".*"
+        ." FROM ".TBL_MATCHS.", "
+        .TBL_SCORES.", "
+        .TBL_TEAMS.", "
+        .TBL_PLAYERS.", "
+        .TBL_USERS
+        ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+        ." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
+        ." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+        ." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+        ." AND (".TBL_PLAYERS.".User = ".USERID.")";
+        $result_Opps = $sql->db_Query($q_Opps);
+        $numOpps = mysql_numrows($result_Opps);
+        break;
+        default:
+    }
 
     $can_approve = 0;
     $can_delete = 0;

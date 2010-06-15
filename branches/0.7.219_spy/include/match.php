@@ -1221,19 +1221,43 @@ function displayMatchInfo($match_id, $type = 0)
                 $reporter_matchteam = mysql_result($result,0, TBL_SCORES.".Player_MatchTeam");
             }
 
-            // Is the user an opponent of the reporter?
-            $q = "SELECT DISTINCT ".TBL_SCORES.".*"
-            ." FROM ".TBL_MATCHS.", "
-            .TBL_SCORES.", "
-            .TBL_PLAYERS.", "
-            .TBL_USERS
-            ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-            ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-            ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-            ." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
-            ." AND (".TBL_PLAYERS.".User = ".USERID.")";
-            $result = $sql->db_Query($q);
-            $numOpps = mysql_numrows($result);
+            switch($mEventType)
+            {
+                case "One Player Ladder":
+                case "Team Ladder":
+                // Is the user an opponent of the reporter?
+                $q = "SELECT DISTINCT ".TBL_SCORES.".*"
+                ." FROM ".TBL_MATCHS.", "
+                .TBL_SCORES.", "
+                .TBL_PLAYERS.", "
+                .TBL_USERS
+                ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+                ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+                ." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
+                ." AND (".TBL_PLAYERS.".User = ".USERID.")";
+                $result = $sql->db_Query($q);
+                $numOpps = mysql_numrows($result);
+                break;
+                case "ClanWar":
+                // Is the user an opponent of the reporter?
+                $q = "SELECT DISTINCT ".TBL_SCORES.".*"
+                ." FROM ".TBL_MATCHS.", "
+                .TBL_SCORES.", "
+                .TBL_TEAMS.", "
+                .TBL_PLAYERS.", "
+                .TBL_USERS
+                ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+                ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+                ." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
+                ." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+                ." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+                ." AND (".TBL_PLAYERS.".User = ".USERID.")";
+                $result = $sql->db_Query($q);
+                $numOpps = mysql_numrows($result);
+                break;
+                default:
+            }
 
             $can_approve = 0;
             if (USERID==$mEventOwner)
