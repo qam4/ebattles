@@ -412,7 +412,8 @@ function eventAddDivision($event_id, $div_id, $notify)
     $eTS_default_mu = mysql_result($result, 0, TBL_EVENTS.".TS_default_mu");
     $eTS_default_sigma = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
 
-    $add_players = ( $etype == "ClanWar" ? FALSE : TRUE);
+    //$add_players = ( $etype == "ClanWar" ? FALSE : TRUE);
+    $add_players = TRUE;
 
     // Is the division signed up
     $q = "SELECT ".TBL_TEAMS.".*"
