@@ -563,4 +563,32 @@ function disclaimer()
 
     return '<span class="smalltext" style="float:right">'.$pref['eb_disclaimer'].'</span>';
 }
+
+function versionsCompare($version1, $version2)
+{
+    $version1 = explode('.', $version1, 3);
+    $version2 = explode('.', $version2, 3);
+    if (!$version2[2]) $version2[2] = 0;
+
+    if ($version1[0] < $version2[0])
+    return -1;
+    else if ($version1[0] > $version2[0])
+    return 1;
+    else
+    {
+        if ($version1[1] < $version2[1])
+        return -1;
+        else if ($version1[1] > $version2[1])
+        return 1;
+        else
+        {
+            if ($version1[2] < $version2[2])
+            return -1;
+            else if ($version2[2] > $version2[2])
+            return 1;
+            else
+            return 0;
+        }
+    }
+}
 ?>

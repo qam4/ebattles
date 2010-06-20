@@ -16,10 +16,30 @@ require_once(e_PLUGIN."ebattles/include/event.php");
 ********************************************************************/
 require_once(HEADERF);
 
-$text .= '
-<script type="text/javascript" src="./js/tabpane.js"></script>
-';
+$text .= "
+<script type='text/javascript' src='./js/tabpane.js'></script>
+<script type='text/javascript'>
+<!--//
+function del_media(v)
+{
+document.getElementById('del_media').value=v;
+document.getElementById('mediaform').submit();
+}
+//-->
+</script>
+";
+$text .= "
+<script type='text/javascript' src='./js/shadowbox/js/lib/prototype.js'></script>
+<script type='text/javascript' src='./js/shadowbox/adapter/shadowbox-prototype.js'></script>
+<script type='text/javascript' src='./js/shadowbox/shadowbox.js'></script>
+<script type='text/javascript'>
+Shadowbox.loadSkin('classic', './js/shadowbox/skin'); // use the classic skin
+Shadowbox.loadLanguage('en', './js/shadowbox/lang'); // use the English language
+Shadowbox.loadPlayer(['img', 'flv', 'wmt', 'swf', 'html', 'iframe'], './js/shadowbox/player'); // use img and qt players
 
+window.onload = Shadowbox.init;
+
+</script>";
 global $sql;
 
 $match_id = $_GET['matchid'];
@@ -171,6 +191,42 @@ else
     {
         case "One Player Ladder":
         case "Team Ladder":
+        // Is the user a player of this match?
+        $q_Played = "SELECT DISTINCT ".TBL_SCORES.".*"
+        ." FROM ".TBL_MATCHS.", "
+        .TBL_SCORES.", "
+        .TBL_PLAYERS.", "
+        .TBL_USERS
+        ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+        ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+        ." AND (".TBL_PLAYERS.".User = ".USERID.")";
+        $result_Played = $sql->db_Query($q_Played);
+        $numPlayed = mysql_numrows($result_Played);
+        break;
+        case "ClanWar":
+        // Is the user an opponent of the reporter?
+        $q_Played = "SELECT DISTINCT ".TBL_SCORES.".*"
+        ." FROM ".TBL_MATCHS.", "
+        .TBL_SCORES.", "
+        .TBL_TEAMS.", "
+        .TBL_PLAYERS.", "
+        .TBL_USERS
+        ." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+        ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+        ." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+        ." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+        ." AND (".TBL_PLAYERS.".User = ".USERID.")";
+        $result_Played = $sql->db_Query($q_Played);
+        $numPlayed = mysql_numrows($result_Played);
+        break;
+        default:
+    }
+
+    switch($etype)
+    {
+        case "One Player Ladder":
+        case "Team Ladder":
         // Is the user an opponent of the reporter?
         $q_Opps = "SELECT DISTINCT ".TBL_SCORES.".*"
         ." FROM ".TBL_MATCHS.", "
@@ -207,6 +263,8 @@ else
 
     $can_approve = 0;
     $can_delete = 0;
+    $can_submit_media = 0;
+    $can_delete_media = 0;
     if (  (USERID==$reported_by)
     &&(  ($eend==0)
     ||(  ($eend>=$time)
@@ -218,23 +276,34 @@ else
         $userclass |= eb_UC_EVENT_OWNER;
         $can_delete = 1;
         $can_approve = 1;
+        $can_submit_media = 1;
+        $can_delete_media = 1;
     }
     if ($numMods>0)
     {
         $userclass |= eb_UC_EB_MODERATOR;
         $can_delete = 1;
         $can_approve = 1;
+        $can_submit_media = 1;
+        $can_delete_media = 1;
     }
     if (check_class($pref['eb_mod_class']))
     {
         $userclass |= eb_UC_EB_MODERATOR;
         $can_approve = 1;
+        $can_submit_media = 1;
+        $can_delete_media = 1;
     }
     if ($numOpps>0)
     {
         $userclass |= eb_UC_EVENT_PLAYER;
         $can_approve = 1;
     }
+    if ($numPlayed>0)
+    {
+        $can_submit_media = 1;
+    }
+
     if($userclass < $eMatchesApproval) $can_approve = 0;
     if($eMatchesApproval == eb_UC_NONE) $can_approve = 0;
     if ($mStatus == 'active') $can_approve = 0;
@@ -247,6 +316,7 @@ else
     {
         $text .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?eventid='.$event_id.'" method="post">';
         $text .= '<div>';
+        $text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
         $text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
         $text .= '<input class="button" type="submit" name="deletematch" value="'.EB_MATCHD_L4.'" onclick="return confirm(\''.EB_MATCHD_L5.'\');"/>';
         $text .= '</div>';
@@ -408,6 +478,88 @@ else
         $text .= '</tr>';
     }
     $text .= '</tbody></table><br />';
+
+    // Media
+    $array_types = array(
+    'Screenshot' => EB_MATCHD_L19,
+    'Replay'     => EB_MATCHD_L20,
+    'Video'      => EB_MATCHD_L21
+    );
+
+    // List of all media
+    $q_UserMedia = "SELECT ".TBL_MEDIA.".*"
+    ." FROM ".TBL_MEDIA
+    ." WHERE (".TBL_MEDIA.".MatchID = '$match_id')"
+    ."   AND (".TBL_MEDIA.".Submitter = ".USERID.")";
+    $result_UserMedia = $sql->db_Query($q_UserMedia);
+    $numUserMedia = mysql_numrows($result_UserMedia);
+    //dbg: echo "numUserMedia $numUserMedia - ".$pref['eb_max_number_media']."<br>";
+    if ($numUserMedia >= $pref['eb_max_number_media']) $can_submit_media = 0;
+    
+    $q_Media = "SELECT ".TBL_MEDIA.".*, "
+    .TBL_USERS.".*"
+    ." FROM ".TBL_MEDIA.", "
+    .TBL_USERS
+    ." WHERE (".TBL_MEDIA.".MatchID = '$match_id')"
+    ."   AND (".TBL_MEDIA.".Submitter = ".TBL_USERS.".user_id)";
+    $result_Media = $sql->db_Query($q_Media);
+    $numMedia = mysql_numrows($result_Media);
+
+    $text .= '<table class="table_left">';
+    $text .= '<form id="mediaform" action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
+    $text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+    $text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
+    $text .= '<input type="hidden" id="del_media" name="del_media" value=""/>';
+    for ($media = 0; $media < $numMedia; $media++)
+    {
+        $mID = mysql_result($result_Media,$media , TBL_MEDIA.".MediaID");
+        $mPath = mysql_result($result_Media,$media , TBL_MEDIA.".Path");
+        $mType = mysql_result($result_Media,$media , TBL_MEDIA.".Type");
+        $mSubmitterID = mysql_result($result_Media,$media , TBL_MEDIA.".Submitter");
+        $mSubmitterName = mysql_result($result_Media,$media , TBL_USERS.".user_name");
+        
+        $shadow='';
+        if (($mType == "Video")||($mType == "Screenshot"))
+        {
+            $shadow = 'rel="shadowbox"';
+        }        
+
+        $text .= '<tr>';
+        $text .= '<td><a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a><td>';
+        $text .= '<td>';
+        if (($mSubmitterID == USERID)||($can_delete_media == 1))
+        {
+            $text .= '<a href="javascript:del_media(\''.$mID.'\');" title="'.EB_MATCHD_L25.'" onclick="return confirm(\''.EB_MATCHD_L26.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_MATCHD_L25.'"/></a>';
+        }
+        $text .= '</td>';
+        $text .= '</tr>';
+    }
+    $text .= '</form>';
+    $text .= '</table>';
+
+    /*
+    $text .= "<a href='http://img269.imageshack.us/img269/7034/966b.png' rel='shadowbox'>My Image</a><br>";
+    $text .= "<a href='http://www.youtube.com/v/iSZoeNuX4gk' rel='shadowbox'>My Video</a>";
+    */
+
+    if($can_submit_media != 0)
+    {
+        $text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
+        $text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+        $text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
+        $text .= '<table class="table_left"><tr>';
+        $text .= '<td><select class="tbox" name="mediatype">';
+        foreach ($array_types as $key => $value)
+        {
+            $text .= '<option value="'.$key.'"';
+            $text .= '>'.$value.'</option>';
+        }
+        $text .= '</select></td>';
+        $text .= '<td><input class="tbox" type="text" name="mediapath" size="40" value="" maxlength="64" title="'.EB_MATCHD_L22.'"/></td>';
+        $text .= '<td><input class="button" type="submit" name="addmedia" value="'.EB_MATCHD_L23.'"/></td>';
+        $text .= '</tr></table>';
+        $text .= '</form>';
+    }
 
     if ($comments)
     {

@@ -111,6 +111,32 @@ if (isset($_POST['approvematch']))
     header("Location: matchinfo.php?matchid=$match_id");
     exit;
 }
+if (isset($_POST['addmedia']))
+{
+    $event_id = $_POST['eventid'];
+    $match_id = $_POST['matchid'];
+    $media_type = $_POST['mediatype'];
+    $media_path = $tp->toDB($_POST['mediapath']);
+    $submitter = USERID;
+
+    if (preg_match("/http:\/\//", $media_path))
+    {
+        add_media($match_id, $submitter, $media_path, $media_type);
+    }
+
+    header("Location: matchinfo.php?matchid=$match_id");
+    exit;
+}
+if (isset($_POST['del_media']) && $_POST['del_media']!="")
+{
+    $match_id = $_POST['matchid'];
+    $media = $_POST['del_media'];
+
+    delete_media($media);
+
+    header("Location: matchinfo.php?matchid=$match_id");
+    exit;
+}
 
 // should not be here -> redirect
 header("Location: events.php");
