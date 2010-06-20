@@ -452,6 +452,14 @@ define('EB_MATCHD_L15', 'Volver a');
 define('EB_MATCHD_L16', 'Evento');
 define('EB_MATCHD_L17', 'Aprobar este partido');
 define('EB_MATCHD_L18', 'Este partido esta pendiente de revision');
+define('EB_MATCHD_L19', 'Captura de pantalla');
+define('EB_MATCHD_L20', 'Replay');
+define('EB_MATCHD_L21', 'Video');
+define('EB_MATCHD_L22', 'Por favor, escriba la dirección completa del medio aquí (http://...)');
+define('EB_MATCHD_L23', 'Envíe el Medio');
+define('EB_MATCHD_L24', 'presentado por');
+define('EB_MATCHD_L25', 'Eliminar');
+define('EB_MATCHD_L26', '¿Está seguro que desea eliminar este medio?');
 
 define('EB_MATCHDEL_L1', 'Eliminar Partido');
 define('EB_MATCHDEL_L2', 'Usted no esta autorizado para eliminar este partido.');

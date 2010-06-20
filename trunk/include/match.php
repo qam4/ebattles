@@ -1473,4 +1473,23 @@ function displayMatchInfo($match_id, $type = 0)
     }
     return $string;
 }
+
+function add_media($match_id, $submitter, $media_path, $media_type)
+{
+    global $sql;
+
+    $q = "INSERT INTO ".TBL_MEDIA."(MatchID,Submitter,Path,Type)
+    VALUES ('$match_id','$submitter','$media_path','$media_type')";
+    $sql->db_Query($q);
+
+    //dbg: echo "$match_id, $submitter, $media_path, $media_type";
+}
+
+function delete_media($media)
+{
+    global $sql;
+
+    $q = "DELETE FROM ".TBL_MEDIA." WHERE (MediaID = '$media')";
+    $result = $sql->db_Query($q);
+}
 ?>

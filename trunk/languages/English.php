@@ -454,6 +454,14 @@ define('EB_MATCHD_L15', 'Back to');
 define('EB_MATCHD_L16', 'Event');
 define('EB_MATCHD_L17', 'Approve this match');
 define('EB_MATCHD_L18', 'This match is pending review');
+define('EB_MATCHD_L19', 'Screenshot');
+define('EB_MATCHD_L20', 'Replay');
+define('EB_MATCHD_L21', 'Video');
+define('EB_MATCHD_L22', 'Please type full address of remote media here (http://...)');
+define('EB_MATCHD_L23', 'Submit Media');
+define('EB_MATCHD_L24', 'submitted by');
+define('EB_MATCHD_L25', 'Delete');
+define('EB_MATCHD_L26', 'Are you sure you want to delete this media?');
 
 define('EB_MATCHDEL_L1', 'Match Delete');
 define('EB_MATCHDEL_L2', 'You are not authorized to delete this match.');
