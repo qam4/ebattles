@@ -65,7 +65,9 @@ $eplug_prefs = array(
 "eb_activity_max_image_size_check" => 1,
 "eb_activity_max_image_size" => 16,
 "eb_disclaimer" => EB_ADMIN_L37,
-"eb_max_number_media" => 3
+"eb_max_number_media" => 3,
+"eb_max_map_image_size_check" => 1,
+"eb_max_map_image_size" => 80
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -97,6 +99,7 @@ $eplug_tables = array(
 GameID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(GameID),
 Name varchar(63),
+ShortName varchar(63),
 Icon varchar(63),
 Style varchar(63) NOT NULL default '',
 Genre varchar(63) NOT NULL default '',
@@ -360,7 +363,8 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Name varchar(63) NOT NULL default '',
-Image varchar(63) NOT NULL default ''
+Image varchar(63) NOT NULL default '',
+Description varchar(63) NOT NULL default ''
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_FACTIONS."
 (
@@ -420,6 +424,7 @@ if (versionsCompare($eb_version_string, "0.8"))
     "ALTER TABLE ".TBL_EVENTS." ADD PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'",
     "ALTER TABLE ".TBL_MATCHS." ADD Map int DEFAULT '0'",
     "ALTER TABLE ".TBL_SCORES." ADD Faction int DEFAULT '0'",
+    "ALTER TABLE ".TBL_GAMES." ADD ShortName varchar(63) ",
     "CREATE TABLE ".TBL_MAPS."
     (
     MapID int NOT NULL AUTO_INCREMENT,
@@ -428,7 +433,8 @@ if (versionsCompare($eb_version_string, "0.8"))
     INDEX (Game),
     FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
     Name varchar(63) NOT NULL default '',
-    Image varchar(63) NOT NULL default ''
+    Image varchar(63) NOT NULL default '',
+    Description varchar(63) NOT NULL default ''
     ) TYPE = MyISAM;",
     "CREATE TABLE ".TBL_FACTIONS."
     (
@@ -456,7 +462,9 @@ if (versionsCompare($eb_version_string, "0.8"))
     );
     
     $upgrade_add_prefs += array(
-    "eb_max_number_media" => 3
+    "eb_max_number_media" => 3,
+    "eb_max_map_image_size_check" => 1,
+    "eb_max_map_image_size" => 80
     );
 }
 

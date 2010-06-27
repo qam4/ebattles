@@ -131,45 +131,17 @@ function array_searchRecursive( $needle, $haystack, $strict=false, $path=array()
     return false;
 }
 
-function getGameIcon($icon)
+function getImagePath($image, $dir)
 {
-    if (preg_match("/\//", $icon))
+    if (preg_match("/\//", $image))
     {
         // External link
-        return $icon;
+        return $image;
     }
     else
     {
         // Internal link
-        return e_PLUGIN."ebattles/images/games_icons/$icon";
-    }
-}
-
-function getAvatar($name)
-{
-    if (preg_match("/\//", $name))
-    {
-        // External link
-        return $name;
-    }
-    else
-    {
-        // Internal link
-        return e_PLUGIN."ebattles/images/avatars/$name";
-    }
-}
-
-function getTeamAvatar($name)
-{
-    if (preg_match("/\//", $name))
-    {
-        // External link
-        return $name;
-    }
-    else
-    {
-        // Internal link
-        return e_PLUGIN."ebattles/images/team_avatars/$name";
+        return e_PLUGIN."ebattles/images/$dir/$image";
     }
 }
 
@@ -212,7 +184,7 @@ function imageResize($image, $target, $force_resize=FALSE) {
     }
 }
 
-function getIconResize($icon, $max_size, $enable_max_resize=TRUE, $force_resize=FALSE) {
+function getImageResize($icon, $max_size, $enable_max_resize=TRUE, $force_resize=FALSE) {
     global $pref;
 
     if (($enable_max_resize == TRUE)||($force_resize==TRUE))
@@ -227,22 +199,31 @@ function getIconResize($icon, $max_size, $enable_max_resize=TRUE, $force_resize=
 
 function getGameIconResize($gicon) {
     global $pref;
-    return getIconResize(getGameIcon($gicon), $pref['eb_max_image_size'], $pref['eb_max_image_size_check']).' alt="'.$gicon.'"';
+    return getImageResize(getImagePath($gicon, 'games_icons'), $pref['eb_max_image_size'], $pref['eb_max_image_size_check']).' alt="'.$gicon.'"';
 }
 
 function getActivityIconResize($icon) {
     global $pref;
-    return getIconResize($icon, $pref['eb_activity_max_image_size'], $pref['eb_activity_max_image_size_check']);
+    return getImageResize($icon, $pref['eb_activity_max_image_size'], $pref['eb_activity_max_image_size_check']);
 }
 
 function getActivityGameIconResize($gicon) {
     global $pref;
-    return getIconResize(getGameIcon($gicon), $pref['eb_activity_max_image_size'], $pref['eb_activity_max_image_size_check']).' alt="'.$gicon.'"';
+    return getImageResize(getImagePath($gicon, 'games_icons'), $pref['eb_activity_max_image_size'], $pref['eb_activity_max_image_size_check']).' alt="'.$gicon.'"';
 }
 
 function getAvatarResize($icon) {
     global $pref;
-    return getIconResize($icon, $pref['eb_max_avatar_size']).' alt="'.$icon.'"';
+    return getImageResize($icon, $pref['eb_max_avatar_size']).' alt="'.$icon.'"';
+}
+
+function getFactionIconResize($ficon) {
+    global $pref;
+    return getImageResize(getImagePath($ficon, 'games_factions'), $pref['eb_max_image_size'], $pref['eb_max_image_size_check']).' alt="'.$ficon.'"';
+}
+function getMapImageResize($mimage) {
+    global $pref;
+    return getImageResize(getImagePath($mimage, 'games_maps'), $pref['eb_max_map_image_size'], $pref['eb_max_map_image_size_check']).' alt="'.$mimage.'"';
 }
 
 function floatToSQL($number)

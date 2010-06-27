@@ -159,7 +159,7 @@ function displayCurrentEvents(){
         ." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
         ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
         ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-        ." ORDER BY $orderby_array[1] $sort"
+        ." ORDER BY $orderby_array[1] $sort, EventID DESC"
         ." $pages->limit";
     }
     else
@@ -184,7 +184,7 @@ function displayCurrentEvents(){
         ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
         ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
         ."   AND (".TBL_EVENTS.".Game = '$gameid')"
-        ." ORDER BY $orderby_array[1] $sort"
+        ." ORDER BY $orderby_array[1] $sort, EventID DESC"
         ." $pages->limit";
     }
 
