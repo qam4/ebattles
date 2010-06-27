@@ -116,7 +116,7 @@ else
             $mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
             $mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
 
-            $mapImage = EB_MATCHR_L44.': '.$mName.' - '.$mDescrition.'<br /><a href="'.getImagePath($mImage, 'games_maps').'" rel="shadowbox"><img '.getMapImageResize($mImage).' title="'.$mName.'" style="vertical-align:middle"/>';
+            $mapImage = EB_MATCHR_L44.': '.$mName.' - '.$mDescrition.'<br /><a href="'.getImagePath($mImage, 'games_maps').'" rel="shadowbox"><img '.getMapImageResize($mImage).' title="'.$mName.'" style="vertical-align:middle"/></a>';
         }
 
 
@@ -462,7 +462,7 @@ else
         <td class="forumheader3">'.$pscore.'</td>
         <td class="forumheader3">'.$ppoints.'</td>
         <td class="forumheader3">'.$pdeltaELO.'</td>
-        <td class="forumheader3">'.$pdeltaTS_mu.'</td>
+        <td class="forumheader3">'.number_format($pdeltaTS_mu,2).'</td>
         ';
 
         // Opponent Ratings
@@ -547,37 +547,42 @@ else
     $result_Media = $sql->db_Query($q_Media);
     $numMedia = mysql_numrows($result_Media);
 
-    $text .= '<table class="table_left">';
-    $text .= '<form id="mediaform" action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
-    $text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
-    $text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
-    $text .= '<input type="hidden" id="del_media" name="del_media" value=""/>';
-    for ($media = 0; $media < $numMedia; $media++)
+    if ($numMedia>0)
     {
-        $mID = mysql_result($result_Media,$media , TBL_MEDIA.".MediaID");
-        $mPath = mysql_result($result_Media,$media , TBL_MEDIA.".Path");
-        $mType = mysql_result($result_Media,$media , TBL_MEDIA.".Type");
-        $mSubmitterID = mysql_result($result_Media,$media , TBL_MEDIA.".Submitter");
-        $mSubmitterName = mysql_result($result_Media,$media , TBL_USERS.".user_name");
-
-        $shadow='';
-        if (($mType == "Video")||($mType == "Screenshot"))
+        $text .= '<form id="mediaform" action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
+        $text .= '<div>';
+        $text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+        $text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
+        $text .= '<input type="hidden" id="del_media" name="del_media" value=""/>';
+        $text .= '</div>';
+        $text .= '<table class="table_left">';
+        for ($media = 0; $media < $numMedia; $media++)
         {
-            $shadow = 'rel="shadowbox"';
-        }
+            $mID = mysql_result($result_Media,$media , TBL_MEDIA.".MediaID");
+            $mPath = mysql_result($result_Media,$media , TBL_MEDIA.".Path");
+            $mType = mysql_result($result_Media,$media , TBL_MEDIA.".Type");
+            $mSubmitterID = mysql_result($result_Media,$media , TBL_MEDIA.".Submitter");
+            $mSubmitterName = mysql_result($result_Media,$media , TBL_USERS.".user_name");
 
-        $text .= '<tr>';
-        $text .= '<td><a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a><td>';
-        $text .= '<td>';
-        if (($mSubmitterID == USERID)||($can_delete_media == 1))
-        {
-            $text .= '<a href="javascript:del_media(\''.$mID.'\');" title="'.EB_MATCHD_L25.'" onclick="return confirm(\''.EB_MATCHD_L26.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_MATCHD_L25.'"/></a>';
+            $shadow='';
+            if (($mType == "Video")||($mType == "Screenshot"))
+            {
+                $shadow = 'rel="shadowbox"';
+            }
+
+            $text .= '<tr>';
+            $text .= '<td><a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a></td>';
+            $text .= '<td>';
+            if (($mSubmitterID == USERID)||($can_delete_media == 1))
+            {
+                $text .= '<a href="javascript:del_media(\''.$mID.'\');" title="'.EB_MATCHD_L25.'" onclick="return confirm(\''.EB_MATCHD_L26.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_MATCHD_L25.'"/></a>';
+            }
+            $text .= '</td>';
+            $text .= '</tr>';
         }
-        $text .= '</td>';
-        $text .= '</tr>';
+        $text .= '</table>';
+        $text .= '</form>';
     }
-    $text .= '</form>';
-    $text .= '</table>';
 
     /*
     $text .= "<a href='http://img269.imageshack.us/img269/7034/966b.png' rel='shadowbox'>My Image</a><br>";
@@ -587,8 +592,10 @@ else
     if($can_submit_media != 0)
     {
         $text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
+        $text .= '<div>';
         $text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
         $text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
+        $text .= '</div>';
         $text .= '<table class="table_left"><tr>';
         $text .= '<td><select class="tbox" name="mediatype">';
         foreach ($array_types as $key => $value)
@@ -602,7 +609,7 @@ else
         $text .= '</tr></table>';
         $text .= '</form>';
     }
-    
+
     if ($comments)
     {
         $text .= '<p>';

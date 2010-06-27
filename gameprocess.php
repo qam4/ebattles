@@ -52,11 +52,9 @@ if(isset($_POST['gamesettingssave']))
     }
     /* Game Short Name */
     $new_gameshortname = htmlspecialchars($_POST['gameShortName']);
-    if ($new_gameshortname != '')
-    {
-        $q = "UPDATE ".TBL_GAMES." SET ShortName = '$new_gameshortname' WHERE (GameID = '$game_id')";
-        $result = $sql->db_Query($q);
-    }    
+    $q = "UPDATE ".TBL_GAMES." SET ShortName = '$new_gameshortname' WHERE (GameID = '$game_id')";
+    $result = $sql->db_Query($q);
+
     header("Location: admin_config.php?eb_games&gameid=$game_id");
 }
 if(isset($_POST['gamedelete']))

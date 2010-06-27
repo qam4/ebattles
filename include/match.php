@@ -1361,7 +1361,7 @@ function displayMatchInfo($match_id, $type = 0)
                 $prank  = mysql_result($result,$index , TBL_SCORES.".Player_Rank");
                 $pmatchteam  = mysql_result($result,$index , TBL_SCORES.".Player_MatchTeam");
                 $pscore = mysql_result($result,$index , TBL_SCORES.".Player_Score");
-                $pfaction  = mysql_result($result,$i, TBL_SCORES.".Faction");
+                $pfaction  = mysql_result($result,$index, TBL_SCORES.".Faction");
 
                 $pfactionIcon = "";
                 //if (($pfaction!=0)&&($type!=0))

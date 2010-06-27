@@ -371,7 +371,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
     $handle = opendir(e_PLUGIN."ebattles/images/games_factions/");
     while ($file = readdir($handle))
     {
-        if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn" && $file != "Games List.csv" && preg_match("/$game_shortname-/", $file))
+        if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn" && $game_shortname != "" && preg_match("/".$game_shortname."-/", $file))
         {
             $gamefactionslist[] = $file;
         }
@@ -450,7 +450,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
     $handle = opendir(e_PLUGIN."ebattles/images/games_maps/");
     while ($file = readdir($handle))
     {
-        if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn" && $file != "Games List.csv" && preg_match("/$game_shortname-/", $file))
+        if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn" && $game_shortname != "" && preg_match("/".$game_shortname."-/", $file))
         {
             $gamemapslist[] = $file;
         }
