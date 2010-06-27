@@ -99,6 +99,28 @@ else
     $mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
     $reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
     $reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
+    $mMap = mysql_result($result,0, TBL_MATCHS.".Map");
+
+    $mapImage = "";
+    if ($mMap!=0)
+    {
+        $q_Maps = "SELECT ".TBL_MAPS.".*"
+        ." FROM ".TBL_MAPS
+        ." WHERE (".TBL_MAPS.".MapID = '$mMap')";
+        $result_Maps = $sql->db_Query($q_Maps);
+        $numMaps = mysql_numrows($result_Maps);
+
+        if ($numMaps>0)
+        {
+            $mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
+            $mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
+            $mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
+
+            $mapImage = EB_MATCHR_L44.': '.$mName.' - '.$mDescrition.'<br /><a href="'.getImagePath($mImage, 'games_maps').'" rel="shadowbox"><img '.getMapImageResize($mImage).' title="'.$mName.'" style="vertical-align:middle"/>';
+        }
+
+
+    }
 
     // Get the scores for this match
     switch($etype)
@@ -376,7 +398,24 @@ else
         $pscore  = mysql_result($result,$i, TBL_SCORES.".Player_Score");
         $pOppScore  = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
         $ppoints  = mysql_result($result,$i, TBL_SCORES.".Player_Points");
+        $pfaction  = mysql_result($result,$i, TBL_SCORES.".Faction");
 
+        $pfactionIcon = "";
+        if ($pfaction!=0)
+        {
+            $q_Factions = "SELECT ".TBL_FACTIONS.".*"
+            ." FROM ".TBL_FACTIONS
+            ." WHERE (".TBL_FACTIONS.".FactionID = '$pfaction')";
+            $result_Factions = $sql->db_Query($q_Factions);
+            $numFactions = mysql_numrows($result_Factions);
+            if ($numFactions>0)
+            {
+                $fIcon = mysql_result($result_Factions,0 , TBL_FACTIONS.".Icon");
+                $fName = mysql_result($result_Factions,0 , TBL_FACTIONS.".Name");
+
+                $pfactionIcon = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'" style="vertical-align:middle"/>';
+            }
+        }
 
         $image = "";
         if ($pref['eb_avatar_enable_playersstandings'] == 1)
@@ -389,15 +428,15 @@ else
                 {
                     $image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
                 } else if ($pref['eb_avatar_default_image'] != ''){
-                    $image = '<img '.getAvatarResize(getAvatar($pref['eb_avatar_default_image'])).' style="vertical-align:middle"/>';
+                    $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image']), 'avatars').' style="vertical-align:middle"/>';
                 }
                 break;
                 case "ClanWar":
                 if($pavatar)
                 {
-                    $image = '<img '.getAvatarResize(getTeamAvatar($pavatar)).' style="vertical-align:middle"/>';
+                    $image = '<img '.getAvatarResize(getImagePath($pavatar), 'team_avatars').' style="vertical-align:middle"/>';
                 } else if ($pref['eb_avatar_default_image'] != ''){
-                    $image = '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).' style="vertical-align:middle"/>';
+                    $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image']), 'team_avatars').' style="vertical-align:middle"/>';
                 }
                 break;
                 default:
@@ -407,7 +446,7 @@ else
         //$text .= "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
         $text .= '<tr>';
         $text .= '<td class="forumheader3"><b>'.$prank.'</b></td>
-        <td class="forumheader3">'.$pMatchTeam.'</td>';
+        <td class="forumheader3">'.$pMatchTeam.$pfactionIcon.'</td>';
         switch($etype)
         {
             case "One Player Ladder":
@@ -479,6 +518,9 @@ else
     }
     $text .= '</tbody></table><br />';
 
+    // Map Image
+    $text .= $mapImage;
+
     // Media
     $array_types = array(
     'Screenshot' => EB_MATCHD_L19,
@@ -495,7 +537,7 @@ else
     $numUserMedia = mysql_numrows($result_UserMedia);
     //dbg: echo "numUserMedia $numUserMedia - ".$pref['eb_max_number_media']."<br>";
     if ($numUserMedia >= $pref['eb_max_number_media']) $can_submit_media = 0;
-    
+
     $q_Media = "SELECT ".TBL_MEDIA.".*, "
     .TBL_USERS.".*"
     ." FROM ".TBL_MEDIA.", "
@@ -517,12 +559,12 @@ else
         $mType = mysql_result($result_Media,$media , TBL_MEDIA.".Type");
         $mSubmitterID = mysql_result($result_Media,$media , TBL_MEDIA.".Submitter");
         $mSubmitterName = mysql_result($result_Media,$media , TBL_USERS.".user_name");
-        
+
         $shadow='';
         if (($mType == "Video")||($mType == "Screenshot"))
         {
             $shadow = 'rel="shadowbox"';
-        }        
+        }
 
         $text .= '<tr>';
         $text .= '<td><a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a><td>';
@@ -560,7 +602,7 @@ else
         $text .= '</tr></table>';
         $text .= '</form>';
     }
-
+    
     if ($comments)
     {
         $text .= '<p>';

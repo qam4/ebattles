@@ -83,6 +83,7 @@ $eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
 $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
 $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
 $eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
+$eGame = mysql_result($result,0 , TBL_EVENTS.".Game");
 
 switch($etype)
 {
@@ -181,6 +182,10 @@ if (isset($_POST['submit']))
     $userIsPlaying = 0;
     $userIsCaptain = 0;
     $userIsTeamMember = 0;
+    // Map
+    if (!isset($_POST['map'])) $_POST['map'] = 0;
+    $map = $_POST['map'];
+        
     for($i=1;$i<=$nbr_players;$i++)
     {
         $pid = $_POST['player'.$i];
@@ -194,6 +199,9 @@ if (isset($_POST['submit']))
         if (!isset($_POST['score'.$i])) $_POST['score'.$i] = 0;
         if(!preg_match("/^\d+$/", $_POST['score'.$i]))
         $error_str .= '<li>'.EB_MATCHR_L12.$i.'&nbsp;'.EB_MATCHR_L13.'&nbsp;'.$_POST['score'.$i].'</li>';
+
+        // Faction
+        if (!isset($_POST['faction'.$i])) $_POST['faction'.$i] = 0;
 
         switch($etype)
         {
@@ -320,7 +328,7 @@ if (isset($_POST['submit']))
 
     if (!empty($error_str)) {
         // show form again
-        user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore,$userclass);
+        user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore,$userclass,$eGame);
         // errors have occured, halt execution and show form again.
         $text .= '<p style="color:red">'.EB_MATCHR_L14;
         $text .= '<ul style="color:red">'.$error_str.'</ul></p>';
@@ -348,8 +356,8 @@ if (isset($_POST['submit']))
 
         // Create Match ------------------------------------------
         $q =
-        "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status)
-        VALUES ($event_id,'$reported_by',$time, '$comments', 'pending')";
+        "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status, Map)
+        VALUES ($event_id,'$reported_by',$time, '$comments', 'pending', '$map')";
         $result = $sql->db_Query($q);
 
         $last_id = mysql_insert_id();
@@ -368,20 +376,21 @@ if (isset($_POST['submit']))
             }
 
             $pscore = $_POST['score'.$i];
+            $pfaction = $_POST['faction'.$i];
 
             switch($etype)
             {
                 case "One Player Ladder":
                 case "Team Ladder":
                 $q =
-                "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank)
-                VALUES ($match_id,$pid,$pteam,$pscore,$prank)
+                "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Faction)
+                VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pfaction)
                 ";
                 break;
                 case "ClanWar":
                 $q =
-                "INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank)
-                VALUES ($match_id,$pid,$pteam,$pscore,$prank)
+                "INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Faction)
+                VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pfaction)
                 ";
                 break;
                 default:
@@ -432,7 +441,7 @@ if (isset($_POST['submit']))
     {
         $userclass = $_POST['userclass'];
         // the form has not been submitted, let's show it
-        user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore,$userclass);
+        user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore,$userclass,$eGame);
     }
 }
 

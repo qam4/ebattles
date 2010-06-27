@@ -1,6 +1,7 @@
 <?php
 // function to output form and hold previously entered values.
-function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore, $userclass) {
+function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore, $userclass,$eGame) {
+    global $sql;
     global $text;
     global $tp;
 
@@ -69,7 +70,9 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     {
         if (!isset($_POST['team'.$i])) $_POST['team'.$i] = 'Team #'.$i;
         if (!isset($_POST['score'.$i])) $_POST['score'.$i] = 0;
+        if (!isset($_POST['faction'.$i])) $_POST['faction'.$i] = 0;
     }
+    if (!isset($_POST['map'])) $_POST['map'] = 0;
 
     for($i=1;$i<=$nbr_teams;$i++)
     {
@@ -138,11 +141,19 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
 
     // TABLE - Players/Teams Selection
     //----------------------------------
+    // List of all Factions
+    $q_Factions = "SELECT ".TBL_FACTIONS.".*"
+    ." FROM ".TBL_FACTIONS
+    ." WHERE (".TBL_FACTIONS.".Game = '$eGame')";
+    $result_Factions = $sql->db_Query($q_Factions);
+    $numFactions = mysql_numrows($result_Factions);
+
     $text .= EB_MATCHR_L20;
     $text .= '<table id="matchresult_selectPlayersTeams"><tbody>';
     $text .= '<tr><td></td><td>'.EB_MATCHR_L38.'</td>';
     $text .= '<td>'.EB_MATCHR_L25.'</td>';
     if ($allowScore == TRUE) $text .= '<td>'.EB_MATCHR_L26.'</td>';
+    if ($numFactions > 0) $text .= '<td>'.EB_MATCHR_L41.'</td>';
     $text .= '</tr>';
     for($i=1;$i<=$nbr_players;$i++)
     {
@@ -170,6 +181,22 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
             $text .= '<td>';
             $text .= '<input class="tbox" type="text" name="score'.$i.'" value="'.$_POST['score'.$i].'"/>';
             $text .= '</td>';
+        }
+        if ($numFactions > 0)
+        {
+            $text .= '<td><select class="tbox" name="faction'.$i.'">';
+            $text .= '<option value="0"';
+            $text .= '>'.EB_MATCHR_L43.'</option>';
+            for($faction=1;$faction<=$numFactions;$faction++)
+            {
+                $fID = mysql_result($result_Factions,$faction - 1 , TBL_FACTIONS.".FactionID");
+                $fIcon = mysql_result($result_Factions,$faction - 1, TBL_FACTIONS.".Icon");
+                $fName = mysql_result($result_Factions,$faction - 1, TBL_FACTIONS.".Name");
+                $text .= '<option value="'.$fID.'"';
+                if (strtolower($_POST['faction'.$i]) == $fID) $text .= ' selected="selected"';
+                $text .= '>'.$fName.'</option>';
+            }
+            $text .= '</select></td>';
         }
         $text .= '</tr>';
     }
@@ -213,6 +240,43 @@ function user_form($players_id, $players_name, $eventid, $allowDraw, $allowScore
     }
     $text .= '</tbody></table>';
 
+    // Map Selection
+    //----------------------------------
+    // List of all Maps
+    $q_Maps = "SELECT ".TBL_MAPS.".*"
+    ." FROM ".TBL_MAPS
+    ." WHERE (".TBL_MAPS.".Game = '$eGame')";
+    $result_Maps = $sql->db_Query($q_Maps);
+    $numMaps = mysql_numrows($result_Maps);
+
+    if ($numMaps > 0)
+    {
+        $text .= EB_MATCHR_L42;
+        $text .= '<table id="matchresult_selectMap"><tbody>';
+        $text .= '<tr>';
+
+        $text .= '<td><select class="tbox" name="map">';
+            $text .= '<option value="0"';
+            $text .= '>'.EB_MATCHR_L43.'</option>';
+        for($map=0;$map < $numMaps;$map++)
+        {
+            $mID = mysql_result($result_Maps,$map , TBL_MAPS.".MapID");
+            $mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
+            $mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
+            $mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
+
+            $text .= '<option value="'.$mID.'"';
+            if (strtolower($_POST['map']) == $mID) $text .= ' selected="selected"';
+            $text .= '>'.$mName.'</option>';
+        }
+        $text .= '</select></td>';
+        $text .= '</tr>';
+        $text .= '</tbody></table>';
+        $text .= '<br />';
+    }
+
+    // Comments
+    //----------------------------------
     $text .= '<br />';
     $text .= '<div style="display:table; margin-left:auto; margin-right:auto;">';
     $text .= EB_MATCHR_L30.'<br />';

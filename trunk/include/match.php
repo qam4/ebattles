@@ -1361,6 +1361,25 @@ function displayMatchInfo($match_id, $type = 0)
                 $prank  = mysql_result($result,$index , TBL_SCORES.".Player_Rank");
                 $pmatchteam  = mysql_result($result,$index , TBL_SCORES.".Player_MatchTeam");
                 $pscore = mysql_result($result,$index , TBL_SCORES.".Player_Score");
+                $pfaction  = mysql_result($result,$i, TBL_SCORES.".Faction");
+
+                $pfactionIcon = "";
+                //if (($pfaction!=0)&&($type!=0))
+                if ($pfaction!=0)
+                {
+                    $q_Factions = "SELECT ".TBL_FACTIONS.".*"
+                    ." FROM ".TBL_FACTIONS
+                    ." WHERE (".TBL_FACTIONS.".FactionID = '$pfaction')";
+                    $result_Factions = $sql->db_Query($q_Factions);
+                    $numFactions = mysql_numrows($result_Factions);
+                    if ($numFactions>0)
+                    {
+                        $fIcon = mysql_result($result_Factions,0 , TBL_FACTIONS.".Icon");
+                        $fName = mysql_result($result_Factions,0 , TBL_FACTIONS.".Name");
+
+                        $pfactionIcon = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'" style="vertical-align:middle"/>';
+                    }
+                }
 
                 /* takes too long
                 $image = '';
@@ -1374,15 +1393,15 @@ function displayMatchInfo($match_id, $type = 0)
                 {
                 $image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
                 } else if ($pref['eb_avatar_default_image'] != ''){
-                $image = '<img '.getAvatarResize(getAvatar($pref['eb_avatar_default_image'])).' style="vertical-align:middle"/>';
+                $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image']), 'avatars').' style="vertical-align:middle"/>';
                 }
                 break;
                 case "ClanWar":
                 if($pavatar)
                 {
-                $image = '<img '.getAvatarResize(getTeamAvatar($pavatar)).' style="vertical-align:middle"/>';
+                $image = '<img '.getAvatarResize(getImagePath($pavatar), 'team_avatars').' style="vertical-align:middle"/>';
                 } else if ($pref['eb_avatar_default_image'] != ''){
-                $image = '<img '.getAvatarResize(getTeamAvatar($pref['eb_avatar_default_team_image'])).' style="vertical-align:middle"/>';
+                $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image']), 'team_avatars').' style="vertical-align:middle"/>';
                 }
                 break;
                 default:
@@ -1416,6 +1435,8 @@ function displayMatchInfo($match_id, $type = 0)
                     $matchteam = $pmatchteam;
                     $scores .= $pscore;
                 }
+
+                $string .= $pfactionIcon.' ';
 
                 switch($mEventType)
                 {
