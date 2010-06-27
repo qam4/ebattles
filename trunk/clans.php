@@ -100,11 +100,12 @@ function displayClans(){
 
             $image = "";
             if ($pref['eb_avatar_enable_teamslist'] == 1)
-            {            if($cavatar)
+            {
+                if($cavatar)
                 {
-                    $image = '<img '.getAvatarResize(getImagePath($cavatar), 'team_avatars').' style="vertical-align:middle"/>';
+                    $image = '<img '.getAvatarResize(getImagePath($cavatar, 'team_avatars')).' style="vertical-align:middle"/>';
                 } else if ($pref['eb_avatar_default_team_image'] != ''){
-                    $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image']), 'team_avatars').' style="vertical-align:middle"/>';
+                    $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
                 }
             }
 

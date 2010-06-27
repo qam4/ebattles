@@ -115,9 +115,9 @@ function displayTeamSummary($clan_id){
     $image = "";
     if($clan_avatar)
     {
-        $image = '<img '.getAvatarResize(getImagePath($clan_avatar), 'team_avatars').' style="vertical-align:middle"/>';
+        $image = '<img '.getAvatarResize(getImagePath($clan_avatar, 'team_avatars')).' style="vertical-align:middle"/>';
     } else if ($pref['eb_avatar_default_team_image'] != ''){
-        $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image']), 'team_avatars').' style="vertical-align:middle"/>';
+        $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
     }
     $text .= $image.'<br />';
 

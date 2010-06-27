@@ -706,9 +706,9 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
         {
             if($avatar[$index])
             {
-                $image = '<img '.getAvatarResize(getImagePath($avatar[$index]), 'team_avatars').' style="vertical-align:middle"/>';
+                $image = '<img '.getAvatarResize(getImagePath($avatar[$index], 'team_avatars')).' style="vertical-align:middle"/>';
             } else if ($pref['eb_avatar_default_team_image'] != ''){
-                $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image']), 'team_avatars').' style="vertical-align:middle"/>';
+                $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
             }
         }
 
