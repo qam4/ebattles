@@ -428,15 +428,15 @@ else
                 {
                     $image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
                 } else if ($pref['eb_avatar_default_image'] != ''){
-                    $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image']), 'avatars').' style="vertical-align:middle"/>';
+                    $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).' style="vertical-align:middle"/>';
                 }
                 break;
                 case "ClanWar":
                 if($pavatar)
                 {
-                    $image = '<img '.getAvatarResize(getImagePath($pavatar), 'team_avatars').' style="vertical-align:middle"/>';
+                    $image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).' style="vertical-align:middle"/>';
                 } else if ($pref['eb_avatar_default_image'] != ''){
-                    $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image']), 'team_avatars').' style="vertical-align:middle"/>';
+                    $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
                 }
                 break;
                 default:

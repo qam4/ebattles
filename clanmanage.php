@@ -158,7 +158,7 @@ else
         <td class="forumheader3">';
         if ($clan_avatar != '')
         {
-            $text .= '<img '.getAvatarResize(getImagePath($clan_avatar), 'team_avatars').' style="vertical-align:middle"/>&nbsp;';
+            $text .= '<img '.getAvatarResize(getImagePath($clan_avatar, 'team_avatars')).' style="vertical-align:middle"/>&nbsp;';
         }
         $text .= '<input class="tbox" type="text" id="clanavatar" name="clanavatar" size="20" value="'.$clan_avatar.'"/>';
 
