@@ -29,7 +29,7 @@ document.getElementById('mediaform').submit();
 </script>
 ";
 $text .= "
-<script type='text/javascript' src='./js/shadowbox/js/lib/prototype.js'></script>
+<script type='text/javascript' src='./js/shadowbox/lib/prototype.js'></script>
 <script type='text/javascript' src='./js/shadowbox/adapter/shadowbox-prototype.js'></script>
 <script type='text/javascript' src='./js/shadowbox/shadowbox.js'></script>
 <script type='text/javascript'>
