@@ -1,5 +1,25 @@
 #summary eBattles Release Notes.
 
+= Release 0.8.0 =
+== Features ==
+ * Support match media submission
+  * Now players can submit screenshots/replays/videos for the match they played.
+  * Use Shadowbox.js (GNU version) to display match media
+  * Plugin userclass for users allowed to submit media when they report a match.
+ * Support for Games maps
+  * Now, admin can add maps to games.
+  * Users can select the match map when reporting a match
+  * Plugin preference for maps image max size.
+ * Support for Games factions
+  * Now, admin can add factions/races to games.
+  * Users can select the faction of each player when reporting a match
+== Changes ==
+ * In events list, sort columns by user selected value, then by latest event created.
+ * Use new function getImagePath() to get images path
+ * Added Starcraft 2 in games list, and maps/factions as an example. 
+ * For Team Ladders, members of the teams are allowed to report matches, instead of team captains.
+ * For Team Ladders, added to option for members of a team to approve the matches reported by an opponent.
+
 = Release 0.7.229 =
 == Features ==
  * Changed teams stats calculation for team ladders.
