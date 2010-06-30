@@ -67,6 +67,7 @@ define('EB_ADMIN_L39', 'Games');
 define('EB_ADMIN_L40', 'Maps Images max size');
 define('EB_ADMIN_L41', 'If enabled, map images will be resized if they exceed the max size (can be slow)');
 define('EB_ADMIN_L42', 'Enable map images max size');
+define('EB_ADMIN_L43', 'Match media submit userclass');
 
 define('EB_ADMINHELP_L1', 'eBattles Help');
 define('EB_ADMINHELP_L2', 'Version');
