@@ -49,6 +49,7 @@ $eplug_prefs = array(
 "eb_mod_class" => e_UC_ADMIN,
 "eb_events_create_class" => e_UC_MEMBER,
 "eb_teams_create_class" => e_UC_MEMBER,
+"eb_media_submit_class" => e_UC_MEMBER,
 "eb_tab_theme" => 'default',
 "eb_max_image_size_check" => 0,
 "eb_max_image_size" => 16,
@@ -464,7 +465,8 @@ if (versionsCompare($eb_version_string, "0.8"))
     $upgrade_add_prefs += array(
     "eb_max_number_media" => 3,
     "eb_max_map_image_size_check" => 1,
-    "eb_max_map_image_size" => 80
+    "eb_max_map_image_size" => 80,
+    "eb_media_submit_class" => e_UC_MEMBER
     );
 }
 

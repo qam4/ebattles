@@ -66,6 +66,7 @@ define('EB_ADMIN_L39', 'Juegos');
 define('EB_ADMIN_L40', 'Maps Images tamaño máximo');
 define('EB_ADMIN_L41', 'Si esta habilitado, las maps imagenes se cambia el tama&ntilde;o, si exceden el tama&ntilde;o maximo (puede ser lento)');
 define('EB_ADMIN_L42', 'Habilitar el tam. maximo de las maps imagenes');
+define('EB_ADMIN_L43', 'Medios del partido userclass');
 
 define('EB_ADMINHELP_L1', 'eBattles Ayuda');
 define('EB_ADMINHELP_L2', 'Version');

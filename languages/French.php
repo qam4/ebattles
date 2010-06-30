@@ -65,6 +65,7 @@ define('EB_ADMIN_L39', 'Jeux');
 define('EB_ADMIN_L40', 'Dimension max des images de maps');
 define('EB_ADMIN_L41', 'Si activé, les images de maps seront modifiées si leur taille excède la taille max (peut être lent)');
 define('EB_ADMIN_L42', 'Activer la dimension max des imagesde maps');
+define('EB_ADMIN_L43', 'Groupe d’utilisateurs authorisés à soumettre un media du match');
 
 define('EB_ADMINHELP_L1', 'eBattles Aide');
 define('EB_ADMINHELP_L2', 'Version');

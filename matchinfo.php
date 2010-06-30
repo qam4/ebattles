@@ -321,7 +321,7 @@ else
         $userclass |= eb_UC_EVENT_PLAYER;
         $can_approve = 1;
     }
-    if ($numPlayed>0)
+    if (($numPlayed>0)&&(check_class($pref['eb_media_submit_class'])))
     {
         $can_submit_media = 1;
     }

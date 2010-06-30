@@ -19,6 +19,7 @@ if (isset($_POST['updatesettings'])) {
     $pref['eb_events_update_delay_enable'] = $_POST['eb_events_update_delay_enable'];
     $pref['eb_events_create_class'] = $_POST['eb_events_create_class'];
     $pref['eb_teams_create_class'] = $_POST['eb_teams_create_class'];
+    $pref['eb_media_submit_class'] = $_POST['eb_media_submit_class'];
     $pref['eb_mod_class'] = $_POST['eb_mod_class'];
     $pref['eb_tab_theme'] = $_POST['eb_tab_theme'];
     $pref['eb_max_image_size_check'] = $_POST['eb_max_image_size_check'];
@@ -587,6 +588,13 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
     </tr>
     ";
 
+    $text .= "<tr>
+    <td class='forumheader3' style='width:40%'>".EB_ADMIN_L43.": </td>
+    <td class='forumheader3' style='width:60%'>". r_userclass("eb_media_submit_class", $pref['eb_media_submit_class'], 'off', "public, member, admin, classes")."
+    </td>
+    </tr>
+    ";
+    
     $text .= "<tr>
     <td class='forumheader3' style='width:40%'>".EB_ADMIN_L3.":  <div class='smalltext'>".EB_ADMIN_L4."</div></td>
     <td class='forumheader3' style='width:60%'>
