@@ -63,6 +63,11 @@ define('EB_ADMIN_L35', 'Select a remote icon using an external link or one of th
 define('EB_ADMIN_L36', 'Hold Liste');
 define('EB_ADMIN_L37', 'Lavet Af <a href=&quot;http://ebattles.freehostia.com/&quot; rel=&quot;external&quot;>eBattles</a>');
 define('EB_ADMIN_L38', 'Plugin Disclaimer');
+define('EB_ADMIN_L39', 'Spil');
+define('EB_ADMIN_L40', 'Kort Billeder max størrelse');
+define('EB_ADMIN_L41', 'Hvis aktiveret, kort så vil billeder automatisk blive ændret til den angivet størrelse i systemet(an sløve systemet)');
+define('EB_ADMIN_L42', 'Aktiver kortbilleder max st�se');
+define('EB_ADMIN_L43', 'Match medier indsende userclass');
 
 define('EB_ADMINHELP_L1', 'eBattles Hjælp');
 define('EB_ADMINHELP_L2', 'Version');
@@ -452,6 +457,14 @@ define('EB_MATCHD_L15', 'Tilbage');
 define('EB_MATCHD_L16', 'Turnering');
 define('EB_MATCHD_L17', 'Godkend denne kamp');
 define('EB_MATCHD_L18', 'This match is pending review');
+define('EB_MATCHD_L19', 'Screenshot');
+define('EB_MATCHD_L20', 'Replay');
+define('EB_MATCHD_L21', 'Video');
+define('EB_MATCHD_L22', 'Skriv venligst fuld adresse på medier her (http://...)');
+define('EB_MATCHD_L23', 'Indsend Media');
+define('EB_MATCHD_L24', 'indsendt af');
+define('EB_MATCHD_L25', 'Slet');
+define('EB_MATCHD_L26', 'Er du sikker på du vil slette denne medier?');
 
 define('EB_MATCHDEL_L1', 'Kampen er slettet');
 define('EB_MATCHDEL_L2', 'Du har IKKE rettigheder til, at slette denne kamp.');
@@ -504,6 +517,10 @@ define('EB_MATCHR_L37', 'Du har kun tilladelse til, at rapportere fra kamme dine
 define('EB_MATCHR_L38', 'Spiller');
 define('EB_MATCHR_L39', 'Hold #');
 define('EB_MATCHR_L40', 'er det samme som hold #');
+define('EB_MATCHR_L41', 'Faction');
+define('EB_MATCHR_L42', 'Vælg spillet kort:');
+define('EB_MATCHR_L43', 'Ukendt');
+define('EB_MATCHR_L44', 'Kort');
 
 define('EB_MATCHQL_L1', 'Skrivebords resultat');
 define('EB_MATCHQL_L2', 'Du har IKKE tilladelse til, at rappotere fra en kamp.');
@@ -522,6 +539,28 @@ define('EB_GAME_L7', 'Gem Ændringer');
 define('EB_GAME_L8', 'Opret Nyt Spil');
 define('EB_GAME_L9', 'Slet Spil');
 define('EB_GAME_L10', 'Er du sikker på, at du vil slette dette spil?');
+define('EB_GAME_L11', 'Info');
+define('EB_GAME_L12', 'Factions');
+define('EB_GAME_L13', 'Kort');
+define('EB_GAME_L14', 'Ikon');
+define('EB_GAME_L15', 'Navn');
+define('EB_GAME_L16', 'Ikon Link');
+define('EB_GAME_L17', 'Aktivitet');
+define('EB_GAME_L18', 'Ikonet kan komme fra et ekstern link eller skal ligge i mappen ebattles/images/games_factions/, med præfiks &quot;spil_kort_navn-&quot;');
+define('EB_GAME_L19', 'Add Faction');
+define('EB_GAME_L20', 'Delete');
+define('EB_GAME_L21', 'Er du sikker på du vil slette dette faction?');
+define('EB_GAME_L22', 'Billede');
+define('EB_GAME_L23', 'Navn');
+define('EB_GAME_L24', 'Billede Link');
+define('EB_GAME_L25', 'Beskrivelse');
+define('EB_GAME_L26', 'Aktivitet');
+define('EB_GAME_L27', 'Billede kan komme fra et ekstern link eller skal ligge i mappen ebattles/images/games_maps/, med præfiks &quot;spil_kort_navn-&quot;');
+define('EB_GAME_L28', 'Tilføj Kort');
+define('EB_GAME_L29', 'Slet');
+define('EB_GAME_L30', 'Er du sikker på du vil slette dette kort?');
+define('EB_GAME_L31', 'Rediger');
+define('EB_GAME_L32', 'Kort Navn');
 
 define('EB_GAMES_L1', 'Spil');
 define('EB_GAMES_L2', 'Spil');
