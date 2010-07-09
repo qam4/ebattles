@@ -122,8 +122,8 @@ function displayClans(){
         $text .= '<div>';
         $text .= '<input type="hidden" name="userid" value="'.USERID.'"/>';
         $text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
-        $text .= '<input class="button" type="submit" name="createteam" value="'.EB_CLANS_L7.'"/>';
         $text .= '</div>';
+        $text .= ebImageTextButton('createteam', 'add.png', EB_CLANS_L7);
         $text .= '</form>';
     }
     else

@@ -98,7 +98,7 @@ else
         if ($numClanScores == 0)
         {
             $text .= '<br />';
-            $text .= '<input class="button" type="submit" name="clandelete" value="'.EB_CLANM_L5.'" onclick="return confirm(\''.EB_CLANM_L6.'\');"/>';
+            $text .= ebImageTextButton('clandelete', 'delete.png', EB_CLANM_L5, 'negative', EB_CLANM_L6);
         }
         $text .= '</td></tr>';
 
@@ -136,7 +136,7 @@ else
         $text .= '</select>';
         $text .= '</td>';
         $text .= '<td>';
-        $text .= '<input class="button" type="submit" name="clanchangeowner" value="'.EB_CLANM_L8.'"/>';
+        $text .= ebImageTextButton('clanchangeowner', 'user_go.ico', EB_CLANM_L8);
         $text .= '</td>';
         $text .= '</tr>';
         $text .= '</table>';
@@ -207,7 +207,7 @@ else
         </table>
         <!-- Save Button -->
         <table><tbody><tr><td>
-        <input class="button" type="submit" name="clansettingssave" value="'.EB_CLANM_L12.'"/>
+        '.ebImageTextButton('clansettingssave', 'disk.png', EB_CLANM_L12).'
         </td></tr></tbody></table>
         </form>
 
@@ -245,7 +245,7 @@ else
             }
             $text .= '</select>';
             $text .= '<input type="hidden" name="clanowner" value="'.$clan_owner.'"/>';
-            $text .= '<input class="button" type="submit" name="clanadddiv" value="'.EB_CLANM_L14.'"/>';
+            $text .= ebImageTextButton('clanadddiv', 'add.png', EB_CLANM_L14);
             $text .= '</div>';
             $text .= '</form>';
             $text .= '</td>';
@@ -300,7 +300,7 @@ else
                 $text .= '<br /><form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
                 $text .= '<div>';
                 $text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"/>';
-                $text .= '<input class="button" type="submit" name="clandeletediv" value="'.EB_CLANM_L16.'" onclick="return confirm(\''.EB_CLANM_L17.'\');"/>';
+                $text .= ebImageTextButton('clandeletediv', 'delete.png', EB_CLANM_L16, 'negative', EB_CLANM_L17);
                 $text .= '</div></form>';
             }
 
@@ -355,7 +355,7 @@ else
                 $text .= '</td>';
                 $text .= '<td>';
                 $text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"/>';
-                $text .= '<input class="button" type="submit" name="clanchangedivcaptain" value="'.EB_CLANM_L19.'"/>';
+                $text .= ebImageTextButton('clanchangedivcaptain', 'user_go.ico', EB_CLANM_L19);
                 $text .= '</td>';
                 $text .= '</tr>';
                 $text .= '</table>';
@@ -394,7 +394,7 @@ else
                 }
                 $text .= '<tr>';
                 $text .= '<td colspan="4">';
-                $text .= '<input class="button" type="submit" name="kick" value="'.EB_CLANM_L26.'"/>';
+                $text .= ebImageTextButton('kick', 'user_delete.ico', EB_CLANM_L26);
                 $text .= '</td>';
                 $text .= '</tr>';
                 $text .= '</tbody></table>';
