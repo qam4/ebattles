@@ -64,6 +64,7 @@ $text .= '
 
 /* Event Name */
 $event_id = $_GET['eventid'];
+$match_id = $_GET['matchid'];
 
 $q = "SELECT ".TBL_EVENTS.".*"
 ." FROM ".TBL_EVENTS
@@ -87,74 +88,74 @@ $eGame = mysql_result($result,0 , TBL_EVENTS.".Game");
 
 switch($etype)
 {
-    case "One Player Ladder":
-    case "Team Ladder":
-    $q = "SELECT ".TBL_PLAYERS.".*, "
-    .TBL_USERS.".*"
-    ." FROM ".TBL_PLAYERS.", "
-    .TBL_USERS
-    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-    ." AND (".TBL_PLAYERS.".Banned != 1)"
-    ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-    ." ORDER BY ".TBL_USERS.".user_name";
+	case "One Player Ladder":
+	case "Team Ladder":
+	$q = "SELECT ".TBL_PLAYERS.".*, "
+	.TBL_USERS.".*"
+	." FROM ".TBL_PLAYERS.", "
+	.TBL_USERS
+	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	." AND (".TBL_PLAYERS.".Banned != 1)"
+	." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	." ORDER BY ".TBL_USERS.".user_name";
 
-    $result = $sql->db_Query($q);
-    $num_rows = mysql_numrows($result);
+	$result = $sql->db_Query($q);
+	$num_rows = mysql_numrows($result);
 
-    $players_id[0] = EB_MATCHR_L1;
-    $players_uid[0] = EB_MATCHR_L1;
-    $players_name[0] = EB_MATCHR_L1;
-    for($i=0; $i<$num_rows; $i++){
-        $pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-        $puid  = mysql_result($result,$i, TBL_USERS.".user_id");
-        $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-        $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
-        $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-        list($pclan, $pclantag, $pclanid) = getClanName($pteam);
-        if ($prank==0)
-        $prank_txt = EB_EVENT_L54;
-        else
-        $prank_txt = "#$prank";
+	$players_id[0] = EB_MATCHR_L1;
+	$players_uid[0] = EB_MATCHR_L1;
+	$players_name[0] = EB_MATCHR_L1;
+	for($i=0; $i<$num_rows; $i++){
+		$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+		$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
+		$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
+		$pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+		$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
+		list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+		if ($prank==0)
+		$prank_txt = EB_EVENT_L54;
+		else
+		$prank_txt = "#$prank";
 
-        $players_id[$i+1] = $pid;
-        $players_uid[$i+1] = $puid;
-        $players_name[$i+1] = $pclantag.$pname." ($prank_txt)";
-    }
-    break;
-    case "ClanWar":
-    $q = "SELECT ".TBL_CLANS.".*, "
-    .TBL_TEAMS.".*, "
-    .TBL_DIVISIONS.".* "
-    ." FROM ".TBL_CLANS.", "
-    .TBL_TEAMS.", "
-    .TBL_DIVISIONS
-    ." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-    ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-    ." AND (".TBL_TEAMS.".Event = '$event_id')"
-    ." ORDER BY ".TBL_CLANS.".Name";
+		$players_id[$i+1] = $pid;
+		$players_uid[$i+1] = $puid;
+		$players_name[$i+1] = $pclantag.$pname." ($prank_txt)";
+	}
+	break;
+	case "ClanWar":
+	$q = "SELECT ".TBL_CLANS.".*, "
+	.TBL_TEAMS.".*, "
+	.TBL_DIVISIONS.".* "
+	." FROM ".TBL_CLANS.", "
+	.TBL_TEAMS.", "
+	.TBL_DIVISIONS
+	." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+	." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+	." AND (".TBL_TEAMS.".Event = '$event_id')"
+	." ORDER BY ".TBL_CLANS.".Name";
 
-    $result = $sql->db_Query($q);
-    $num_rows = mysql_numrows($result);
+	$result = $sql->db_Query($q);
+	$num_rows = mysql_numrows($result);
 
-    $players_id[0] = EB_MATCHR_L1;
-    $players_uid[0] = EB_MATCHR_L1;
-    $players_name[0] = EB_MATCHR_L1;
-    for($i=0; $i<$num_rows; $i++){
-        $pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-        $puid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-        $prank  = mysql_result($result,$i, TBL_TEAMS.".Rank");
-        $pname  = mysql_result($result,$i, TBL_CLANS.".Name");
-        if ($prank==0)
-        $prank_txt = EB_EVENT_L54;
-        else
-        $prank_txt = "#$prank";
+	$players_id[0] = EB_MATCHR_L1;
+	$players_uid[0] = EB_MATCHR_L1;
+	$players_name[0] = EB_MATCHR_L1;
+	for($i=0; $i<$num_rows; $i++){
+		$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+		$puid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+		$prank  = mysql_result($result,$i, TBL_TEAMS.".Rank");
+		$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
+		if ($prank==0)
+		$prank_txt = EB_EVENT_L54;
+		else
+		$prank_txt = "#$prank";
 
-        $players_id[$i+1] = $pid;
-        $players_uid[$i+1] = $puid;
-        $players_name[$i+1] = $pname." ($prank_txt)";
-    }
-    break;
-    default:
+		$players_id[$i+1] = $pid;
+		$players_uid[$i+1] = $puid;
+		$players_name[$i+1] = $pname." ($prank_txt)";
+	}
+	break;
+	default:
 }
 
 $text .= '
@@ -167,282 +168,306 @@ require_once(e_PLUGIN.'ebattles/matchreport_functions.php');
 // has the form been submitted?
 if (isset($_POST['submit']))
 {
-    // the form has been submitted
-    // perform data checks.
-    $error_str = ''; // initialise $error_str as empty
+	// the form has been submitted
+	// perform data checks.
+	$error_str = ''; // initialise $error_str as empty
 
-    $reported_by = $_POST['reported_by'];
-    $userclass = $_POST['userclass'];
-    //$text .= "reported by: $reported_by<br />";
+	$reported_by = $_POST['reported_by'];
+	$userclass = $_POST['userclass'];
+	$time_reported = $_POST['time_reported'];
 
-    $comments = $tp->toDB($_POST['match_comment']);
+	//$text .= "reported by: $reported_by<br />";
 
-    $nbr_players = $_POST['nbr_players'];
-    $nbr_teams = $_POST['nbr_teams'];
-    $userIsPlaying = 0;
-    $userIsCaptain = 0;
-    $userIsTeamMember = 0;
-    // Map
-    if (!isset($_POST['map'])) $_POST['map'] = 0;
-    $map = $_POST['map'];
-        
-    for($i=1;$i<=$nbr_players;$i++)
-    {
-        $pid = $_POST['player'.$i];
-        $pMatchTeam = $_POST['team'.$i];
+	$comments = $tp->toDB($_POST['match_comment']);
 
-        // Check if a player is not selected
-        if ($pid == $players_name[0])
-        $error_str .= '<li>'.EB_MATCHR_L2.$i.'&nbsp;'.EB_MATCHR_L3.'</li>';
+	$nbr_players = $_POST['nbr_players'];
+	$nbr_teams = $_POST['nbr_teams'];
+	$userIsPlaying = 0;
+	$userIsCaptain = 0;
+	$userIsTeamMember = 0;
+	// Map
+	if (!isset($_POST['map'])) $_POST['map'] = 0;
+	$map = $_POST['map'];
 
-        // Check if a score is not a number
-        if (!isset($_POST['score'.$i])) $_POST['score'.$i] = 0;
-        if(!preg_match("/^\d+$/", $_POST['score'.$i]))
-        $error_str .= '<li>'.EB_MATCHR_L12.$i.'&nbsp;'.EB_MATCHR_L13.'&nbsp;'.$_POST['score'.$i].'</li>';
+	for($i=1;$i<=$nbr_players;$i++)
+	{
+		$pid = $_POST['player'.$i];
+		$pMatchTeam = $_POST['team'.$i];
 
-        // Faction
-        if (!isset($_POST['faction'.$i])) $_POST['faction'.$i] = 0;
+		// Check if a player is not selected
+		if ($pid == $players_name[0])
+		$error_str .= '<li>'.EB_MATCHR_L2.$i.'&nbsp;'.EB_MATCHR_L3.'</li>';
 
-        switch($etype)
-        {
-            case "One Player Ladder":
-            case "Team Ladder":
-            $q =
-            "SELECT ".TBL_USERS.".*, "
-            .TBL_PLAYERS.".*"
-            ." FROM ".TBL_USERS.", "
-            .TBL_PLAYERS
-            ." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
-            ."   AND (".TBL_PLAYERS.".User     = ".TBL_USERS.".user_id)";
-            $result = $sql->db_Query($q);
-            $row = mysql_fetch_array($result);
-            $puid = $row['user_id'];
-            $pTeam = $row['Team'];
+		// Check if a score is not a number
+		if (!isset($_POST['score'.$i])) $_POST['score'.$i] = 0;
+		if(!preg_match("/^\d+$/", $_POST['score'.$i]))
+		$error_str .= '<li>'.EB_MATCHR_L12.$i.'&nbsp;'.EB_MATCHR_L13.'&nbsp;'.$_POST['score'.$i].'</li>';
 
-            if ($puid == $reported_by) $userIsPlaying = 1;
+		// Faction
+		if (!isset($_POST['faction'.$i])) $_POST['faction'.$i] = 0;
 
-            // Check if 2 players are the same user
-            // Check if 2 players of same team are playing against each other
-            for($j=$i+1;$j<=$nbr_players;$j++)
-            {
-                //if ($_POST['player'.$i] == $_POST['player'.$j])
-                $pjid = $_POST['player'.$j];
-                $q =
-                "SELECT ".TBL_USERS.".*, "
-                .TBL_PLAYERS.".*"
-                ." FROM ".TBL_USERS.", "
-                .TBL_PLAYERS
-                ." WHERE (".TBL_PLAYERS.".PlayerID = '$pjid')"
-                ."   AND (".TBL_PLAYERS.".User   = ".TBL_USERS.".user_id)";
-                $result = $sql->db_Query($q);
-                $row = mysql_fetch_array($result);
-                $pjuid = $row['user_id'];
-                $pjTeam = $row['Team'];
-                $pjMatchTeam = $_POST['team'.$j];
+		switch($etype)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			$q =
+			"SELECT ".TBL_USERS.".*, "
+			.TBL_PLAYERS.".*"
+			." FROM ".TBL_USERS.", "
+			.TBL_PLAYERS
+			." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
+			."   AND (".TBL_PLAYERS.".User     = ".TBL_USERS.".user_id)";
+			$result = $sql->db_Query($q);
+			$row = mysql_fetch_array($result);
+			$puid = $row['user_id'];
+			$pTeam = $row['Team'];
 
-                if ($puid == $pjuid)
-                $error_str .= '<li>'.EB_MATCHR_L4.$i.'&nbsp;'.EB_MATCHR_L5.$j.'</li>';
-                if (($pTeam == $pjTeam)&&($pMatchTeam != $pjMatchTeam)&&($pTeam != 0))
-                $error_str .= '<li>'.EB_MATCHR_L6.$i.'&nbsp;'.EB_MATCHR_L7.$j.' '.EB_MATCHR_L8.'</li>';
-            }
-            break;
-            case "ClanWar":
-            // Check if user is the team captain
-            $q = "SELECT ".TBL_DIVISIONS.".*, "
-            .TBL_TEAMS.".*"
-            ." FROM ".TBL_DIVISIONS.", "
-            .TBL_TEAMS
-            ." WHERE (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
-            ." AND (".TBL_TEAMS.".TeamID = '$pid')";
-            $result = $sql->db_Query($q);
-            $row = mysql_fetch_array($result);
-            $dcaptain = $row['Captain'];
-            if ($dcaptain == $reported_by) $userIsCaptain = 1;
-                        
-            // Check if user is a team's member
-            $q = "SELECT ".TBL_DIVISIONS.".*, "
-            .TBL_MEMBERS.".*, "
-            .TBL_TEAMS.".*"
-            ." FROM ".TBL_DIVISIONS.", "
-            .TBL_MEMBERS.", "
-            .TBL_TEAMS
-            ." WHERE (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
-            ." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-            ." AND (".TBL_TEAMS.".TeamID = '$pid')";
-            $result = $sql->db_Query($q);
-            $numMembers = mysql_numrows($result);    
-            for($member=0; $member < $numMembers; $member++)
-            {
-                $muid  = mysql_result($result,$member, TBL_MEMBERS.".User");
-                $dcaptain  = mysql_result($result,$member, TBL_DIVISIONS.".Captain");
+			if ($puid == $reported_by) $userIsPlaying = 1;
 
-               if ($dcaptain == $reported_by) $userIsCaptain = 1;
-               if ($muid == $reported_by) $userIsTeamMember = 1;
-            }
-            
-            // Check if 2 teams are the same
-            for($j=$i+1;$j<=$nbr_players;$j++)
-            {
-                if ($_POST['player'.$i] == $_POST['player'.$j])
-                $error_str .= '<li>'.EB_MATCHR_L39.$i.'&nbsp;'.EB_MATCHR_L40.$j.'</li>';
-            }
-            break;
-            default:
-        }
-    }
-    
-    switch($etype)
-    {
-        case "One Player Ladder":
-        case "Team Ladder":
-        // Check if the reporter played in the match
-        if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
-        $error_str .= '<li>'.EB_MATCHR_L9.'</li>';
-        break;
-        case "ClanWar":
-        // Check if the reporter's team played in the match
-        if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
-        $error_str .= '<li>'.EB_MATCHR_L37.'</li>';
-        break;
-        default:
-    }
+			// Check if 2 players are the same user
+			// Check if 2 players of same team are playing against each other
+			for($j=$i+1;$j<=$nbr_players;$j++)
+			{
+				//if ($_POST['player'.$i] == $_POST['player'.$j])
+				$pjid = $_POST['player'.$j];
+				$q =
+				"SELECT ".TBL_USERS.".*, "
+				.TBL_PLAYERS.".*"
+				." FROM ".TBL_USERS.", "
+				.TBL_PLAYERS
+				." WHERE (".TBL_PLAYERS.".PlayerID = '$pjid')"
+				."   AND (".TBL_PLAYERS.".User   = ".TBL_USERS.".user_id)";
+				$result = $sql->db_Query($q);
+				$row = mysql_fetch_array($result);
+				$pjuid = $row['user_id'];
+				$pjTeam = $row['Team'];
+				$pjMatchTeam = $_POST['team'.$j];
 
-    // Check if a team has no player
-    for($i=1;$i<=$nbr_teams;$i++)
-    {
-        $team_players = 0;
-        for($j=1;$j<=$nbr_players;$j++)
-        {
-            if ($_POST['team'.$j] == 'Team #'.$i)
-            $team_players ++;
-        }
-        if ($team_players == 0)
-        $error_str .= '<li>'.EB_MATCHR_L10.$i.'&nbsp;'.EB_MATCHR_L11.'</li>';
-    }
+				if ($puid == $pjuid)
+				$error_str .= '<li>'.EB_MATCHR_L4.$i.'&nbsp;'.EB_MATCHR_L5.$j.'</li>';
+				if (($pTeam == $pjTeam)&&($pMatchTeam != $pjMatchTeam)&&($pTeam != 0))
+				$error_str .= '<li>'.EB_MATCHR_L6.$i.'&nbsp;'.EB_MATCHR_L7.$j.' '.EB_MATCHR_L8.'</li>';
+			}
+			break;
+			case "ClanWar":
+			// Check if user is the team captain
+			$q = "SELECT ".TBL_DIVISIONS.".*, "
+			.TBL_TEAMS.".*"
+			." FROM ".TBL_DIVISIONS.", "
+			.TBL_TEAMS
+			." WHERE (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
+			." AND (".TBL_TEAMS.".TeamID = '$pid')";
+			$result = $sql->db_Query($q);
+			$row = mysql_fetch_array($result);
+			$dcaptain = $row['Captain'];
+			if ($dcaptain == $reported_by) $userIsCaptain = 1;
 
-    // we could do more data checks, but you get the idea.
-    // we could also strip any HTML from the variables, convert it to entities, have a maximum character limit on the values, etc etc, but this is just an example.
-    // now, have any of these errors happened? We can find out by checking if $error_str is empty
+			// Check if user is a team's member
+			$q = "SELECT ".TBL_DIVISIONS.".*, "
+			.TBL_MEMBERS.".*, "
+			.TBL_TEAMS.".*"
+			." FROM ".TBL_DIVISIONS.", "
+			.TBL_MEMBERS.", "
+			.TBL_TEAMS
+			." WHERE (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
+			." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+			." AND (".TBL_TEAMS.".TeamID = '$pid')";
+			$result = $sql->db_Query($q);
+			$numMembers = mysql_numrows($result);
+			for($member=0; $member < $numMembers; $member++)
+			{
+				$muid  = mysql_result($result,$member, TBL_MEMBERS.".User");
+				$dcaptain  = mysql_result($result,$member, TBL_DIVISIONS.".Captain");
 
-    //$error_str = 'test';
+				if ($dcaptain == $reported_by) $userIsCaptain = 1;
+				if ($muid == $reported_by) $userIsTeamMember = 1;
+			}
 
-    if (!empty($error_str)) {
-        // show form again
-        user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore,$userclass,$eGame);
-        // errors have occured, halt execution and show form again.
-        $text .= '<p style="color:red">'.EB_MATCHR_L14;
-        $text .= '<ul style="color:red">'.$error_str.'</ul></p>';
-    }
-    else
-    {
-        //$text .= "OK<br />";
-        $nbr_players = $_POST['nbr_players'];
+			// Check if 2 teams are the same
+			for($j=$i+1;$j<=$nbr_players;$j++)
+			{
+				if ($_POST['player'.$i] == $_POST['player'.$j])
+				$error_str .= '<li>'.EB_MATCHR_L39.$i.'&nbsp;'.EB_MATCHR_L40.$j.'</li>';
+			}
+			break;
+			default:
+		}
+	}
 
-        $actual_rank[1] = 1;
-        for($i=1;$i<=$nbr_teams;$i++)
-        {
-            $text .= 'Rank #'.$i.': '.$_POST['rank'.$i];
-            $text .= '<br />';
-            // Calculate actual rank based on draws checkboxes
-            if ($_POST['draw'.$i] != "")
-            $actual_rank[$i] = $actual_rank[$i-1];
-            else
-            $actual_rank[$i] = $i;
-        }
+	switch($etype)
+	{
+		case "One Player Ladder":
+		case "Team Ladder":
+		// Check if the reporter played in the match
+		if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
+		$error_str .= '<li>'.EB_MATCHR_L9.'</li>';
+		break;
+		case "ClanWar":
+		// Check if the reporter's team played in the match
+		if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
+		$error_str .= '<li>'.EB_MATCHR_L37.'</li>';
+		break;
+		default:
+	}
 
-        $text .= '--------------------<br />';
+	// Check if a team has no player
+	for($i=1;$i<=$nbr_teams;$i++)
+	{
+		$team_players = 0;
+		for($j=1;$j<=$nbr_players;$j++)
+		{
+			if ($_POST['team'.$j] == 'Team #'.$i)
+			$team_players ++;
+		}
+		if ($team_players == 0)
+		$error_str .= '<li>'.EB_MATCHR_L10.$i.'&nbsp;'.EB_MATCHR_L11.'</li>';
+	}
 
-        $text .= 'Comments: '.$tp->toHTML($comments).'<br />';
+	// we could do more data checks, but you get the idea.
+	// we could also strip any HTML from the variables, convert it to entities, have a maximum character limit on the values, etc etc, but this is just an example.
+	// now, have any of these errors happened? We can find out by checking if $error_str is empty
 
-        // Create Match ------------------------------------------
-        $q =
-        "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status, Map)
-        VALUES ($event_id,'$reported_by',$time, '$comments', 'pending', '$map')";
-        $result = $sql->db_Query($q);
+	//$error_str = 'test';
 
-        $last_id = mysql_insert_id();
-        $match_id = $last_id;
+	if (!empty($error_str)) {
+		// show form again
+		user_form($players_id, $players_name, $event_id, $match_id, $eAllowDraw, $eAllowScore,$userclass);
+		// errors have occured, halt execution and show form again.
+		$text .= '<p style="color:red">'.EB_MATCHR_L14;
+		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
+	}
+	else
+	{
+		$text .= "OK<br />";
+		if($match_id)
+		{
+			// Match Edit, Need to delete the match scores and re-create a new ones.
+			deleteMatchScores($event_id, $match_id);
+		}
 
-        // Create Scores ------------------------------------------
-        for($i=1;$i<=$nbr_players;$i++)
-        {
-            $pid = $_POST['player'.$i];
-            $pteam = str_replace("Team #","",$_POST['team'.$i]);
+		$nbr_players = $_POST['nbr_players'];
 
-            for($j=1;$j<=$nbr_teams;$j++)
-            {
-                if( $_POST['rank'.$j] == "Team #".$pteam)
-                $prank = $actual_rank[$j];
-            }
+		$actual_rank[1] = 1;
+		for($i=1;$i<=$nbr_teams;$i++)
+		{
+			$text .= 'Rank #'.$i.': '.$_POST['rank'.$i];
+			$text .= '<br />';
+			// Calculate actual rank based on draws checkboxes
+			if ($_POST['draw'.$i] != "")
+			$actual_rank[$i] = $actual_rank[$i-1];
+			else
+			$actual_rank[$i] = $i;
+		}
 
-            $pscore = $_POST['score'.$i];
-            $pfaction = $_POST['faction'.$i];
+		$text .= '--------------------<br />';
 
-            switch($etype)
-            {
-                case "One Player Ladder":
-                case "Team Ladder":
-                $q =
-                "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Faction)
-                VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pfaction)
-                ";
-                break;
-                case "ClanWar":
-                $q =
-                "INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Faction)
-                VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pfaction)
-                ";
-                break;
-                default:
-            }
-            $result = $sql->db_Query($q);
-        }
-        $text .= '--------------------<br />';
+		$text .= 'Comments: '.$tp->toHTML($comments).'<br />';
 
-        // Update scores stats
-        match_scores_update($match_id);
+		if($match_id)
+		{
+			// Edit Match --------------------------------------------
+			$q =
+			"UPDATE ".TBL_MATCHS
+			." SET ReportedBy = '$reported_by',"
+			."       TimeReported = '$time_reported',"
+			."       Comments = '$comments',"
+			."       Status= 'pending',"
+			."       Map = '$map'"
+			." WHERE(MatchID = '$match_id')";
 
-        // Automatically Update Players stats only if Match Approval is Disabled
-        if ($eMatchesApproval == eb_UC_NONE)
-        {
-            switch($etype)
-            {
-                case "One Player Ladder":
-                case "Team Ladder":
-                match_players_update($match_id);
-                break;
-                case "ClanWar":
-                match_teams_update($match_id);
-                break;
-                default:
-            }
+			$result = $sql->db_Query($q);
+		}
+		else
+		{
+			// Create Match ------------------------------------------
+			$q =
+			"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status, Map)
+			VALUES ($event_id,'$reported_by', '$time_reported', '$comments', 'pending', '$map')";
+			$result = $sql->db_Query($q);
+			$last_id = mysql_insert_id();
+			$match_id = $last_id;
+		}
 
-            $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-            $result = $sql->db_Query($q);
-        }
+		// Create Scores ------------------------------------------
+		for($i=1;$i<=$nbr_players;$i++)
+		{
+			$pid = $_POST['player'.$i];
+			$pteam = str_replace("Team #","",$_POST['team'.$i]);
 
-        header("Location: matchinfo.php?matchid=$match_id");
-        exit();
-    }
-    // if we get here, all data checks were okay, process information as you wish.
+			for($j=1;$j<=$nbr_teams;$j++)
+			{
+				if( $_POST['rank'.$j] == "Team #".$pteam)
+				$prank = $actual_rank[$j];
+			}
+
+			$pscore = $_POST['score'.$i];
+			$pfaction = $_POST['faction'.$i];
+
+			switch($etype)
+			{
+				case "One Player Ladder":
+				case "Team Ladder":
+				$q =
+				"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Faction)
+				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pfaction)
+				";
+				break;
+				case "ClanWar":
+				$q =
+				"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Faction)
+				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pfaction)
+				";
+				break;
+				default:
+			}
+			$result = $sql->db_Query($q);
+		}
+		$text .= '--------------------<br />';
+
+		// Update scores stats
+		match_scores_update($match_id);
+
+		// Automatically Update Players stats only if Match Approval is Disabled
+		if ($eMatchesApproval == eb_UC_NONE)
+		{
+			switch($etype)
+			{
+				case "One Player Ladder":
+				case "Team Ladder":
+				match_players_update($match_id);
+				break;
+				case "ClanWar":
+				match_teams_update($match_id);
+				break;
+				default:
+			}
+
+			$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+			$result = $sql->db_Query($q);
+		}
+
+		header("Location: matchinfo.php?matchid=$match_id");
+		exit();
+	}
+	// if we get here, all data checks were okay, process information as you wish.
 } else {
 
-    if (!isset($_POST['matchreport']))
-    {
-        $text .= '<p>'.EB_MATCHR_L33.'</p>';
-        $text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]</p>';
-    }
-    else if (!check_class(e_UC_MEMBER))
-    {
-        $text .= '<p>'.EB_MATCHR_L36.'</p>';
-        $text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]</p>';
-    }
-    else
-    {
-        $userclass = $_POST['userclass'];
-        // the form has not been submitted, let's show it
-        user_form($players_id, $players_name, $event_id, $eAllowDraw, $eAllowScore,$userclass,$eGame);
-    }
+	if (!isset($_POST['matchreport'])&&!isset($_POST['matchedit']))
+	{
+		$text .= '<p>'.EB_MATCHR_L33.'</p>';
+		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]</p>';
+	}
+	else if (!check_class(e_UC_MEMBER))
+	{
+		$text .= '<p>'.EB_MATCHR_L36.'</p>';
+		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]</p>';
+	}
+	else
+	{
+		$userclass = $_POST['userclass'];
+		// the form has not been submitted, let's show it
+		user_form($players_id, $players_name, $event_id, $match_id, $eAllowDraw, $eAllowScore,$userclass);
+	}
 }
 
 $text .= '
