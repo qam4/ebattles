@@ -274,9 +274,9 @@ else
 	&& (($eend==0)
 	|| (($eend>=$time)&&($estart<=$time))))
 	$can_delete = 1;
-	
+
 	if ((USERID==$reported_by)&&($mStatus == 'pending')) $can_edit = 1;
-	
+
 	if (check_class($pref['eb_mod_class']))  $can_delete = 1;
 	if (USERID==$eowner)
 	{
@@ -321,40 +321,35 @@ else
 	if ($mStatus == 'pending')
 	$text .= '<div>'.EB_MATCHD_L18.'</div>';
 
-
 	if($can_delete != 0)
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?eventid='.$event_id.'" method="post">';
 		$text .= '<div>';
-		$text .= '<img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_MATCHD_L4.' style="vertical-align:middle""/>';
 		$text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
-		$text .= '<input class="button" type="submit" name="deletematch" value="'.EB_MATCHD_L4.'" onclick="return confirm(\''.EB_MATCHD_L5.'\');"/>';
 		$text .= '</div>';
+		$text .= ebImageTextButton('deletematch', 'cross.png', EB_MATCHD_L4, 'negative', EB_MATCHD_L5);
 		$text .= '</form>';
 	}
 	if($can_approve != 0)
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
 		$text .= '<div>';
-		$text .= '<img src="'.e_PLUGIN.'ebattles/images/accept.png" alt="'.EB_MATCHD_L17.' style="vertical-align:middle""/>';
 		$text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
-		$text .= '<input class="button" type="submit" name="approvematch" value="'.EB_MATCHD_L17.'"/>';
 		$text .= '</div>';
+		$text .= ebImageTextButton('approvematch', 'accept.png', EB_MATCHD_L17, 'positive');
 		$text .= '</form>';
 	}
 	if($can_edit != 0)
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'" method="post">';
 		$text .= '<div>';
-		$text .= '<img src="'.e_PLUGIN.'ebattles/images/pencil.png" alt="'.EB_MATCHD_L27.' style="vertical-align:middle""/>';
-        $text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
-		$text .= '<input class="button" type="submit" name="matchedit" value="'.EB_MATCHD_L27.'"/>';
+		$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 		$text .= '</div>';
+		$text .= ebImageTextButton('matchedit', 'pencil.png', EB_MATCHD_L27);
 		$text .= '</form>';
 	}
-	$text .= '<br />';
 
 	$text .= '<table class="fborder" style="width:95%"><tbody>';
 	$text .= '<tr>

@@ -184,8 +184,8 @@ function displayTeamDivisions($clan_id){
                     '.EB_CLAN_L10.':
                     <input class="tbox" type="password" title="'.EB_CLAN_L11.'" name="joindivisionPassword"/>
                     <input type="hidden" name="division" value="'.$div_id.'"/>
-                    <input class="button" type="submit" name="joindivision" value="'.EB_CLAN_L12.'"/>
                     </div>
+                    '.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12).'
                     </form>';
                 }
                 else
@@ -195,9 +195,9 @@ function displayTeamDivisions($clan_id){
                     <div>
                     <input type="hidden" name="joindivisionPassword" value=""/>
                     <input type="hidden" name="division" value="'.$div_id.'"/>
-                    <input class="button" type="submit" name="joindivision" value="'.EB_CLAN_L12.'"/>
                     </div>
-                    </form>';
+                    '.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12).'
+                  </form>';
                 }
             }
             else
@@ -224,8 +224,8 @@ function displayTeamDivisions($clan_id){
                     <form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
                     <div>
                     <input type="hidden" name="division" value="'.$div_id.'"/>
-                    <input class="button" type="submit" name="quitdivision" value="'.EB_CLAN_L13.'" onclick="return confirm(\''.EB_CLAN_L25.'\');"/>
                     </div>
+                    '.ebImageTextButton('quitdivision', 'user_delete.ico', EB_CLAN_L13, 'negative', EB_CLAN_L25).'
                     </form>';
                 }
             }

@@ -81,7 +81,7 @@ else
         $text .= '<div>';
         $text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
         $text .= '<input type="hidden" name="username" value="'.$uname.'"/>';
-        $text .= '<input class="button" type="submit" name="createevent" value="'.EB_EVENTS_L20.'"/>';
+        $text .= ebImageTextButton('createevent', 'add.png', EB_EVENTS_L20);
         $text .= '</div>';
         $text .= '</form><br />';
     }

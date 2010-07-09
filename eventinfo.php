@@ -278,8 +278,8 @@ else
                                 <div>
                                 <input class="tbox" type="password" title="'.EB_EVENT_L9.'" name="joinEventPassword"/>
                                 <input type="hidden" name="division" value="'.$div_id.'"/>
-                                <input class="button" type="submit" name="teamjoinevent" value="'.EB_EVENT_L10.'"/>
                                 </div>
+                                '.ebImageTextButton('teamjoinevent', 'user_add.png', EB_EVENT_L10).'
                                 ';
                                 $text .= '</form>';
                                 $text .= '</td>';
@@ -292,8 +292,8 @@ else
                                 <div>
                                 <input type="hidden" name="joinEventPassword" value=""/>
                                 <input type="hidden" name="division" value="'.$div_id.'"/>
-                                <input class="button" type="submit" name="teamjoinevent" value="'.EB_EVENT_L12.'"/>
                                 </div>
+                                '.ebImageTextButton('teamjoinevent', 'user_add.png', EB_EVENT_L12).'
                                 ';
                                 $text .= '</form>';
                                 $text .= '</td>';
@@ -394,8 +394,8 @@ else
                                 <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                 <div>
                                 <input type="hidden" name="team" value="'.$team_id.'"/>
-                                <input class="button" type="submit" name="jointeamevent" value="'.EB_EVENT_L19.'"/>
                                 </div>
+                                '.ebImageTextButton('jointeamevent', 'user_add.png', EB_EVENT_L19).'
                                 </form></td>
                                 ';
                             }
@@ -428,7 +428,7 @@ else
                                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                                         <div>
                                         <input type="hidden" name="player" value="'.$user_pid.'"/>
-                                        <input class="button" type="submit" name="quitevent" value="'.EB_EVENT_L23.'" onclick="return confirm(\''.EB_EVENT_L24.'\');"/>
+                                        '.ebImageTextButton('quitevent', 'user_delete.ico', EB_EVENT_L23, 'negative', EB_EVENT_L24).'
                                         </div>
                                         </form></td>
                                         ';
@@ -462,8 +462,8 @@ else
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                         <div>
                         <input class="tbox" type="password" title="'.EB_EVENT_L27.'" name="joinEventPassword"/>
-                        <input class="button" type="submit" name="joinevent" value="'.EB_EVENT_L19.'"/>
                         </div>
+                        '.ebImageTextButton('joinevent', 'user_add.png', EB_EVENT_L19).'
                         </form></td></tr>
                         ';
                     }
@@ -474,8 +474,8 @@ else
                         <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                         <div>
                         <input type="hidden" name="joinEventPassword" value=""/>
-                        <input class="button" type="submit" name="joinevent" value="'.EB_EVENT_L19.'"/>
                         </div>
+                        '.ebImageTextButton('joinevent', 'user_add.png', EB_EVENT_L19).'
                         </form></td></tr>
                         ';
                     }
@@ -508,7 +508,7 @@ else
                             <form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
                             <div>
                             <input type="hidden" name="player" value="'.$user_pid.'"/>
-                            <input class="button" type="submit" name="quitevent" value="'.EB_EVENT_L32.'" onclick="return confirm(\''.EB_EVENT_L33.'\');"/>
+                            '.ebImageTextButton('quitevent', 'user_delete.ico', EB_EVENT_L32, 'negative', EB_EVENT_L33).'
                             </div>
                             </form></td></tr>
                             ';
@@ -874,7 +874,7 @@ else
         {
             $text .= '<td>';
             $text .= '<form action="'.e_PLUGIN.'ebattles/quickreport.php?eventid='.$event_id.'" method="post">';
-            $text .= '<div><input class="button" type="submit" name="quicklossreport" value="'.EB_EVENT_L56.'"/></div>';
+            $text .= ebImageTextButton('quicklossreport', 'flag_red.png', EB_EVENT_L56);
             $text .= '</form>';
             $text .= '</td>';
         }
@@ -884,7 +884,7 @@ else
             $text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'" method="post">';
             $text .= '<div>';
             $text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
-            $text .= '<input class="button" type="submit" name="matchreport" value="'.EB_EVENT_L57.'"/>';
+            $text .= ebImageTextButton('matchreport', 'page_white_edit.png', EB_EVENT_L57);
             $text .= '</div>';
             $text .= '</form>';
             $text .= '</td>';
