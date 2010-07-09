@@ -36,30 +36,8 @@ else
     }
     else
     {
-        /* Event Info */
-        $q = "SELECT ".TBL_EVENTS.".*"
-        ." FROM ".TBL_EVENTS
-        ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
-        $result = $sql->db_Query($q);
-        $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-
         $match_id = $_POST['matchid'];
-        
-        switch($etype)
-        {
-            case "One Player Ladder":
-            case "Team Ladder":
-                deletePlayersMatchScores($match_id);
-            break;
-            case "ClanWar":
-                deleteTeamsMatchScores($match_id);
-            break;
-            default:
-        }
-
-        $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-        $result = $sql->db_Query($q);
-
+		deleteMatchScores($event_id, $match_id);
         $text .= '<br />'.EB_MATCHDEL_L3.'<br />';
     }
     $text .= '<br />'.EB_MATCHDEL_L4.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHDEL_L5.'</a>]<br />';

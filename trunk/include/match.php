@@ -822,6 +822,33 @@ function match_teams_update($match_id)
 	//exit;
 }
 
+function deleteMatchScores($event_id, $match_id)
+{
+	global $sql;
+
+	/* Event Info */
+	$q = "SELECT ".TBL_EVENTS.".*"
+	." FROM ".TBL_EVENTS
+	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	$result = $sql->db_Query($q);
+	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+
+	switch($etype)
+	{
+		case "One Player Ladder":
+		case "Team Ladder":
+		deletePlayersMatchScores($match_id);
+		break;
+		case "ClanWar":
+		deleteTeamsMatchScores($match_id);
+		break;
+		default:
+	}
+
+	$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+	$result = $sql->db_Query($q);
+}
+
 function deletePlayersMatchScores($match_id)
 {
 	global $sql;
@@ -967,7 +994,7 @@ function deletePlayersMatchScores($match_id)
 
 		// Delete Score
 		$q = "DELETE FROM ".TBL_SCORES." WHERE (ScoreID = '$scoreid')";
-		//dbg $result2 = $sql->db_Query($q);
+		$result2 = $sql->db_Query($q);
 		$output .= "$q<br>";
 
 	}
