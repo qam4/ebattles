@@ -221,7 +221,6 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
         }
     }
     $text .= '</select>';
-    //$text .= '<input class="button" type="submit" value="Select"/>';
     $text .= '</td>';
     $text .= '</tr>';
     $text .= '</tbody>';
