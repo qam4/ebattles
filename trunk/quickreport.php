@@ -96,8 +96,8 @@ else
     $text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 
     $text .= '
-    <input class="button" type="submit" name="qrsubmitloss" value="'.EB_MATCHQL_L6.'"/>
     </div>
+    '.ebImageTextButton('qrsubmitloss', 'flag_red.png', EB_MATCHQL_L6).'
     </td>
     </tr>
     </table>

@@ -577,7 +577,8 @@ function ebImageTextButton($name, $image, $text, $class='', $confirm='')
 {
 	$image_str = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'" style="vertical-align:middle"/>' : '';
 	$confirm_str = ($confirm!='') ? 'onclick="return confirm(\''.$confirm.'\');"' : '';
-	return '<div class="buttons"><button class="'.$class.'" type="submit" name="'.$name.'" '.$confirm_str.'>'.$image_str.'&nbsp;'.$text.'</button></div>
+	$class_str = ($class!='') ? 'class="'.$class.'"' : '';
+	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" '.$confirm_str.'>'.$image_str.'&nbsp;'.$text.'</button></div>
             <div style="clear:both"></div>';
 }
 

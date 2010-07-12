@@ -600,7 +600,7 @@ else
 		}
 		$text .= '</select></td>';
 		$text .= '<td><input class="tbox" type="text" name="mediapath" size="40" value="" maxlength="64" title="'.EB_MATCHD_L22.'"/></td>';
-		$text .= '<td><input class="button" type="submit" name="addmedia" value="'.EB_MATCHD_L23.'"/></td>';
+		$text .= '<td>'.ebImageTextButton('addmedia', 'film_add.png', EB_MATCHD_L23).'</td>';
 		$text .= '</tr></table>';
 		$text .= '</form>';
 	}

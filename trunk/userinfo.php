@@ -323,8 +323,8 @@ else
         $text .= '<div>';
         $text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
         $text .= '<input type="hidden" name="username" value="'.$uname.'"/>';
-        $text .= '<input class="button" type="submit" name="createteam" value="'.EB_CLANS_L7.'"/>';
         $text .= '</div>';
+        $text .= ebImageTextButton('createteam', 'add.png', EB_CLANS_L7);
         $text .= '</form><br />';
     }
 

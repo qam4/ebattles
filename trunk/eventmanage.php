@@ -220,7 +220,7 @@ else
         $text .= '</select>';
         $text .= '</td>';
         $text .= '<td>';
-        $text .= '<input class="button" type="submit" name="eventchangeowner" value="'.EB_EVENTM_L10.'"/>';
+        $text .= ebImageTextButton('eventchangeowner', 'user_go.ico', EB_EVENTM_L10);
         $text .= '</td>';
         $text .= '</tr>';
         $text .= '</table>';
@@ -251,7 +251,7 @@ else
                 $text .= '<td>';
                 $text .= '<div>';
                 $text .= '<input type="hidden" name="eventmod" value="'.$modid.'"/>';
-                $text .= '<input class="button" type="submit" name="eventdeletemod" value="'.EB_EVENTM_L12.'" onclick="return confirm(\''.EB_EVENTM_L13.'\');"/>';
+                $text .= ebImageTextButton('eventdeletemod', 'user_delete.ico', EB_EVENTM_L12, 'negative', EB_EVENTM_L13);
                 $text .= '</div>';
                 $text .= '</td>';
                 $text .= '</tr>';
@@ -280,7 +280,7 @@ else
         </td>
         <td>
         <div>
-        <input class="button" type="submit" name="eventaddmod" value="'.EB_EVENTM_L14.'"/>
+        '.ebImageTextButton('eventaddmod', 'user_add.png', EB_EVENTM_L14).'
         </div>
         </td>
         </tr>
@@ -455,18 +455,15 @@ else
         $text .= '
         <tr>
         <td class="forumheader3"><b>'.EB_EVENTM_L108.'</b><div class="smalltext">'.EB_EVENTM_L109.'</div></td>
-        <td class="forumheader3"><select class="tbox" name="eventmatchapprovaluserclass">';
+        <td class="forumheader3">
+        <div>';
+        $text .= '<select class="tbox" name="eventmatchapprovaluserclass">';
         $text .= '<option value="'.eb_UC_NONE.'" '.(($eMatchesApproval == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L113.'</option>';
         $text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.((($eMatchesApproval & eb_UC_EVENT_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L112.'</option>';
         $text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.((($eMatchesApproval & eb_UC_EVENT_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L111.'</option>';
         $text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.((($eMatchesApproval & eb_UC_EVENT_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L110.'</option>';
         $text .= '</select>';
         $text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
-        $text .= '
-        </td>
-        </tr>
-        ';
-
         $text .= '
         </div>
         </td>
@@ -620,7 +617,7 @@ else
         $text .= '
         <table><tr><td>
         <div>
-        <input class="button" type="submit" name="eventsettingssave" value="'.EB_EVENTM_L37.'"/>
+        '.ebImageTextButton('eventsettingssave', 'disk.png', EB_EVENTM_L37).'
         </div>
         </td></tr></table>
 
@@ -659,7 +656,7 @@ else
         $text .= '
         <table><tr><td>
         <div>
-        <input class="button" type="submit" name="eventrulessave" value="'.EB_EVENTM_L39.'"/>
+        '.ebImageTextButton('eventrulessave', 'disk.png', EB_EVENTM_L39).'
         </div>
         </td></tr></table>
 
@@ -775,7 +772,7 @@ else
             }
             $text .= '
             </select>
-            <input class="button" type="submit" name="eventaddteam" value="'.EB_EVENTM_L42.'"/>
+            '.ebImageTextButton('eventaddteam', 'user_add.png', EB_EVENTM_L42).'
             <input class="tbox" type="checkbox" name="eventaddteamnotify"/>'.EB_EVENTM_L43.'
             </td>
             </tr>
@@ -800,7 +797,9 @@ else
             <b>'.EB_EVENTM_L44.'</b>
             </td>
             <td class="forumheader3">
-            <select class="tbox" name="player">
+            <table>
+            <tr>
+            <td><div><select class="tbox" name="player">
             ';
             for($i=0; $i<$numUsers; $i++)
             {
@@ -809,9 +808,11 @@ else
                 $text .= '<option value="'.$uid.'">'.$uname.'</option>';
             }
             $text .= '
-            </select>
-            <input class="button" type="submit" name="eventaddplayer" value="'.EB_EVENTM_L45.'"/>
-            <input class="tbox" type="checkbox" name="eventaddplayernotify"/>'.EB_EVENTM_L46.'
+            </select></div></td>
+            <td>'.ebImageTextButton('eventaddplayer', 'user_add.png', EB_EVENTM_L45).'</td>
+            <td><div><input class="tbox" type="checkbox" name="eventaddplayernotify"/>'.EB_EVENTM_L46.'</div></td>
+            </tr>
+            </table>
             </td>
             </tr>
             </tbody>
@@ -1007,7 +1008,7 @@ else
         <td class="forumheader3"><b>'.EB_EVENTM_L70.'</b><br />'.EB_EVENTM_L71.'</td>
         <td class="forumheader3">
         ';
-        $text .= '<input class="button" type="submit" name="eventresetscores" value="'.EB_EVENTM_L72.'" onclick="return confirm(\''.EB_EVENTM_L73.'\');"/>';
+        $text .= ebImageTextButton('eventresetscores', 'bin_closed.png', EB_EVENTM_L72, '', EB_EVENTM_L73);
         $text .= '
         </td>
         </tr>
@@ -1017,7 +1018,7 @@ else
         <td class="forumheader3"><b>'.EB_EVENTM_L74.'</b><br />'.EB_EVENTM_L75.'</td>
         <td class="forumheader3">
         ';
-        $text .= '<input class="button" type="submit" name="eventresetevent" value="'.EB_EVENTM_L76.'" onclick="return confirm(\''.EB_EVENTM_L77.'\');"/>';
+        $text .= ebImageTextButton('eventresetevent', 'bin_closed.png', EB_EVENTM_L76, '', EB_EVENTM_L77);
         $text .= '
         </td>
         </tr>
@@ -1027,7 +1028,7 @@ else
         <td class="forumheader3"><b>'.EB_EVENTM_L78.'</b><br />'.EB_EVENTM_L79.'</td>
         <td class="forumheader3">
         ';
-        $text .= '<input class="button" type="submit" name="eventdelete" value="'.EB_EVENTM_L80.'" onclick="return confirm(\''.EB_EVENTM_L81.'\');"/>';
+        $text .= ebImageTextButton('eventdelete', 'delete.png', EB_EVENTM_L80, 'negative', EB_EVENTM_L81);
         $text .= '
         </td>
         </tr>
@@ -1037,7 +1038,7 @@ else
         <td class="forumheader3"><b>'.EB_EVENTM_L82.'</b><br />'.EB_EVENTM_L83.'</td>
         <td class="forumheader3">
         ';
-        $text .= '<input class="button" type="submit" name="eventupdatescores" value="'.EB_EVENTM_L84.'" onclick="return confirm(\''.EB_EVENTM_L85.'\');"/>';
+        $text .= ebImageTextButton('eventupdatescores', 'chart_curve.png', EB_EVENTM_L84, '', EB_EVENTM_L85);
         $text .= '
         </td>
         </tr>
@@ -1085,6 +1086,7 @@ else
         if ($etype != "ClanWar")
         {
             $text .= '
+            <tr>
             <td class="forumheader3">'.EB_EVENTM_L90.'</td>
             <td class="forumheader3">
             <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
@@ -1270,7 +1272,7 @@ else
         <!-- Save Button -->
         <table><tr><td>
         <div>
-        <input class="button" type="submit" name="eventstatssave" value="'.EB_EVENTM_L107.'"/>
+        '.ebImageTextButton('eventstatssave', 'disk.png', EB_EVENTM_L107).'
         </div>
         </td></tr></table>
         </form>

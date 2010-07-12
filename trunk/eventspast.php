@@ -75,7 +75,7 @@ function displayPastEvents(){
     $text .= '</td>';
     $text .= '<td>';
     $text .= '<br />';
-    $text .= '<input class="button" type="submit" name="subgameselect" value="'.EB_EVENTS_L24.'"/>';
+    $text .= ebImageTextButton('subgameselect', 'magnify.png', EB_EVENTS_L24);
     $text .= '</td>';
     $text .= '</tr>';
     $text .= '</table>';
