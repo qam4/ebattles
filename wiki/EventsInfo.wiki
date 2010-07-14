@@ -19,8 +19,10 @@ Any number of teams and any number of players per team is allowed: 1v1, 2v2, 1v1
       * Match report:
         * Select the number of players and teams
         * Select the players and their respective team
+        * Enter the score of each player (if applicable).
+        * Enter the faction of each player (if applicable).
         * Select the rank of each team
-        * Enter score (if applicable).
+        * Enter the map for the match (if applicable).
         * Check the draw checkbox if rank is same as previous team (if applicable) 
         * Add games comments
 
