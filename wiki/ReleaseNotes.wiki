@@ -1,6 +1,6 @@
 #summary eBattles Release Notes.
 
-= Release 0.8.2 =
+= Release 0.8.3 =
 == Features ==
  * Match editing (Fixes issue 22)
  Now match reporters can edit their matches if they are pending.
