@@ -1,5 +1,20 @@
 #summary eBattles Release Notes.
 
+= Release 0.8.2 =
+== Features ==
+ * Match editing (Fixes issue 22)
+ Now match reporters can edit their matches if they are pending.
+ Also, event admins, event moderators can edit matches.
+ * Replaced submit buttons with nicer buttons with image/text/colors
+== Bug fixes ==
+ * Fixed issue with match approval.
+  * The match reporter could see the approval button for teams events where match approval was allowed to opponents only.
+ * Fixed Disclaimer floating on the right needed a 'clear'
+ 
+= Release 0.8.1 =
+== Features ==
+ * Support for Danish language
+
 = Release 0.8.0 =
 == Features ==
  * Support match media submission
