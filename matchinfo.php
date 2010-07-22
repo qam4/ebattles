@@ -101,6 +101,23 @@ else
 	$reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
 	$mMap = mysql_result($result,0, TBL_MATCHS.".Map");
 
+	$categoriesToShow = array();
+	$q_Categories = "SELECT ".TBL_STATSCATEGORIES.".*"
+	." FROM ".TBL_STATSCATEGORIES
+	." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
+
+	$result_Categories = $sql->db_Query($q_Categories);
+	$numCategories = mysql_numrows($result_Categories);
+
+	for($category=0; $category < $numCategories; $category++)
+	{
+		$cat_name = mysql_result($result_Categories,$category, TBL_STATSCATEGORIES.".CategoryName");
+        $cat_maxpoints = mysql_result($result_Categories,$category, TBL_STATSCATEGORIES.".CategoryMaxValue");
+		if ($cat_maxpoints>0) $categoriesToShow["$cat_name"] = TRUE;
+	}
+
+	//dbg: print_r($categoriesToShow);
+
 	$mapImage = "";
 	if ($mMap!=0)
 	{
@@ -350,18 +367,19 @@ else
 		$text .= ebImageTextButton('matchedit', 'pencil.png', EB_MATCHD_L27);
 		$text .= '</form>';
 	}
-
+    $text .= '<br />';
 	$text .= '<table class="fborder" style="width:95%"><tbody>';
-	$text .= '<tr>
-	<td class="forumheader"><b>'.EB_MATCHD_L6.'</b></td>
-	<td class="forumheader"><b>'.EB_MATCHD_L7.'</b></td>
-	<td class="forumheader"><b>'.EB_MATCHD_L8.'</b></td>
-	<td class="forumheader"><b>'.EB_MATCHD_L9.'</b></td>
-	<td class="forumheader"><b>'.EB_MATCHD_L10.'</b></td>
-	<td class="forumheader"><b>'.EB_MATCHD_L11.'</b></td>
-	<td class="forumheader"><b>'.EB_MATCHD_L12.'</b></td>
-	<td class="forumheader"><b>'.EB_MATCHD_L13.'</b></td>
-	</tr>';
+	$text .= '<tr>';
+	$text .= '<td class="forumheader"><b>'.EB_MATCHD_L6.'</b></td>';
+	$text .= '<td class="forumheader"><b>'.EB_MATCHD_L7.'</b></td>';
+	$text .= '<td class="forumheader"><b>'.EB_MATCHD_L8.'</b></td>';
+	$text .= ($categoriesToShow["Score"] == TRUE) ? '<td class="forumheader"><b>'.EB_MATCHD_L9.'</b></td>' : '';
+	$text .= ($categoriesToShow["Points"] == TRUE) ? '<td class="forumheader"><b>'.EB_MATCHD_L10.'</b></td>' : '';
+	$text .= ($categoriesToShow["ELO"] == TRUE) ? '<td class="forumheader"><b>'.EB_MATCHD_L11.'</b></td>' : '';
+	$text .= ($categoriesToShow["Skill"] == TRUE) ? '<td class="forumheader"><b>'.EB_MATCHD_L12.'</b></td>' : '';
+	$text .= '<td class="forumheader"><b>'.EB_MATCHD_L13.'</b></td>';
+	$text .= '</tr>';
+	
 	for($i=0; $i < $numScores; $i++)
 	{
 		switch($etype)
@@ -453,13 +471,12 @@ else
 			break;
 			default:
 		}
-		$text .= '
-		<td class="forumheader3">'.$pscore.'</td>
-		<td class="forumheader3">'.$ppoints.'</td>
-		<td class="forumheader3">'.$pdeltaELO.'</td>
-		<td class="forumheader3">'.number_format($pdeltaTS_mu,2).'</td>
-		';
-
+		
+		$text .= ($categoriesToShow["Score"] == TRUE) ? '<td class="forumheader3">'.$pscore.'</td>' : '';
+		$text .= ($categoriesToShow["Points"] == TRUE) ? '<td class="forumheader3">'.$ppoints.'</td>' : '';
+		$text .= ($categoriesToShow["ELO"] == TRUE) ? '<td class="forumheader3">'.$pdeltaELO.'</td>' : '';
+		$text .= ($categoriesToShow["Skill"] == TRUE) ? '<td class="forumheader3">'.number_format($pdeltaTS_mu,2).'</td>' : '';
+		
 		// Opponent Ratings
 		$text .= '<td class="forumheader3">';
 		switch($etype)

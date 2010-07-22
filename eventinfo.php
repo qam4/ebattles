@@ -908,10 +908,10 @@ else
     $row = mysql_fetch_array($result);
     $numMatches = $row['NbrMatches'];
 
-    $text .= '<p>';
+    $text .= '<p><b>';
     $text .= $numMatches.'&nbsp;'.EB_EVENT_L59;
     $text .= ' [<a href="'.e_PLUGIN.'ebattles/eventmatchs.php?eventid='.$event_id.'">'.EB_EVENT_L60.'</a>]';
-    $text .= '</p>';
+    $text .= '</b></p>';
     $text .= '<br />';
 
     $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
@@ -952,9 +952,9 @@ else
     $result = $sql->db_Query($q);
     $numMatches = mysql_numrows($result);
 
-    $text .= '<p>';
+    $text .= '<p><b>';
     $text .= $numMatches.'&nbsp;'.EB_EVENT_L64;
-    $text .= '</p>';
+    $text .= '</b></p>';
     $text .= '<br />';
 
     if ($numMatches>0)
@@ -1045,7 +1045,7 @@ else
             {
                 $award_string .= $date;
             }
-            $award_string .= '</div><br /></td></tr>';
+            $award_string .= '</div></td></tr>';
 
             $text .= $award_string;
         }
