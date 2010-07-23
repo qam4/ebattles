@@ -1216,6 +1216,13 @@ function displayMatchInfo($match_id, $type = 0)
 		$mTime_local = $mTime + TIMEOFFSET;
 		$date = date("d M Y, h:i A",$mTime_local);
 
+	// Calculate number of players and teams for the match
+	$q = "SELECT DISTINCT ".TBL_SCORES.".Player_MatchTeam"
+	." FROM ".TBL_SCORES
+	." WHERE (".TBL_SCORES.".MatchID = '$match_id')";
+	$result = $sql->db_Query($q);
+	$nbr_teams = mysql_numrows($result);
+
 		// Check if the match has several ranks
 		$q = "SELECT DISTINCT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".Player_Rank"
@@ -1331,6 +1338,9 @@ function displayMatchInfo($match_id, $type = 0)
 			if ($userclass < $mEventMatchesApproval) $can_approve = 0;
 			if ($mEventMatchesApproval == eb_UC_NONE) $can_approve = 0;
 			if ($mStatus == 'active') $can_approve = 0;
+			
+			$orderby_str = " ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+			if($nbr_teams==2) $orderby_str = " ORDER BY ".TBL_SCORES.".Player_MatchTeam";
 
 			switch($mEventType)
 			{
@@ -1348,7 +1358,7 @@ function displayMatchInfo($match_id, $type = 0)
 				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 				." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 				." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-				." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+				.$orderby_str;
 				break;
 				case "ClanWar":
 				$q = "SELECT ".TBL_MATCHS.".*, "
@@ -1366,7 +1376,7 @@ function displayMatchInfo($match_id, $type = 0)
 				." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
 				." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
 				." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-				." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+				.$orderby_str;
 				break;
 				default:
 			}
@@ -1385,7 +1395,6 @@ function displayMatchInfo($match_id, $type = 0)
 			}
 
 			$string .= '<td>';
-			$rank = 1;
 			$matchteam = 0;
 			for ($index = 0; $index < $numPlayers; $index++)
 			{
@@ -1470,19 +1479,30 @@ function displayMatchInfo($match_id, $type = 0)
 						{
 							$str = ' '.EB_MATCH_L2.' ';
 						}
-						else
+						else if ($prank > $rank)
 						{
 							$str = ' '.EB_MATCH_L3.' ';
 						}
+						else
+						{
+							$str = ' '.EB_MATCH_L14.' ';
+						}
+						
 						$string .= $str;
-						$matchteam++;
+						$matchteam = $pmatchteam;
+						$rank = $prank;
 					}
 				}
 				else
 				{
+					$rank = $prank;
 					$matchteam = $pmatchteam;
 					$scores .= $pscore;
 				}
+				/*
+				echo "rank: $rank, prank: $prank<br>";
+				echo "mt: $matchteam, pmt $pmatchteam<br>";
+				*/
 
 				$string .= $pfactionIcon.' ';
 

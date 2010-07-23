@@ -439,6 +439,7 @@ define('EB_MATCH_L10', 'comments');
 define('EB_MATCH_L11', 'comment');
 define('EB_MATCH_L12', 'in');
 define('EB_MATCH_L13', 'Needs your Approval');
+define('EB_MATCH_L14', 'lost against');
 
 define('EB_MATCHD_L1', 'Match details');
 define('EB_MATCHD_L2', 'Match reported by');
