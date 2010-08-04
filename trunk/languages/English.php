@@ -178,6 +178,12 @@ define('EB_EVENT_L61', 'Match');
 define('EB_EVENT_L62', 'View details');
 define('EB_EVENT_L63', 'Latest Awards');
 define('EB_EVENT_L64', 'match(es) pending');
+define('EB_EVENT_L65', 'Challenge Player');
+define('EB_EVENT_L66', 'requested challenge(s)');
+define('EB_EVENT_L67', 'unconfirmed challenge(s)');
+define('EB_EVENT_L68', 'challenge(s) pending');
+define('EB_EVENT_L69', 'Challenge deleted');
+define('EB_EVENT_L70', 'match(es) scheduled');
 
 define('EB_EVENTM_L1', 'Manage');
 define('EB_EVENTM_L2', 'Event Summary');
@@ -302,6 +308,10 @@ define('EB_EVENTM_L118', 'Classic: Players are ranked based on their score in th
 Combined Stats: Players are ranked based on a combination of their scores in each stats category');
 define('EB_EVENTM_L119', 'Classic');
 define('EB_EVENTM_L120', 'Combined Stats');
+define('EB_EVENTM_L121', 'Event Challenges');
+define('EB_EVENTM_L122', 'Enable/Disable Challenges');
+define('EB_EVENTM_L123', 'Save Challenges settings');
+
 
 define('EB_EVENTP_L1', 'Past Events');
 define('EB_EVENTP_L2', 'Past Events');
@@ -440,6 +450,9 @@ define('EB_MATCH_L11', 'comment');
 define('EB_MATCH_L12', 'in');
 define('EB_MATCH_L13', 'Needs your Approval');
 define('EB_MATCH_L14', 'lost against');
+define('EB_MATCH_L15', 'Submitted by');
+define('EB_MATCH_L16', 'Scheduled');
+define('EB_MATCH_L17', 'for');
 
 define('EB_MATCHD_L1', 'Match details');
 define('EB_MATCHD_L2', 'Match reported by');
@@ -589,6 +602,40 @@ define('EB_GAMES_L18', 'Update selected');
 define('EB_GAMES_L19', 'Update all Games');
 define('EB_GAMES_L20', 'Add Predefined Games');
 
+define('EB_CHALLENGE_L1', 'Challenge');
+define('EB_CHALLENGE_L2', 'Challenge a player');
+define('EB_CHALLENGE_L3', 'Challenge a team');
+define('EB_CHALLENGE_L4', 'Event:');
+define('EB_CHALLENGE_L5', 'Challenger:');
+define('EB_CHALLENGE_L6', 'Challenged:');
+define('EB_CHALLENGE_L7', 'Select dates:');
+define('EB_CHALLENGE_L8', 'Comments:');
+define('EB_CHALLENGE_L9', 'Send Challenge');
+define('EB_CHALLENGE_L10', 'Date');
+define('EB_CHALLENGE_L11', 'is not set');
+define('EB_CHALLENGE_L12', 'Challenge submitted');
+define('EB_CHALLENGE_L13', 'Back to');
+define('EB_CHALLENGE_L14', 'Event');
+define('EB_CHALLENGE_L15', 'Withdraw');
+define('EB_CHALLENGE_L16', 'Are you sure you want to withdraw this challenge?');
+define('EB_CHALLENGE_L17', 'Confirm');
+define('EB_CHALLENGE_L18', 'Confirm a challenge');
+define('EB_CHALLENGE_L19', 'Choose a date');
+define('EB_CHALLENGE_L20', 'Accept');
+define('EB_CHALLENGE_L21', 'Decline');
+define('EB_CHALLENGE_L22', 'Challenge accepted, match scheduled');
+define('EB_CHALLENGE_L23', 'You have been challenged!');
+define('EB_CHALLENGE_L24', 'Hello ');
+define('EB_CHALLENGE_L25', ',
+
+	You have been challenged by ');
+define('EB_CHALLENGE_L26', ' in the "');
+define('EB_CHALLENGE_L27', '" ladder.
+	Please check your "My Profile" page to see the challenge details.
+	
+	Cordially,
+	The ladder admin');
+	
 define('EB_AWARD_L1', 'Award');
 define('EB_AWARD_L2', 'took 1st place');
 define('EB_AWARD_L3', '1st place');

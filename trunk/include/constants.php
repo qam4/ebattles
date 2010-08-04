@@ -34,6 +34,7 @@ define("TBL_GAMES_PLATFORMS_SHORT", TBL_PREFIX."GamesPlatforms");
 define("TBL_MAPS_SHORT",            TBL_PREFIX."Maps");
 define("TBL_FACTIONS_SHORT",        TBL_PREFIX."Factions");
 define("TBL_MEDIA_SHORT",           TBL_PREFIX."Media");
+define("TBL_CHALLENGES_SHORT",      TBL_PREFIX."Challenges");
 
 define("TBL_USERS",           MPREFIX."user");
 define("TBL_EVENTS",          MPREFIX.TBL_EVENTS_SHORT);
@@ -54,6 +55,7 @@ define("TBL_GAMES_PLATFORMS", MPREFIX.TBL_GAMES_PLATFORMS_SHORT);
 define("TBL_MAPS",            MPREFIX.TBL_MAPS_SHORT);
 define("TBL_FACTIONS",        MPREFIX.TBL_FACTIONS_SHORT);
 define("TBL_MEDIA",           MPREFIX.TBL_MEDIA_SHORT);
+define("TBL_CHALLENGES",      MPREFIX.TBL_CHALLENGES_SHORT);
 
 /**
  * Email Constants - these specify what goes in
@@ -85,5 +87,8 @@ define("eb_UC_EVENT_PLAYER", 1);
 define("eb_UC_NONE", 0);
 
 define("eb_PAGINATION_MIDRANGE", 7);
+
+define("eb_MATCH_NOEVENTINFO", 1);
+define("eb_MATCH_SCHEDULED", 2);
 
 ?>

@@ -178,6 +178,12 @@ define('EB_EVENT_L61', 'Kamp');
 define('EB_EVENT_L62', 'Vis Detaljer');
 define('EB_EVENT_L63', 'Seneste Vinder');
 define('EB_EVENT_L64', 'Kamp(e) der venter');
+define('EB_EVENT_L65', 'Udfordring en spiller');
+define('EB_EVENT_L66', 'anmodet udfordring(er)');
+define('EB_EVENT_L67', 'ubekr奴et udfordring(er)');
+define('EB_EVENT_L68', 'indtil udfordring(er)');
+define('EB_EVENT_L69', 'Udfordring slettet');
+define('EB_EVENT_L70', 'lanlagt kamp(e)');
 
 define('EB_EVENTM_L1', 'Administrer');
 define('EB_EVENTM_L2', 'Turnerings Detaljer');
@@ -302,6 +308,9 @@ define('EB_EVENTM_L118', 'Classic: Players are ranked based on their score in th
 Combined Stats: Players are ranked based on a combination of their scores in each stats category');
 define('EB_EVENTM_L119', 'Classic');
 define('EB_EVENTM_L120', 'Kombineret Stats');
+define('EB_EVENTM_L121', 'Turnerings Udfordringer');
+define('EB_EVENTM_L122', 'Aktiver/Deaktiver Udfordringer');
+define('EB_EVENTM_L123', 'Gem Udfordringer indstillinger');
 
 define('EB_EVENTP_L1', 'Tidligere Turneringer');
 define('EB_EVENTP_L2', 'Tidligere Turneringer');
@@ -438,6 +447,10 @@ define('EB_MATCH_L10', 'Kommentarer');
 define('EB_MATCH_L11', 'Skriv Kommentar');
 define('EB_MATCH_L12', 'i');
 define('EB_MATCH_L13', 'Skal have din godkendelse');
+define('EB_MATCH_L14', 'tabte mod');
+define('EB_MATCH_L15', 'Tilmeldt af');
+define('EB_MATCH_L16', 'Planlagt');
+define('EB_MATCH_L17', 'for');
 
 define('EB_MATCHD_L1', 'Kamp detaljer');
 define('EB_MATCHD_L2', 'Kamp inberettet af');
@@ -586,6 +599,40 @@ define('EB_GAMES_L17', 'Er du sikker på, at du vil slette ALLE spil?');
 define('EB_GAMES_L18', 'Opdater Valgte');
 define('EB_GAMES_L19', 'Opdater ALLE spil');
 define('EB_GAMES_L20', 'Tilføj Spil');
+
+define('EB_CHALLENGE_L1', 'Udfordring');
+define('EB_CHALLENGE_L2', 'Udfordring en spiller');
+define('EB_CHALLENGE_L3', 'Udfordring et hold');
+define('EB_CHALLENGE_L4', 'Event:');
+define('EB_CHALLENGE_L5', 'Challenger:');
+define('EB_CHALLENGE_L6', 'Udfordret:');
+define('EB_CHALLENGE_L7', 'Vælg datoer:');
+define('EB_CHALLENGE_L8', 'Kommentarer:');
+define('EB_CHALLENGE_L9', 'Send Udfordring');
+define('EB_CHALLENGE_L10', 'Dato');
+define('EB_CHALLENGE_L11', 'er ikke indstillet');
+define('EB_CHALLENGE_L12', 'Udfordring sendt');
+define('EB_CHALLENGE_L13', 'Tilbage til');
+define('EB_CHALLENGE_L14', 'Event');
+define('EB_CHALLENGE_L15', 'Træk');
+define('EB_CHALLENGE_L16', 'Er du sikker på du vil trække denne udfordring?');
+define('EB_CHALLENGE_L17', 'Bekræft');
+define('EB_CHALLENGE_L18', 'Bekræft en udfordring');
+define('EB_CHALLENGE_L19', 'Vælg en dato');
+define('EB_CHALLENGE_L20', 'Accept');
+define('EB_CHALLENGE_L21', 'Tilbagegang');
+define('EB_CHALLENGE_L22', 'Udfordring accepteret, match planlagt');
+define('EB_CHALLENGE_L23', 'You have been challenged!');
+define('EB_CHALLENGE_L24', 'Hej ');
+define('EB_CHALLENGE_L25', ',
+
+	Du er blevet udfordret af ');
+define('EB_CHALLENGE_L26', ' i turnering"');
+define('EB_CHALLENGE_L27', '".
+	Tjek venligst din "Min profil" for at se den udfordring detaljer.
+
+	Hjerteligt,
+	Turnering admin');
 
 define('EB_AWARD_L1', 'Præmier');
 define('EB_AWARD_L2', 'fik 1. pladsen');

@@ -4,7 +4,7 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	global $sql;
 	global $text;
 	global $tp;
-    global $time;
+	global $time;
 
 	/* Event Info */
 	$q = "SELECT ".TBL_EVENTS.".*"
@@ -23,146 +23,40 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 		require_once(e_HANDLER."ren_help.php");
 		$insertjs = "rows='5' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
 	}
+	/*
 	//dbg form
-	//echo "<br>_POST: ";
-	//print_r($_POST);    // show $_POST
-	//echo "<br>_GET: ";
-	//print_r($_GET);     // show $_GET
+	echo "<br>_POST: ";
+	print_r($_POST);    // show $_POST
+	echo "<br>_GET: ";
+	print_r($_GET);     // show $_GET
+	*/
 
 	$match_str = '';
 	$matchreport_str = EB_MATCHR_L31;
-	if($match_id)
+
+	if(isset($_POST['matchedit']))
 	{
+		$matchreport_str = EB_MATCHR_L46;
+
 		$text .= '<div>';
 		$text .= EB_MATCHR_L45." $match_id<br>";
 		$text .= '<img src="'.e_PLUGIN.'ebattles/images/exclamation.png"/>';
 		$text .= EB_MATCHR_L47;
 		$text .= '</div><br>';
-
-		$match_str = '&amp;matchid='.$match_id;
-		$matchreport_str = EB_MATCHR_L46;
-		
-		// Get the scores for this match
-		switch($etype)
-		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			$q = "SELECT ".TBL_MATCHS.".*, "
-			.TBL_SCORES.".*, "
-			.TBL_PLAYERS.".*, "
-			.TBL_USERS.".*"
-			." FROM ".TBL_MATCHS.", "
-			.TBL_SCORES.", "
-			.TBL_PLAYERS.", "
-			.TBL_USERS
-			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-			." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-			." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-			." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
-			break;
-			case "ClanWar":
-			$q = "SELECT ".TBL_MATCHS.".*, "
-			.TBL_SCORES.".*, "
-			.TBL_CLANS.".*, "
-			.TBL_TEAMS.".*, "
-			.TBL_DIVISIONS.".*"
-			." FROM ".TBL_MATCHS.", "
-			.TBL_SCORES.", "
-			.TBL_CLANS.", "
-			.TBL_TEAMS.", "
-			.TBL_DIVISIONS
-			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-			." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
-			." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-			." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-			." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
-			break;
-			default:
-		}
-
-		$result = $sql->db_Query($q);
-		$numScores = mysql_numrows($result);
-
-		if (!isset($_POST['nbr_players']))   $_POST['nbr_players'] = $numScores;
-		if (!isset($_POST['map']))           $_POST['map'] = mysql_result($result,0, TBL_MATCHS.".Map");
-		if (!isset($_POST['reported_by']))   $_POST['reported_by'] = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
-		if (!isset($_POST['match_comment'])) $_POST['match_comment'] = mysql_result($result,0, TBL_MATCHS.".Comments");
-		if (!isset($_POST['time_reported'])) $_POST['time_reported'] = mysql_result($result,0, TBL_MATCHS.".TimeReported");
-
-		$index = 1;
-		$rank = 0;
-		$matchteam = 0;
-		$nbr_teams = 0;
-		for($score=0;$score < $numScores;$score++)
-		{
-			switch($etype)
-			{
-				case "One Player Ladder":
-				case "Team Ladder":
-				$pid  = mysql_result($result,$score, TBL_PLAYERS.".PlayerID");
-				$puid  = mysql_result($result,$score, TBL_USERS.".user_id");
-				$pname  = mysql_result($result,$score, TBL_USERS.".user_name");
-				$pavatar = mysql_result($result,$score, TBL_USERS.".user_image");
-				$pteam  = mysql_result($result,$score, TBL_PLAYERS.".Team");
-				list($pclan, $pclantag, $pclanid) = getClanName($pteam);
-				break;
-				case "ClanWar":
-				$pid  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
-				$pname  = mysql_result($result,$score, TBL_CLANS.".Name");
-				$pavatar = mysql_result($result,$score, TBL_CLANS.".Image");
-				$pteam  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
-				list($pclan, $pclantag, $pclanid) = getClanName($pteam); // Use this function to get other clan info like clan id?
-				break;
-				default:
-			}
-			$pscoreid  = mysql_result($result,$score, TBL_SCORES.".ScoreID");
-			$prank  = mysql_result($result,$score, TBL_SCORES.".Player_Rank");
-			$pMatchTeam  = mysql_result($result,$score, TBL_SCORES.".Player_MatchTeam");
-			$pdeltaELO  = mysql_result($result,$score, TBL_SCORES.".Player_deltaELO");
-			$pdeltaTS_mu  = mysql_result($result,$score, TBL_SCORES.".Player_deltaTS_mu");
-			$pdeltaTS_sigma  = mysql_result($result,$score, TBL_SCORES.".Player_deltaTS_sigma");
-			$pscore  = mysql_result($result,$score, TBL_SCORES.".Player_Score");
-			$pOppScore  = mysql_result($result,$score, TBL_SCORES.".Player_ScoreAgainst");
-			$ppoints  = mysql_result($result,$score, TBL_SCORES.".Player_Points");
-			$pfaction  = mysql_result($result,$score, TBL_SCORES.".Faction");
-
-			if ($pMatchTeam > $nbr_teams) $nbr_teams = $pMatchTeam;
-
-			$i = $score + 1;
-			if (!isset($_POST['team'.$i]))    $_POST['team'.$i] = 'Team #'.$pMatchTeam;
-			if (!isset($_POST['player'.$i]))  $_POST['player'.$i] = $pid;
-			if (!isset($_POST['score'.$i]))   $_POST['score'.$i] = $pscore;
-			if (!isset($_POST['faction'.$i])) $_POST['faction'.$i] = $pfaction;
-
-			if ($pMatchTeam != $matchteam)
-			{
-				if (!isset($_POST['rank'.$index])) $_POST['rank'.$index] = 'Team #'.$pMatchTeam;
-				if($prank == $rank)
-				{
-					if (!isset($_POST['draw'.$index])) $_POST['draw'.$index] = 1;
-				}
-				else
-				{
-					$rank++;
-				}
-				$matchteam = $pMatchTeam;
-				$index++;
-			}
-		}
-		if (!isset($_POST['nbr_teams'])) $_POST['nbr_teams'] = $nbr_teams;
-
-		//dbg form
-		//echo "<br>_POST: ";
-		//print_r($_POST);    // show $_POST
-		//echo "<br>_GET: ";
-		//print_r($_GET);     // show $_GET
 	}
+
+	if($match_id)
+	{
+		$match_str = '&amp;matchid='.$match_id;
+	}
+
 	// Assign values to POST if not set
-	if (!isset($_POST['time_reported'])) $_POST['time_reported'] = $time;
+	// fm: check might not be correct here
+	// should check if isset($_POST['matchedit']) only?
+	if ((!isset($_POST['time_reported']))
+	||isset($_POST['challengereport'])) $_POST['time_reported'] = $time;
 	$time_reported = $_POST['time_reported'];
-	
+
 	if(!isset($_POST['reported_by'])) $_POST['reported_by'] = USERID;
 	$reported_by = $_POST['reported_by'];
 
@@ -175,13 +69,14 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 
 	if (!isset($_POST['map'])) $_POST['map'] = 0;
 
-	$max_nbr_players = count($players_id)-1;
 
 	// if vars are not set, set them as empty.
 	if (!isset($_POST['nbr_players'])) $_POST['nbr_players'] = 2;
 	if (!isset($_POST['nbr_teams'])) $_POST['nbr_teams'] = 2;
 
 	// now to output the form HTML.
+	$max_nbr_players = count($players_id)-1;
+
 	$nbr_players = $_POST['nbr_players'];
 	$nbr_teams = $_POST['nbr_teams'];
 
@@ -228,7 +123,7 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 
 	/////////////////
 	/// MAIN FORM ///
-	/////////////////	
+	/////////////////
 	$text .= '<form id="matchreport" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$event_id.$match_str.'" method="post">';
 	$text .= '<div>';
 	// TABLE - Player/Teams Add/Remove
@@ -240,7 +135,8 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	$text .= '<tr><td>'.$nbr_players.'&nbsp;'.EB_MATCHR_L21.'</td>';
 	$text .= '<td><input type="hidden" name="nbr_players" value="'.$_POST['nbr_players'].'"/>';
 	// Add Player
-	if ($nbr_players < $max_nbr_players)
+	if (($nbr_players < $max_nbr_players)
+	&&(!isset($_POST['challengereport'])))
 	{
 		$text .= '<input class="button" type="submit" value="'.EB_MATCHR_L16.'" name="addPlayer"/></td>';
 	}
@@ -249,7 +145,8 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 		$text .= '<input class="button_disabled" type="submit" value="'.EB_MATCHR_L16.'" name="addPlayer" disabled="disabled"/></td>';
 	}
 	// Remove Player
-	if ($nbr_players>2)
+	if (($nbr_players>2)
+	&&(!isset($_POST['challengereport'])))
 	{
 		$text .= '<td><input class="button" type="submit" value="'.EB_MATCHR_L17.'" name="removePlayer"/></td>';
 	}
@@ -263,7 +160,8 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	$text .= '<tr><td>'.$nbr_teams.'&nbsp;'.EB_MATCHR_L22.'</td>';
 	$text .= '<td><input type="hidden" name="nbr_teams" value="'.$_POST['nbr_teams'].'"/>';
 	// Add Team
-	if ($nbr_teams<$nbr_players)
+	if (($nbr_teams<$nbr_players)
+	&&(!isset($_POST['challengereport'])))
 	{
 		$text .= '<input class="button" type="submit" value="'.EB_MATCHR_L18.'" name="addTeam"/></td>';
 	}
@@ -272,7 +170,8 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 		$text .= '<input class="button_disabled" type="submit" value="'.EB_MATCHR_L18.'" name="addTeam" disabled="disabled"/></td>';
 	}
 	// Remove Team
-	if ($nbr_teams>2)
+	if (($nbr_teams>2)
+	&&(!isset($_POST['challengereport'])))
 	{
 		$text .= '<td><input class="button" type="submit" value="'.EB_MATCHR_L19.'" name="removeTeam"/></td>';
 	}
@@ -302,11 +201,14 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	if ($allowScore == TRUE) $text .= '<td>'.EB_MATCHR_L26.'</td>';
 	if ($numFactions > 0) $text .= '<td>'.EB_MATCHR_L41.'</td>';
 	$text .= '</tr>';
+
+	$select_disabled_str = (isset($_POST['challengereport'])) ? 'disabled="disabled"' : '';
+
 	for($i=1;$i<=$nbr_players;$i++)
 	{
 		$text .= '<tr><td>'.EB_MATCHR_L23.$i.':</td>';
 
-		$text .= '<td><select class="tbox" name="player'.$i.'">';
+		$text .= '<td><select class="tbox" name="player'.$i.'" '.$select_disabled_str.'>';
 		for($j=1;$j <= $max_nbr_players+1;$j++)
 		{
 			$text .= '<option value="'.$players_id[($j-1)].'"';
@@ -438,6 +340,10 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 	$text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 	$text .= '<input type="hidden" name="time_reported" value="'.$time_reported.'"/>';
+	if(isset($_POST['challengereport']))
+	{
+		$text .= '<input type="hidden" name="challengereport" value="1"/>';
+	}
 	$text .= '<input class="button" type="submit" value="'.$matchreport_str.'" name="submit"/>';
 	$text .= '</div>';
 	$text .= '<br /><br />';

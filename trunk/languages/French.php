@@ -5,7 +5,7 @@
 |
 +----------------------------------------------------------------------------+
 */
-// ’, à, è, é, ê 	
+// ’, à, è, é, ê, 	
 define('EB_L1', 'eBattles');
 define('EB_L2', 'eBattles vous permet d’organiser vos propres ladders!
  Ladders avec Système Automatisé de Classement des Joueurs.
@@ -176,6 +176,12 @@ define('EB_EVENT_L61', 'Match');
 define('EB_EVENT_L62', 'Voir les détails');
 define('EB_EVENT_L63', 'Trophés récents');
 define('EB_EVENT_L64', 'match(s) en attente');
+define('EB_EVENT_L65', 'Défiez ce joueur');
+define('EB_EVENT_L66', 'Défi(s) lancés');
+define('EB_EVENT_L67', 'Défi(s) non-confirmé(s)');
+define('EB_EVENT_L68', 'Défi(s) en attente');
+define('EB_EVENT_L69', 'Défi effacé');
+define('EB_EVENT_L70', 'match(s) prévu(s)');
 
 define('EB_EVENTM_L1', 'Gérer');
 define('EB_EVENTM_L2', 'Sommaire');
@@ -300,7 +306,10 @@ define('EB_EVENTM_L118', 'Classique: Players are ranked based on their score in 
 Combined Stats: Players are ranked based on a combination of their scores in each stats category');
 define('EB_EVENTM_L119', 'Classique');
 define('EB_EVENTM_L120', 'Stats combinées');
-
+define('EB_EVENTM_L121', 'Challenges');
+define('EB_EVENTM_L122', 'Activer/Désactiver les Challenges');
+define('EB_EVENTM_L123', 'Sauver les Paramètres des Challenges');
+	
 define('EB_EVENTP_L1', 'Ladders passés');
 define('EB_EVENTP_L2', 'Ladders passés');
 define('EB_EVENTP_L3', 'Retour vers');
@@ -437,6 +446,10 @@ define('EB_MATCH_L10', 'commentaires');
 define('EB_MATCH_L11', 'commentaire');
 define('EB_MATCH_L12', 'en jouant');
 define('EB_MATCH_L13', 'A besoin de votre approbation');
+define('EB_MATCH_L14', 'a perdu contre');
+define('EB_MATCH_L15', 'Soumis par');
+define('EB_MATCH_L16', 'Prévu');
+define('EB_MATCH_L17', 'pour');
 
 define('EB_MATCHD_L1', 'Détails du Match');
 define('EB_MATCHD_L2', 'Match rapporté par');
@@ -529,7 +542,7 @@ define('EB_MATCHQL_L1', 'Rapport rapide de défaite');
 define('EB_MATCHQL_L2', 'Vous n’êtes pas authorisé a soumettre un match.');
 define('EB_MATCHQL_L3', 'Retour vers');
 define('EB_MATCHQL_L4', 'Ladder');
-define('EB_MATCHQL_L5', 'Selectonnez le joueur');
+define('EB_MATCHQL_L5', 'Selectionnez le joueur');
 define('EB_MATCHQL_L6', 'Soumettre la Perte');
 
 define('EB_GAME_L1', 'Jeu Inconnu');
@@ -586,6 +599,40 @@ define('EB_GAMES_L18', 'Mettre à jour les jeux sélectionnés');
 define('EB_GAMES_L19', 'Mettre à jour tous les jeux');
 define('EB_GAMES_L20', 'Ajouter les Jeux prédéfinis');
 
+define('EB_CHALLENGE_L1', 'Défi');
+define('EB_CHALLENGE_L2', 'Défier un Joueur');
+define('EB_CHALLENGE_L3', 'Défier une Équipes');
+define('EB_CHALLENGE_L4', 'Ladder:');
+define('EB_CHALLENGE_L5', 'Challenger:');
+define('EB_CHALLENGE_L6', 'Défié:');
+define('EB_CHALLENGE_L7', 'Sélectionnez des dates:');
+define('EB_CHALLENGE_L8', 'Commentairess:');
+define('EB_CHALLENGE_L9', 'Envoyer le Défi');
+define('EB_CHALLENGE_L10', 'La date');
+define('EB_CHALLENGE_L11', 'n’est pas rentrée');
+define('EB_CHALLENGE_L12', 'Défié soumis');
+define('EB_CHALLENGE_L13', 'Retour vers');
+define('EB_CHALLENGE_L14', 'Ladder');
+define('EB_CHALLENGE_L15', 'Annuler');
+define('EB_CHALLENGE_L16', 'Êtes-vous sûr de vouloir supprimer ce défi?');
+define('EB_CHALLENGE_L17', 'Confirmez');
+define('EB_CHALLENGE_L18', 'Confirmation du défi');
+define('EB_CHALLENGE_L19', 'Choisissez la date');
+define('EB_CHALLENGE_L20', 'Accepter');
+define('EB_CHALLENGE_L21', 'Décliner');
+define('EB_CHALLENGE_L22', 'Défi accepté, match prévu');
+define('EB_CHALLENGE_L23', 'You have been challenged!');
+define('EB_CHALLENGE_L24', 'Bonjour ');
+define('EB_CHALLENGE_L25', ',
+
+	Vous avez reçu un défi de ');
+define('EB_CHALLENGE_L26', ' dans le ladder "');
+define('EB_CHALLENGE_L27', '".
+	Veuillez vérifiez votre page "Mon Profil" pour plus d’infos.
+	
+	Cordiallement,
+	L’admin du ladder');
+	
 define('EB_AWARD_L1', 'Trophée');
 define('EB_AWARD_L2', 'a pris la 1ère place');
 define('EB_AWARD_L3', '1ère place');
