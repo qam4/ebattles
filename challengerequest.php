@@ -18,12 +18,13 @@ $e_wysiwyg = "challenge_comments";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
 
 
+/*
 //dbg form
 echo "<br>_POST: ";
 print_r($_POST);    // show $_POST
 echo "<br>_GET: ";
 print_r($_GET);     // show $_GET
-
+*/
 
 if (e_WYSIWYG)
 {
