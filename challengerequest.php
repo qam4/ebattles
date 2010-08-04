@@ -1,0 +1,352 @@
+<?php
+/**
+* ChallengeRequest.php
+*
+*/
+require_once("../../class2.php");
+require_once(e_PLUGIN.'ebattles/include/main.php');
+require_once(e_PLUGIN.'ebattles/include/match.php');
+require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/challenge.php");
+
+/*******************************************************************
+********************************************************************/
+// Specify if we use WYSIWYG for text areas
+global $e_wysiwyg;
+$e_wysiwyg = "challenge_comments";  // set $e_wysiwyg before including HEADERF
+require_once(HEADERF);
+
+
+//dbg form
+echo "<br>_POST: ";
+print_r($_POST);    // show $_POST
+echo "<br>_GET: ";
+print_r($_GET);     // show $_GET
+
+
+if (e_WYSIWYG)
+{
+	$insertjs = "rows='15'";
+}
+else
+{
+	require_once(e_HANDLER."ren_help.php");
+	$insertjs = "rows='5' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
+}
+
+$text = '
+<!-- main calendar program -->
+<script type="text/javascript" src="./js/calendar/calendar.js"></script>
+<!-- language for the calendar -->
+<script type="text/javascript" src="./js/calendar/lang/calendar-en.js"></script>
+<!-- the following script defines the Calendar.setup helper function, which makes
+adding a calendar a matter of 1 or 2 lines of code. -->
+<script type="text/javascript" src="./js/calendar/calendar-setup.js"></script>
+<script type="text/javascript">
+<!--//
+function clearDate(frm, index)
+{
+document.getElementById("f_date"+index).value = ""
+}
+//-->
+</script>
+';
+/* Event Name */
+$event_id = $_GET['eventid'];
+$q = "SELECT ".TBL_EVENTS.".*"
+." FROM ".TBL_EVENTS
+." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+$result = $sql->db_Query($q);
+
+$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
+$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+$eNumDates = 3; // hardcoded for now
+$ename = mysql_result($result,0 , TBL_EVENTS.".Name");
+
+if(isset($_POST['challenge_player']))
+{
+	$challenger = $_POST['Challenger'];
+	$challenged = $_POST['Challenged'];
+
+	$text .= PlayerChallengeForm($event_id, $challenger, $challenged);
+}
+if(isset($_POST['challenge_player_submit']))
+{
+	$challenger = $_POST['reported_by'];
+	$challenged = $_POST['Challenged'];
+
+	// Verify form
+	$error_str = '';
+
+	for($date=1; $date <= $eNumDates; $date++)
+	{
+		if ($_POST['date'.$date] == '')
+		{
+			$error_str .= '<li>'.EB_CHALLENGE_L10.'&nbsp;'.$date.'&nbsp;'.EB_CHALLENGE_L11.'</li>';
+		}
+	}
+
+	if (!empty($error_str)) {
+		// show form again
+		$text .= PlayerChallengeForm($event_id, $challenger, $challenged);
+
+		// errors have occured, halt execution and show form again.
+		$text .= '<p style="color:red">'.EB_MATCHR_L14;
+		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
+	}
+	else
+	{
+		SubmitPlayerChallenge($event_id, $challenger, $challenged, $eNumDates);
+		$text .= EB_CHALLENGE_L12;
+		$text .= '<br />';
+		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
+	}
+}
+
+$ns->tablerender("$ename (".eventType($etype).") - ".EB_CHALLENGE_L1, $text);
+require_once(FOOTERF);
+exit;
+
+//=================================================================================
+// Functions
+//=================================================================================
+function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
+{
+	global $sql;
+	global $tp;
+	global $time;
+
+	$q = "SELECT ".TBL_EVENTS.".*"
+	." FROM ".TBL_EVENTS
+	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	$result = $sql->db_Query($q);
+
+	$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
+	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+	$eNumDates = 3; // hardcoded for now
+	
+	$output .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
+
+	$output .= '<b>'.EB_CHALLENGE_L2.'</b><br />';
+	$output .= '<br />';
+	// Challenger Info
+	// Attention here, we use user_id, so there has to be 1 user for 1 player
+	$output .= '<b>'.EB_CHALLENGE_L5.'</b>'; // Challenger
+	$q = "SELECT ".TBL_PLAYERS.".*, "
+	.TBL_USERS.".*"
+	." FROM ".TBL_PLAYERS.", "
+	.TBL_USERS
+	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_USERS.".user_id = '$challengerpuid')";
+	$result = $sql->db_Query($q);
+
+	$pid    = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
+	$puid   = mysql_result($result,0 , TBL_USERS.".user_id");
+	$prank  = mysql_result($result,0 , TBL_PLAYERS.".Rank");
+	$pname  = mysql_result($result,0 , TBL_USERS.".user_name");
+	$pteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
+	list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+
+	if ($prank==0)
+	$prank_txt = EB_EVENT_L54;
+	else
+	$prank_txt = "#$prank";
+	$str = $pclantag.$pname.' ('.$prank_txt.')';
+	$output .= ' '.$str.'<br />';
+
+	// Challenged Info
+	$output .= '<b>'.EB_CHALLENGE_L6.'</b>'; // Challenged
+	$q = "SELECT ".TBL_PLAYERS.".*, "
+	.TBL_USERS.".*"
+	." FROM ".TBL_PLAYERS.", "
+	.TBL_USERS
+	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_PLAYERS.".PlayerID = '$challengedpid')";
+	$result = $sql->db_Query($q);
+
+	$pid    = mysql_result($result, 0, TBL_PLAYERS.".PlayerID");
+	$puid   = mysql_result($result, 0, TBL_USERS.".user_id");
+	$prank  = mysql_result($result, 0, TBL_PLAYERS.".Rank");
+	$pname  = mysql_result($result, 0, TBL_USERS.".user_name");
+	$pteam  = mysql_result($result, 0, TBL_PLAYERS.".Team");
+	list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+
+	if ($prank==0)
+	$prank_txt = EB_EVENT_L54;
+	else
+	$prank_txt = "#$prank";
+	$str = $pclantag.$pname.' ('.$prank_txt.')';
+	$output .= ' '.$str.'<br />';
+
+	$output .= '<br />';
+
+	// Select Dates
+	$output .= '<b>'.EB_CHALLENGE_L7.'</b><br />'; // Select Dates
+	$output .= '<table class="table_left">';
+	for($date=1; $date <= $eNumDates; $date++)
+	{
+		//<!-- Select date Date -->
+		$output .= '
+		<tr>
+		<td><b>'.EB_CHALLENGE_L10.' #'.$date.'</b></td>
+		<td>
+		<table>
+		<tr>
+		<td>
+		<div><input class="tbox" type="text" name="date'.$date.'" id="f_date'.$date.'" value="'.$_POST['date'.$date].'" readonly="readonly" /></div>
+		</td>
+		<td>
+		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger'.$date.'" style="cursor: pointer; border: 1px solid red;" title="'.EB_EVENTM_L33.'"
+		';
+		$output .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
+		$output .= '
+		</td>
+		<td>
+		<div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
+		</td>
+		</tr>
+		</table>
+		';
+		$output .= '
+		<script type="text/javascript">
+		Calendar.setup({
+		inputField     :    "f_date'.$date.'",      // id of the input field
+		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
+		showsTime      :    true,            // will display a time selector
+		button         :    "f_trigger'.$date.'",   // trigger for the calendar (button ID)
+		singleClick    :    true,           // single-click mode
+		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
+		});
+		</script>
+		</td>
+		</tr>
+		';
+	}
+	$output .= '</table>';
+
+	// comments
+	//----------------------------------
+	if(isset($_POST['challenge_comments']))
+	{
+		$comments = $tp->toDB($_POST['challenge_comments']);
+	} else {
+		$comments = '';
+	}
+	$output .= '<br />';
+	$output .= '<div>';
+	$output .= EB_CHALLENGE_L8.'<br />';
+	$output .= '<textarea class="tbox" id="challenge_comments" name="challenge_comments" style="width:500px" cols="70" '.$insertjs.'>'.$comments.'</textarea>';
+	if (!e_WYSIWYG)
+	{
+		$output .= '<br />'.display_help("helpb","comments");
+	}
+	$output .= '</div>';
+
+	$output .= '<br />';
+
+	$output .= '<div>';
+	$output .= '<input type="hidden" name="reported_by" value="'.$challengerpuid.'"/>';
+	$output .= '<input type="hidden" name="Challenger" value="'.$challengerpid.'"/>';
+	$output .= '<input type="hidden" name="Challenged" value="'.$challengedpid.'"/>';
+
+	$output .= '
+	</div>
+	<div>
+	'.ebImageTextButton('challenge_player_submit', 'challenge.png', EB_CHALLENGE_L9).'
+	</div>
+	</form>
+	';
+	
+	return $output;
+}
+
+function SubmitPlayerChallenge($event_id, $challengerpuid, $challengedpid)
+{
+	global $sql;
+	global $text;
+	global $tp;
+	global $time;
+
+	$q = "SELECT ".TBL_EVENTS.".*"
+	." FROM ".TBL_EVENTS
+	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	$result = $sql->db_Query($q);
+
+	$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
+	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+	$ename = mysql_result($result,0 , TBL_EVENTS.".Name");
+	$eNumDates = 3; // hardcoded for now
+
+	// Challenger Info
+	// Attention here, we use user_id, so there has to be 1 user for 1 player
+	$q = "SELECT ".TBL_PLAYERS.".*, "
+	.TBL_USERS.".*"
+	." FROM ".TBL_PLAYERS.", "
+	.TBL_USERS
+	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_USERS.".user_id = '$challengerpuid')";
+	$result = $sql->db_Query($q);
+	$challengerpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
+	$challengerpuid   = mysql_result($result, 0, TBL_USERS.".user_id");
+	$challengerpname  = mysql_result($result, 0, TBL_USERS.".user_name");
+
+	// Challenged Info
+	$q = "SELECT ".TBL_PLAYERS.".*, "
+	.TBL_USERS.".*"
+	." FROM ".TBL_PLAYERS.", "
+	.TBL_USERS
+	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_PLAYERS.".PlayerID = '$challengedpid')";
+	$result = $sql->db_Query($q);
+
+	$challengedpid    = mysql_result($result, 0, TBL_PLAYERS.".PlayerID");
+	$challengedpuid   = mysql_result($result, 0, TBL_USERS.".user_id");
+	$challengedpname  = mysql_result($result, 0, TBL_USERS.".user_name");
+
+	$challenge_times = '';
+	for($date=1; $date <= $eNumDates; $date++)
+	{
+		$challenge_date = $_POST['date'.$date];
+		$challenge_time_local = strtotime($challenge_date);
+		$challenge_time_local = $challenge_time_local - TIMEOFFSET;	// Convert to GMT time
+		if ($date > 1) $challenge_times .= ',';
+		$challenge_times .= $challenge_time_local;
+	}
+
+	// comments
+	//----------------------------------
+	$comments = $tp->toDB($_POST['challenge_comment']);
+	$time_reported = $time;
+
+	// Create Challenge ------------------------------------------
+	$q =
+	"INSERT INTO ".TBL_CHALLENGES."(Event,ChallengerPlayer,ChallengedPlayer,ReportedBy,TimeReported,Comments,Status,MatchDates)
+	VALUES (
+	'$event_id',
+	'$challengerpid',
+	'$challengedpid',
+	'$challengerpuid',
+	'$time_reported',
+	'$comments',
+	'requested',
+	'$challenge_times'
+	)";
+	$result = $sql->db_Query($q);
+
+	// Send PM
+	$sendto = $challengedpuid;
+	$fromid = $challengerpuid;
+	$subject = EB_CHALLENGE_L23;
+	$message = EB_CHALLENGE_L24.$challengedpname.EB_CHALLENGE_L25.$challengerpname.EB_CHALLENGE_L26.$ename.EB_CHALLENGE_L27;
+	sendNotification($sendto, $subject, $message, $fromid);
+
+}
+?>
+
+
+

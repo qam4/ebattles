@@ -1215,13 +1215,15 @@ function displayMatchInfo($match_id, $type = 0)
 		$mTime  = mysql_result($result, 0, TBL_MATCHS.".TimeReported");
 		$mTime_local = $mTime + TIMEOFFSET;
 		$date = date("d M Y, h:i A",$mTime_local);
-
-	// Calculate number of players and teams for the match
-	$q = "SELECT DISTINCT ".TBL_SCORES.".Player_MatchTeam"
-	." FROM ".TBL_SCORES
-	." WHERE (".TBL_SCORES.".MatchID = '$match_id')";
-	$result = $sql->db_Query($q);
-	$nbr_teams = mysql_numrows($result);
+		$mTimeScheduled  = mysql_result($result, 0, TBL_MATCHS.".TimeReported");
+		$mTimeScheduled_local = $mTimeScheduled + TIMEOFFSET;
+		$dateScheduled = date("d M Y, h:i A",$mTimeScheduled_local);
+		// Calculate number of players and teams for the match
+		$q = "SELECT DISTINCT ".TBL_SCORES.".Player_MatchTeam"
+		." FROM ".TBL_SCORES
+		." WHERE (".TBL_SCORES.".MatchID = '$match_id')";
+		$result = $sql->db_Query($q);
+		$nbr_teams = mysql_numrows($result);
 
 		// Check if the match has several ranks
 		$q = "SELECT DISTINCT ".TBL_MATCHS.".*, "
@@ -1235,6 +1237,7 @@ function displayMatchInfo($match_id, $type = 0)
 		if ($numRanks > 0)
 		{
 			$can_approve = 0;
+			$can_report = 0;
 			$userclass = 0;
 
 			switch($mEventType)
@@ -1313,32 +1316,52 @@ function displayMatchInfo($match_id, $type = 0)
 				break;
 				default:
 			}
+			// Is the user a player in the match?
+			$q_UserPlayers = "SELECT DISTINCT ".TBL_SCORES.".*"
+			." FROM ".TBL_MATCHS.", "
+			.TBL_SCORES.", "
+			.TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+			." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+			." AND (".TBL_PLAYERS.".User = ".USERID.")";
+			$result_UserPlayers = $sql->db_Query($q_UserPlayers);
+			$numUserPlayers = mysql_numrows($result_UserPlayers);
 
 			$can_approve = 0;
 			if (USERID==$mEventOwner)
 			{
 				$userclass |= eb_UC_EVENT_OWNER;
 				$can_approve = 1;
+				$can_report = 1;
 			}
 			if ($numMods>0)
 			{
 				$userclass |= eb_UC_EB_MODERATOR;
 				$can_approve = 1;
+				$can_report = 1;
 			}
 			if (check_class($pref['eb_mod_class']))
 			{
 				$userclass |= eb_UC_EB_MODERATOR;
 				$can_approve = 1;
+				$can_report = 1;
 			}
 			if ($numOpps>0)
 			{
 				$userclass |= eb_UC_EVENT_PLAYER;
 				$can_approve = 1;
 			}
+			if ($numUserPlayers > 0)
+			{
+				$can_report = 1;
+			}
 			if ($userclass < $mEventMatchesApproval) $can_approve = 0;
 			if ($mEventMatchesApproval == eb_UC_NONE) $can_approve = 0;
-			if ($mStatus == 'active') $can_approve = 0;
-			
+			if ($mStatus != 'pending') $can_approve = 0;
+			if ($mStatus != 'scheduled') $can_report = 0;
+
 			$orderby_str = " ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 			if($nbr_teams==2) $orderby_str = " ORDER BY ".TBL_SCORES.".Player_MatchTeam";
 
@@ -1387,7 +1410,7 @@ function displayMatchInfo($match_id, $type = 0)
 			$string .= '<tr>';
 			$scores = '';
 
-			if ($type == 0)
+			if (($type & eb_MATCH_NOEVENTINFO) == 0)
 			{
 				$string .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'" title="'.$mEventgame.'">';
 				$string .= '<img '.getActivityGameIconResize($mEventgameicon).'/>';
@@ -1481,13 +1504,22 @@ function displayMatchInfo($match_id, $type = 0)
 						}
 						else if ($prank > $rank)
 						{
-							$str = ' '.EB_MATCH_L3.' ';
+							if (($type & eb_MATCH_SCHEDULED) != 0)
+							{
+								$str = ' vs. ';
+
+							}
+							else
+							{
+								$str = ' '.EB_MATCH_L3.' ';
+
+							}
 						}
 						else
 						{
 							$str = ' '.EB_MATCH_L14.' ';
 						}
-						
+
 						$string .= $str;
 						$matchteam = $pmatchteam;
 						$rank = $prank;
@@ -1521,43 +1553,71 @@ function displayMatchInfo($match_id, $type = 0)
 			}
 
 			//score here
-			if ($mEventAllowScore == TRUE)
+			if (($mEventAllowScore == TRUE)
+			&&(($type & eb_MATCH_SCHEDULED) == 0))
 			{
 				$string .= ' ('.$scores.') ';
 			}
 
-			if ($type == 0)
+			if (($type & eb_MATCH_NOEVENTINFO) == 0)
 			{
 				$string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>';
 			}
-			if ($can_approve == 1)
+			if (($type & eb_MATCH_SCHEDULED) == 0)
 			{
-				$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/></a>';
-			}
-			else
-			{
-				$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img src="'.e_PLUGIN.'ebattles/images/magnify.png" alt="'.EB_MATCH_L5.'" title="'.EB_MATCH_L5.'" style="vertical-align:text-top;"/></a>';
-			}
-			$string .= ' <div class="smalltext">';
-			$string .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
+				if ($can_approve == 1)
+				{
+					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/></a>';
+				}
+				else
+				{
+					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img src="'.e_PLUGIN.'ebattles/images/magnify.png" alt="'.EB_MATCH_L5.'" title="'.EB_MATCH_L5.'" style="vertical-align:text-top;"/></a>';
+				}
+				$string .= ' <div class="smalltext">';
+				$string .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
 
-			if (($time-$mTime) < INT_MINUTE )
-			{
-				$string .= EB_MATCH_L7;
-			}
-			else if (($time-$mTime) < INT_DAY )
-			{
-				$string .= get_formatted_timediff($mTime, $time).'&nbsp;'.EB_MATCH_L8;
+				if (($time-$mTime) < INT_MINUTE )
+				{
+					$string .= EB_MATCH_L7;
+				}
+				else if (($time-$mTime) < INT_DAY )
+				{
+					$string .= get_formatted_timediff($mTime, $time).'&nbsp;'.EB_MATCH_L8;
+				}
+				else
+				{
+					$string .= EB_MATCH_L9.'&nbsp;'.$date.'.';
+				}
+				$nbr_comments = getCommentTotal("ebmatches", $match_id);
+				$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'" title="'.EB_MATCH_L4.'&nbsp;'.$match_id.'">'.$nbr_comments.'&nbsp;';
+				$string .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
+				$string .= '</a>';
+				$string .= '</div></td>';
 			}
 			else
 			{
-				$string .= EB_MATCH_L9.'&nbsp;'.$date.'.';
+				$string .= ' <div class="smalltext">';
+				$string .= EB_MATCH_L16.'&nbsp;';
+				$string .= EB_MATCH_L17.'&nbsp;'.$date.'.';
+
+				$string .= '</div></td>';
 			}
-			$nbr_comments = getCommentTotal("ebmatches", $match_id);
-			$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'" title="'.EB_MATCH_L4.'&nbsp;'.$match_id.'">'.$nbr_comments.'&nbsp;';
-			$string .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
-			$string .= '</a>';
-			$string .= '</div></td></tr>';
+
+			if ($can_report == 1)
+			{
+				$string .= '<td>';
+				$string .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$mEventID.'&amp;matchid='.$match_id.'" method="post">';
+				$text .= '<div>';
+				$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
+				$text .= '</div>';
+				$string .= '<div>';
+				$string .= ebImageTextButton('challengereport', 'page_white_edit.png', '', '', '', EB_EVENT_L57);
+				$string .= '</div>';
+				$string .= '</form>';
+				$string .= '</td>';
+			}
+
+			$string .= '</tr>';
 		}
 	}
 	return $string;

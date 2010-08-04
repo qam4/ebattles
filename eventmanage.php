@@ -140,6 +140,7 @@ else
     $ematch_report_userclass = mysql_result($result,0 , TBL_EVENTS.".match_report_userclass");
     $equick_loss_report = mysql_result($result,0 , TBL_EVENTS.".quick_loss_report");
     $eranking_type = mysql_result($result,0 , TBL_EVENTS.".RankingType");
+    $echallengesenabled = mysql_result($result,0 , TBL_EVENTS.".ChallengesEnable");
 
     if($estart!=0)
     {
@@ -171,6 +172,7 @@ else
     else
     {
         //***************************************************************************************
+        // tab-page "Event Summary"
         $text .= '
         <div class="tab-pane" id="tab-pane-3">
 
@@ -293,9 +295,10 @@ else
         </table>
         </form>
         </div>
-        ';
+        ';  // tab-page "Event Summary"
 
         //***************************************************************************************
+        // tab-page "Event Settings"
         $text .= '
         <div class="tab-page">
         <div class="tab">'.EB_EVENTM_L3.'</div>
@@ -623,8 +626,10 @@ else
 
         </form>
         </div>
-        ';
+        ';  // tab-page "Event Settings"
+        
         //***************************************************************************************
+		// tab-page "Event Rules"
         $text .= '
         <div class="tab-page">
         <div class="tab">'.EB_EVENTM_L4.'</div>
@@ -662,9 +667,10 @@ else
 
         </form>
         </div>
-        ';
+        ';  // tab-page "Event Rules"
 
         //***************************************************************************************
+        // tab-page "Event Players/Teams"
         $text .= '
         <div class="tab-page">
         <div class="tab">'.EB_EVENTM_L5.'</div>
@@ -991,9 +997,10 @@ else
 
         $text .= '
         </div>
-        ';
+        ';  // tab-page "Event Players/Teams"
 
         //***************************************************************************************
+        // tab-page "Event Reset"
         $text .= '
         <div class="tab-page">
         <div class="tab">'.EB_EVENTM_L6.'</div>
@@ -1046,8 +1053,10 @@ else
         </table>
         </form>
         </div>
-        ';
+        ';  // tab-page "Event Reset"
+        
         //***************************************************************************************
+        // tab-page "Event Stats"
         $cat_index = 0;
         $text .= '
         <div class="tab-page">
@@ -1276,7 +1285,60 @@ else
         </div>
         </td></tr></table>
         </form>
+        </div>';   // tab-page "Event Stats"
+        
+        //***************************************************************************************
+        // tab-page "Event Settings"
+        $text .= '
+        <div class="tab-page">
+        <div class="tab">'.EB_EVENTM_L121.'</div>
+        ';
+        $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        $text .= '
+        <table class="fborder" style="width:95%">
+        <tbody>
+        ';
+        //<!-- Enable/Disable Challenges -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L122.'</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input class="tbox" type="checkbox" name="eventchallengesenable"';
+        if ($echallengesenabled == TRUE)
+        {
+            $text .= ' checked="checked"/>';
+        }
+        else
+        {
+            $text .= '/>';
+        }
+        $text .= '
         </div>
+        </td>
+        </tr>
+        ';
+
+        // ------------------------------
+         $text .= '
+        </tbody>
+        </table>
+        ';
+
+        //<!-- Save Button -->
+        $text .= '
+        <table><tr><td>
+        <div>
+        '.ebImageTextButton('eventchallengessave', 'disk.png', EB_EVENTM_L123).'
+        </div>
+        </td></tr></table>
+
+        </form>
+        </div>
+        ';  // tab-page "Event Challenges"        
+
+        $text .= '
         </div>
         <script type="text/javascript">
         //<![CDATA[

@@ -461,6 +461,22 @@ else
             header("Location: eventmanage.php?eventid=$event_id");
             exit();
         }
+        if(isset($_POST['eventchallengessave']))
+        {
+           /* Event Challenges enable/disable */
+            if ($_POST['eventchallengesenable'] != "")
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET ChallengesEnable = 1 WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
+            else
+            {
+                $q2 = "UPDATE ".TBL_EVENTS." SET ChallengesEnable = 0 WHERE (EventID = '$event_id')";
+                $result2 = $sql->db_Query($q2);
+            }
+            header("Location: eventmanage.php?eventid=$event_id");
+            exit();
+        }
     }
 }
 

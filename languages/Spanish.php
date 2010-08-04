@@ -177,6 +177,12 @@ define('EB_EVENT_L61', 'Partido');
 define('EB_EVENT_L62', 'Ver detalles');
 define('EB_EVENT_L63', 'Ultimos Premios');
 define('EB_EVENT_L64', 'Partido(s) pendiente');
+define('EB_EVENT_L65', 'Desafío de un jugador');
+define('EB_EVENT_L66', 'desafío(s) solicitada');
+define('EB_EVENT_L67', 'desafío(s) sin confirmar');
+define('EB_EVENT_L68', 'desafío(s) pendiente');
+define('EB_EVENT_L69', 'Desafío eliminado');
+define('EB_EVENT_L70', 'partido(s) solicitada');
 
 define('EB_EVENTM_L1', 'Gestionar - EVENTO');
 define('EB_EVENTM_L2', 'Resumen');
@@ -301,6 +307,9 @@ define('EB_EVENTM_L118', 'Classic: Players are ranked based on their score in th
 Combined Stats: Players are ranked based on a combination of their scores in each stats category');
 define('EB_EVENTM_L119', 'Classic');
 define('EB_EVENTM_L120', 'Combined Stats');
+define('EB_EVENTM_L121', 'Evento Desafíos');
+define('EB_EVENTM_L122', 'Activar/Desactivar Desafíos');
+define('EB_EVENTM_L123', 'Guardar configuracion de los desafíos');
 
 define('EB_EVENTP_L1', 'Eventos anteriores');
 define('EB_EVENTP_L2', 'Eventos anteriores');
@@ -437,6 +446,10 @@ define('EB_MATCH_L10', 'comentarios');
 define('EB_MATCH_L11', 'comentario');
 define('EB_MATCH_L12', 'Jugando');
 define('EB_MATCH_L13', 'Las necesidades de su aprobación');
+define('EB_MATCH_L14', 'perdió contra');
+define('EB_MATCH_L15', 'Enviado por');
+define('EB_MATCH_L16', 'Programado');
+define('EB_MATCH_L17', 'para');
 
 define('EB_MATCHD_L1', 'Detalles del Partido');
 define('EB_MATCHD_L2', 'Partido informado por');
@@ -586,6 +599,39 @@ define('EB_GAMES_L18', 'Actualizar seleccionado');
 define('EB_GAMES_L19', 'Atualizar todos selecionados');
 define('EB_GAMES_L20', 'A&ntilde;adir Juegos Predefinidos');
 
+define('EB_CHALLENGE_L1', 'Desafío');
+define('EB_CHALLENGE_L2', 'Desafío de un jugador');
+define('EB_CHALLENGE_L3', 'Desafío de un equipo');
+define('EB_CHALLENGE_L4', 'Evento:');
+define('EB_CHALLENGE_L5', 'Desafíador:');
+define('EB_CHALLENGE_L6', 'Desafíado:');
+define('EB_CHALLENGE_L7', 'Seleccione las fechas:');
+define('EB_CHALLENGE_L8', 'Comentarios:');
+define('EB_CHALLENGE_L9', 'Enviar Desafío');
+define('EB_CHALLENGE_L10', 'Date');
+define('EB_CHALLENGE_L11', 'is not set');
+define('EB_CHALLENGE_L12', 'Desafío se presenta');
+define('EB_CHALLENGE_L13', 'Volver a');
+define('EB_CHALLENGE_L14', 'Eventos');
+define('EB_CHALLENGE_L15', 'Retirar');
+define('EB_CHALLENGE_L16', '&iquest;Estas seguro de que deseas eliminar este desafío?');
+define('EB_CHALLENGE_L17', 'Confirmar');
+define('EB_CHALLENGE_L18', 'Confirmar un desafío');
+define('EB_CHALLENGE_L19', 'Elija una fecha');
+define('EB_CHALLENGE_L20', 'Aceptar');
+define('EB_CHALLENGE_L21', 'Declinar');
+define('EB_CHALLENGE_L22', 'Desafío aceptado, Partido programado');
+define('EB_CHALLENGE_L23', 'You have been challenged!');
+define('EB_CHALLENGE_L24', 'Hola ');
+define('EB_CHALLENGE_L25', ',
+
+	Usted ha sido cuestionado por ');
+define('EB_CHALLENGE_L26', ' en el evento "');
+define('EB_CHALLENGE_L27', '".
+	Por favor revise su "Mi prefil" pagina para ver los detalles desafío.
+	
+	Cordialmente,
+	El evento admin');
 define('EB_AWARD_L1', 'Premio');
 define('EB_AWARD_L2', 'tomo 1er lugar');
 define('EB_AWARD_L3', '1er lugar');

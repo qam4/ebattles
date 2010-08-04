@@ -503,11 +503,13 @@ function sendNotification($sendto, $subject, $message, $fromid=0) {
         }
     }
 
+    /*
     // Check user is allowed to send PMs
     $pm_prefs = $sysprefs->getArray("pm_prefs");
     if (!check_class($pm_prefs['pm_class'])) {
         return NOT_AUTHORIZED;
     }
+    */
 
     /*
     // Annotate message with senders details
@@ -573,12 +575,14 @@ function versionsCompare($version1, $version2)
     }
 }
 
-function ebImageTextButton($name, $image, $text, $class='', $confirm='')
+function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title='')
 {
-	$image_str = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'" style="vertical-align:middle"/>' : '';
+	$image_str   = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'" style="vertical-align:middle"/>' : '';
 	$confirm_str = ($confirm!='') ? 'onclick="return confirm(\''.$confirm.'\');"' : '';
-	$class_str = ($class!='') ? 'class="'.$class.'"' : '';
-	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" '.$confirm_str.'>'.$image_str.'&nbsp;'.$text.'</button></div>
+	$class_str   = ($class!='') ? 'class="'.$class.'"' : '';
+	$title_str   = ($title!='') ? 'title="'.$title.'"' : '';
+	$text_str    = ($text != '') ? '&nbsp;'.$text : '';
+	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" '.$title_str.' '.$confirm_str.'>'.$image_str.$text_str.'</button></div>
             <div style="clear:both"></div>';
 }
 

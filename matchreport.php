@@ -162,6 +162,128 @@ $text .= '
 <div class="spacer">
 ';
 
+if($match_id)
+{
+	// If match_id is not null, fill up the form information from the database
+	switch($etype)
+	{
+		case "One Player Ladder":
+		case "Team Ladder":
+		$q = "SELECT ".TBL_MATCHS.".*, "
+		.TBL_SCORES.".*, "
+		.TBL_PLAYERS.".*, "
+		.TBL_USERS.".*"
+		." FROM ".TBL_MATCHS.", "
+		.TBL_SCORES.", "
+		.TBL_PLAYERS.", "
+		.TBL_USERS
+		." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+		." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+		." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+		break;
+		case "ClanWar":
+		$q = "SELECT ".TBL_MATCHS.".*, "
+		.TBL_SCORES.".*, "
+		.TBL_CLANS.".*, "
+		.TBL_TEAMS.".*, "
+		.TBL_DIVISIONS.".*"
+		." FROM ".TBL_MATCHS.", "
+		.TBL_SCORES.", "
+		.TBL_CLANS.", "
+		.TBL_TEAMS.", "
+		.TBL_DIVISIONS
+		." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+		." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+		." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+		." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+		break;
+		default:
+	}
+
+	$result = $sql->db_Query($q);
+	$numScores = mysql_numrows($result);
+
+	if (!isset($_POST['nbr_players']))   $_POST['nbr_players'] = $numScores;
+	if (!isset($_POST['map']))           $_POST['map'] = mysql_result($result,0, TBL_MATCHS.".Map");
+	if (!isset($_POST['reported_by']))   $_POST['reported_by'] = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
+	if (!isset($_POST['match_comment'])) $_POST['match_comment'] = mysql_result($result,0, TBL_MATCHS.".Comments");
+	if (!isset($_POST['time_reported'])) $_POST['time_reported'] = mysql_result($result,0, TBL_MATCHS.".TimeReported");
+
+	$index = 1;
+	$rank = 0;
+	$matchteam = 0;
+	$nbr_teams = 0;
+	for($score=0;$score < $numScores;$score++)
+	{
+		switch($etype)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			$pid  = mysql_result($result,$score, TBL_PLAYERS.".PlayerID");
+			$puid  = mysql_result($result,$score, TBL_USERS.".user_id");
+			$pname  = mysql_result($result,$score, TBL_USERS.".user_name");
+			$pavatar = mysql_result($result,$score, TBL_USERS.".user_image");
+			$pteam  = mysql_result($result,$score, TBL_PLAYERS.".Team");
+			list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+			break;
+			case "ClanWar":
+			$pid  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
+			$pname  = mysql_result($result,$score, TBL_CLANS.".Name");
+			$pavatar = mysql_result($result,$score, TBL_CLANS.".Image");
+			$pteam  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
+			list($pclan, $pclantag, $pclanid) = getClanName($pteam); // Use this function to get other clan info like clan id?
+			break;
+			default:
+		}
+		$pscoreid  = mysql_result($result,$score, TBL_SCORES.".ScoreID");
+		$prank  = mysql_result($result,$score, TBL_SCORES.".Player_Rank");
+		$pMatchTeam  = mysql_result($result,$score, TBL_SCORES.".Player_MatchTeam");
+		$pdeltaELO  = mysql_result($result,$score, TBL_SCORES.".Player_deltaELO");
+		$pdeltaTS_mu  = mysql_result($result,$score, TBL_SCORES.".Player_deltaTS_mu");
+		$pdeltaTS_sigma  = mysql_result($result,$score, TBL_SCORES.".Player_deltaTS_sigma");
+		$pscore  = mysql_result($result,$score, TBL_SCORES.".Player_Score");
+		$pOppScore  = mysql_result($result,$score, TBL_SCORES.".Player_ScoreAgainst");
+		$ppoints  = mysql_result($result,$score, TBL_SCORES.".Player_Points");
+		$pfaction  = mysql_result($result,$score, TBL_SCORES.".Faction");
+
+		if ($pMatchTeam > $nbr_teams) $nbr_teams = $pMatchTeam;
+
+		$i = $score + 1;
+		if (!isset($_POST['team'.$i]))    $_POST['team'.$i] = 'Team #'.$pMatchTeam;
+		if (!isset($_POST['player'.$i]))  $_POST['player'.$i] = $pid;
+		if (!isset($_POST['score'.$i]))   $_POST['score'.$i] = $pscore;
+		if (!isset($_POST['faction'.$i])) $_POST['faction'.$i] = $pfaction;
+
+		if ($pMatchTeam != $matchteam)
+		{
+			if (!isset($_POST['rank'.$index])) $_POST['rank'.$index] = 'Team #'.$pMatchTeam;
+			if($prank == $rank)
+			{
+				if (!isset($_POST['draw'.$index])) $_POST['draw'.$index] = 1;
+			}
+			else
+			{
+				$rank++;
+			}
+			$matchteam = $pMatchTeam;
+			$index++;
+		}
+	}
+	if (!isset($_POST['nbr_teams'])) $_POST['nbr_teams'] = $nbr_teams;
+
+	/*
+	//dbg form
+	echo "<br>_POST: ";
+	print_r($_POST);    // show $_POST
+	echo "<br>_GET: ";
+	print_r($_GET);     // show $_GET
+	*/
+}
+
 // assuming we saved the above function in "functions.php", let's make sure it's available
 require_once(e_PLUGIN.'ebattles/matchreport_functions.php');
 
@@ -452,7 +574,7 @@ if (isset($_POST['submit']))
 	// if we get here, all data checks were okay, process information as you wish.
 } else {
 
-	if (!isset($_POST['matchreport'])&&!isset($_POST['matchedit']))
+	if (!isset($_POST['matchreport'])&&!isset($_POST['matchedit'])&&!isset($_POST['challengereport']))
 	{
 		$text .= '<p>'.EB_MATCHR_L33.'</p>';
 		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]</p>';

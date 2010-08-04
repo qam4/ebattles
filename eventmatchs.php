@@ -97,7 +97,7 @@ else
         for($i=0; $i<$num_rows; $i++)
         {
             $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-            $text .= displayMatchInfo($mID, 1);
+            $text .= displayMatchInfo($mID, eb_MATCH_NOEVENTINFO);
         }
         $text .= '</table>';
     }

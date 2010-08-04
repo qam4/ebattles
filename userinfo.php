@@ -12,6 +12,7 @@ require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 require_once(e_HANDLER."rate_class.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/match.php");
+require_once(e_PLUGIN."ebattles/include/challenge.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -55,25 +56,22 @@ else
     Player Profile
     ---------------------
     */
-    $text .= '
-    <div class="tab-page">
-    <div class="tab">'.EB_USER_L2.'</div>
-    ';
+    $text .= '<div class="tab-page">';    // tab-page"Profile"
+    $text .= '<div class="tab">'.EB_USER_L2.'</div>';
 
     $text .= '<p>';
     $text .= EB_USER_L7.': <a href="'.e_BASE.'user.php?id.'.$req_user.'">'.$uname.'</a>';
     $text .= '</p>';
 
-    $text .= '</div>';
+    $text .= '</div>';    // tab-page "Profile"
 
     /*
     --------------------- 
     Events 
     ---------------------
     */
-    $text .= '
-    <div class="tab-page">
-    <div class="tab">'.EB_USER_L3.'</div>
+    $text .= '<div class="tab-page">';    // tab-page "Events"
+    $text .= '<div class="tab">'.EB_USER_L3.'</div>
     ';
     if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_events_create_class'])))
     {
@@ -306,16 +304,15 @@ else
         }
         $text .= '</table>';
     }
-    $text .= '</div>';
+    $text .= '</div>';   // tab-page"Events"
 
     /*
     --------------------- 
     Divisions
     ---------------------
     */
-    $text .= '
-    <div class="tab-page">
-    <div class="tab">'.EB_USER_L4.'</div>
+    $text .= '<div class="tab-page">';   // tab-page "Divisions"
+    $text .= '<div class="tab">'.EB_USER_L4.'</div>
     ';
     if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_teams_create_class'])))
     {
@@ -507,17 +504,15 @@ else
         }
         $text .= '</table>';
     }
-    $text .= '</div>';
+    $text .= '</div>';   // tab-page "Divisions"
 
     /*
     --------------------- 
     Matches
     ---------------------
     */
-    $text .= '
-    <div class="tab-page">
-    <div class="tab">'.EB_USER_L5.'</div>
-    ';
+    $text .= '<div class="tab-page">';   // tab-page "Matches"
+    $text .= '<div class="tab">'.EB_USER_L5.'</div>';
 
     /* Display Active Matches */
     /* set pagination variables */
@@ -535,9 +530,9 @@ else
     $pages->mid_range = eb_PAGINATION_MIDRANGE;
     $pages->paginate();
 
-    $text .= '<p>';
+    $text .= '<p><b>';
     $text .= $totalItems.'&nbsp;'.EB_EVENT_L59;
-    $text .= '</p>';
+    $text .= '</b></p>';
     
     $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
     ." FROM ".TBL_MATCHS.", "
@@ -575,15 +570,6 @@ else
         $text .= '</table>';
     }
     /* Display Pending Matches */
-/* fm
- Need to add the user's pending matches. (done)
- And highlight them if they need his approval (replace details icon with a thumbs up icon?)
- Maybe do this in the displayMatchInfo() function.
- i.e:
-  - if his userclass is enough 
-  - he is not in the reporter's matchteam
-*/
-
     $text .= '<br />';
 
     $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
@@ -598,10 +584,10 @@ else
     $result = $sql->db_Query($q);
     $numMatches = mysql_numrows($result);
 
-    $text .= '<p>';
+    $text .= '<p><b>';
     $text .= $numMatches.'&nbsp;'.EB_EVENT_L64;
-    $text .= '</p>';
-    $text .= '<br />';
+    $text .= '</b></p>';
+	$text .= '<br />';
 
     if ($numMatches>0)
     {
@@ -610,22 +596,110 @@ else
         for($i=0; $i < $numMatches; $i++)
         {
             $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-            $text .= displayMatchInfo($mID, 1);
+            $text .= displayMatchInfo($mID);
         }
         $text .= '</table>';
     }
 
-    $text .= '</div>';
+    /* Display Scheduled Matches */
+    $text .= '<br />';
+
+    $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+    ." FROM ".TBL_MATCHS.", "
+    .TBL_SCORES.", "
+    .TBL_PLAYERS
+    ." WHERE (".TBL_MATCHS.".Status = 'scheduled')"
+    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+    ." AND (".TBL_PLAYERS.".User = '$req_user')"
+    ." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
+    $result = $sql->db_Query($q);
+    $numMatches = mysql_numrows($result);
+
+    $text .= '<p><b>';
+    $text .= $numMatches.'&nbsp;'.EB_EVENT_L70;
+    $text .= '</b></p>';
+	$text .= '<br />';
+
+    if ($numMatches>0)
+    {
+        /* Display table contents */
+        $text .= '<table class="table_left">';
+        for($i=0; $i < $numMatches; $i++)
+        {
+            $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+            $text .= displayMatchInfo($mID, eb_MATCH_SCHEDULED);
+        }
+        $text .= '</table>';
+    }
+    /* Display Requested Challenges */
+    $text .= '<br />';
+
+    $q = "SELECT DISTINCT ".TBL_CHALLENGES.".*"
+    ." FROM ".TBL_CHALLENGES
+    ." WHERE (".TBL_CHALLENGES.".Status = 'requested')"
+    ." AND (".TBL_CHALLENGES.".ReportedBy = '$req_user')"
+    ." ORDER BY ".TBL_CHALLENGES.".TimeReported DESC";
+    $result = $sql->db_Query($q);
+    $numChallenges = mysql_numrows($result);
+
+    $text .= '<p><b>';
+    $text .= $numChallenges.'&nbsp;'.EB_EVENT_L66;
+    $text .= '</b></p>';
+	$text .= '<br />';
+
+    if ($numChallenges>0)
+    {
+        /* Display table contents */
+        $text .= '<table class="table_left">';
+        for($i=0; $i < $numChallenges; $i++)
+        {
+            $cID  = mysql_result($result,$i, TBL_CHALLENGES.".ChallengeID");
+            $text .= displayChallengeInfo($cID);
+        }
+        $text .= '</table>';
+    }
+    
+    /* Display Unconfirmed Challenges */
+    $text .= '<br />';
+
+	$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*"
+	." FROM ".TBL_CHALLENGES.", "
+	.TBL_PLAYERS
+    ." WHERE (".TBL_CHALLENGES.".Status = 'requested')"
+	."   AND (".TBL_PLAYERS.".PlayerID = ".TBL_CHALLENGES.".ChallengedPlayer)"
+	."   AND (".TBL_PLAYERS.".User = '$req_user')"
+    ." ORDER BY ".TBL_CHALLENGES.".TimeReported DESC";
+	$result = $sql->db_Query($q);
+    $numChallenges = mysql_numrows($result);
+
+    $text .= '<p><b>';
+    $text .= $numChallenges.'&nbsp;'.EB_EVENT_L67;
+    $text .= '</b></p>';
+	$text .= '<br />';
+
+    if ($numChallenges>0)
+    {
+        /* Display table contents */
+        $text .= '<table class="table_left">';
+        for($i=0; $i < $numChallenges; $i++)
+        {
+            $cID  = mysql_result($result,$i, TBL_CHALLENGES.".ChallengeID");
+            $text .= displayChallengeInfo($cID);
+        }
+        $text .= '</table>';
+    }
+    	
+    $text .= '</div>';   // tab-page "Matches"
+
 
     /*
     --------------------- 
     Awards
     ---------------------
     */
-    $text .= '
-    <div class="tab-page">
-    <div class="tab">'.EB_USER_L6.'</div>
-    ';
+    $text .= '<div class="tab-page">';   // tab-page "Awards"
+    $text .= '<div class="tab">'.EB_USER_L6.'</div>';
 
     /* Stats/Results */
     $q = "SELECT ".TBL_AWARDS.".*, "
@@ -715,7 +789,7 @@ else
         $text .= '</table><br />';
     }
     $text .= '<br />';
-    $text .= '</div>';
+    $text .= '</div>';   // tab-page "Awards"
 
     $text .= '
     </div>
