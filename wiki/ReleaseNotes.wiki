@@ -1,5 +1,40 @@
 #summary eBattles Release Notes.
 
+= Release 0.8.4 =
+==Features ==
+ * Added "Player Challenges system"
+  * Features:
+   * A player (the challenger) can challenge another player (the challenged) in the same ladder.
+   * To request a challenge, 
+    * the challenger selects a player in the ladder and clicks on "Challenge player"
+    * on the next page, the challenger selects a number of dates/times (now hardcoded to 3) and can leave a comment, then click "Send challenge".
+    * A PM is sent to the challenged player.
+    * The challenge appears in the challenger/challenged "My profile" page and in the event's page.
+   * The challenger can "Withdraw" the challenge
+   * The challenged can "Confirm" the challenge by accepting or declining it.
+    * He can select one of the dates proposed by the challenger, and click "Accept"
+    * He can click "Decline"
+   * The confirmed challenge becomes a scheduled match. It can be played, and reported by either players.
+  * Limitations (for now):
+    * No support for Team challenges yet.
+    * Only 1 option: Events admin can enable/disable challenges
+  * Plan:
+    * Add team challenges support
+    * Add more options
+      * How many simultaneous challenges allowed
+      * Dates options
+        * How many dates required
+        * Minimum delay between request and challenge date
+      * Points removed for declining challenge
+      * Challenge expiration
+        * Allow challenge to expire
+        * Hours to expire after
+        * Penalty for not accepting before expiration
+        * Bonus for challenger
+ * In match details, only display stats categories that have a non-zero max rating value. (Fixes issue 85)
+== Fixed ==
+ * Improved match info display.
+
 = Release 0.8.3 =
 == Features ==
  * Match editing (Fixes issue 22)
