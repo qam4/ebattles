@@ -49,6 +49,8 @@ function displayChallengeInfo($challenge_id, $type = 0)
 
 		$cChallengerpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerPlayer");
 		$cChallengedpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedPlayer");
+		$cChallengertID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerTeam");
+		$cChallengedtID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedTeam");
 
 		$string .= '<tr>';
 		// Game icon
@@ -60,43 +62,87 @@ function displayChallengeInfo($challenge_id, $type = 0)
 		}
 
 		$string .= '<td>';
-		// Challenger Info
-		$q = "SELECT ".TBL_PLAYERS.".*, "
-		.TBL_USERS.".*"
-		." FROM ".TBL_PLAYERS.", "
-		.TBL_USERS
-		." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
-		."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-		."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
-		$result = $sql->db_Query($q);
-		$challengerpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
-		$challengerpuid   = mysql_result($result, 0, TBL_USERS.".user_id");
-		$challengerpname  = mysql_result($result, 0, TBL_USERS.".user_name");
-		$challengerpavatar = mysql_result($result,$index, TBL_USERS.".user_image");
-		$challengerpteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");
-		list($challengerpclan, $challengerpclantag, $challengerpclanid) = getClanName($challengerpteam);
-		$isUserChallenger = (USERID == $challengerpuid) ? TRUE : FALSE;
-		$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengerpuid.'">'.$challengerpclantag.$challengerpname.'</a>';
 
-		$string .= ' vs. ';
-
-		// Challenged Info
+		// User info
 		$q = "SELECT ".TBL_PLAYERS.".*, "
-		.TBL_USERS.".*"
+		.TBL_USERS.".*, "
+		.TBL_TEAMS.".*"
 		." FROM ".TBL_PLAYERS.", "
-		.TBL_USERS
+		.TBL_USERS.", "
+		.TBL_TEAMS
 		." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
-		."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-		."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
+		."   AND (".TBL_TEAMS.".TeamID = ".TBL_PLAYERS.".Team)"
+		."   AND (".TBL_PLAYERS.".User = '".USERID."')";
 		$result = $sql->db_Query($q);
-		$challengedpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
-		$challengedpuid   = mysql_result($result, 0, TBL_USERS.".user_id");
-		$challengedpname  = mysql_result($result, 0, TBL_USERS.".user_name");
-		$challengedpavatar = mysql_result($result,$index, TBL_USERS.".user_image");
-		$challengedpteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");
-		list($challengedpclan, $challengedpclantag, $challengedpclanid) = getClanName($challengedpteam);
-		$isUserChallenged = (USERID == $challengedpuid) ? TRUE : FALSE;
-		$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
+		$uteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
+		
+		switch($cEventType)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			// Challenger Info
+			$q = "SELECT ".TBL_PLAYERS.".*, "
+			.TBL_USERS.".*"
+			." FROM ".TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
+			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+			."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
+			$result = $sql->db_Query($q);
+			$challengerpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
+			$challengerpuid   = mysql_result($result, 0, TBL_USERS.".user_id");
+			$challengerpname  = mysql_result($result, 0, TBL_USERS.".user_name");
+			$challengerpavatar = mysql_result($result,$index, TBL_USERS.".user_image");
+			$challengerpteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");
+			list($challengerpclan, $challengerpclantag, $challengerpclanid) = getClanName($challengerpteam);
+			$isUserChallenger = (USERID == $challengerpuid) ? TRUE : FALSE;
+			$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengerpuid.'">'.$challengerpclantag.$challengerpname.'</a>';
+
+			$string .= ' vs. ';
+
+			// Challenged Info
+			$q = "SELECT ".TBL_PLAYERS.".*, "
+			.TBL_USERS.".*"
+			." FROM ".TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
+			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+			."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
+			$result = $sql->db_Query($q);
+			$challengedpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
+			$challengedpuid   = mysql_result($result, 0, TBL_USERS.".user_id");
+			$challengedpname  = mysql_result($result, 0, TBL_USERS.".user_name");
+			$challengedpavatar = mysql_result($result,$index, TBL_USERS.".user_image");
+			$challengedpteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");
+			list($challengedpclan, $challengedpclantag, $challengedpclanid) = getClanName($challengedpteam);
+			$isUserChallenged = (USERID == $challengedpuid) ? TRUE : FALSE;
+			$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
+			break;
+			case "ClanWar":
+			// Challenger Info
+			$q = "SELECT ".TBL_TEAMS.".*"
+			."   AND (".TBL_TEAMS.".TeamID = '$cChallengertID')";
+			$result = $sql->db_Query($q);
+			$challengertrank  = mysql_result($result, 0, TBL_TEAMS.".Rank");
+			list($challengertclan, $challengertclantag, $challengertclanid) = getClanName($cChallengertID);
+
+			$isUserChallenger = ($uteam == $cChallengertID) ? TRUE : FALSE;
+			$string .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$challengertclanid.'">'.$challengertclan.'</a>';
+
+			$string .= ' vs. ';
+
+			// Challenged Info
+			$q = "SELECT ".TBL_TEAMS.".*"
+			."   AND (".TBL_TEAMS.".TeamID = '$cChallengedtID')";
+			$result = $sql->db_Query($q);
+			$challengedtrank  = mysql_result($result, 0, TBL_TEAMS.".Rank");
+			list($challengedtclan, $challengedtclantag, $challengedtclanid) = getClanName($cChallengedtID);
+			$isUserChallenged = ($uteam == $cChallengedtID) ? TRUE : FALSE;
+			$string .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$challengedtclanid.'">'.$challengedtclan.'</a>';
+			break;
+
+			default:
+		}
 
 		// Event
 		if (($type & eb_MATCH_NOEVENTINFO) == 0)

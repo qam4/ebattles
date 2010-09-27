@@ -184,6 +184,7 @@ define('EB_EVENT_L67', 'unconfirmed challenge(s)');
 define('EB_EVENT_L68', 'challenge(s) pending');
 define('EB_EVENT_L69', 'Challenge deleted');
 define('EB_EVENT_L70', 'match(es) scheduled');
+define('EB_EVENT_L71', 'Challenge Team');
 
 define('EB_EVENTM_L1', 'Manage');
 define('EB_EVENTM_L2', 'Event Summary');
@@ -311,6 +312,8 @@ define('EB_EVENTM_L120', 'Combined Stats');
 define('EB_EVENTM_L121', 'Event Challenges');
 define('EB_EVENTM_L122', 'Enable/Disable Challenges');
 define('EB_EVENTM_L123', 'Save Challenges settings');
+define('EB_EVENTM_L124', 'Max number of dates per Challenge request');
+define('EB_EVENTM_L125', 'Max number of maps per match');
 
 
 define('EB_EVENTP_L1', 'Past Events');
@@ -399,6 +402,10 @@ define('EB_CLAN_L23', 'No old events');
 define('EB_CLAN_L24', 'old event(s)');
 define('EB_CLAN_L25', 'Are you sure you want to quit this division?');
 define('EB_CLAN_L26', 'Member');
+define('EB_CLAN_L27', 'Website');
+define('EB_CLAN_L28', 'Email');
+define('EB_CLAN_L29', 'IM');
+define('EB_CLAN_L30', 'Description');
 
 define('EB_CLANC_L1', 'Create Team');
 define('EB_CLANC_L2', 'You are not authorized to create a team.');
@@ -435,6 +442,10 @@ define('EB_CLANM_L27', 'Back to');
 define('EB_CLANM_L28', 'Teams');
 define('EB_CLANM_L29', 'Avatar');
 define('EB_CLANM_L30', 'Select a remote icon using an external link or one of the pre-defined icons');
+define('EB_CLANM_L31', 'Website');
+define('EB_CLANM_L32', 'Email');
+define('EB_CLANM_L33', 'IM');
+define('EB_CLANM_L34', 'Description');
 
 define('EB_MATCH_L1', 'Match');
 define('EB_MATCH_L2', 'tied');
@@ -534,9 +545,9 @@ define('EB_MATCHR_L38', 'Competitor');
 define('EB_MATCHR_L39', 'Team #');
 define('EB_MATCHR_L40', 'is the same as Team #');
 define('EB_MATCHR_L41', 'Faction');
-define('EB_MATCHR_L42', 'Select the game map:');
+define('EB_MATCHR_L42', 'Select the match map(s):');
 define('EB_MATCHR_L43', 'Unknown');
-define('EB_MATCHR_L44', 'Map');
+define('EB_MATCHR_L44', 'Map(s)');
 define('EB_MATCHR_L45', 'Editing Match');
 define('EB_MATCHR_L46', 'Edit Match');
 define('EB_MATCHR_L47', 'It is strongly recommended to update the event statistics after editing a match.');

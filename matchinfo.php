@@ -99,7 +99,7 @@ else
 	$mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
 	$reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
 	$reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
-	$mMap = mysql_result($result,0, TBL_MATCHS.".Map");
+	$matchMaps = explode(",", mysql_result($result,0, TBL_MATCHS.".Maps"));
 
 	$categoriesToShow = array();
 	$q_Categories = "SELECT ".TBL_STATSCATEGORIES.".*"
@@ -112,30 +112,36 @@ else
 	for($category=0; $category < $numCategories; $category++)
 	{
 		$cat_name = mysql_result($result_Categories,$category, TBL_STATSCATEGORIES.".CategoryName");
-        $cat_maxpoints = mysql_result($result_Categories,$category, TBL_STATSCATEGORIES.".CategoryMaxValue");
+		$cat_maxpoints = mysql_result($result_Categories,$category, TBL_STATSCATEGORIES.".CategoryMaxValue");
 		if ($cat_maxpoints>0) $categoriesToShow["$cat_name"] = TRUE;
 	}
 
 	//dbg: print_r($categoriesToShow);
 
-	$mapImage = "";
-	if ($mMap!=0)
+	$mapImage = '';
+	$mapImage .= EB_MATCHR_L44.':<br>';
+	foreach($matchMaps as $matchMap)
 	{
-		$q_Maps = "SELECT ".TBL_MAPS.".*"
-		." FROM ".TBL_MAPS
-		." WHERE (".TBL_MAPS.".MapID = '$mMap')";
-		$result_Maps = $sql->db_Query($q_Maps);
-		$numMaps = mysql_numrows($result_Maps);
-
-		if ($numMaps>0)
+		if ($matchMap!='0')
 		{
-			$mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
-			$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
-			$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
+			$q_Maps = "SELECT ".TBL_MAPS.".*"
+			." FROM ".TBL_MAPS
+			." WHERE (".TBL_MAPS.".MapID = '$matchMap')";
+			$result_Maps = $sql->db_Query($q_Maps);
+			$numMaps = mysql_numrows($result_Maps);
 
-			$mapImage = EB_MATCHR_L44.': '.$mName.' - '.$mDescrition.'<br /><a href="'.getImagePath($mImage, 'games_maps').'" rel="shadowbox"><img '.getMapImageResize($mImage).' title="'.$mName.'" style="vertical-align:middle"/></a>';
+			if ($numMaps>0)
+			{
+				$mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
+				$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
+				$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
+				$mDescrition = ($mDescrition!='') ? ' - '.$mDescrition : '';
+
+				$mapImage .= '<a href="'.getImagePath($mImage, 'games_maps').'" rel="shadowbox"><img '.getMapImageResize($mImage).' title="'.$mName.'" style="vertical-align:middle"/></a> '.$mName.$mDescrition.'<br /><br />';
+			}
 		}
 	}
+
 
 	// Get the scores for this match
 	switch($etype)
@@ -367,7 +373,7 @@ else
 		$text .= ebImageTextButton('matchedit', 'pencil.png', EB_MATCHD_L27);
 		$text .= '</form>';
 	}
-    $text .= '<br />';
+	$text .= '<br />';
 	$text .= '<table class="fborder" style="width:95%"><tbody>';
 	$text .= '<tr>';
 	$text .= '<td class="forumheader"><b>'.EB_MATCHD_L6.'</b></td>';
@@ -379,7 +385,7 @@ else
 	$text .= ($categoriesToShow["Skill"] == TRUE) ? '<td class="forumheader"><b>'.EB_MATCHD_L12.'</b></td>' : '';
 	$text .= '<td class="forumheader"><b>'.EB_MATCHD_L13.'</b></td>';
 	$text .= '</tr>';
-	
+
 	for($i=0; $i < $numScores; $i++)
 	{
 		switch($etype)
@@ -471,12 +477,12 @@ else
 			break;
 			default:
 		}
-		
+
 		$text .= ($categoriesToShow["Score"] == TRUE) ? '<td class="forumheader3">'.$pscore.'</td>' : '';
 		$text .= ($categoriesToShow["Points"] == TRUE) ? '<td class="forumheader3">'.$ppoints.'</td>' : '';
 		$text .= ($categoriesToShow["ELO"] == TRUE) ? '<td class="forumheader3">'.$pdeltaELO.'</td>' : '';
 		$text .= ($categoriesToShow["Skill"] == TRUE) ? '<td class="forumheader3">'.number_format($pdeltaTS_mu,2).'</td>' : '';
-		
+
 		// Opponent Ratings
 		$text .= '<td class="forumheader3">';
 		switch($etype)

@@ -95,6 +95,7 @@ function displayTeamSummary($clan_id){
     global $sql;
     global $text;
     global $pref;
+    global $tp;
 
     $q = "SELECT ".TBL_CLANS.".*, "
     .TBL_USERS.".*"
@@ -111,6 +112,10 @@ function displayTeamSummary($clan_id){
     $clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
     $clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
     $clan_avatar    = mysql_result($result,0, TBL_CLANS.".Image");
+    $clan_website    = mysql_result($result,0, TBL_CLANS.".websiteURL");
+    $clan_email    = mysql_result($result,0, TBL_CLANS.".email");
+    $clan_IM    = mysql_result($result,0, TBL_CLANS.".IM");
+    $clan_Description    = mysql_result($result,0, TBL_CLANS.".Description");
 
     $image = "";
     if($clan_avatar)
@@ -123,13 +128,18 @@ function displayTeamSummary($clan_id){
 
     $text .= '<b>'.$clan_name.' ('.$clan_tag.')</b><br />';
 
-    $text .= '<p>'.EB_CLAN_L7.': <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a><br />';
+    $text .= '<p><b>'.EB_CLAN_L7.'</b>: <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a><br />';
     $can_manage = 0;
     if (check_class($pref['eb_mod_class'])) $can_manage = 1;
     if (USERID==$clan_owner) $can_manage = 1;
     if ($can_manage == 1)
     $text .= '<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_CLAN_L8.'</a><br />';
-    $text .= '</p>';
+    $text .= '</p></br>';
+    
+    $text .= '<p><b>'.EB_CLAN_L27.'</b>: '.$clan_website.'<p></br>';
+    $text .= '<p><b>'.EB_CLAN_L28.'</b>: '.$clan_email.'<p></br>';
+    $text .= '<p><b>'.EB_CLAN_L29.'</b>: '.$clan_IM.'<p></br>';
+    $text .= '<p><b>'.EB_CLAN_L30.'</b>: '.$tp->toHTML($clan_Description, true).'<p></br>';
 }
 
 /**
