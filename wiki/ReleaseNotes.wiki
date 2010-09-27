@@ -1,4 +1,21 @@
 #summary eBattles Release Notes.
+= Release 0.8.5 =
+==Features ==
+ * Added "Team Challenges system"
+  * Now challenge system can be used in team ladders.
+  * Any player of a team can challenge another team.
+  * Any player of the challenge team can confirm the challenge.
+ * Can select multiple maps per match (fixes issue 92)
+  * Event admin can choose the max number of maps per match.
+ * Added some fields for teams: website, email, IM, description.
+ * Added team matches display in "My Profile"
+
+==Changes==
+ * Event admin can choose the max number of dates per challenge.
+
+==Bug fixes==
+ * Fixed problem in database creation during plugin installation for 0.8.4.
+ * Fixed an issue with challenges comments not being submitted.
 
 = Release 0.8.4 =
 ==Features ==
