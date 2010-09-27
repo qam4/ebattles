@@ -13,6 +13,8 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	$result = $sql->db_Query($q);
 	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
 	$eGame = mysql_result($result,0 , TBL_EVENTS.".Game");
+    $eMaxMapsPerMatch = mysql_result($result,0 , TBL_EVENTS.".MaxMapsPerMatch");
+	
 
 	if (e_WYSIWYG)
 	{
@@ -67,8 +69,10 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 		$comment = '';
 	}
 
-	if (!isset($_POST['map'])) $_POST['map'] = 0;
-
+	for ($matchMap = 0; $matchMap<min($numMaps, $eMaxMapsPerMatch); $matchMap++)
+	{
+		if (!isset($_POST['map'.$matchMap])) $_POST['map'.$matchMap] = 0;
+	}
 
 	// if vars are not set, set them as empty.
 	if (!isset($_POST['nbr_players'])) $_POST['nbr_players'] = 2;
@@ -302,24 +306,30 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	{
 		$text .= EB_MATCHR_L42;
 		$text .= '<table id="matchresult_selectMap"><tbody>';
-		$text .= '<tr>';
 
-		$text .= '<td><select class="tbox" name="map">';
-		$text .= '<option value="0"';
-		$text .= '>'.EB_MATCHR_L43.'</option>';
-		for($map=0;$map < $numMaps;$map++)
+		for ($matchMap = 0; $matchMap<min($numMaps, $eMaxMapsPerMatch); $matchMap++)
 		{
-			$mID = mysql_result($result_Maps,$map , TBL_MAPS.".MapID");
-			$mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
-			$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
-			$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
+			$text .= '<tr>';
 
-			$text .= '<option value="'.$mID.'"';
-			if (strtolower($_POST['map']) == $mID) $text .= ' selected="selected"';
-			$text .= '>'.$mName.'</option>';
+			$text .= '<td><select class="tbox" name="map'.$matchMap.'">';
+			$text .= '<option value="0"';
+			$text .= '>'.EB_MATCHR_L43.'</option>';
+			for($map=0;$map < $numMaps;$map++)
+			{
+				$mID = mysql_result($result_Maps,$map , TBL_MAPS.".MapID");
+				$mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
+				$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
+				$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
+
+				$text .= '<option value="'.$mID.'"';
+				if (strtolower($_POST['map'.$matchMap]) == $mID) $text .= ' selected="selected"';
+				$text .= '>'.$mName.'</option>';
+			}
+			$text .= '</select></td>';
+			$text .= '</tr>';
 		}
-		$text .= '</select></td>';
-		$text .= '</tr>';
+
+
 		$text .= '</tbody></table>';
 		$text .= '<br />';
 	}

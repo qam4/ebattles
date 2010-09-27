@@ -89,8 +89,8 @@ else
 	$ematch_report_userclass = mysql_result($result,0 , TBL_EVENTS.".match_report_userclass");
 	$equick_loss_report = mysql_result($result,0 , TBL_EVENTS.".quick_loss_report");
 	$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
-    $echallengesenabled = mysql_result($result,0 , TBL_EVENTS.".ChallengesEnable");
-    
+	$echallengesenabled = mysql_result($result,0 , TBL_EVENTS.".ChallengesEnable");
+
 	if ($pref['eb_events_update_delay_enable'] == 1)
 	{
 		$eneedupdate = 0;
@@ -735,6 +735,71 @@ else
 		$text .= '<div class="tab-page">';
 		$text .= '<div class="tab">'.EB_EVENT_L45.'</div>';
 
+		if(($can_challenge != 0)&&($etype == "ClanWar"))
+		{
+			$text .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
+			$text .= '<table>';
+			$text .= '<tr>';
+			// "Challenge team" form
+			$q = "SELECT ".TBL_PLAYERS.".*"
+			." FROM ".TBL_PLAYERS
+			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+			."   AND (".TBL_PLAYERS.".User = '".USERID."')";
+			$result = $sql->db_Query($q);
+			$uteam = mysql_result($result,0 , TBL_PLAYERS.".Team");
+
+			$q = "SELECT ".TBL_CLANS.".*, "
+			.TBL_TEAMS.".*, "
+			.TBL_DIVISIONS.".* "
+			." FROM ".TBL_CLANS.", "
+			.TBL_TEAMS.", "
+			.TBL_DIVISIONS
+			." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+			." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+			." AND (".TBL_TEAMS.".Event = '$event_id')"
+			." ORDER BY ".TBL_CLANS.".Name";
+			$result = $sql->db_Query($q);
+			$num_rows = mysql_numrows($result);
+
+			$text .= '<td><div>
+			<select class="tbox" name="Challenged">
+			';
+			for($i=0; $i<$num_rows; $i++)
+			{
+				$tid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+				$trank  = mysql_result($result,$i, TBL_TEAMS.".Rank");
+				$tname  = mysql_result($result,$i, TBL_CLANS.".Name");
+
+				if(($uteam == 0)||($uteam != $tid))
+				{
+					if ($trank==0)
+					$trank_txt = EB_EVENT_L54;
+					else
+					$trank_txt = "#$trank";
+					$text .= '<option value="'.$tid.'">'.$tname.' ('.$trank_txt.')</option>';
+				}
+			}
+			$text .= '
+			</select>
+			</div></td>
+			';
+			$Challenger = USERID;
+			$text .= '<td><div>';
+			$text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+			$text .= '<input type="hidden" name="submitted_by" value="'.$Challenger.'"/>';
+			$text .= '</div></td>';
+
+			$text .= '<td>';
+			$text .= '<div>';
+			$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
+			$text .= ebImageTextButton('challenge_team', 'challenge.png', EB_EVENT_L71);
+			$text .= '</div>';
+			$text .= '</td>';
+			$text .= '</tr>';
+			$text .= '</table>';
+			$text .= '</form>';
+		}
+
 		if (($time < $enextupdate) && ($eischanged == 1))
 		{
 			$text .= EB_EVENT_L46.'&nbsp;'.$date_nextupdate.'<br />';
@@ -806,11 +871,11 @@ else
 		$text .= '<div class="tab-page">';
 		$text .= '<div class="tab">'.EB_EVENT_L49.'</div>';
 
-		$text .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
-		$text .= '<table>';
-		$text .= '<tr>';
 		if($can_challenge != 0)
 		{
+			$text .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
+			$text .= '<table>';
+			$text .= '<tr>';
 			// "Challenge player" form
 			$q = "SELECT ".TBL_PLAYERS.".*"
 			." FROM ".TBL_PLAYERS
@@ -858,7 +923,7 @@ else
 			$Challenger = USERID;
 			$text .= '<td><div>';
 			$text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
-			$text .= '<input type="hidden" name="Challenger" value="'.$Challenger.'"/>';
+			$text .= '<input type="hidden" name="submitted_by" value="'.$Challenger.'"/>';
 			$text .= '</div></td>';
 
 			$text .= '<td>';
@@ -867,10 +932,10 @@ else
 			$text .= ebImageTextButton('challenge_player', 'challenge.png', EB_EVENT_L65);
 			$text .= '</div>';
 			$text .= '</td>';
+			$text .= '</tr>';
+			$text .= '</table>';
+			$text .= '</form>';
 		}
-		$text .= '</tr>';
-		$text .= '</table>';
-		$text .= '</form>';
 
 		if (($time < $enextupdate) && ($eischanged == 1))
 		{
@@ -1041,69 +1106,67 @@ else
 		}
 		$text .= '</table>';
 	}
-	
-    /* Display Scheduled Matches */
-    $text .= '<br />';
 
-    $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
-    ." FROM ".TBL_MATCHS.", "
-    .TBL_SCORES.", "
-    .TBL_PLAYERS
-    ." WHERE (".TBL_MATCHS.".Status = 'scheduled')"
-    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-    ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-    ." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
-    $result = $sql->db_Query($q);
-    $numMatches = mysql_numrows($result);
-
-    $text .= '<p><b>';
-    $text .= $numMatches.'&nbsp;'.EB_EVENT_L70;
-    $text .= '</b></p>';
+	/* Display Scheduled Matches */
 	$text .= '<br />';
 
-    if ($numMatches>0)
-    {
-        /* Display table contents */
-        $text .= '<table class="table_left">';
-        for($i=0; $i < $numMatches; $i++)
-        {
-            $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-            $text .= displayMatchInfo($mID, eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
-        }
-        $text .= '</table>';
-    }
-    
-    /* Display Unconfirmed Challenges */
-    $text .= '<br />';
+	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES
+	." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+	." AND (".TBL_MATCHS.".Status = 'scheduled')"
+	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
+	$result = $sql->db_Query($q);
+	$numMatches = mysql_numrows($result);
+
+	$text .= '<p><b>';
+	$text .= $numMatches.'&nbsp;'.EB_EVENT_L70;
+	$text .= '</b></p>';
+	$text .= '<br />';
+
+	if ($numMatches>0)
+	{
+		/* Display table contents */
+		$text .= '<table class="table_left">';
+		for($i=0; $i < $numMatches; $i++)
+		{
+			$mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$text .= displayMatchInfo($mID, eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
+		}
+		$text .= '</table>';
+	}
+
+	/* Display Unconfirmed Challenges */
+	$text .= '<br />';
 
 	$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*"
 	." FROM ".TBL_CHALLENGES.", "
 	.TBL_PLAYERS
-    ." WHERE (".TBL_CHALLENGES.".Status = 'requested')"
-    ."   AND (".TBL_CHALLENGES.".Event = '".$event_id."')"
-	."   AND (".TBL_PLAYERS.".PlayerID = ".TBL_CHALLENGES.".ChallengedPlayer)"
-    ." ORDER BY ".TBL_CHALLENGES.".TimeReported DESC";
+	." WHERE (".TBL_CHALLENGES.".Event = '".$event_id."')"
+	."   AND (".TBL_CHALLENGES.".Status = 'requested')"
+	." ORDER BY ".TBL_CHALLENGES.".TimeReported DESC";
 	$result = $sql->db_Query($q);
-    $numChallenges = mysql_numrows($result);
+	$numChallenges = mysql_numrows($result);
 
-    $text .= '<p><b>';
-    $text .= $numChallenges.'&nbsp;'.EB_EVENT_L67;
-    $text .= '</b></p>';
+	$text .= '<p><b>';
+	$text .= $numChallenges.'&nbsp;'.EB_EVENT_L67;
+	$text .= '</b></p>';
 	$text .= '<br />';
 
-    if ($numChallenges>0)
-    {
-        /* Display table contents */
-        $text .= '<table class="table_left">';
-        for($i=0; $i < $numChallenges; $i++)
-        {
-            $cID  = mysql_result($result,$i, TBL_CHALLENGES.".ChallengeID");
-            $text .= displayChallengeInfo($cID,eb_MATCH_NOEVENTINFO);
-        }
-        $text .= '</table>';
-    }
-    
-   	$text .= '</div>';    // tab-page "Teams Matches"
+	if ($numChallenges>0)
+	{
+		/* Display table contents */
+		$text .= '<table class="table_left">';
+		for($i=0; $i < $numChallenges; $i++)
+		{
+			$cID  = mysql_result($result,$i, TBL_CHALLENGES.".ChallengeID");
+			$text .= displayChallengeInfo($cID,eb_MATCH_NOEVENTINFO);
+		}
+		$text .= '</table>';
+	}
+
+	$text .= '</div>';    // tab-page "Teams Matches"
 
 	$text .= '<div class="tab-page">';
 	$text .= '<div class="tab">'.EB_EVENT_L63.'</div>';

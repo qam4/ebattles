@@ -135,6 +135,26 @@ if(isset($_POST['clansettingssave']))
     $q2 = "UPDATE ".TBL_CLANS." SET password = '$new_clanpassword' WHERE (ClanID = '$clan_id')";
     $result2 = $sql->db_Query($q2);
 
+    /* Clan Website */
+    $new_clanwebsite = htmlspecialchars($_POST['clanwebsite']);
+    $q2 = "UPDATE ".TBL_CLANS." SET websiteURL = '$new_clanwebsite' WHERE (ClanID = '$clan_id')";
+    $result2 = $sql->db_Query($q2);
+
+    /* Clan Email */
+    $new_clanemail = htmlspecialchars($_POST['clanemail']);
+    $q2 = "UPDATE ".TBL_CLANS." SET email = '$new_clanemail' WHERE (ClanID = '$clan_id')";
+    $result2 = $sql->db_Query($q2);
+
+    /* Clan IM */
+    $new_clanIM = htmlspecialchars($_POST['clanIM']);
+    $q2 = "UPDATE ".TBL_CLANS." SET IM = '$new_clanIM' WHERE (ClanID = '$clan_id')";
+    $result2 = $sql->db_Query($q2);
+
+    /* Clan Description */
+    $new_clandescription = $tp->toDB($_POST['clandescription']);
+    $q2 = "UPDATE ".TBL_CLANS." SET Description = '$new_clandescription' WHERE (ClanID = '$clan_id')";
+    $result2 = $sql->db_Query($q2);
+
     //echo "-- clansettingssave --<br />";
     header("Location: clanmanage.php?clanid=$clan_id");
 }

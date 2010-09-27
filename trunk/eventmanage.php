@@ -141,6 +141,8 @@ else
     $equick_loss_report = mysql_result($result,0 , TBL_EVENTS.".quick_loss_report");
     $eranking_type = mysql_result($result,0 , TBL_EVENTS.".RankingType");
     $echallengesenabled = mysql_result($result,0 , TBL_EVENTS.".ChallengesEnable");
+    $eMaxDatesPerChallenge = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
+    $eMaxMapsPerMatch = mysql_result($result,0 , TBL_EVENTS.".MaxMapsPerMatch");
 
     if($estart!=0)
     {
@@ -523,6 +525,20 @@ else
         </td>
         </tr>
         ';
+
+        //<!-- Maps -->
+         $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L125.'</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input class="tbox" type="text" name="eventmaxmapspermatch" size="2" value="'.$eMaxMapsPerMatch.'"';
+        $text .= '
+        </div>
+        </td>
+        </tr>
+        '; 
 
         //<!-- Start Date -->
         $text .= '
@@ -1319,6 +1335,20 @@ else
         </td>
         </tr>
         ';
+        
+        //<!-- Max number of Dates per Challenge -->
+         $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L124.'</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input class="tbox" type="text" name="eventdatesperchallenge" size="2" value="'.$eMaxDatesPerChallenge.'"';
+        $text .= '
+        </div>
+        </td>
+        </tr>
+        '; 
 
         // ------------------------------
          $text .= '

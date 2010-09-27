@@ -44,7 +44,7 @@ if(isset($_POST['challenge_withdraw']))
 }
 if(isset($_POST['challenge_confirm']))
 {
-	$text .= PlayerChallengeConfirmForm($challenge_id);
+	$text .= ChallengeConfirmForm($challenge_id);
 }
 if(isset($_POST['challenge_accept']))
 {
@@ -53,7 +53,7 @@ if(isset($_POST['challenge_accept']))
 
 	if (!empty($error_str)) {
 		// show form again
-		$text .= PlayerChallengeConfirmForm($challenge_id);
+		$text .= ChallengeConfirmForm($challenge_id);
 
 		// errors have occured, halt execution and show form again.
 		$text .= '<p style="color:red">'.EB_MATCHR_L14;
@@ -61,7 +61,7 @@ if(isset($_POST['challenge_accept']))
 	}
 	else
 	{
-		PlayerChallengeAccept($challenge_id);
+		ChallengeAccept($challenge_id);
 		$text .= EB_CHALLENGE_L22;
 		$text .= '<br />';
 		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
@@ -83,7 +83,7 @@ exit;
 //=================================================================================
 // Functions
 //=================================================================================
-function PlayerChallengeConfirmForm($challenge_id)
+function ChallengeConfirmForm($challenge_id)
 {
 	global $sql;
 	global $tp;
@@ -118,7 +118,7 @@ function PlayerChallengeConfirmForm($challenge_id)
 		$cEventgame = mysql_result($result, 0, TBL_GAMES.".Name");
 		$cEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
 		$cEventType  = mysql_result($result, 0, TBL_EVENTS.".Type");
-		$cEventNumDates  = 3; // Hardcoded for now
+		$cEventNumDates  = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
 		$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 		$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
 		$cTime_local = $cTime + TIMEOFFSET;
@@ -127,61 +127,83 @@ function PlayerChallengeConfirmForm($challenge_id)
 
 		$cChallengerpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerPlayer");
 		$cChallengedpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedPlayer");
+		$cChallengertID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerTeam");
+		$cChallengedtID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedTeam");
 
 		$output .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?eventid='.$cEventID.'&amp;challengeid='.$challenge_id.'" method="post">';
 
 		$output .= '<b>'.EB_CHALLENGE_L18.'</b><br />';
 		$output .= '<br />';
 
-		// Challenger Info
-		$output .= '<b>'.EB_CHALLENGE_L5.'</b>'; // Challenger
-		$q = "SELECT ".TBL_PLAYERS.".*, "
-		.TBL_USERS.".*"
-		." FROM ".TBL_PLAYERS.", "
-		.TBL_USERS
-		." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
-		."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-		."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
-		$result = $sql->db_Query($q);
+		switch($cEventType)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			// Challenger Info
+			$output .= '<b>'.EB_CHALLENGE_L5.'</b>'; // Challenger
+			$q = "SELECT ".TBL_PLAYERS.".*, "
+			.TBL_USERS.".*"
+			." FROM ".TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
+			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+			."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
+			$result = $sql->db_Query($q);
+			$challengerpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
+			$challengerpuid   = mysql_result($result, 0, TBL_USERS.".user_id");
+			$challengerpname  = mysql_result($result, 0, TBL_USERS.".user_name");
+			$challengerpavatar = mysql_result($result,$index, TBL_USERS.".user_image");
+			$challengerpteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");
+			list($challengerpclan, $challengerpclantag, $challengerpclanid) = getClanName($challengerpteam);
+			$isUserChallenger = (USERID == $challengerpuid) ? TRUE : FALSE;
+			$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengerpuid.'">'.$challengerpclantag.$challengerpname.'</a>';
 
-		$pid    = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
-		$puid   = mysql_result($result,0 , TBL_USERS.".user_id");
-		$prank  = mysql_result($result,0 , TBL_PLAYERS.".Rank");
-		$pname  = mysql_result($result,0 , TBL_USERS.".user_name");
-		$pteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
-		list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+			$string .= ' vs. ';
 
-		if ($prank==0)
-		$prank_txt = EB_EVENT_L54;
-		else
-		$prank_txt = "#$prank";
-		$str = $pclantag.$pname.' ('.$prank_txt.')';
-		$output .= ' '.$str.'<br />';
+			// Challenged Info
+			$q = "SELECT ".TBL_PLAYERS.".*, "
+			.TBL_USERS.".*"
+			." FROM ".TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
+			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+			."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
+			$result = $sql->db_Query($q);
+			$challengedpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
+			$challengedpuid   = mysql_result($result, 0, TBL_USERS.".user_id");
+			$challengedpname  = mysql_result($result, 0, TBL_USERS.".user_name");
+			$challengedpavatar = mysql_result($result,$index, TBL_USERS.".user_image");
+			$challengedpteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");
+			list($challengedpclan, $challengedpclantag, $challengedpclanid) = getClanName($challengedpteam);
+			$isUserChallenged = (USERID == $challengedpuid) ? TRUE : FALSE;
+			$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
+			break;
+			case "ClanWar":
+			// Challenger Info
+			$q = "SELECT ".TBL_TEAMS.".*"
+			."   AND (".TBL_TEAMS.".TeamID = '$cChallengertID')";
+			$result = $sql->db_Query($q);
+			$challengertrank  = mysql_result($result, 0, TBL_TEAMS.".Rank");
+			list($challengertclan, $challengertclantag, $challengertclanid) = getClanName($cChallengertID);
 
-		// Challenged Info
-		$output .= '<b>'.EB_CHALLENGE_L6.'</b>'; // Challenged
-		$q = "SELECT ".TBL_PLAYERS.".*, "
-		.TBL_USERS.".*"
-		." FROM ".TBL_PLAYERS.", "
-		.TBL_USERS
-		." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
-		."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-		."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
-		$result = $sql->db_Query($q);
+			$isUserChallenger = ($uteam == $cChallengertID) ? TRUE : FALSE;
+			$string .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$challengertclanid.'">'.$challengertclan.'</a>';
 
-		$pid    = mysql_result($result, 0, TBL_PLAYERS.".PlayerID");
-		$puid   = mysql_result($result, 0, TBL_USERS.".user_id");
-		$prank  = mysql_result($result, 0, TBL_PLAYERS.".Rank");
-		$pname  = mysql_result($result, 0, TBL_USERS.".user_name");
-		$pteam  = mysql_result($result, 0, TBL_PLAYERS.".Team");
-		list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+			$string .= ' vs. ';
 
-		if ($prank==0)
-		$prank_txt = EB_EVENT_L54;
-		else
-		$prank_txt = "#$prank";
-		$str = $pclantag.$pname.' ('.$prank_txt.')';
-		$output .= ' '.$str.'<br />';
+			// Challenged Info
+			$q = "SELECT ".TBL_TEAMS.".*"
+			."   AND (".TBL_TEAMS.".TeamID = '$cChallengedtID')";
+			$result = $sql->db_Query($q);
+			$challengedtrank  = mysql_result($result, 0, TBL_TEAMS.".Rank");
+			list($challengedtclan, $challengedtclantag, $challengedtclanid) = getClanName($cChallengedtID);
+			$isUserChallenged = ($uteam == $cChallengedtID) ? TRUE : FALSE;
+			$string .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$challengedtclanid.'">'.$challengedtclan.'</a>';
+			break;
+
+			default:
+		}
+		$output .= ' '.$string.'<br />';
 
 		$output .= '<br />';
 
@@ -217,7 +239,7 @@ function PlayerChallengeConfirmForm($challenge_id)
 }
 
 
-function PlayerChallengeAccept($challenge_id)
+function ChallengeAccept($challenge_id)
 {
 	global $sql;
 	global $tp;
@@ -252,13 +274,16 @@ function PlayerChallengeAccept($challenge_id)
 		$cEventgame = mysql_result($result, 0, TBL_GAMES.".Name");
 		$cEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
 		$cEventType  = mysql_result($result, 0, TBL_EVENTS.".Type");
-		$cEventNumDates  = 3; // Hardcoded for now
+		$cEventNumDates  = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
 		$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 		$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
 		$cChallengerpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerPlayer");
 		$cChallengedpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedPlayer");
+		$cChallengertID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerTeam");
+		$cChallengedtID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedTeam");
 
 
+		
 		// Create Match ------------------------------------------
 		$comments = '';
 		$q =
@@ -269,19 +294,18 @@ function PlayerChallengeAccept($challenge_id)
 		$last_id = mysql_insert_id();
 		$match_id = $last_id;
 
-		// Create Scores ------------------------------------------
 		$q =
-		"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Rank)
-		VALUES ($match_id,$cChallengerpID,1,1)
+		"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
+		VALUES ($match_id,$cChallengerpID,$cChallengertID,1,1)
 		";
 		$result = $sql->db_Query($q);
 
 		$q =
-		"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Rank)
-		VALUES ($match_id,$cChallengedpID,2,2)
+		"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
+		VALUES ($match_id,$cChallengedpID,$cChallengedtID,2,2)
 		";
 		$result = $sql->db_Query($q);
-		
+
 		deleteChallenge($challenge_id);
 	}
 }

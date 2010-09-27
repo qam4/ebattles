@@ -359,6 +359,8 @@ function eventAddPlayer($event_id, $user, $team = 0, $notify)
     ." WHERE (".TBL_USERS.".user_id = '$user')";
     $result = $sql->db_Query($q);
     $username = mysql_result($result, 0, TBL_USERS.".user_name");
+    echo "user: $user, $username<br>";
+    echo "event_id: $event_id, team: $team, user: $user<br>";
 
     // Is the user already signed up for the team?
     $q = "SELECT ".TBL_PLAYERS.".*"
@@ -368,11 +370,13 @@ function eventAddPlayer($event_id, $user, $team = 0, $notify)
     ."   AND (".TBL_PLAYERS.".User = '$user')";
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
+    echo "num_rows: $num_rows<br>";
     if ($num_rows==0)
     {
         $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
         VALUES ($event_id,$user,$team,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
         $sql->db_Query($q);
+        echo "player created, query: $q<br>";
         $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $sql->db_Query($q);
 

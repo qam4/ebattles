@@ -208,10 +208,17 @@ if($match_id)
 	$numScores = mysql_numrows($result);
 
 	if (!isset($_POST['nbr_players']))   $_POST['nbr_players'] = $numScores;
-	if (!isset($_POST['map']))           $_POST['map'] = mysql_result($result,0, TBL_MATCHS.".Map");
 	if (!isset($_POST['reported_by']))   $_POST['reported_by'] = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
 	if (!isset($_POST['match_comment'])) $_POST['match_comment'] = mysql_result($result,0, TBL_MATCHS.".Comments");
 	if (!isset($_POST['time_reported'])) $_POST['time_reported'] = mysql_result($result,0, TBL_MATCHS.".TimeReported");
+
+	$matchMaps = explode(",", mysql_result($result,0, TBL_MATCHS.".Maps"));
+	$map = 0;
+	foreach($matchMaps as $matchMap)
+	{
+		if (!isset($_POST['map'.$map]))           $_POST['map'.$map] = $matchMap;
+		$map++;
+	}
 
 	$index = 1;
 	$rank = 0;
@@ -308,9 +315,20 @@ if (isset($_POST['submit']))
 	$userIsCaptain = 0;
 	$userIsTeamMember = 0;
 	// Map
-	if (!isset($_POST['map'])) $_POST['map'] = 0;
-	$map = $_POST['map'];
-
+	// List of all Maps
+	$q_Maps = "SELECT ".TBL_MAPS.".*"
+	." FROM ".TBL_MAPS
+	." WHERE (".TBL_MAPS.".Game = '$eGame')";
+	$result_Maps = $sql->db_Query($q_Maps);
+	$numMaps = mysql_numrows($result_Maps);
+	$map = '';
+	for ($matchMap = 0; $matchMap<min($numMaps, eb_MAX_MAPS_PER_MATCH); $matchMap++)
+	{
+		if (!isset($_POST['map'.$matchMap])) $_POST['map'.$matchMap] = '0';
+		if ($matchMap > 0) $map .= ',';
+		$map .= $_POST['map'.$matchMap];
+	}
+	
 	for($i=1;$i<=$nbr_players;$i++)
 	{
 		$pid = $_POST['player'.$i];
@@ -494,8 +512,8 @@ if (isset($_POST['submit']))
 			."       TimeReported = '$time_reported',"
 			."       Comments = '$comments',"
 			."       Status= 'pending',"
-			."       Map = '$map'"
-			." WHERE(MatchID = '$match_id')";
+			."       Maps = '$map'"
+			." WHERE (MatchID = '$match_id')";
 
 			$result = $sql->db_Query($q);
 		}
@@ -503,7 +521,7 @@ if (isset($_POST['submit']))
 		{
 			// Create Match ------------------------------------------
 			$q =
-			"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status, Map)
+			"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status, Maps)
 			VALUES ($event_id,'$reported_by', '$time_reported', '$comments', 'pending', '$map')";
 			$result = $sql->db_Query($q);
 			$last_id = mysql_insert_id();

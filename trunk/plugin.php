@@ -154,7 +154,9 @@ RankingType varchar(20) DEFAULT 'CombinedStats',
 Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 Status varchar(20) DEFAULT 'active',
 PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-ChallengesEnable tinyint(1) DEFAULT '0'
+ChallengesEnable tinyint(1) DEFAULT '0',
+MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."',
+MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."'
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
@@ -178,7 +180,11 @@ Owner int(10) unsigned NOT NULL,
 INDEX (Owner),
 FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id),
 password varchar(32),
-Image varchar(100) NOT NULL default ''
+Image varchar(100) NOT NULL default '',
+websiteURL varchar(100) NOT NULL default '',
+email varchar(100) NOT NULL default '',
+IM varchar(100) NOT NULL default '',
+Description text NOT NULL
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_DIVISIONS."
 (
@@ -247,8 +253,8 @@ FOREIGN KEY (ReportedBy) REFERENCES ".TBL_USERS." (user_id),
 TimeReported int(11) unsigned not null,
 Comments text NOT NULL,
 Status varchar(20) DEFAULT 'active',
-Map int DEFAULT '0',
-TimeScheduled int(11) unsigned not null,
+Maps varchar(255) NOT NULL default '0',
+TimeScheduled int(11) unsigned not null
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_PLAYERS."
 (
@@ -396,7 +402,7 @@ Type varchar(20) NOT NULL default ''
 "CREATE TABLE ".TBL_CHALLENGES."
 (
 ChallengeID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(CallengeID),
+PRIMARY KEY(ChallengeID),
 Event int NOT NULL,
 INDEX (Event),
 FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
@@ -536,7 +542,19 @@ if (versionsCompare($eb_version_string, "0.8.4"))
 	);
 }
 
-
+if (versionsCompare($eb_version_string, "0.8.5"))
+{
+	// To revision 0.8.5
+	$upgrade_alter_tables += array(
+	"ALTER TABLE ".TBL_MATCHS." CHANGE Map Maps varchar(255) NOT NULL default '0'",
+	"ALTER TABLE ".TBL_EVENTS." ADD MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."'",
+	"ALTER TABLE ".TBL_EVENTS." ADD MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."'",
+	"ALTER TABLE ".TBL_CLANS." ADD websiteURL varchar(100) NOT NULL default ''",
+	"ALTER TABLE ".TBL_CLANS." ADD email varchar(100) NOT NULL default ''",
+	"ALTER TABLE ".TBL_CLANS." ADD IM varchar(100) NOT NULL default ''",
+	"ALTER TABLE ".TBL_CLANS." ADD Description text NOT NULL"
+	);
+}
 
 /* dbg
 echo "<br>Prefs upgrade:";
