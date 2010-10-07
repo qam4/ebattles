@@ -1,6 +1,17 @@
 #summary eBattles Release Notes.
 = Release 0.8.5 =
 ==Features ==
+ * Added "Scheduled Match"
+  * Now matches can be scheduled by event admin and mods
+
+==Changes==
+ * Display team's website and email address as hyperlinks.
+
+==Bug fixes==
+ * Fixed bug with multiple maps selection, which was hardcoded to 2 maps max by mistake.
+
+= Release 0.8.5 =
+==Features ==
  * Added "Team Challenges system"
   * Now challenge system can be used in team ladders.
   * Any player of a team can challenge another team.
