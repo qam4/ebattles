@@ -1238,6 +1238,7 @@ function displayMatchInfo($match_id, $type = 0)
 		{
 			$can_approve = 0;
 			$can_report = 0;
+			$can_schedule = 0;
 			$userclass = 0;
 
 			switch($mEventType)
@@ -1335,18 +1336,21 @@ function displayMatchInfo($match_id, $type = 0)
 				$userclass |= eb_UC_EVENT_OWNER;
 				$can_approve = 1;
 				$can_report = 1;
+				$can_schedule = 1;
 			}
 			if ($numMods>0)
 			{
 				$userclass |= eb_UC_EB_MODERATOR;
 				$can_approve = 1;
 				$can_report = 1;
+				$can_schedule = 1;
 			}
 			if (check_class($pref['eb_mod_class']))
 			{
 				$userclass |= eb_UC_EB_MODERATOR;
 				$can_approve = 1;
 				$can_report = 1;
+				$can_schedule = 1;
 			}
 			if ($numOpps>0)
 			{
@@ -1498,22 +1502,18 @@ function displayMatchInfo($match_id, $type = 0)
 					}
 					else
 					{
-						if ($prank == $rank)
+						if (($type & eb_MATCH_SCHEDULED) != 0)
+						{
+							$str = ' vs. ';
+
+						}
+						else if ($prank == $rank)
 						{
 							$str = ' '.EB_MATCH_L2.' ';
 						}
 						else if ($prank > $rank)
 						{
-							if (($type & eb_MATCH_SCHEDULED) != 0)
-							{
-								$str = ' vs. ';
-
-							}
-							else
-							{
-								$str = ' '.EB_MATCH_L3.' ';
-
-							}
+							$str = ' '.EB_MATCH_L3.' ';
 						}
 						else
 						{
@@ -1563,16 +1563,20 @@ function displayMatchInfo($match_id, $type = 0)
 			{
 				$string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>';
 			}
-			if (($type & eb_MATCH_SCHEDULED) == 0)
+			if ($can_approve == 1)
 			{
-				if ($can_approve == 1)
-				{
-					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/></a>';
-				}
-				else
+				$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/></a>';
+			}
+			else
+			{
+				if((($type & eb_MATCH_SCHEDULED) == 0)||($can_schedule == 1))
 				{
 					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img src="'.e_PLUGIN.'ebattles/images/magnify.png" alt="'.EB_MATCH_L5.'" title="'.EB_MATCH_L5.'" style="vertical-align:text-top;"/></a>';
 				}
+			}
+
+			if (($type & eb_MATCH_SCHEDULED) == 0)
+			{
 				$string .= ' <div class="smalltext">';
 				$string .= EB_MATCH_L6.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mReportedBy.'">'.$mReportedByNickName.'</a> ';
 
@@ -1611,7 +1615,7 @@ function displayMatchInfo($match_id, $type = 0)
 				$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 				$text .= '</div>';
 				$string .= '<div>';
-				$string .= ebImageTextButton('challengereport', 'page_white_edit.png', '', '', '', EB_EVENT_L57);
+				$string .= ebImageTextButton('matchscheduledreport', 'page_white_edit.png', '', '', '', EB_EVENT_L57);
 				$string .= '</div>';
 				$string .= '</form>';
 				$string .= '</td>';

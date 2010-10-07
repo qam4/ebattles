@@ -596,6 +596,7 @@ else
 
 	$can_approve = 0;
 	$can_report = 0;
+	$can_schedule = 0;
 	$can_report_quickloss = 0;
 	$can_challenge = 0;
 	$userclass = 0;
@@ -605,6 +606,7 @@ else
 	{
 		$userclass |= eb_UC_EB_MODERATOR;
 		$can_report = 1;
+		$can_schedule = 1;
 		$can_approve = 1;
 	}
 	// Is the user event owner?
@@ -612,6 +614,7 @@ else
 	{
 		$userclass |= eb_UC_EVENT_OWNER;
 		$can_report = 1;
+		$can_schedule = 1;
 		$can_approve = 1;
 	}
 	// Is the user a moderator?
@@ -625,6 +628,7 @@ else
 	{
 		$userclass |= eb_UC_EVENT_MODERATOR;
 		$can_report = 1;
+		$can_schedule = 1;
 		$can_approve = 1;
 	}
 	/*
@@ -686,6 +690,7 @@ else
 		if (($nbrplayersNotBanned < 2)||($pbanned))
 		{
 			$can_report = 0;
+			$can_schedule = 0;
 			$can_report_quickloss = 0;
 			$can_challenge = 0;
 		}
@@ -694,6 +699,7 @@ else
 		if ($nbrteams < 2)
 		{
 			$can_report = 0;
+			$can_schedule = 0;
 			$can_report_quickloss = 0;
 			$can_challenge = 0;
 		}
@@ -726,6 +732,8 @@ else
 	if($eMatchesApproval == eb_UC_NONE) $can_approve = 0;
 
 	if($echallengesenabled==FALSE) $can_challenge= 0;
+
+	//fm: Need userclass for match scheduling
 
 	$enextupdate_local = $enextupdate + TIMEOFFSET;
 	$date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
@@ -1023,6 +1031,17 @@ else
 			$text .= '<div>';
 			$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 			$text .= ebImageTextButton('matchreport', 'page_white_edit.png', EB_EVENT_L57);
+			$text .= '</div>';
+			$text .= '</form>';
+			$text .= '</td>';
+		}
+		if($can_schedule != 0)
+		{
+			$text .= '<td>';
+			$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'" method="post">';
+			$text .= '<div>';
+			$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
+			$text .= ebImageTextButton('matchschedule', 'add.png', EB_EVENT_L72);
 			$text .= '</div>';
 			$text .= '</form>';
 			$text .= '</td>';

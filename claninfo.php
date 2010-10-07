@@ -136,8 +136,8 @@ function displayTeamSummary($clan_id){
     $text .= '<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_CLAN_L8.'</a><br />';
     $text .= '</p></br>';
     
-    $text .= '<p><b>'.EB_CLAN_L27.'</b>: '.$clan_website.'<p></br>';
-    $text .= '<p><b>'.EB_CLAN_L28.'</b>: '.$clan_email.'<p></br>';
+    $text .= '<p><b>'.EB_CLAN_L27.'</b>: <a href="http://'.$clan_website.'" rel="external">'.$clan_website.'</a><p></br>';
+    $text .= '<p><b>'.EB_CLAN_L28.'</b>: <a href="mailto:'.$clan_email.'">'.$clan_email.'</a><p></br>';
     $text .= '<p><b>'.EB_CLAN_L29.'</b>: '.$clan_IM.'<p></br>';
     $text .= '<p><b>'.EB_CLAN_L30.'</b>: '.$tp->toHTML($clan_Description, true).'<p></br>';
 }
