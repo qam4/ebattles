@@ -61,7 +61,23 @@ if (rank_txt == new_rank_txt) {select.selectedIndex=old_rank-1}
 $text .= '
 </script>
 ';
-
+$text = '
+<!-- main calendar program -->
+<script type="text/javascript" src="./js/calendar/calendar.js"></script>
+<!-- language for the calendar -->
+<script type="text/javascript" src="./js/calendar/lang/calendar-en.js"></script>
+<!-- the following script defines the Calendar.setup helper function, which makes
+adding a calendar a matter of 1 or 2 lines of code. -->
+<script type="text/javascript" src="./js/calendar/calendar-setup.js"></script>
+<script type="text/javascript">
+<!--//
+function clearDate(frm)
+{
+document.getElementById("f_date").value = ""
+}
+//-->
+</script>
+';
 /* Event Name */
 $event_id = $_GET['eventid'];
 $match_id = $_GET['matchid'];
@@ -85,6 +101,7 @@ $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
 $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
 $eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
 $eGame = mysql_result($result,0 , TBL_EVENTS.".Game");
+$eMaxMapsPerMatch = mysql_result($result,0 , TBL_EVENTS.".MaxMapsPerMatch");
 
 switch($etype)
 {
@@ -212,6 +229,11 @@ if($match_id)
 	if (!isset($_POST['match_comment'])) $_POST['match_comment'] = mysql_result($result,0, TBL_MATCHS.".Comments");
 	if (!isset($_POST['time_reported'])) $_POST['time_reported'] = mysql_result($result,0, TBL_MATCHS.".TimeReported");
 
+	$time_scheduled = mysql_result($result,0, TBL_MATCHS.".TimeScheduled");
+	$time_scheduled_local = $time_scheduled + TIMEOFFSET;
+	$date_scheduled = date("m/d/Y h:i A",$time_scheduled_local);
+	if (!isset($_POST['date_scheduled'])) $_POST['date_scheduled'] = $date_scheduled;
+
 	$matchMaps = explode(",", mysql_result($result,0, TBL_MATCHS.".Maps"));
 	$map = 0;
 	foreach($matchMaps as $matchMap)
@@ -268,7 +290,7 @@ if($match_id)
 		if ($pMatchTeam != $matchteam)
 		{
 			if (!isset($_POST['rank'.$index])) $_POST['rank'.$index] = 'Team #'.$pMatchTeam;
-			if($prank == $rank)
+			if(($prank == $rank)&&($prank!=0))
 			{
 				if (!isset($_POST['draw'.$index])) $_POST['draw'.$index] = 1;
 			}
@@ -281,14 +303,6 @@ if($match_id)
 		}
 	}
 	if (!isset($_POST['nbr_teams'])) $_POST['nbr_teams'] = $nbr_teams;
-
-	/*
-	//dbg form
-	echo "<br>_POST: ";
-	print_r($_POST);    // show $_POST
-	echo "<br>_GET: ";
-	print_r($_GET);     // show $_GET
-	*/
 }
 
 // assuming we saved the above function in "functions.php", let's make sure it's available
@@ -322,13 +336,13 @@ if (isset($_POST['submit']))
 	$result_Maps = $sql->db_Query($q_Maps);
 	$numMaps = mysql_numrows($result_Maps);
 	$map = '';
-	for ($matchMap = 0; $matchMap<min($numMaps, eb_MAX_MAPS_PER_MATCH); $matchMap++)
+	for ($matchMap = 0; $matchMap<min($numMaps, $eMaxMapsPerMatch); $matchMap++)
 	{
 		if (!isset($_POST['map'.$matchMap])) $_POST['map'.$matchMap] = '0';
 		if ($matchMap > 0) $map .= ',';
 		$map .= $_POST['map'.$matchMap];
 	}
-	
+
 	for($i=1;$i<=$nbr_players;$i++)
 	{
 		$pid = $_POST['player'.$i];
@@ -434,40 +448,73 @@ if (isset($_POST['submit']))
 		}
 	}
 
-	switch($etype)
+	if(isset($_POST['matchschedule']))
 	{
-		case "One Player Ladder":
-		case "Team Ladder":
-		// Check if the reporter played in the match
-		if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
-		$error_str .= '<li>'.EB_MATCHR_L9.'</li>';
-		break;
-		case "ClanWar":
-		// Check if the reporter's team played in the match
-		if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
-		$error_str .= '<li>'.EB_MATCHR_L37.'</li>';
-		break;
-		default:
+		if($_POST['date_scheduled'] == '')
+		{
+			$error_str .= '<li>'.EB_CHALLENGE_L10.'&nbsp;'.EB_CHALLENGE_L11.'</li>';
+		}
+		else
+		{
+			$date_scheduled = $_POST['date_scheduled'];
+			$time_scheduled_local = strtotime($date_scheduled);
+			$time_scheduled = $time_scheduled_local - TIMEOFFSET;	// Convert to GMT time
+		}
+	}
+
+	if(!isset($_POST['matchschedule']))
+	{
+		switch($etype)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			// Check if the reporter played in the match
+			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
+			$error_str .= '<li>'.EB_MATCHR_L9.'</li>';
+			break;
+			case "ClanWar":
+			// Check if the reporter's team played in the match
+			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
+			$error_str .= '<li>'.EB_MATCHR_L37.'</li>';
+			break;
+			default:
+		}
+	}
+
+	for($i=1;$i<=$nbr_teams;$i++)
+	{
+		if (!isset($_POST['rank'.$i])) $_POST['rank'.$i] = 'Team #'.$i;
 	}
 
 	// Check if a team has no player
-	for($i=1;$i<=$nbr_teams;$i++)
+	if(!isset($_POST['matchschedule']))
 	{
-		$team_players = 0;
-		for($j=1;$j<=$nbr_players;$j++)
+		for($i=1;$i<=$nbr_teams;$i++)
 		{
-			if ($_POST['team'.$j] == 'Team #'.$i)
-			$team_players ++;
+			$team_players = 0;
+			for($j=1;$j<=$nbr_players;$j++)
+			{
+				if ($_POST['team'.$j] == 'Team #'.$i)
+				$team_players ++;
+			}
+			if ($team_players == 0)
+			$error_str .= '<li>'.EB_MATCHR_L10.$i.'&nbsp;'.EB_MATCHR_L11.'</li>';
 		}
-		if ($team_players == 0)
-		$error_str .= '<li>'.EB_MATCHR_L10.$i.'&nbsp;'.EB_MATCHR_L11.'</li>';
 	}
-
 	// we could do more data checks, but you get the idea.
 	// we could also strip any HTML from the variables, convert it to entities, have a maximum character limit on the values, etc etc, but this is just an example.
 	// now, have any of these errors happened? We can find out by checking if $error_str is empty
 
 	//$error_str = 'test';
+
+/*
+	//dbg form
+	echo "<br>_POST: ";
+	print_r($_POST);    // show $_POST
+	echo "<br>_GET: ";
+	print_r($_GET);     // show $_GET
+	exit;
+*/
 
 	if (!empty($error_str)) {
 		// show form again
@@ -520,9 +567,18 @@ if (isset($_POST['submit']))
 		else
 		{
 			// Create Match ------------------------------------------
-			$q =
-			"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status, Maps)
-			VALUES ($event_id,'$reported_by', '$time_reported', '$comments', 'pending', '$map')";
+			if(isset($_POST['matchschedule']))
+			{
+				$q =
+				"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
+				VALUES ($event_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled)";
+			}
+			else
+			{
+				$q =
+				"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status, Maps)
+				VALUES ($event_id,'$reported_by', '$time_reported', '$comments', 'pending', '$map')";
+			}
 			$result = $sql->db_Query($q);
 			$last_id = mysql_insert_id();
 			$match_id = $last_id;
@@ -565,34 +621,41 @@ if (isset($_POST['submit']))
 		$text .= '--------------------<br />';
 
 		// Update scores stats
-		match_scores_update($match_id);
-
-		// Automatically Update Players stats only if Match Approval is Disabled
-		if ($eMatchesApproval == eb_UC_NONE)
+		if(isset($_POST['matchschedule']))
 		{
-			switch($etype)
-			{
-				case "One Player Ladder":
-				case "Team Ladder":
-				match_players_update($match_id);
-				break;
-				case "ClanWar":
-				match_teams_update($match_id);
-				break;
-				default:
-			}
+			header("Location: eventinfo.php?eventid=$event_id");
+		}
+		else
+		{
+			match_scores_update($match_id);
 
-			$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-			$result = $sql->db_Query($q);
+			// Automatically Update Players stats only if Match Approval is Disabled
+			if ($eMatchesApproval == eb_UC_NONE)
+			{
+				switch($etype)
+				{
+					case "One Player Ladder":
+					case "Team Ladder":
+					match_players_update($match_id);
+					break;
+					case "ClanWar":
+					match_teams_update($match_id);
+					break;
+					default:
+				}
+
+				$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+				$result = $sql->db_Query($q);
+			}
+			header("Location: matchinfo.php?matchid=$match_id");
 		}
 
-		header("Location: matchinfo.php?matchid=$match_id");
 		exit();
 	}
 	// if we get here, all data checks were okay, process information as you wish.
 } else {
 
-	if (!isset($_POST['matchreport'])&&!isset($_POST['matchedit'])&&!isset($_POST['challengereport']))
+	if (!isset($_POST['matchreport'])&&!isset($_POST['matchedit'])&&!isset($_POST['matchscheduledreport'])&&!isset($_POST['matchschedule']))
 	{
 		$text .= '<p>'.EB_MATCHR_L33.'</p>';
 		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]</p>';

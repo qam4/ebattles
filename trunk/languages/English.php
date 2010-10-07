@@ -185,6 +185,7 @@ define('EB_EVENT_L68', 'challenge(s) pending');
 define('EB_EVENT_L69', 'Challenge deleted');
 define('EB_EVENT_L70', 'match(es) scheduled');
 define('EB_EVENT_L71', 'Challenge Team');
+define('EB_EVENT_L72', 'Match Schedule');
 
 define('EB_EVENTM_L1', 'Manage');
 define('EB_EVENTM_L2', 'Event Summary');
@@ -551,6 +552,10 @@ define('EB_MATCHR_L44', 'Map(s)');
 define('EB_MATCHR_L45', 'Editing Match');
 define('EB_MATCHR_L46', 'Edit Match');
 define('EB_MATCHR_L47', 'It is strongly recommended to update the event statistics after editing a match.');
+define('EB_MATCHR_L48', 'Schedule Match');
+define('EB_MATCHR_L49', 'Match Date/Time');
+define('EB_MATCHR_L50', 'Date selector');
+define('EB_MATCHR_L51', 'Reset');
 
 define('EB_MATCHQL_L1', 'Quick Loss Report');
 define('EB_MATCHQL_L2', 'You are not authorized to report a match.');

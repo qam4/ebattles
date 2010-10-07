@@ -185,6 +185,7 @@ define('EB_EVENT_L68', 'indtil udfordring(er)');
 define('EB_EVENT_L69', 'Udfordring slettet');
 define('EB_EVENT_L70', 'lanlagt kamp(e)');
 define('EB_EVENT_L71', 'Udfordring Hold');
+define('EB_EVENT_L72', 'Planlæg en kamp');
 
 define('EB_EVENTM_L1', 'Administrer');
 define('EB_EVENTM_L2', 'Turnerings Detaljer');
@@ -551,6 +552,10 @@ define('EB_MATCHR_L44', 'Kort(e)');
 define('EB_MATCHR_L45', 'Rediger Kamp');
 define('EB_MATCHR_L46', 'Rediger Kamp');
 define('EB_MATCHR_L47', 'Det anbefales kraftigt at opdatere begivenhed statistikker efter redigering af en kamp.');
+define('EB_MATCHR_L48', 'Planlæg en kamp');
+define('EB_MATCHR_L49', 'Kampen Dato og tid');
+define('EB_MATCHR_L50', 'Dato Vælger');
+define('EB_MATCHR_L51', 'Nulstil');
 
 define('EB_MATCHQL_L1', 'Skrivebords resultat');
 define('EB_MATCHQL_L2', 'Du har IKKE tilladelse til, at rappotere fra en kamp.');

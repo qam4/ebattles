@@ -184,6 +184,7 @@ define('EB_EVENT_L68', 'desafío(s) pendiente');
 define('EB_EVENT_L69', 'Desafío eliminado');
 define('EB_EVENT_L70', 'partido(s) solicitada');
 define('EB_EVENT_L71', 'Desafío de un Equipo');
+define('EB_EVENT_L72', 'Horario de un partido');
 
 define('EB_EVENTM_L1', 'Gestionar - EVENTO');
 define('EB_EVENTM_L2', 'Resumen');
@@ -548,6 +549,10 @@ define('EB_MATCHR_L44', 'Mapa(s)');
 define('EB_MATCHR_L45', 'Edición de partido');
 define('EB_MATCHR_L46', 'Editar partido');
 define('EB_MATCHR_L47', 'Se recomienda actualizar las estadísticas de eventos después de edición de partido.');
+define('EB_MATCHR_L48', 'Horario de un partido');
+define('EB_MATCHR_L49', 'Partido Fecha/Hora');
+define('EB_MATCHR_L50', 'Selector de fecha');
+define('EB_MATCHR_L51', 'Reinicializar');
 
 define('EB_MATCHQL_L1', 'Informe de perdidas');
 define('EB_MATCHQL_L2', 'Usted no esta autorizado para informar el partido.');
