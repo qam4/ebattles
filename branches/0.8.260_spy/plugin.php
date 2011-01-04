@@ -455,7 +455,7 @@ $revision = $eb_version[2];
 if (versionsCompare($eb_version_string, "0.8"))
 {
 	// To revision 0.8
-	$upgrade_alter_tables += array(
+	array_push ($upgrade_alter_tables,
 	"ALTER TABLE ".TBL_EVENTS." ADD Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'",
 	"ALTER TABLE ".TBL_EVENTS." ADD Status varchar(20) DEFAULT 'active'",
 	"ALTER TABLE ".TBL_EVENTS." ADD PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'",
@@ -498,18 +498,18 @@ if (versionsCompare($eb_version_string, "0.8"))
 	) TYPE = MyISAM;"
 	);
 
-	$upgrade_add_prefs += array(
+	array_push_associative ($upgrade_add_prefs, array(
 	"eb_max_number_media" => 3,
 	"eb_max_map_image_size_check" => 1,
 	"eb_max_map_image_size" => 80,
 	"eb_media_submit_class" => e_UC_MEMBER
-	);
+	));
 }
 
 if (versionsCompare($eb_version_string, "0.8.4"))
 {
 	// To revision 0.8.4
-	$upgrade_alter_tables += array(
+	array_push ($upgrade_alter_tables,
 	"ALTER TABLE ".TBL_EVENTS." ADD ChallengesEnable tinyint(1) DEFAULT '0'",
 	"ALTER TABLE ".TBL_MATCHS." ADD TimeScheduled int(11) unsigned not null",
 	"CREATE TABLE ".TBL_CHALLENGES."
@@ -545,7 +545,7 @@ if (versionsCompare($eb_version_string, "0.8.4"))
 if (versionsCompare($eb_version_string, "0.8.5"))
 {
 	// To revision 0.8.5
-	$upgrade_alter_tables += array(
+	array_push ($upgrade_alter_tables,
 	"ALTER TABLE ".TBL_MATCHS." CHANGE Map Maps varchar(255) NOT NULL default '0'",
 	"ALTER TABLE ".TBL_EVENTS." ADD MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."'",
 	"ALTER TABLE ".TBL_EVENTS." ADD MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."'",
@@ -556,7 +556,7 @@ if (versionsCompare($eb_version_string, "0.8.5"))
 	);
 }
 
-/* dbg
+/*
 echo "<br>Prefs upgrade:";
 print_r($upgrade_add_prefs);
 echo "<br>Tables upgrade:";
@@ -579,4 +579,6 @@ if(!function_exists("ebattles_uninstall"))
 		purgeRatings("ebscores");
 	}
 }
+
+
 ?>

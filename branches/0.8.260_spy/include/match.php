@@ -1215,7 +1215,7 @@ function displayMatchInfo($match_id, $type = 0)
 		$mTime  = mysql_result($result, 0, TBL_MATCHS.".TimeReported");
 		$mTime_local = $mTime + TIMEOFFSET;
 		$date = date("d M Y, h:i A",$mTime_local);
-		$mTimeScheduled  = mysql_result($result, 0, TBL_MATCHS.".TimeReported");
+		$mTimeScheduled  = mysql_result($result, 0, TBL_MATCHS.".TimeScheduled");
 		$mTimeScheduled_local = $mTimeScheduled + TIMEOFFSET;
 		$dateScheduled = date("d M Y, h:i A",$mTimeScheduled_local);
 		// Calculate number of players and teams for the match
@@ -1602,7 +1602,7 @@ function displayMatchInfo($match_id, $type = 0)
 			{
 				$string .= ' <div class="smalltext">';
 				$string .= EB_MATCH_L16.'&nbsp;';
-				$string .= EB_MATCH_L17.'&nbsp;'.$date.'.';
+				$string .= EB_MATCH_L17.'&nbsp;'.$dateScheduled.'.';
 
 				$string .= '</div></td>';
 			}

@@ -96,10 +96,22 @@ if(isset($_POST['clanadddiv']))
         $result = $sql->db_Query($q);
 
         $last_id = mysql_insert_id();
-        // Automatically add the clan owner to that divison
+        // Automatically add the clan owner to that divison, if he does not play for another team
+        $q = "SELECT ".TBL_MEMBERS.".*"
+        ." FROM ".TBL_MEMBERS.", "
+        .TBL_DIVISIONS
+        ." WHERE (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+        ." AND (".TBL_DIVISIONS.".Clan != '$clan_id')"
+        ." AND (".TBL_MEMBERS.".User = '$clan_owner')";
+        $result = $sql->db_Query($q);
+
+        if((!$result_3 || (mysql_numrows($result_3) < 1))
+        || (check_class($pref['eb_mod_class'])))
+        {
         $q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
         VALUES ($last_id,'$clan_owner',$time)";
         $sql->db_Query($q);
+    }
     }
     //echo "-- clanadddiv --<br />";
     header("Location: clanmanage.php?clanid=$clan_id");

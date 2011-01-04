@@ -586,4 +586,18 @@ function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title=
             <div style="clear:both"></div>';
 }
 
+// Append associative array elements
+function array_push_associative(&$arr) {
+	$args = func_get_args();
+	foreach ($args as $arg) {
+		if (is_array($arg)) {
+			foreach ($arg as $key => $value) {
+				$arr[$key] = $value;
+			}
+		}else{
+			$arr[$arg] = "";
+		}
+	}
+}
+
 ?>
