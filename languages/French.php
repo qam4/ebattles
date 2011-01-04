@@ -62,6 +62,10 @@ define('EB_ADMIN_L36', 'Liste des Équipes');
 define('EB_ADMIN_L37', 'Powered by <a href="http://ebattles.freehostia.com/" rel="external">eBattles</a>');
 define('EB_ADMIN_L38', 'Plugin Copyright');
 define('EB_ADMIN_L39', 'Jeux');
+define('EB_ADMIN_L40', 'Dimension max des images de maps');
+define('EB_ADMIN_L41', 'Si activé, les images de maps seront modifiées si leur taille excède la taille max (peut être lent)');
+define('EB_ADMIN_L42', 'Activer la dimension max des imagesde maps');
+define('EB_ADMIN_L43', 'Groupe d’utilisateurs authorisés à soumettre un media du match');
 
 define('EB_ADMINHELP_L1', 'eBattles Aide');
 define('EB_ADMINHELP_L2', 'Version');
@@ -172,6 +176,14 @@ define('EB_EVENT_L61', 'Match');
 define('EB_EVENT_L62', 'Voir les détails');
 define('EB_EVENT_L63', 'Trophés récents');
 define('EB_EVENT_L64', 'match(s) en attente');
+define('EB_EVENT_L65', 'Défiez ce joueur');
+define('EB_EVENT_L66', 'Défi(s) lancés');
+define('EB_EVENT_L67', 'Défi(s) non-confirmé(s)');
+define('EB_EVENT_L68', 'Défi(s) en attente');
+define('EB_EVENT_L69', 'Défi effacé');
+define('EB_EVENT_L70', 'match(s) prévu(s)');
+define('EB_EVENT_L71', 'Défiez cette équipes');
+define('EB_EVENT_L72', 'Planifier un match');
 
 define('EB_EVENTM_L1', 'Gérer');
 define('EB_EVENTM_L2', 'Sommaire');
@@ -296,6 +308,11 @@ define('EB_EVENTM_L118', 'Classique: Players are ranked based on their score in 
 Combined Stats: Players are ranked based on a combination of their scores in each stats category');
 define('EB_EVENTM_L119', 'Classique');
 define('EB_EVENTM_L120', 'Stats combinées');
+define('EB_EVENTM_L121', 'Challenges');
+define('EB_EVENTM_L122', 'Activer/Désactiver les Challenges');
+define('EB_EVENTM_L123', 'Sauver les Paramètres des Challenges');
+define('EB_EVENTM_L124', 'Nombre maximum de dates par Challenge');
+define('EB_EVENTM_L125', 'Nombre maximum de maps par match');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');
@@ -382,6 +399,11 @@ define('EB_CLAN_L22', 'Classement');
 define('EB_CLAN_L23', 'Pas de Tournois passés');
 define('EB_CLAN_L24', 'Tournois(s) passé(s)');
 define('EB_CLAN_L25', 'Etes-vous sûr de vouloir quitter cette division?');
+define('EB_CLAN_L26', 'Membre');
+define('EB_CLAN_L27', 'Website');
+define('EB_CLAN_L28', 'Email');
+define('EB_CLAN_L29', 'IM');
+define('EB_CLAN_L30', 'Description');
 
 define('EB_CLANC_L1', 'Créer une Équipe');
 define('EB_CLANC_L2', 'Vous n’êtes pas autorisé à créer une équipe.');
@@ -418,6 +440,10 @@ define('EB_CLANM_L27', 'Retour vers ');
 define('EB_CLANM_L28', 'Équipes');
 define('EB_CLANM_L29', 'Avatar');
 define('EB_CLANM_L30', 'Séléctionez un avatar distant en utilsant un lien externe ou un des icons pré-défini');
+define('EB_CLANM_L31', 'Website');
+define('EB_CLANM_L32', 'Email');
+define('EB_CLANM_L33', 'IM');
+define('EB_CLANM_L34', 'Description');
 
 define('EB_MATCH_L1', 'Match');
 define('EB_MATCH_L2', 'a mis en échec');
@@ -432,6 +458,10 @@ define('EB_MATCH_L10', 'commentaires');
 define('EB_MATCH_L11', 'commentaire');
 define('EB_MATCH_L12', 'en jouant');
 define('EB_MATCH_L13', 'A besoin de votre approbation');
+define('EB_MATCH_L14', 'a perdu contre');
+define('EB_MATCH_L15', 'Soumis par');
+define('EB_MATCH_L16', 'Prévu');
+define('EB_MATCH_L17', 'pour');
 
 define('EB_MATCHD_L1', 'Détails du Match');
 define('EB_MATCHD_L2', 'Match rapporté par');
@@ -451,6 +481,15 @@ define('EB_MATCHD_L15', 'Retour vers');
 define('EB_MATCHD_L16', 'Tournois');
 define('EB_MATCHD_L17', 'Approuver ce match');
 define('EB_MATCHD_L18', 'Ce match est en attente d’homologation');
+define('EB_MATCHD_L19', 'Capture d’écran');
+define('EB_MATCHD_L20', 'Replay');
+define('EB_MATCHD_L21', 'Video');
+define('EB_MATCHD_L22', 'Veuillez entrer l’addresse complète du media ici (http://...)');
+define('EB_MATCHD_L23', 'Soumettre le Media');
+define('EB_MATCHD_L24', 'soumis par');
+define('EB_MATCHD_L25', 'Effacer');
+define('EB_MATCHD_L26', 'Êtes-vous sûr de vouloir effacer ce media?');
+define('EB_MATCHD_L27', 'Editer ce match');
 
 define('EB_MATCHDEL_L1', 'Match');
 define('EB_MATCHDEL_L2', 'Vous n’êtes pas autorisé à effacer ce match.');
@@ -503,6 +542,17 @@ define('EB_MATCHR_L37', 'Vous n’êtes authorisé qu’à rapporter des matchs 
 define('EB_MATCHR_L38', 'Joueur');
 define('EB_MATCHR_L39', 'Équipe #');
 define('EB_MATCHR_L40', 'est la même qu’Équipe #');
+define('EB_MATCHR_L41', 'Faction');
+define('EB_MATCHR_L42', 'Sélectionnez les maps du match:');
+define('EB_MATCHR_L43', 'Inconnue');
+define('EB_MATCHR_L44', 'Map(s)');
+define('EB_MATCHR_L45', 'Vous editez le Match');
+define('EB_MATCHR_L46', 'Editer le Match');
+define('EB_MATCHR_L47', 'Il est fortement recommandé de mettre à jour les statistiques du ladder après l’edition d’un match.');
+define('EB_MATCHR_L48', 'Planifier le match');
+define('EB_MATCHR_L49', 'Date/Heure du Match');
+define('EB_MATCHR_L50', 'Sélecteur de Date');
+define('EB_MATCHR_L51', 'Réinitialiser');
 
 define('EB_MATCHQL_L1', 'Rapport rapide de défaite');
 define('EB_MATCHQL_L2', 'Vous n’êtes pas authorisé a soumettre un match.');
@@ -521,6 +571,28 @@ define('EB_GAME_L7', 'Sauver les Changements');
 define('EB_GAME_L8', 'Créer un nouveau Jeu');
 define('EB_GAME_L9', 'Supprimer ce Jeu');
 define('EB_GAME_L10', 'Etes-vous sûr de vouloir supprimer ce jeu?');
+define('EB_GAME_L11', 'Information');
+define('EB_GAME_L12', 'Factions');
+define('EB_GAME_L13', 'Maps');
+define('EB_GAME_L14', 'Icône');
+define('EB_GAME_L15', 'Nom');
+define('EB_GAME_L16', 'Adresse de l’icône');
+define('EB_GAME_L17', 'Action');
+define('EB_GAME_L18', 'Veuillez entrer l’addresse complète de l’icône ici (http://...), avec le préfixe &quot;jeu_nom_court-&quot;');
+define('EB_GAME_L19', 'Ajouter une Faction');
+define('EB_GAME_L20', 'Effacer');
+define('EB_GAME_L21', 'Êtes-vous sûr de vouloir supprimer cette faction?');
+define('EB_GAME_L22', 'Image');
+define('EB_GAME_L23', 'Nom');
+define('EB_GAME_L24', 'Adresse de l’image');
+define('EB_GAME_L25', 'Description');
+define('EB_GAME_L26', 'Action');
+define('EB_GAME_L27', 'Veuillez entrer l’addresse complète de l’image ici (http://...) avec le préfixe &quot;jeu_nom_court-&quot;');
+define('EB_GAME_L28', 'Ajouter une Map');
+define('EB_GAME_L29', 'Effacer');
+define('EB_GAME_L30', 'Êtes-vous sûr de vouloir supprimer cette map?');
+define('EB_GAME_L31', 'Editer');
+define('EB_GAME_L32', 'Nom Court');
 
 define('EB_GAMES_L1', 'Jeux');
 define('EB_GAMES_L2', 'Jeux');
@@ -543,6 +615,40 @@ define('EB_GAMES_L18', 'Mettre à jour les jeux sélectionnés');
 define('EB_GAMES_L19', 'Mettre à jour tous les jeux');
 define('EB_GAMES_L20', 'Ajouter les Jeux prédéfinis');
 
+define('EB_CHALLENGE_L1', 'Défi');
+define('EB_CHALLENGE_L2', 'Défier un Joueur');
+define('EB_CHALLENGE_L3', 'Défier une Équipes');
+define('EB_CHALLENGE_L4', 'Ladder:');
+define('EB_CHALLENGE_L5', 'Challenger:');
+define('EB_CHALLENGE_L6', 'Défié:');
+define('EB_CHALLENGE_L7', 'Sélectionnez des dates:');
+define('EB_CHALLENGE_L8', 'Commentairess:');
+define('EB_CHALLENGE_L9', 'Envoyer le Défi');
+define('EB_CHALLENGE_L10', 'La date');
+define('EB_CHALLENGE_L11', 'n’est pas rentrée');
+define('EB_CHALLENGE_L12', 'Défié soumis');
+define('EB_CHALLENGE_L13', 'Retour vers');
+define('EB_CHALLENGE_L14', 'Ladder');
+define('EB_CHALLENGE_L15', 'Annuler');
+define('EB_CHALLENGE_L16', 'Êtes-vous sûr de vouloir supprimer ce défi?');
+define('EB_CHALLENGE_L17', 'Confirmez');
+define('EB_CHALLENGE_L18', 'Confirmation du défi');
+define('EB_CHALLENGE_L19', 'Choisissez la date');
+define('EB_CHALLENGE_L20', 'Accepter');
+define('EB_CHALLENGE_L21', 'Décliner');
+define('EB_CHALLENGE_L22', 'Défi accepté, match prévu');
+define('EB_CHALLENGE_L23', 'Vous avez reçu un défi!');
+define('EB_CHALLENGE_L24', 'Bonjour ');
+define('EB_CHALLENGE_L25', ',
+
+	Vous avez reçu un défi de ');
+define('EB_CHALLENGE_L26', ' dans le ladder "');
+define('EB_CHALLENGE_L27', '".
+	Veuillez vérifiez votre page "Mon Profil" pour plus d’infos.
+	
+	Cordiallement,
+	L’admin du ladder');
+	
 define('EB_AWARD_L1', 'Trophée');
 define('EB_AWARD_L2', 'a pris la 1ère place');
 define('EB_AWARD_L3', '1ère place');
