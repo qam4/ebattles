@@ -651,6 +651,7 @@ define('EB_CHALLENGE_L27', '" ladder.
 	
 	Cordially,
 	The ladder admin');
+define('EB_CHALLENGE_L28', 'Challenger comments:');
 	
 define('EB_AWARD_L1', 'Award');
 define('EB_AWARD_L2', 'took 1st place');

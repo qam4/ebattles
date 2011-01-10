@@ -119,6 +119,7 @@ function ChallengeConfirmForm($challenge_id)
 		$cEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
 		$cEventType  = mysql_result($result, 0, TBL_EVENTS.".Type");
 		$cEventNumDates  = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
+		$cComments  = mysql_result($result,0, TBL_CHALLENGES.".Comments");
 		$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 		$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
 		$cTime_local = $cTime + TIMEOFFSET;
@@ -140,7 +141,6 @@ function ChallengeConfirmForm($challenge_id)
 			case "One Player Ladder":
 			case "Team Ladder":
 			// Challenger Info
-			$output .= '<b>'.EB_CHALLENGE_L5.'</b>'; // Challenger
 			$q = "SELECT ".TBL_PLAYERS.".*, "
 			.TBL_USERS.".*"
 			." FROM ".TBL_PLAYERS.", "
@@ -206,6 +206,17 @@ function ChallengeConfirmForm($challenge_id)
 		$output .= ' '.$string.'<br />';
 
 		$output .= '<br />';
+
+		// Comments
+		if ($cComments)
+		{
+			$output .= '<b>'.EB_CHALLENGE_L28.'</b><br />'; // Comments
+			$output .= '<p>';
+			$output .= $tp->toHTML($cComments, true).'<br />';
+			$output .= '</p>';
+			$output .= '<br />';
+		}
+
 
 		// Select Date
 		$matchDates = explode(",", $cMatchDates);
@@ -283,7 +294,7 @@ function ChallengeAccept($challenge_id)
 		$cChallengedtID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedTeam");
 
 
-		
+
 		// Create Match ------------------------------------------
 		$comments = '';
 		$q =

@@ -126,6 +126,13 @@
   color: #fff;
 }
 
+#shadowbox_title {
+border: 0px solid;
+}
+#shadowbox_info {
+border: 0px solid;
+}
+
 /*_____________________________________________________________________  nav  */
 #shadowbox_nav {
   float: right;
