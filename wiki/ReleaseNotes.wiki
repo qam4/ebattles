@@ -1,5 +1,17 @@
 #summary eBattles Release Notes.
-= Release 0.8.5 =
+= Release 0.8.7 =
+==Changes==
+ * Prevent players from individually quitting clan events.
+ * Improved plugin upgrade, added function array_push_associative()
+ * In division page, captain go on top of members list. (Aaron)
+
+==Bug fixes==
+ * Fix problem with medias display with IE8 (shadowbox issue)
+ * Show challenger's comments in challenge confirmation form.
+ * Fix issues in French translation
+ * Fix for accepted challenge date.
+
+= Release 0.8.6 =
 ==Features ==
  * Added "Scheduled Match"
   * Now matches can be scheduled by event admin and mods
