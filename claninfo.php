@@ -274,6 +274,8 @@ function displayTeamDivisions($clan_id){
             <td class="forumheader"><b>'.EB_CLAN_L17.'</b></td>
             <td class="forumheader"><b>'.EB_CLAN_L18.'</b></td>
             </tr>';
+
+            // Captain
             for($j=0; $j < $numMembers; $j++)
             {
                 $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
@@ -282,13 +284,35 @@ function displayTeamDivisions($clan_id){
                 $mjoined_local = $mjoined + TIMEOFFSET;
                 $date = date("d M Y",$mjoined_local);
                 
-                $status =  ($mid == $div_captain) ? EB_CLAN_L9 : EB_CLAN_L26; 
+                if ($mid == $div_captain)
+                {
+                	$status =  EB_CLAN_L9; 
 
-                $text .= '<tr>';
-                $text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
-                <td class="forumheader3">'.$status.'</td>
-                <td class="forumheader3">'.$date.'</td></tr>';
-// Need to remove hardcoded "Member" here
+                	$text .= '<tr>';
+                	$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
+                	<td class="forumheader3">'.$status.'</td>
+                	<td class="forumheader3">'.$date.'</td></tr>';
+            	}
+            }
+
+            // Other members
+            for($j=0; $j < $numMembers; $j++)
+            {
+                $mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+                $mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
+                $mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
+                $mjoined_local = $mjoined + TIMEOFFSET;
+                $date = date("d M Y",$mjoined_local);
+                
+                if ($mid != $div_captain)
+                {
+	                $status =  EB_CLAN_L26; 
+	
+	                $text .= '<tr>';
+	                $text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
+	                <td class="forumheader3">'.$status.'</td>
+	                <td class="forumheader3">'.$date.'</td></tr>';
+	            }
             }
             $text .= '</tbody></table>';
         }
