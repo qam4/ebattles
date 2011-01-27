@@ -1,4 +1,15 @@
 #summary eBattles Release Notes.
+= Release 0.8.8 =
+==Features ==
+ * Notifications for event invitation or new challenge are now sent by email as well as PM. (Klinge)
+
+==Changes==
+ * Allow negative points per loss (M@vrik)
+
+==Bug fixes==
+ * Fixed disclaimer link display
+ * Fixed Scheduled Match report button was not showing for participants in team ladders. (M@vrik)
+
 = Release 0.8.7 =
 ==Changes==
  * Prevent players from individually quitting clan events.
