@@ -113,6 +113,16 @@ define('EB_EVENTS_L22', 'Individual Ladder');
 define('EB_EVENTS_L23', 'Hold/Individual Ladder');
 define('EB_EVENTS_L24', 'Filter');
 define('EB_EVENTS_L25', 'Hold Ladder');
+define('EB_EVENTS_L26', 'Hej ');
+define('EB_EVENTS_L27', ',
+	Du er inviteret til at deltage i turneringen "');
+define('EB_EVENTS_L29', '"
+	Tjek venligst din "Min Profil/Turneringer" for at se turneringen detaljer.');
+define('EB_EVENTS_L30', '"
+	Vær venlig at klikke på nedenstående link for at se turneringen detaljer: ');	
+define('EB_EVENTS_L31', '
+	Hjerteligt,
+	Turnering admin ');
 
 define('EB_EVENT_L1', 'Turneringer');
 define('EB_EVENT_L2', 'Turnering starter d.');
@@ -647,10 +657,11 @@ define('EB_CHALLENGE_L25', ',
 	Du er blevet udfordret af ');
 define('EB_CHALLENGE_L26', ' i turnering"');
 define('EB_CHALLENGE_L27', '".
-	Tjek venligst din "Min profil" for at se den udfordring detaljer.
+	Tjek venligst din "Min profil/Kampe" for at se den udfordring detaljer.
 
 	Hjerteligt,
 	Turnering admin');
+define('EB_CHALLENGE_L28', 'Challenger kommentarer:');
 
 define('EB_AWARD_L1', 'Præmier');
 define('EB_AWARD_L2', 'fik 1. pladsen');

@@ -112,6 +112,16 @@ define('EB_EVENTS_L22', 'Liga Individual');
 define('EB_EVENTS_L23', 'Liga Individual por Equipos');
 define('EB_EVENTS_L24', 'Filtro');
 define('EB_EVENTS_L25', 'Liga por Equipos');
+define('EB_EVENTS_L26', 'Hola ');
+define('EB_EVENTS_L27', ',
+	Usted esta invitado a participar en la evento "');
+define('EB_EVENTS_L29', '"
+	Por favor revise su "Mi prefil/Eventos" pagina para ver los detalles evento.');
+define('EB_EVENTS_L30', '"
+	Por favor, haga clic en el siguiente enlace para ver los detalles evento: ');
+define('EB_EVENTS_L31', '
+	Cordialmente,
+	El evento admin ');
 
 define('EB_EVENT_L1', 'Eventos');
 define('EB_EVENT_L2', 'Comienza en');
@@ -644,10 +654,12 @@ define('EB_CHALLENGE_L25', ',
 	Usted ha sido cuestionado por ');
 define('EB_CHALLENGE_L26', ' en el evento "');
 define('EB_CHALLENGE_L27', '".
-	Por favor revise su "Mi prefil" pagina para ver los detalles desafío.
+	Por favor revise su "Mi prefil/Partidos" pagina para ver los detalles desafío.
 	
 	Cordialmente,
 	El evento admin');
+define('EB_CHALLENGE_L28', 'Desafíador comentarios:');
+	
 define('EB_AWARD_L1', 'Premio');
 define('EB_AWARD_L2', 'tomo 1er lugar');
 define('EB_AWARD_L3', '1er lugar');
