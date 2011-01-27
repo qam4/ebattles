@@ -113,6 +113,16 @@ define('EB_EVENTS_L22', 'Individual Ladder');
 define('EB_EVENTS_L23', 'Team/Individual Ladder');
 define('EB_EVENTS_L24', 'Filter');
 define('EB_EVENTS_L25', 'Team Ladder');
+define('EB_EVENTS_L26', 'Hello ');
+define('EB_EVENTS_L27', ',
+	You are invited to participate in the ladder "');
+define('EB_EVENTS_L29', '"
+	Please check your "My Profile/Events" page to see the ladder details.');
+define('EB_EVENTS_L30', '"
+	Please click the following link to view the ladder details: ');	
+define('EB_EVENTS_L31', '
+	Cordially,
+	The ladder admin ');
 
 define('EB_EVENT_L1', 'Events');
 define('EB_EVENT_L2', 'Event starts in');
@@ -647,7 +657,7 @@ define('EB_CHALLENGE_L25', ',
 	You have been challenged by ');
 define('EB_CHALLENGE_L26', ' in the "');
 define('EB_CHALLENGE_L27', '" ladder.
-	Please check your "My Profile" page to see the challenge details.
+	Please check your "My Profile/Matches" page to see the challenge details.
 	
 	Cordially,
 	The ladder admin');

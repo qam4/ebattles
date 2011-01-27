@@ -111,6 +111,16 @@ define('EB_EVENTS_L22', 'Tournois individuel');
 define('EB_EVENTS_L23', 'Tournois individuel par équipe');
 define('EB_EVENTS_L24', 'Filtrer');
 define('EB_EVENTS_L25', 'Tournois par équipe');
+define('EB_EVENTS_L26', 'Bonjour ');
+define('EB_EVENTS_L27', ',
+	Vous êtes invitsé àparticiper au tournoi "');
+define('EB_EVENTS_L29', '"
+	Veuillez vérifier votre page "Mon Profil/Tournois" pour plus d’infos.');
+define('EB_EVENTS_L30', '"
+	Veuillez suivre le lien suivant pour avoir plus d’infos sur le tournoi: ');	
+define('EB_EVENTS_L31', '
+	Cordialement,
+	L’admin du ladder');
 
 define('EB_EVENT_L1', 'Tournois');
 define('EB_EVENT_L2', 'Le Tournois débute dans');
@@ -644,10 +654,11 @@ define('EB_CHALLENGE_L25', ',
 	Vous avez reçu un défi de ');
 define('EB_CHALLENGE_L26', ' dans le ladder "');
 define('EB_CHALLENGE_L27', '".
-	Veuillez vérifiez votre page "Mon Profil" pour plus d’infos.
+	Veuillez vérifier votre page "Mon Profil/Matchs" pour plus d’infos.
 	
-	Cordiallement,
+	Cordialement,
 	L’admin du ladder');
+define('EB_CHALLENGE_L28', 'Commentaires du challenger:');
 	
 define('EB_AWARD_L1', 'Trophée');
 define('EB_AWARD_L2', 'a pris la 1ère place');
