@@ -229,7 +229,7 @@ else
 				$result2 = $sql->db_Query($q2);
 			}
 			$new_eventpointsperloss = htmlspecialchars($_POST['eventpointsperloss']);
-			if (preg_match("/^\d+$/", $new_eventpointsperloss))
+			if (preg_match("/^-?\d+$/", $new_eventpointsperloss))
 			{
 				$q2 = "UPDATE ".TBL_EVENTS." SET PointsPerLoss = '$new_eventpointsperloss' WHERE (EventID = '$event_id')";
 				$result2 = $sql->db_Query($q2);
