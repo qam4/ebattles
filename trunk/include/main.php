@@ -543,8 +543,9 @@ function sendNotification($sendto, $subject, $message, $fromid=0) {
 function disclaimer()
 {
     global $pref;
+    global $tp;
 
-    return '<span class="smalltext" style="float:right">'.$pref['eb_disclaimer'].'</span><span style="clear:both"><br /></span>';
+    return '<span class="smalltext" style="float:right">'.$tp->toHTML($pref['eb_disclaimer']).'</span><span style="clear:both"><br /></span>';
 }
 
 function versionsCompare($version1, $version2)

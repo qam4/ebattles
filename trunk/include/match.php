@@ -1317,18 +1317,44 @@ function displayMatchInfo($match_id, $type = 0)
 				break;
 				default:
 			}
+
 			// Is the user a player in the match?
-			$q_UserPlayers = "SELECT DISTINCT ".TBL_SCORES.".*"
-			." FROM ".TBL_MATCHS.", "
-			.TBL_SCORES.", "
-			.TBL_PLAYERS.", "
-			.TBL_USERS
-			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-			." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-			." AND (".TBL_PLAYERS.".User = ".USERID.")";
-			$result_UserPlayers = $sql->db_Query($q_UserPlayers);
-			$numUserPlayers = mysql_numrows($result_UserPlayers);
+			switch($mEventType)
+			{
+				case "One Player Ladder":
+				case "Team Ladder":
+				$q_UserPlayers = "SELECT DISTINCT ".TBL_SCORES.".*"
+				." FROM ".TBL_MATCHS.", "
+				.TBL_SCORES.", "
+				.TBL_PLAYERS.", "
+				.TBL_USERS
+				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+				." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+				." AND (".TBL_PLAYERS.".User = ".USERID.")";
+				$result_UserPlayers = $sql->db_Query($q_UserPlayers);
+				$numUserPlayers = mysql_numrows($result_UserPlayers);
+
+				break;
+				case "ClanWar":
+				$q_UserPlayers = "SELECT DISTINCT ".TBL_SCORES.".*"
+				." FROM ".TBL_MATCHS.", "
+				.TBL_SCORES.", "
+				.TBL_TEAMS.", "
+				.TBL_PLAYERS.", "
+				.TBL_USERS
+				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+				." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+				." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+				." AND (".TBL_PLAYERS.".User = ".USERID.")";
+				$result_UserPlayers = $sql->db_Query($q_UserPlayers);
+				$numUserPlayers = mysql_numrows($result_UserPlayers);
+				//dbg: echo "numUserPlayers: $numUserPlayers<br>";
+
+				break;
+				default:
+			}
 
 			$can_approve = 0;
 			if (USERID==$mEventOwner)

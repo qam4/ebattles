@@ -61,7 +61,7 @@ define('EB_ADMIN_L33', 'Teams Standings');
 define('EB_ADMIN_L34', 'Default Team Avatar');
 define('EB_ADMIN_L35', 'Select a remote icon using an external link or one of the icons in ebattles/images/team_avatars/');
 define('EB_ADMIN_L36', 'Teams List');
-define('EB_ADMIN_L37', 'Powered by <a href="http://ebattles.freehostia.com/" rel="external">eBattles</a>');
+define('EB_ADMIN_L37', 'Powered by <a href=&quot;http://ebattles.freehostia.com/&quot; rel=&quot;external&quot;>eBattles</a>');
 define('EB_ADMIN_L38', 'Plugin Disclaimer');
 define('EB_ADMIN_L39', 'Games');
 define('EB_ADMIN_L40', 'Maps Images max size');

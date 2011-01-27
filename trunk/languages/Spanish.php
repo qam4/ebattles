@@ -60,7 +60,7 @@ define('EB_ADMIN_L33', 'Clasificaciones de Equipos');
 define('EB_ADMIN_L34', 'Avatar de Equipos');
 define('EB_ADMIN_L35', 'Seleccione un icono de remoto a través de un enlace externo o uno de los iconos en ebattles ebattles/images/team_avatars/');
 define('EB_ADMIN_L36', 'Lista de Equipos');
-define('EB_ADMIN_L37', 'Hecho por <a href="http://ebattles.freehostia.com/" rel="external">eBattles</a>');
+define('EB_ADMIN_L37', 'Hecho por <a href=&quot;http://ebattles.freehostia.com/&quot; rel=&quot;external&quot;>eBattles</a>');
 define('EB_ADMIN_L38', 'Responsable por el Plugin');
 define('EB_ADMIN_L39', 'Juegos');
 define('EB_ADMIN_L40', 'Maps Images tamaño máximo');
