@@ -1,4 +1,5 @@
 #summary eBattles Release Notes.
+#labels Featured
 = Release 0.8.8 =
 ==Features ==
  * Notifications for event invitation or new challenge are now sent by email as well as PM. (Klinge)
