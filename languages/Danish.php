@@ -66,8 +66,10 @@ define('EB_ADMIN_L38', 'Plugin Disclaimer');
 define('EB_ADMIN_L39', 'Spil');
 define('EB_ADMIN_L40', 'Kort Billeder max størrelse');
 define('EB_ADMIN_L41', 'Hvis aktiveret, kort så vil billeder automatisk blive ændret til den angivet størrelse i systemet(an sløve systemet)');
-define('EB_ADMIN_L42', 'Aktiver kortbilleder max st�se');
+define('EB_ADMIN_L42', 'Aktiver kortbilleder max st?se');
 define('EB_ADMIN_L43', 'Match medier indsende userclass');
+define('EB_ADMIN_L44', 'PM meddelelser userclass');
+define('EB_ADMIN_L45', 'Email meddelelser userclass');
 
 define('EB_ADMINHELP_L1', 'eBattles Hjælp');
 define('EB_ADMINHELP_L2', 'Version');
@@ -117,9 +119,9 @@ define('EB_EVENTS_L26', 'Hej ');
 define('EB_EVENTS_L27', ',
 	Du er inviteret til at deltage i turneringen "');
 define('EB_EVENTS_L29', '"
-	Tjek venligst din "Min Profil/Turneringer" for at se turneringen detaljer.');
+	Tjek venligst din "Min Profil/Turneringer" for at se turnerings detaljer.');
 define('EB_EVENTS_L30', '"
-	Vær venlig at klikke på nedenstående link for at se turneringen detaljer: ');	
+	Vær venlig at klikke på nedenstående link for at se turnerings detaljer: ');	
 define('EB_EVENTS_L31', '
 	Hjerteligt,
 	Turnering admin ');
@@ -190,10 +192,10 @@ define('EB_EVENT_L63', 'Seneste Vinder');
 define('EB_EVENT_L64', 'Kamp(e) der venter');
 define('EB_EVENT_L65', 'Udfordring en spiller');
 define('EB_EVENT_L66', 'anmodet udfordring(er)');
-define('EB_EVENT_L67', 'ubekr奴et udfordring(er)');
+define('EB_EVENT_L67', 'ubekræftet udfordring(er)');
 define('EB_EVENT_L68', 'indtil udfordring(er)');
 define('EB_EVENT_L69', 'Udfordring slettet');
-define('EB_EVENT_L70', 'lanlagt kamp(e)');
+define('EB_EVENT_L70', 'Planlagt kamp(e)');
 define('EB_EVENT_L71', 'Udfordring Hold');
 define('EB_EVENT_L72', 'Planlæg en kamp');
 
@@ -452,11 +454,10 @@ define('EB_CLANM_L27', 'Tilbage');
 define('EB_CLANM_L28', 'Hold');
 define('EB_CLANM_L29', 'Avatar');
 define('EB_CLANM_L30', 'Vælg et eksternt Ikon ved, at indsætte et link til billede eller forud bestemt Ikon');
-define('EB_CLAN_L26', 'Medlem');
-define('EB_CLAN_L27', 'Website');
-define('EB_CLAN_L28', 'Email');
-define('EB_CLAN_L29', 'IM');
-define('EB_CLAN_L30', 'Beskrivelse');
+define('EB_CLANM_L31', 'Website');
+define('EB_CLANM_L32', 'Email');
+define('EB_CLANM_L33', 'IM');
+define('EB_CLANM_L34', 'Beskrivelse');
 
 define('EB_MATCH_L1', 'Kamp');
 define('EB_MATCH_L2', 'Uafgjort');
@@ -466,7 +467,7 @@ define('EB_MATCH_L5', 'Se detaljer');
 define('EB_MATCH_L6', 'Indsendt af');
 define('EB_MATCH_L7', 'For få sekunder siden');
 define('EB_MATCH_L8', 'Siden.');
-define('EB_MATCH_L9', 'on');
+define('EB_MATCH_L9', 'd.');
 define('EB_MATCH_L10', 'Kommentarer');
 define('EB_MATCH_L11', 'Skriv Kommentar');
 define('EB_MATCH_L12', 'i');
@@ -566,6 +567,17 @@ define('EB_MATCHR_L48', 'Planlæg en kamp');
 define('EB_MATCHR_L49', 'Kampen Dato og tid');
 define('EB_MATCHR_L50', 'Dato Vælger');
 define('EB_MATCHR_L51', 'Nulstil');
+define('EB_MATCHR_L52', 'Du har en ny planlagt kamp!');
+define('EB_MATCHR_L53', 'Hej ');
+define('EB_MATCHR_L54', ',
+
+	Du har en ny planlagt kamp');
+define('EB_MATCHR_L55', ' i turnering "');
+define('EB_MATCHR_L56', '".
+	Tjek venligst din "Min profil/Kampe" for at se udfordrings detaljer.
+
+	Venlig hilsen,
+	Turnering admin');
 
 define('EB_MATCHQL_L1', 'Skrivebords resultat');
 define('EB_MATCHQL_L2', 'Du har IKKE tilladelse til, at rappotere fra en kamp.');
@@ -650,18 +662,29 @@ define('EB_CHALLENGE_L19', 'Vælg en dato');
 define('EB_CHALLENGE_L20', 'Accept');
 define('EB_CHALLENGE_L21', 'Tilbagegang');
 define('EB_CHALLENGE_L22', 'Udfordring accepteret, match planlagt');
-define('EB_CHALLENGE_L23', 'You have been challenged!');
+define('EB_CHALLENGE_L23', 'Du er blevet udfordret!');
 define('EB_CHALLENGE_L24', 'Hej ');
 define('EB_CHALLENGE_L25', ',
 
 	Du er blevet udfordret af ');
-define('EB_CHALLENGE_L26', ' i turnering"');
+define('EB_CHALLENGE_L26', ' i turnering "');
 define('EB_CHALLENGE_L27', '".
-	Tjek venligst din "Min profil/Kampe" for at se den udfordring detaljer.
+	Tjek venligst din "Min profil/Kampe" for at se udfordrings detaljer.
 
-	Hjerteligt,
+	Venlig hilsen,
 	Turnering admin');
 define('EB_CHALLENGE_L28', 'Challenger kommentarer:');
+define('EB_CHALLENGE_L29', 'Udfordring faldt!');
+define('EB_CHALLENGE_L30', 'Hej ');
+define('EB_CHALLENGE_L31', ',
+
+	Din udfordring er blevet afvist af');
+define('EB_CHALLENGE_L32', ' i turnering "');
+define('EB_CHALLENGE_L33', '".
+	Tjek venligst din "Min profil/Kampe" for at se udfordrings detaljer.
+
+	Venlig hilsen,
+	Turnering admin');
 
 define('EB_AWARD_L1', 'Præmier');
 define('EB_AWARD_L2', 'fik 1. pladsen');
