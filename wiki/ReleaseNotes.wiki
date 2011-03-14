@@ -1,5 +1,19 @@
 #summary eBattles Release Notes.
 #labels Featured
+= Release 0.8.9 =
+==Features ==
+ * Added userclass for emails and PM notifications.
+  * Can be changed from plugin admin area.
+ * Added Czech translation (thanks godlion)
+
+==Changes==
+ * Added notifications
+  * when challenge is accepted or declined,
+  * when a match is scheduled.
+
+==Bug fixes==
+ * Fixed some w3c incompatibilities.
+
 = Release 0.8.8 =
 ==Features ==
  * Notifications for event invitation or new challenge are now sent by email as well as PM. (Klinge)
