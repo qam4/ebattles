@@ -68,6 +68,8 @@ define('EB_ADMIN_L40', 'Maps Images max size');
 define('EB_ADMIN_L41', 'If enabled, map images will be resized if they exceed the max size (can be slow)');
 define('EB_ADMIN_L42', 'Enable map images max size');
 define('EB_ADMIN_L43', 'Match media submit userclass');
+define('EB_ADMIN_L44', 'PM Notifications userclass');
+define('EB_ADMIN_L45', 'Email Notifications userclass');
 
 define('EB_ADMINHELP_L1', 'eBattles Help');
 define('EB_ADMINHELP_L2', 'Version');
@@ -566,6 +568,17 @@ define('EB_MATCHR_L48', 'Schedule Match');
 define('EB_MATCHR_L49', 'Match Date/Time');
 define('EB_MATCHR_L50', 'Date selector');
 define('EB_MATCHR_L51', 'Reset');
+define('EB_MATCHR_L52', 'You have a new match scheduled!');
+define('EB_MATCHR_L53', 'Hello ');
+define('EB_MATCHR_L54', ',
+
+	You have a new match scheduled');
+define('EB_MATCHR_L55', ' in the "');
+define('EB_MATCHR_L56', '" ladder.
+	Please check your "My Profile/Matches" page to see the match details.
+	
+	Cordially,
+	The ladder admin');
 
 define('EB_MATCHQL_L1', 'Quick Loss Report');
 define('EB_MATCHQL_L2', 'You are not authorized to report a match.');
@@ -662,6 +675,17 @@ define('EB_CHALLENGE_L27', '" ladder.
 	Cordially,
 	The ladder admin');
 define('EB_CHALLENGE_L28', 'Challenger comments:');
+define('EB_CHALLENGE_L29', 'Challenge declined!');
+define('EB_CHALLENGE_L30', 'Hello ');
+define('EB_CHALLENGE_L31', ',
+
+	Your challenge has been declined by ');
+define('EB_CHALLENGE_L32', ' in the "');
+define('EB_CHALLENGE_L33', '" ladder.
+	Please check your "My Profile/Matches" page to see the challenge details.
+	
+	Cordially,
+	The ladder admin');
 	
 define('EB_AWARD_L1', 'Award');
 define('EB_AWARD_L2', 'took 1st place');

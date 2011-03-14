@@ -34,6 +34,8 @@ if (isset($_POST['updatesettings'])) {
     $pref['eb_avatar_enable_teamslist'] = $_POST['eb_avatar_enable_teamslist'];
     $pref['eb_avatar_default_team_image'] = $_POST['eb_avatar_default_team_image'];
     $pref['eb_disclaimer'] = $_POST['eb_disclaimer'];
+    $pref['eb_pm_notifications_class'] = $_POST['eb_pm_notifications_class'];
+    $pref['eb_email_notifications_class'] = $_POST['eb_email_notifications_class'];
     save_prefs();
     $message = EB_ADMIN_L1;
 }
@@ -593,7 +595,21 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
     </td>
     </tr>
     ";
-    
+
+    $text .= "<tr>
+    <td class='forumheader3' style='width:40%'>".EB_ADMIN_L44.": </td>
+    <td class='forumheader3' style='width:60%'>". r_userclass("eb_pm_notifications_class", $pref['eb_pm_notifications_class'], 'off', "public, member, admin, classes")."
+    </td>
+    </tr>
+    ";
+
+    $text .= "<tr>
+    <td class='forumheader3' style='width:40%'>".EB_ADMIN_L45.": </td>
+    <td class='forumheader3' style='width:60%'>". r_userclass("eb_email_notifications_class", $pref['eb_email_notifications_class'], 'off', "public, member, admin, classes")."
+    </td>
+    </tr>
+    ";
+        
     $text .= "<tr>
     <td class='forumheader3' style='width:40%'>".EB_ADMIN_L3.":  <div class='smalltext'>".EB_ADMIN_L4."</div></td>
     <td class='forumheader3' style='width:60%'>

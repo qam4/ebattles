@@ -68,7 +68,9 @@ $eplug_prefs = array(
 "eb_disclaimer" => EB_ADMIN_L37,
 "eb_max_number_media" => 3,
 "eb_max_map_image_size_check" => 1,
-"eb_max_map_image_size" => 80
+"eb_max_map_image_size" => 80,
+"eb_pm_notifications_class" => e_UC_MEMBER,
+"eb_email_notifications_class" => e_UC_MEMBER,
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -554,6 +556,15 @@ if (versionsCompare($eb_version_string, "0.8.5"))
 	"ALTER TABLE ".TBL_CLANS." ADD IM varchar(100) NOT NULL default ''",
 	"ALTER TABLE ".TBL_CLANS." ADD Description text NOT NULL"
 	);
+}
+
+if (versionsCompare($eb_version_string, "0.8.9"))
+{
+	// To revision 0.8.9
+	array_push_associative ($upgrade_add_prefs, array(
+	"eb_pm_notifications_class" => e_UC_MEMBER,
+	"eb_email_notifications_class" => e_UC_MEMBER
+	));
 }
 
 /*

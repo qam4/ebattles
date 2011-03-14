@@ -66,6 +66,8 @@ define('EB_ADMIN_L40', 'Dimension max des images de maps');
 define('EB_ADMIN_L41', 'Si activé, les images de maps seront modifiées si leur taille excède la taille max (peut être lent)');
 define('EB_ADMIN_L42', 'Activer la dimension max des imagesde maps');
 define('EB_ADMIN_L43', 'Groupe d’utilisateurs authorisés à soumettre un media du match');
+define('EB_ADMIN_L44', 'Groupe d’utilisateurs notifiés par PM');
+define('EB_ADMIN_L45', 'Groupe d’utilisateurs notifiés par email');
 
 define('EB_ADMINHELP_L1', 'eBattles Aide');
 define('EB_ADMINHELP_L2', 'Version');
@@ -563,6 +565,17 @@ define('EB_MATCHR_L48', 'Planifier le match');
 define('EB_MATCHR_L49', 'Date/Heure du Match');
 define('EB_MATCHR_L50', 'Sélecteur de Date');
 define('EB_MATCHR_L51', 'Réinitialiser');
+define('EB_MATCHR_L52', 'Vous avez un match prévu!');
+define('EB_MATCHR_L53', 'Bonjour ');
+define('EB_MATCHR_L54', ',
+
+	Vous avez un match prévu');
+define('EB_MATCHR_L55', ' dans le ladder "');
+define('EB_MATCHR_L56', '".
+	Veuillez vérifier votre page "Mon Profil/Matchs" pour plus d’infos.
+	
+	Cordialement,
+	L’admin du ladder');
 
 define('EB_MATCHQL_L1', 'Rapport rapide de défaite');
 define('EB_MATCHQL_L2', 'Vous n’êtes pas authorisé a soumettre un match.');
@@ -659,6 +672,17 @@ define('EB_CHALLENGE_L27', '".
 	Cordialement,
 	L’admin du ladder');
 define('EB_CHALLENGE_L28', 'Commentaires du challenger:');
+define('EB_CHALLENGE_L29', 'Challenge refusé!');
+define('EB_CHALLENGE_L30', 'Bonjour ');
+define('EB_CHALLENGE_L31', ',
+
+	Votre challenge a été décliné par ');
+define('EB_CHALLENGE_L32', ' dans le ladder "');
+define('EB_CHALLENGE_L33', '".
+	Veuillez vérifier votre page "Mon Profil/Matchs" pour plus d’infos.
+	
+	Cordialement,
+	L’admin du ladder');
 	
 define('EB_AWARD_L1', 'Trophée');
 define('EB_AWARD_L2', 'a pris la 1ère place');

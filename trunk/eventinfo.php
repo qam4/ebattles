@@ -315,7 +315,7 @@ else
 			{
 				case "Team Ladder":
 				case "ClanWar":
-				// Is user a member of a division for that game?
+				// Is the user a member of a division for that game?
 				$q_2 = "SELECT ".TBL_CLANS.".*, "
 				.TBL_MEMBERS.".*, "
 				.TBL_DIVISIONS.".*, "
@@ -1010,7 +1010,7 @@ else
 	$text .= '</div>';
 
 	//dbg: $text .= "Userclass: $userclass<br>";
-
+	
 	/* Display Match Report buttons */
 	if(($can_report_quickloss != 0)||($can_report != 0))
 	{

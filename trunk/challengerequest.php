@@ -307,6 +307,7 @@ function SubmitPlayerChallenge($event_id, $challengerpuid, $challengedpid)
 	global $text;
 	global $tp;
 	global $time;
+	global $pref;
 
 	$q = "SELECT ".TBL_EVENTS.".*"
 	." FROM ".TBL_EVENTS
@@ -379,17 +380,22 @@ function SubmitPlayerChallenge($event_id, $challengerpuid, $challengedpid)
 	)";
 	$result = $sql->db_Query($q);
 
-	// Send PM
-	$sendto = $challengedpuid;
-	$fromid = $challengerpuid;
 	$subject = SITENAME." ".EB_CHALLENGE_L23;
 	$message = EB_CHALLENGE_L24.$challengedpname.EB_CHALLENGE_L25.$challengerpname.EB_CHALLENGE_L26.$ename.EB_CHALLENGE_L27;
-	sendNotification($sendto, $subject, $message, $fromid);
+	if (check_class($pref['eb_pm_notifications_class']))
+	{
+		// Send PM
+		$sendto = $challengedpuid;
+		$fromid = $challengerpuid;
+		sendNotification($sendto, $subject, $message, $fromid);
+	}
 
-	// Send email
-	require_once(e_HANDLER."mail.php");
-	sendemail($challengedpemail, $subject, $message);
-
+	if (check_class($pref['eb_email_notifications_class']))
+	{
+		// Send email
+		require_once(e_HANDLER."mail.php");
+		sendemail($challengedpemail, $subject, $message);
+	}
 }
 
 function TeamChallengeForm($event_id, $challengerpuid, $challengedtid)
@@ -542,6 +548,7 @@ function SubmitTeamChallenge($event_id, $challengerpuid, $challengedtid)
 	global $text;
 	global $tp;
 	global $time;
+	global $pref;
 
 	$q = "SELECT ".TBL_EVENTS.".*"
 	." FROM ".TBL_EVENTS
@@ -605,7 +612,7 @@ function SubmitTeamChallenge($event_id, $challengerpuid, $challengedtid)
 	$fromid = $challengerpuid;
 	$subject = SITENAME." ".EB_CHALLENGE_L23;
 
-	// All members of this division will receive the PM
+	// All members of the challenged division will receive the PM
 	$q = "SELECT ".TBL_TEAMS.".*, "
 	.TBL_MEMBERS.".*, "
 	.TBL_USERS.".*"
@@ -624,12 +631,17 @@ function SubmitTeamChallenge($event_id, $challengerpuid, $challengedtid)
 			$challengedpname = mysql_result($result, $j, TBL_USERS.".user_name");
 			$challengedpemail = mysql_result($result, $j, TBL_USERS.".user_email");
 			$message = EB_CHALLENGE_L24.$challengedpname.EB_CHALLENGE_L25.$challengertclan.EB_CHALLENGE_L26.$ename.EB_CHALLENGE_L27;
-			$sendto = mysql_result($result, $j, TBL_USERS.".user_id");
-			sendNotification($sendto, $subject, $message, $fromid);
-
-			// Send email
-			require_once(e_HANDLER."mail.php");
-			sendemail($challengedpemail, $subject, $message);
+			if (check_class($pref['eb_pm_notifications_class']))
+			{
+				$sendto = mysql_result($result, $j, TBL_USERS.".user_id");
+				sendNotification($sendto, $subject, $message, $fromid);
+			}
+			if (check_class($pref['eb_email_notifications_class']))
+			{
+				// Send email
+				require_once(e_HANDLER."mail.php");
+				sendemail($challengedpemail, $subject, $message);
+			}
 		}
 	}
 }

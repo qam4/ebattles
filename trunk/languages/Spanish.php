@@ -67,6 +67,8 @@ define('EB_ADMIN_L40', 'Maps Images tamaño máximo');
 define('EB_ADMIN_L41', 'Si esta habilitado, las maps imagenes se cambia el tama&ntilde;o, si exceden el tama&ntilde;o maximo (puede ser lento)');
 define('EB_ADMIN_L42', 'Habilitar el tam. maximo de las maps imagenes');
 define('EB_ADMIN_L43', 'Medios del partido userclass');
+define('EB_ADMIN_L44', 'PM Notificaciones userclass');
+define('EB_ADMIN_L45', 'Email Notificaciones userclass');
 
 define('EB_ADMINHELP_L1', 'eBattles Ayuda');
 define('EB_ADMINHELP_L2', 'Version');
@@ -563,6 +565,17 @@ define('EB_MATCHR_L48', 'Horario de un partido');
 define('EB_MATCHR_L49', 'Partido Fecha/Hora');
 define('EB_MATCHR_L50', 'Selector de fecha');
 define('EB_MATCHR_L51', 'Reinicializar');
+define('EB_MATCHR_L52', 'Usted tiene un nuevo partido programado!');
+define('EB_MATCHR_L53', 'Hola ');
+define('EB_MATCHR_L54', ',
+
+	Usted tiene un nuevo partido programado');
+define('EB_MATCHR_L55', ' en el evento "');
+define('EB_MATCHR_L56', '".
+	Por favor revise su "Mi prefil/Partidos" pagina para ver los detalles desafío.
+	
+	Cordialmente,
+	El evento admin');
 
 define('EB_MATCHQL_L1', 'Informe de perdidas');
 define('EB_MATCHQL_L2', 'Usted no esta autorizado para informar el partido.');
@@ -659,6 +672,17 @@ define('EB_CHALLENGE_L27', '".
 	Cordialmente,
 	El evento admin');
 define('EB_CHALLENGE_L28', 'Desafíador comentarios:');
+define('EB_CHALLENGE_L29', 'Desafío se redujo!');
+define('EB_CHALLENGE_L30', 'Hola ');
+define('EB_CHALLENGE_L31', ',
+
+	Su desafío ha sido rechazada por ');
+define('EB_CHALLENGE_L32', ' en el evento "');
+define('EB_CHALLENGE_L33', '".
+	Por favor revise su "Mi prefil/Partidos" pagina para ver los detalles desafío.
+	
+	Cordialmente,
+	El evento admin');
 	
 define('EB_AWARD_L1', 'Premio');
 define('EB_AWARD_L2', 'tomo 1er lugar');

@@ -158,6 +158,9 @@ function displayRecentActivity($event_id){
     {
         $text .= $events[$index][1];
     }
+    if($index==0)
+        $text .= "<tr><td>No activity</td></tr>";
+    
     $text .= '</table>';
 
     return $text;

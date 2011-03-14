@@ -507,14 +507,14 @@ if (isset($_POST['submit']))
 
 	//$error_str = 'test';
 
-/*
+	/*
 	//dbg form
 	echo "<br>_POST: ";
 	print_r($_POST);    // show $_POST
 	echo "<br>_GET: ";
 	print_r($_GET);     // show $_GET
 	exit;
-*/
+	*/
 
 	if (!empty($error_str)) {
 		// show form again
@@ -623,6 +623,70 @@ if (isset($_POST['submit']))
 		// Update scores stats
 		if(isset($_POST['matchschedule']))
 		{
+			// Send notification to all the players.
+			$fromid = USERID;
+			$subject = SITENAME." ".EB_MATCHR_L52;
+
+			switch($etype)
+			{
+				case "One Player Ladder":
+				case "Team Ladder":
+				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
+				." FROM ".TBL_MATCHS.", "
+				.TBL_SCORES.", "
+				.TBL_PLAYERS.", "
+				.TBL_USERS
+				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+				." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+				." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
+				$result_Players = $sql->db_Query($q_Players);
+				$numPlayers = mysql_numrows($result_Players);
+				echo "numPlayers: $numPlayers<br>";
+
+				break;
+				case "ClanWar":
+				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
+				." FROM ".TBL_MATCHS.", "
+				.TBL_SCORES.", "
+				.TBL_TEAMS.", "
+				.TBL_PLAYERS.", "
+				.TBL_USERS
+				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+				." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+				." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+				." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
+				$result_Players = $sql->db_Query($q_Players);
+				$numPlayers = mysql_numrows($result_Players);
+				echo "numPlayers: $numPlayers<br>";
+
+				break;
+				default:
+			}
+
+			if($numPlayers > 0)
+			{
+				for($j=0; $j < $numPlayers; $j++)
+				{
+					$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
+					$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
+					$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$ename.EB_MATCHR_L56;
+					$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
+					$sendtoemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
+					if (check_class($pref['eb_pm_notifications_class']))
+					{
+						sendNotification($sendto, $subject, $message, $fromid);
+					}
+					if (check_class($pref['eb_email_notifications_class']))
+					{
+						// Send email
+						require_once(e_HANDLER."mail.php");
+						sendemail($sendtoemail, $subject, $message);
+					}
+				}
+			}
+
 			header("Location: eventinfo.php?eventid=$event_id");
 		}
 		else

@@ -171,7 +171,7 @@ function displayChallengeInfo($challenge_id, $type = 0)
 
 		// Action form
 		$string .= '<td>';
-		// If user is challenger, show the "Withraw" button
+		// If the user is challenger, show the "Withdraw" button
 		if ($isUserChallenger == TRUE)
 		{
 			$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?eventid='.$cEventID.'&amp;challengeid='.$challenge_id.'" method="post">';
@@ -180,8 +180,7 @@ function displayChallengeInfo($challenge_id, $type = 0)
 			$string .= '</div>';
 			$string .= '</form>';
 		}
-		// If user is challenged, show the "Confirm"  button
-		// If user is admin/moderator, show the "Edit" button
+		// If the user is challenged, show the "Confirm"  button
 		if ($isUserChallenged == TRUE)
 		{
 			$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?eventid='.$cEventID.'&amp;challengeid='.$challenge_id.'" method="post">';
@@ -190,6 +189,9 @@ function displayChallengeInfo($challenge_id, $type = 0)
 			$string .= '</div>';
 			$string .= '</form>';
 		}
+		// If the user is admin/moderator, show the "Edit" button
+		// fm: TBD ???
+
 		$string .= '</td>';
 		$string .= '</tr>';
 	}

@@ -69,7 +69,7 @@ if(isset($_POST['challenge_accept']))
 }
 if(isset($_POST['challenge_decline']))
 {
-	deleteChallenge($challenge_id);
+	Challengedecline($challenge_id);
 	$text .= EB_EVENT_L69;
 
 	$text .= '<br />';
@@ -255,6 +255,7 @@ function ChallengeAccept($challenge_id)
 	global $sql;
 	global $tp;
 	global $time;
+	global $pref;
 
 	$challenge_time = $_POST['challengedate'];
 
@@ -293,8 +294,6 @@ function ChallengeAccept($challenge_id)
 		$cChallengertID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerTeam");
 		$cChallengedtID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedTeam");
 
-
-
 		// Create Match ------------------------------------------
 		$comments = '';
 		$q =
@@ -318,9 +317,125 @@ function ChallengeAccept($challenge_id)
 		$result = $sql->db_Query($q);
 
 		deleteChallenge($challenge_id);
+
+		// Send notification to all the players.
+		$fromid = USERID;
+		$subject = SITENAME." ".EB_MATCHR_L52;
+
+		switch($cEventType)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
+			." FROM ".TBL_MATCHS.", "
+			.TBL_SCORES.", "
+			.TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+			." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+			." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
+			$result_Players = $sql->db_Query($q_Players);
+			$numPlayers = mysql_numrows($result_Players);
+			echo "numPlayers: $numPlayers<br>";
+
+			break;
+			case "ClanWar":
+			$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
+			." FROM ".TBL_MATCHS.", "
+			.TBL_SCORES.", "
+			.TBL_TEAMS.", "
+			.TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+			." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+			." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+			." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
+			$result_Players = $sql->db_Query($q_Players);
+			$numPlayers = mysql_numrows($result_Players);
+			echo "numPlayers: $numPlayers<br>";
+
+			break;
+			default:
+		}
+
+		if($numPlayers > 0)
+		{
+			for($j=0; $j < $numPlayers; $j++)
+			{
+				$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
+				$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
+				$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$cEventName.EB_MATCHR_L56;
+				if (check_class($pref['eb_pm_notifications_class']))
+				{
+					$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
+					sendNotification($sendto, $subject, $message, $fromid);
+				}
+				if (check_class($pref['eb_email_notifications_class']))
+				{
+					// Send email
+					require_once(e_HANDLER."mail.php");
+					sendemail($pemail, $subject, $message);
+				}
+			}
+		}
 	}
 }
 
+function ChallengeDecline($challenge_id)
+{
+	global $sql;
+	global $tp;
+	global $time;
+	global $pref;
+
+	// Get info about the challenge
+	$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*, "
+	.TBL_USERS.".*, "
+	.TBL_EVENTS.".*, "
+	.TBL_GAMES.".*"
+	." FROM ".TBL_CHALLENGES.", "
+	.TBL_USERS.", "
+	.TBL_EVENTS.", "
+	.TBL_GAMES
+	." WHERE (".TBL_CHALLENGES.".ChallengeID = '$challenge_id')"
+	." AND (".TBL_USERS.".user_id = ".TBL_CHALLENGES.".ReportedBy)"
+	." AND (".TBL_CHALLENGES.".Event = ".TBL_EVENTS.".EventID)"
+	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
+
+	$result = $sql->db_Query($q);
+	$numChallenges = mysql_numrows($result);
+
+	if ($numChallenges > 0)
+	{
+		$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
+		$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
+		$cReportedByEmail  = mysql_result($result, 0, TBL_USERS.".user_email");
+		$cEventID  = mysql_result($result, 0, TBL_EVENTS.".EventID");
+		$cEventName  = mysql_result($result, 0, TBL_EVENTS.".Name");
+
+		$subject = SITENAME." ".EB_CHALLENGE_L29;
+		$message = EB_CHALLENGE_L30.$cReportedByNickName.EB_CHALLENGE_L31.USERNAME.EB_CHALLENGE_L32.$cEventName.EB_CHALLENGE_L33;
+		$fromid = USERID;
+		$sendto = $cReportedBy;
+		$sendtoemail = $cReportedByEmail;
+		if (check_class($pref['eb_pm_notifications_class']))
+		{
+			// Send PM
+			sendNotification($sendto, $subject, $message, $fromid);
+		}
+
+		if (check_class($pref['eb_email_notifications_class']))
+		{
+			// Send email
+			require_once(e_HANDLER."mail.php");
+			sendemail($sendtoemail, $subject, $message);
+		}
+	}
+
+	deleteChallenge($challenge_id);
+}
 ?>
 
 
