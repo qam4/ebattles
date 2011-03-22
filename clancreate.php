@@ -10,21 +10,46 @@ $text = '';
 
 if ((!isset($_POST['createteam']))||(!check_class($pref['eb_teams_create_class'])))
 {
-    $text .= '<br />'.EB_CLANS_L8.'<br />';
+	$text .= '<br />'.EB_CLANS_L8.'<br />';
 }
 else
 {
-    $userid = $_POST['userid'];
-    $username = $_POST['username'];
+	$userid = $_POST['userid'];
+	$username = $_POST['username'];
 
-    $q = "INSERT INTO ".TBL_CLANS."(Name,Tag,Owner)"
-    ." VALUES ('Team', '$username', '$userid')";
-    $result = $sql->db_Query($q);
-    $last_id = mysql_insert_id();
+	$q = "SELECT COUNT(*) as UserNbrClans"
+	." FROM ".TBL_CLANS
+	." WHERE (".TBL_CLANS.".Owner = '$userid')";
+	$result = $sql->db_Query($q);
+	$row = mysql_fetch_array($result);
+	$userNbrClans = $row['UserNbrClans'];
 
-    $q = "UPDATE ".TBL_CLANS." SET Name = '".EB_CLAN_L1." $last_id - $username' WHERE (ClanID = '$last_id')";
-    $result = $sql->db_Query($q);
-    header("Location: clanmanage.php?clanid=".$last_id);
+	$q = "SELECT COUNT(*) as UserNbrMembers"
+	." FROM ".TBL_MEMBERS
+	." WHERE (".TBL_MEMBERS.".User = '$userid')";
+	$result = $sql->db_Query($q);
+	$row = mysql_fetch_array($result);
+	$userNbrMembers = $row['UserNbrMembers'];
+
+	if (($userNbrClans > 0)&&(!check_class($pref['eb_mod_class'])))
+	{
+		$text .= '<br />'.EB_CLANC_L3.'<br />';
+	}
+	else if (($userNbrMembers > 0)&&(!check_class($pref['eb_mod_class'])))
+	{
+		$text .= '<br />'.EB_CLANC_L4.'<br />';
+	}
+	else
+	{
+		$q = "INSERT INTO ".TBL_CLANS."(Name,Tag,Owner)"
+		." VALUES ('Team', '$username', '$userid')";
+		$result = $sql->db_Query($q);
+		$last_id = mysql_insert_id();
+
+		$q = "UPDATE ".TBL_CLANS." SET Name = '".EB_CLAN_L1." $last_id - $username' WHERE (ClanID = '$last_id')";
+		$result = $sql->db_Query($q);
+		header("Location: clanmanage.php?clanid=".$last_id);
+	}
 }
 $ns->tablerender(EB_CLANC_L1, $text);
 require_once(FOOTERF);
