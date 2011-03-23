@@ -145,7 +145,8 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	$text .= '<td><input type="hidden" name="nbr_players" value="'.$_POST['nbr_players'].'"/>';
 	// Add Player
 	if (($nbr_players < $max_nbr_players)
-	&&(!isset($_POST['matchscheduledreport'])))
+	&&(!isset($_POST['matchscheduledreport']))
+	&&($etype!="ClanWar"))
 	{
 		$text .= '<input class="button" type="submit" value="'.EB_MATCHR_L16.'" name="addPlayer"/></td>';
 	}
