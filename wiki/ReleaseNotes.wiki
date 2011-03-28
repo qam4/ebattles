@@ -1,5 +1,31 @@
 #summary eBattles Release Notes.
 #labels Featured
+= Release 0.8.10 =
+== Features == 
+ * Improved eBattles links menu.
+  * Added "create events" and "create team" button
+  * Added number of
+    * matches played
+    * matches to approve
+    * matches pending
+    * matches scheduled
+    * challenges requested
+    * challenges not confirmed
+  * Each of these info can be disabled from admin page.
+
+== Changes ==
+ * Added number of pending matches in "My Profile" page, Events tab, for events owners and mods.
+ * Added "No-one" userclass to emails/pm notification possible choices.
+ * Emails and pm notifications are now sent from user 0.
+ * Moved "Create Team/Event" buttons at the top of the page, rather than after the lists of Teams/Events.
+ * Changed look of buttons, added "simple" button class for buttons with image and no text.
+ * Allow challenges withdrawal to event owners and mods only.
+
+== Bug Fixes ==
+ * Delete challenges when resetting event.php
+ * Fixed issue where the reporter of a scheduled match could approve the match.
+  * When a scheduled match was reported, the reporter was the user who had scheduled the match, rather than the user himself.
+
 = Release 0.8.9 =
 ==Features ==
  * Added userclass for emails and PM notifications.
