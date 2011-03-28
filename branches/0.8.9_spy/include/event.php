@@ -116,6 +116,13 @@ function deleteMatches($event_id)
 		}
 	}
 }
+function deleteChallenges($event_id)
+{
+	global $sql;
+	$q2 = "DELETE FROM ".TBL_CHALLENGES
+	." WHERE (".TBL_CHALLENGES.".Event = '$event_id')";
+	$result2 = $sql->db_Query($q2);
+}
 function deletePlayerMatches($player_id)
 {
 	global $sql;
@@ -198,6 +205,7 @@ function deleteEvent($event_id)
 {
 	global $sql;
 	deleteMatches($event_id);
+	deleteChallenges($event_id);
 	deletePlayers($event_id);
 	deleteTeams($event_id);
 	deleteMods($event_id);

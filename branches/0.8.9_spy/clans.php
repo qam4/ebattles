@@ -51,6 +51,21 @@ function displayClans(){
 
     $pages = new Paginator;
 
+    if(check_class($pref['eb_teams_create_class']))
+    {
+        $text .= '<form action="'.e_PLUGIN.'ebattles/clancreate.php" method="post">';
+        $text .= '<div>';
+        $text .= '<input type="hidden" name="userid" value="'.USERID.'"/>';
+        $text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
+        $text .= '</div>';
+        $text .= ebImageTextButton('createteam', 'add.png', EB_CLANS_L7);
+        $text .= '</form><br />';
+    }
+    else
+    {
+        //$text .= '<div>'..'</div>';
+    }
+
     /* set pagination variables */
     $q = "SELECT count(*) "
     ." FROM ".TBL_CLANS;
@@ -115,23 +130,6 @@ function displayClans(){
         }
         $text .= '</tbody></table><br />';
     }
-
-    if(check_class($pref['eb_teams_create_class']))
-    {
-        $text .= '<form action="'.e_PLUGIN.'ebattles/clancreate.php" method="post">';
-        $text .= '<div>';
-        $text .= '<input type="hidden" name="userid" value="'.USERID.'"/>';
-        $text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
-        $text .= '</div>';
-        $text .= ebImageTextButton('createteam', 'add.png', EB_CLANS_L7);
-        $text .= '</form>';
-    }
-    else
-    {
-        //$text .= '<div>'..'</div>';
-    }
-
-
 }
 ?>
 

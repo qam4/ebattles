@@ -288,15 +288,18 @@ else
 		default:
 	}
 
+	$userclass = 0;
 	$can_edit = 0;
 	$can_approve = 0;
 	$can_delete = 0;
 	$can_submit_media = 0;
 	$can_delete_media = 0;
+	/*
 	if ((USERID==$reported_by)
 	&& (($eend==0)
 	|| (($eend>=$time)&&($estart<=$time))))
 	$can_delete = 1;
+	*/
 
 	if ((USERID==$reported_by)&&($mStatus == 'pending')) $can_edit = 1;
 

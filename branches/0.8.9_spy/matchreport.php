@@ -624,7 +624,7 @@ if (isset($_POST['submit']))
 		if(isset($_POST['matchschedule']))
 		{
 			// Send notification to all the players.
-			$fromid = USERID;
+			$fromid = 0;
 			$subject = SITENAME." ".EB_MATCHR_L52;
 
 			switch($etype)
