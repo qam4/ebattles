@@ -201,9 +201,9 @@ else
 	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
 
 	$result = $sql->db_Query($q);
-	$num_rows = mysql_numrows($result);
+	$num_events = mysql_numrows($result);
 
-	if ($num_rows>0)
+	if ($num_events>0)
 	{
 		/* Display table contents */
 		$text .= '<table class="fborder" style="width:95%">';
@@ -214,15 +214,27 @@ else
 		$text .= '<td class="forumheader3">';
 		$text .= EB_USER_L14;
 		$text .= '</td>';
+		$text .= '<td class="forumheader3">';
+		$text .= EB_USER_L31;
+		$text .= '</td>';
 		$text .= '</tr>';
 
-		for($i=0; $i<$num_rows; $i++)
+		for($i=0; $i<$num_events; $i++)
 		{
 			$ename  = mysql_result($result,$i, TBL_EVENTS.".Name");
 			$egame  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$egameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
 			$eowner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
+
+			$q_pending = "SELECT COUNT(*) as nbrMatchesPending"
+			." FROM ".TBL_MATCHS
+			." WHERE (".TBL_MATCHS.".Event = '$eid')"
+			."   AND (".TBL_MATCHS.".Status = 'pending')";
+			$result_pending = $sql->db_Query($q_pending);
+			$row = mysql_fetch_array($result_pending);
+			$nbrMatchesPending = $row['nbrMatchesPending'];
+
 			$text .= '<tr>';
 			$text .= '<td class="forumheader3">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a><br />';
@@ -241,6 +253,9 @@ else
 			{
 				$text .= EB_USER_L17;
 			}
+			$text .= '</td>';
+			$text .= '<td class="forumheader3">';
+			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
 			$text .= '</td>';
 			$text .= '</tr>';
 		}
@@ -272,6 +287,9 @@ else
 		$text .= '<td class="forumheader3">';
 		$text .= EB_USER_L14;
 		$text .= '</td>';
+		$text .= '<td class="forumheader3">';
+		$text .= EB_USER_L31;
+		$text .= '</td>';
 		$text .= '</tr>';
 
 		for($i=0; $i<$num_rows; $i++)
@@ -281,6 +299,15 @@ else
 			$egameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
 			$eowner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
+
+			$q_pending = "SELECT COUNT(*) as nbrMatchesPending"
+			." FROM ".TBL_MATCHS
+			." WHERE (".TBL_MATCHS.".Event = '$eid')"
+			."   AND (".TBL_MATCHS.".Status = 'pending')";
+			$result_pending = $sql->db_Query($q_pending);
+			$row = mysql_fetch_array($result_pending);
+			$nbrMatchesPending = $row['nbrMatchesPending'];
+
 			$text .= '<tr>';
 			$text .= '<td class="forumheader3">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a><br />';
@@ -299,6 +326,9 @@ else
 			{
 				$text .= EB_USER_L17;
 			}
+			$text .= '</td>';
+			$text .= '<td class="forumheader3">';
+			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
 			$text .= '</td>';
 			$text .= '</tr>';
 		}
@@ -700,7 +730,6 @@ else
 	}
 
 	$text .= '</div>';   // tab-page "Matches"
-
 
 	/*
 	---------------------

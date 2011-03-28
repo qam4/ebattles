@@ -1641,7 +1641,7 @@ function displayMatchInfo($match_id, $type = 0)
 				$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 				$text .= '</div>';
 				$string .= '<div>';
-				$string .= ebImageTextButton('matchscheduledreport', 'page_white_edit.png', '', '', '', EB_EVENT_L57);
+				$string .= ebImageTextButton('matchscheduledreport', 'page_white_edit.png', '', 'simple', '', EB_EVENT_L57);
 				$string .= '</div>';
 				$string .= '</form>';
 				$string .= '</td>';

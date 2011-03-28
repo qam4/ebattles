@@ -78,6 +78,26 @@ function displayCurrentEvents(){
     global $time;
     $pages = new Paginator;
 
+   if(check_class($pref['eb_events_create_class']))
+    {
+        $text .= '<form action="'.e_PLUGIN.'ebattles/eventcreate.php" method="post">';
+        $text .= '<div>';
+        $text .= '<input type="hidden" name="userid" value="'.USERID.'"/>';
+        $text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
+        $text .= '</div>';
+        $text .= ebImageTextButton('createevent', 'add.png', EB_EVENTS_L20);
+        $text .= '</form><br />';
+/*
+        $text .= '<span class="buttons"><a href="'.e_PLUGIN.'ebattles/matchdelete.php?action=createevent&amp;username='.$USERNAME.'&amp;userid='.$USERID.'" title="'.EB_EVENTS_L20.'" style="text-decoration:none"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_EVENTS_L20.'"/>'.EB_EVENTS_L20.'</a></span>';
+        $text .= '<div><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_EVENTS_L20.'" style="vertical-align:middle"/>'.EB_EVENTS_L20.'</div>';
+        $text .= '<div><button type="submit" name="createevent"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_EVENTS_L20.'" style="vertical-align:middle"/>'.EB_EVENTS_L20.'</button></div>';
+*/
+    }
+    else
+    {
+        //$text .= '<div>'.EB_EVENTC_L2.'</div>';
+    }
+    
     $array = array(
         'latest' => array(EB_EVENTS_L4,'EventID'),
         'name'   => array(EB_EVENTS_L5, TBL_EVENTS.'.Name'),
@@ -336,26 +356,6 @@ function displayCurrentEvents(){
             }
         }
         $text .= '</tbody></table><br />';
-    }
-
-    if(check_class($pref['eb_events_create_class']))
-    {
-        $text .= '<form action="'.e_PLUGIN.'ebattles/eventcreate.php" method="post">';
-        $text .= '<div>';
-        $text .= '<input type="hidden" name="userid" value="'.USERID.'"/>';
-        $text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
-        $text .= '</div>';
-        $text .= ebImageTextButton('createevent', 'add.png', EB_EVENTS_L20);
-        $text .= '</form>';
-/*
-        $text .= '<span class="buttons"><a href="'.e_PLUGIN.'ebattles/matchdelete.php?action=createevent&amp;username='.$USERNAME.'&amp;userid='.$USERID.'" title="'.EB_EVENTS_L20.'" style="text-decoration:none"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_EVENTS_L20.'"/>'.EB_EVENTS_L20.'</a></span>';
-        $text .= '<div><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_EVENTS_L20.'" style="vertical-align:middle"/>'.EB_EVENTS_L20.'</div>';
-        $text .= '<div><button type="submit" name="createevent"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_EVENTS_L20.'" style="vertical-align:middle"/>'.EB_EVENTS_L20.'</button></div>';
-*/
-    }
-    else
-    {
-        //$text .= '<div>'.EB_EVENTC_L2.'</div>';
     }
 }
 

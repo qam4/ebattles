@@ -68,6 +68,14 @@ define('EB_ADMIN_L42', 'Activer la dimension max des imagesde maps');
 define('EB_ADMIN_L43', 'Groupe d’utilisateurs authorisés à soumettre un media du match');
 define('EB_ADMIN_L44', 'Groupe d’utilisateurs notifiés par PM');
 define('EB_ADMIN_L45', 'Groupe d’utilisateurs notifiés par email');
+define('EB_ADMIN_L46', 'Afficher le bouton de création de tournois');
+define('EB_ADMIN_L47', 'Afficher le bouton de création d’équipes');
+define('EB_ADMIN_L48', 'Afficher le nombre de matchs joués');
+define('EB_ADMIN_L49', 'Afficher le nombre de matchs à approuver');
+define('EB_ADMIN_L50', 'Afficher le nombre de matchs en attente');
+define('EB_ADMIN_L51', 'Afficher le nombre de matchs prévus');
+define('EB_ADMIN_L52', 'Afficher le nombre de défis lancés');
+define('EB_ADMIN_L53', 'Afficher le nombre de défis non-confirmés');
 
 define('EB_ADMINHELP_L1', 'eBattles Aide');
 define('EB_ADMINHELP_L2', 'Version');
@@ -115,7 +123,7 @@ define('EB_EVENTS_L24', 'Filtrer');
 define('EB_EVENTS_L25', 'Tournois par équipe');
 define('EB_EVENTS_L26', 'Bonjour ');
 define('EB_EVENTS_L27', ',
-	Vous êtes invitsé àparticiper au tournoi "');
+	Vous êtes invité à participer au tournoi "');
 define('EB_EVENTS_L29', '"
 	Veuillez vérifier votre page "Mon Profil/Tournois" pour plus d’infos.');
 define('EB_EVENTS_L30', '"
@@ -194,8 +202,9 @@ define('EB_EVENT_L67', 'Défi(s) non-confirmé(s)');
 define('EB_EVENT_L68', 'Défi(s) en attente');
 define('EB_EVENT_L69', 'Défi effacé');
 define('EB_EVENT_L70', 'match(s) prévu(s)');
-define('EB_EVENT_L71', 'Défiez cette équipes');
+define('EB_EVENT_L71', 'Défier cette équipe');
 define('EB_EVENT_L72', 'Planifier un match');
+define('EB_EVENT_L73', 'match(s) à approuver');
 
 define('EB_EVENTM_L1', 'Gérer');
 define('EB_EVENTM_L2', 'Sommaire');
@@ -649,7 +658,7 @@ define('EB_CHALLENGE_L8', 'Commentairess:');
 define('EB_CHALLENGE_L9', 'Envoyer le Défi');
 define('EB_CHALLENGE_L10', 'La date');
 define('EB_CHALLENGE_L11', 'n’est pas rentrée');
-define('EB_CHALLENGE_L12', 'Défié soumis');
+define('EB_CHALLENGE_L12', 'Défi soumis');
 define('EB_CHALLENGE_L13', 'Retour vers');
 define('EB_CHALLENGE_L14', 'Ladder');
 define('EB_CHALLENGE_L15', 'Annuler');
@@ -726,6 +735,8 @@ define('EB_USER_L27', 'est l’admin des équipes suivantes');
 define('EB_USER_L28', 'Équipe');
 define('EB_USER_L29', 'Capitaine');
 define('EB_USER_L30', 'est capitaine des divisions suivantes');
+define('EB_USER_L31', 'Info');
+define('EB_USER_L32', 'Matchs en attente: ');
 
 define('EB_PGN_L1', 'Aller à la page');
 define('EB_PGN_L2', 'Précédente');
