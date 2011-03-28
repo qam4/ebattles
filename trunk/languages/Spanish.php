@@ -69,6 +69,14 @@ define('EB_ADMIN_L42', 'Habilitar el tam. maximo de las maps imagenes');
 define('EB_ADMIN_L43', 'Medios del partido userclass');
 define('EB_ADMIN_L44', 'PM Notificaciones userclass');
 define('EB_ADMIN_L45', 'Email Notificaciones userclass');
+define('EB_ADMIN_L46', 'Mostrar botón de creación de eventos');
+define('EB_ADMIN_L47', 'Mostrar botón de creación de equipo');
+define('EB_ADMIN_L48', 'Mostrar el número de partidos jugados');
+define('EB_ADMIN_L49', 'Mostrar el número de partidos para aprobar');
+define('EB_ADMIN_L50', 'Mostrar el número de partidos pendientes');
+define('EB_ADMIN_L51', 'Mostrar el número de partidos programados');
+define('EB_ADMIN_L52', 'Mostrar el número de desafío(s) solicitada');
+define('EB_ADMIN_L53', 'Mostrar el número de desafío(s) sin confirmar');
 
 define('EB_ADMINHELP_L1', 'eBattles Ayuda');
 define('EB_ADMINHELP_L2', 'Version');
@@ -197,6 +205,7 @@ define('EB_EVENT_L69', 'Desafío eliminado');
 define('EB_EVENT_L70', 'partido(s) solicitada');
 define('EB_EVENT_L71', 'Desafío de un Equipo');
 define('EB_EVENT_L72', 'Horario de un partido');
+define('EB_EVENT_L73', 'partido(s) para aprobar');
 
 define('EB_EVENTM_L1', 'Gestionar - EVENTO');
 define('EB_EVENTM_L2', 'Resumen');
@@ -726,6 +735,8 @@ define('EB_USER_L27', 'es Administrador de los seguintes equipos');
 define('EB_USER_L28', 'Equipo');
 define('EB_USER_L29', 'Capitan');
 define('EB_USER_L30', 'es captain de las seguintes divisiones');
+define('EB_USER_L31', 'Info');
+define('EB_USER_L32', 'Partidos pendientes: ');
 
 define('EB_PGN_L1', 'Ir a la Pagina');
 define('EB_PGN_L2', 'Anterior');

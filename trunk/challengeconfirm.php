@@ -319,7 +319,7 @@ function ChallengeAccept($challenge_id)
 		deleteChallenge($challenge_id);
 
 		// Send notification to all the players.
-		$fromid = USERID;
+		$fromid = 0;
 		$subject = SITENAME." ".EB_MATCHR_L52;
 
 		switch($cEventType)
@@ -417,7 +417,7 @@ function ChallengeDecline($challenge_id)
 
 		$subject = SITENAME." ".EB_CHALLENGE_L29;
 		$message = EB_CHALLENGE_L30.$cReportedByNickName.EB_CHALLENGE_L31.USERNAME.EB_CHALLENGE_L32.$cEventName.EB_CHALLENGE_L33;
-		$fromid = USERID;
+		$fromid = 0;
 		$sendto = $cReportedBy;
 		$sendtoemail = $cReportedByEmail;
 		if (check_class($pref['eb_pm_notifications_class']))

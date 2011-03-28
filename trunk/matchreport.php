@@ -225,7 +225,7 @@ if($match_id)
 	$numScores = mysql_numrows($result);
 
 	if (!isset($_POST['nbr_players']))   $_POST['nbr_players'] = $numScores;
-	if (!isset($_POST['reported_by']))   $_POST['reported_by'] = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
+	if (!isset($_POST['reported_by'])&&!isset($_POST['matchscheduledreport']))   $_POST['reported_by'] = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
 	if (!isset($_POST['match_comment'])) $_POST['match_comment'] = mysql_result($result,0, TBL_MATCHS.".Comments");
 	if (!isset($_POST['time_reported'])) $_POST['time_reported'] = mysql_result($result,0, TBL_MATCHS.".TimeReported");
 
@@ -624,7 +624,7 @@ if (isset($_POST['submit']))
 		if(isset($_POST['matchschedule']))
 		{
 			// Send notification to all the players.
-			$fromid = USERID;
+			$fromid = 0;
 			$subject = SITENAME." ".EB_MATCHR_L52;
 
 			switch($etype)

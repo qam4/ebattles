@@ -386,7 +386,7 @@ function SubmitPlayerChallenge($event_id, $challengerpuid, $challengedpid)
 	{
 		// Send PM
 		$sendto = $challengedpuid;
-		$fromid = $challengerpuid;
+		$fromid = 0;
 		sendNotification($sendto, $subject, $message, $fromid);
 	}
 
@@ -609,7 +609,7 @@ function SubmitTeamChallenge($event_id, $challengerpuid, $challengedtid)
 	$result = $sql->db_Query($q);
 
 	// Send PM
-	$fromid = $challengerpuid;
+	$fromid = 0;
 	$subject = SITENAME." ".EB_CHALLENGE_L23;
 
 	// All members of the challenged division will receive the PM

@@ -70,6 +70,14 @@ define('EB_ADMIN_L42', 'Povolit maximální rozměry obrázků map');
 define('EB_ADMIN_L43', 'Match media submit userclass');
 define('EB_ADMIN_L44', 'PM Upozornění userclass');
 define('EB_ADMIN_L45', 'Email Upozornění userclass');
+define('EB_ADMIN_L46', 'Zobrazit vytvořit událost tlačítka');
+define('EB_ADMIN_L47', 'Zobrazit vytvořit tým tlačítko');
+define('EB_ADMIN_L48', 'Zobrazit počet odehraných zápasů');
+define('EB_ADMIN_L49', 'Zobrazit počet zápasů schválit');
+define('EB_ADMIN_L50', 'Zobrazit počet zápasů čeká');
+define('EB_ADMIN_L51', 'Zobrazit počet zápasy naplánované');
+define('EB_ADMIN_L52', 'Zobrazit počet úkolů požadovaných');
+define('EB_ADMIN_L53', 'Zobrazit počet úkolů nepotvrzených');
 
 define('EB_ADMINHELP_L1', 'eBattles Help');
 define('EB_ADMINHELP_L2', 'Verze');
@@ -188,6 +196,7 @@ define('EB_EVENT_L69', 'Výzva byla smazána');
 define('EB_EVENT_L70', 'naplánované zápasy');
 define('EB_EVENT_L71', 'Vyzvat tým');
 define('EB_EVENT_L72', 'Rozvrh zápasů');
+define('EB_EVENT_L73', 'zápas(y) o schválení');
 
 define('EB_EVENTM_L1', 'Upravit');
 define('EB_EVENTM_L2', 'Přehled');
@@ -713,6 +722,8 @@ define('EB_USER_L27', 'je vlastníkem následujících týmů');
 define('EB_USER_L28', 'tým');
 define('EB_USER_L29', 'Kapitán');
 define('EB_USER_L30', 'je kapitánem následujících divizí');
+define('EB_USER_L31', 'Info');
+define('EB_USER_L32', 'Utkání čeká: ');
 
 define('EB_PGN_L1', 'Jdi na stranu');
 define('EB_PGN_L2', 'Předchozí');

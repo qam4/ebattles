@@ -70,6 +70,14 @@ define('EB_ADMIN_L42', 'Aktiver kortbilleder max st?se');
 define('EB_ADMIN_L43', 'Match medier indsende userclass');
 define('EB_ADMIN_L44', 'PM meddelelser userclass');
 define('EB_ADMIN_L45', 'Email meddelelser userclass');
+define('EB_ADMIN_L46', 'Vis opret ny Turnering knap');
+define('EB_ADMIN_L47', 'Vis opret nyt hold knap');
+define('EB_ADMIN_L48', 'Vis antallet af kampe spillet');
+define('EB_ADMIN_L49', 'Vis antal kampe at godkende');
+define('EB_ADMIN_L50', 'Vis antal kampe der venter');
+define('EB_ADMIN_L51', 'Vis antal kampe planlagte');
+define('EB_ADMIN_L52', 'Vis række udfordringer anmodet');
+define('EB_ADMIN_L53', 'Vis række udfordringer ubekræftede');
 
 define('EB_ADMINHELP_L1', 'eBattles Hjælp');
 define('EB_ADMINHELP_L2', 'Version');
@@ -198,6 +206,7 @@ define('EB_EVENT_L69', 'Udfordring slettet');
 define('EB_EVENT_L70', 'Planlagt kamp(e)');
 define('EB_EVENT_L71', 'Udfordring Hold');
 define('EB_EVENT_L72', 'Planlæg en kamp');
+define('EB_EVENT_L73', 'kamp(e) at godkende');
 
 define('EB_EVENTM_L1', 'Administrer');
 define('EB_EVENTM_L2', 'Turnerings Detaljer');
@@ -728,6 +737,8 @@ define('EB_USER_L27', 'er ejer af følgende hold');
 define('EB_USER_L28', 'Hold');
 define('EB_USER_L29', 'Captajn');
 define('EB_USER_L30', 'er kaptajn af følgende division(er)');
+define('EB_USER_L31', 'Info');
+define('EB_USER_L32', 'Kampe der venter: ');
 
 define('EB_PGN_L1', 'Gå Til Side');
 define('EB_PGN_L2', 'Forgående');
