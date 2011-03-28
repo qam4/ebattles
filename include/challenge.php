@@ -75,7 +75,7 @@ function displayChallengeInfo($challenge_id, $type = 0)
 		."   AND (".TBL_PLAYERS.".User = '".USERID."')";
 		$result = $sql->db_Query($q);
 		$uteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
-		
+
 		switch($cEventType)
 		{
 			case "One Player Ladder":
@@ -170,29 +170,59 @@ function displayChallengeInfo($challenge_id, $type = 0)
 		$string .= '</div></td>';
 
 		// Action form
-		$string .= '<td>';
+		// Is the user a moderator?
+		$can_delete = 0;
+
+		$q_Mods = "SELECT ".TBL_EVENTMODS.".*"
+		." FROM ".TBL_EVENTMODS
+		." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
+		."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
+		$result_Mods = $sql->db_Query($q_Mods);
+		$numMods = mysql_numrows($result_Mods);
+
+		if (check_class($pref['eb_mod_class']))  $can_delete = 1;
+		if (USERID==$eowner)
+		{
+			$userclass |= eb_UC_EVENT_OWNER;
+			$can_delete = 1;
+		}
+		if ($numMods>0)
+		{
+			$userclass |= eb_UC_EB_MODERATOR;
+			$can_delete = 1;
+		}
 		// If the user is challenger, show the "Withdraw" button
+		/*
 		if ($isUserChallenger == TRUE)
 		{
+		$can_delete = 1;
+		}
+		*/
+
+		if($can_delete != 0)
+		{
+		$string .= '<td>';
 			$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?eventid='.$cEventID.'&amp;challengeid='.$challenge_id.'" method="post">';
 			$string .= '<div>';
-			$string .= ebImageTextButton('challenge_withdraw', 'delete.png', '', 'negative', EB_CHALLENGE_L16, EB_CHALLENGE_L15);
+			$string .= ebImageTextButton('challenge_withdraw', 'delete.png', '', 'simple', EB_CHALLENGE_L16, EB_CHALLENGE_L15);
 			$string .= '</div>';
 			$string .= '</form>';
+		$string .= '</td>';
 		}
 		// If the user is challenged, show the "Confirm"  button
 		if ($isUserChallenged == TRUE)
 		{
+		$string .= '<td>';
 			$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?eventid='.$cEventID.'&amp;challengeid='.$challenge_id.'" method="post">';
 			$string .= '<div>';
-			$string .= ebImageTextButton('challenge_confirm', 'page_white_edit.png', '', '', '', EB_CHALLENGE_L17);
+			$string .= ebImageTextButton('challenge_confirm', 'page_white_edit.png', '', 'simple', '', EB_CHALLENGE_L17);
 			$string .= '</div>';
 			$string .= '</form>';
+		$string .= '</td>';
 		}
 		// If the user is admin/moderator, show the "Edit" button
 		// fm: TBD ???
 
-		$string .= '</td>';
 		$string .= '</tr>';
 	}
 

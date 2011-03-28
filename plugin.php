@@ -71,6 +71,14 @@ $eplug_prefs = array(
 "eb_max_map_image_size" => 80,
 "eb_pm_notifications_class" => e_UC_MEMBER,
 "eb_email_notifications_class" => e_UC_MEMBER,
+"eb_links_showcreateevent" => 1,
+"eb_links_showcreateteam" => 1,
+"eb_links_showmatchsplayed" => 1,
+"eb_links_showmatchstoapprove" => 1,
+"eb_links_showmatchspending" => 1,
+"eb_links_showmatchesscheduled" => 1,
+"eb_links_showchallengesrequested" => 1,
+"eb_links_showchallengesunconfirmed" => 1
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -564,6 +572,21 @@ if (versionsCompare($eb_version_string, "0.8.9"))
 	array_push_associative ($upgrade_add_prefs, array(
 	"eb_pm_notifications_class" => e_UC_MEMBER,
 	"eb_email_notifications_class" => e_UC_MEMBER
+	));
+}
+
+if (versionsCompare($eb_version_string, "0.8.10"))
+{
+	// To revision 0.8.10
+	array_push_associative ($upgrade_add_prefs, array(
+	"eb_links_showcreateevent" => 1,
+	"eb_links_showcreateteam" => 1,
+	"eb_links_showmatchsplayed" => 1,
+	"eb_links_showmatchstoapprove" => 1,
+	"eb_links_showmatchspending" => 1,
+	"eb_links_showmatchesscheduled" => 1,
+	"eb_links_showchallengesrequested" => 1,
+	"eb_links_showchallengesunconfirmed" => 1
 	));
 }
 

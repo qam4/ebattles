@@ -378,6 +378,7 @@ else
 		if(isset($_POST['eventresetevent']))
 		{
 			deleteMatches($event_id);
+			deleteChallenges($event_id);
 			deletePlayers($event_id);
 			deleteTeams($event_id);
 
