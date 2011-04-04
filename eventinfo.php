@@ -1192,7 +1192,10 @@ else
 
 	$rowsPerPage = $pref['eb_default_items_per_page'];
 
-	/* Stats/Results */
+	$awards = array();
+	$nbr_awards = 0;
+
+	/* Latest awards */
 	$q = "SELECT ".TBL_AWARDS.".*, "
 	.TBL_PLAYERS.".*, "
 	.TBL_USERS.".*"
@@ -1210,7 +1213,6 @@ else
 
 	if ($numAwards>0)
 	{
-		$text .= '<table class="table_left">';
 		/* Display table contents */
 		for($i=0; $i < $numAwards; $i++)
 		{
@@ -1264,10 +1266,94 @@ else
 			}
 			$award_string .= '</div></td></tr>';
 
-			$text .= $award_string;
+			$awards[$nbr_awards][0] = $aTime;
+			$awards[$nbr_awards][1] = $award_string;
+			$nbr_awards ++;
 		}
-		$text .= '</table><br />';
 	}
+
+	$q = "SELECT ".TBL_AWARDS.".*, "
+	.TBL_TEAMS.".*"
+	." FROM ".TBL_AWARDS.", "
+	.TBL_TEAMS
+    ." WHERE (".TBL_AWARDS.".Team = ".TBL_TEAMS.".TeamID)"
+    ." AND (".TBL_TEAMS.".Event = '$event_id')"
+	." ORDER BY ".TBL_AWARDS.".timestamp DESC"
+	." LIMIT 0, $rowsPerPage";
+
+	$result = $sql->db_Query($q);
+	$numAwards = mysql_numrows($result);
+	
+	if ($numAwards>0)
+	{
+		/* Display table contents */
+		for($i=0; $i < $numAwards; $i++)
+		{
+			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
+			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
+			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
+			$aTime_local = $aTime + TIMEOFFSET;
+			$date = date("d M Y, h:i A",$aTime_local);
+
+			$aClanTeam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+			list($tclan, $tclantag, $tclanid) = getClanName($aClanTeam);
+
+			switch ($aType) {
+				case 'TeamTookFirstPlace':
+				$award = EB_AWARD_L2;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/> ';
+				break;
+				case 'TeamInTopTen':
+				$award = EB_AWARD_L4;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/> ';
+				break;
+				case 'TeamStreak5':
+				$award = EB_AWARD_L6;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/> ';
+				break;
+				case 'TeamStreak10':
+				$award = EB_AWARD_L8;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/> ';
+				break;
+				case 'TeamStreak25':
+				$award = EB_AWARD_L10;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
+				break;
+			}
+
+			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
+			$award_string .= '<td><a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$tclanid.'">'.$tclan.'</a>';
+			$award_string .= '&nbsp;'.$award;
+
+			$award_string .= ' <div class="smalltext">';
+			if (($time-$aTime) < INT_MINUTE )
+			{
+				$award_string .= EB_MATCH_L7;
+			}
+			else if (($time-$aTime) < INT_DAY )
+			{
+				$award_string .= get_formatted_timediff($aTime, $time).'&nbsp;'.EB_MATCH_L8;
+			}
+			else
+			{
+				$award_string .= $date;
+			}
+			$award_string .= '</div></td></tr>';
+
+			$awards[$nbr_awards][0] = $aTime;
+			$awards[$nbr_awards][1] = $award_string;
+			$nbr_awards ++;
+		}
+	}
+
+	$text .= '<table style="margin-left: 0px; margin-right: auto;">';
+	multi2dSortAsc($awards, 0, SORT_DESC);
+	for ($index = 0; $index<min($nbr_awards, $rowsPerPage); $index++)
+	{
+		$text .= $awards[$index][1];
+	}
+	$text .= '</table>';
+
 	$text .= '<br />';
 	$text .= '
 	</div>

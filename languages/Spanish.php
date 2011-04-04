@@ -58,25 +58,25 @@ define('EB_ADMIN_L31', 'Actividad reciente');
 define('EB_ADMIN_L32', 'Buscar actualizaciones');
 define('EB_ADMIN_L33', 'Clasificaciones de Equipos');
 define('EB_ADMIN_L34', 'Avatar de Equipos');
-define('EB_ADMIN_L35', 'Seleccione un icono de remoto a través de un enlace externo o uno de los iconos en ebattles ebattles/images/team_avatars/');
+define('EB_ADMIN_L35', 'Seleccione un icono de remoto a travï¿½s de un enlace externo o uno de los iconos en ebattles ebattles/images/team_avatars/');
 define('EB_ADMIN_L36', 'Lista de Equipos');
 define('EB_ADMIN_L37', 'Hecho por <a href=&quot;http://ebattles.freehostia.com/&quot; rel=&quot;external&quot;>eBattles</a>');
 define('EB_ADMIN_L38', 'Responsable por el Plugin');
 define('EB_ADMIN_L39', 'Juegos');
-define('EB_ADMIN_L40', 'Maps Images tamaño máximo');
+define('EB_ADMIN_L40', 'Maps Images tamaï¿½o mï¿½ximo');
 define('EB_ADMIN_L41', 'Si esta habilitado, las maps imagenes se cambia el tama&ntilde;o, si exceden el tama&ntilde;o maximo (puede ser lento)');
 define('EB_ADMIN_L42', 'Habilitar el tam. maximo de las maps imagenes');
 define('EB_ADMIN_L43', 'Medios del partido userclass');
 define('EB_ADMIN_L44', 'PM Notificaciones userclass');
 define('EB_ADMIN_L45', 'Email Notificaciones userclass');
-define('EB_ADMIN_L46', 'Mostrar botón de creación de eventos');
-define('EB_ADMIN_L47', 'Mostrar botón de creación de equipo');
-define('EB_ADMIN_L48', 'Mostrar el número de partidos jugados');
-define('EB_ADMIN_L49', 'Mostrar el número de partidos para aprobar');
-define('EB_ADMIN_L50', 'Mostrar el número de partidos pendientes');
-define('EB_ADMIN_L51', 'Mostrar el número de partidos programados');
-define('EB_ADMIN_L52', 'Mostrar el número de desafío(s) solicitada');
-define('EB_ADMIN_L53', 'Mostrar el número de desafío(s) sin confirmar');
+define('EB_ADMIN_L46', 'Mostrar botï¿½n de creaciï¿½n de eventos');
+define('EB_ADMIN_L47', 'Mostrar botï¿½n de creaciï¿½n de equipo');
+define('EB_ADMIN_L48', 'Mostrar el nï¿½mero de partidos jugados');
+define('EB_ADMIN_L49', 'Mostrar el nï¿½mero de partidos para aprobar');
+define('EB_ADMIN_L50', 'Mostrar el nï¿½mero de partidos pendientes');
+define('EB_ADMIN_L51', 'Mostrar el nï¿½mero de partidos programados');
+define('EB_ADMIN_L52', 'Mostrar el nï¿½mero de desafï¿½o(s) solicitada');
+define('EB_ADMIN_L53', 'Mostrar el nï¿½mero de desafï¿½o(s) sin confirmar');
 
 define('EB_ADMINHELP_L1', 'eBattles Ayuda');
 define('EB_ADMINHELP_L2', 'Version');
@@ -197,13 +197,13 @@ define('EB_EVENT_L61', 'Partido');
 define('EB_EVENT_L62', 'Ver detalles');
 define('EB_EVENT_L63', 'Ultimos Premios');
 define('EB_EVENT_L64', 'Partido(s) pendiente');
-define('EB_EVENT_L65', 'Desafío de un jugador');
-define('EB_EVENT_L66', 'desafío(s) solicitada');
-define('EB_EVENT_L67', 'desafío(s) sin confirmar');
-define('EB_EVENT_L68', 'desafío(s) pendiente');
-define('EB_EVENT_L69', 'Desafío eliminado');
+define('EB_EVENT_L65', 'Desafï¿½o de un jugador');
+define('EB_EVENT_L66', 'desafï¿½o(s) solicitada');
+define('EB_EVENT_L67', 'desafï¿½o(s) sin confirmar');
+define('EB_EVENT_L68', 'desafï¿½o(s) pendiente');
+define('EB_EVENT_L69', 'Desafï¿½o eliminado');
 define('EB_EVENT_L70', 'partido(s) solicitada');
-define('EB_EVENT_L71', 'Desafío de un Equipo');
+define('EB_EVENT_L71', 'Desafï¿½o de un Equipo');
 define('EB_EVENT_L72', 'Horario de un partido');
 define('EB_EVENT_L73', 'partido(s) para aprobar');
 
@@ -330,9 +330,9 @@ define('EB_EVENTM_L118', 'Classic: Players are ranked based on their score in th
 Combined Stats: Players are ranked based on a combination of their scores in each stats category');
 define('EB_EVENTM_L119', 'Classic');
 define('EB_EVENTM_L120', 'Combined Stats');
-define('EB_EVENTM_L121', 'Evento Desafíos');
-define('EB_EVENTM_L122', 'Activar/Desactivar Desafíos');
-define('EB_EVENTM_L123', 'Guardar configuracion de los desafíos');
+define('EB_EVENTM_L121', 'Evento Desafï¿½os');
+define('EB_EVENTM_L122', 'Activar/Desactivar Desafï¿½os');
+define('EB_EVENTM_L123', 'Guardar configuracion de los desafï¿½os');
 define('EB_EVENTM_L124', 'Numero maximo de fechas por Desafio');
 define('EB_EVENTM_L125', 'Numero maximo de mapas por partido');
 
@@ -425,11 +425,12 @@ define('EB_CLAN_L26', 'Miembro');
 define('EB_CLAN_L27', 'Website');
 define('EB_CLAN_L28', 'Email');
 define('EB_CLAN_L29', 'IM');
-define('EB_CLAN_L30', 'Descripción');
+define('EB_CLAN_L30', 'Descripciï¿½n');
+define('EB_CLAN_L31', 'Premios');
 
 define('EB_CLANC_L1', 'Crear equipo');
 define('EB_CLANC_L2', 'Usted no esta autorizado a crear un equipo.');
-define('EB_CLANC_L3', 'Usted no puede ser el administrador de más de un equipo.');
+define('EB_CLANC_L3', 'Usted no puede ser el administrador de mï¿½s de un equipo.');
 
 define('EB_CLANM_L1', 'Gestionar');
 define('EB_CLANM_L2', 'Resume del Equipo');
@@ -464,7 +465,7 @@ define('EB_CLANM_L30', 'Selecione un icono usando un enlance externo o uno de lo
 define('EB_CLANM_L31', 'Website');
 define('EB_CLANM_L32', 'Email');
 define('EB_CLANM_L33', 'IM');
-define('EB_CLANM_L34', 'Descripción');
+define('EB_CLANM_L34', 'Descripciï¿½n');
 
 define('EB_MATCH_L1', 'Partido');
 define('EB_MATCH_L2', 'empatado');
@@ -478,8 +479,8 @@ define('EB_MATCH_L9', 'en');
 define('EB_MATCH_L10', 'comentarios');
 define('EB_MATCH_L11', 'comentario');
 define('EB_MATCH_L12', 'Jugando');
-define('EB_MATCH_L13', 'Las necesidades de su aprobación');
-define('EB_MATCH_L14', 'perdió contra');
+define('EB_MATCH_L13', 'Las necesidades de su aprobaciï¿½n');
+define('EB_MATCH_L14', 'perdiï¿½ contra');
 define('EB_MATCH_L15', 'Enviado por');
 define('EB_MATCH_L16', 'Programado');
 define('EB_MATCH_L17', 'para');
@@ -505,11 +506,11 @@ define('EB_MATCHD_L18', 'Este partido esta pendiente de revision');
 define('EB_MATCHD_L19', 'Captura de pantalla');
 define('EB_MATCHD_L20', 'Replay');
 define('EB_MATCHD_L21', 'Video');
-define('EB_MATCHD_L22', 'Por favor, escriba la dirección completa del medio aquí (http://...)');
-define('EB_MATCHD_L23', 'Envíe el Medio');
+define('EB_MATCHD_L22', 'Por favor, escriba la direcciï¿½n completa del medio aquï¿½ (http://...)');
+define('EB_MATCHD_L23', 'Envï¿½e el Medio');
 define('EB_MATCHD_L24', 'presentado por');
 define('EB_MATCHD_L25', 'Eliminar');
-define('EB_MATCHD_L26', '¿Está seguro que desea eliminar este medio?');
+define('EB_MATCHD_L26', 'ï¿½Estï¿½ seguro que desea eliminar este medio?');
 define('EB_MATCHD_L27', 'Editar este partido');
 
 define('EB_MATCHDEL_L1', 'Eliminar Partido');
@@ -563,13 +564,13 @@ define('EB_MATCHR_L37', 'You are only allowed to report matches your team has pl
 define('EB_MATCHR_L38', 'Competidor');
 define('EB_MATCHR_L39', 'Equipo #');
 define('EB_MATCHR_L40', 'es el mismo equipo #');
-define('EB_MATCHR_L41', 'Facción');
+define('EB_MATCHR_L41', 'Facciï¿½n');
 define('EB_MATCHR_L42', 'Seleccione mapa(s):');
 define('EB_MATCHR_L43', 'Desconocida');
 define('EB_MATCHR_L44', 'Mapa(s)');
-define('EB_MATCHR_L45', 'Edición de partido');
+define('EB_MATCHR_L45', 'Ediciï¿½n de partido');
 define('EB_MATCHR_L46', 'Editar partido');
-define('EB_MATCHR_L47', 'Se recomienda actualizar las estadísticas de eventos después de edición de partido.');
+define('EB_MATCHR_L47', 'Se recomienda actualizar las estadï¿½sticas de eventos despuï¿½s de ediciï¿½n de partido.');
 define('EB_MATCHR_L48', 'Horario de un partido');
 define('EB_MATCHR_L49', 'Partido Fecha/Hora');
 define('EB_MATCHR_L50', 'Selector de fecha');
@@ -581,7 +582,7 @@ define('EB_MATCHR_L54', ',
 	Usted tiene un nuevo partido programado');
 define('EB_MATCHR_L55', ' en el evento "');
 define('EB_MATCHR_L56', '".
-	Por favor revise su "Mi prefil/Partidos" pagina para ver los detalles desafío.
+	Por favor revise su "Mi prefil/Partidos" pagina para ver los detalles desafï¿½o.
 	
 	Cordialmente,
 	El evento admin');
@@ -591,7 +592,7 @@ define('EB_MATCHQL_L2', 'Usted no esta autorizado para informar el partido.');
 define('EB_MATCHQL_L3', 'Volver a');
 define('EB_MATCHQL_L4', 'Evento');
 define('EB_MATCHQL_L5', 'Seleccione el jugador');
-define('EB_MATCHQL_L6', 'Presentar la pérdida');
+define('EB_MATCHQL_L6', 'Presentar la pï¿½rdida');
 
 define('EB_GAME_L1', 'Juego desconocido');
 define('EB_GAME_L2', 'Gestionar Juego');
@@ -607,19 +608,19 @@ define('EB_GAME_L11', 'Info');
 define('EB_GAME_L12', 'Facciones');
 define('EB_GAME_L13', 'Mapas');
 define('EB_GAME_L14', 'Icono');
-define('EB_GAME_L15', 'Título');
-define('EB_GAME_L16', 'Icon dirección');
+define('EB_GAME_L15', 'Tï¿½tulo');
+define('EB_GAME_L16', 'Icon direcciï¿½n');
 define('EB_GAME_L17', 'Action');
-define('EB_GAME_L18', 'Por favor, escriba la dirección completa del icon aquí (http://...), con el prefijo &quot;juego_nombre_corto-&quot;');
-define('EB_GAME_L19', 'Crear Facción');
+define('EB_GAME_L18', 'Por favor, escriba la direcciï¿½n completa del icon aquï¿½ (http://...), con el prefijo &quot;juego_nombre_corto-&quot;');
+define('EB_GAME_L19', 'Crear Facciï¿½n');
 define('EB_GAME_L20', 'Eliminar');
-define('EB_GAME_L21', '&iquest;Estas seguro de que deseas eliminar esta facción?');
+define('EB_GAME_L21', '&iquest;Estas seguro de que deseas eliminar esta facciï¿½n?');
 define('EB_GAME_L22', 'Imagen');
-define('EB_GAME_L23', 'Título');
-define('EB_GAME_L24', 'Imagen dirección');
-define('EB_GAME_L25', 'Descripción');
-define('EB_GAME_L26', 'Acción');
-define('EB_GAME_L27', 'Por favor, escriba la dirección completa del mapa aquí (http://...), con el prefijo &quot;juego_nombre_corto-&quot;');
+define('EB_GAME_L23', 'Tï¿½tulo');
+define('EB_GAME_L24', 'Imagen direcciï¿½n');
+define('EB_GAME_L25', 'Descripciï¿½n');
+define('EB_GAME_L26', 'Acciï¿½n');
+define('EB_GAME_L27', 'Por favor, escriba la direcciï¿½n completa del mapa aquï¿½ (http://...), con el prefijo &quot;juego_nombre_corto-&quot;');
 define('EB_GAME_L28', 'Crear Mapa');
 define('EB_GAME_L29', 'Eliminar');
 define('EB_GAME_L30', '&iquest;Estas seguro de que deseas eliminar este mapa?');
@@ -647,28 +648,28 @@ define('EB_GAMES_L18', 'Actualizar seleccionado');
 define('EB_GAMES_L19', 'Atualizar todos selecionados');
 define('EB_GAMES_L20', 'A&ntilde;adir Juegos Predefinidos');
 
-define('EB_CHALLENGE_L1', 'Desafío');
-define('EB_CHALLENGE_L2', 'Desafío de un jugador');
-define('EB_CHALLENGE_L3', 'Desafío de un equipo');
+define('EB_CHALLENGE_L1', 'Desafï¿½o');
+define('EB_CHALLENGE_L2', 'Desafï¿½o de un jugador');
+define('EB_CHALLENGE_L3', 'Desafï¿½o de un equipo');
 define('EB_CHALLENGE_L4', 'Evento:');
-define('EB_CHALLENGE_L5', 'Desafíador:');
-define('EB_CHALLENGE_L6', 'Desafíado:');
+define('EB_CHALLENGE_L5', 'Desafï¿½ador:');
+define('EB_CHALLENGE_L6', 'Desafï¿½ado:');
 define('EB_CHALLENGE_L7', 'Seleccione las fechas:');
 define('EB_CHALLENGE_L8', 'Comentarios:');
-define('EB_CHALLENGE_L9', 'Enviar Desafío');
+define('EB_CHALLENGE_L9', 'Enviar Desafï¿½o');
 define('EB_CHALLENGE_L10', 'Date');
 define('EB_CHALLENGE_L11', 'is not set');
-define('EB_CHALLENGE_L12', 'Desafío se presenta');
+define('EB_CHALLENGE_L12', 'Desafï¿½o se presenta');
 define('EB_CHALLENGE_L13', 'Volver a');
 define('EB_CHALLENGE_L14', 'Eventos');
 define('EB_CHALLENGE_L15', 'Retirar');
-define('EB_CHALLENGE_L16', '&iquest;Estas seguro de que deseas eliminar este desafío?');
+define('EB_CHALLENGE_L16', '&iquest;Estas seguro de que deseas eliminar este desafï¿½o?');
 define('EB_CHALLENGE_L17', 'Confirmar');
-define('EB_CHALLENGE_L18', 'Confirmar un desafío');
+define('EB_CHALLENGE_L18', 'Confirmar un desafï¿½o');
 define('EB_CHALLENGE_L19', 'Elija una fecha');
 define('EB_CHALLENGE_L20', 'Aceptar');
 define('EB_CHALLENGE_L21', 'Declinar');
-define('EB_CHALLENGE_L22', 'Desafío aceptado, Partido programado');
+define('EB_CHALLENGE_L22', 'Desafï¿½o aceptado, Partido programado');
 define('EB_CHALLENGE_L23', 'You have been challenged!');
 define('EB_CHALLENGE_L24', 'Hola ');
 define('EB_CHALLENGE_L25', ',
@@ -676,19 +677,19 @@ define('EB_CHALLENGE_L25', ',
 	Usted ha sido cuestionado por ');
 define('EB_CHALLENGE_L26', ' en el evento "');
 define('EB_CHALLENGE_L27', '".
-	Por favor revise su "Mi prefil/Partidos" pagina para ver los detalles desafío.
+	Por favor revise su "Mi prefil/Partidos" pagina para ver los detalles desafï¿½o.
 	
 	Cordialmente,
 	El evento admin');
-define('EB_CHALLENGE_L28', 'Desafíador comentarios:');
-define('EB_CHALLENGE_L29', 'Desafío se redujo!');
+define('EB_CHALLENGE_L28', 'Desafï¿½ador comentarios:');
+define('EB_CHALLENGE_L29', 'Desafï¿½o se redujo!');
 define('EB_CHALLENGE_L30', 'Hola ');
 define('EB_CHALLENGE_L31', ',
 
-	Su desafío ha sido rechazada por ');
+	Su desafï¿½o ha sido rechazada por ');
 define('EB_CHALLENGE_L32', ' en el evento "');
 define('EB_CHALLENGE_L33', '".
-	Por favor revise su "Mi prefil/Partidos" pagina para ver los detalles desafío.
+	Por favor revise su "Mi prefil/Partidos" pagina para ver los detalles desafï¿½o.
 	
 	Cordialmente,
 	El evento admin');

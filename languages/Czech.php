@@ -418,6 +418,7 @@ define('EB_CLAN_L27', 'Web');
 define('EB_CLAN_L28', 'Email');
 define('EB_CLAN_L29', 'IM');
 define('EB_CLAN_L30', 'Popis');
+define('EB_CLAN_L31', 'Ocenění');
 
 define('EB_CLANC_L1', 'Vytvořit tým');
 define('EB_CLANC_L2', 'Nejsi orávněn vytvořit tým.');

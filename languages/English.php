@@ -428,6 +428,7 @@ define('EB_CLAN_L27', 'Website');
 define('EB_CLAN_L28', 'Email');
 define('EB_CLAN_L29', 'IM');
 define('EB_CLAN_L30', 'Description');
+define('EB_CLAN_L31', 'Awards');
 
 define('EB_CLANC_L1', 'Create Team');
 define('EB_CLANC_L2', 'You are not authorized to create a team.');

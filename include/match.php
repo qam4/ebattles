@@ -756,43 +756,41 @@ function match_teams_update($match_id)
 		$output .= "Match id: $match_id<br>";
 
 		$gain = mysql_result($result,$i, TBL_SCORES.".Player_Win") - mysql_result($result,$i, TBL_SCORES.".Player_Loss");
-		if ($gain * $pStreak > 0)
+		if ($gain * $tStreak > 0)
 		{
 			// same sign
-			$pStreak += $gain;
+			$tStreak += $gain;
 		}
 		else
 		{
 			// opposite sign
-			$pStreak = $gain;
+			$tStreak = $gain;
 		}
 
-		if ($pStreak > $pStreak_Best) $pStreak_Best = $pStreak;
-		if ($pStreak < $pStreak_Worst) $pStreak_Worst = $pStreak;
+		if ($tStreak > $tStreak_Best) $tStreak_Best = $tStreak;
+		if ($tStreak < $tStreak_Worst) $tStreak_Worst = $tStreak;
 
-		/*
-		if ($pStreak == 5)
+		if ($tStreak == 5)
 		{
-		// Award: player wins 5 games in a row
-		$q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-		VALUES ($pid,'PlayerStreak5',$time_reported)";
-		$result4 = $sql->db_Query($q4);
+			// Award: team wins 5 games in a row
+			$q4 = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+			VALUES ($tid,'TeamStreak5',$time_reported)";
+			$result4 = $sql->db_Query($q4);
 		}
-		if ($pStreak == 10)
+		if ($tStreak == 10)
 		{
-		// Award: player wins 10 games in a row
-		$q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-		VALUES ($pid,'PlayerStreak10',$time_reported)";
-		$result4 = $sql->db_Query($q4);
+			// Award: team wins 10 games in a row
+			$q4 = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+			VALUES ($tid,'TeamStreak10',$time_reported)";
+			$result4 = $sql->db_Query($q4);
 		}
-		if ($pStreak == 25)
+		if ($tStreak == 25)
 		{
-		// Award: player wins 25 games in a row
-		$q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-		VALUES ($pid,'PlayerStreak25',$time_reported)";
-		$result4 = $sql->db_Query($q4);
+			// Award: player wins 25 games in a row
+			$q4 = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+			VALUES ($tid,'TeamStreak25',$time_reported)";
+			$result4 = $sql->db_Query($q4);
 		}
-		*/
 
 		// Update database.
 		// Reset rank delta after a match.
