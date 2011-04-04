@@ -1,7 +1,7 @@
 <?php
 // Denne sektion SKAL være inkluderet i sprog filen for, at kunne tjekke for opdateringer.
 define("EVERSION_U1", "plugin.php findes IKKE i plugin mappen");
-define("EVERSION_U2", "e_update.php findes IKKE i plugin mappen");/Users/klinge/Desktop/ebattles/languages/eversion/English.php
+define("EVERSION_U2", "e_update.php findes IKKE i plugin mappen");
 define("EVERSION_U3", "Tjekker for opdatering til denne plugin :");
 define("EVERSION_U4", "Den nuværende version på din server er:");
 define("EVERSION_U5", "Tjek for opdateringer");

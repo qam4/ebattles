@@ -820,7 +820,7 @@ else
 			{
 				$award_string .= $date;
 			}
-			$award_string .= '</div><br /></td></tr>';
+			$award_string .= '</div></td></tr>';
 
 			$text .= $award_string;
 		}

@@ -342,6 +342,9 @@ PRIMARY KEY(AwardID),
 Player int NOT NULL,
 INDEX (Player),
 FOREIGN KEY (Player) REFERENCES ".TBL_PLAYERS." (PlayerID),
+Team int DEFAULT '0',
+INDEX (Team),
+FOREIGN KEY (Player) REFERENCES ".TBL_TEAMS." (TeamID),
 Type varchar(63),
 timestamp int(11) unsigned not null
 ) TYPE = MyISAM;",
@@ -588,6 +591,16 @@ if (versionsCompare($eb_version_string, "0.8.10"))
 	"eb_links_showchallengesrequested" => 1,
 	"eb_links_showchallengesunconfirmed" => 1
 	));
+}
+
+if (versionsCompare($eb_version_string, "0.8.11"))
+{
+	// To revision 0.8.11
+	array_push ($upgrade_alter_tables,
+        "ALTER TABLE ".TBL_AWARDS." ADD Team int NOT NULL",
+        "ALTER TABLE ".TBL_AWARDS." ADD INDEX (Team)",
+        "ALTER TABLE ".TBL_AWARDS." ADD FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID)"
+	);
 }
 
 /*

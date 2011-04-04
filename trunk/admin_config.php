@@ -1000,4 +1000,3 @@ function displayGames(){
 
 ?>
 
-?>
