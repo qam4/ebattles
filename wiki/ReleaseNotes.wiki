@@ -1,5 +1,13 @@
 #summary eBattles Release Notes.
 #labels Featured
+= Release 0.8.12 =
+== Features ==
+ * Added team awards (Fixes issue 78)
+ * Added stats category "streaks" for teams events.
+
+== Bug Fixes ==
+ * Fixed typos
+
 = Release 0.8.10 =
 == Features == 
  * Improved eBattles links menu.
