@@ -1,0 +1,136 @@
+.dynamic-tab-pane-control .tab-pane {
+	position:		relative;
+	width:			100%;
+}
+
+.dynamic-tab-pane-control .tab-row .tab {
+	cursor:			Default;
+	display:		inline;
+	margin:			1px -1px 5px 0px;
+	float:			left;
+	padding:		1px 6px 4px 6px;
+	background:		rgb(40,40,40);
+	border:			1px dotted;
+	border-bottom:		1px solid;
+	border-color:		rgb(70,70,70);
+	
+	cursor:			pointer;
+	
+	z-index:		1;
+	position:		relative;
+	font-size:      	11px;
+	height: 		13px;
+}
+
+.dynamic-tab-pane-control .tab-row .tab.selected {
+	border:			1px solid;
+	border-color:		rgb(70,70,70);
+	border-bottom:		0;
+	z-index:		3;
+	padding:		2px 6px 6px 6px;
+	margin:			1px -1px 5px 0px;
+	top:            	-2px;
+}
+
+.dynamic-tab-pane-control .tab-row .tab a {
+	text-decoration:	none;
+	cursor:			pointer;	
+}
+
+.dynamic-tab-pane-control .tab-row .hover a {
+}
+
+.dynamic-tab-pane-control .tab-row .tab.selected a {
+	font-weight:		bold;
+}
+
+.dynamic-tab-pane-control .tab-page {
+	clear:			both;
+	z-index:		2;
+	position:		relative;
+	padding:		10px;
+}
+
+.dynamic-tab-pane-control .tab-row {
+	z-index:		1;
+	white-space:		nowrap;
+	height:			20px;
+	width:			100%;
+	border-bottom:  	1px dotted;
+	border-color:		rgb(70,70,70);
+}
+
+/* BUTTONS */
+
+.buttons a, .buttons button{
+    display:block;
+    float:left;
+    margin:0 0 0 0; 
+    background-color:rgb(40,40,40);
+    color:rgb(100,100,100);
+    border:1px solid rgb(70,70,70);
+    border-top:1px solid rgb(70,70,70);
+    border-left:1px solid rgb(70,70,70);
+
+    font-size:100%;
+    text-decoration:none;
+    font-weight:bold;
+    cursor:pointer;
+    padding:2px 6px 2px 2px; /* Links */
+}
+.buttons button{
+    width:auto;
+    overflow:visible;
+}
+
+/* STANDARD */
+
+button:hover, .buttons a:hover{
+    background-color:#dff4ff;
+    border:1px solid #c2e1ef;
+    color:#336699;
+}
+.buttons a:active{
+    background-color:#6299c5;
+    border:1px solid #6299c5;
+    color:#fff;
+}
+
+/* POSITIVE */
+
+button.positive, .buttons a.positive{
+    color:#529214;
+}
+.buttons a.positive:hover, button.positive:hover{
+    background-color:#E6EFC2;
+    border:1px solid #C6D880;
+    color:#529214;
+}
+.buttons a.positive:active{
+    background-color:#529214;
+    border:1px solid #529214;
+    color:#fff;
+}
+
+/* NEGATIVE */
+
+.buttons a.negative, button.negative{
+    color:#d12f19;
+}
+.buttons a.negative:hover, button.negative:hover{
+    background:#fbe3e4;
+    border:1px solid #fbc2c4;
+    color:#d12f19;
+}
+.buttons a.negative:active{
+    background-color:#d12f19;
+    border:1px solid #d12f19;
+    color:#fff;
+}
+/* SIMPLE */
+
+.buttons a.simple, button.simple{
+    background-color:transparent;
+    border:0px;
+    padding:0px 0px 0px 0px;
+}
