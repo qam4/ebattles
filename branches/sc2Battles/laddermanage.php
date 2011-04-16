@@ -1,19 +1,19 @@
 <?php
 /**
-* EventManage.php
+* LadderManage.php
 *
 *
 */
 
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
-require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/ladder.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 
 // Specify if we use WYSIWYG for text areas
 global $e_wysiwyg;
-$e_wysiwyg	= "eventdescription,eventrules";  // set $e_wysiwyg before including HEADERF
+$e_wysiwyg	= "ladderdescription,ladderrules";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
 // Include userclass file
 require_once(e_HANDLER."userclass_class.php");
@@ -91,58 +91,58 @@ document.getElementById('playersform').submit();
 ";
 
 
-$event_id = $_GET['eventid'];
+$ladder_id = $_GET['LadderID'];
 $self = $_SERVER['PHP_SELF'];
 
-if (!$event_id)
+if (!$ladder_id)
 {
-    header("Location: ./events.php");
+    header("Location: ./ladders.php");
     exit();
 }
 else
 {
-    $q = "SELECT ".TBL_EVENTS.".*, "
+    $q = "SELECT ".TBL_LADDERS.".*, "
     .TBL_GAMES.".*, "
     .TBL_USERS.".*"
-    ." FROM ".TBL_EVENTS.", "
+    ." FROM ".TBL_LADDERS.", "
     .TBL_GAMES.", "
     .TBL_USERS
-    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')"
-    ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-    ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTS.".Owner)";
+    ." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')"
+    ."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+    ."   AND (".TBL_USERS.".user_id = ".TBL_LADDERS.".Owner)";
 
     $result = $sql->db_Query($q);
-    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
-    $epassword = mysql_result($result,0 , TBL_EVENTS.".Password");
+    $ename = mysql_result($result,0 , TBL_LADDERS.".Name");
+    $epassword = mysql_result($result,0 , TBL_LADDERS.".Password");
     $egame = mysql_result($result,0 , TBL_GAMES.".Name");
     $egameicon  = mysql_result($result,0 , TBL_GAMES.".Icon");
     $egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
-    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+    $etype = mysql_result($result,0 , TBL_LADDERS.".Type");
     $eowner = mysql_result($result,0 , TBL_USERS.".user_id");
     $eownername = mysql_result($result,0 , TBL_USERS.".user_name");
-    $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
-    $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
-    $erules = mysql_result($result,0 , TBL_EVENTS.".Rules");
-    $edescription = mysql_result($result,0 , TBL_EVENTS.".Description");
-    $eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
-    $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
-    $eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
-    $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
-    $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
-    $eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
-    $eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
-    $ePointPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
-    $ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
-    $ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
-    $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
-    $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
-    $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
-    $ematch_report_userclass = mysql_result($result,0 , TBL_EVENTS.".match_report_userclass");
-    $equick_loss_report = mysql_result($result,0 , TBL_EVENTS.".quick_loss_report");
-    $eranking_type = mysql_result($result,0 , TBL_EVENTS.".RankingType");
-    $echallengesenabled = mysql_result($result,0 , TBL_EVENTS.".ChallengesEnable");
-    $eMaxDatesPerChallenge = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
-    $eMaxMapsPerMatch = mysql_result($result,0 , TBL_EVENTS.".MaxMapsPerMatch");
+    $emingames = mysql_result($result,0 , TBL_LADDERS.".nbr_games_to_rank");
+    $eminteamgames = mysql_result($result,0 , TBL_LADDERS.".nbr_team_games_to_rank");
+    $erules = mysql_result($result,0 , TBL_LADDERS.".Rules");
+    $edescription = mysql_result($result,0 , TBL_LADDERS.".Description");
+    $eAllowDraw = mysql_result($result,0 , TBL_LADDERS.".AllowDraw");
+    $eAllowScore = mysql_result($result,0 , TBL_LADDERS.".AllowScore");
+    $eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
+    $eELO_K = mysql_result($result,0 , TBL_LADDERS.".ELO_K");
+    $eELO_M = mysql_result($result,0 , TBL_LADDERS.".ELO_M");
+    $eTS_beta = mysql_result($result,0 , TBL_LADDERS.".TS_beta");
+    $eTS_epsilon = mysql_result($result,0 , TBL_LADDERS.".TS_epsilon");
+    $ePointPerWin = mysql_result($result,0 , TBL_LADDERS.".PointsPerWin");
+    $ePointPerDraw = mysql_result($result,0 , TBL_LADDERS.".PointsPerDraw");
+    $ePointPerLoss = mysql_result($result,0 , TBL_LADDERS.".PointsPerLoss");
+    $estart = mysql_result($result,0 , TBL_LADDERS.".Start_timestamp");
+    $eend = mysql_result($result,0 , TBL_LADDERS.".End_timestamp");
+    $ehide_ratings_column = mysql_result($result,0 , TBL_LADDERS.".hide_ratings_column");
+    $ematch_report_userclass = mysql_result($result,0 , TBL_LADDERS.".match_report_userclass");
+    $equick_loss_report = mysql_result($result,0 , TBL_LADDERS.".quick_loss_report");
+    $eranking_type = mysql_result($result,0 , TBL_LADDERS.".RankingType");
+    $echallengesenabled = mysql_result($result,0 , TBL_LADDERS.".ChallengesEnable");
+    $eMaxDatesPerChallenge = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
+    $eMaxMapsPerMatch = mysql_result($result,0 , TBL_LADDERS.".MaxMapsPerMatch");
 
     if($estart!=0)
     {
@@ -168,32 +168,32 @@ else
     if (USERID==$eowner) $can_manage = 1;
     if ($can_manage == 0)
     {
-        header("Location: ./eventinfo.php?eventid=$event_id");
+        header("Location: ./ladderinfo.php?LadderID=$ladder_id");
         exit();
     }
     else
     {
         //***************************************************************************************
-        // tab-page "Event Summary"
+        // tab-page "Ladder Summary"
         $text .= '
         <div class="tab-pane" id="tab-pane-3">
 
         <div class="tab-page">
-        <div class="tab">'.EB_EVENTM_L2.'</div>
+        <div class="tab">'.EB_LADDERM_L2.'</div>
         ';
 
         $text .= '
-        <form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">
+        <form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">
         <table class="fborder" style="width:95%">
         <tbody>
         ';
         $text .= '<tr>';
-        $text .= '<td class="forumheader3"><b>'.EB_EVENTM_L8.'</b></td>';
-        $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$ename.'</a></td>';
+        $text .= '<td class="forumheader3"><b>'.EB_LADDERM_L8.'</b></td>';
+        $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ename.'</a></td>';
         $text .= '</tr>';
 
         $text .= '<tr>';
-        $text .= '<td class="forumheader3"><b>'.EB_EVENTM_L9.'</b><br />';
+        $text .= '<td class="forumheader3"><b>'.EB_LADDERM_L9.'</b><br />';
         $text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
         $text .= '</td>';
 
@@ -206,7 +206,7 @@ else
         $text .= '<td class="forumheader3">';
         $text .= '<table>';
         $text .= '<tr>';
-        $text .= '<td><select class="tbox" name="eventowner">';
+        $text .= '<td><select class="tbox" name="ladderowner">';
         for($j=0; $j<$num_rows_2; $j++)
         {
             $uid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
@@ -224,25 +224,25 @@ else
         $text .= '</select>';
         $text .= '</td>';
         $text .= '<td>';
-        $text .= ebImageTextButton('eventchangeowner', 'user_go.ico', EB_EVENTM_L10);
+        $text .= ebImageTextButton('ladderchangeowner', 'user_go.ico', EB_LADDERM_L10);
         $text .= '</td>';
         $text .= '</tr>';
         $text .= '</table>';
         $text .= '</td>';
         $text .= '</tr>';
 
-        $q = "SELECT ".TBL_EVENTMODS.".*, "
+        $q = "SELECT ".TBL_LADDERMODS.".*, "
         .TBL_USERS.".*"
-        ." FROM ".TBL_EVENTMODS.", "
+        ." FROM ".TBL_LADDERMODS.", "
         .TBL_USERS
-        ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
-        ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTMODS.".User)";
+        ." WHERE (".TBL_LADDERMODS.".Ladder = '$ladder_id')"
+        ."   AND (".TBL_USERS.".user_id = ".TBL_LADDERMODS.".User)";
         $result = $sql->db_Query($q);
         $numMods = mysql_numrows($result);
         $text .= '
         <tr>
         ';
-        $text .= '<td class="forumheader3"><b>'.EB_EVENTM_L11.'</b></td>';
+        $text .= '<td class="forumheader3"><b>'.EB_LADDERM_L11.'</b></td>';
         $text .= '<td class="forumheader3">';
         if ($numMods>0)
         {
@@ -254,8 +254,8 @@ else
                 $text .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$modid.'">'.$modname.'</a></td>';
                 $text .= '<td>';
                 $text .= '<div>';
-                $text .= '<input type="hidden" name="eventmod" value="'.$modid.'"/>';
-                $text .= ebImageTextButton('eventdeletemod', 'user_delete.ico', EB_EVENTM_L12, 'negative', EB_EVENTM_L13);
+                $text .= '<input type="hidden" name="laddermod" value="'.$modid.'"/>';
+                $text .= ebImageTextButton('ladderdeletemod', 'user_delete.ico', EB_LADDERM_L12, 'negative', EB_LADDERM_L13);
                 $text .= '</div>';
                 $text .= '</td>';
                 $text .= '</tr>';
@@ -284,7 +284,7 @@ else
         </td>
         <td>
         <div>
-        '.ebImageTextButton('eventaddmod', 'user_add.png', EB_EVENTM_L14).'
+        '.ebImageTextButton('ladderaddmod', 'user_add.png', EB_LADDERM_L14).'
         </div>
         </td>
         </tr>
@@ -297,39 +297,39 @@ else
         </table>
         </form>
         </div>
-        ';  // tab-page "Event Summary"
+        ';  // tab-page "Ladder Summary"
 
         //***************************************************************************************
-        // tab-page "Event Settings"
+        // tab-page "Ladder Settings"
         $text .= '
         <div class="tab-page">
-        <div class="tab">'.EB_EVENTM_L3.'</div>
+        <div class="tab">'.EB_LADDERM_L3.'</div>
         ';
-        $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        $text .= '<form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
         $text .= '
         <table class="fborder" style="width:95%">
         <tbody>
         ';
-        //<!-- Event Name -->
+        //<!-- Ladder Name -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L15.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L15.'</b></td>
         <td class="forumheader3">
-        <div><input class="tbox" type="text" size="40" name="eventname" value="'.$ename.'"/></div>
+        <div><input class="tbox" type="text" size="40" name="laddername" value="'.$ename.'"/></div>
         </td>
         </tr>
         ';
 
-        //<!-- Event Password -->
+        //<!-- Ladder Password -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L16.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L16.'</b></td>
         <td class="forumheader3">
-        <div><input class="tbox" type="text" size="40" name="eventpassword" value="'.$epassword.'"/></div>
+        <div><input class="tbox" type="text" size="40" name="ladderpassword" value="'.$epassword.'"/></div>
         </td>
         </tr>
         ';
-        //<!-- Event Game -->
+        //<!-- Ladder Game -->
 
         $q = "SELECT ".TBL_GAMES.".*"
         ." FROM ".TBL_GAMES
@@ -338,8 +338,8 @@ else
         /* Error occurred, return given name by default */
         $numGames = mysql_numrows($result);
         $text .= '<tr>';
-        $text .= '<td class="forumheader3"><b>'.EB_EVENTM_L17.'</b></td>';
-        $text .= '<td class="forumheader3"><select class="tbox" name="eventgame">';
+        $text .= '<td class="forumheader3"><b>'.EB_LADDERM_L17.'</b></td>';
+        $text .= '<td class="forumheader3"><select class="tbox" name="laddergame">';
         for($i=0; $i<$numGames; $i++){
             $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
             $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -358,13 +358,13 @@ else
         //<!-- Type -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L18.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L18.'</b></td>
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="radio" size="40" name="eventtype" '.($etype == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" />'.EB_EVENTM_L19;
-        $text .= '<input class="tbox" type="radio" size="40" name="eventtype" '.($etype == "Team Ladder" ? 'checked="checked"' : '').' value="Team" />'.EB_EVENTM_L20;
-        $text .= '<input class="tbox" type="radio" size="40" name="eventtype" '.($etype == "ClanWar" ? 'checked="checked"' : '').' value="ClanWar" />'.EB_EVENTM_L116;
+        $text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($etype == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" />'.EB_LADDERM_L19;
+        $text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($etype == "Team Ladder" ? 'checked="checked"' : '').' value="Team" />'.EB_LADDERM_L20;
+        $text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($etype == "ClanWar" ? 'checked="checked"' : '').' value="ClanWar" />'.EB_LADDERM_L116;
 
         $text .= '
         </div>
@@ -375,12 +375,12 @@ else
         //<!-- Rating Type -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L117.'</b><div class="smalltext">'.EB_EVENTM_L118.'</div></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L117.'</b><div class="smalltext">'.EB_LADDERM_L118.'</div></td>
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="radio" size="40" name="eventrankingtype" '.($eranking_type == "Classic" ? 'checked="checked"' : '').' value="Classic" />'.EB_EVENTM_L119;
-        $text .= '<input class="tbox" type="radio" size="40" name="eventrankingtype" '.($eranking_type == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" />'.EB_EVENTM_L120;
+        $text .= '<input class="tbox" type="radio" size="40" name="ladderrankingtype" '.($eranking_type == "Classic" ? 'checked="checked"' : '').' value="Classic" />'.EB_LADDERM_L119;
+        $text .= '<input class="tbox" type="radio" size="40" name="ladderrankingtype" '.($eranking_type == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" />'.EB_LADDERM_L120;
 
         $text .= '
         </div>
@@ -391,11 +391,11 @@ else
         //<!-- Match report userclass -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L21.'</b></td>
-        <td class="forumheader3"><select class="tbox" name="eventmatchreportuserclass">';
-        $text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.($ematch_report_userclass == eb_UC_EVENT_PLAYER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L22.'</option>';
-        $text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.($ematch_report_userclass == eb_UC_EVENT_MODERATOR ? 'selected="selected"' : '') .'>'.EB_EVENTM_L23.'</option>';
-        $text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.($ematch_report_userclass == eb_UC_EVENT_OWNER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L24.'</option>';
+        <td class="forumheader3"><b>'.EB_LADDERM_L21.'</b></td>
+        <td class="forumheader3"><select class="tbox" name="laddermatchreportuserclass">';
+        $text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($ematch_report_userclass == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($ematch_report_userclass == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.($ematch_report_userclass == eb_UC_LADDER_OWNER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L24.'</option>';
         $text .= '</select>
         </td>
         </tr>
@@ -404,11 +404,11 @@ else
         //<!-- Allow Quick Loss Report -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L25.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L25.'</b></td>
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="checkbox" name="eventallowquickloss"';
+        $text .= '<input class="tbox" type="checkbox" name="ladderallowquickloss"';
         if ($equick_loss_report == TRUE)
         {
             $text .= ' checked="checked"/>';
@@ -426,11 +426,11 @@ else
         //<!-- Allow Score -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L26.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L26.'</b></td>
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="checkbox" name="eventallowscore"';
+        $text .= '<input class="tbox" type="checkbox" name="ladderallowscore"';
         if ($eAllowScore == TRUE)
         {
             $text .= ' checked="checked"/>';
@@ -449,7 +449,7 @@ else
         $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
         ." FROM ".TBL_MATCHS.", "
         .TBL_SCORES
-        ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+        ." WHERE (".TBL_MATCHS.".Ladder = '$ladder_id')"
         ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
         ." AND (".TBL_MATCHS.".Status = 'pending')";
         $result = $sql->db_Query($q);
@@ -459,16 +459,16 @@ else
 
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L108.'</b><div class="smalltext">'.EB_EVENTM_L109.'</div></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L108.'</b><div class="smalltext">'.EB_LADDERM_L109.'</div></td>
         <td class="forumheader3">
         <div>';
-        $text .= '<select class="tbox" name="eventmatchapprovaluserclass">';
-        $text .= '<option value="'.eb_UC_NONE.'" '.(($eMatchesApproval == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L113.'</option>';
-        $text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.((($eMatchesApproval & eb_UC_EVENT_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L112.'</option>';
-        $text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.((($eMatchesApproval & eb_UC_EVENT_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L111.'</option>';
-        $text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.((($eMatchesApproval & eb_UC_EVENT_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L110.'</option>';
+        $text .= '<select class="tbox" name="laddermatchapprovaluserclass">';
+        $text .= '<option value="'.eb_UC_NONE.'" '.(($eMatchesApproval == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L113.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.((($eMatchesApproval & eb_UC_LADDER_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L112.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.((($eMatchesApproval & eb_UC_LADDER_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L111.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.((($eMatchesApproval & eb_UC_LADDER_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L110.'</option>';
         $text .= '</select>';
-        $text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
+        $text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
         $text .= '
         </div>
         </td>
@@ -478,11 +478,11 @@ else
         //<!-- Allow Draws -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L27.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L27.'</b></td>
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="checkbox" name="eventallowdraw"';
+        $text .= '<input class="tbox" type="checkbox" name="ladderallowdraw"';
         if ($eAllowDraw == TRUE)
         {
             $text .= ' checked="checked"/>';
@@ -500,23 +500,23 @@ else
         //<!-- Points -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L28.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L28.'</b></td>
         <td class="forumheader3">
         <table>
         <tr>
-        <td>'.EB_EVENTM_L29.'</td>
-        <td>'.EB_EVENTM_L30.'</td>
-        <td>'.EB_EVENTM_L31.'</td>
+        <td>'.EB_LADDERM_L29.'</td>
+        <td>'.EB_LADDERM_L30.'</td>
+        <td>'.EB_LADDERM_L31.'</td>
         </tr>
         <tr>
         <td>
-        <div><input class="tbox" type="text" name="eventpointsperwin" value="'.$ePointPerWin.'"/></div>
+        <div><input class="tbox" type="text" name="ladderpointsperwin" value="'.$ePointPerWin.'"/></div>
         </td>
         <td>
-        <div><input class="tbox" type="text" name="eventpointsperdraw" value="'.$ePointPerDraw.'"/></div>
+        <div><input class="tbox" type="text" name="ladderpointsperdraw" value="'.$ePointPerDraw.'"/></div>
         </td>
         <td>
-        <div><input class="tbox" type="text" name="eventpointsperloss" value="'.$ePointPerLoss.'"/></div>
+        <div><input class="tbox" type="text" name="ladderpointsperloss" value="'.$ePointPerLoss.'"/></div>
         </td>
         </tr>
         </table>
@@ -529,11 +529,11 @@ else
         //<!-- Maps -->
          $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L125.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L125.'</b></td>
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="text" name="eventmaxmapspermatch" size="2" value="'.$eMaxMapsPerMatch.'"';
+        $text .= '<input class="tbox" type="text" name="laddermaxmapspermatch" size="2" value="'.$eMaxMapsPerMatch.'"';
         $text .= '
         </div>
         </td>
@@ -543,7 +543,7 @@ else
         //<!-- Start Date -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L32.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L32.'</b></td>
         <td class="forumheader3">
         <table>
         <tr>
@@ -551,13 +551,13 @@ else
         <div><input class="tbox" type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
         </td>
         <td>
-        <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="'.EB_EVENTM_L33.'"
+        <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
         ';
         $text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
         $text .= '
         </td>
         <td>
-        <div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearStartDate(this.form);"/></div>
+        <div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearStartDate(this.form);"/></div>
         </td>
         </tr>
         </table>
@@ -580,7 +580,7 @@ else
         //<!-- End Date -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L35.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L35.'</b></td>
         <td class="forumheader3">
         <table>
         <tr>
@@ -588,13 +588,13 @@ else
         <div><input class="tbox" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
         </td>
         <td>
-        <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="'.EB_EVENTM_L33.'"
+        <img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
         ';
         $text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
         $text .= '
         </td>
         <td>
-        <div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearEndDate(this.form);"/></div>
+        <div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearEndDate(this.form);"/></div>
         </td>
         </tr>
         </table>
@@ -617,10 +617,10 @@ else
         //<!-- Description -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L36.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L36.'</b></td>
         <td class="forumheader3">
         ';
-        $text .= '<textarea class="tbox" id="eventdescription" name="eventdescription" cols="70" '.$insertjs.'>'.$edescription.'</textarea>';
+        $text .= '<textarea class="tbox" id="ladderdescription" name="ladderdescription" cols="70" '.$insertjs.'>'.$edescription.'</textarea>';
         if (!e_WYSIWYG)
         {
             $text .= '<br />'.display_help("helpb",1);
@@ -636,21 +636,21 @@ else
         $text .= '
         <table><tr><td>
         <div>
-        '.ebImageTextButton('eventsettingssave', 'disk.png', EB_EVENTM_L37).'
+        '.ebImageTextButton('laddersettingssave', 'disk.png', EB_LADDERM_L37).'
         </div>
         </td></tr></table>
 
         </form>
         </div>
-        ';  // tab-page "Event Settings"
+        ';  // tab-page "Ladder Settings"
         
         //***************************************************************************************
-		// tab-page "Event Rules"
+		// tab-page "Ladder Rules"
         $text .= '
         <div class="tab-page">
-        <div class="tab">'.EB_EVENTM_L4.'</div>
+        <div class="tab">'.EB_LADDERM_L4.'</div>
         ';
-        $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        $text .= '<form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
 
         $text .= '
         <table class="fborder" style="width:95%">
@@ -659,10 +659,10 @@ else
         //<!-- Rules -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L38.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L38.'</b></td>
         <td class="forumheader3">
         ';
-        $text .= '<textarea class="tbox" id="eventrules" name="eventrules" cols="70" '.$insertjs.'>'.$erules.'</textarea>';
+        $text .= '<textarea class="tbox" id="ladderrules" name="ladderrules" cols="70" '.$insertjs.'>'.$erules.'</textarea>';
         if (!e_WYSIWYG)
         {
             $text .= '<br />'.display_help("helpb",1);
@@ -677,28 +677,28 @@ else
         $text .= '
         <table><tr><td>
         <div>
-        '.ebImageTextButton('eventrulessave', 'disk.png', EB_EVENTM_L39).'
+        '.ebImageTextButton('ladderrulessave', 'disk.png', EB_LADDERM_L39).'
         </div>
         </td></tr></table>
 
         </form>
         </div>
-        ';  // tab-page "Event Rules"
+        ';  // tab-page "Ladder Rules"
 
         //***************************************************************************************
-        // tab-page "Event Players/Teams"
+        // tab-page "Ladder Players/Teams"
         $text .= '
         <div class="tab-page">
-        <div class="tab">'.EB_EVENTM_L5.'</div>
+        <div class="tab">'.EB_LADDERM_L5.'</div>
         ';
 
         $pages = new Paginator;
 
         $array = array(
-        'name'   => array(EB_EVENTM_L55, TBL_USERS.'.user_name'),
-        'rank'   => array(EB_EVENTM_L56, TBL_PLAYERS.'.OverallScore'),
-        'games'  => array(EB_EVENTM_L57, TBL_PLAYERS.'.GamesPlayed'),
-        'awards' => array(EB_EVENTM_L58, '')
+        'name'   => array(EB_LADDERM_L55, TBL_USERS.'.user_name'),
+        'rank'   => array(EB_LADDERM_L56, TBL_PLAYERS.'.OverallScore'),
+        'games'  => array(EB_LADDERM_L57, TBL_PLAYERS.'.GamesPlayed'),
+        'awards' => array(EB_LADDERM_L58, '')
         );
 
         if (!isset($_GET['orderby'])) $_GET['orderby'] = 'rank';
@@ -713,7 +713,7 @@ else
         $q = "SELECT COUNT(*) as NbrPlayers"
         ." FROM ".TBL_PLAYERS.", "
         .TBL_USERS
-        ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+        ." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
         ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
         $result = $sql->db_Query($q);
         $row = mysql_fetch_array($result);
@@ -731,14 +731,14 @@ else
             case "ClanWar":
             $q = "SELECT COUNT(*) as NbrTeams"
             ." FROM ".TBL_TEAMS
-            ." WHERE (".TBL_TEAMS.".Event = '$event_id')";
+            ." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')";
             $result = $sql->db_Query($q);
             $row = mysql_fetch_array($result);
             $numTeams = $row['NbrTeams'];
 
             $text .= '<div class="spacer">';
             $text .= '<p>';
-            $text .= $numTeams.' '.EB_EVENTM_L114.'<br />';
+            $text .= $numTeams.' '.EB_LADDERM_L114.'<br />';
             $text .= '</p>';
             $text .= '</div>';
             break;
@@ -752,7 +752,7 @@ else
             case "Team Ladder":
             $text .= '<div class="spacer">';
             $text .= '<p>';
-            $text .= $numPlayers.' '.EB_EVENTM_L40.'<br />';
+            $text .= $numPlayers.' '.EB_LADDERM_L40.'<br />';
             $text .= '</p>';
             $text .= '</div>';
             break;
@@ -764,7 +764,7 @@ else
         {
             case "Team Ladder":
             case "ClanWar":
-            // Form to add a team's division to the event
+            // Form to add a team's division to the ladder
             $q = "SELECT ".TBL_DIVISIONS.".*, "
             .TBL_CLANS.".*"
             ." FROM ".TBL_DIVISIONS.", "
@@ -775,13 +775,13 @@ else
             /* Error occurred, return given name by default */
             $numDivisions = mysql_numrows($result);
 
-            $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+            $text .= '<form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
             $text .= '
             <table class="fborder" style="width:95%">
             <tbody>
             <tr>
             <td class="forumheader3">
-            <b>'.EB_EVENTM_L41.'</b>
+            <b>'.EB_LADDERM_L41.'</b>
             </td>
             <td class="forumheader3">
             <select class="tbox" name="division">
@@ -794,8 +794,8 @@ else
             }
             $text .= '
             </select>
-            '.ebImageTextButton('eventaddteam', 'user_add.png', EB_EVENTM_L42).'
-            <input class="tbox" type="checkbox" name="eventaddteamnotify"/>'.EB_EVENTM_L43.'
+            '.ebImageTextButton('ladderaddteam', 'user_add.png', EB_LADDERM_L42).'
+            <input class="tbox" type="checkbox" name="ladderaddteamnotify"/>'.EB_LADDERM_L43.'
             </td>
             </tr>
             </tbody>
@@ -804,19 +804,19 @@ else
             ';
             break;
             case "One Player Ladder":
-            // Form to add a player to the event
+            // Form to add a player to the ladder
             $q = "SELECT ".TBL_USERS.".*"
             ." FROM ".TBL_USERS;
             $result = $sql->db_Query($q);
             /* Error occurred, return given name by default */
             $numUsers = mysql_numrows($result);
-            $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+            $text .= '<form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
             $text .= '
             <table class="fborder" style="width:95%">
             <tbody>
             <tr>
             <td class="forumheader3">
-            <b>'.EB_EVENTM_L44.'</b>
+            <b>'.EB_LADDERM_L44.'</b>
             </td>
             <td class="forumheader3">
             <table>
@@ -831,8 +831,8 @@ else
             }
             $text .= '
             </select></div></td>
-            <td>'.ebImageTextButton('eventaddplayer', 'user_add.png', EB_EVENTM_L45).'</td>
-            <td><div><input class="tbox" type="checkbox" name="eventaddplayernotify"/>'.EB_EVENTM_L46.'</div></td>
+            <td>'.ebImageTextButton('ladderaddplayer', 'user_add.png', EB_LADDERM_L45).'</td>
+            <td><div><input class="tbox" type="checkbox" name="ladderaddplayernotify"/>'.EB_LADDERM_L46.'</div></td>
             </tr>
             </table>
             </td>
@@ -846,10 +846,10 @@ else
         }
 
         $text .= '<br /><table>';
-        $text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L47.':</td>';
-        $text .= '<td>'.EB_EVENTM_L48.'</td></tr>';
-        $text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L49.':</td>';
-        $text .= '<td>'.EB_EVENTM_L50.'</td></tr>';
+        $text .= '<tr><td style="vertical-align:top">'.EB_LADDERM_L47.':</td>';
+        $text .= '<td>'.EB_LADDERM_L48.'</td></tr>';
+        $text .= '<tr><td style="vertical-align:top">'.EB_LADDERM_L49.':</td>';
+        $text .= '<td>'.EB_LADDERM_L50.'</td></tr>';
         $text .= '</table>';
 
         switch($etype)
@@ -865,14 +865,14 @@ else
             .TBL_DIVISIONS
             ." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
             ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-            ." AND (".TBL_TEAMS.".Event = '$event_id')";
+            ." AND (".TBL_TEAMS.".Ladder = '$ladder_id')";
             $result = $sql->db_Query($q_Teams);
             $num_rows = mysql_numrows($result);
             if(!$result || ($num_rows < 0)){
-                $text .= EB_EVENTM_L51.'<br />';
+                $text .= EB_LADDERM_L51.'<br />';
             }
             if($num_rows == 0){
-                $text .= EB_EVENTM_L115.'<br />';
+                $text .= EB_LADDERM_L115.'<br />';
             }
             else
             {
@@ -916,17 +916,17 @@ else
             .TBL_USERS.".*"
             ." FROM ".TBL_PLAYERS.", "
             .TBL_USERS
-            ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+            ." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
             ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
             ." ORDER BY $orderby_array[1] $sort"
             ." $pages->limit";
             $result = $sql->db_Query($q_Players);
             $num_rows = mysql_numrows($result);
             if(!$result || ($num_rows < 0)){
-                $text .= EB_EVENTM_L51.'<br />';
+                $text .= EB_LADDERM_L51.'<br />';
             }
             if($num_rows == 0){
-                $text .= EB_EVENTM_L52.'<br />';
+                $text .= EB_LADDERM_L52.'<br />';
             }
             else
             {
@@ -941,14 +941,14 @@ else
                 $text .= $pages->display_items_per_page();
                 $text .= '</span><br /><br />';
                 /* Display table contents */
-                $text .= '<form id="playersform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+                $text .= '<form id="playersform" action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
                 $text .= '<table class="fborder" style="width:95%"><tbody>';
                 $text .= '<tr>';
                 foreach($array as $opt=>$opt_array)
                 {
-                    $text .= '<td class="forumheader"><a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
+                    $text .= '<td class="forumheader"><a href="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$ladder_id.'&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
                 }
-                $text .= '<td class="forumheader">'.EB_EVENTM_L59;
+                $text .= '<td class="forumheader">'.EB_LADDERM_L59;
                 $text .= '<input type="hidden" id="ban_player" name="ban_player" value=""/>';
                 $text .= '<input type="hidden" id="unban_player" name="unban_player" value=""/>';
                 $text .= '<input type="hidden" id="kick_player" name="kick_player" value=""/>';
@@ -973,33 +973,33 @@ else
                     $row = mysql_fetch_array($result_awards);
                     $pawards = $row['NbrAwards'];
 
-                    if ($prank == 0) $prank = EB_EVENTM_L53;
+                    if ($prank == 0) $prank = EB_LADDERM_L53;
 
                     $text .= '<tr>';
                     $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
-                    $text .= '<td class="forumheader3">'.(($pbanned) ? EB_EVENTM_L54 : $prank).'</td>';
+                    $text .= '<td class="forumheader3">'.(($pbanned) ? EB_LADDERM_L54 : $prank).'</td>';
                     $text .= '<td class="forumheader3">'.$pgames.'</td>';
                     $text .= '<td class="forumheader3">'.$pawards.'</td>';
                     $text .= '<td class="forumheader3">';
                     if ($pbanned)
                     {
-                        $text .= ' <a href="javascript:unban_player(\''.$pid.'\');" title="'.EB_EVENTM_L60.'" onclick="return confirm(\''.EB_EVENTM_L61.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_go.ico" alt="'.EB_EVENTM_L60.'"/></a>';
+                        $text .= ' <a href="javascript:unban_player(\''.$pid.'\');" title="'.EB_LADDERM_L60.'" onclick="return confirm(\''.EB_LADDERM_L61.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_go.ico" alt="'.EB_LADDERM_L60.'"/></a>';
                     }
                     else
                     {
-                        $text .= ' <a href="javascript:ban_player(\''.$pid.'\');" title="'.EB_EVENTM_L62.'" onclick="return confirm(\''.EB_EVENTM_L63.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="'.EB_EVENTM_L62.'"/></a>';
+                        $text .= ' <a href="javascript:ban_player(\''.$pid.'\');" title="'.EB_LADDERM_L62.'" onclick="return confirm(\''.EB_LADDERM_L63.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="'.EB_LADDERM_L62.'"/></a>';
                     }
                     if (($pgames == 0)&&($pawards == 0))
                     {
-                        $text .= ' <a href="javascript:kick_player(\''.$pid.'\');" title="'.EB_EVENTM_L64.'" onclick="return confirm(\''.EB_EVENTM_L65.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_EVENTM_L64.'"/></a>';
+                        $text .= ' <a href="javascript:kick_player(\''.$pid.'\');" title="'.EB_LADDERM_L64.'" onclick="return confirm(\''.EB_LADDERM_L65.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_LADDERM_L64.'"/></a>';
                     }
                     if ($pgames != 0)
                     {
-                        $text .= ' <a href="javascript:del_player_games(\''.$pid.'\');" title="'.EB_EVENTM_L66.'" onclick="return confirm(\''.EB_EVENTM_L67.'\')"><img src="'.e_PLUGIN.'ebattles/images/controller_delete.ico" alt="'.EB_EVENTM_L66.'"/></a>';
+                        $text .= ' <a href="javascript:del_player_games(\''.$pid.'\');" title="'.EB_LADDERM_L66.'" onclick="return confirm(\''.EB_LADDERM_L67.'\')"><img src="'.e_PLUGIN.'ebattles/images/controller_delete.ico" alt="'.EB_LADDERM_L66.'"/></a>';
                     }
                     if ($pawards != 0)
                     {
-                        $text .= ' <a href="javascript:del_player_awards(\''.$pid.'\');" title="'.EB_EVENTM_L68.'" onclick="return confirm(\''.EB_EVENTM_L69.'\')"><img src="'.e_PLUGIN.'ebattles/images/award_star_delete.ico" alt="'.EB_EVENTM_L68.'"/></a>';
+                        $text .= ' <a href="javascript:del_player_awards(\''.$pid.'\');" title="'.EB_LADDERM_L68.'" onclick="return confirm(\''.EB_LADDERM_L69.'\')"><img src="'.e_PLUGIN.'ebattles/images/award_star_delete.ico" alt="'.EB_LADDERM_L68.'"/></a>';
                     }
                     $text .= '</td>';
                     $text .= '</tr>';
@@ -1013,55 +1013,55 @@ else
 
         $text .= '
         </div>
-        ';  // tab-page "Event Players/Teams"
+        ';  // tab-page "Ladder Players/Teams"
 
         //***************************************************************************************
-        // tab-page "Event Reset"
+        // tab-page "Ladder Reset"
         $text .= '
         <div class="tab-page">
-        <div class="tab">'.EB_EVENTM_L6.'</div>
+        <div class="tab">'.EB_LADDERM_L6.'</div>
         ';
-        $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        $text .= '<form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
         $text .= '
         <table class="fborder" style="width:95%">
         <tbody>
         ';
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L70.'</b><br />'.EB_EVENTM_L71.'</td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L70.'</b><br />'.EB_LADDERM_L71.'</td>
         <td class="forumheader3">
         ';
-        $text .= ebImageTextButton('eventresetscores', 'bin_closed.png', EB_EVENTM_L72, '', EB_EVENTM_L73);
+        $text .= ebImageTextButton('ladderresetscores', 'bin_closed.png', EB_LADDERM_L72, '', EB_LADDERM_L73);
         $text .= '
         </td>
         </tr>
         ';
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L74.'</b><br />'.EB_EVENTM_L75.'</td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L74.'</b><br />'.EB_LADDERM_L75.'</td>
         <td class="forumheader3">
         ';
-        $text .= ebImageTextButton('eventresetevent', 'bin_closed.png', EB_EVENTM_L76, '', EB_EVENTM_L77);
+        $text .= ebImageTextButton('ladderresetladder', 'bin_closed.png', EB_LADDERM_L76, '', EB_LADDERM_L77);
         $text .= '
         </td>
         </tr>
         ';
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L78.'</b><br />'.EB_EVENTM_L79.'</td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L78.'</b><br />'.EB_LADDERM_L79.'</td>
         <td class="forumheader3">
         ';
-        $text .= ebImageTextButton('eventdelete', 'delete.png', EB_EVENTM_L80, 'negative', EB_EVENTM_L81);
+        $text .= ebImageTextButton('ladderdelete', 'delete.png', EB_LADDERM_L80, 'negative', EB_LADDERM_L81);
         $text .= '
         </td>
         </tr>
         ';
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L82.'</b><br />'.EB_EVENTM_L83.'</td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L82.'</b><br />'.EB_LADDERM_L83.'</td>
         <td class="forumheader3">
         ';
-        $text .= ebImageTextButton('eventupdatescores', 'chart_curve.png', EB_EVENTM_L84, '', EB_EVENTM_L85);
+        $text .= ebImageTextButton('ladderupdatescores', 'chart_curve.png', EB_LADDERM_L84, '', EB_LADDERM_L85);
         $text .= '
         </td>
         </tr>
@@ -1069,16 +1069,16 @@ else
         </table>
         </form>
         </div>
-        ';  // tab-page "Event Reset"
+        ';  // tab-page "Ladder Reset"
         
         //***************************************************************************************
-        // tab-page "Event Stats"
+        // tab-page "Ladder Stats"
         $cat_index = 0;
         $text .= '
         <div class="tab-page">
-        <div class="tab">'.EB_EVENTM_L7.'</div>
+        <div class="tab">'.EB_LADDERM_L7.'</div>
         ';
-        $text .= EB_EVENTM_L86;
+        $text .= EB_LADDERM_L86;
         $text .= "
         <script type='text/javascript'>
         var A_TPL = {
@@ -1098,21 +1098,21 @@ else
         </script>
         ";
 
-        $text .= '<form id="eventstatsform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        $text .= '<form id="ladderstatsform" action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
         $text .= '
         <table class="fborder" style="width:95%"><tbody>';
 
         $text .= '
         <tr>
-        <td class="forumheader">'.EB_EVENTM_L87.'</td>
-        <td class="forumheader" colspan="2">'.EB_EVENTM_L88.'</td>
-        <td class="forumheader">'.EB_EVENTM_L89.'</td>
+        <td class="forumheader">'.EB_LADDERM_L87.'</td>
+        <td class="forumheader" colspan="2">'.EB_LADDERM_L88.'</td>
+        <td class="forumheader">'.EB_LADDERM_L89.'</td>
         </tr>';
         if ($etype != "ClanWar")
         {
             $text .= '
             <tr>
-            <td class="forumheader3">'.EB_EVENTM_L90.'</td>
+            <td class="forumheader3">'.EB_LADDERM_L90.'</td>
             <td class="forumheader3">
             <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
             </td>
@@ -1121,7 +1121,7 @@ else
             $text .= "
             <script type='text/javascript'>
             var A_INIT = {
-            's_form' : 'eventstatsform',
+            's_form' : 'ladderstatsform',
             's_name': 'sliderValue".$cat_index."',
             'n_minValue' : 0,
             'n_maxValue' : 10,
@@ -1144,7 +1144,7 @@ else
         {
             $text .= '
             <tr>
-            <td class="forumheader3">'.EB_EVENTM_L91.'</td>
+            <td class="forumheader3">'.EB_LADDERM_L91.'</td>
             <td class="forumheader3">
             <input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
             </td>
@@ -1153,7 +1153,7 @@ else
             $text .= "
             <script type='text/javascript'>
             var A_INIT = {
-            's_form' : 'eventstatsform',
+            's_form' : 'ladderstatsform',
             's_name': 'sliderValue".$cat_index."',
             'n_minValue' : 0,
             'n_maxValue' : 10,
@@ -1174,7 +1174,7 @@ else
 
         $q_1 = "SELECT ".TBL_STATSCATEGORIES.".*"
         ." FROM ".TBL_STATSCATEGORIES
-        ." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
+        ." WHERE (".TBL_STATSCATEGORIES.".Ladder = '$ladder_id')";
 
         $result_1 = $sql->db_Query($q_1);
         $numCategories = mysql_numrows($result_1);
@@ -1191,43 +1191,43 @@ else
             {
 
                 case "ELO":
-                $cat_name_display = EB_EVENTM_L92;
+                $cat_name_display = EB_LADDERM_L92;
                 break;
                 case "GamesPlayed":
-                $cat_name_display = EB_EVENTM_L93;
+                $cat_name_display = EB_LADDERM_L93;
                 break;
                 case "VictoryRatio":
-                $cat_name_display = EB_EVENTM_L94;
+                $cat_name_display = EB_LADDERM_L94;
                 break;
                 case "VictoryPercent":
-                $cat_name_display = EB_EVENTM_L95;
+                $cat_name_display = EB_LADDERM_L95;
                 break;
                 case "WinDrawLoss":
-                $cat_name_display = EB_EVENTM_L96;
+                $cat_name_display = EB_LADDERM_L96;
                 break;
                 case "UniqueOpponents":
-                $cat_name_display = EB_EVENTM_L97;
+                $cat_name_display = EB_LADDERM_L97;
                 break;
                 case "OpponentsELO":
-                $cat_name_display = EB_EVENTM_L98;
+                $cat_name_display = EB_LADDERM_L98;
                 break;
                 case "Streaks":
-                $cat_name_display = EB_EVENTM_L99;
+                $cat_name_display = EB_LADDERM_L99;
                 break;
                 case "Skill":
-                $cat_name_display = EB_EVENTM_L100;
+                $cat_name_display = EB_LADDERM_L100;
                 break;
                 case "Score":
-                $cat_name_display = EB_EVENTM_L101;
+                $cat_name_display = EB_LADDERM_L101;
                 break;
                 case "ScoreAgainst":
-                $cat_name_display = EB_EVENTM_L102;
+                $cat_name_display = EB_LADDERM_L102;
                 break;
                 case "ScoreDiff":
-                $cat_name_display = EB_EVENTM_L103;
+                $cat_name_display = EB_LADDERM_L103;
                 break;
                 case "Points":
-                $cat_name_display = EB_EVENTM_L104;
+                $cat_name_display = EB_LADDERM_L104;
                 break;
                 default:
             }
@@ -1244,7 +1244,7 @@ else
             $text .= "
             <script type='text/javascript'>
             var A_INIT = {
-            's_form' : 'eventstatsform',
+            's_form' : 'ladderstatsform',
             's_name': 'sliderValue".$cat_index."',
             'n_minValue' : 0,
             'n_maxValue' : 100,
@@ -1280,7 +1280,7 @@ else
 
         $text .= '
         <tr>
-        <td class="forumheader3">'.EB_EVENTM_L105.'</td>
+        <td class="forumheader3">'.EB_LADDERM_L105.'</td>
         <td class="forumheader3">'.$rating_max.'</td>
         <td class="forumheader3" colspan="2">
         <input class="tbox" type="checkbox" name="hideratings" value="1"
@@ -1289,7 +1289,7 @@ else
         {
             $text .= ' checked="checked"';
         }
-        $text .= '/>&nbsp;'.EB_EVENTM_L106.'</td>';
+        $text .= '/>&nbsp;'.EB_LADDERM_L106.'</td>';
 
         $text .= '
         </tr></tbody></table>
@@ -1297,19 +1297,19 @@ else
         <!-- Save Button -->
         <table><tr><td>
         <div>
-        '.ebImageTextButton('eventstatssave', 'disk.png', EB_EVENTM_L107).'
+        '.ebImageTextButton('ladderstatssave', 'disk.png', EB_LADDERM_L107).'
         </div>
         </td></tr></table>
         </form>
-        </div>';   // tab-page "Event Stats"
+        </div>';   // tab-page "Ladder Stats"
         
         //***************************************************************************************
-        // tab-page "Event Settings"
+        // tab-page "Ladder Settings"
         $text .= '
         <div class="tab-page">
-        <div class="tab">'.EB_EVENTM_L121.'</div>
+        <div class="tab">'.EB_LADDERM_L121.'</div>
         ';
-        $text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+        $text .= '<form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
         $text .= '
         <table class="fborder" style="width:95%">
         <tbody>
@@ -1317,11 +1317,11 @@ else
         //<!-- Enable/Disable Challenges -->
         $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L122.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L122.'</b></td>
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="checkbox" name="eventchallengesenable"';
+        $text .= '<input class="tbox" type="checkbox" name="ladderchallengesenable"';
         if ($echallengesenabled == TRUE)
         {
             $text .= ' checked="checked"/>';
@@ -1339,11 +1339,11 @@ else
         //<!-- Max number of Dates per Challenge -->
          $text .= '
         <tr>
-        <td class="forumheader3"><b>'.EB_EVENTM_L124.'</b></td>
+        <td class="forumheader3"><b>'.EB_LADDERM_L124.'</b></td>
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="text" name="eventdatesperchallenge" size="2" value="'.$eMaxDatesPerChallenge.'"';
+        $text .= '<input class="tbox" type="text" name="ladderdatesperchallenge" size="2" value="'.$eMaxDatesPerChallenge.'"';
         $text .= '
         </div>
         </td>
@@ -1360,13 +1360,13 @@ else
         $text .= '
         <table><tr><td>
         <div>
-        '.ebImageTextButton('eventchallengessave', 'disk.png', EB_EVENTM_L123).'
+        '.ebImageTextButton('ladderchallengessave', 'disk.png', EB_LADDERM_L123).'
         </div>
         </td></tr></table>
 
         </form>
         </div>
-        ';  // tab-page "Event Challenges"        
+        ';  // tab-page "Ladder Challenges"        
 
         $text .= '
         </div>
@@ -1381,7 +1381,7 @@ else
     }
 }
 
-$ns->tablerender("$ename ($egame - ".eventType($etype).") - ".EB_EVENTM_L1, $text);
+$ns->tablerender("$ename ($egame - ".ladderType($etype).") - ".EB_LADDERM_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

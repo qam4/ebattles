@@ -11,7 +11,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN.'ebattles/include/match.php');
-require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/ladder.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 
 /*******************************************************************
@@ -78,30 +78,30 @@ document.getElementById("f_date").value = ""
 //-->
 </script>
 ';
-/* Event Name */
-$event_id = $_GET['eventid'];
+/* Ladder Name */
+$ladder_id = $_GET['LadderID'];
 $match_id = $_GET['matchid'];
 
-$q = "SELECT ".TBL_EVENTS.".*"
-." FROM ".TBL_EVENTS
-." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+$q = "SELECT ".TBL_LADDERS.".*"
+." FROM ".TBL_LADDERS
+." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 $result = $sql->db_Query($q);
 
-$ename = mysql_result($result,0 , TBL_EVENTS.".Name");
-$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-$eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
-$eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
-$eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
-$eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
-$ePointPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
-$ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
-$ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
-$eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
-$eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
-$eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
-$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
-$eGame = mysql_result($result,0 , TBL_EVENTS.".Game");
-$eMaxMapsPerMatch = mysql_result($result,0 , TBL_EVENTS.".MaxMapsPerMatch");
+$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
+$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+$eELO_K = mysql_result($result,0 , TBL_LADDERS.".ELO_K");
+$eELO_M = mysql_result($result,0 , TBL_LADDERS.".ELO_M");
+$eTS_beta = mysql_result($result,0 , TBL_LADDERS.".TS_beta");
+$eTS_epsilon = mysql_result($result,0 , TBL_LADDERS.".TS_epsilon");
+$ePointPerWin = mysql_result($result,0 , TBL_LADDERS.".PointsPerWin");
+$ePointPerDraw = mysql_result($result,0 , TBL_LADDERS.".PointsPerDraw");
+$ePointPerLoss = mysql_result($result,0 , TBL_LADDERS.".PointsPerLoss");
+$eAllowDraw = mysql_result($result,0 , TBL_LADDERS.".AllowDraw");
+$eAllowScore = mysql_result($result,0 , TBL_LADDERS.".AllowScore");
+$eAllowScore = mysql_result($result,0 , TBL_LADDERS.".AllowScore");
+$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
+$eGame = mysql_result($result,0 , TBL_LADDERS.".Game");
+$eMaxMapsPerMatch = mysql_result($result,0 , TBL_LADDERS.".MaxMapsPerMatch");
 
 switch($etype)
 {
@@ -111,7 +111,7 @@ switch($etype)
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_USERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 	." AND (".TBL_PLAYERS.".Banned != 1)"
 	." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 	." ORDER BY ".TBL_USERS.".user_name";
@@ -130,7 +130,7 @@ switch($etype)
 		$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 		list($pclan, $pclantag, $pclanid) = getClanName($pteam);
 		if ($prank==0)
-		$prank_txt = EB_EVENT_L54;
+		$prank_txt = EB_LADDER_L54;
 		else
 		$prank_txt = "#$prank";
 
@@ -148,7 +148,7 @@ switch($etype)
 	.TBL_DIVISIONS
 	." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
 	." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-	." AND (".TBL_TEAMS.".Event = '$event_id')"
+	." AND (".TBL_TEAMS.".Ladder = '$ladder_id')"
 	." ORDER BY ".TBL_CLANS.".Name";
 
 	$result = $sql->db_Query($q);
@@ -163,7 +163,7 @@ switch($etype)
 		$prank  = mysql_result($result,$i, TBL_TEAMS.".Rank");
 		$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
 		if ($prank==0)
-		$prank_txt = EB_EVENT_L54;
+		$prank_txt = EB_LADDER_L54;
 		else
 		$prank_txt = "#$prank";
 
@@ -469,12 +469,12 @@ if (isset($_POST['submit']))
 			case "One Player Ladder":
 			case "Team Ladder":
 			// Check if the reporter played in the match
-			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
+			if (($userclass == eb_UC_LADDER_PLAYER) && ($userIsPlaying == 0))
 			$error_str .= '<li>'.EB_MATCHR_L9.'</li>';
 			break;
 			case "ClanWar":
 			// Check if the reporter's team played in the match
-			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
+			if (($userclass == eb_UC_LADDER_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
 			$error_str .= '<li>'.EB_MATCHR_L37.'</li>';
 			break;
 			default:
@@ -518,7 +518,7 @@ if (isset($_POST['submit']))
 
 	if (!empty($error_str)) {
 		// show form again
-		user_form($players_id, $players_name, $event_id, $match_id, $eAllowDraw, $eAllowScore,$userclass);
+		user_form($players_id, $players_name, $ladder_id, $match_id, $eAllowDraw, $eAllowScore,$userclass);
 		// errors have occured, halt execution and show form again.
 		$text .= '<p style="color:red">'.EB_MATCHR_L14;
 		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
@@ -529,7 +529,7 @@ if (isset($_POST['submit']))
 		if($match_id)
 		{
 			// Match Edit, Need to delete the match scores and re-create a new ones.
-			deleteMatchScores($event_id, $match_id);
+			deleteMatchScores($ladder_id, $match_id);
 		}
 
 		$nbr_players = $_POST['nbr_players'];
@@ -570,14 +570,14 @@ if (isset($_POST['submit']))
 			if(isset($_POST['matchschedule']))
 			{
 				$q =
-				"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
-				VALUES ($event_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled)";
+				"INSERT INTO ".TBL_MATCHS."(Ladder,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
+				VALUES ($ladder_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled)";
 			}
 			else
 			{
 				$q =
-				"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status, Maps)
-				VALUES ($event_id,'$reported_by', '$time_reported', '$comments', 'pending', '$map')";
+				"INSERT INTO ".TBL_MATCHS."(Ladder,ReportedBy,TimeReported,Comments, Status, Maps)
+				VALUES ($ladder_id,'$reported_by', '$time_reported', '$comments', 'pending', '$map')";
 			}
 			$result = $sql->db_Query($q);
 			$last_id = mysql_insert_id();
@@ -687,7 +687,7 @@ if (isset($_POST['submit']))
 				}
 			}
 
-			header("Location: eventinfo.php?eventid=$event_id");
+			header("Location: ladderinfo.php?LadderID=$ladder_id");
 		}
 		else
 		{
@@ -708,7 +708,7 @@ if (isset($_POST['submit']))
 					default:
 				}
 
-				$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+				$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
 				$result = $sql->db_Query($q);
 			}
 			header("Location: matchinfo.php?matchid=$match_id");
@@ -722,18 +722,18 @@ if (isset($_POST['submit']))
 	if (!isset($_POST['matchreport'])&&!isset($_POST['matchedit'])&&!isset($_POST['matchscheduledreport'])&&!isset($_POST['matchschedule']))
 	{
 		$text .= '<p>'.EB_MATCHR_L33.'</p>';
-		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]</p>';
+		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">Ladder</a>]</p>';
 	}
 	else if (!check_class(e_UC_MEMBER))
 	{
 		$text .= '<p>'.EB_MATCHR_L36.'</p>';
-		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]</p>';
+		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">Ladder</a>]</p>';
 	}
 	else
 	{
 		$userclass = $_POST['userclass'];
 		// the form has not been submitted, let's show it
-		user_form($players_id, $players_name, $event_id, $match_id, $eAllowDraw, $eAllowScore,$userclass);
+		user_form($players_id, $players_name, $ladder_id, $match_id, $eAllowDraw, $eAllowScore,$userclass);
 	}
 }
 
@@ -741,7 +741,7 @@ $text .= '
 </div>
 ';
 
-$ns->tablerender("$ename (".eventType($etype).") - ".EB_MATCHR_L32, $text);
+$ns->tablerender("$ename (".ladderType($etype).") - ".EB_MATCHR_L32, $text);
 require_once(FOOTERF);
 exit;
 ?>

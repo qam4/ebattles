@@ -4,7 +4,7 @@ if(!defined("e107_INIT")){ exit(); }
 require_once(e_PLUGIN."ebattles/include/main.php");
 
 $ebattles_title = $pref['eb_links_menuheading'];
-$events_link    = e_PLUGIN.'ebattles/events.php';
+$ladders_link    = e_PLUGIN.'ebattles/ladders.php';
 $teams_link     = e_PLUGIN.'ebattles/clans.php';
 $profile_link   = e_PLUGIN.'ebattles/userinfo.php?user='.USERID;
 
@@ -12,21 +12,21 @@ $text  = '<table style="margin-left: 0px; margin-right: auto;">';
 $text .= '<tr>';
 $text .= '<td>';
 
-$text .= '<a href="'.$events_link.'">';
+$text .= '<a href="'.$ladders_link.'">';
 $text .= EB_MENU_L2;
 $text .= '</a>';
 $text .= '</td>';
 
-if(check_class($pref['eb_events_create_class']) && $pref['eb_links_showcreateevent'] == 1)
+if(check_class($pref['eb_ladders_create_class']) && $pref['eb_links_showcreateladder'] == 1)
 {
 	$text .= '<td>';
-	$text .= '<form action="'.e_PLUGIN.'ebattles/eventcreate.php" method="post">';
+	$text .= '<form action="'.e_PLUGIN.'ebattles/laddercreate.php" method="post">';
 	$text .= '<div>';
 	$text .= '<input type="hidden" name="userid" value="'.USERID.'"/>';
 	$text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
 	$text .= '</div>';
-	//$text .= ebImageTextButton('createevent', 'add.png', '', 'simple', '', EB_EVENTS_L20);
-	$text .= '<div class="buttons"><button style="display:block; float:left; margin:0 0 0 0; padding:0 0 0 0; background-color:transparent; border:0px; font-size:100%; text-decoration:none; font-weight:bold; cursor:pointer;" type="submit" name="createevent" title="'.EB_EVENTS_L20.'"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_EVENTS_L20.'" style="vertical-align:middle"/></button></div>
+	//$text .= ebImageTextButton('createladder', 'add.png', '', 'simple', '', EB_LADDERS_L20);
+	$text .= '<div class="buttons"><button style="display:block; float:left; margin:0 0 0 0; padding:0 0 0 0; background-color:transparent; border:0px; font-size:100%; text-decoration:none; font-weight:bold; cursor:pointer;" type="submit" name="createladder" title="'.EB_LADDERS_L20.'"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'" style="vertical-align:middle"/></button></div>
 	<div style="clear:both"></div>';
 	$text .= '</form>';
 	$text .= '</td>';
@@ -103,7 +103,7 @@ if($pref['eb_links_showmatchsplayed'] == 1)
 
 	if ($numMatches > 0)
 	{
-		$text .= $numMatches.'&nbsp;'.EB_EVENT_L59;
+		$text .= $numMatches.'&nbsp;'.EB_LADDER_L59;
 		$text .= '<br />';
 	}
 }
@@ -112,12 +112,12 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 {
 	/* Display Matches which need user approval */
 	$matchArray = array();
-	// events owned
+	// ladders owned
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
-	.TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".Owner = '$req_user')"
-	."   AND (".TBL_MATCHS.".Event = ".TBL_EVENTS.".EventID)"
+	.TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".Owner = '$req_user')"
+	."   AND (".TBL_MATCHS.".Ladder = ".TBL_LADDERS.".LadderID)"
 	."   AND (".TBL_MATCHS.".Status = 'pending')";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
@@ -127,12 +127,12 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 		$matchArray[]  = mysql_result($result,$match, TBL_MATCHS.".MatchID");
 	}
 
-	// events mod
+	// ladders mod
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
-	.TBL_EVENTMODS
-	." WHERE (".TBL_EVENTMODS.".User = '$req_user')"
-	."   AND (".TBL_MATCHS.".Event = ".TBL_EVENTMODS.".Event)"
+	.TBL_LADDERMODS
+	." WHERE (".TBL_LADDERMODS.".User = '$req_user')"
+	."   AND (".TBL_MATCHS.".Ladder = ".TBL_LADDERMODS.".Ladder)"
 	."   AND (".TBL_MATCHS.".Status = 'pending')";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
@@ -166,25 +166,25 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 		$userclass = 0;
 		$can_approve = 0;
 
-		// Get event information
-		$q_event = "SELECT ".TBL_EVENTS.".*, "
+		// Get ladder information
+		$q_ladder = "SELECT ".TBL_LADDERS.".*, "
 		.TBL_GAMES.".*, "
 		.TBL_MATCHS.".*, "
 		.TBL_USERS.".*"
-		." FROM ".TBL_EVENTS.", "
+		." FROM ".TBL_LADDERS.", "
 		.TBL_GAMES.", "
 		.TBL_MATCHS.", "
 		.TBL_USERS
 		." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-		."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)"
-		."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+		."   AND (".TBL_LADDERS.".LadderID = ".TBL_MATCHS.".Ladder)"
+		."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
 		."   AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)";
 
-		$result_event = $sql->db_Query($q_event);
-		$event_id = mysql_result($result_event,0 , TBL_EVENTS.".EventID");
-		$etype = mysql_result($result_event,0 , TBL_EVENTS.".Type");
-		$eMatchesApproval = mysql_result($result_event,0 , TBL_EVENTS.".MatchesApproval");
-		$reported_by  = mysql_result($result_event,0, TBL_MATCHS.".ReportedBy");
+		$result_ladder = $sql->db_Query($q_ladder);
+		$ladder_id = mysql_result($result_ladder,0 , TBL_LADDERS.".LadderID");
+		$etype = mysql_result($result_ladder,0 , TBL_LADDERS.".Type");
+		$eMatchesApproval = mysql_result($result_ladder,0 , TBL_LADDERS.".MatchesApproval");
+		$reported_by  = mysql_result($result_ladder,0, TBL_MATCHS.".ReportedBy");
 
 		switch($etype)
 		{
@@ -262,7 +262,7 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 
 		if ($numOpps>0)
 		{
-			$userclass |= eb_UC_EVENT_PLAYER;
+			$userclass |= eb_UC_LADDER_PLAYER;
 			$can_approve = 1;
 		}
 		if($userclass < $eMatchesApproval) $can_approve = 0;
@@ -278,7 +278,7 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 
 	if ($numMatches > 0)
 	{
-		$text .= '<span style="color:red">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L73;
+		$text .= '<span style="color:red">'.$numMatches.'</span>&nbsp;'.EB_LADDER_L73;
 		$text .= '<br />';
 	}
 }
@@ -303,7 +303,7 @@ if($pref['eb_links_showmatchspending'] == 1)
 
 	if ($numMatches > 0)
 	{
-		$text .= $numMatches.'&nbsp;'.EB_EVENT_L64;
+		$text .= $numMatches.'&nbsp;'.EB_LADDER_L64;
 		$text .= '<br />';
 	}
 }
@@ -327,7 +327,7 @@ if($pref['eb_links_showmatchesscheduled'] == 1)
 
 	if ($numMatches > 0)
 	{
-		$text .= '<span style="color:red">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L70;
+		$text .= '<span style="color:red">'.$numMatches.'</span>&nbsp;'.EB_LADDER_L70;
 		$text .= '<br />';
 	}
 }
@@ -345,7 +345,7 @@ if($pref['eb_links_showchallengesrequested'] == 1)
 
 	if ($numChallenges > 0)
 	{
-		$text .= $numChallenges.'&nbsp;'.EB_EVENT_L66;
+		$text .= $numChallenges.'&nbsp;'.EB_LADDER_L66;
 		$text .= '<br />';
 	}
 }
@@ -366,7 +366,7 @@ if($pref['eb_links_showchallengesunconfirmed'] == 1)
 
 	if ($numChallenges > 0)
 	{
-		$text .= '<span style="color:red">'.$numChallenges.'</span>&nbsp;'.EB_EVENT_L67;
+		$text .= '<span style="color:red">'.$numChallenges.'</span>&nbsp;'.EB_LADDER_L67;
 	}
 }
 	$text .= '</td></tr>';

@@ -8,13 +8,13 @@ require_once(e_HANDLER."avatar_handler.php");
 require_once(e_HANDLER."rate_class.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 
-function updateStats($event_id, $time, $serialize = TRUE)
+function updateStats($ladder_id, $time, $serialize = TRUE)
 {
     global $sql;
     global $pref;
 
     $rater = new rater();
-    $file = 'cache/sql_cache_event_'.$event_id.'.txt';
+    $file = 'cache/sql_cache_ladder_'.$ladder_id.'.txt';
 
     $id = array();
     $uid = array();
@@ -57,16 +57,16 @@ function updateStats($event_id, $time, $serialize = TRUE)
     $scorediff_score = array();
     $points_score = array();
 
-    /* Event Info */
-    $q = "SELECT ".TBL_EVENTS.".*"
-    ." FROM ".TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+    /* Ladder Info */
+    $q = "SELECT ".TBL_LADDERS.".*"
+    ." FROM ".TBL_LADDERS
+    ." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
     $result = $sql->db_Query($q);
-    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-    $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
-    $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
-    $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
-    $eranking_type = mysql_result($result,0 , TBL_EVENTS.".RankingType");
+    $etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+    $emingames = mysql_result($result,0 , TBL_LADDERS.".nbr_games_to_rank");
+    $eminteamgames = mysql_result($result,0 , TBL_LADDERS.".nbr_team_games_to_rank");
+    $ehide_ratings_column = mysql_result($result,0 , TBL_LADDERS.".hide_ratings_column");
+    $eranking_type = mysql_result($result,0 , TBL_LADDERS.".RankingType");
     if ($eranking_type == "Classic") $ehide_ratings_column = TRUE;
 
     // Update Players stats
@@ -74,7 +74,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     .TBL_USERS.".*"
     ." FROM ".TBL_PLAYERS.", "
     .TBL_USERS
-    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+    ." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
     ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
     $result_Players = $sql->db_Query($q_Players);
     $numPlayers = mysql_numrows($result_Players);
@@ -240,7 +240,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
 
     $q_Categories = "SELECT ".TBL_STATSCATEGORIES.".*"
     ." FROM ".TBL_STATSCATEGORIES
-    ." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')"
+    ." WHERE (".TBL_STATSCATEGORIES.".Ladder = '$ladder_id')"
     ." ORDER BY ".TBL_STATSCATEGORIES.".CategoryMaxValue DESC";
     $result_Categories = $sql->db_Query($q_Categories);
     $numCategories = mysql_numrows($result_Categories);
@@ -485,7 +485,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
                 }
             }
 
-            $q_update = "UPDATE ".TBL_PLAYERS." SET OverallScore = '".floatToSQL($OverallScore[$player])."' WHERE (PlayerID = '$id[$player]') AND (Event = '$event_id')";
+            $q_update = "UPDATE ".TBL_PLAYERS." SET OverallScore = '".floatToSQL($OverallScore[$player])."' WHERE (PlayerID = '$id[$player]') AND (Ladder = '$ladder_id')";
             $result_update = $sql->db_Query($q_update);
         }
         break;
@@ -503,7 +503,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
             }
             //dbg: echo "<br>Player $player ($name[$player]), os: $OverallScore[$player]";
 
-            $q_update = "UPDATE ".TBL_PLAYERS." SET OverallScore = '".floatToSQL($OverallScore[$player])."' WHERE (PlayerID = '$id[$player]') AND (Event = '$event_id')";
+            $q_update = "UPDATE ".TBL_PLAYERS." SET OverallScore = '".floatToSQL($OverallScore[$player])."' WHERE (PlayerID = '$id[$player]') AND (Ladder = '$ladder_id')";
             $result_update = $sql->db_Query($q_update);
         }
         break;
@@ -514,7 +514,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     //--------------------
     $q_Players = "SELECT *"
     ." FROM ".TBL_PLAYERS
-    ." WHERE (Event = '$event_id')"
+    ." WHERE (Ladder = '$ladder_id')"
     ." ORDER BY ".TBL_PLAYERS.".OverallScore DESC, ".TBL_PLAYERS.".GamesPlayed DESC, ".TBL_PLAYERS.".ELORanking DESC, ".TBL_PLAYERS.".Banned ASC";
     $result_Players = $sql->db_Query($q_Players);
     $ranknumber = 1;
@@ -534,28 +534,28 @@ function updateStats($event_id, $time, $serialize = TRUE)
         {
             $rank = '<span title="'.EB_STATS_L33.'"><img src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="'.EB_STATS_L34.'" title="'.EB_STATS_L34.'"/></span>';
             $prankdelta_string = "";
-            $q_update = "UPDATE ".TBL_PLAYERS." SET Rank = 0 WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
+            $q_update = "UPDATE ".TBL_PLAYERS." SET Rank = 0 WHERE (PlayerID = '$pid') AND (Ladder = '$ladder_id')";
             $result_update = $sql->db_Query($q_update);
         }
         elseif($OverallScore[$index] <= $OverallScoreThreshold)
         {
             $rank = '<span title="'.EB_STATS_L35.'">'.EB_STATS_L36.'</span>';
             $prankdelta_string = "";
-            $q_update = "UPDATE ".TBL_PLAYERS." SET Rank = 0 WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
+            $q_update = "UPDATE ".TBL_PLAYERS." SET Rank = 0 WHERE (PlayerID = '$pid') AND (Ladder = '$ladder_id')";
             $result_update = $sql->db_Query($q_update);
         }
         else
         {
             $rank = $ranknumber;
             $ranknumber++; // increases $ranknumber by 1
-            $q_update = "UPDATE ".TBL_PLAYERS." SET Rank = $rank WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
+            $q_update = "UPDATE ".TBL_PLAYERS." SET Rank = $rank WHERE (PlayerID = '$pid') AND (Ladder = '$ladder_id')";
             $result_update = $sql->db_Query($q_update);
 
             $new_rankdelta = $prank - $rank;
             if ($new_rankdelta != 0)
             {
                 $prankdelta += $new_rankdelta;
-                $q_update = "UPDATE ".TBL_PLAYERS." SET RankDelta = $prankdelta WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
+                $q_update = "UPDATE ".TBL_PLAYERS." SET RankDelta = $prankdelta WHERE (PlayerID = '$pid') AND (Ladder = '$ladder_id')";
                 $result_update = $sql->db_Query($q_update);
             }
 

@@ -20,12 +20,12 @@ global $sql;
 
 $text = '';
 
-/* Event Name */
-$event_id = $_GET['eventid'];
+/* Ladder Name */
+$ladder_id = $_GET['LadderID'];
 
-if (!$event_id)
+if (!$ladder_id)
 {
-    header("Location: ./events.php");
+    header("Location: ./ladders.php");
     exit();
 }
 else
@@ -37,10 +37,10 @@ else
     else
     {
         $match_id = $_POST['matchid'];
-		deleteMatchScores($event_id, $match_id);
+		deleteMatchScores($ladder_id, $match_id);
         $text .= '<br />'.EB_MATCHDEL_L3.'<br />';
     }
-    $text .= '<br />'.EB_MATCHDEL_L4.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHDEL_L5.'</a>]<br />';
+    $text .= '<br />'.EB_MATCHDEL_L4.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_MATCHDEL_L5.'</a>]<br />';
 }
 $ns->tablerender(EB_MATCHDEL_L1, $text);
 require_once(FOOTERF);

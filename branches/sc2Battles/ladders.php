@@ -1,12 +1,12 @@
 <?php
 /**
-* events.php
+* ladders.php
 *
 */
 
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
-require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/ladder.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 
 require_once(HEADERF);
@@ -28,23 +28,23 @@ $text .= '
 <div class="tab-pane" id="tab-pane-2">
 ';
 /**
-* Display Current Events
+* Display Current Ladders
 */
 $text .= '
 <div class="tab-page">
-<div class="tab">'.EB_EVENTS_L2.'</div>
+<div class="tab">'.EB_LADDERS_L2.'</div>
 ';
-displayCurrentEvents();
+displayCurrentLadders();
 $text .= '</div>';
 
 /**
-* Display Recent Events
+* Display Recent Ladders
 */
 $text .= '
 <div class="tab-page">
-<div class="tab">'.EB_EVENTS_L3.'</div>
+<div class="tab">'.EB_LADDERS_L3.'</div>
 ';
-displayRecentEvents();
+displayRecentLadders();
 $text .= '
 </div>
 </div>
@@ -60,7 +60,7 @@ setupAllTabs();
 </script>
 ';
 
-$ns->tablerender(EB_EVENTS_L1, $text);
+$ns->tablerender(EB_LADDERS_L1, $text);
 require_once(FOOTERF);
 exit;
 
@@ -68,42 +68,42 @@ exit;
 Functions
 ***************************************************************************************/
 /**
-* displayEvents - Displays the events database table in
+* displayLadders - Displays the ladders database table in
 * a nicely formatted html table.
 */
-function displayCurrentEvents(){
+function displayCurrentLadders(){
     global $pref;
     global $sql;
     global $text;
     global $time;
     $pages = new Paginator;
 
-   if(check_class($pref['eb_events_create_class']))
+   if(check_class($pref['eb_ladders_create_class']))
     {
-        $text .= '<form action="'.e_PLUGIN.'ebattles/eventcreate.php" method="post">';
+        $text .= '<form action="'.e_PLUGIN.'ebattles/laddercreate.php" method="post">';
         $text .= '<div>';
         $text .= '<input type="hidden" name="userid" value="'.USERID.'"/>';
         $text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
         $text .= '</div>';
-        $text .= ebImageTextButton('createevent', 'add.png', EB_EVENTS_L20);
+        $text .= ebImageTextButton('createladder', 'add.png', EB_LADDERS_L20);
         $text .= '</form><br />';
 /*
-        $text .= '<span class="buttons"><a href="'.e_PLUGIN.'ebattles/matchdelete.php?action=createevent&amp;username='.$USERNAME.'&amp;userid='.$USERID.'" title="'.EB_EVENTS_L20.'" style="text-decoration:none"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_EVENTS_L20.'"/>'.EB_EVENTS_L20.'</a></span>';
-        $text .= '<div><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_EVENTS_L20.'" style="vertical-align:middle"/>'.EB_EVENTS_L20.'</div>';
-        $text .= '<div><button type="submit" name="createevent"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_EVENTS_L20.'" style="vertical-align:middle"/>'.EB_EVENTS_L20.'</button></div>';
+        $text .= '<span class="buttons"><a href="'.e_PLUGIN.'ebattles/matchdelete.php?action=createladder&amp;username='.$USERNAME.'&amp;userid='.$USERID.'" title="'.EB_LADDERS_L20.'" style="text-decoration:none"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'"/>'.EB_LADDERS_L20.'</a></span>';
+        $text .= '<div><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'" style="vertical-align:middle"/>'.EB_LADDERS_L20.'</div>';
+        $text .= '<div><button type="submit" name="createladder"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'" style="vertical-align:middle"/>'.EB_LADDERS_L20.'</button></div>';
 */
     }
     else
     {
-        //$text .= '<div>'.EB_EVENTC_L2.'</div>';
+        //$text .= '<div>'.EB_LADDERC_L2.'</div>';
     }
     
     $array = array(
-        'latest' => array(EB_EVENTS_L4,'EventID'),
-        'name'   => array(EB_EVENTS_L5, TBL_EVENTS.'.Name'),
-        'game'   => array(EB_EVENTS_L6, TBL_GAMES.'.Name'),
-        'type'   => array(EB_EVENTS_L7, TBL_EVENTS.'.Type'),
-        'start'  => array(EB_EVENTS_L8, TBL_EVENTS.'.Start_timestamp')
+        'latest' => array(EB_LADDERS_L4,'LadderID'),
+        'name'   => array(EB_LADDERS_L5, TBL_LADDERS.'.Name'),
+        'game'   => array(EB_LADDERS_L6, TBL_GAMES.'.Name'),
+        'type'   => array(EB_LADDERS_L7, TBL_LADDERS.'.Type'),
+        'start'  => array(EB_LADDERS_L8, TBL_LADDERS.'.Start_timestamp')
     );
     if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
     $gameid = $_GET['gameid'];
@@ -120,8 +120,8 @@ function displayCurrentEvents(){
     // Drop down list to select Games to display
     $q = "SELECT DISTINCT ".TBL_GAMES.".*"
     ." FROM ".TBL_GAMES.", "
-    . TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+    . TBL_LADDERS
+    ." WHERE (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
     ." ORDER BY Name";
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
@@ -130,15 +130,15 @@ function displayCurrentEvents(){
     $text .= '<div>';
     $text .= '<table>';
     $text .= '<tr><td>';
-    $text .= EB_EVENTS_L9.'<br />';
+    $text .= EB_LADDERS_L9.'<br />';
     $text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
     if ($gameid == "All")
     {
-        $text .= '<option value="All" selected="selected">'.EB_EVENTS_L10.'</option>';
+        $text .= '<option value="All" selected="selected">'.EB_LADDERS_L10.'</option>';
     }
     else
     {
-        $text .= '<option value="All">'.EB_EVENTS_L10.'</option>';
+        $text .= '<option value="All">'.EB_LADDERS_L10.'</option>';
     }
     for($i=0; $i<$num_rows; $i++)
     {
@@ -162,9 +162,9 @@ function displayCurrentEvents(){
     if ($gameid == "All")
     {
         $q = "SELECT count(*) "
-        ." FROM ".TBL_EVENTS
-        ." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
-        ."        OR (".TBL_EVENTS.".End_timestamp > $time)) ";
+        ." FROM ".TBL_LADDERS
+        ." WHERE (   (".TBL_LADDERS.".End_timestamp = '')"
+        ."        OR (".TBL_LADDERS.".End_timestamp > $time)) ";
         $result = $sql->db_Query($q);
         $totalItems = mysql_result($result, 0);
         $pages->items_total = $totalItems;
@@ -172,23 +172,23 @@ function displayCurrentEvents(){
         $pages->paginate();
 
         $orderby_array = $array["$orderby"];
-        $q = "SELECT ".TBL_EVENTS.".*, "
+        $q = "SELECT ".TBL_LADDERS.".*, "
         .TBL_GAMES.".*"
-        ." FROM ".TBL_EVENTS.", "
+        ." FROM ".TBL_LADDERS.", "
         .TBL_GAMES
-        ." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
-        ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
-        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-        ." ORDER BY $orderby_array[1] $sort, EventID DESC"
+        ." WHERE (   (".TBL_LADDERS.".End_timestamp = '')"
+        ."        OR (".TBL_LADDERS.".End_timestamp > $time)) "
+        ."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+        ." ORDER BY $orderby_array[1] $sort, LadderID DESC"
         ." $pages->limit";
     }
     else
     {
         $q = "SELECT count(*) "
-        ." FROM ".TBL_EVENTS
-        ." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
-        ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
-        ."   AND (".TBL_EVENTS.".Game = '$gameid')";
+        ." FROM ".TBL_LADDERS
+        ." WHERE (   (".TBL_LADDERS.".End_timestamp = '')"
+        ."        OR (".TBL_LADDERS.".End_timestamp > $time)) "
+        ."   AND (".TBL_LADDERS.".Game = '$gameid')";
         $result = $sql->db_Query($q);
         $totalItems = mysql_result($result, 0);
         $pages->items_total = $totalItems;
@@ -196,15 +196,15 @@ function displayCurrentEvents(){
         $pages->paginate();
 
         $orderby_array = $array["$orderby"];
-        $q = "SELECT ".TBL_EVENTS.".*, "
+        $q = "SELECT ".TBL_LADDERS.".*, "
         .TBL_GAMES.".*"
-        ." FROM ".TBL_EVENTS.", "
+        ." FROM ".TBL_LADDERS.", "
         .TBL_GAMES
-        ." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
-        ."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
-        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-        ."   AND (".TBL_EVENTS.".Game = '$gameid')"
-        ." ORDER BY $orderby_array[1] $sort, EventID DESC"
+        ." WHERE (   (".TBL_LADDERS.".End_timestamp = '')"
+        ."        OR (".TBL_LADDERS.".End_timestamp > $time)) "
+        ."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+        ."   AND (".TBL_LADDERS.".Game = '$gameid')"
+        ." ORDER BY $orderby_array[1] $sort, LadderID DESC"
         ." $pages->limit";
     }
 
@@ -213,12 +213,12 @@ function displayCurrentEvents(){
     $num_rows = mysql_numrows($result);
     if(!$result || ($num_rows < 0))
     {
-        $text .= EB_EVENTS_L11;
+        $text .= EB_LADDERS_L11;
         return;
     }
     if($num_rows == 0)
     {
-        $text .= EB_EVENTS_L12.'</div>';
+        $text .= EB_LADDERS_L12.'</div>';
         $text .= '</form><br/>';
     }
     else
@@ -261,23 +261,23 @@ function displayCurrentEvents(){
         /* Display table contents */
         $text .= '<table class="fborder" style="width:95%"><tbody>';
         $text .= '<tr>
-        <td class="forumheader"><b>'.EB_EVENTS_L13.'</b></td>
-        <td colspan="2" class="forumheader"><b>'.EB_EVENTS_L14.'</b></td>
-        <td class="forumheader"><b>'.EB_EVENTS_L15.'</b></td>
-        <td class="forumheader"><b>'.EB_EVENTS_L16.'</b></td>
-        <td class="forumheader"><b>'.EB_EVENTS_L17.'</b></td>
-        <td class="forumheader"><b>'.EB_EVENTS_L18.'</b></td>
-        <td class="forumheader"><b>'.EB_EVENTS_L19.'</b></td>
+        <td class="forumheader"><b>'.EB_LADDERS_L13.'</b></td>
+        <td colspan="2" class="forumheader"><b>'.EB_LADDERS_L14.'</b></td>
+        <td class="forumheader"><b>'.EB_LADDERS_L15.'</b></td>
+        <td class="forumheader"><b>'.EB_LADDERS_L16.'</b></td>
+        <td class="forumheader"><b>'.EB_LADDERS_L17.'</b></td>
+        <td class="forumheader"><b>'.EB_LADDERS_L18.'</b></td>
+        <td class="forumheader"><b>'.EB_LADDERS_L19.'</b></td>
         </tr>';
         for($i=0; $i<$num_rows; $i++)
         {
             $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
             $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-            $eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
-            $ename  = mysql_result($result,$i, TBL_EVENTS.".Name");
-            $etype = mysql_result($result,$i, TBL_EVENTS.".Type");
-            $estart = mysql_result($result,$i, TBL_EVENTS.".Start_timestamp");
-            $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
+            $eid  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+            $ename  = mysql_result($result,$i, TBL_LADDERS.".Name");
+            $etype = mysql_result($result,$i, TBL_LADDERS.".Type");
+            $estart = mysql_result($result,$i, TBL_LADDERS.".Start_timestamp");
+            $eend = mysql_result($result,$i, TBL_LADDERS.".End_timestamp");
             if($estart!=0)
             {
                 $estart_local = $estart + TIMEOFFSET;
@@ -300,7 +300,7 @@ function displayCurrentEvents(){
             /* Nbr players */
             $q_2 = "SELECT COUNT(*) as NbrPlayers"
             ." FROM ".TBL_PLAYERS
-            ." WHERE (Event = '$eid')";
+            ." WHERE (Ladder = '$eid')";
             $result_2 = $sql->db_Query($q_2);
             $row = mysql_fetch_array($result_2);
             $nbrplayers = $row['NbrPlayers'];
@@ -308,7 +308,7 @@ function displayCurrentEvents(){
             /* Nbr Teams */
             $q_2 = "SELECT COUNT(*) as NbrTeams"
             ." FROM ".TBL_TEAMS
-            ." WHERE (".TBL_TEAMS.".Event = '$eid')";
+            ." WHERE (".TBL_TEAMS.".Ladder = '$eid')";
             $result_2 = $sql->db_Query($q_2);
             $row = mysql_fetch_array($result_2);
             $nbrTeams = $row['NbrTeams'];
@@ -317,7 +317,7 @@ function displayCurrentEvents(){
             $q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
             ." FROM ".TBL_MATCHS.", "
             .TBL_SCORES
-            ." WHERE (Event = '$eid')"
+            ." WHERE (Ladder = '$eid')"
             ." AND (".TBL_MATCHS.".Status = 'active')"
             ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
             $result_2 = $sql->db_Query($q_2);
@@ -344,10 +344,10 @@ function displayCurrentEvents(){
             )
             {
                 $text .= '<tr>
-                <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></td>
+                <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a></td>
                 <td class="forumheader3"><img '.getGameIconResize($gicon).'/></td>
                 <td class="forumheader3">'.$gname.'</td>
-                <td class="forumheader3">'.eventType($etype).'</td>
+                <td class="forumheader3">'.ladderType($etype).'</td>
                 <td class="forumheader3">'.$date_start.'</td>
                 <td class="forumheader3">'.$date_end.'</td>
                 <td class="forumheader3">'.$nbrTeamPlayers.'</td>
@@ -359,7 +359,7 @@ function displayCurrentEvents(){
     }
 }
 
-function displayRecentEvents(){
+function displayRecentLadders(){
     global $sql;
     global $session;
     global $text;
@@ -376,8 +376,8 @@ function displayRecentEvents(){
 
     $q = "SELECT DISTINCT ".TBL_GAMES.".*"
     ." FROM ".TBL_GAMES.", "
-    . TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+    . TBL_LADDERS
+    ." WHERE (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
     ." ORDER BY Name";
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
@@ -385,15 +385,15 @@ function displayRecentEvents(){
     $text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
     $text .= '<table>';
     $text .= '<tr><td>';
-    $text .= EB_EVENTS_L9.'<br />';
+    $text .= EB_LADDERS_L9.'<br />';
     $text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
     if ($gameid == "All")
     {
-        $text .= '<option value="All" selected="selected">'.EB_EVENTS_L10.'</option>';
+        $text .= '<option value="All" selected="selected">'.EB_LADDERS_L10.'</option>';
     }
     else
     {
-        $text .= '<option value="All">'.EB_EVENTS_L10.'</option>';
+        $text .= '<option value="All">'.EB_LADDERS_L10.'</option>';
     }
     for($i=0; $i<$num_rows; $i++)
     {
@@ -417,25 +417,25 @@ function displayRecentEvents(){
 
     if ($gameid == "All")
     {
-        $q = "SELECT ".TBL_EVENTS.".*, "
+        $q = "SELECT ".TBL_LADDERS.".*, "
         .TBL_GAMES.".*"
-        ." FROM ".TBL_EVENTS.", "
+        ." FROM ".TBL_LADDERS.", "
         .TBL_GAMES
-        ." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
-        ."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
-        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+        ." WHERE (   (".TBL_LADDERS.".End_timestamp != '')"
+        ."       AND (".TBL_LADDERS.".End_timestamp < $time)) "
+        ."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
         ." LIMIT 0, $rowsPerPage";
     }
     else
     {
-        $q = "SELECT ".TBL_EVENTS.".*, "
+        $q = "SELECT ".TBL_LADDERS.".*, "
         .TBL_GAMES.".*"
-        ." FROM ".TBL_EVENTS.", "
+        ." FROM ".TBL_LADDERS.", "
         .TBL_GAMES
-        ." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
-        ."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
-        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-        ."   AND (".TBL_EVENTS.".Game = '$gameid')"
+        ." WHERE (   (".TBL_LADDERS.".End_timestamp != '')"
+        ."       AND (".TBL_LADDERS.".End_timestamp < $time)) "
+        ."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+        ."   AND (".TBL_LADDERS.".Game = '$gameid')"
         ." LIMIT 0, $rowsPerPage";
     }
 
@@ -444,34 +444,34 @@ function displayRecentEvents(){
     $num_rows = mysql_numrows($result);
     if(!$result || ($num_rows < 0))
     {
-        $text .= EB_EVENTS_L11;
+        $text .= EB_LADDERS_L11;
         return;
     }
     if($num_rows == 0)
     {
-        $text .= '<div>'.EB_EVENTS_L12.'</div>';
+        $text .= '<div>'.EB_LADDERS_L12.'</div>';
         return;
     }
     /* Display table contents */
     $text .= '<table class="fborder" style="width:95%"><tbody>';
     $text .= '<tr>
-    <td class="forumheader"><b>'.EB_EVENTS_L13.'</b></td>
-    <td colspan="2" class="forumheader"><b>'.EB_EVENTS_L14.'</b></td>
-    <td class="forumheader"><b>'.EB_EVENTS_L15.'</b></td>
-    <td class="forumheader"><b>'.EB_EVENTS_L16.'</b></td>
-    <td class="forumheader"><b>'.EB_EVENTS_L17.'</b></td>
-    <td class="forumheader"><b>'.EB_EVENTS_L18.'</b></td>
-    <td class="forumheader"><b>'.EB_EVENTS_L19.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L13.'</b></td>
+    <td colspan="2" class="forumheader"><b>'.EB_LADDERS_L14.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L15.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L16.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L17.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L18.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L19.'</b></td>
     </tr>';
     for($i=0; $i<$num_rows; $i++)
     {
         $gname  = mysql_result($result,$i, TBL_GAMES.".name");
         $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-        $eid  = mysql_result($result,$i, TBL_EVENTS.".eventid");
-        $ename  = mysql_result($result,$i, TBL_EVENTS.".name");
-        $etype = mysql_result($result,$i, TBL_EVENTS.".type");
-        $estart = mysql_result($result,$i, TBL_EVENTS.".Start_timestamp");
-        $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
+        $eid  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+        $ename  = mysql_result($result,$i, TBL_LADDERS.".name");
+        $etype = mysql_result($result,$i, TBL_LADDERS.".type");
+        $estart = mysql_result($result,$i, TBL_LADDERS.".Start_timestamp");
+        $eend = mysql_result($result,$i, TBL_LADDERS.".End_timestamp");
         if($estart!=0)
         {
             $estart_local = $estart + TIMEOFFSET;
@@ -494,7 +494,7 @@ function displayRecentEvents(){
         /* Nbr players */
         $q_2 = "SELECT COUNT(*) as NbrPlayers"
         ." FROM ".TBL_PLAYERS
-        ." WHERE (Event = '$eid')";
+        ." WHERE (Ladder = '$eid')";
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);
         $nbrplayers = $row['NbrPlayers'];
@@ -502,7 +502,7 @@ function displayRecentEvents(){
         /* Nbr Teams */
         $q_2 = "SELECT COUNT(*) as NbrTeams"
         ." FROM ".TBL_TEAMS
-        ." WHERE (".TBL_TEAMS.".Event = '$eid')";
+        ." WHERE (".TBL_TEAMS.".Ladder = '$eid')";
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);
         $nbrTeams = $row['NbrTeams'];
@@ -511,7 +511,7 @@ function displayRecentEvents(){
         $q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
         ." FROM ".TBL_MATCHS.", "
         .TBL_SCORES
-        ." WHERE (Event = '$eid')"
+        ." WHERE (Ladder = '$eid')"
         ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);
@@ -537,10 +537,10 @@ function displayRecentEvents(){
         )
         {
             $text .= '<tr>
-            <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></td>
+            <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a></td>
             <td class="forumheader3"><img '.getGameIconResize($gicon).'/></td>
             <td class="forumheader3">'.$gname.'</td>
-            <td class="forumheader3">'.eventType($etype).'</td>
+            <td class="forumheader3">'.ladderType($etype).'</td>
             <td class="forumheader3">'.$date_start.'</td>
             <td class="forumheader3">'.$date_end.'</td>
             <td class="forumheader3">'.$nbrTeamPlayers.'</td>
@@ -551,7 +551,7 @@ function displayRecentEvents(){
     $text .= '</tbody></table><br />';
 
     $text .= '<p>';
-    $text .= '[<a href="'.e_PLUGIN.'ebattles/eventspast.php">'.EB_EVENTS_L21.'</a>]';
+    $text .= '[<a href="'.e_PLUGIN.'ebattles/ladderspast.php">'.EB_LADDERS_L21.'</a>]';
     $text .= '</p>';
 }
 ?>

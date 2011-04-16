@@ -6,7 +6,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN.'ebattles/include/main.php');
 require_once(e_PLUGIN.'ebattles/include/match.php');
-require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/ladder.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/challenge.php");
 
@@ -53,24 +53,24 @@ document.getElementById("f_date"+index).value = ""
 //-->
 </script>
 ';
-/* Event Name */
-$event_id = $_GET['eventid'];
-$q = "SELECT ".TBL_EVENTS.".*"
-." FROM ".TBL_EVENTS
-." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+/* Ladder Name */
+$ladder_id = $_GET['LadderID'];
+$q = "SELECT ".TBL_LADDERS.".*"
+." FROM ".TBL_LADDERS
+." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 $result = $sql->db_Query($q);
 
-$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
-$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-$eNumDates = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
-$ename = mysql_result($result,0 , TBL_EVENTS.".Name");
+$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
+$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+$eNumDates = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
+$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
 
 if(isset($_POST['challenge_player']))
 {
 	$challenger = $_POST['submitted_by'];
 	$challenged = $_POST['Challenged'];
 
-	$text .= PlayerChallengeForm($event_id, $challenger, $challenged);
+	$text .= PlayerChallengeForm($ladder_id, $challenger, $challenged);
 }
 if(isset($_POST['challenge_player_submit']))
 {
@@ -90,7 +90,7 @@ if(isset($_POST['challenge_player_submit']))
 
 	if (!empty($error_str)) {
 		// show form again
-		$text .= PlayerChallengeForm($event_id, $challenger, $challenged);
+		$text .= PlayerChallengeForm($ladder_id, $challenger, $challenged);
 
 		// errors have occured, halt execution and show form again.
 		$text .= '<p style="color:red">'.EB_MATCHR_L14;
@@ -98,10 +98,10 @@ if(isset($_POST['challenge_player_submit']))
 	}
 	else
 	{
-		SubmitPlayerChallenge($event_id, $challenger, $challenged, $eNumDates);
+		SubmitPlayerChallenge($ladder_id, $challenger, $challenged, $eNumDates);
 		$text .= EB_CHALLENGE_L12;
 		$text .= '<br />';
-		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
+		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
 	}
 }
 if(isset($_POST['challenge_team']))
@@ -109,7 +109,7 @@ if(isset($_POST['challenge_team']))
 	$challenger = $_POST['submitted_by'];
 	$challenged = $_POST['Challenged'];
 
-	$text .= TeamChallengeForm($event_id, $challenger, $challenged);
+	$text .= TeamChallengeForm($ladder_id, $challenger, $challenged);
 }
 if(isset($_POST['challenge_team_submit']))
 {
@@ -129,7 +129,7 @@ if(isset($_POST['challenge_team_submit']))
 
 	if (!empty($error_str)) {
 		// show form again
-		$text .= TeamChallengeForm($event_id, $challenger, $challenged);
+		$text .= TeamChallengeForm($ladder_id, $challenger, $challenged);
 
 		// errors have occured, halt execution and show form again.
 		$text .= '<p style="color:red">'.EB_MATCHR_L14;
@@ -137,35 +137,35 @@ if(isset($_POST['challenge_team_submit']))
 	}
 	else
 	{
-		SubmitTeamChallenge($event_id, $challenger, $challenged, $eNumDates);
+		SubmitTeamChallenge($ladder_id, $challenger, $challenged, $eNumDates);
 		$text .= EB_CHALLENGE_L12;
 		$text .= '<br />';
-		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
+		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
 	}
 }
-$ns->tablerender("$ename (".eventType($etype).") - ".EB_CHALLENGE_L1, $text);
+$ns->tablerender("$ename (".ladderType($etype).") - ".EB_CHALLENGE_L1, $text);
 require_once(FOOTERF);
 exit;
 
 //=================================================================================
 // Functions
 //=================================================================================
-function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
+function PlayerChallengeForm($ladder_id, $challengerpuid, $challengedpid)
 {
 	global $sql;
 	global $tp;
 	global $time;
 
-	$q = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	$q = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
 
-	$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-	$eNumDates = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
+	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+	$eNumDates = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
 
-	$output .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
+	$output .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?LadderID='.$ladder_id.'" method="post">';
 
 	$output .= '<b>'.EB_CHALLENGE_L2.'</b><br />';
 	$output .= '<br />';
@@ -176,7 +176,7 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_USERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 	."   AND (".TBL_USERS.".user_id = '$challengerpuid')";
 	$result = $sql->db_Query($q);
@@ -189,7 +189,7 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 	list($pclan, $pclantag, $pclanid) = getClanName($pteam);
 
 	if ($prank==0)
-	$prank_txt = EB_EVENT_L54;
+	$prank_txt = EB_LADDER_L54;
 	else
 	$prank_txt = "#$prank";
 	$str = $pclantag.$pname.' ('.$prank_txt.')';
@@ -201,7 +201,7 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_USERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 	."   AND (".TBL_PLAYERS.".PlayerID = '$challengedpid')";
 	$result = $sql->db_Query($q);
@@ -214,7 +214,7 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 	list($pclan, $pclantag, $pclanid) = getClanName($pteam);
 
 	if ($prank==0)
-	$prank_txt = EB_EVENT_L54;
+	$prank_txt = EB_LADDER_L54;
 	else
 	$prank_txt = "#$prank";
 	$str = $pclantag.$pname.' ('.$prank_txt.')';
@@ -238,13 +238,13 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 		<div><input class="tbox" type="text" name="date'.$date.'" id="f_date'.$date.'" value="'.$_POST['date'.$date].'" readonly="readonly" /></div>
 		</td>
 		<td>
-		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger'.$date.'" style="cursor: pointer; border: 1px solid red;" title="'.EB_EVENTM_L33.'"
+		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger'.$date.'" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
 		';
 		$output .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
 		$output .= '
 		</td>
 		<td>
-		<div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
+		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
 		</td>
 		</tr>
 		</table>
@@ -301,7 +301,7 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 	return $output;
 }
 
-function SubmitPlayerChallenge($event_id, $challengerpuid, $challengedpid)
+function SubmitPlayerChallenge($ladder_id, $challengerpuid, $challengedpid)
 {
 	global $sql;
 	global $text;
@@ -309,15 +309,15 @@ function SubmitPlayerChallenge($event_id, $challengerpuid, $challengedpid)
 	global $time;
 	global $pref;
 
-	$q = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	$q = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
 
-	$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-	$ename = mysql_result($result,0 , TBL_EVENTS.".Name");
-	$eNumDates = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
+	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+	$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
+	$eNumDates = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
 
 	// Challenger Info
 	// Attention here, we use user_id, so there has to be 1 user for 1 player
@@ -325,7 +325,7 @@ function SubmitPlayerChallenge($event_id, $challengerpuid, $challengedpid)
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_USERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 	."   AND (".TBL_USERS.".user_id = '$challengerpuid')";
 	$result = $sql->db_Query($q);
@@ -340,7 +340,7 @@ function SubmitPlayerChallenge($event_id, $challengerpuid, $challengedpid)
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_USERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 	."   AND (".TBL_PLAYERS.".PlayerID = '$challengedpid')";
 	$result = $sql->db_Query($q);
@@ -367,9 +367,9 @@ function SubmitPlayerChallenge($event_id, $challengerpuid, $challengedpid)
 
 	// Create Challenge ------------------------------------------
 	$q =
-	"INSERT INTO ".TBL_CHALLENGES."(Event,ChallengerPlayer,ChallengedPlayer,ReportedBy,TimeReported,Comments,Status,MatchDates)
+	"INSERT INTO ".TBL_CHALLENGES."(Ladder,ChallengerPlayer,ChallengedPlayer,ReportedBy,TimeReported,Comments,Status,MatchDates)
 	VALUES (
-	'$event_id',
+	'$ladder_id',
 	'$challengerpid',
 	'$challengedpid',
 	'$challengerpuid',
@@ -398,22 +398,22 @@ function SubmitPlayerChallenge($event_id, $challengerpuid, $challengedpid)
 	}
 }
 
-function TeamChallengeForm($event_id, $challengerpuid, $challengedtid)
+function TeamChallengeForm($ladder_id, $challengerpuid, $challengedtid)
 {
 	global $sql;
 	global $tp;
 	global $time;
 
-	$q = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	$q = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
 
-	$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-	$eNumDates = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
+	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+	$eNumDates = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
 
-	$output .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
+	$output .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?LadderID='.$ladder_id.'" method="post">';
 
 	$output .= '<b>'.EB_CHALLENGE_L3.'</b><br />';
 	$output .= '<br />';
@@ -426,7 +426,7 @@ function TeamChallengeForm($event_id, $challengerpuid, $challengedtid)
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_USERS.", "
 	.TBL_TEAMS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 	."   AND (".TBL_TEAMS.".TeamID = ".TBL_PLAYERS.".Team)"
 	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 	."   AND (".TBL_USERS.".user_id = '$challengerpuid')";
@@ -437,7 +437,7 @@ function TeamChallengeForm($event_id, $challengerpuid, $challengedtid)
 	list($tclan, $tclantag, $tclanid) = getClanName($uteam);
 
 	if ($trank==0)
-	$trank_txt = EB_EVENT_L54;
+	$trank_txt = EB_LADDER_L54;
 	else
 	$trank_txt = "#$trank";
 	$str = $tclan.' ('.$trank_txt.')';
@@ -455,7 +455,7 @@ function TeamChallengeForm($event_id, $challengerpuid, $challengedtid)
 	list($tclan, $tclantag, $tclanid) = getClanName($uteam);
 
 	if ($trank==0)
-	$trank_txt = EB_EVENT_L54;
+	$trank_txt = EB_LADDER_L54;
 	else
 	$trank_txt = "#$trank";
 	$str = $tclan.' ('.$trank_txt.')';
@@ -479,13 +479,13 @@ function TeamChallengeForm($event_id, $challengerpuid, $challengedtid)
 		<div><input class="tbox" type="text" name="date'.$date.'" id="f_date'.$date.'" value="'.$_POST['date'.$date].'" readonly="readonly" /></div>
 		</td>
 		<td>
-		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger'.$date.'" style="cursor: pointer; border: 1px solid red;" title="'.EB_EVENTM_L33.'"
+		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger'.$date.'" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
 		';
 		$output .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
 		$output .= '
 		</td>
 		<td>
-		<div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
+		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
 		</td>
 		</tr>
 		</table>
@@ -542,7 +542,7 @@ function TeamChallengeForm($event_id, $challengerpuid, $challengedtid)
 	return $output;
 }
 
-function SubmitTeamChallenge($event_id, $challengerpuid, $challengedtid)
+function SubmitTeamChallenge($ladder_id, $challengerpuid, $challengedtid)
 {
 	global $sql;
 	global $text;
@@ -550,15 +550,15 @@ function SubmitTeamChallenge($event_id, $challengerpuid, $challengedtid)
 	global $time;
 	global $pref;
 
-	$q = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	$q = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
 
-	$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-	$ename = mysql_result($result,0 , TBL_EVENTS.".Name");
-	$eNumDates = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
+	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+	$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
+	$eNumDates = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
 
 	// Challenger Info
 	// Attention here, we use user_id, so there has to be 1 user for 1 player
@@ -566,7 +566,7 @@ function SubmitTeamChallenge($event_id, $challengerpuid, $challengedtid)
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_USERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 	."   AND (".TBL_USERS.".user_id = '$challengerpuid')";
 	$result = $sql->db_Query($q);
@@ -595,9 +595,9 @@ function SubmitTeamChallenge($event_id, $challengerpuid, $challengedtid)
 
 	// Create Challenge ------------------------------------------
 	$q =
-	"INSERT INTO ".TBL_CHALLENGES."(Event,ChallengerTeam,ChallengedTeam,ReportedBy,TimeReported,Comments,Status,MatchDates)
+	"INSERT INTO ".TBL_CHALLENGES."(Ladder,ChallengerTeam,ChallengedTeam,ReportedBy,TimeReported,Comments,Status,MatchDates)
 	VALUES (
-	'$event_id',
+	'$ladder_id',
 	'$challengertid',
 	'$challengedtid',
 	'$challengerpuid',

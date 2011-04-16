@@ -8,22 +8,22 @@ function match_scores_update($match_id)
 {
 	global $sql;
 
-	// Get event info
-	$q = "SELECT ".TBL_EVENTS.".*, "
+	// Get ladder info
+	$q = "SELECT ".TBL_LADDERS.".*, "
 	.TBL_MATCHS.".*"
-	." FROM ".TBL_EVENTS.", "
+	." FROM ".TBL_LADDERS.", "
 	.TBL_MATCHS
 	." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-	."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)";
+	."   AND (".TBL_LADDERS.".LadderID = ".TBL_MATCHS.".Ladder)";
 	$result = $sql->db_Query($q);
-	$eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
-	$eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
-	$eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
-	$eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
-	$ePointPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
-	$ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
-	$ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+	$eELO_K = mysql_result($result,0 , TBL_LADDERS.".ELO_K");
+	$eELO_M = mysql_result($result,0 , TBL_LADDERS.".ELO_M");
+	$eTS_beta = mysql_result($result,0 , TBL_LADDERS.".TS_beta");
+	$eTS_epsilon = mysql_result($result,0 , TBL_LADDERS.".TS_epsilon");
+	$ePointPerWin = mysql_result($result,0 , TBL_LADDERS.".PointsPerWin");
+	$ePointPerDraw = mysql_result($result,0 , TBL_LADDERS.".PointsPerDraw");
+	$ePointPerLoss = mysql_result($result,0 , TBL_LADDERS.".PointsPerLoss");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
 
 	// Initialize scores ELO/TrueSkill
 	$deltaELO = 0;
@@ -679,15 +679,15 @@ function match_teams_update($match_id)
 {
 	global $sql;
 
-	// Get event info
-	$q = "SELECT ".TBL_EVENTS.".*, "
+	// Get ladder info
+	$q = "SELECT ".TBL_LADDERS.".*, "
 	.TBL_MATCHS.".*"
-	." FROM ".TBL_EVENTS.", "
+	." FROM ".TBL_LADDERS.", "
 	.TBL_MATCHS
 	." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-	."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)";
+	."   AND (".TBL_LADDERS.".LadderID = ".TBL_MATCHS.".Ladder)";
 	$result = $sql->db_Query($q);
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
 
 	// Update Teams with scores
 	$q = "SELECT ".TBL_MATCHS.".*, "
@@ -820,16 +820,16 @@ function match_teams_update($match_id)
 	//exit;
 }
 
-function deleteMatchScores($event_id, $match_id)
+function deleteMatchScores($ladder_id, $match_id)
 {
 	global $sql;
 
-	/* Event Info */
-	$q = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	/* Ladder Info */
+	$q = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
 
 	switch($etype)
 	{
@@ -843,7 +843,7 @@ function deleteMatchScores($event_id, $match_id)
 		default:
 	}
 
-	$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+	$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
 }
 
@@ -1182,18 +1182,18 @@ function displayMatchInfo($match_id, $type = 0)
 	// Get info about the match
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*, "
 	.TBL_USERS.".*, "
-	.TBL_EVENTS.".*, "
+	.TBL_LADDERS.".*, "
 	.TBL_GAMES.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
 	.TBL_USERS.", "
-	.TBL_EVENTS.", "
+	.TBL_LADDERS.", "
 	.TBL_GAMES
 	." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
-	." AND (".TBL_MATCHS.".Event = ".TBL_EVENTS.".EventID)"
-	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
+	." AND (".TBL_MATCHS.".Ladder = ".TBL_LADDERS.".LadderID)"
+	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
 
 	$result = $sql->db_Query($q);
 	$numMatchs = mysql_numrows($result);
@@ -1201,14 +1201,14 @@ function displayMatchInfo($match_id, $type = 0)
 	{
 		$mReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 		$mReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
-		$mEventID  = mysql_result($result, 0, TBL_EVENTS.".EventID");
-		$mEventName  = mysql_result($result, 0, TBL_EVENTS.".Name");
-		$mEventOwner  = mysql_result($result, 0, TBL_EVENTS.".Owner");
-		$mEventgame = mysql_result($result, 0, TBL_GAMES.".Name");
-		$mEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
-		$mEventType  = mysql_result($result, 0, TBL_EVENTS.".Type");
-		$mEventAllowScore = mysql_result($result, 0, TBL_EVENTS.".AllowScore");
-		$mEventMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
+		$mLadderID  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
+		$mLadderName  = mysql_result($result, 0, TBL_LADDERS.".Name");
+		$mLadderOwner  = mysql_result($result, 0, TBL_LADDERS.".Owner");
+		$mLaddergame = mysql_result($result, 0, TBL_GAMES.".Name");
+		$mLaddergameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
+		$mLadderType  = mysql_result($result, 0, TBL_LADDERS.".Type");
+		$mLadderAllowScore = mysql_result($result, 0, TBL_LADDERS.".AllowScore");
+		$mLadderMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
 		$mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
 		$mTime  = mysql_result($result, 0, TBL_MATCHS.".TimeReported");
 		$mTime_local = $mTime + TIMEOFFSET;
@@ -1239,7 +1239,7 @@ function displayMatchInfo($match_id, $type = 0)
 			$can_schedule = 0;
 			$userclass = 0;
 
-			switch($mEventType)
+			switch($mLadderType)
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -1317,7 +1317,7 @@ function displayMatchInfo($match_id, $type = 0)
 			}
 
 			// Is the user a player in the match?
-			switch($mEventType)
+			switch($mLadderType)
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -1355,9 +1355,9 @@ function displayMatchInfo($match_id, $type = 0)
 			}
 
 			$can_approve = 0;
-			if (USERID==$mEventOwner)
+			if (USERID==$mLadderOwner)
 			{
-				$userclass |= eb_UC_EVENT_OWNER;
+				$userclass |= eb_UC_LADDER_OWNER;
 				$can_approve = 1;
 				$can_report = 1;
 				$can_schedule = 1;
@@ -1378,22 +1378,22 @@ function displayMatchInfo($match_id, $type = 0)
 			}
 			if ($numOpps>0)
 			{
-				$userclass |= eb_UC_EVENT_PLAYER;
+				$userclass |= eb_UC_LADDER_PLAYER;
 				$can_approve = 1;
 			}
 			if ($numUserPlayers > 0)
 			{
 				$can_report = 1;
 			}
-			if ($userclass < $mEventMatchesApproval) $can_approve = 0;
-			if ($mEventMatchesApproval == eb_UC_NONE) $can_approve = 0;
+			if ($userclass < $mLadderMatchesApproval) $can_approve = 0;
+			if ($mLadderMatchesApproval == eb_UC_NONE) $can_approve = 0;
 			if ($mStatus != 'pending') $can_approve = 0;
 			if ($mStatus != 'scheduled') $can_report = 0;
 
 			$orderby_str = " ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 			if($nbr_teams==2) $orderby_str = " ORDER BY ".TBL_SCORES.".Player_MatchTeam";
 
-			switch($mEventType)
+			switch($mLadderType)
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -1438,10 +1438,10 @@ function displayMatchInfo($match_id, $type = 0)
 			$string .= '<tr>';
 			$scores = '';
 
-			if (($type & eb_MATCH_NOEVENTINFO) == 0)
+			if (($type & eb_MATCH_NOLADDERINFO) == 0)
 			{
-				$string .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'" title="'.$mEventgame.'">';
-				$string .= '<img '.getActivityGameIconResize($mEventgameicon).'/>';
+				$string .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'" title="'.$mLaddergame.'">';
+				$string .= '<img '.getActivityGameIconResize($mLaddergameicon).'/>';
 				$string .= '</a></td>';
 			}
 
@@ -1449,7 +1449,7 @@ function displayMatchInfo($match_id, $type = 0)
 			$matchteam = 0;
 			for ($index = 0; $index < $numPlayers; $index++)
 			{
-				switch($mEventType)
+				switch($mLadderType)
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
@@ -1493,7 +1493,7 @@ function displayMatchInfo($match_id, $type = 0)
 				$image = '';
 				if ($pref['eb_avatar_enable_playersstandings'] == 1)
 				{
-				switch($mEventType)
+				switch($mLadderType)
 				{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -1562,7 +1562,7 @@ function displayMatchInfo($match_id, $type = 0)
 
 				$string .= $pfactionIcon.' ';
 
-				switch($mEventType)
+				switch($mLadderType)
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
@@ -1577,15 +1577,15 @@ function displayMatchInfo($match_id, $type = 0)
 			}
 
 			//score here
-			if (($mEventAllowScore == TRUE)
+			if (($mLadderAllowScore == TRUE)
 			&&(($type & eb_MATCH_SCHEDULED) == 0))
 			{
 				$string .= ' ('.$scores.') ';
 			}
 
-			if (($type & eb_MATCH_NOEVENTINFO) == 0)
+			if (($type & eb_MATCH_NOLADDERINFO) == 0)
 			{
-				$string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$mEventID.'">'.$mEventName.'</a>';
+				$string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$mLadderID.'">'.$mLadderName.'</a>';
 			}
 			if ($can_approve == 1)
 			{
@@ -1634,12 +1634,12 @@ function displayMatchInfo($match_id, $type = 0)
 			if ($can_report == 1)
 			{
 				$string .= '<td>';
-				$string .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$mEventID.'&amp;matchid='.$match_id.'" method="post">';
+				$string .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?LadderID='.$mLadderID.'&amp;matchid='.$match_id.'" method="post">';
 				$text .= '<div>';
 				$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 				$text .= '</div>';
 				$string .= '<div>';
-				$string .= ebImageTextButton('matchscheduledreport', 'page_white_edit.png', '', 'simple', '', EB_EVENT_L57);
+				$string .= ebImageTextButton('matchscheduledreport', 'page_white_edit.png', '', 'simple', '', EB_LADDER_L57);
 				$string .= '</div>';
 				$string .= '</form>';
 				$string .= '</td>';

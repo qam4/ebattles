@@ -6,7 +6,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN.'ebattles/include/main.php');
 require_once(e_PLUGIN.'ebattles/include/match.php');
-require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/ladder.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/challenge.php");
 
@@ -22,25 +22,25 @@ echo "<br>_GET: ";
 print_r($_GET);     // show $_GET
 */
 
-/* Event Name */
-$event_id = $_GET['eventid'];
+/* Ladder Name */
+$ladder_id = $_GET['LadderID'];
 $challenge_id = $_GET['challengeid'];
-$q = "SELECT ".TBL_EVENTS.".*"
-." FROM ".TBL_EVENTS
-." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+$q = "SELECT ".TBL_LADDERS.".*"
+." FROM ".TBL_LADDERS
+." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 $result = $sql->db_Query($q);
 
-$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
-$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-$ename = mysql_result($result,0 , TBL_EVENTS.".Name");
+$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
+$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
 $text = '';
 
 if(isset($_POST['challenge_withdraw']))
 {
 	deleteChallenge($challenge_id);
-	$text .= EB_EVENT_L69;
+	$text .= EB_LADDER_L69;
 	$text .= '<br />';
-	$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
+	$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
 }
 if(isset($_POST['challenge_confirm']))
 {
@@ -64,19 +64,19 @@ if(isset($_POST['challenge_accept']))
 		ChallengeAccept($challenge_id);
 		$text .= EB_CHALLENGE_L22;
 		$text .= '<br />';
-		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
+		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
 	}
 }
 if(isset($_POST['challenge_decline']))
 {
 	Challengedecline($challenge_id);
-	$text .= EB_EVENT_L69;
+	$text .= EB_LADDER_L69;
 
 	$text .= '<br />';
-	$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
+	$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
 }
 
-$ns->tablerender("$ename (".eventType($etype).") - ".EB_CHALLENGE_L1, $text);
+$ns->tablerender("$ename (".ladderType($etype).") - ".EB_CHALLENGE_L1, $text);
 require_once(FOOTERF);
 exit;
 
@@ -94,16 +94,16 @@ function ChallengeConfirmForm($challenge_id)
 	// Get info about the challenge
 	$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*, "
 	.TBL_USERS.".*, "
-	.TBL_EVENTS.".*, "
+	.TBL_LADDERS.".*, "
 	.TBL_GAMES.".*"
 	." FROM ".TBL_CHALLENGES.", "
 	.TBL_USERS.", "
-	.TBL_EVENTS.", "
+	.TBL_LADDERS.", "
 	.TBL_GAMES
 	." WHERE (".TBL_CHALLENGES.".ChallengeID = '$challenge_id')"
 	." AND (".TBL_USERS.".user_id = ".TBL_CHALLENGES.".ReportedBy)"
-	." AND (".TBL_CHALLENGES.".Event = ".TBL_EVENTS.".EventID)"
-	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
+	." AND (".TBL_CHALLENGES.".Ladder = ".TBL_LADDERS.".LadderID)"
+	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
 
 	$result = $sql->db_Query($q);
 	$numChallenges = mysql_numrows($result);
@@ -112,13 +112,13 @@ function ChallengeConfirmForm($challenge_id)
 	{
 		$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 		$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
-		$cEventID  = mysql_result($result, 0, TBL_EVENTS.".EventID");
-		$cEventName  = mysql_result($result, 0, TBL_EVENTS.".Name");
-		$cEventOwner  = mysql_result($result, 0, TBL_EVENTS.".Owner");
-		$cEventgame = mysql_result($result, 0, TBL_GAMES.".Name");
-		$cEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
-		$cEventType  = mysql_result($result, 0, TBL_EVENTS.".Type");
-		$cEventNumDates  = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
+		$cLadderID  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
+		$cLadderName  = mysql_result($result, 0, TBL_LADDERS.".Name");
+		$cLadderOwner  = mysql_result($result, 0, TBL_LADDERS.".Owner");
+		$cLaddergame = mysql_result($result, 0, TBL_GAMES.".Name");
+		$cLaddergameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
+		$cLadderType  = mysql_result($result, 0, TBL_LADDERS.".Type");
+		$cLadderNumDates  = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
 		$cComments  = mysql_result($result,0, TBL_CHALLENGES.".Comments");
 		$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 		$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
@@ -131,12 +131,12 @@ function ChallengeConfirmForm($challenge_id)
 		$cChallengertID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerTeam");
 		$cChallengedtID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedTeam");
 
-		$output .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?eventid='.$cEventID.'&amp;challengeid='.$challenge_id.'" method="post">';
+		$output .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?LadderID='.$cLadderID.'&amp;challengeid='.$challenge_id.'" method="post">';
 
 		$output .= '<b>'.EB_CHALLENGE_L18.'</b><br />';
 		$output .= '<br />';
 
-		switch($cEventType)
+		switch($cLadderType)
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -145,7 +145,7 @@ function ChallengeConfirmForm($challenge_id)
 			.TBL_USERS.".*"
 			." FROM ".TBL_PLAYERS.", "
 			.TBL_USERS
-			." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
+			." WHERE (".TBL_PLAYERS.".Ladder = '$cLadderID')"
 			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 			."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
 			$result = $sql->db_Query($q);
@@ -165,7 +165,7 @@ function ChallengeConfirmForm($challenge_id)
 			.TBL_USERS.".*"
 			." FROM ".TBL_PLAYERS.", "
 			.TBL_USERS
-			." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
+			." WHERE (".TBL_PLAYERS.".Ladder = '$cLadderID')"
 			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 			."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
 			$result = $sql->db_Query($q);
@@ -262,16 +262,16 @@ function ChallengeAccept($challenge_id)
 	// Get info about the challenge
 	$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*, "
 	.TBL_USERS.".*, "
-	.TBL_EVENTS.".*, "
+	.TBL_LADDERS.".*, "
 	.TBL_GAMES.".*"
 	." FROM ".TBL_CHALLENGES.", "
 	.TBL_USERS.", "
-	.TBL_EVENTS.", "
+	.TBL_LADDERS.", "
 	.TBL_GAMES
 	." WHERE (".TBL_CHALLENGES.".ChallengeID = '$challenge_id')"
 	." AND (".TBL_USERS.".user_id = ".TBL_CHALLENGES.".ReportedBy)"
-	." AND (".TBL_CHALLENGES.".Event = ".TBL_EVENTS.".EventID)"
-	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
+	." AND (".TBL_CHALLENGES.".Ladder = ".TBL_LADDERS.".LadderID)"
+	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
 
 	$result = $sql->db_Query($q);
 	$numChallenges = mysql_numrows($result);
@@ -280,13 +280,13 @@ function ChallengeAccept($challenge_id)
 	{
 		$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 		$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
-		$cEventID  = mysql_result($result, 0, TBL_EVENTS.".EventID");
-		$cEventName  = mysql_result($result, 0, TBL_EVENTS.".Name");
-		$cEventOwner  = mysql_result($result, 0, TBL_EVENTS.".Owner");
-		$cEventgame = mysql_result($result, 0, TBL_GAMES.".Name");
-		$cEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
-		$cEventType  = mysql_result($result, 0, TBL_EVENTS.".Type");
-		$cEventNumDates  = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
+		$cLadderID  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
+		$cLadderName  = mysql_result($result, 0, TBL_LADDERS.".Name");
+		$cLadderOwner  = mysql_result($result, 0, TBL_LADDERS.".Owner");
+		$cLaddergame = mysql_result($result, 0, TBL_GAMES.".Name");
+		$cLaddergameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
+		$cLadderType  = mysql_result($result, 0, TBL_LADDERS.".Type");
+		$cLadderNumDates  = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
 		$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 		$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
 		$cChallengerpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerPlayer");
@@ -297,8 +297,8 @@ function ChallengeAccept($challenge_id)
 		// Create Match ------------------------------------------
 		$comments = '';
 		$q =
-		"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
-		VALUES ($cEventID,".USERID.", $time, '$comments', 'scheduled', $challenge_time)";
+		"INSERT INTO ".TBL_MATCHS."(Ladder,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
+		VALUES ($cLadderID,".USERID.", $time, '$comments', 'scheduled', $challenge_time)";
 		$result = $sql->db_Query($q);
 
 		$last_id = mysql_insert_id();
@@ -322,7 +322,7 @@ function ChallengeAccept($challenge_id)
 		$fromid = 0;
 		$subject = SITENAME." ".EB_MATCHR_L52;
 
-		switch($cEventType)
+		switch($cLadderType)
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -366,7 +366,7 @@ function ChallengeAccept($challenge_id)
 			{
 				$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
 				$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
-				$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$cEventName.EB_MATCHR_L56;
+				$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$cLadderName.EB_MATCHR_L56;
 				if (check_class($pref['eb_pm_notifications_class']))
 				{
 					$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
@@ -393,16 +393,16 @@ function ChallengeDecline($challenge_id)
 	// Get info about the challenge
 	$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*, "
 	.TBL_USERS.".*, "
-	.TBL_EVENTS.".*, "
+	.TBL_LADDERS.".*, "
 	.TBL_GAMES.".*"
 	." FROM ".TBL_CHALLENGES.", "
 	.TBL_USERS.", "
-	.TBL_EVENTS.", "
+	.TBL_LADDERS.", "
 	.TBL_GAMES
 	." WHERE (".TBL_CHALLENGES.".ChallengeID = '$challenge_id')"
 	." AND (".TBL_USERS.".user_id = ".TBL_CHALLENGES.".ReportedBy)"
-	." AND (".TBL_CHALLENGES.".Event = ".TBL_EVENTS.".EventID)"
-	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
+	." AND (".TBL_CHALLENGES.".Ladder = ".TBL_LADDERS.".LadderID)"
+	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
 
 	$result = $sql->db_Query($q);
 	$numChallenges = mysql_numrows($result);
@@ -412,11 +412,11 @@ function ChallengeDecline($challenge_id)
 		$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 		$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
 		$cReportedByEmail  = mysql_result($result, 0, TBL_USERS.".user_email");
-		$cEventID  = mysql_result($result, 0, TBL_EVENTS.".EventID");
-		$cEventName  = mysql_result($result, 0, TBL_EVENTS.".Name");
+		$cLadderID  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
+		$cLadderName  = mysql_result($result, 0, TBL_LADDERS.".Name");
 
 		$subject = SITENAME." ".EB_CHALLENGE_L29;
-		$message = EB_CHALLENGE_L30.$cReportedByNickName.EB_CHALLENGE_L31.USERNAME.EB_CHALLENGE_L32.$cEventName.EB_CHALLENGE_L33;
+		$message = EB_CHALLENGE_L30.$cReportedByNickName.EB_CHALLENGE_L31.USERNAME.EB_CHALLENGE_L32.$cLadderName.EB_CHALLENGE_L33;
 		$fromid = 0;
 		$sendto = $cReportedBy;
 		$sendtoemail = $cReportedByEmail;

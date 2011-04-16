@@ -11,7 +11,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
-require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/ladder.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
@@ -46,7 +46,7 @@ $match_id = $_GET['matchid'];
 
 if (!$match_id)
 {
-	header("Location: ./events.php");
+	header("Location: ./ladders.php");
 	exit();
 }
 else
@@ -73,29 +73,29 @@ else
 		$uteam = mysql_result($result,0 , TBL_SCORES.".Player_MatchTeam");
 	}
 
-	// Get event information
-	$q = "SELECT ".TBL_EVENTS.".*, "
+	// Get ladder information
+	$q = "SELECT ".TBL_LADDERS.".*, "
 	.TBL_GAMES.".*, "
 	.TBL_MATCHS.".*, "
 	.TBL_USERS.".*"
-	." FROM ".TBL_EVENTS.", "
+	." FROM ".TBL_LADDERS.", "
 	.TBL_GAMES.", "
 	.TBL_MATCHS.", "
 	.TBL_USERS
 	." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-	."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)"
-	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+	."   AND (".TBL_LADDERS.".LadderID = ".TBL_MATCHS.".Ladder)"
+	."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
 	."   AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)";
 
 	$result = $sql->db_Query($q);
-	$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
-	$ename = mysql_result($result,0 , TBL_EVENTS.".Name");
+	$ladder_id = mysql_result($result,0 , TBL_LADDERS.".LadderID");
+	$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
 	$egame = mysql_result($result,0 , TBL_GAMES.".Name");
-	$eowner = mysql_result($result,0 , TBL_EVENTS.".Owner");
-	$estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
-	$eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-	$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
+	$eowner = mysql_result($result,0 , TBL_LADDERS.".Owner");
+	$estart = mysql_result($result,0 , TBL_LADDERS.".Start_timestamp");
+	$eend = mysql_result($result,0 , TBL_LADDERS.".End_timestamp");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
 	$mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
 	$reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
 	$reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
@@ -104,7 +104,7 @@ else
 	$categoriesToShow = array();
 	$q_Categories = "SELECT ".TBL_STATSCATEGORIES.".*"
 	." FROM ".TBL_STATSCATEGORIES
-	." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
+	." WHERE (".TBL_STATSCATEGORIES.".Ladder = '$ladder_id')";
 
 	$result_Categories = $sql->db_Query($q_Categories);
 	$numCategories = mysql_numrows($result_Categories);
@@ -206,10 +206,10 @@ else
 	// Can I delete the game
 	//-----------------------
 	// Is the user a moderator?
-	$q_Mods = "SELECT ".TBL_EVENTMODS.".*"
-	." FROM ".TBL_EVENTMODS
-	." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
-	."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
+	$q_Mods = "SELECT ".TBL_LADDERMODS.".*"
+	." FROM ".TBL_LADDERMODS
+	." WHERE (".TBL_LADDERMODS.".Ladder = '$ladder_id')"
+	."   AND (".TBL_LADDERMODS.".User = ".USERID.")";
 	$result_Mods = $sql->db_Query($q_Mods);
 	$numMods = mysql_numrows($result_Mods);
 
@@ -306,7 +306,7 @@ else
 	if (check_class($pref['eb_mod_class']))  $can_delete = 1;
 	if (USERID==$eowner)
 	{
-		$userclass |= eb_UC_EVENT_OWNER;
+		$userclass |= eb_UC_LADDER_OWNER;
 		$can_delete = 1;
 		$can_approve = 1;
 		$can_edit = 1;
@@ -332,7 +332,7 @@ else
 	}
 	if ($numOpps>0)
 	{
-		$userclass |= eb_UC_EVENT_PLAYER;
+		$userclass |= eb_UC_LADDER_PLAYER;
 		$can_approve = 1;
 	}
 	if (($numPlayed>0)&&(check_class($pref['eb_media_submit_class'])))
@@ -349,9 +349,9 @@ else
 
 	if($can_delete != 0)
 	{
-		$text .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?eventid='.$event_id.'" method="post">';
+		$text .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?LadderID='.$ladder_id.'" method="post">';
 		$text .= '<div>';
-		$text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+		$text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '</div>';
 		$text .= ebImageTextButton('deletematch', 'cross.png', EB_MATCHD_L4, 'negative', EB_MATCHD_L5);
@@ -361,7 +361,7 @@ else
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
 		$text .= '<div>';
-		$text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+		$text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '</div>';
 		$text .= ebImageTextButton('approvematch', 'accept.png', EB_MATCHD_L17, 'positive');
@@ -369,7 +369,7 @@ else
 	}
 	if($can_edit != 0)
 	{
-		$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'" method="post">';
+		$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?LadderID='.$ladder_id.'&amp;matchid='.$match_id.'" method="post">';
 		$text .= '<div>';
 		$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 		$text .= '</div>';
@@ -572,7 +572,7 @@ else
 	{
 		$text .= '<form id="mediaform" action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
 		$text .= '<div>';
-		$text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+		$text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '<input type="hidden" id="del_media" name="del_media" value=""/>';
 		$text .= '</div>';
@@ -614,7 +614,7 @@ else
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
 		$text .= '<div>';
-		$text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+		$text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '</div>';
 		$text .= '<table class="table_left"><tr>';
@@ -645,10 +645,10 @@ else
 	$text .= '</div>';
 
 	$text .= '<p>';
-	$text .= '<br />'.EB_MATCHD_L15.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHD_L16.'</a>]<br />';
+	$text .= '<br />'.EB_MATCHD_L15.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_MATCHD_L16.'</a>]<br />';
 	$text .= '</p>';
 
-	$ns->tablerender("$ename ($egame - ".eventType($etype).")", $text);
+	$ns->tablerender("$ename ($egame - ".ladderType($etype).")", $text);
 
 	unset($text);
 
