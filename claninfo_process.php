@@ -24,15 +24,15 @@ if(isset($_POST['joindivision']))
         VALUES ($div_id,".USERID.",$time)";
         $sql->db_Query($q);
 
-        // User will automatically be signed up to all current events this division participates in
+        // User will automatically be signed up to all current ladders this division participates in
         $q_2 = "SELECT ".TBL_TEAMS.".*, "
-        .TBL_EVENTS.".*"
+        .TBL_LADDERS.".*"
         ." FROM ".TBL_TEAMS.", "
-        .TBL_EVENTS
+        .TBL_LADDERS
         ." WHERE (".TBL_TEAMS.".Division = '$div_id')"
-        ." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
-        ." AND (   (".TBL_EVENTS.".End_timestamp = '')"
-        ."        OR (".TBL_EVENTS.".End_timestamp > $time)) ";
+        ." AND (".TBL_TEAMS.".Ladder = ".TBL_LADDERS.".LadderID)"
+        ." AND (   (".TBL_LADDERS.".End_timestamp = '')"
+        ."        OR (".TBL_LADDERS.".End_timestamp > $time)) ";
 
         $result_2 = $sql->db_Query($q_2);
         $num_rows_2 = mysql_numrows($result_2);
@@ -40,16 +40,16 @@ if(isset($_POST['joindivision']))
         {
             for($j=0; $j<$num_rows_2; $j++)
             {
-                $eid  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
-                $eELOdefault  = mysql_result($result_2,$j, TBL_EVENTS.".ELO_default");
-                $eTS_default_mu  = mysql_result($result_2,$j, TBL_EVENTS.".TS_default_mu");
-                $eTS_default_sigma  = mysql_result($result_2,$j, TBL_EVENTS.".TS_default_sigma");
+                $eid  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
+                $eELOdefault  = mysql_result($result_2,$j, TBL_LADDERS.".ELO_default");
+                $eTS_default_mu  = mysql_result($result_2,$j, TBL_LADDERS.".TS_default_mu");
+                $eTS_default_sigma  = mysql_result($result_2,$j, TBL_LADDERS.".TS_default_sigma");
                 $team_id = mysql_result($result_2,$j, TBL_TEAMS.".TeamID");
 
-                // Verify there is no other player for that user/event/team
+                // Verify there is no other player for that user/ladder/team
                 $q = "SELECT COUNT(*) as NbrPlayers"
                 ." FROM ".TBL_PLAYERS
-                ." WHERE (Event = '$eid')"
+                ." WHERE (Ladder = '$eid')"
                 ." AND (Team = '$team_id')"
                 ." AND (User = ".USERID.")";
                 $result = $sql->db_Query($q);
@@ -57,10 +57,10 @@ if(isset($_POST['joindivision']))
                 $nbrplayers = $row['NbrPlayers'];
                 if ($nbrplayers == 0)
                 {
-                    $q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
+                    $q = " INSERT INTO ".TBL_PLAYERS."(Ladder,User,Team,ELORanking,TS_mu,TS_sigma)
                     VALUES ($eid,".USERID.",$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
                     $sql->db_Query($q);
-                    $q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$eid')";
+                    $q4 = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$eid')";
                     $result = $sql->db_Query($q4);
                 }
             }

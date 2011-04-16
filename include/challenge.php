@@ -6,7 +6,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN.'ebattles/include/main.php');
 require_once(e_PLUGIN.'ebattles/include/match.php');
-require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/ladder.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 
 function displayChallengeInfo($challenge_id, $type = 0)
@@ -19,16 +19,16 @@ function displayChallengeInfo($challenge_id, $type = 0)
 	// Get info about the challenge
 	$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*, "
 	.TBL_USERS.".*, "
-	.TBL_EVENTS.".*, "
+	.TBL_LADDERS.".*, "
 	.TBL_GAMES.".*"
 	." FROM ".TBL_CHALLENGES.", "
 	.TBL_USERS.", "
-	.TBL_EVENTS.", "
+	.TBL_LADDERS.", "
 	.TBL_GAMES
 	." WHERE (".TBL_CHALLENGES.".ChallengeID = '$challenge_id')"
 	." AND (".TBL_USERS.".user_id = ".TBL_CHALLENGES.".ReportedBy)"
-	." AND (".TBL_CHALLENGES.".Event = ".TBL_EVENTS.".EventID)"
-	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
+	." AND (".TBL_CHALLENGES.".Ladder = ".TBL_LADDERS.".LadderID)"
+	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
 
 	$result = $sql->db_Query($q);
 	$numChallenges = mysql_numrows($result);
@@ -36,12 +36,12 @@ function displayChallengeInfo($challenge_id, $type = 0)
 	{
 		$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 		$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
-		$cEventID  = mysql_result($result, 0, TBL_EVENTS.".EventID");
-		$cEventName  = mysql_result($result, 0, TBL_EVENTS.".Name");
-		$cEventOwner  = mysql_result($result, 0, TBL_EVENTS.".Owner");
-		$cEventgame = mysql_result($result, 0, TBL_GAMES.".Name");
-		$cEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
-		$cEventType  = mysql_result($result, 0, TBL_EVENTS.".Type");
+		$cLadderID  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
+		$cLadderName  = mysql_result($result, 0, TBL_LADDERS.".Name");
+		$cLadderOwner  = mysql_result($result, 0, TBL_LADDERS.".Owner");
+		$cLaddergame = mysql_result($result, 0, TBL_GAMES.".Name");
+		$cLaddergameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
+		$cLadderType  = mysql_result($result, 0, TBL_LADDERS.".Type");
 		$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 		$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
 		$cTime_local = $cTime + TIMEOFFSET;
@@ -54,10 +54,10 @@ function displayChallengeInfo($challenge_id, $type = 0)
 
 		$string .= '<tr>';
 		// Game icon
-		if (($type & eb_MATCH_NOEVENTINFO) == 0)
+		if (($type & eb_MATCH_NOLADDERINFO) == 0)
 		{
-			$string .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$cEventID.'" title="'.$cEventgame.'">';
-			$string .= '<img '.getActivityGameIconResize($cEventgameicon).'/>';
+			$string .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$cLadderID.'" title="'.$cLaddergame.'">';
+			$string .= '<img '.getActivityGameIconResize($cLaddergameicon).'/>';
 			$string .= '</a></td>';
 		}
 
@@ -70,13 +70,13 @@ function displayChallengeInfo($challenge_id, $type = 0)
 		." FROM ".TBL_PLAYERS.", "
 		.TBL_USERS.", "
 		.TBL_TEAMS
-		." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
+		." WHERE (".TBL_PLAYERS.".Ladder = '$cLadderID')"
 		."   AND (".TBL_TEAMS.".TeamID = ".TBL_PLAYERS.".Team)"
 		."   AND (".TBL_PLAYERS.".User = '".USERID."')";
 		$result = $sql->db_Query($q);
 		$uteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
 
-		switch($cEventType)
+		switch($cLadderType)
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -85,7 +85,7 @@ function displayChallengeInfo($challenge_id, $type = 0)
 			.TBL_USERS.".*"
 			." FROM ".TBL_PLAYERS.", "
 			.TBL_USERS
-			." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
+			." WHERE (".TBL_PLAYERS.".Ladder = '$cLadderID')"
 			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 			."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
 			$result = $sql->db_Query($q);
@@ -105,7 +105,7 @@ function displayChallengeInfo($challenge_id, $type = 0)
 			.TBL_USERS.".*"
 			." FROM ".TBL_PLAYERS.", "
 			.TBL_USERS
-			." WHERE (".TBL_PLAYERS.".Event = '$cEventID')"
+			." WHERE (".TBL_PLAYERS.".Ladder = '$cLadderID')"
 			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 			."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
 			$result = $sql->db_Query($q);
@@ -144,10 +144,10 @@ function displayChallengeInfo($challenge_id, $type = 0)
 			default:
 		}
 
-		// Event
-		if (($type & eb_MATCH_NOEVENTINFO) == 0)
+		// Ladder
+		if (($type & eb_MATCH_NOLADDERINFO) == 0)
 		{
-			$string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$cEventID.'">'.$cEventName.'</a>';
+			$string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$cLadderID.'">'.$cLadderName.'</a>';
 		}
 
 		// Submitted by
@@ -173,17 +173,17 @@ function displayChallengeInfo($challenge_id, $type = 0)
 		// Is the user a moderator?
 		$can_delete = 0;
 
-		$q_Mods = "SELECT ".TBL_EVENTMODS.".*"
-		." FROM ".TBL_EVENTMODS
-		." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
-		."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
+		$q_Mods = "SELECT ".TBL_LADDERMODS.".*"
+		." FROM ".TBL_LADDERMODS
+		." WHERE (".TBL_LADDERMODS.".Ladder = '$ladder_id')"
+		."   AND (".TBL_LADDERMODS.".User = ".USERID.")";
 		$result_Mods = $sql->db_Query($q_Mods);
 		$numMods = mysql_numrows($result_Mods);
 
 		if (check_class($pref['eb_mod_class']))  $can_delete = 1;
 		if (USERID==$eowner)
 		{
-			$userclass |= eb_UC_EVENT_OWNER;
+			$userclass |= eb_UC_LADDER_OWNER;
 			$can_delete = 1;
 		}
 		if ($numMods>0)
@@ -202,7 +202,7 @@ function displayChallengeInfo($challenge_id, $type = 0)
 		if($can_delete != 0)
 		{
 		$string .= '<td>';
-			$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?eventid='.$cEventID.'&amp;challengeid='.$challenge_id.'" method="post">';
+			$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?LadderID='.$cLadderID.'&amp;challengeid='.$challenge_id.'" method="post">';
 			$string .= '<div>';
 			$string .= ebImageTextButton('challenge_withdraw', 'delete.png', '', 'simple', EB_CHALLENGE_L16, EB_CHALLENGE_L15);
 			$string .= '</div>';
@@ -213,7 +213,7 @@ function displayChallengeInfo($challenge_id, $type = 0)
 		if ($isUserChallenged == TRUE)
 		{
 		$string .= '<td>';
-			$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?eventid='.$cEventID.'&amp;challengeid='.$challenge_id.'" method="post">';
+			$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?LadderID='.$cLadderID.'&amp;challengeid='.$challenge_id.'" method="post">';
 			$string .= '<div>';
 			$string .= ebImageTextButton('challenge_confirm', 'page_white_edit.png', '', 'simple', '', EB_CHALLENGE_L17);
 			$string .= '</div>';

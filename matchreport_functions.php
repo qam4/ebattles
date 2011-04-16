@@ -1,19 +1,19 @@
 <?php
 // function to output form and hold previously entered values.
-function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw, $allowScore, $userclass) {
+function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw, $allowScore, $userclass) {
 	global $sql;
 	global $text;
 	global $tp;
 	global $time;
 
-	/* Event Info */
-	$q = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	/* Ladder Info */
+	$q = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-	$eGame = mysql_result($result,0 , TBL_EVENTS.".Game");
-	$eMaxMapsPerMatch = mysql_result($result,0 , TBL_EVENTS.".MaxMapsPerMatch");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+	$eGame = mysql_result($result,0 , TBL_LADDERS.".Game");
+	$eMaxMapsPerMatch = mysql_result($result,0 , TBL_LADDERS.".MaxMapsPerMatch");
 
 
 	if (e_WYSIWYG)
@@ -133,7 +133,7 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	/////////////////
 	/// MAIN FORM ///
 	/////////////////
-	$text .= '<form id="matchreport" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$event_id.$match_str.'" method="post">';
+	$text .= '<form id="matchreport" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?LadderID='.$ladder_id.$match_str.'" method="post">';
 	$text .= '<div>';
 	// TABLE - Player/Teams Add/Remove
 	//----------------------------------

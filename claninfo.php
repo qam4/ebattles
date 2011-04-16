@@ -58,13 +58,13 @@ else
 	$text .= '</div>';
 
 	/**
-	* Display Events
+	* Display Ladders
 	*/
 	$text .= '
 	<div class="tab-page">
 	<div class="tab">'.EB_CLAN_L4.'</div>
 	';
-	displayTeamEvents($clan_id);
+	displayTeamLadders($clan_id);
 	$text .= '</div>';
 
 	/**
@@ -331,9 +331,9 @@ function displayTeamDivisions($clan_id){
 }
 
 /**
-* displayTeamEvents - Displays ...
+* displayTeamLadders - Displays ...
 */
-function displayTeamEvents($clan_id){
+function displayTeamLadders($clan_id){
 	global $sql;
 	global $text;
 	global $time;
@@ -360,13 +360,13 @@ function displayTeamEvents($clan_id){
 		$text .= '<b><img '.getGameIconResize($gicon).'/> '.$gname.'</b><br />';
 
 		$q_2 = "SELECT ".TBL_TEAMS.".*, "
-		.TBL_EVENTS.".*"
+		.TBL_LADDERS.".*"
 		." FROM ".TBL_TEAMS.", "
-		.TBL_EVENTS
+		.TBL_LADDERS
 		." WHERE (".TBL_TEAMS.".Division = '$div_id')"
-		." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
-		." AND (   (".TBL_EVENTS.".End_timestamp = '')"
-		."        OR (".TBL_EVENTS.".End_timestamp > $time)) ";
+		." AND (".TBL_TEAMS.".Ladder = ".TBL_LADDERS.".LadderID)"
+		." AND (   (".TBL_LADDERS.".End_timestamp = '')"
+		."        OR (".TBL_LADDERS.".End_timestamp > $time)) ";
 
 		$result_2 = $sql->db_Query($q_2);
 		if(!$result_2 || (mysql_numrows($result_2) < 1))
@@ -376,34 +376,34 @@ function displayTeamEvents($clan_id){
 		else
 		{
 			$row = mysql_fetch_array($result_2);
-			$numEvents = mysql_numrows($result_2);
+			$numLadders = mysql_numrows($result_2);
 
-			$text .= '<p>'.$numEvents.'&nbsp;'.EB_CLAN_L20.'</p>';
+			$text .= '<p>'.$numLadders.'&nbsp;'.EB_CLAN_L20.'</p>';
 
 			$text .= '<table class="fborder" style="width:95%"><tbody>';
 			$text .= '<tr><td class="forumheader"><b>'.EB_CLAN_L21.'</b></td>
 			<td class="forumheader"><b>'.EB_CLAN_L22.'</b></td></tr>';
-			for($j=0; $j < $numEvents; $j++)
+			for($j=0; $j < $numLadders; $j++)
 			{
-				$eid  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
-				$ename  = mysql_result($result_2,$j, TBL_EVENTS.".Name");
+				$eid  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
+				$ename  = mysql_result($result_2,$j, TBL_LADDERS.".Name");
 				$erank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
 				$text .= '<tr>';
-				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></b></td>
+				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a></b></td>
 				<td class="forumheader3">'.$erank.'</td></tr>';
 			}
 			$text .= "</tbody></table>\n";
 		}
 
 		$q_2 = "SELECT ".TBL_TEAMS.".*, "
-		.TBL_EVENTS.".*"
+		.TBL_LADDERS.".*"
 		." FROM ".TBL_TEAMS.", "
-		.TBL_EVENTS
+		.TBL_LADDERS
 		." WHERE (".TBL_TEAMS.".Division = '$div_id')"
-		." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
-		." AND (    (".TBL_EVENTS.".End_timestamp != '')"
-		."      AND (".TBL_EVENTS.".End_timestamp < $time)) ";
+		." AND (".TBL_TEAMS.".Ladder = ".TBL_LADDERS.".LadderID)"
+		." AND (    (".TBL_LADDERS.".End_timestamp != '')"
+		."      AND (".TBL_LADDERS.".End_timestamp < $time)) ";
 
 		$result_2 = $sql->db_Query($q_2);
 		if(!$result_2 || (mysql_numrows($result_2) < 1))
@@ -413,21 +413,21 @@ function displayTeamEvents($clan_id){
 		else
 		{
 			$row = mysql_fetch_array($result_2);
-			$numEvents = mysql_numrows($result_2);
+			$numLadders = mysql_numrows($result_2);
 
-			$text .= '<p>'.$numEvents.'&nbsp;'.EB_CLAN_L24.'</p>';
+			$text .= '<p>'.$numLadders.'&nbsp;'.EB_CLAN_L24.'</p>';
 
 			$text .= '<table class="fborder" style="width:95%"><tbody>';
 			$text .= '<tr><td class="forumheader"><b>'.EB_CLAN_L21.'</b></td>
 			<td class="forumheader"><b>'.EB_CLAN_L22.'</b></td></tr>';
-			for($j=0; $j<$numEvents; $j++)
+			for($j=0; $j<$numLadders; $j++)
 			{
-				$eid  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
-				$ename  = mysql_result($result_2,$j, TBL_EVENTS.".Name");
+				$eid  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
+				$ename  = mysql_result($result_2,$j, TBL_LADDERS.".Name");
 				$erank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
 				$text .= '<tr>';
-				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></b></td>
+				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a></b></td>
 				<td class="forumheader3">'.$erank.'</td></tr>';
 			}
 			$text .= '</tbody></table>';
@@ -446,13 +446,13 @@ function displayTeamAwards($clan_id){
 
 	/* Stats/Results */
 	$q = "SELECT ".TBL_AWARDS.".*, "
-	.TBL_EVENTS.".*, "
+	.TBL_LADDERS.".*, "
 	.TBL_CLANS.".*, "
 	.TBL_TEAMS.".*, "
 	.TBL_DIVISIONS.".*, "
 	.TBL_GAMES.".*"
 	." FROM ".TBL_AWARDS.", "
-	.TBL_EVENTS.", "
+	.TBL_LADDERS.", "
 	.TBL_CLANS.", "
 	.TBL_TEAMS.", "
 	.TBL_DIVISIONS.", "
@@ -461,8 +461,8 @@ function displayTeamAwards($clan_id){
 	." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
 	." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
 	." AND (".TBL_AWARDS.".Team = ".TBL_TEAMS.".TeamID)"
-	." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
-	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+	." AND (".TBL_TEAMS.".Ladder = ".TBL_LADDERS.".LadderID)"
+	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
 	." ORDER BY ".TBL_AWARDS.".timestamp DESC";
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
@@ -475,10 +475,10 @@ function displayTeamAwards($clan_id){
 		for($i=0; $i<$num_rows; $i++)
 		{
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
-			$aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
-			$aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
-			$aEventgame = mysql_result($result,$i , TBL_GAMES.".Name");
-			$aEventgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
+			$aLadderID  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+			$aLadderName  = mysql_result($result,$i, TBL_LADDERS.".Name");
+			$aLaddergame = mysql_result($result,$i , TBL_GAMES.".Name");
+			$aLaddergameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
 			$aTime_local = $aTime + TIMEOFFSET;
@@ -514,7 +514,7 @@ function displayTeamAwards($clan_id){
 			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
 			$award_string .= '<td><a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$tclanid.'">'.$tclan.'</a>';
 			$award_string .= ' '.$award;
-			$award_string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a> ('.$aEventgame.')';
+			$award_string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$aLadderID.'">'.$aLadderName.'</a> ('.$aLaddergame.')';
 
 			$award_string .= ' <div class="smalltext">';
 			if (($time-$aTime) < INT_MINUTE )

@@ -44,10 +44,10 @@ $eplug_icon_small = $eplug_folder."/images/ebattles_16.ico";
 
 // List of preferences -----------------------------------------------------------------------------------------------
 $eplug_prefs = array(
-"eb_events_update_delay" => 60,
-"eb_events_update_delay_enable" => 0,
+"eb_ladders_update_delay" => 60,
+"eb_ladders_update_delay_enable" => 0,
 "eb_mod_class" => e_UC_ADMIN,
-"eb_events_create_class" => e_UC_MEMBER,
+"eb_ladders_create_class" => e_UC_MEMBER,
 "eb_teams_create_class" => e_UC_MEMBER,
 "eb_media_submit_class" => e_UC_MEMBER,
 "eb_tab_theme" => 'default',
@@ -71,7 +71,7 @@ $eplug_prefs = array(
 "eb_max_map_image_size" => 80,
 "eb_pm_notifications_class" => e_UC_MEMBER,
 "eb_email_notifications_class" => e_UC_MEMBER,
-"eb_links_showcreateevent" => 1,
+"eb_links_showcreateladder" => 1,
 "eb_links_showcreateteam" => 1,
 "eb_links_showmatchsplayed" => 1,
 "eb_links_showmatchstoapprove" => 1,
@@ -84,8 +84,8 @@ $eplug_prefs = array(
 // List of table names -----------------------------------------------------------------------------------------------
 $eplug_table_names = array(
 TBL_GAMES_SHORT,
-TBL_EVENTS_SHORT,
-TBL_EVENTMODS_SHORT,
+TBL_LADDERS_SHORT,
+TBL_LADDERMODS_SHORT,
 TBL_CLANS_SHORT,
 TBL_DIVISIONS_SHORT,
 TBL_MEMBERS_SHORT,
@@ -123,10 +123,10 @@ OfficialWebsite varchar(63) NOT NULL default '',
 ESRB varchar(63) NOT NULL default '',
 Banner varchar(63) NOT NULL default ''
 ) TYPE = MyISAM;",
-"CREATE TABLE ".TBL_EVENTS."
+"CREATE TABLE ".TBL_LADDERS."
 (
-EventID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(EventID),
+LadderID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(LadderID),
 Name varchar(63),
 password varchar(32),
 Game int NOT NULL,
@@ -156,7 +156,7 @@ AllowScore tinyint(1) DEFAULT '0',
 PointsPerWin int default '".PointsPerWin_DEFAULT."',
 PointsPerDraw int default '".PointsPerDraw_DEFAULT."',
 PointsPerLoss int default '".PointsPerLoss_DEFAULT."',
-match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."',
+match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_PLAYER."',
 quick_loss_report tinyint(1) DEFAULT '1',
 hide_ratings_column tinyint(1) DEFAULT '0',
 MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
@@ -168,13 +168,13 @@ ChallengesEnable tinyint(1) DEFAULT '0',
 MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."',
 MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."'
 ) TYPE = MyISAM;",
-"CREATE TABLE ".TBL_EVENTMODS."
+"CREATE TABLE ".TBL_LADDERMODS."
 (
-EventModeratorID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(EventModeratorID),
-Event int NOT NULL,
-INDEX (Event),
-FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
+LadderModeratorID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(LadderModeratorID),
+Ladder int NOT NULL,
+INDEX (Ladder),
+FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
 User int(10) unsigned NOT NULL,
 INDEX (User),
 FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
@@ -226,9 +226,9 @@ timestamp int(11) unsigned not null
 (
 TeamID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(TeamID),
-Event int NOT NULL,
-INDEX (Event),
-FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
+Ladder int NOT NULL,
+INDEX (Ladder),
+FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
 Division int NOT NULL,
 INDEX (Division),
 FOREIGN KEY (Division) REFERENCES ".TBL_DIVISIONS." (DivisionID),
@@ -254,9 +254,9 @@ Banned tinyint(1) DEFAULT '0'
 (
 MatchID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(MatchID),
-Event int NOT NULL,
-INDEX (Event),
-FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
+Ladder int NOT NULL,
+INDEX (Ladder),
+FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
 ReportedBy int(10) unsigned NOT NULL,
 INDEX (ReportedBy),
 FOREIGN KEY (ReportedBy) REFERENCES ".TBL_USERS." (user_id),
@@ -270,9 +270,9 @@ TimeScheduled int(11) unsigned not null
 (
 PlayerID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(PlayerID),
-Event int NOT NULL,
-INDEX (Event),
-FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
+Ladder int NOT NULL,
+INDEX (Ladder),
+FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
 User int(10) unsigned NOT NULL,
 INDEX (User),
 FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
@@ -327,9 +327,9 @@ Faction int DEFAULT '0'
 (
 StatsCategoryID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(StatsCategoryID),
-Event int NOT NULL,
-INDEX (Event),
-FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
+Ladder int NOT NULL,
+INDEX (Ladder),
+FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
 CategoryName varchar(63),
 CategoryMinValue int DEFAULT '1',
 CategoryMaxValue int DEFAULT '100',
@@ -416,9 +416,9 @@ Type varchar(20) NOT NULL default ''
 (
 ChallengeID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(ChallengeID),
-Event int NOT NULL,
-INDEX (Event),
-FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
+Ladder int NOT NULL,
+INDEX (Ladder),
+FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
 ChallengerPlayer int NOT NULL,
 INDEX (ChallengerPlayer),
 FOREIGN KEY (ChallengerPlayer) REFERENCES ".TBL_PLAYERS." (PlayerID),
@@ -441,16 +441,13 @@ MatchDates varchar(255) NOT NULL default ''
 ) TYPE = MyISAM;"
 );
 
-// Insert "Unknown Game"
-$query =
-"INSERT INTO ".TBL_GAMES."(Name, Icon)
-VALUES ('".EB_GAME_L1."', 'unknown.gif')";
-array_push($eplug_tables, $query);
+// Insert "Starcraft 2"
+@require_once e_PLUGIN.'ebattles/db_admin/insert_data.php';
 
 // Create a link in main menu (yes=TRUE, no=FALSE) -------------------------------------------------------------
 $eplug_link = TRUE;
 $eplug_link_name = EB_L5;
-$eplug_link_url = e_PLUGIN."ebattles/events.php";
+$eplug_link_url = e_PLUGIN."ebattles/ladders.php";
 
 
 // Text to display after plugin successfully installed ------------------------------------------------------------------
@@ -469,9 +466,9 @@ if (versionsCompare($eb_version_string, "0.8"))
 {
 	// To revision 0.8
 	array_push ($upgrade_alter_tables,
-	"ALTER TABLE ".TBL_EVENTS." ADD Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'",
-	"ALTER TABLE ".TBL_EVENTS." ADD Status varchar(20) DEFAULT 'active'",
-	"ALTER TABLE ".TBL_EVENTS." ADD PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'",
+	"ALTER TABLE ".TBL_LADDERS." ADD Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'",
+	"ALTER TABLE ".TBL_LADDERS." ADD Status varchar(20) DEFAULT 'active'",
+	"ALTER TABLE ".TBL_LADDERS." ADD PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'",
 	"ALTER TABLE ".TBL_MATCHS." ADD Map int DEFAULT '0'",
 	"ALTER TABLE ".TBL_SCORES." ADD Faction int DEFAULT '0'",
 	"ALTER TABLE ".TBL_GAMES." ADD ShortName varchar(63) ",
@@ -523,15 +520,15 @@ if (versionsCompare($eb_version_string, "0.8.4"))
 {
 	// To revision 0.8.4
 	array_push ($upgrade_alter_tables,
-	"ALTER TABLE ".TBL_EVENTS." ADD ChallengesEnable tinyint(1) DEFAULT '0'",
+	"ALTER TABLE ".TBL_LADDERS." ADD ChallengesEnable tinyint(1) DEFAULT '0'",
 	"ALTER TABLE ".TBL_MATCHS." ADD TimeScheduled int(11) unsigned not null",
 	"CREATE TABLE ".TBL_CHALLENGES."
 	(
 	ChallengeID int NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY(ChallengeID),
-	Event int NOT NULL,
-	INDEX (Event),
-	FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
+	Ladder int NOT NULL,
+	INDEX (Ladder),
+	FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
 	ChallengerPlayer int NOT NULL,
 	INDEX (ChallengerPlayer),
 	FOREIGN KEY (ChallengerPlayer) REFERENCES ".TBL_PLAYERS." (PlayerID),
@@ -560,8 +557,8 @@ if (versionsCompare($eb_version_string, "0.8.5"))
 	// To revision 0.8.5
 	array_push ($upgrade_alter_tables,
 	"ALTER TABLE ".TBL_MATCHS." CHANGE Map Maps varchar(255) NOT NULL default '0'",
-	"ALTER TABLE ".TBL_EVENTS." ADD MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."'",
-	"ALTER TABLE ".TBL_EVENTS." ADD MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."'",
+	"ALTER TABLE ".TBL_LADDERS." ADD MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."'",
+	"ALTER TABLE ".TBL_LADDERS." ADD MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."'",
 	"ALTER TABLE ".TBL_CLANS." ADD websiteURL varchar(100) NOT NULL default ''",
 	"ALTER TABLE ".TBL_CLANS." ADD email varchar(100) NOT NULL default ''",
 	"ALTER TABLE ".TBL_CLANS." ADD IM varchar(100) NOT NULL default ''",
@@ -582,7 +579,7 @@ if (versionsCompare($eb_version_string, "0.8.10"))
 {
 	// To revision 0.8.10
 	array_push_associative ($upgrade_add_prefs, array(
-	"eb_links_showcreateevent" => 1,
+	"eb_links_showcreateladder" => 1,
 	"eb_links_showcreateteam" => 1,
 	"eb_links_showmatchsplayed" => 1,
 	"eb_links_showmatchstoapprove" => 1,

@@ -1,12 +1,12 @@
 <?php
 /**
-* events.php
+* ladders.php
 *
 */
 
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
-require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/ladder.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 
 /*******************************************************************
@@ -23,15 +23,15 @@ $text .= '
 $text .= '
 <div class="tab-pane" id="tab-pane-9">
 <div class="tab-page">
-<div class="tab">'.EB_EVENTP_L2.'</div>
+<div class="tab">'.EB_LADDERP_L2.'</div>
 ';
-displayPastEvents();
+displayPastLadders();
 $text .= '
 </div>
 </div>
 ';
 
-$ns->tablerender(EB_EVENTP_L1, $text);
+$ns->tablerender(EB_LADDERP_L1, $text);
 require_once(FOOTERF);
 exit;
 
@@ -39,10 +39,10 @@ exit;
 Functions
 ***************************************************************************************/
 /**
-* displayEvents - Displays the events database table in
+* displayLadders - Displays the ladders database table in
 * a nicely formatted html table.
 */
-function displayPastEvents(){
+function displayPastLadders(){
     global $sql;
     global $text;
     global $time;
@@ -54,8 +54,8 @@ function displayPastEvents(){
     // Drop down list to select Games to display
     $q = "SELECT DISTINCT ".TBL_GAMES.".*"
     ." FROM ".TBL_GAMES.", "
-    . TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+    . TBL_LADDERS
+    ." WHERE (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
     ." ORDER BY Name";
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
@@ -63,9 +63,9 @@ function displayPastEvents(){
     $text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="post">';
     $text .= '<table>';
     $text .= '<tr><td>';
-    $text .= EB_EVENTS_L9.'<br />';
+    $text .= EB_LADDERS_L9.'<br />';
     $text .= '<select class="tbox" name="gameid">';
-    $text .= '<option value="All">'.EB_EVENTS_L10.'</option>';
+    $text .= '<option value="All">'.EB_LADDERS_L10.'</option>';
     for($i=0; $i<$num_rows; $i++){
         $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
         $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -75,7 +75,7 @@ function displayPastEvents(){
     $text .= '</td>';
     $text .= '<td>';
     $text .= '<br />';
-    $text .= ebImageTextButton('subgameselect', 'magnify.png', EB_EVENTS_L24);
+    $text .= ebImageTextButton('subgameselect', 'magnify.png', EB_LADDERS_L24);
     $text .= '</td>';
     $text .= '</tr>';
     $text .= '</table>';
@@ -86,56 +86,56 @@ function displayPastEvents(){
     {
         /* set pagination variables */
         $q = "SELECT count(*) "
-        ." FROM ".TBL_EVENTS
-        ." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
-        ."       AND (".TBL_EVENTS.".End_timestamp < $time)) ";
+        ." FROM ".TBL_LADDERS
+        ." WHERE (   (".TBL_LADDERS.".End_timestamp != '')"
+        ."       AND (".TBL_LADDERS.".End_timestamp < $time)) ";
         $result = $sql->db_Query($q);
         $totalItems = mysql_result($result, 0);
         $pages->items_total = $totalItems;
         $pages->mid_range = eb_PAGINATION_MIDRANGE;
         $pages->paginate();
 
-        $q = "SELECT ".TBL_EVENTS.".*, "
+        $q = "SELECT ".TBL_LADDERS.".*, "
         .TBL_GAMES.".*"
-        ." FROM ".TBL_EVENTS.", "
+        ." FROM ".TBL_LADDERS.", "
         .TBL_GAMES
-        ." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
-        ."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
-        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+        ." WHERE (   (".TBL_LADDERS.".End_timestamp != '')"
+        ."       AND (".TBL_LADDERS.".End_timestamp < $time)) "
+        ."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
         ." $pages->limit";
     }
     else
     {
         $q = "SELECT count(*) "
-        ." FROM ".TBL_EVENTS
-        ." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
-        ."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
-        ."   AND (".TBL_EVENTS.".Game = ".$_POST['gameid'].")";
+        ." FROM ".TBL_LADDERS
+        ." WHERE (   (".TBL_LADDERS.".End_timestamp != '')"
+        ."       AND (".TBL_LADDERS.".End_timestamp < $time)) "
+        ."   AND (".TBL_LADDERS.".Game = ".$_POST['gameid'].")";
         $result = $sql->db_Query($q);
         $totalItems = mysql_result($result, 0);
         $pages->items_total = $totalItems;
         $pages->mid_range = eb_PAGINATION_MIDRANGE;
         $pages->paginate();
 
-        $q = "SELECT ".TBL_EVENTS.".*, "
+        $q = "SELECT ".TBL_LADDERS.".*, "
         .TBL_GAMES.".*"
-        ." FROM ".TBL_EVENTS.", "
+        ." FROM ".TBL_LADDERS.", "
         .TBL_GAMES
-        ." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
-        ."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
-        ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-        ."   AND (".TBL_EVENTS.".Game = ".$_POST['gameid'].")"
+        ." WHERE (   (".TBL_LADDERS.".End_timestamp != '')"
+        ."       AND (".TBL_LADDERS.".End_timestamp < $time)) "
+        ."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+        ."   AND (".TBL_LADDERS.".Game = ".$_POST['gameid'].")"
         ." $pages->limit";
     }
     $result = $sql->db_Query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysql_numrows($result);
     if(!$result || ($num_rows < 0)){
-        $text .= EB_EVENTS_L11;
+        $text .= EB_LADDERS_L11;
         return;
     }
     if($num_rows == 0){
-        $text .= '<div>'.EB_EVENTS_L12.'</div>';
+        $text .= '<div>'.EB_LADDERS_L12.'</div>';
         return;
     }
 
@@ -152,22 +152,22 @@ function displayPastEvents(){
     /* Display table contents */
     $text .= '<table class="fborder" style="width:95%"><tbody>';
     $text .= '<tr>
-    <td class="forumheader"><b>'.EB_EVENTS_L13.'</b></td>
-    <td colspan="2" class="forumheader"><b>'.EB_EVENTS_L14.'</b></td>
-    <td class="forumheader"><b>'.EB_EVENTS_L15.'</b></td>
-    <td class="forumheader"><b>'.EB_EVENTS_L16.'</b></td>
-    <td class="forumheader"><b>'.EB_EVENTS_L17.'</b></td>
-    <td class="forumheader"><b>'.EB_EVENTS_L18.'</b></td>
-    <td class="forumheader"><b>'.EB_EVENTS_L19.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L13.'</b></td>
+    <td colspan="2" class="forumheader"><b>'.EB_LADDERS_L14.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L15.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L16.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L17.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L18.'</b></td>
+    <td class="forumheader"><b>'.EB_LADDERS_L19.'</b></td>
     </tr>';
     for($i=0; $i<$num_rows; $i++){
         $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
         $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-        $eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
-        $ename  = mysql_result($result,$i, TBL_EVENTS.".Name");
-        $etype = mysql_result($result,$i, TBL_EVENTS.".Type");
-        $estart = mysql_result($result,$i, TBL_EVENTS.".Start_timestamp");
-        $eend = mysql_result($result,$i, TBL_EVENTS.".End_timestamp");
+        $eid  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+        $ename  = mysql_result($result,$i, TBL_LADDERS.".Name");
+        $etype = mysql_result($result,$i, TBL_LADDERS.".Type");
+        $estart = mysql_result($result,$i, TBL_LADDERS.".Start_timestamp");
+        $eend = mysql_result($result,$i, TBL_LADDERS.".End_timestamp");
         if($estart!=0)
         {
             $estart_local = $estart + TIMEOFFSET;
@@ -190,7 +190,7 @@ function displayPastEvents(){
         /* Nbr players */
         $q_2 = "SELECT COUNT(*) as NbrPlayers"
         ." FROM ".TBL_PLAYERS
-        ." WHERE (Event = '$eid')";
+        ." WHERE (Ladder = '$eid')";
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);
         $nbrplayers = $row['NbrPlayers'];
@@ -198,7 +198,7 @@ function displayPastEvents(){
         $q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
         ." FROM ".TBL_MATCHS.", "
         .TBL_SCORES
-        ." WHERE (Event = '$eid')"
+        ." WHERE (Ladder = '$eid')"
         ." AND (".TBL_MATCHS.".Status = 'active')"
         ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
         $result_2 = $sql->db_Query($q_2);
@@ -211,10 +211,10 @@ function displayPastEvents(){
         )
         {
             $text .= '<tr>
-            <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></td>
+            <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a></td>
             <td class="forumheader3"><img '.getGameIconResize($gicon).'/></td>
             <td class="forumheader3">'.$gname.'</td>
-            <td class="forumheader3">'.eventType($etype).'</td>
+            <td class="forumheader3">'.ladderType($etype).'</td>
             <td class="forumheader3">'.$date_start.'</td>
             <td class="forumheader3">'.$date_end.'</td>
             <td class="forumheader3">'.$nbrplayers.'</td>
@@ -224,7 +224,7 @@ function displayPastEvents(){
     }
     $text .= '</tbody></table>';
 
-    $text .= '<br />'.EB_EVENTP_L3.' [<a href="'.e_PLUGIN.'ebattles/events.php">'.EB_EVENTP_L4.'</a>]<br />';
+    $text .= '<br />'.EB_LADDERP_L3.' [<a href="'.e_PLUGIN.'ebattles/ladders.php">'.EB_LADDERP_L4.'</a>]<br />';
 }
 
 ?>

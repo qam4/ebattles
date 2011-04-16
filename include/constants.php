@@ -16,8 +16,8 @@
 define("TBL_PREFIX", "ebattles_");
 
 define("TBL_USERS_SHORT",           "user");
-define("TBL_EVENTS_SHORT",          TBL_PREFIX."Events");
-define("TBL_EVENTMODS_SHORT",       TBL_PREFIX."EventModerators");
+define("TBL_LADDERS_SHORT",          TBL_PREFIX."Ladders");
+define("TBL_LADDERMODS_SHORT",       TBL_PREFIX."LadderModerators");
 define("TBL_TEAMS_SHORT",           TBL_PREFIX."Teams");
 define("TBL_MATCHS_SHORT",          TBL_PREFIX."Matchs");
 define("TBL_PLAYERS_SHORT",         TBL_PREFIX."Players");
@@ -37,8 +37,8 @@ define("TBL_MEDIA_SHORT",           TBL_PREFIX."Media");
 define("TBL_CHALLENGES_SHORT",      TBL_PREFIX."Challenges");
 
 define("TBL_USERS",           MPREFIX."user");
-define("TBL_EVENTS",          MPREFIX.TBL_EVENTS_SHORT);
-define("TBL_EVENTMODS",       MPREFIX.TBL_EVENTMODS_SHORT);
+define("TBL_LADDERS",          MPREFIX.TBL_LADDERS_SHORT);
+define("TBL_LADDERMODS",       MPREFIX.TBL_LADDERMODS_SHORT);
 define("TBL_TEAMS",           MPREFIX.TBL_TEAMS_SHORT);
 define("TBL_MATCHS",          MPREFIX.TBL_MATCHS_SHORT);
 define("TBL_PLAYERS",         MPREFIX.TBL_PLAYERS_SHORT);
@@ -81,14 +81,14 @@ define("PointsPerLoss_DEFAULT" , 0);
 
 // Match report userclass
 define("eb_UC_EB_MODERATOR", 8);
-define("eb_UC_EVENT_OWNER", 4);
-define("eb_UC_EVENT_MODERATOR", 2);
-define("eb_UC_EVENT_PLAYER", 1);
+define("eb_UC_LADDER_OWNER", 4);
+define("eb_UC_LADDER_MODERATOR", 2);
+define("eb_UC_LADDER_PLAYER", 1);
 define("eb_UC_NONE", 0);
 
 define("eb_PAGINATION_MIDRANGE", 7);
 
-define("eb_MATCH_NOEVENTINFO", 1);
+define("eb_MATCH_NOLADDERINFO", 1);
 define("eb_MATCH_SCHEDULED", 2);
 
 define("eb_MAX_CHALLENGE_DATES", 3);

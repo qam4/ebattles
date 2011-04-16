@@ -1,5 +1,5 @@
 <?php
-// functions for events.
+// functions for ladders.
 //___________________________________________________________________
 require_once(e_PLUGIN.'ebattles/include/main.php');
 require_once(e_PLUGIN.'ebattles/include/match.php');
@@ -9,20 +9,20 @@ require_once(e_PLUGIN."ebattles/include/updateteamstats.php");
 /***************************************************************************************
 Functions
 ***************************************************************************************/
-function resetPlayers($event_id)
+function resetPlayers($ladder_id)
 {
 	global $sql;
-	$q2 = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
+	$q2 = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result2 = $sql->db_Query($q2);
-	$eELOdefault = mysql_result($result2,0 , TBL_EVENTS.".ELO_default");
-	$eTS_default_mu  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_mu");
-	$eTS_default_sigma  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_sigma");
+	$eELOdefault = mysql_result($result2,0 , TBL_LADDERS.".ELO_default");
+	$eTS_default_mu  = mysql_result($result2, 0, TBL_LADDERS.".TS_default_mu");
+	$eTS_default_sigma  = mysql_result($result2, 0, TBL_LADDERS.".TS_default_sigma");
 
 	$q2 = "SELECT ".TBL_PLAYERS.".*"
 	." FROM ".TBL_PLAYERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')";
 	$result2 = $sql->db_Query($q2);
 	$num_players = mysql_numrows($result2);
 	if ($num_players!=0)
@@ -54,20 +54,20 @@ function resetPlayers($event_id)
 		}
 	}
 }
-function resetTeams($event_id)
+function resetTeams($ladder_id)
 {
 	global $sql;
-	$q2 = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
+	$q2 = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result2 = $sql->db_Query($q2);
-	$eELOdefault = mysql_result($result2,0 , TBL_EVENTS.".ELO_default");
-	$eTS_default_mu  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_mu");
-	$eTS_default_sigma  = mysql_result($result2, 0, TBL_EVENTS.".TS_default_sigma");
+	$eELOdefault = mysql_result($result2,0 , TBL_LADDERS.".ELO_default");
+	$eTS_default_mu  = mysql_result($result2, 0, TBL_LADDERS.".TS_default_mu");
+	$eTS_default_sigma  = mysql_result($result2, 0, TBL_LADDERS.".TS_default_sigma");
 
 	$q2 = "SELECT ".TBL_TEAMS.".*"
 	." FROM ".TBL_TEAMS
-	." WHERE (".TBL_TEAMS.".Event = '$event_id')";
+	." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')";
 	$result2 = $sql->db_Query($q2);
 	$num_teams = mysql_numrows($result2);
 	if ($num_teams!=0)
@@ -94,12 +94,12 @@ function resetTeams($event_id)
 		}
 	}
 }
-function deleteMatches($event_id)
+function deleteMatches($ladder_id)
 {
 	global $sql;
 	$q2 = "SELECT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS
-	." WHERE (".TBL_MATCHS.".Event = '$event_id')";
+	." WHERE (".TBL_MATCHS.".Ladder = '$ladder_id')";
 	$result2 = $sql->db_Query($q2);
 	$num_matches = mysql_numrows($result2);
 	if ($num_matches!=0)
@@ -116,11 +116,11 @@ function deleteMatches($event_id)
 		}
 	}
 }
-function deleteChallenges($event_id)
+function deleteChallenges($ladder_id)
 {
 	global $sql;
 	$q2 = "DELETE FROM ".TBL_CHALLENGES
-	." WHERE (".TBL_CHALLENGES.".Event = '$event_id')";
+	." WHERE (".TBL_CHALLENGES.".Ladder = '$ladder_id')";
 	$result2 = $sql->db_Query($q2);
 }
 function deletePlayerMatches($player_id)
@@ -147,12 +147,12 @@ function deletePlayerMatches($player_id)
 		}
 	}
 }
-function deletePlayers($event_id)
+function deletePlayers($ladder_id)
 {
 	global $sql;
 	$q2 = "SELECT ".TBL_PLAYERS.".*"
 	." FROM ".TBL_PLAYERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')";
 	$result2 = $sql->db_Query($q2);
 	$num_players = mysql_numrows($result2);
 	if ($num_players!=0)
@@ -173,25 +173,25 @@ function deletePlayer($pID)
 	$result = $sql->db_Query($q);
 }
 
-function deleteTeams($event_id)
+function deleteTeams($ladder_id)
 {
 	global $sql;
 	$q3 = "DELETE FROM ".TBL_TEAMS
-	." WHERE (".TBL_TEAMS.".Event = '$event_id')";
+	." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')";
 	$result3 = $sql->db_Query($q3);
 }
-function deleteMods($event_id)
+function deleteMods($ladder_id)
 {
 	global $sql;
-	$q3 = "DELETE FROM ".TBL_EVENTMODS
-	." WHERE (".TBL_EVENTMODS.".Event = '$event_id')";
+	$q3 = "DELETE FROM ".TBL_LADDERMODS
+	." WHERE (".TBL_LADDERMODS.".Ladder = '$ladder_id')";
 	$result3 = $sql->db_Query($q3);
 }
-function deleteStatsCats($event_id)
+function deleteStatsCats($ladder_id)
 {
 	global $sql;
 	$q3 = "DELETE FROM ".TBL_STATSCATEGORIES
-	." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
+	." WHERE (".TBL_STATSCATEGORIES.".Ladder = '$ladder_id')";
 	$result3 = $sql->db_Query($q3);
 }
 function deleteAwards($player_id)
@@ -201,23 +201,23 @@ function deleteAwards($player_id)
 	." WHERE (".TBL_AWARDS.".Player = '$player_id')";
 	$result3 = $sql->db_Query($q3);
 }
-function deleteEvent($event_id)
+function deleteLadder($ladder_id)
 {
 	global $sql;
-	deleteMatches($event_id);
-	deleteChallenges($event_id);
-	deletePlayers($event_id);
-	deleteTeams($event_id);
-	deleteMods($event_id);
-	deleteStatsCats($event_id);
-	$q3 = "DELETE FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
+	deleteMatches($ladder_id);
+	deleteChallenges($ladder_id);
+	deletePlayers($ladder_id);
+	deleteTeams($ladder_id);
+	deleteMods($ladder_id);
+	deleteStatsCats($ladder_id);
+	$q3 = "DELETE FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result3 = $sql->db_Query($q3);
 }
 /**
-* eventScoresUpdate - Re-calculate the scores and players of an event
+* ladderScoresUpdate - Re-calculate the scores and players of an ladder
 */
-function eventScoresUpdate($event_id, $current_match)
+function ladderScoresUpdate($ladder_id, $current_match)
 {
 	global $sql;
 	global $time;
@@ -226,18 +226,18 @@ function eventScoresUpdate($event_id, $current_match)
 
 	$numMatchsPerUpdate = 10;
 
-	/* Event Info */
-	$q = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	/* Ladder Info */
+	$q = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
 	//fm: attention if estart is not set.
-	$estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+	$estart = mysql_result($result,0 , TBL_LADDERS.".Start_timestamp");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
 
 	$q = "SELECT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS
-	." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+	." WHERE (".TBL_MATCHS.".Ladder = '$ladder_id')"
 	." AND (".TBL_MATCHS.".Status = 'active')"
 	." ORDER BY TimeReported";
 	$result = $sql->db_Query($q);
@@ -249,19 +249,19 @@ function eventScoresUpdate($event_id, $current_match)
 		switch($etype)
 		{
 			case "One Player Ladder":
-			updateStats($event_id, $time, TRUE);
+			updateStats($ladder_id, $time, TRUE);
 			break;
 			case "Team Ladder":
-			updateStats($event_id, $time, TRUE);
-			updateTeamStats($event_id, $time, TRUE);
+			updateStats($ladder_id, $time, TRUE);
+			updateTeamStats($ladder_id, $time, TRUE);
 			break;
 			case "ClanWar":
-			updateTeamStats($event_id, $time, TRUE);
+			updateTeamStats($ladder_id, $time, TRUE);
 			break;
 			default:
 		}
 		echo "Done.";
-		echo '<META HTTP-EQUIV="Refresh" Content="0; URL=eventmanage.php?eventid='.$event_id.'">';
+		echo '<META HTTP-EQUIV="Refresh" Content="0; URL=laddermanage.php?LadderID='.$ladder_id.'">';
 	}
 	else
 	{
@@ -269,20 +269,20 @@ function eventScoresUpdate($event_id, $current_match)
 		if ($current_match == 0)
 		{
 			// Reset players stats
-			resetPlayers($event_id);
-			resetTeams($event_id);
+			resetPlayers($ladder_id);
+			resetTeams($ladder_id);
 
 			switch($etype)
 			{
 				case "One Player Ladder":
-				updateStats($event_id, $estart, FALSE);
+				updateStats($ladder_id, $estart, FALSE);
 				break;
 				case "Team Ladder":
-				updateStats($event_id, $estart, FALSE);
-				updateTeamStats($event_id, $estart, FALSE);
+				updateStats($ladder_id, $estart, FALSE);
+				updateTeamStats($ladder_id, $estart, FALSE);
 				break;
 				case "ClanWar":
-				updateTeamStats($event_id, $estart, FALSE);
+				updateTeamStats($ladder_id, $estart, FALSE);
 				break;
 				default:
 			}
@@ -313,16 +313,16 @@ function eventScoresUpdate($event_id, $current_match)
 				{
 					case "One Player Ladder":
 					match_players_update($mID);
-					updateStats($event_id, $estart, FALSE);
+					updateStats($ladder_id, $estart, FALSE);
 					break;
 					case "Team Ladder":
 					match_players_update($mID);
-					updateStats($event_id, $estart, FALSE);
-					updateTeamStats($event_id, $estart, FALSE);
+					updateStats($ladder_id, $estart, FALSE);
+					updateTeamStats($ladder_id, $estart, FALSE);
 					break;
 					case "ClanWar":
 					match_teams_update($mID);
-					updateTeamStats($event_id, $estart, FALSE);
+					updateTeamStats($ladder_id, $estart, FALSE);
 					break;
 					default:
 				}
@@ -336,9 +336,9 @@ function eventScoresUpdate($event_id, $current_match)
 			}
 		}
 
-		echo '<form name="updateform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+		echo '<form name="updateform" action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
 		echo '<input type="hidden" name="match" value="'.$next_match.'"/>';
-		echo '<input type="hidden" name="eventupdatescores" value="1"/>';
+		echo '<input type="hidden" name="ladderupdatescores" value="1"/>';
 		echo '</form>';
 		echo '<script language="javascript">document.updateform.submit()</script>';
 
@@ -347,20 +347,20 @@ function eventScoresUpdate($event_id, $current_match)
 	exit;
 }
 /**
-* eventAddPlayer - add a user to an event
+* ladderAddPlayer - add a user to an ladder
 */
-function eventAddPlayer($event_id, $user, $team = 0, $notify)
+function ladderAddPlayer($ladder_id, $user, $team = 0, $notify)
 {
 	global $sql;
 
-	$q = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".EventID = '$event_id')";
+	$q = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
-	$eELOdefault = mysql_result($result, 0, TBL_EVENTS.".ELO_default");
-	$eTS_default_mu = mysql_result($result, 0, TBL_EVENTS.".TS_default_mu");
-	$eTS_default_sigma = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
-	$ename = mysql_result($result, 0, TBL_EVENTS.".Name");
+	$eELOdefault = mysql_result($result, 0, TBL_LADDERS.".ELO_default");
+	$eTS_default_mu = mysql_result($result, 0, TBL_LADDERS.".TS_default_mu");
+	$eTS_default_sigma = mysql_result($result, 0, TBL_LADDERS.".TS_default_sigma");
+	$ename = mysql_result($result, 0, TBL_LADDERS.".Name");
 
 	$q = "SELECT ".TBL_USERS.".*"
 	." FROM ".TBL_USERS
@@ -369,12 +369,12 @@ function eventAddPlayer($event_id, $user, $team = 0, $notify)
 	$username = mysql_result($result, 0, TBL_USERS.".user_name");
 	$useremail = mysql_result($result, 0, TBL_USERS.".user_email");
 	//dbg:echo "user: $user, $username<br>";
-	//dbg:echo "event_id: $event_id, team: $team, user: $user<br>";
+	//dbg:echo "ladder_id: $ladder_id, team: $team, user: $user<br>";
 
 	// Is the user already signed up for the team?
 	$q = "SELECT ".TBL_PLAYERS.".*"
 	." FROM ".TBL_PLAYERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 	."   AND (".TBL_PLAYERS.".Team = '$team')"
 	."   AND (".TBL_PLAYERS.".User = '$user')";
 	$result = $sql->db_Query($q);
@@ -382,23 +382,23 @@ function eventAddPlayer($event_id, $user, $team = 0, $notify)
 	//dbg:echo "num_rows: $num_rows<br>";
 	if ($num_rows==0)
 	{
-		$q = " INSERT INTO ".TBL_PLAYERS."(Event,User,Team,ELORanking,TS_mu,TS_sigma)
-		VALUES ($event_id,$user,$team,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
+		$q = " INSERT INTO ".TBL_PLAYERS."(Ladder,User,Team,ELORanking,TS_mu,TS_sigma)
+		VALUES ($ladder_id,$user,$team,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
 		$sql->db_Query($q);
 		echo "player created, query: $q<br>";
-		$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+		$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
 		$sql->db_Query($q);
 
 		if ($notify)
 		{
 			$sendto = $user;
 			$subject = SITENAME." $ename";
-			$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$ename.EB_EVENTS_L29.EB_EVENTS_L31.USERNAME;
+			$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$ename.EB_LADDERS_L29.EB_LADDERS_L31.USERNAME;
 			sendNotification($sendto, $subject, $message, $fromid=0);
 
 			// Send email
-			//$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$ename.EB_EVENTS_L30."<a href='".SITEURLBASE.e_PLUGIN_ABS."ebattles/eventinfo.php?eventid=$event_id'>$ename</a>.".EB_EVENTS_L31.USERNAME.EB_EVENTS_L32;
-			$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$ename.EB_EVENTS_L30.SITEURLBASE.e_PLUGIN_ABS."ebattles/eventinfo.php?eventid=$event_id".EB_EVENTS_L31.USERNAME;
+			//$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$ename.EB_LADDERS_L30."<a href='".SITEURLBASE.e_PLUGIN_ABS."ebattles/ladderinfo.php?LadderID=$ladder_id'>$ename</a>.".EB_LADDERS_L31.USERNAME.EB_LADDERS_L32;
+			$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$ename.EB_LADDERS_L30.SITEURLBASE.e_PLUGIN_ABS."ebattles/ladderinfo.php?LadderID=$ladder_id".EB_LADDERS_L31.USERNAME;
 			require_once(e_HANDLER."mail.php");
 			sendemail($useremail, $subject, $message);
 		}
@@ -407,21 +407,21 @@ function eventAddPlayer($event_id, $user, $team = 0, $notify)
 
 
 /**
-* eventAddDivision - add a division to an event
+* ladderAddDivision - add a division to an ladder
 */
-function eventAddDivision($event_id, $div_id, $notify)
+function ladderAddDivision($ladder_id, $div_id, $notify)
 {
 	global $sql;
 
-	/* Event Info */
-	$q = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
+	/* Ladder Info */
+	$q = "SELECT ".TBL_LADDERS.".*"
+	." FROM ".TBL_LADDERS
+	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-	$eELOdefault = mysql_result($result, 0, TBL_EVENTS.".ELO_default");
-	$eTS_default_mu = mysql_result($result, 0, TBL_EVENTS.".TS_default_mu");
-	$eTS_default_sigma = mysql_result($result, 0, TBL_EVENTS.".TS_default_sigma");
+	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+	$eELOdefault = mysql_result($result, 0, TBL_LADDERS.".ELO_default");
+	$eTS_default_mu = mysql_result($result, 0, TBL_LADDERS.".TS_default_mu");
+	$eTS_default_sigma = mysql_result($result, 0, TBL_LADDERS.".TS_default_sigma");
 
 	//$add_players = ( $etype == "ClanWar" ? FALSE : TRUE);
 	$add_players = TRUE;
@@ -429,20 +429,20 @@ function eventAddDivision($event_id, $div_id, $notify)
 	// Is the division signed up
 	$q = "SELECT ".TBL_TEAMS.".*"
 	." FROM ".TBL_TEAMS
-	." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+	." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')"
 	." AND (".TBL_TEAMS.".Division = '$div_id')";
 	$result = $sql->db_Query($q);
 	$numTeams = mysql_numrows($result);
 	if($numTeams == 0)
 	{
-		$q = "INSERT INTO ".TBL_TEAMS."(Event,Division,ELORanking,TS_mu,TS_sigma)
-		VALUES ($event_id,$div_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
+		$q = "INSERT INTO ".TBL_TEAMS."(Ladder,Division,ELORanking,TS_mu,TS_sigma)
+		VALUES ($ladder_id,$div_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
 		$sql->db_Query($q);
 		$team_id =  mysql_insert_id();
 
 		if ($add_players == TRUE)
 		{
-			// All members of this division will automatically be signed up to this event
+			// All members of this division will automatically be signed up to this ladder
 			$q_2 = "SELECT ".TBL_DIVISIONS.".*, "
 			.TBL_MEMBERS.".*, "
 			.TBL_USERS.".*"
@@ -459,27 +459,27 @@ function eventAddDivision($event_id, $div_id, $notify)
 				for($j=0; $j<$num_rows_2; $j++)
 				{
 					$mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
-					eventAddPlayer ($event_id, $mid, $team_id, $notify);
+					ladderAddPlayer ($ladder_id, $mid, $team_id, $notify);
 				}
-				$q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
+				$q4 = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
 				$result = $sql->db_Query($q4);
 			}
 		}
 	}
 }
 
-function eventType($type)
+function ladderType($type)
 {
 	switch($type)
 	{
 		case "One Player Ladder":
-		return EB_EVENTS_L22;
+		return EB_LADDERS_L22;
 		break;
 		case "Team Ladder":
-		return EB_EVENTS_L23;
+		return EB_LADDERS_L23;
 		break;
 		case "ClanWar":
-		return EB_EVENTS_L25;
+		return EB_LADDERS_L25;
 		break;
 		default:
 		return $type;
