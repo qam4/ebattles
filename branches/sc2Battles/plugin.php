@@ -160,7 +160,7 @@ match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_PLAY
 quick_loss_report tinyint(1) DEFAULT '1',
 hide_ratings_column tinyint(1) DEFAULT '0',
 MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-RankingType varchar(20) DEFAULT 'CombinedStats',
+RankingType varchar(20) DEFAULT 'Classic',
 Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 Status varchar(20) DEFAULT 'active',
 PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
@@ -332,7 +332,7 @@ INDEX (Ladder),
 FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
 CategoryName varchar(63),
 CategoryMinValue int DEFAULT '1',
-CategoryMaxValue int DEFAULT '100',
+CategoryMaxValue int DEFAULT '0',
 InfoOnly tinyint(1) DEFAULT '0'
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_AWARDS."

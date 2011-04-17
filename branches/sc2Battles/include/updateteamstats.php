@@ -61,18 +61,12 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 	$points_score = array();
 
 	/* Ladder Info */
-	$q = "SELECT ".TBL_LADDERS.".*"
-	." FROM ".TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-	$result = $sql->db_Query($q);
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-	$emingames = mysql_result($result,0 , TBL_LADDERS.".nbr_games_to_rank");
-	$eminteamgames = mysql_result($result,0 , TBL_LADDERS.".nbr_team_games_to_rank");
-	$ehide_ratings_column = mysql_result($result,0 , TBL_LADDERS.".hide_ratings_column");
-	$eranking_type = mysql_result($result,0 , TBL_LADDERS.".RankingType");
-	if ($eranking_type == "Classic") $ehide_ratings_column = TRUE;
+   	$ladder = new Ladder($ladder_id);
 
-	//Update Teams stats
+    $hide_ratings_column = $ladder->getField('hide_ratings_column');
+    if ($ladder->getField('RankingType') == "Classic") $hide_ratings_column = TRUE;
+    
+    //Update Teams stats
 	$q_Teams = "SELECT ".TBL_TEAMS.".*, "
 	.TBL_DIVISIONS.".*, "
 	.TBL_CLANS.".*"
@@ -115,7 +109,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		$tpoints = mysql_result($result_Teams,$team, TBL_TEAMS.".Points");
 		$tbanned  = mysql_result($result_Teams,$team, TBL_TEAMS.".Banned");
 
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "Team Ladder":
 			$tunique_opponents = 0;
@@ -343,7 +337,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		$scorediff_score[] = ($tgames_played>0) ? ($tscore - $toppscore)/$tgames_played : 0;
 		$points_score[] = $tpoints;
 
-		if ($tgames_played >= $eminteamgames)
+		if ($tgames_played >= $ladder->getField('nbr_team_games_to_rank'))
 		{
 			$teams_rated++;
 		}
@@ -445,7 +439,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 				$stat_display[$cat_index] = $opponentsELO;
 				break;
 				case "Streaks":
-				switch($etype)
+				switch($ladder->getField('Type'))
 				{
 					case "Team Ladder":
 					$display_cat = 0;
@@ -501,7 +495,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 			{
 				$stat_InfoOnly[$cat_index] = $cat_InfoOnly;
 
-				switch($eranking_type)
+				switch($ladder->getField('RankingType'))
 				{
 					case "CombinedStats":
 					if (($cat_InfoOnly == TRUE))
@@ -564,7 +558,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 	"0"=>array('header','<b>'.EB_STATS_L28.'</b>','<b>'.EB_STATS_L39.'</b>')
 	);
 
-	switch($etype)
+	switch($ladder->getField('Type'))
 	{
 		case "Team Ladder":
 		$stats[0][] = '<b>'.EB_STATS_L40.'</b>';
@@ -575,7 +569,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 	// user rating not shown
 	// $stats[0][] = '<b>'.EB_STATS_L30.'</b>';
 
-	if ($ehide_ratings_column == FALSE)
+	if ($hide_ratings_column == FALSE)
 	$stats[0][] = '<b title="'.EB_STATS_L31.' ['.number_format ($rating_max,2).' '.EB_STATS_L27.']">'.EB_STATS_L32.'</b>';
 	//$stats[0][] = '<b title="'.EB_STATS_L31.'">'.EB_STATS_L32.'</b><br /><div class="smalltext">['.number_format ($rating_max,2).'&nbsp;'.EB_STATS_L27.']</div>';
 
@@ -584,7 +578,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		$stats[0][] = $stat_cat_header[$category];
 	}
 
-	switch($eranking_type)
+	switch($ladder->getField('RankingType'))
 	{
 		case "CombinedStats":
 		$OverallScoreThreshold = 0;
@@ -592,7 +586,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		for($team=0; $team < $numTeams; $team++)
 		{
 			$OverallScore[$team]=0;
-			if ($games_played[$team] >= $eminteamgames)
+			if ($games_played[$team] >= $ladder->getField('nbr_team_games_to_rank'))
 			{
 				for ($category=0; $category < $numDisplayedCategories; $category++)
 				{
@@ -622,7 +616,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		$OverallScoreThreshold = $numTeams;
 		for($team=0; $team < $numTeams; $team++)
 		{
-			if ($games_played[$team] >= $eminteamgames)
+			if ($games_played[$team] >= $ladder->getField('nbr_team_games_to_rank'))
 			{
 				$OverallScore[$team] = array_search($team, $ranks, false) + $numTeams + 1;
 			}
@@ -796,19 +790,19 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		$stats_row[] = $image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan[$index].'"><b>'.$name[$index].'</b></a>';
 		//  ('.$clantag[$index].')
 
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "Team Ladder":
 			$stats_row[] = "$nbr_players[$index]";
 			break;
 			default:
 		}
-		if ($ehide_ratings_column == FALSE)
+		if ($hide_ratings_column == FALSE)
 		$stats_row[] = number_format ($OverallScore[$index],2);
 
 		for ($category=0; $category < $numDisplayedCategories; $category++)
 		{
-			if (($stat_InfoOnly[$category] == TRUE)||($eranking_type == "Classic"))
+			if (($stat_InfoOnly[$category] == TRUE)||($ladder->getField('RankingType') == "Classic"))
 			{
 				$stats_row[] = $stat_display[$category][$index];
 			}

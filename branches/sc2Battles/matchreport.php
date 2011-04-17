@@ -82,28 +82,9 @@ document.getElementById("f_date").value = ""
 $ladder_id = $_GET['LadderID'];
 $match_id = $_GET['matchid'];
 
-$q = "SELECT ".TBL_LADDERS.".*"
-." FROM ".TBL_LADDERS
-." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-$result = $sql->db_Query($q);
+$ladder = new Ladder($ladder_id);
 
-$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
-$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-$eELO_K = mysql_result($result,0 , TBL_LADDERS.".ELO_K");
-$eELO_M = mysql_result($result,0 , TBL_LADDERS.".ELO_M");
-$eTS_beta = mysql_result($result,0 , TBL_LADDERS.".TS_beta");
-$eTS_epsilon = mysql_result($result,0 , TBL_LADDERS.".TS_epsilon");
-$ePointPerWin = mysql_result($result,0 , TBL_LADDERS.".PointsPerWin");
-$ePointPerDraw = mysql_result($result,0 , TBL_LADDERS.".PointsPerDraw");
-$ePointPerLoss = mysql_result($result,0 , TBL_LADDERS.".PointsPerLoss");
-$eAllowDraw = mysql_result($result,0 , TBL_LADDERS.".AllowDraw");
-$eAllowScore = mysql_result($result,0 , TBL_LADDERS.".AllowScore");
-$eAllowScore = mysql_result($result,0 , TBL_LADDERS.".AllowScore");
-$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
-$eGame = mysql_result($result,0 , TBL_LADDERS.".Game");
-$eMaxMapsPerMatch = mysql_result($result,0 , TBL_LADDERS.".MaxMapsPerMatch");
-
-switch($etype)
+switch($ladder->getField('Type'))
 {
 	case "One Player Ladder":
 	case "Team Ladder":
@@ -182,7 +163,7 @@ $text .= '
 if($match_id)
 {
 	// If match_id is not null, fill up the form information from the database
-	switch($etype)
+	switch($ladder->getField('Type'))
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
@@ -248,7 +229,7 @@ if($match_id)
 	$nbr_teams = 0;
 	for($score=0;$score < $numScores;$score++)
 	{
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -332,11 +313,11 @@ if (isset($_POST['submit']))
 	// List of all Maps
 	$q_Maps = "SELECT ".TBL_MAPS.".*"
 	." FROM ".TBL_MAPS
-	." WHERE (".TBL_MAPS.".Game = '$eGame')";
+	." WHERE (".TBL_MAPS.".Game = '$ladder->getField('Game')')";
 	$result_Maps = $sql->db_Query($q_Maps);
 	$numMaps = mysql_numrows($result_Maps);
 	$map = '';
-	for ($matchMap = 0; $matchMap<min($numMaps, $eMaxMapsPerMatch); $matchMap++)
+	for ($matchMap = 0; $matchMap<min($numMaps, $ladder->getField('MaxMapsPerMatch')); $matchMap++)
 	{
 		if (!isset($_POST['map'.$matchMap])) $_POST['map'.$matchMap] = '0';
 		if ($matchMap > 0) $map .= ',';
@@ -360,7 +341,7 @@ if (isset($_POST['submit']))
 		// Faction
 		if (!isset($_POST['faction'.$i])) $_POST['faction'.$i] = 0;
 
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -464,7 +445,7 @@ if (isset($_POST['submit']))
 
 	if(!isset($_POST['matchschedule']))
 	{
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -518,7 +499,7 @@ if (isset($_POST['submit']))
 
 	if (!empty($error_str)) {
 		// show form again
-		user_form($players_id, $players_name, $ladder_id, $match_id, $eAllowDraw, $eAllowScore,$userclass);
+		user_form($players_id, $players_name, $ladder_id, $match_id, $ladder->getField('AllowDraw'), $ladder->getField('AllowScore'),$userclass);
 		// errors have occured, halt execution and show form again.
 		$text .= '<p style="color:red">'.EB_MATCHR_L14;
 		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
@@ -599,7 +580,7 @@ if (isset($_POST['submit']))
 			$pscore = $_POST['score'.$i];
 			$pfaction = $_POST['faction'.$i];
 
-			switch($etype)
+			switch($ladder->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -627,7 +608,7 @@ if (isset($_POST['submit']))
 			$fromid = 0;
 			$subject = SITENAME." ".EB_MATCHR_L52;
 
-			switch($etype)
+			switch($ladder->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -671,7 +652,7 @@ if (isset($_POST['submit']))
 				{
 					$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
 					$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
-					$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$ename.EB_MATCHR_L56;
+					$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$ladder->getField('Name').EB_MATCHR_L56;
 					$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
 					$sendtoemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
 					if (check_class($pref['eb_pm_notifications_class']))
@@ -694,9 +675,9 @@ if (isset($_POST['submit']))
 			match_scores_update($match_id);
 
 			// Automatically Update Players stats only if Match Approval is Disabled
-			if ($eMatchesApproval == eb_UC_NONE)
+			if ($ladder->getField('MatchesApproval') == eb_UC_NONE)
 			{
-				switch($etype)
+				switch($ladder->getField('Type'))
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
@@ -733,7 +714,7 @@ if (isset($_POST['submit']))
 	{
 		$userclass = $_POST['userclass'];
 		// the form has not been submitted, let's show it
-		user_form($players_id, $players_name, $ladder_id, $match_id, $eAllowDraw, $eAllowScore,$userclass);
+		user_form($players_id, $players_name, $ladder_id, $match_id, $ladder->getField('AllowDraw'), $ladder->getField('AllowScore'),$userclass);
 	}
 }
 
@@ -741,7 +722,7 @@ $text .= '
 </div>
 ';
 
-$ns->tablerender("$ename (".ladderType($etype).") - ".EB_MATCHR_L32, $text);
+$ns->tablerender($ladder->getField('Name')." (".ladderTypeToString($ladder->getField('Type')).") - ".EB_MATCHR_L32, $text);
 require_once(FOOTERF);
 exit;
 ?>

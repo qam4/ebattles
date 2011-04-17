@@ -7,15 +7,8 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 	global $time;
 
 	/* Ladder Info */
-	$q = "SELECT ".TBL_LADDERS.".*"
-	." FROM ".TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-	$result = $sql->db_Query($q);
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-	$eGame = mysql_result($result,0 , TBL_LADDERS.".Game");
-	$eMaxMapsPerMatch = mysql_result($result,0 , TBL_LADDERS.".MaxMapsPerMatch");
-
-
+	$ladder = new Ladder($ladder_id);
+	
 	if (e_WYSIWYG)
 	{
 		$insertjs = "rows='15'";
@@ -74,7 +67,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 		$comment = '';
 	}
 
-	for ($matchMap = 0; $matchMap<min($numMaps, $eMaxMapsPerMatch); $matchMap++)
+	for ($matchMap = 0; $matchMap<min($numMaps, $ladder->getField('MaxMapsPerMatch')); $matchMap++)
 	{
 		if (!isset($_POST['map'.$matchMap])) $_POST['map'.$matchMap] = 0;
 	}
@@ -199,7 +192,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 	// List of all Factions
 	$q_Factions = "SELECT ".TBL_FACTIONS.".*"
 	." FROM ".TBL_FACTIONS
-	." WHERE (".TBL_FACTIONS.".Game = '$eGame')";
+	." WHERE (".TBL_FACTIONS.".Game = '$ladder->getField('Game')')";
 	$result_Factions = $sql->db_Query($q_Factions);
 	$numFactions = mysql_numrows($result_Factions);
 
@@ -308,7 +301,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 		// List of all Maps
 		$q_Maps = "SELECT ".TBL_MAPS.".*"
 		." FROM ".TBL_MAPS
-		." WHERE (".TBL_MAPS.".Game = '$eGame')";
+		." WHERE (".TBL_MAPS.".Game = '$ladder->getField('Game')')";
 		$result_Maps = $sql->db_Query($q_Maps);
 		$numMaps = mysql_numrows($result_Maps);
 
@@ -317,7 +310,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 			$text .= EB_MATCHR_L42;
 			$text .= '<table id="matchresult_selectMap"><tbody>';
 
-			for ($matchMap = 0; $matchMap<min($numMaps, $eMaxMapsPerMatch); $matchMap++)
+			for ($matchMap = 0; $matchMap<min($numMaps, $ladder->getField('MaxMapsPerMatch')); $matchMap++)
 			{
 				$text .= '<tr>';
 

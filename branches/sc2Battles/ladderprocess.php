@@ -35,19 +35,11 @@ if (!$ladder_id)
 }
 else
 {
-	$q = "SELECT ".TBL_LADDERS.".*"
-	." FROM ".TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-	$result = $sql->db_Query($q);
-	$eowner = mysql_result($result,0 , TBL_LADDERS.".Owner");
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-	$eELOdefault = mysql_result($result, 0, TBL_LADDERS.".ELO_default");
-	$eTS_default_mu  = mysql_result($result, 0, TBL_LADDERS.".TS_default_mu");
-	$eTS_default_sigma  = mysql_result($result, 0, TBL_LADDERS.".TS_default_sigma");
-
+	$ladder = new Ladder($ladder_id);
+	
 	$can_manage = 0;
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
-	if (USERID==$eowner) $can_manage = 1;
+	if (USERID==$ladder->getField('Owner')) $can_manage = 1;
 	if ($can_manage == 0)
 	{
 		header("Location: ./ladderinfo.php?LadderID=$ladder_id");
@@ -105,12 +97,6 @@ else
 
 		if(isset($_POST['laddersettingssave']))
 		{
-			$q2 = "SELECT ".TBL_LADDERS.".*"
-			." FROM ".TBL_LADDERS
-			." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-			$result2 = $sql->db_Query($q2);
-			$epassword = mysql_result($result2,0 , TBL_LADDERS.".Password");
-
 			/* Ladder Name */
 			$new_laddername = htmlspecialchars($_POST['laddername']);
 			if ($new_laddername != '')
@@ -308,7 +294,7 @@ else
 		{
 			$player = $_POST['player'];
 			$notify = (isset($_POST['ladderaddplayernotify'])? TRUE: FALSE);
-			ladderAddPlayer($ladder_id, $player, 0, $notify);
+			$ladder->ladderAddPlayer($player, 0, $notify);
 
 			//echo "-- ladderaddplayer --<br />";
 			header("Location: laddermanage.php?LadderID=$ladder_id");
@@ -318,7 +304,7 @@ else
 		{
 			$division = $_POST['division'];
 			$notify = (isset($_POST['ladderaddteamnotify'])? TRUE: FALSE);
-			ladderAddDivision($ladder_id, $division, $notify);
+			$ladder->ladderAddDivision($ladder_id, $division, $notify);
 
 			//echo "-- ladderaddteam --<br />";
 			header("Location: laddermanage.php?LadderID=$ladder_id");
@@ -361,15 +347,15 @@ else
 		if(isset($_POST['del_player_awards']) && $_POST['del_player_awards']!="")
 		{
 			$playerid = $_POST['del_player_awards'];
-			deleteAwards($playerid);
+			deletePlayerAwards($playerid);
 			header("Location: laddermanage.php?LadderID=$ladder_id");
 			exit();
 		}
 		if(isset($_POST['ladderresetscores']))
 		{
-			resetPlayers($ladder_id);
-			resetTeams($ladder_id);
-			deleteMatches($ladder_id);
+			$ladder->resetPlayers();
+			$ladder->resetTeams();
+			$ladder->deleteMatches();
 
 			//echo "-- ladderresetscores --<br />";
 			header("Location: laddermanage.php?LadderID=$ladder_id");
@@ -377,10 +363,10 @@ else
 		}
 		if(isset($_POST['ladderresetladder']))
 		{
-			deleteMatches($ladder_id);
-			deleteChallenges($ladder_id);
-			deletePlayers($ladder_id);
-			deleteTeams($ladder_id);
+			$ladder->deleteMatches();
+			$ladder->deleteChallenges();
+			$ladder->deletePlayers();
+			$ladder->deleteTeams();
 
 			//echo "-- ladderresetladder --<br />";
 			header("Location: laddermanage.php?LadderID=$ladder_id");
@@ -388,7 +374,7 @@ else
 		}
 		if(isset($_POST['ladderdelete']))
 		{
-			deleteLadder($ladder_id);
+			$ladder->deleteLadder();
 
 			//echo "-- ladderdelete --<br />";
 			header("Location: ladders.php");
@@ -398,7 +384,7 @@ else
 		{
 			if (!isset($_POST['match'])) $_POST['match'] = 0;
 			$current_match = $_POST['match'];
-			ladderScoresUpdate($ladder_id, $current_match);
+			$ladder->ladderScoresUpdate($current_match);
 		}
 		if(isset($_POST['ladderstatssave']))
 		{
@@ -406,7 +392,7 @@ else
 			$cat_index = 0;
 
 			/* Ladder Min games to rank */
-			if ($etype != "ClanWar")
+			if ($ladder->getField('Type') != "ClanWar")
 			{
 				$new_ladderGamesToRank = htmlspecialchars($_POST['sliderValue'.$cat_index]);
 				if (is_numeric($new_ladderGamesToRank))
@@ -417,7 +403,7 @@ else
 				$cat_index++;
 			}
 
-			if (($etype == "Team Ladder")||($etype == "ClanWar"))
+			if (($ladder->getField('Type') == "Team Ladder")||($ladder->getField('Type') == "ClanWar"))
 			{
 				/* Ladder Min Team games to rank */
 				$new_ladderTeamGamesToRank = htmlspecialchars($_POST['sliderValue'.$cat_index]);

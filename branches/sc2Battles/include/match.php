@@ -825,11 +825,7 @@ function deleteMatchScores($ladder_id, $match_id)
 	global $sql;
 
 	/* Ladder Info */
-	$q = "SELECT ".TBL_LADDERS.".*"
-	." FROM ".TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-	$result = $sql->db_Query($q);
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+   	$ladder = new Ladder($ladder_id);
 
 	switch($etype)
 	{

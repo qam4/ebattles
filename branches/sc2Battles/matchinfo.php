@@ -119,7 +119,6 @@ else
 	//dbg: print_r($categoriesToShow);
 
 	$mapImage = '';
-	$mapImage .= EB_MATCHR_L44.':<br>';
 	foreach($matchMaps as $matchMap)
 	{
 		if ($matchMap!='0')
@@ -137,6 +136,7 @@ else
 				$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
 				$mDescrition = ($mDescrition!='') ? ' - '.$mDescrition : '';
 
+				$mapImage .= EB_MATCHR_L44.':<br>';
 				$mapImage .= '<a href="'.getImagePath($mImage, 'games_maps').'" rel="shadowbox"><img '.getMapImageResize($mImage).' title="'.$mName.'" style="vertical-align:middle"/></a> '.$mName.$mDescrition.'<br /><br />';
 			}
 		}
@@ -648,7 +648,7 @@ else
 	$text .= '<br />'.EB_MATCHD_L15.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_MATCHD_L16.'</a>]<br />';
 	$text .= '</p>';
 
-	$ns->tablerender("$ename ($egame - ".ladderType($etype).")", $text);
+	$ns->tablerender("$ename ($egame - ".ladderTypeToString($etype).")", $text);
 
 	unset($text);
 

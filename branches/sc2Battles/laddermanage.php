@@ -1381,7 +1381,7 @@ else
     }
 }
 
-$ns->tablerender("$ename ($egame - ".ladderType($etype).") - ".EB_LADDERM_L1, $text);
+$ns->tablerender("$ename ($egame - ".ladderTypeToString($etype).") - ".EB_LADDERM_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

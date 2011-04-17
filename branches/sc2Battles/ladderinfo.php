@@ -46,15 +46,6 @@ else
 	$file = 'cache/sql_cache_ladder_'.$ladder_id.'.txt';
 	$file_team = 'cache/sql_cache_ladder_team_'.$ladder_id.'.txt';
 
-	$q = "SELECT ".TBL_LADDERS.".*"
-	." FROM ".TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-	$result = $sql->db_Query($q);
-	$eELOdefault = mysql_result($result, 0, TBL_LADDERS.".ELO_default");
-	$eTS_default_mu  = mysql_result($result, 0, TBL_LADDERS.".TS_default_mu");
-	$eTS_default_sigma  = mysql_result($result, 0, TBL_LADDERS.".TS_default_sigma");
-	$epassword = mysql_result($result, 0, TBL_LADDERS.".Password");
-
 	require_once(e_PLUGIN."ebattles/ladderinfo_process.php");
 
 	$q = "SELECT ".TBL_LADDERS.".*, "
@@ -66,30 +57,19 @@ else
 	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')"
 	."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
 	."   AND (".TBL_USERS.".user_id = ".TBL_LADDERS.".Owner)";
-
 	$result = $sql->db_Query($q);
-	$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
+
+	$ladder_id = mysql_result($result,0 , TBL_LADDERS.".LadderID");
+	$ladder = new Ladder($ladder_id);
+	
 	$egame = mysql_result($result,0 , TBL_GAMES.".Name");
 	$egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
 	$egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-	$eallowdraw = mysql_result($result,0 , TBL_LADDERS.".AllowDraw");
-	$eallowscore = mysql_result($result,0 , TBL_LADDERS.".AllowScore");
 	$eowner = mysql_result($result,0 , TBL_USERS.".user_id");
 	$eownername = mysql_result($result,0 , TBL_USERS.".user_name");
-	$emingames = mysql_result($result,0 , TBL_LADDERS.".nbr_games_to_rank");
-	$eminteamgames = mysql_result($result,0 , TBL_LADDERS.".nbr_team_games_to_rank");
-	$erules = mysql_result($result,0 , TBL_LADDERS.".Rules");
-	$edescription = mysql_result($result,0 , TBL_LADDERS.".Description");
-	$estart = mysql_result($result,0 , TBL_LADDERS.".Start_timestamp");
-	$eend = mysql_result($result,0 , TBL_LADDERS.".End_timestamp");
-	$enextupdate = mysql_result($result,0 , TBL_LADDERS.".NextUpdate_timestamp");
-	$eischanged = mysql_result($result,0 , TBL_LADDERS.".IsChanged");
-	$ehide_ratings_column = mysql_result($result,0 , TBL_LADDERS.".hide_ratings_column");
-	$ematch_report_userclass = mysql_result($result,0 , TBL_LADDERS.".match_report_userclass");
-	$equick_loss_report = mysql_result($result,0 , TBL_LADDERS.".quick_loss_report");
-	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
-	$echallengesenabled = mysql_result($result,0 , TBL_LADDERS.".ChallengesEnable");
+	
+	$ladderIsChanged = $ladder->getField('IsChanged');
+
 
 	if ($pref['eb_ladders_update_delay_enable'] == 1)
 	{
@@ -102,27 +82,27 @@ else
 	}
 
 	if (
-	(($time > $enextupdate) && ($eischanged == 1))
+	(($time > $nextupdate_timestamp_local) && ($ladderIsChanged == 1))
 	||(file_exists($file) == FALSE)
-	||((file_exists($file_team) == FALSE) && (($etype == "Team Ladder")||($etype == "ClanWar")))
+	||((file_exists($file_team) == FALSE) && (($ladder->getField('Type') == "Team Ladder")||($ladder->getField('Type') == "ClanWar")))
 	)
 	{
 		$eneedupdate = 1;
 	}
 
-	if($estart!=0)
+	if($ladder->getField('Start_timestamp')!=0)
 	{
-		$estart_local = $estart + TIMEOFFSET;
-		$date_start = date("d M Y, h:i A",$estart_local);
+		$start_timestamp_local = $ladder->getField('Start_timestamp') + TIMEOFFSET;
+		$date_start = date("d M Y, h:i A",$start_timestamp_local);
 	}
 	else
 	{
 		$date_start = "-";
 	}
-	if($eend!=0)
+	if($ladder->getField('End_timestamp')!=0)
 	{
-		$eend_local = $eend + TIMEOFFSET;
-		$date_end = date("d M Y, h:i A",$eend_local);
+		$end_timestamp_local = $ladder->getField('End_timestamp') + TIMEOFFSET;
+		$date_end = date("d M Y, h:i A",$end_timestamp_local);
 	}
 	else
 	{
@@ -130,20 +110,20 @@ else
 	}
 
 	$time_comment = '';
-	if (  ($estart != 0)
-	&&($time <= $estart)
+	if (  ($ladder->getField('Start_timestamp') != 0)
+	&&($time <= $ladder->getField('Start_timestamp'))
 	)
 	{
-		$time_comment = EB_LADDER_L2.'&nbsp;'.get_formatted_timediff($time, $estart);
+		$time_comment = EB_LADDER_L2.'&nbsp;'.get_formatted_timediff($time, $ladder->getField('Start_timestamp'));
 	}
-	else if (  ($eend != 0)
-	&&($time <= $eend)
+	else if (  ($ladder->getField('End_timestamp') != 0)
+	&&($time <= $ladder->getField('End_timestamp'))
 	)
 	{
-		$time_comment = EB_LADDER_L3.'&nbsp;'.get_formatted_timediff($time, $eend);
+		$time_comment = EB_LADDER_L3.'&nbsp;'.get_formatted_timediff($time, $ladder->getField('End_timestamp'));
 	}
-	else if (  ($eend != 0)
-	&&($time > $eend)
+	else if (  ($ladder->getField('End_timestamp') != 0)
+	&&($time > $ladder->getField('End_timestamp'))
 	)
 	{
 		$time_comment = EB_LADDER_L4;
@@ -179,13 +159,13 @@ else
 		$new_nextupdate = $time + 60*$pref['eb_ladders_update_delay'];
 		$q = "UPDATE ".TBL_LADDERS." SET NextUpdate_timestamp = $new_nextupdate WHERE (LadderID = '$ladder_id')";
 		$result = $sql->db_Query($q);
-		$enextupdate = $new_nextupdate;
+		$nextupdate_timestamp_local = $new_nextupdate;
 
 		$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 0 WHERE (LadderID = '$ladder_id')";
 		$result = $sql->db_Query($q);
-		$eischanged = 0;
+		$ladderIsChanged = 0;
 
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			updateStats($ladder_id, $time, TRUE);
@@ -201,7 +181,7 @@ else
 
 	}
 
-	switch($etype)
+	switch($ladder->getField('Type'))
 	{
 		case "One Player Ladder":
 		$text .= '<div class="tab-pane" id="tab-pane-1">';
@@ -217,7 +197,7 @@ else
 
 	$text .= '<div class="tab-page">';
 	$text .= '<div class="tab">'.EB_LADDER_L5.'</div>';
-	$text .= $tp->toHTML($edescription, true);
+	$text .= $tp->toHTML($ladder->getField('Description'), true);
 	$text .= '</div>';  // tab-page "Ladder"
 
 	/* Join/Quit Ladder */
@@ -228,10 +208,10 @@ else
 	if(check_class(e_UC_MEMBER))
 	{
 		// If logged in
-		if(($eend == 0) || ($time < $eend))
+		if(($ladder->getField('End_timestamp') == 0) || ($time < $ladder->getField('End_timestamp')))
 		{
 			// If ladder is not finished
-			if (($etype == "Team Ladder")||($etype == "ClanWar"))
+			if (($ladder->getField('Type') == "Team Ladder")||($ladder->getField('Type') == "ClanWar"))
 			{
 				// Find if user is captain of a division playing that game
 				// if yes, propose to join this ladder
@@ -272,7 +252,7 @@ else
 						if( $numTeams == 0)
 						{
 
-							if ($epassword != "")
+							if ($ladder->getField('Password') != "")
 							{
 								$text .= '<td>'.EB_LADDER_L8.'</td>';
 								$text .= '<td>
@@ -311,7 +291,7 @@ else
 				}
 			}
 
-			switch($etype)
+			switch($ladder->getField('Type'))
 			{
 				case "Team Ladder":
 				case "ClanWar":
@@ -424,7 +404,7 @@ else
                                     ." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
                                     $result = $sql->db_Query($q);
                                     $nbrscores = mysql_numrows($result);
-                                    if (($nbrscores == 0)&&($user_banned!=1)&&($etype!="ClanWar"))
+                                    if (($nbrscores == 0)&&($user_banned!=1)&&($ladder->getField('Type')!="ClanWar"))
                                     {
                                         $text .= '<td>
                                         <form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
@@ -455,7 +435,7 @@ else
                 $result = $sql->db_Query($q);
                 if(!$result || (mysql_numrows($result) < 1))
                 {
-                    if ($epassword != "")
+                    if ($ladder->getField('Password') != "")
                     {
                         $text .= '<tr><td>'.EB_LADDER_L25.'</td>';
                         $text .= '<td>'.EB_LADDER_L26.'</td>';
@@ -541,12 +521,12 @@ else
 
 	$text .= '<tr>';
 	$text .= '<td class="forumheader3">'.EB_LADDER_L36.'</td>';
-	$text .= '<td class="forumheader3"><b>'.$ename.'</b></td>';
+	$text .= '<td class="forumheader3"><b>'.$ladder->getField('Name').'</b></td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
 	$text .= '<td class="forumheader3">'.EB_LADDER_L37.'</td>';
-	$text .= '<td class="forumheader3">'.ladderType($etype).'</td>';
+	$text .= '<td class="forumheader3">'.ladderTypeToString($ladder->getField('Type')).'</td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
@@ -590,7 +570,7 @@ else
 	$text .= '<tr><td class="forumheader3">'.EB_LADDER_L42.'</td><td class="forumheader3">'.$date_start.'</td></tr>';
 	$text .= '<tr><td class="forumheader3">'.EB_LADDER_L43.'</td><td class="forumheader3">'.$date_end.'</td></tr>';
 	$text .= '<tr><td class="forumheader3"></td><td class="forumheader3">'.$time_comment.'</td></tr>';
-	$text .= '<tr><td class="forumheader3">'.EB_LADDER_L44.'</td><td class="forumheader3">'.$tp->toHTML($erules, true).'</td></tr>';
+	$text .= '<tr><td class="forumheader3">'.EB_LADDER_L44.'</td><td class="forumheader3">'.$tp->toHTML($ladder->getField('Rules'), true).'</td></tr>';
 	$text .= '</tbody></table>';
 	$text .= '</div>';    // tab-page "Info"
 
@@ -671,9 +651,9 @@ else
 		$myPosition_txt .= '</p>';
 
 		// Is the ladder started, and not ended
-		if (  ($eend == 0)
-		||(  ($eend >= $time)
-		&&($estart <= $time)
+		if (  ($ladder->getField('End_timestamp') == 0)
+		||(  ($ladder->getField('End_timestamp') >= $time)
+		&&($ladder->getField('Start_timestamp') <= $time)
 		)
 		)
 		{
@@ -683,7 +663,7 @@ else
 		}
 	}
 
-	switch($etype)
+	switch($ladder->getField('Type'))
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
@@ -721,29 +701,29 @@ else
 	$can_report_quickloss = 0;
 
 	// Check if AllowScore is set
-	if ($eallowscore==TRUE)
+	if ($ladder->getField('AllowScore')==TRUE)
 	$can_report_quickloss = 0;
 
-	if($etype == "ClanWar") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
-	if($equick_loss_report==FALSE) $can_report_quickloss = 0;
-	if($userclass < $ematch_report_userclass) $can_report = 0;
+	if($ladder->getField('Type') == "ClanWar") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
+	if($ladder->getField('quick_loss_report')==FALSE) $can_report_quickloss = 0;
+	if($userclass < $ladder->getField('match_report_userclass')) $can_report = 0;
 
-	if($userclass < $eMatchesApproval) $can_approve = 0;
-	if($eMatchesApproval == eb_UC_NONE) $can_approve = 0;
+	if($userclass < $ladder->getField('MatchesApproval')) $can_approve = 0;
+	if($ladder->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
 
-	if($echallengesenabled==FALSE) $can_challenge= 0;
+	if($ladder->getField('ChallengesEnable')==FALSE) $can_challenge= 0;
 
 	//fm: Need userclass for match scheduling
 
-	$enextupdate_local = $enextupdate + TIMEOFFSET;
-	$date_nextupdate = date("d M Y, h:i A",$enextupdate_local);
+	$nextupdate_timestamp_local_local = $nextupdate_timestamp_local + TIMEOFFSET;
+	$date_nextupdate = date("d M Y, h:i A",$nextupdate_timestamp_local_local);
 
-	if (($etype == "Team Ladder")||($etype == "ClanWar"))
+	if (($ladder->getField('Type') == "Team Ladder")||($ladder->getField('Type') == "ClanWar"))
 	{
 		$text .= '<div class="tab-page">';
 		$text .= '<div class="tab">'.EB_LADDER_L45.'</div>';
 
-		if(($can_challenge != 0)&&($etype == "ClanWar"))
+		if(($can_challenge != 0)&&($ladder->getField('Type') == "ClanWar"))
 		{
 			$text .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?LadderID='.$ladder_id.'" method="post">';
 			$text .= '<table>';
@@ -808,14 +788,14 @@ else
 			$text .= '</form>';
 		}
 
-		if (($time < $enextupdate) && ($eischanged == 1))
+		if (($time < $nextupdate_timestamp_local) && ($ladderIsChanged == 1))
 		{
 			$text .= EB_LADDER_L46.'&nbsp;'.$date_nextupdate.'<br />';
 		}
 		$text .= '<div class="spacer">';
 		$text .= '<p>';
 		$text .= $nbrteams.' teams<br />';
-		$text .= EB_LADDER_L47.'&nbsp;'.$eminteamgames.'&nbsp;'.EB_LADDER_L48.'<br /><br />';
+		$text .= EB_LADDER_L47.'&nbsp;'.$ladder->getField('nbr_team_games_to_rank').'&nbsp;'.EB_LADDER_L48.'<br /><br />';
 		$text .= '</p>';
 
 		// Teams standings stats
@@ -849,7 +829,7 @@ else
 		$text .= '</div>';    // tab-page "Teams Standings"
 	}
 
-	if (($etype == "Team Ladder")||($etype == "One Player Ladder"))
+	if (($ladder->getField('Type') == "Team Ladder")||($ladder->getField('Type') == "One Player Ladder"))
 	{
 		// Players standings stats
 		$stats = unserialize(implode('',file($file)));
@@ -945,7 +925,7 @@ else
 			$text .= '</form>';
 		}
 
-		if (($time < $enextupdate) && ($eischanged == 1))
+		if (($time < $nextupdate_timestamp_local) && ($ladderIsChanged == 1))
 		{
 			$text .= EB_LADDER_L50.'&nbsp;'.$date_nextupdate.'<br />';
 		}
@@ -958,7 +938,7 @@ else
 
 		$text .= '<p>';
 		$text .= $nbrplayers.'&nbsp;'.EB_LADDER_L51.'<br />';
-		$text .= EB_LADDER_L52.'&nbsp;'.$emingames.'&nbsp;'.EB_LADDER_L53.'<br />';
+		$text .= EB_LADDER_L52.'&nbsp;'.$ladder->getField('nbr_games_to_rank').'&nbsp;'.EB_LADDER_L53.'<br />';
 		$text .= '</p>';
 
 		$text .= $myPosition_txt;
@@ -1371,7 +1351,7 @@ else
 	';
 }
 
-$ns->tablerender("$ename ($egame - ".ladderType($etype).")", $text);
+$ns->tablerender($ladder->getField('Name')." ($egame - ".ladderTypeToString($ladder->getField('Type')).")", $text);
 require_once(FOOTERF);
 exit;
 

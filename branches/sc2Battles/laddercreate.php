@@ -17,8 +17,8 @@ else
    $userid = $_POST['userid'];
    $username = $_POST['username'];
 
-   $q2 = "INSERT INTO ".TBL_LADDERS."(Name,Password,Game,Type,Owner, Description)"
-       ." VALUES ('".EB_LADDERC_L3."', '', '1', 'One Player Ladder','$userid', '".EB_LADDERC_L4."')";   
+   $q2 = "INSERT INTO ".TBL_LADDERS."(Name,Password,Game,Type,Owner, Description, RankingType)"
+       ." VALUES ('".EB_LADDERC_L3."', '', '1', 'One Player Ladder','$userid', '".EB_LADDERC_L4."', 'Classic')";   
    $result2 = $sql->db_Query($q2);
    $last_id = mysql_insert_id();
    $q2 = 
@@ -26,16 +26,16 @@ else
     VALUES ('$last_id', 'ELO')";
    $result2 = $sql->db_Query($q2);
    $q2 = 
-   "INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
-    VALUES ('$last_id', 'Skill')";
+   "INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue)
+    VALUES ('$last_id', 'Skill', 4)";
    $result2 = $sql->db_Query($q2);
    $q2 = 
-   "INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
-    VALUES ('$last_id', 'GamesPlayed')";
+   "INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue, InfoOnly)
+    VALUES ('$last_id', 'GamesPlayed', 1, 1)";
    $result2 = $sql->db_Query($q2);
    $q2 = 
-   "INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
-    VALUES ('$last_id', 'VictoryRatio')";
+   "INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue)
+    VALUES ('$last_id', 'VictoryRatio', 3)";
    $result2 = $sql->db_Query($q2);
    $q2 = 
    "INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
@@ -54,8 +54,8 @@ else
     VALUES ('$last_id', 'OpponentsELO')";
    $result2 = $sql->db_Query($q2);
    $q2 = 
-   "INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
-    VALUES ('$last_id', 'Streaks')";
+   "INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue, InfoOnly)
+    VALUES ('$last_id', 'Streaks', 2, 1)";
    $result2 = $sql->db_Query($q2);
    $q2 = 
    "INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
