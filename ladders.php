@@ -142,15 +142,15 @@ function displayCurrentLadders(){
     }
     for($i=0; $i<$num_rows; $i++)
     {
-        $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
+        $gName  = mysql_result($result,$i, TBL_GAMES.".Name");
         $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
         if ($gameid == $gid)
         {
-            $text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
+            $text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gName).'</option>';
         }
         else
         {
-            $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
+            $text .= '<option value="'.$gid.'">'.htmlspecialchars($gName).'</option>';
         }
     }
     $text .= '</select>';
@@ -271,26 +271,24 @@ function displayCurrentLadders(){
         </tr>';
         for($i=0; $i<$num_rows; $i++)
         {
-            $gname  = mysql_result($result,$i, TBL_GAMES.".Name");
-            $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-            $eid  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-            $ename  = mysql_result($result,$i, TBL_LADDERS.".Name");
-            $etype = mysql_result($result,$i, TBL_LADDERS.".Type");
-            $estart = mysql_result($result,$i, TBL_LADDERS.".Start_timestamp");
-            $eend = mysql_result($result,$i, TBL_LADDERS.".End_timestamp");
-            if($estart!=0)
+            $gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+            $gIcon  = mysql_result($result,$i, TBL_GAMES.".Icon");
+            $ladder_id  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+            $ladder = new Ladder($ladder_id);
+            
+            if($ladder->getField('Start_timestamp')!=0)
             {
-                $estart_local = $estart + TIMEOFFSET;
-                $date_start = date("d M Y",$estart_local);
+                $start_timestamp_local = $ladder->getField('Start_timestamp') + TIMEOFFSET;
+                $date_start = date("d M Y", $start_timestamp_local);
             }
             else
             {
                 $date_start = "-";
             }
-            if($eend!=0)
+            if($ladder->getField('End_timestamp')!=0)
             {
-                $eend_local = $eend + TIMEOFFSET;
-                $date_end = date("d M Y",$eend_local);
+                $end_timestamp_local = $ladder->getField('End_timestamp') + TIMEOFFSET;
+                $date_end = date("d M Y", $end_timestamp_local);
             }
             else
             {
@@ -300,7 +298,7 @@ function displayCurrentLadders(){
             /* Nbr players */
             $q_2 = "SELECT COUNT(*) as NbrPlayers"
             ." FROM ".TBL_PLAYERS
-            ." WHERE (Ladder = '$eid')";
+            ." WHERE (Ladder = '$ladder_id')";
             $result_2 = $sql->db_Query($q_2);
             $row = mysql_fetch_array($result_2);
             $nbrplayers = $row['NbrPlayers'];
@@ -308,7 +306,7 @@ function displayCurrentLadders(){
             /* Nbr Teams */
             $q_2 = "SELECT COUNT(*) as NbrTeams"
             ." FROM ".TBL_TEAMS
-            ." WHERE (".TBL_TEAMS.".Ladder = '$eid')";
+            ." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')";
             $result_2 = $sql->db_Query($q_2);
             $row = mysql_fetch_array($result_2);
             $nbrTeams = $row['NbrTeams'];
@@ -317,14 +315,14 @@ function displayCurrentLadders(){
             $q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
             ." FROM ".TBL_MATCHS.", "
             .TBL_SCORES
-            ." WHERE (Ladder = '$eid')"
+            ." WHERE (Ladder = '$ladder_id')"
             ." AND (".TBL_MATCHS.".Status = 'active')"
             ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
             $result_2 = $sql->db_Query($q_2);
             $row = mysql_fetch_array($result_2);
             $nbrmatches = $row['NbrMatches'];
 
-            switch($etype)
+            switch($ladder->getField('Type'))
             {
                 case "One Player Ladder":
                 $nbrTeamPlayers = $nbrplayers;
@@ -339,15 +337,15 @@ function displayCurrentLadders(){
             }
 
             if(
-                ($eend==0)
-                ||($eend>=$time)
+                ($ladder->getField('End_timestamp')==0)
+                ||($ladder->getField('End_timestamp')>=$time)
             )
             {
                 $text .= '<tr>
-                <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a></td>
-                <td class="forumheader3"><img '.getGameIconResize($gicon).'/></td>
-                <td class="forumheader3">'.$gname.'</td>
-                <td class="forumheader3">'.ladderTypeToString($etype).'</td>
+                <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
+                <td class="forumheader3"><img '.getGameIconResize($gIcon).'/></td>
+                <td class="forumheader3">'.$gName.'</td>
+                <td class="forumheader3">'.ladderTypeToString($ladder->getField('Type')).'</td>
                 <td class="forumheader3">'.$date_start.'</td>
                 <td class="forumheader3">'.$date_end.'</td>
                 <td class="forumheader3">'.$nbrTeamPlayers.'</td>
@@ -397,15 +395,15 @@ function displayRecentLadders(){
     }
     for($i=0; $i<$num_rows; $i++)
     {
-        $gname  = mysql_result($result,$i, TBL_GAMES.".name");
+        $gName  = mysql_result($result,$i, TBL_GAMES.".name");
         $gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
         if ($gameid == $gid)
         {
-            $text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
+            $text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gName).'</option>';
         }
         else
         {
-            $text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
+            $text .= '<option value="'.$gid.'">'.htmlspecialchars($gName).'</option>';
         }
     }
     $text .= '</select>';
@@ -465,26 +463,24 @@ function displayRecentLadders(){
     </tr>';
     for($i=0; $i<$num_rows; $i++)
     {
-        $gname  = mysql_result($result,$i, TBL_GAMES.".name");
-        $gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-        $eid  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-        $ename  = mysql_result($result,$i, TBL_LADDERS.".name");
-        $etype = mysql_result($result,$i, TBL_LADDERS.".type");
-        $estart = mysql_result($result,$i, TBL_LADDERS.".Start_timestamp");
-        $eend = mysql_result($result,$i, TBL_LADDERS.".End_timestamp");
-        if($estart!=0)
+        $gName  = mysql_result($result,$i, TBL_GAMES.".name");
+        $gIcon  = mysql_result($result,$i, TBL_GAMES.".Icon");
+        $ladder_id  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+        $ladder = new Ladder($ladder_id);
+
+        if($ladder->getField('Start_timestamp')!=0)
         {
-            $estart_local = $estart + TIMEOFFSET;
-            $date_start = date("d M Y",$estart_local);
+            $start_timestamp_local = $ladder->getField('Start_timestamp') + TIMEOFFSET;
+            $date_start = date("d M Y", $start_timestamp_local);
         }
         else
         {
             $date_start = "-";
         }
-        if($eend!=0)
+        if($ladder->getField('End_timestamp')!=0)
         {
-            $eend_local = $eend + TIMEOFFSET;
-            $date_end = date("d M Y",$eend_local);
+            $end_timestamp_local = $ladder->getField('End_timestamp') + TIMEOFFSET;
+            $date_end = date("d M Y", $end_timestamp_local);
         }
         else
         {
@@ -494,7 +490,7 @@ function displayRecentLadders(){
         /* Nbr players */
         $q_2 = "SELECT COUNT(*) as NbrPlayers"
         ." FROM ".TBL_PLAYERS
-        ." WHERE (Ladder = '$eid')";
+        ." WHERE (Ladder = '$ladder_id')";
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);
         $nbrplayers = $row['NbrPlayers'];
@@ -502,7 +498,7 @@ function displayRecentLadders(){
         /* Nbr Teams */
         $q_2 = "SELECT COUNT(*) as NbrTeams"
         ." FROM ".TBL_TEAMS
-        ." WHERE (".TBL_TEAMS.".Ladder = '$eid')";
+        ." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')";
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);
         $nbrTeams = $row['NbrTeams'];
@@ -511,13 +507,13 @@ function displayRecentLadders(){
         $q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
         ." FROM ".TBL_MATCHS.", "
         .TBL_SCORES
-        ." WHERE (Ladder = '$eid')"
+        ." WHERE (Ladder = '$ladder_id')"
         ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
         $result_2 = $sql->db_Query($q_2);
         $row = mysql_fetch_array($result_2);
         $nbrmatches = $row['NbrMatches'];
 
-        switch($etype)
+        switch($ladder->getField('Type'))
         {
             case "One Player Ladder":
             $nbrTeamPlayers = $nbrplayers;
@@ -532,15 +528,15 @@ function displayRecentLadders(){
         }
             
         if(
-            ($eend!=0)
-            &&($eend<$time)
+            ($ladder->getField('End_timestamp')!=0)
+            &&($ladder->getField('End_timestamp')<$time)
         )
         {
             $text .= '<tr>
-            <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a></td>
-            <td class="forumheader3"><img '.getGameIconResize($gicon).'/></td>
-            <td class="forumheader3">'.$gname.'</td>
-            <td class="forumheader3">'.ladderTypeToString($etype).'</td>
+            <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
+            <td class="forumheader3"><img '.getGameIconResize($gIcon).'/></td>
+            <td class="forumheader3">'.$gName.'</td>
+            <td class="forumheader3">'.ladderTypeToString($ladder->getField('Type')).'</td>
             <td class="forumheader3">'.$date_start.'</td>
             <td class="forumheader3">'.$date_end.'</td>
             <td class="forumheader3">'.$nbrTeamPlayers.'</td>

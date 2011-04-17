@@ -40,16 +40,16 @@ if(isset($_POST['joindivision']))
         {
             for($j=0; $j<$num_rows_2; $j++)
             {
-                $eid  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
-                $eELOdefault  = mysql_result($result_2,$j, TBL_LADDERS.".ELO_default");
-                $eTS_default_mu  = mysql_result($result_2,$j, TBL_LADDERS.".TS_default_mu");
-                $eTS_default_sigma  = mysql_result($result_2,$j, TBL_LADDERS.".TS_default_sigma");
+                $ladder_id  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
+                $lELO_default  = mysql_result($result_2,$j, TBL_LADDERS.".ELO_default");
+                $lTS_default_mu  = mysql_result($result_2,$j, TBL_LADDERS.".TS_default_mu");
+                $lTS_default_sigma  = mysql_result($result_2,$j, TBL_LADDERS.".TS_default_sigma");
                 $team_id = mysql_result($result_2,$j, TBL_TEAMS.".TeamID");
 
                 // Verify there is no other player for that user/ladder/team
                 $q = "SELECT COUNT(*) as NbrPlayers"
                 ." FROM ".TBL_PLAYERS
-                ." WHERE (Ladder = '$eid')"
+                ." WHERE (Ladder = '$ladder_id')"
                 ." AND (Team = '$team_id')"
                 ." AND (User = ".USERID.")";
                 $result = $sql->db_Query($q);
@@ -58,9 +58,9 @@ if(isset($_POST['joindivision']))
                 if ($nbrplayers == 0)
                 {
                     $q = " INSERT INTO ".TBL_PLAYERS."(Ladder,User,Team,ELORanking,TS_mu,TS_sigma)
-                    VALUES ($eid,".USERID.",$team_id,$eELOdefault,$eTS_default_mu,$eTS_default_sigma)";
+                    VALUES ($ladder_id,".USERID.",$team_id,$lELO_default,$lTS_default_mu,$lTS_default_sigma)";
                     $sql->db_Query($q);
-                    $q4 = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$eid')";
+                    $q4 = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
                     $result = $sql->db_Query($q4);
                 }
             }

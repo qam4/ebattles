@@ -94,14 +94,14 @@ function displayRecentActivity($ladder_id){
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
 			$aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
-			$aLadderID  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$aLadderName  = mysql_result($result,$i, TBL_LADDERS.".Name");
 			$aLaddergame = mysql_result($result,$i , TBL_GAMES.".Name");
 			$aLaddergameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
 			$aTime_local = $aTime + TIMEOFFSET;
 			$date = date("d M Y, h:i A",$aTime_local);
+			$aLadderID  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+			$aLadderName  = mysql_result($result,$i, TBL_LADDERS.".Name");
 
 			switch ($aType) {
 				case 'PlayerTookFirstPlace':
@@ -176,14 +176,14 @@ function displayRecentActivity($ladder_id){
 		for($i=0; $i < $numAwards; $i++)
 		{
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
-			$aLadderID  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$aLadderName  = mysql_result($result,$i, TBL_LADDERS.".Name");
 			$aLaddergame = mysql_result($result,$i , TBL_GAMES.".Name");
 			$aLaddergameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
 			$aTime_local = $aTime + TIMEOFFSET;
 			$date = date("d M Y, h:i A",$aTime_local);
+			$aLadderID  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+			$aLadderName  = mysql_result($result,$i, TBL_LADDERS.".Name");
 
 			$aClanTeam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 			list($tclan, $tclantag, $tclanid) = getClanName($aClanTeam);

@@ -38,13 +38,11 @@ else
     ."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
 
     $result = $sql->db_Query($q);
-    $mLadderID  = mysql_result($result,0, TBL_LADDERS.".LadderID");
-    $mLadderName  = mysql_result($result,0, TBL_LADDERS.".Name");
-    $mLaddergame = mysql_result($result,0 , TBL_GAMES.".Name");
-    $mLaddergameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
-    $mLadderType  = mysql_result($result,0 , TBL_LADDERS.".Type");
-    $mLadderAllowScore = mysql_result($result,0 , TBL_LADDERS.".AllowScore");
+    $ladder = new Ladder($ladder_id);
 
+    $gName = mysql_result($result,0 , TBL_GAMES.".Name");
+    $gIcon = mysql_result($result,0 , TBL_GAMES.".Icon");
+ 
     $text .= '<div class="tab-pane" id="tab-pane-11">';
     $text .= '<div class="tab-page">';
     $text .= '<div class="tab">'.EB_MATCHS_L1.'</div>';
@@ -110,7 +108,7 @@ else
     $text .= '</div>';
     $text .= '</div>';
 }
-$ns->tablerender("$mLadderName ($mLaddergame - ".ladderTypeToString($mLadderType).")", $text);
+$ns->tablerender("$ladder->getField('Name') ($gName - ".ladderTypeToString($ladder->getField('Type')).")", $text);
 require_once(FOOTERF);
 exit;
 ?>

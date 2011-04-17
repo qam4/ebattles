@@ -16,14 +16,8 @@ function match_scores_update($match_id)
 	." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 	."   AND (".TBL_LADDERS.".LadderID = ".TBL_MATCHS.".Ladder)";
 	$result = $sql->db_Query($q);
-	$eELO_K = mysql_result($result,0 , TBL_LADDERS.".ELO_K");
-	$eELO_M = mysql_result($result,0 , TBL_LADDERS.".ELO_M");
-	$eTS_beta = mysql_result($result,0 , TBL_LADDERS.".TS_beta");
-	$eTS_epsilon = mysql_result($result,0 , TBL_LADDERS.".TS_epsilon");
-	$ePointPerWin = mysql_result($result,0 , TBL_LADDERS.".PointsPerWin");
-	$ePointPerDraw = mysql_result($result,0 , TBL_LADDERS.".PointsPerDraw");
-	$ePointPerLoss = mysql_result($result,0 , TBL_LADDERS.".PointsPerLoss");
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+	$ladder_id = mysql_result($result,0 , TBL_LADDERS.".LadderID");
+	$ladder = new Ladder($ladder_id);
 
 	// Initialize scores ELO/TrueSkill
 	$deltaELO = 0;
@@ -56,7 +50,7 @@ function match_scores_update($match_id)
 			{
 				$output .= "Team $i vs. Team $j<br />";
 
-				switch($etype)
+				switch($ladder->getField('Type'))
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
@@ -196,20 +190,20 @@ function match_scores_update($match_id)
 					$teamA_draw = 1;
 					$teamB_draw = 1;
 				}
-				$teamA_Points = $teamA_win*$ePointPerWin + $teamA_draw*$ePointPerDraw + $teamA_loss*$ePointPerLoss;
-				$teamB_Points = $teamB_win*$ePointPerWin + $teamB_draw*$ePointPerDraw + $teamB_loss*$ePointPerLoss;
+				$teamA_Points = $teamA_win*$ladder->getField('PointsPerWin') + $teamA_draw*$ladder->getField('PointsPerDraw') + $teamA_loss*$ladder->getField('PointsPerLoss');
+				$teamB_Points = $teamB_win*$ladder->getField('PointsPerWin') + $teamB_draw*$ladder->getField('PointsPerDraw') + $teamB_loss*$ladder->getField('PointsPerLoss');
 				$output .= "Team A: $teamA_Points, $teamA_win, $teamA_draw, $teamA_loss, <br />";
 				$output .= "Team B: $teamB_Points, $teamB_win, $teamB_draw, $teamB_loss, <br />";
 
 				// New ELO ------------------------------------------
-				$M=min($NbrPlayersTeamA,$NbrPlayersTeamB)*$eELO_M;      // Span
-				$K=$eELO_K;	// Max adjustment per game
+				$M=min($NbrPlayersTeamA,$NbrPlayersTeamB)*$ladder->getField('ELO_M');      // Span
+				$K=$ladder->getField('ELO_K');	// Max adjustment per game
 				$deltaELO = ELO($M, $K, $teamA_ELO, $teamB_ELO, $teamA_Rank, $teamB_Rank);
 				$output .= "deltaELO: $deltaELO<br />";
 
 				// New TrueSkill ------------------------------------------
-				$beta=$eTS_beta;          // beta
-				$epsilon=$eTS_epsilon;    // draw probability
+				$beta=$ladder->getField('TS_beta');          // beta
+				$epsilon=$ladder->getField('TS_epsilon');    // draw probability
 				$update = Trueskill_update($epsilon,$beta, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Rank, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Rank);
 
 				$teamA_deltaTS_mu = $update[0];
@@ -238,7 +232,7 @@ function match_scores_update($match_id)
 					$scoreLoss += $teamA_loss;
 					$scorePoints += $teamA_Points;
 
-					switch($etype)
+					switch($ladder->getField('Type'))
 					{
 						case "One Player Ladder":
 						case "Team Ladder":
@@ -290,7 +284,7 @@ function match_scores_update($match_id)
 					$scoreLoss += $teamB_loss;
 					$scorePoints += $teamB_Points;
 
-					switch($etype)
+					switch($ladder->getField('Type'))
 					{
 						case "One Player Ladder":
 						case "Team Ladder":
@@ -328,7 +322,7 @@ function match_scores_update($match_id)
 		$output .= '<br />';
 
 		// Update scores score against
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -356,7 +350,7 @@ function match_scores_update($match_id)
 		$nbr_players = mysql_numrows($result);
 		for($i=0;$i<$nbr_players;$i++)
 		{
-			switch($etype)
+			switch($ladder->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -387,7 +381,7 @@ function match_scores_update($match_id)
 			}
 			$pOppScore /= $pnbrOpps;
 
-			switch($etype)
+			switch($ladder->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -687,7 +681,8 @@ function match_teams_update($match_id)
 	." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 	."   AND (".TBL_LADDERS.".LadderID = ".TBL_MATCHS.".Ladder)";
 	$result = $sql->db_Query($q);
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+	$ladder_id = mysql_result($result,0 , TBL_LADDERS.".LadderID");
+	$ladder = new Ladder($ladder_id);
 
 	// Update Teams with scores
 	$q = "SELECT ".TBL_MATCHS.".*, "
@@ -827,7 +822,7 @@ function deleteMatchScores($ladder_id, $match_id)
 	/* Ladder Info */
    	$ladder = new Ladder($ladder_id);
 
-	switch($etype)
+	switch($ladder->getField('Type'))
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
@@ -1197,14 +1192,8 @@ function displayMatchInfo($match_id, $type = 0)
 	{
 		$mReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 		$mReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
-		$mLadderID  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
-		$mLadderName  = mysql_result($result, 0, TBL_LADDERS.".Name");
-		$mLadderOwner  = mysql_result($result, 0, TBL_LADDERS.".Owner");
 		$mLaddergame = mysql_result($result, 0, TBL_GAMES.".Name");
 		$mLaddergameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
-		$mLadderType  = mysql_result($result, 0, TBL_LADDERS.".Type");
-		$mLadderAllowScore = mysql_result($result, 0, TBL_LADDERS.".AllowScore");
-		$mLadderMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
 		$mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
 		$mTime  = mysql_result($result, 0, TBL_MATCHS.".TimeReported");
 		$mTime_local = $mTime + TIMEOFFSET;
@@ -1212,6 +1201,9 @@ function displayMatchInfo($match_id, $type = 0)
 		$mTimeScheduled  = mysql_result($result, 0, TBL_MATCHS.".TimeScheduled");
 		$mTimeScheduled_local = $mTimeScheduled + TIMEOFFSET;
 		$dateScheduled = date("d M Y, h:i A",$mTimeScheduled_local);
+		$ladder_id  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
+		$ladder = new Ladder($ladder_id);
+
 		// Calculate number of players and teams for the match
 		$q = "SELECT DISTINCT ".TBL_SCORES.".Player_MatchTeam"
 		." FROM ".TBL_SCORES
@@ -1235,7 +1227,7 @@ function displayMatchInfo($match_id, $type = 0)
 			$can_schedule = 0;
 			$userclass = 0;
 
-			switch($mLadderType)
+			switch($ladder->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -1313,7 +1305,7 @@ function displayMatchInfo($match_id, $type = 0)
 			}
 
 			// Is the user a player in the match?
-			switch($mLadderType)
+			switch($ladder->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -1351,7 +1343,7 @@ function displayMatchInfo($match_id, $type = 0)
 			}
 
 			$can_approve = 0;
-			if (USERID==$mLadderOwner)
+			if (USERID==$ladder->getField('Owner'))
 			{
 				$userclass |= eb_UC_LADDER_OWNER;
 				$can_approve = 1;
@@ -1381,15 +1373,15 @@ function displayMatchInfo($match_id, $type = 0)
 			{
 				$can_report = 1;
 			}
-			if ($userclass < $mLadderMatchesApproval) $can_approve = 0;
-			if ($mLadderMatchesApproval == eb_UC_NONE) $can_approve = 0;
+			if ($userclass < $ladder->getField('MatchesApproval')) $can_approve = 0;
+			if ($ladder->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
 			if ($mStatus != 'pending') $can_approve = 0;
 			if ($mStatus != 'scheduled') $can_report = 0;
 
 			$orderby_str = " ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 			if($nbr_teams==2) $orderby_str = " ORDER BY ".TBL_SCORES.".Player_MatchTeam";
 
-			switch($mLadderType)
+			switch($ladder->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -1445,7 +1437,7 @@ function displayMatchInfo($match_id, $type = 0)
 			$matchteam = 0;
 			for ($index = 0; $index < $numPlayers; $index++)
 			{
-				switch($mLadderType)
+				switch($ladder->getField('Type'))
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
@@ -1489,7 +1481,7 @@ function displayMatchInfo($match_id, $type = 0)
 				$image = '';
 				if ($pref['eb_avatar_enable_playersstandings'] == 1)
 				{
-				switch($mLadderType)
+				switch($ladder->getField('Type'))
 				{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -1558,7 +1550,7 @@ function displayMatchInfo($match_id, $type = 0)
 
 				$string .= $pfactionIcon.' ';
 
-				switch($mLadderType)
+				switch($ladder->getField('Type'))
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
@@ -1573,7 +1565,7 @@ function displayMatchInfo($match_id, $type = 0)
 			}
 
 			//score here
-			if (($mLadderAllowScore == TRUE)
+			if (($ladder->getField('AllowScore') == TRUE)
 			&&(($type & eb_MATCH_SCHEDULED) == 0))
 			{
 				$string .= ' ('.$scores.') ';
@@ -1581,7 +1573,7 @@ function displayMatchInfo($match_id, $type = 0)
 
 			if (($type & eb_MATCH_NOLADDERINFO) == 0)
 			{
-				$string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$mLadderID.'">'.$mLadderName.'</a>';
+				$string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a>';
 			}
 			if ($can_approve == 1)
 			{
@@ -1630,7 +1622,7 @@ function displayMatchInfo($match_id, $type = 0)
 			if ($can_report == 1)
 			{
 				$string .= '<td>';
-				$string .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?LadderID='.$mLadderID.'&amp;matchid='.$match_id.'" method="post">';
+				$string .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?LadderID='.$ladder_id.'&amp;matchid='.$match_id.'" method="post">';
 				$text .= '<div>';
 				$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 				$text .= '</div>';

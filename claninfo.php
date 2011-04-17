@@ -385,13 +385,13 @@ function displayTeamLadders($clan_id){
 			<td class="forumheader"><b>'.EB_CLAN_L22.'</b></td></tr>';
 			for($j=0; $j < $numLadders; $j++)
 			{
-				$eid  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
-				$ename  = mysql_result($result_2,$j, TBL_LADDERS.".Name");
-				$erank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
+				$ladder_id  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
+				$lName  = mysql_result($result_2,$j, TBL_LADDERS.".Name");
+				$lRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
 				$text .= '<tr>';
-				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a></b></td>
-				<td class="forumheader3">'.$erank.'</td></tr>';
+				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a></b></td>
+				<td class="forumheader3">'.$lRank.'</td></tr>';
 			}
 			$text .= "</tbody></table>\n";
 		}
@@ -422,13 +422,13 @@ function displayTeamLadders($clan_id){
 			<td class="forumheader"><b>'.EB_CLAN_L22.'</b></td></tr>';
 			for($j=0; $j<$numLadders; $j++)
 			{
-				$eid  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
-				$ename  = mysql_result($result_2,$j, TBL_LADDERS.".Name");
-				$erank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
+				$ladder_id  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
+				$lName  = mysql_result($result_2,$j, TBL_LADDERS.".Name");
+				$lRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
 				$text .= '<tr>';
-				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a></b></td>
-				<td class="forumheader3">'.$erank.'</td></tr>';
+				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a></b></td>
+				<td class="forumheader3">'.$lRank.'</td></tr>';
 			}
 			$text .= '</tbody></table>';
 		}

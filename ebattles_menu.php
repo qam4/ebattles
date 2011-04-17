@@ -182,11 +182,10 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 
 		$result_ladder = $sql->db_Query($q_ladder);
 		$ladder_id = mysql_result($result_ladder,0 , TBL_LADDERS.".LadderID");
-		$etype = mysql_result($result_ladder,0 , TBL_LADDERS.".Type");
-		$eMatchesApproval = mysql_result($result_ladder,0 , TBL_LADDERS.".MatchesApproval");
+		$ladder = new Ladder($ladder_id);
 		$reported_by  = mysql_result($result_ladder,0, TBL_MATCHS.".ReportedBy");
 
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -265,8 +264,8 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 			$userclass |= eb_UC_LADDER_PLAYER;
 			$can_approve = 1;
 		}
-		if($userclass < $eMatchesApproval) $can_approve = 0;
-		if($eMatchesApproval == eb_UC_NONE) $can_approve = 0;
+		if($userclass < $ladder->getField('MatchesApproval')) $can_approve = 0;
+		if($ladder->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
 
 		if ($can_approve == 1)
 		{

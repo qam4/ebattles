@@ -89,13 +89,9 @@ else
 
 	$result = $sql->db_Query($q);
 	$ladder_id = mysql_result($result,0 , TBL_LADDERS.".LadderID");
-	$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
-	$egame = mysql_result($result,0 , TBL_GAMES.".Name");
-	$eowner = mysql_result($result,0 , TBL_LADDERS.".Owner");
-	$estart = mysql_result($result,0 , TBL_LADDERS.".Start_timestamp");
-	$eend = mysql_result($result,0 , TBL_LADDERS.".End_timestamp");
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
+	$ladder = new Ladder();
+	
+	$gName = mysql_result($result,0 , TBL_GAMES.".Name");
 	$mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
 	$reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
 	$reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
@@ -144,7 +140,7 @@ else
 
 
 	// Get the scores for this match
-	switch($etype)
+	switch($ladder->getField('Type'))
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
@@ -213,7 +209,7 @@ else
 	$result_Mods = $sql->db_Query($q_Mods);
 	$numMods = mysql_numrows($result_Mods);
 
-	switch($etype)
+	switch($ladder->getField('Type'))
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
@@ -296,15 +292,15 @@ else
 	$can_delete_media = 0;
 	/*
 	if ((USERID==$reported_by)
-	&& (($eend==0)
-	|| (($eend>=$time)&&($estart<=$time))))
+	&& (($ladder->getField('End_timestamp')==0)
+	|| (($ladder->getField('End_timestamp')>=$time)&&($ladder->getField('Start_timestamp')<=$time))))
 	$can_delete = 1;
 	*/
 
 	if ((USERID==$reported_by)&&($mStatus == 'pending')) $can_edit = 1;
 
 	if (check_class($pref['eb_mod_class']))  $can_delete = 1;
-	if (USERID==$eowner)
+	if (USERID==$ladder->getField('Owner'))
 	{
 		$userclass |= eb_UC_LADDER_OWNER;
 		$can_delete = 1;
@@ -340,8 +336,8 @@ else
 		$can_submit_media = 1;
 	}
 
-	if($userclass < $eMatchesApproval) $can_approve = 0;
-	if($eMatchesApproval == eb_UC_NONE) $can_approve = 0;
+	if($userclass < $ladder->getField('MatchesApproval')) $can_approve = 0;
+	if($ladder->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
 	if ($mStatus == 'active') $can_approve = 0;
 
 	if ($mStatus == 'pending')
@@ -391,7 +387,7 @@ else
 
 	for($i=0; $i < $numScores; $i++)
 	{
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -442,7 +438,7 @@ else
 		$image = "";
 		if ($pref['eb_avatar_enable_playersstandings'] == 1)
 		{
-			switch($etype)
+			switch($ladder->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -469,7 +465,7 @@ else
 		$text .= '<tr>';
 		$text .= '<td class="forumheader3"><b>'.$prank.'</b></td>
 		<td class="forumheader3">'.$pMatchTeam.$pfactionIcon.'</td>';
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -488,7 +484,7 @@ else
 
 		// Opponent Ratings
 		$text .= '<td class="forumheader3">';
-		switch($etype)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -648,7 +644,7 @@ else
 	$text .= '<br />'.EB_MATCHD_L15.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_MATCHD_L16.'</a>]<br />';
 	$text .= '</p>';
 
-	$ns->tablerender("$ename ($egame - ".ladderTypeToString($etype).")", $text);
+	$ns->tablerender($ladder->getField('Name')." ($gName - ".ladderTypeToString($ladder->getField('Type')).")", $text);
 
 	unset($text);
 
