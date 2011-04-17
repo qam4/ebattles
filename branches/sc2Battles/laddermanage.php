@@ -112,51 +112,28 @@ else
     ."   AND (".TBL_USERS.".user_id = ".TBL_LADDERS.".Owner)";
 
     $result = $sql->db_Query($q);
-    $ename = mysql_result($result,0 , TBL_LADDERS.".Name");
-    $epassword = mysql_result($result,0 , TBL_LADDERS.".Password");
     $egame = mysql_result($result,0 , TBL_GAMES.".Name");
     $egameicon  = mysql_result($result,0 , TBL_GAMES.".Icon");
     $egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
-    $etype = mysql_result($result,0 , TBL_LADDERS.".Type");
     $eowner = mysql_result($result,0 , TBL_USERS.".user_id");
     $eownername = mysql_result($result,0 , TBL_USERS.".user_name");
-    $emingames = mysql_result($result,0 , TBL_LADDERS.".nbr_games_to_rank");
-    $eminteamgames = mysql_result($result,0 , TBL_LADDERS.".nbr_team_games_to_rank");
-    $erules = mysql_result($result,0 , TBL_LADDERS.".Rules");
-    $edescription = mysql_result($result,0 , TBL_LADDERS.".Description");
-    $eAllowDraw = mysql_result($result,0 , TBL_LADDERS.".AllowDraw");
-    $eAllowScore = mysql_result($result,0 , TBL_LADDERS.".AllowScore");
-    $eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
-    $eELO_K = mysql_result($result,0 , TBL_LADDERS.".ELO_K");
-    $eELO_M = mysql_result($result,0 , TBL_LADDERS.".ELO_M");
-    $eTS_beta = mysql_result($result,0 , TBL_LADDERS.".TS_beta");
-    $eTS_epsilon = mysql_result($result,0 , TBL_LADDERS.".TS_epsilon");
-    $ePointPerWin = mysql_result($result,0 , TBL_LADDERS.".PointsPerWin");
-    $ePointPerDraw = mysql_result($result,0 , TBL_LADDERS.".PointsPerDraw");
-    $ePointPerLoss = mysql_result($result,0 , TBL_LADDERS.".PointsPerLoss");
-    $estart = mysql_result($result,0 , TBL_LADDERS.".Start_timestamp");
-    $eend = mysql_result($result,0 , TBL_LADDERS.".End_timestamp");
-    $ehide_ratings_column = mysql_result($result,0 , TBL_LADDERS.".hide_ratings_column");
-    $ematch_report_userclass = mysql_result($result,0 , TBL_LADDERS.".match_report_userclass");
-    $equick_loss_report = mysql_result($result,0 , TBL_LADDERS.".quick_loss_report");
-    $eranking_type = mysql_result($result,0 , TBL_LADDERS.".RankingType");
-    $echallengesenabled = mysql_result($result,0 , TBL_LADDERS.".ChallengesEnable");
-    $eMaxDatesPerChallenge = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
-    $eMaxMapsPerMatch = mysql_result($result,0 , TBL_LADDERS.".MaxMapsPerMatch");
 
-    if($estart!=0)
+    $ladder = new Ladder($ladder_id);
+
+
+    if($ladder->getField('Start_timestamp')!=0)
     {
-        $estart_local = $estart + TIMEOFFSET;
-        $date_start = date("m/d/Y h:i A",$estart_local);
+        $start_timestamp_local = $ladder->getField('Start_timestamp') + TIMEOFFSET;
+        $date_start = date("m/d/Y h:i A", $start_timestamp_local);
     }
     else
     {
         $date_start = "";
     }
-    if($eend!=0)
+    if($ladder->getField('End_timestamp')!=0)
     {
-        $eend_local = $eend + TIMEOFFSET;
-        $date_end = date("m/d/Y h:i A",$eend_local);
+        $end_timestamp_local = $ladder->getField('End_timestamp') + TIMEOFFSET;
+        $date_end = date("m/d/Y h:i A", $end_timestamp_local);
     }
     else
     {
@@ -189,7 +166,7 @@ else
         ';
         $text .= '<tr>';
         $text .= '<td class="forumheader3"><b>'.EB_LADDERM_L8.'</b></td>';
-        $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ename.'</a></td>';
+        $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>';
         $text .= '</tr>';
 
         $text .= '<tr>';
@@ -315,7 +292,7 @@ else
         <tr>
         <td class="forumheader3"><b>'.EB_LADDERM_L15.'</b></td>
         <td class="forumheader3">
-        <div><input class="tbox" type="text" size="40" name="laddername" value="'.$ename.'"/></div>
+        <div><input class="tbox" type="text" size="40" name="laddername" value="'.$ladder->getField('Name').'"/></div>
         </td>
         </tr>
         ';
@@ -325,7 +302,7 @@ else
         <tr>
         <td class="forumheader3"><b>'.EB_LADDERM_L16.'</b></td>
         <td class="forumheader3">
-        <div><input class="tbox" type="text" size="40" name="ladderpassword" value="'.$epassword.'"/></div>
+        <div><input class="tbox" type="text" size="40" name="ladderpassword" value="'.$ladder->getField('Password').'"/></div>
         </td>
         </tr>
         ';
@@ -362,9 +339,9 @@ else
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($etype == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" />'.EB_LADDERM_L19;
-        $text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($etype == "Team Ladder" ? 'checked="checked"' : '').' value="Team" />'.EB_LADDERM_L20;
-        $text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($etype == "ClanWar" ? 'checked="checked"' : '').' value="ClanWar" />'.EB_LADDERM_L116;
+        $text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($ladder->getField('Type') == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" />'.EB_LADDERM_L19;
+        $text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($ladder->getField('Type') == "Team Ladder" ? 'checked="checked"' : '').' value="Team" />'.EB_LADDERM_L20;
+        $text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($ladder->getField('Type') == "ClanWar" ? 'checked="checked"' : '').' value="ClanWar" />'.EB_LADDERM_L116;
 
         $text .= '
         </div>
@@ -379,8 +356,8 @@ else
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="radio" size="40" name="ladderrankingtype" '.($eranking_type == "Classic" ? 'checked="checked"' : '').' value="Classic" />'.EB_LADDERM_L119;
-        $text .= '<input class="tbox" type="radio" size="40" name="ladderrankingtype" '.($eranking_type == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" />'.EB_LADDERM_L120;
+        $text .= '<input class="tbox" type="radio" size="40" name="ladderrankingtype" '.($ladder->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" />'.EB_LADDERM_L119;
+        $text .= '<input class="tbox" type="radio" size="40" name="ladderrankingtype" '.($ladder->getField('RankingType') == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" />'.EB_LADDERM_L120;
 
         $text .= '
         </div>
@@ -393,9 +370,9 @@ else
         <tr>
         <td class="forumheader3"><b>'.EB_LADDERM_L21.'</b></td>
         <td class="forumheader3"><select class="tbox" name="laddermatchreportuserclass">';
-        $text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($ematch_report_userclass == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
-        $text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($ematch_report_userclass == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
-        $text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.($ematch_report_userclass == eb_UC_LADDER_OWNER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L24.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($ladder->getField('match_report_userclass') == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($ladder->getField('match_report_userclass') == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.($ladder->getField('match_report_userclass') == eb_UC_LADDER_OWNER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L24.'</option>';
         $text .= '</select>
         </td>
         </tr>
@@ -409,7 +386,7 @@ else
         <div>
         ';
         $text .= '<input class="tbox" type="checkbox" name="ladderallowquickloss"';
-        if ($equick_loss_report == TRUE)
+        if ($ladder->getField('quick_loss_report') == TRUE)
         {
             $text .= ' checked="checked"/>';
         }
@@ -431,7 +408,7 @@ else
         <div>
         ';
         $text .= '<input class="tbox" type="checkbox" name="ladderallowscore"';
-        if ($eAllowScore == TRUE)
+        if ($ladder->getField('AllowScore') == TRUE)
         {
             $text .= ' checked="checked"/>';
         }
@@ -463,10 +440,10 @@ else
         <td class="forumheader3">
         <div>';
         $text .= '<select class="tbox" name="laddermatchapprovaluserclass">';
-        $text .= '<option value="'.eb_UC_NONE.'" '.(($eMatchesApproval == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L113.'</option>';
-        $text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.((($eMatchesApproval & eb_UC_LADDER_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L112.'</option>';
-        $text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.((($eMatchesApproval & eb_UC_LADDER_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L111.'</option>';
-        $text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.((($eMatchesApproval & eb_UC_LADDER_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L110.'</option>';
+        $text .= '<option value="'.eb_UC_NONE.'" '.(($ladder->getField('MatchesApproval') == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L113.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.((($ladder->getField('MatchesApproval') & eb_UC_LADDER_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L112.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.((($ladder->getField('MatchesApproval') & eb_UC_LADDER_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L111.'</option>';
+        $text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.((($ladder->getField('MatchesApproval') & eb_UC_LADDER_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L110.'</option>';
         $text .= '</select>';
         $text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
         $text .= '
@@ -483,7 +460,7 @@ else
         <div>
         ';
         $text .= '<input class="tbox" type="checkbox" name="ladderallowdraw"';
-        if ($eAllowDraw == TRUE)
+        if ($ladder->getField('AllowDraw') == TRUE)
         {
             $text .= ' checked="checked"/>';
         }
@@ -510,13 +487,13 @@ else
         </tr>
         <tr>
         <td>
-        <div><input class="tbox" type="text" name="ladderpointsperwin" value="'.$ePointPerWin.'"/></div>
+        <div><input class="tbox" type="text" name="ladderpointsperwin" value="'.$ladder->getField('PointsPerWin').'"/></div>
         </td>
         <td>
-        <div><input class="tbox" type="text" name="ladderpointsperdraw" value="'.$ePointPerDraw.'"/></div>
+        <div><input class="tbox" type="text" name="ladderpointsperdraw" value="'.$ladder->getField('PointsPerDraw').'"/></div>
         </td>
         <td>
-        <div><input class="tbox" type="text" name="ladderpointsperloss" value="'.$ePointPerLoss.'"/></div>
+        <div><input class="tbox" type="text" name="ladderpointsperloss" value="'.$ladder->getField('PointsPerLoss').'"/></div>
         </td>
         </tr>
         </table>
@@ -533,7 +510,7 @@ else
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="text" name="laddermaxmapspermatch" size="2" value="'.$eMaxMapsPerMatch.'"';
+        $text .= '<input class="tbox" type="text" name="laddermaxmapspermatch" size="2" value="'.$ladder->getField('MaxMapsPerMatch').'"';
         $text .= '
         </div>
         </td>
@@ -620,7 +597,7 @@ else
         <td class="forumheader3"><b>'.EB_LADDERM_L36.'</b></td>
         <td class="forumheader3">
         ';
-        $text .= '<textarea class="tbox" id="ladderdescription" name="ladderdescription" cols="70" '.$insertjs.'>'.$edescription.'</textarea>';
+        $text .= '<textarea class="tbox" id="ladderdescription" name="ladderdescription" cols="70" '.$insertjs.'>'.$ladder->getField('Description').'</textarea>';
         if (!e_WYSIWYG)
         {
             $text .= '<br />'.display_help("helpb",1);
@@ -662,7 +639,7 @@ else
         <td class="forumheader3"><b>'.EB_LADDERM_L38.'</b></td>
         <td class="forumheader3">
         ';
-        $text .= '<textarea class="tbox" id="ladderrules" name="ladderrules" cols="70" '.$insertjs.'>'.$erules.'</textarea>';
+        $text .= '<textarea class="tbox" id="ladderrules" name="ladderrules" cols="70" '.$insertjs.'>'.$ladder->getField('Rules').'</textarea>';
         if (!e_WYSIWYG)
         {
             $text .= '<br />'.display_help("helpb",1);
@@ -725,7 +702,7 @@ else
         $pages->paginate();
 
         /* Number of teams */
-        switch($etype)
+        switch($ladder->getField('Type'))
         {
             case "Team Ladder":
             case "ClanWar":
@@ -746,7 +723,7 @@ else
         }
 
         /* Number of players */
-        switch($etype)
+        switch($ladder->getField('Type'))
         {
             case "One Player Ladder":
             case "Team Ladder":
@@ -760,7 +737,7 @@ else
         }
 
         /* Add Team/Player */
-        switch($etype)
+        switch($ladder->getField('Type'))
         {
             case "Team Ladder":
             case "ClanWar":
@@ -852,7 +829,7 @@ else
         $text .= '<td>'.EB_LADDERM_L50.'</td></tr>';
         $text .= '</table>';
 
-        switch($etype)
+        switch($ladder->getField('Type'))
         {
             case "Team Ladder":
             case "ClanWar":
@@ -907,7 +884,7 @@ else
             default:
         }
 
-        switch($etype)
+        switch($ladder->getField('Type'))
         {
             case "One Player Ladder":
             case "Team Ladder":
@@ -1108,7 +1085,7 @@ else
         <td class="forumheader" colspan="2">'.EB_LADDERM_L88.'</td>
         <td class="forumheader">'.EB_LADDERM_L89.'</td>
         </tr>';
-        if ($etype != "ClanWar")
+        if ($ladder->getField('Type') != "ClanWar")
         {
             $text .= '
             <tr>
@@ -1125,7 +1102,7 @@ else
             's_name': 'sliderValue".$cat_index."',
             'n_minValue' : 0,
             'n_maxValue' : 10,
-            'n_value' : ".$emingames.",
+            'n_value' : ".$ladder->getField('nbr_games_to_rank').",
             'n_step' : 1
             }
 
@@ -1140,7 +1117,7 @@ else
             $cat_index ++;
         }
 
-        if (($etype == "Team Ladder")||($etype == "ClanWar"))
+        if (($ladder->getField('Type') == "Team Ladder")||($ladder->getField('Type') == "ClanWar"))
         {
             $text .= '
             <tr>
@@ -1157,7 +1134,7 @@ else
             's_name': 'sliderValue".$cat_index."',
             'n_minValue' : 0,
             'n_maxValue' : 10,
-            'n_value' : ".$eminteamgames.",
+            'n_value' : ".$ladder->getField('nbr_team_games_to_rank').",
             'n_step' : 1
             }
 
@@ -1285,7 +1262,7 @@ else
         <td class="forumheader3" colspan="2">
         <input class="tbox" type="checkbox" name="hideratings" value="1"
         ';
-        if ($ehide_ratings_column == TRUE)
+        if ($ladder->getField('hide_ratings_column') == TRUE)
         {
             $text .= ' checked="checked"';
         }
@@ -1322,7 +1299,7 @@ else
         <div>
         ';
         $text .= '<input class="tbox" type="checkbox" name="ladderchallengesenable"';
-        if ($echallengesenabled == TRUE)
+        if ($ladder->getField('ChallengesEnable') == TRUE)
         {
             $text .= ' checked="checked"/>';
         }
@@ -1343,7 +1320,7 @@ else
         <td class="forumheader3">
         <div>
         ';
-        $text .= '<input class="tbox" type="text" name="ladderdatesperchallenge" size="2" value="'.$eMaxDatesPerChallenge.'"';
+        $text .= '<input class="tbox" type="text" name="ladderdatesperchallenge" size="2" value="'.$ladder->getField('MaxDatesPerChallenge').'"';
         $text .= '
         </div>
         </td>
@@ -1381,7 +1358,7 @@ else
     }
 }
 
-$ns->tablerender("$ename ($egame - ".ladderTypeToString($etype).") - ".EB_LADDERM_L1, $text);
+$ns->tablerender("$ladder->getField('Name'] ($egame - ".ladderTypeToString($ladder->getField('Type')).") - ".EB_LADDERM_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

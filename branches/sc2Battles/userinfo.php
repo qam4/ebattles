@@ -121,21 +121,21 @@ else
 
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$ename  = mysql_result($result,$i, TBL_LADDERS.".Name");
-			$egame  = mysql_result($result,$i, TBL_GAMES.".Name");
-			$egameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
-			$eid = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$eowner = mysql_result($result,$i, TBL_LADDERS.".Owner");
-			$pid =  mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-			$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-			$pwinloss  = mysql_result($result,$i, TBL_PLAYERS.".Win")."/".mysql_result($result,$i, TBL_PLAYERS.".Draw")."/".mysql_result($result,$i, TBL_PLAYERS.".Loss");
+			$ladder_id = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+			$lName  = mysql_result($result,$i, TBL_LADDERS.".Name");
+			$lOwner = mysql_result($result,$i, TBL_LADDERS.".Owner");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
+			$player_id =  mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+			$pRank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
+			$pWinLoss  = mysql_result($result,$i, TBL_PLAYERS.".Win")."/".mysql_result($result,$i, TBL_PLAYERS.".Draw")."/".mysql_result($result,$i, TBL_PLAYERS.".Loss");
 
 			$q_Scores = "SELECT ".TBL_SCORES.".*, "
 			.TBL_PLAYERS.".*"
 			." FROM ".TBL_SCORES.", "
 			.TBL_PLAYERS
 			." WHERE (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-			." AND (".TBL_PLAYERS.".PlayerID = '$pid')";
+			." AND (".TBL_PLAYERS.".PlayerID = '$player_id')";
 
 			$result_Scores = $sql->db_Query($q_Scores);
 			$numScores = mysql_numrows($result_Scores);
@@ -159,25 +159,25 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="forumheader3">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a><br />';
-			$text .= '<img '.getGameIconResize($egameicon).'/> '.$egame;
+			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
+			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="forumheader3">';
-			$text .= $prank;
+			$text .= $pRank;
 			$text .= '</td>';
 			$text .= '<td class="forumheader3">';
-			$text .= $pwinloss;
+			$text .= $pWinLoss;
 			$text .= '</td>';
 			$text .= '<td class="forumheader3">';
 			$text .= $rating;
 			$text .= '</td>';
 			$text .= '<td class="forumheader3">';
-			if($eowner == $req_user)
+			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
-				if ($eowner == USERID)
+				if ($lOwner == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$eid.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$ladder_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else
@@ -221,15 +221,15 @@ else
 
 		for($i=0; $i<$num_ladders; $i++)
 		{
-			$ename  = mysql_result($result,$i, TBL_LADDERS.".Name");
-			$egame  = mysql_result($result,$i, TBL_GAMES.".Name");
-			$egameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
-			$eid  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$eowner  = mysql_result($result,$i, TBL_LADDERS.".Owner");
+			$ladder_id  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+			$lName  = mysql_result($result,$i, TBL_LADDERS.".Name");
+			$lOwner  = mysql_result($result,$i, TBL_LADDERS.".Owner");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
 
 			$q_pending = "SELECT COUNT(*) as nbrMatchesPending"
 			." FROM ".TBL_MATCHS
-			." WHERE (".TBL_MATCHS.".Ladder = '$eid')"
+			." WHERE (".TBL_MATCHS.".Ladder = '$ladder_id')"
 			."   AND (".TBL_MATCHS.".Status = 'pending')";
 			$result_pending = $sql->db_Query($q_pending);
 			$row = mysql_fetch_array($result_pending);
@@ -237,16 +237,16 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="forumheader3">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a><br />';
-			$text .= '<img '.getGameIconResize($egameicon).'/> '.$egame;
+			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
+			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="forumheader3">';
-			if($eowner == $req_user)
+			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
-				if ($eowner == USERID)
+				if ($lOwner == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$eid.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$ladder_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else
@@ -294,15 +294,15 @@ else
 
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$ename  = mysql_result($result,$i, TBL_LADDERS.".Name");
-			$egame  = mysql_result($result,$i, TBL_GAMES.".Name");
-			$egameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
-			$eid  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$eowner  = mysql_result($result,$i, TBL_LADDERS.".Owner");
+			$ladder_id  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+			$lName  = mysql_result($result,$i, TBL_LADDERS.".Name");
+			$lOwner  = mysql_result($result,$i, TBL_LADDERS.".Owner");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
 
 			$q_pending = "SELECT COUNT(*) as nbrMatchesPending"
 			." FROM ".TBL_MATCHS
-			." WHERE (".TBL_MATCHS.".Ladder = '$eid')"
+			." WHERE (".TBL_MATCHS.".Ladder = '$ladder_id')"
 			."   AND (".TBL_MATCHS.".Status = 'pending')";
 			$result_pending = $sql->db_Query($q_pending);
 			$row = mysql_fetch_array($result_pending);
@@ -310,16 +310,16 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="forumheader3">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a><br />';
-			$text .= '<img '.getGameIconResize($egameicon).'/> '.$egame;
+			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
+			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="forumheader3">';
-			if($eowner == $req_user)
+			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
-				if ($eowner == USERID)
+				if ($lOwner == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$eid.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$ladder_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else

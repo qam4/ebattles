@@ -105,15 +105,13 @@ function ChallengeConfirmForm($challenge_id)
 
 	if ($numChallenges > 0)
 	{
+		$ladder_id  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
+		$ladder = new Ladder($ladder_id);
+
 		$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 		$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
-		$cLadderID  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
-		$cLadderName  = mysql_result($result, 0, TBL_LADDERS.".Name");
-		$cLadderOwner  = mysql_result($result, 0, TBL_LADDERS.".Owner");
 		$cLaddergame = mysql_result($result, 0, TBL_GAMES.".Name");
 		$cLaddergameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
-		$cLadderType  = mysql_result($result, 0, TBL_LADDERS.".Type");
-		$cLadderNumDates  = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
 		$cComments  = mysql_result($result,0, TBL_CHALLENGES.".Comments");
 		$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 		$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
@@ -126,12 +124,12 @@ function ChallengeConfirmForm($challenge_id)
 		$cChallengertID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerTeam");
 		$cChallengedtID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedTeam");
 
-		$output .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?LadderID='.$cLadderID.'&amp;challengeid='.$challenge_id.'" method="post">';
+		$output .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?LadderID='.$ladder_id.'&amp;challengeid='.$challenge_id.'" method="post">';
 
 		$output .= '<b>'.EB_CHALLENGE_L18.'</b><br />';
 		$output .= '<br />';
 
-		switch($cLadderType)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -140,7 +138,7 @@ function ChallengeConfirmForm($challenge_id)
 			.TBL_USERS.".*"
 			." FROM ".TBL_PLAYERS.", "
 			.TBL_USERS
-			." WHERE (".TBL_PLAYERS.".Ladder = '$cLadderID')"
+			." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 			."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
 			$result = $sql->db_Query($q);
@@ -160,7 +158,7 @@ function ChallengeConfirmForm($challenge_id)
 			.TBL_USERS.".*"
 			." FROM ".TBL_PLAYERS.", "
 			.TBL_USERS
-			." WHERE (".TBL_PLAYERS.".Ladder = '$cLadderID')"
+			." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
 			."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
 			$result = $sql->db_Query($q);
@@ -273,15 +271,13 @@ function ChallengeAccept($challenge_id)
 
 	if ($numChallenges > 0)
 	{
+		$ladder_id  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
+		$ladder = new Ladder($ladder_id);
+
 		$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 		$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
-		$cLadderID  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
-		$cLadderName  = mysql_result($result, 0, TBL_LADDERS.".Name");
-		$cLadderOwner  = mysql_result($result, 0, TBL_LADDERS.".Owner");
 		$cLaddergame = mysql_result($result, 0, TBL_GAMES.".Name");
 		$cLaddergameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
-		$cLadderType  = mysql_result($result, 0, TBL_LADDERS.".Type");
-		$cLadderNumDates  = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
 		$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 		$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
 		$cChallengerpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerPlayer");
@@ -293,7 +289,7 @@ function ChallengeAccept($challenge_id)
 		$comments = '';
 		$q =
 		"INSERT INTO ".TBL_MATCHS."(Ladder,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
-		VALUES ($cLadderID,".USERID.", $time, '$comments', 'scheduled', $challenge_time)";
+		VALUES ($ladder_id,".USERID.", $time, '$comments', 'scheduled', $challenge_time)";
 		$result = $sql->db_Query($q);
 
 		$last_id = mysql_insert_id();
@@ -317,7 +313,7 @@ function ChallengeAccept($challenge_id)
 		$fromid = 0;
 		$subject = SITENAME." ".EB_MATCHR_L52;
 
-		switch($cLadderType)
+		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -332,7 +328,7 @@ function ChallengeAccept($challenge_id)
 			." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
 			$result_Players = $sql->db_Query($q_Players);
 			$numPlayers = mysql_numrows($result_Players);
-			echo "numPlayers: $numPlayers<br>";
+			//echo "numPlayers: $numPlayers<br>";
 
 			break;
 			case "ClanWar":
@@ -349,7 +345,7 @@ function ChallengeAccept($challenge_id)
 			." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
 			$result_Players = $sql->db_Query($q_Players);
 			$numPlayers = mysql_numrows($result_Players);
-			echo "numPlayers: $numPlayers<br>";
+			//echo "numPlayers: $numPlayers<br>";
 
 			break;
 			default:
@@ -361,7 +357,7 @@ function ChallengeAccept($challenge_id)
 			{
 				$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
 				$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
-				$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$cLadderName.EB_MATCHR_L56;
+				$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$ladder->getField('Name').EB_MATCHR_L56;
 				if (check_class($pref['eb_pm_notifications_class']))
 				{
 					$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
@@ -407,11 +403,11 @@ function ChallengeDecline($challenge_id)
 		$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 		$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
 		$cReportedByEmail  = mysql_result($result, 0, TBL_USERS.".user_email");
-		$cLadderID  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
-		$cLadderName  = mysql_result($result, 0, TBL_LADDERS.".Name");
+		$ladder_id  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
+		$ladder = new Ladder($ladder_id);
 
 		$subject = SITENAME." ".EB_CHALLENGE_L29;
-		$message = EB_CHALLENGE_L30.$cReportedByNickName.EB_CHALLENGE_L31.USERNAME.EB_CHALLENGE_L32.$cLadderName.EB_CHALLENGE_L33;
+		$message = EB_CHALLENGE_L30.$cReportedByNickName.EB_CHALLENGE_L31.USERNAME.EB_CHALLENGE_L32.$ladder->getField('Name').EB_CHALLENGE_L33;
 		$fromid = 0;
 		$sendto = $cReportedBy;
 		$sendtoemail = $cReportedByEmail;
