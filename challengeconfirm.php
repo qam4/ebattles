@@ -25,14 +25,9 @@ print_r($_GET);     // show $_GET
 /* Ladder Name */
 $ladder_id = $_GET['LadderID'];
 $challenge_id = $_GET['challengeid'];
-$q = "SELECT ".TBL_LADDERS.".*"
-." FROM ".TBL_LADDERS
-." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-$result = $sql->db_Query($q);
 
-$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
-$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
+$ladder = new Ladder($ladder_id);
+
 $text = '';
 
 if(isset($_POST['challenge_withdraw']))
@@ -76,7 +71,7 @@ if(isset($_POST['challenge_decline']))
 	$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
 }
 
-$ns->tablerender("$ename (".ladderType($etype).") - ".EB_CHALLENGE_L1, $text);
+$ns->tablerender($ladder->getField('Name')." (".ladderTypeToString($ladder->getField('Type')).") - ".EB_CHALLENGE_L1, $text);
 require_once(FOOTERF);
 exit;
 

@@ -25,12 +25,7 @@ else
 {
     $text .= EB_MATCHQL_L5;
 
-    $q = "SELECT ".TBL_LADDERS.".*"
-    ." FROM ".TBL_LADDERS
-    ." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-    $result = $sql->db_Query($q);
-    $ename = mysql_result($result,0 , TBL_LADDERS.".Name");
-    $etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+   	$ladder = new Ladder($ladder_id);
 
     $q = "SELECT ".TBL_PLAYERS.".*"
     ." FROM ".TBL_PLAYERS
@@ -106,7 +101,7 @@ else
     ';
 }
 
-$ns->tablerender("$ename ($egame - ".ladderType($etype).") - ".EB_MATCHQL_L1, $text);
+$ns->tablerender($ladder->getField('Name')." ($egame - ".ladderTypeToString($ladder->getField('Type')).") - ".EB_MATCHQL_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

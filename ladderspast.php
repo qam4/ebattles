@@ -214,7 +214,7 @@ function displayPastLadders(){
             <td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$eid.'">'.$ename.'</a></td>
             <td class="forumheader3"><img '.getGameIconResize($gicon).'/></td>
             <td class="forumheader3">'.$gname.'</td>
-            <td class="forumheader3">'.ladderType($etype).'</td>
+            <td class="forumheader3">'.ladderTypeToString($etype).'</td>
             <td class="forumheader3">'.$date_start.'</td>
             <td class="forumheader3">'.$date_end.'</td>
             <td class="forumheader3">'.$nbrplayers.'</td>

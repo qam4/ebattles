@@ -110,7 +110,7 @@ else
     $text .= '</div>';
     $text .= '</div>';
 }
-$ns->tablerender("$mLadderName ($mLaddergame - ".ladderType($mLadderType).")", $text);
+$ns->tablerender("$mLadderName ($mLaddergame - ".ladderTypeToString($mLadderType).")", $text);
 require_once(FOOTERF);
 exit;
 ?>

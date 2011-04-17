@@ -7,6 +7,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN.'ebattles/include/main.php');
 require_once(e_PLUGIN.'ebattles/include/match.php');
+require_once(e_PLUGIN.'ebattles/include/ladder.php');
 
 if(isset($_POST['qrsubmitloss']))
 {
@@ -14,13 +15,7 @@ if(isset($_POST['qrsubmitloss']))
     $reported_by = $_POST['reported_by'];
     $pwinnerID = $_POST['Player'];
 
-    $q = "SELECT ".TBL_LADDERS.".*"
-    ." FROM ".TBL_LADDERS
-    ." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-    $result = $sql->db_Query($q);
-
-    $eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
-    $etype = mysql_result($result,0 , TBL_LADDERS.".Type");
+    $ladder = new Ladder($ladder_id);
 
     // Attention here, we use user_id, so there has to be 1 user for 1 player
     $plooserUser = $reported_by;
@@ -59,9 +54,9 @@ if(isset($_POST['qrsubmitloss']))
     match_scores_update($match_id);
 
     // Automatically Update Players stats only if Match Approval is Disabled
-    if ($eMatchesApproval == eb_UC_NONE)
+    if ($ladder->getField('MatchesApproval') == eb_UC_NONE)
     {
-        switch($etype)
+        switch($ladder->getField('Type'))
         {
             case "One Player Ladder":
             case "Team Ladder":
@@ -87,13 +82,9 @@ if (isset($_POST['approvematch']))
     $ladder_id = $_POST['LadderID'];
     $match_id = $_POST['matchid'];
 
-    $q = "SELECT ".TBL_LADDERS.".*"
-    ." FROM ".TBL_LADDERS
-    ." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-    $result = $sql->db_Query($q);
+    $ladder = new Ladder($ladder_id);
 
-    $etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-    switch($etype)
+    switch($ladder->getField('Type'))
     {
         case "One Player Ladder":
         case "Team Ladder":

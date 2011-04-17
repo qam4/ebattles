@@ -5,6 +5,9 @@
 */
 require_once(e_PLUGIN.'ebattles/include/ladder.php');
 
+$ladder_id = $_GET['LadderID'];
+$ladder = new Ladder($ladder_id);
+
 if(isset($_POST['quitladder'])){
     $pid = $_POST['player'];
 
@@ -25,23 +28,23 @@ if(isset($_POST['quitladder'])){
     header("Location: ladderinfo.php?LadderID=$ladder_id");
 }
 if(isset($_POST['joinladder'])){
-    if ($_POST['joinLadderPassword'] == $epassword)
+    if ($_POST['joinLadderPassword'] == $ladder->getField('Password'))
     {
-        ladderAddPlayer($ladder_id, USERID, 0, FALSE);
+        $ladder->ladderAddPlayer(USERID, 0, FALSE);
     }
     header("Location: ladderinfo.php?LadderID=$ladder_id");
 }
 if(isset($_POST['teamjoinladder'])){
-    if ($_POST['joinLadderPassword'] == $epassword)
+    if ($_POST['joinLadderPassword'] == $ladder->getField('Password'))
     {
         $div_id = $_POST['division'];
-        ladderAddDivision($ladder_id, $div_id, FALSE);
+        $ladder->ladderAddDivision($div_id, FALSE);
     }
     header("Location: ladderinfo.php?LadderID=$ladder_id");
 }
 if(isset($_POST['jointeamladder'])){
     $team_id = $_POST['team'];
-    ladderAddPlayer ($ladder_id, USERID, $team_id, FALSE);
+    $ladder->ladderAddPlayer (USERID, $team_id, FALSE);
     header("Location: ladderinfo.php?LadderID=$ladder_id");
 }
 

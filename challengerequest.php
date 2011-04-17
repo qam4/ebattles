@@ -55,15 +55,7 @@ document.getElementById("f_date"+index).value = ""
 ';
 /* Ladder Name */
 $ladder_id = $_GET['LadderID'];
-$q = "SELECT ".TBL_LADDERS.".*"
-." FROM ".TBL_LADDERS
-." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-$result = $sql->db_Query($q);
-
-$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
-$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-$eNumDates = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
-$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
+$ladder = new Ladder($ladder_id);
 
 if(isset($_POST['challenge_player']))
 {
@@ -80,7 +72,7 @@ if(isset($_POST['challenge_player_submit']))
 	// Verify form
 	$error_str = '';
 
-	for($date=1; $date <= $eNumDates; $date++)
+	for($date=1; $date <= $ladder->getField('MaxDatesPerChallenge'); $date++)
 	{
 		if ($_POST['date'.$date] == '')
 		{
@@ -98,7 +90,7 @@ if(isset($_POST['challenge_player_submit']))
 	}
 	else
 	{
-		SubmitPlayerChallenge($ladder_id, $challenger, $challenged, $eNumDates);
+		SubmitPlayerChallenge($ladder_id, $challenger, $challenged, $ladder->getField('MaxDatesPerChallenge'));
 		$text .= EB_CHALLENGE_L12;
 		$text .= '<br />';
 		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
@@ -119,7 +111,7 @@ if(isset($_POST['challenge_team_submit']))
 	// Verify form
 	$error_str = '';
 
-	for($date=1; $date <= $eNumDates; $date++)
+	for($date=1; $date <= $ladder->getField('MaxDatesPerChallenge'); $date++)
 	{
 		if ($_POST['date'.$date] == '')
 		{
@@ -137,13 +129,13 @@ if(isset($_POST['challenge_team_submit']))
 	}
 	else
 	{
-		SubmitTeamChallenge($ladder_id, $challenger, $challenged, $eNumDates);
+		SubmitTeamChallenge($ladder_id, $challenger, $challenged, $ladder->getField('MaxDatesPerChallenge'));
 		$text .= EB_CHALLENGE_L12;
 		$text .= '<br />';
 		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
 	}
 }
-$ns->tablerender("$ename (".ladderType($etype).") - ".EB_CHALLENGE_L1, $text);
+$ns->tablerender($ladder->getField('Name')." (".ladderTypeToString($ladder->getField('Type')).") - ".EB_CHALLENGE_L1, $text);
 require_once(FOOTERF);
 exit;
 
@@ -156,14 +148,7 @@ function PlayerChallengeForm($ladder_id, $challengerpuid, $challengedpid)
 	global $tp;
 	global $time;
 
-	$q = "SELECT ".TBL_LADDERS.".*"
-	." FROM ".TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-	$result = $sql->db_Query($q);
-
-	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-	$eNumDates = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
+	$ladder = new Ladder($ladder_id);
 
 	$output .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?LadderID='.$ladder_id.'" method="post">';
 
@@ -225,7 +210,7 @@ function PlayerChallengeForm($ladder_id, $challengerpuid, $challengedpid)
 	// Select Dates
 	$output .= '<b>'.EB_CHALLENGE_L7.'</b><br />'; // Select Dates
 	$output .= '<table class="table_left">';
-	for($date=1; $date <= $eNumDates; $date++)
+	for($date=1; $date <= $ladder->getField('MaxDatesPerChallenge'); $date++)
 	{
 		//<!-- Select date Date -->
 		$output .= '
@@ -309,15 +294,7 @@ function SubmitPlayerChallenge($ladder_id, $challengerpuid, $challengedpid)
 	global $time;
 	global $pref;
 
-	$q = "SELECT ".TBL_LADDERS.".*"
-	." FROM ".TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-	$result = $sql->db_Query($q);
-
-	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-	$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
-	$eNumDates = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
+	$ladder = new Ladder($ladder_id);
 
 	// Challenger Info
 	// Attention here, we use user_id, so there has to be 1 user for 1 player
@@ -351,7 +328,7 @@ function SubmitPlayerChallenge($ladder_id, $challengerpuid, $challengedpid)
 	$challengedpemail  = mysql_result($result, 0, TBL_USERS.".user_email");
 
 	$challenge_times = '';
-	for($date=1; $date <= $eNumDates; $date++)
+	for($date=1; $date <= $ladder->getField('MaxDatesPerChallenge'); $date++)
 	{
 		$challenge_date = $_POST['date'.$date];
 		$challenge_time_local = strtotime($challenge_date);
@@ -381,7 +358,7 @@ function SubmitPlayerChallenge($ladder_id, $challengerpuid, $challengedpid)
 	$result = $sql->db_Query($q);
 
 	$subject = SITENAME." ".EB_CHALLENGE_L23;
-	$message = EB_CHALLENGE_L24.$challengedpname.EB_CHALLENGE_L25.$challengerpname.EB_CHALLENGE_L26.$ename.EB_CHALLENGE_L27;
+	$message = EB_CHALLENGE_L24.$challengedpname.EB_CHALLENGE_L25.$challengerpname.EB_CHALLENGE_L26.$ladder->getField('Name').EB_CHALLENGE_L27;
 	if (check_class($pref['eb_pm_notifications_class']))
 	{
 		// Send PM
@@ -404,14 +381,7 @@ function TeamChallengeForm($ladder_id, $challengerpuid, $challengedtid)
 	global $tp;
 	global $time;
 
-	$q = "SELECT ".TBL_LADDERS.".*"
-	." FROM ".TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-	$result = $sql->db_Query($q);
-
-	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-	$eNumDates = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
+	$ladder = new Ladder($ladder_id);
 
 	$output .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?LadderID='.$ladder_id.'" method="post">';
 
@@ -466,7 +436,7 @@ function TeamChallengeForm($ladder_id, $challengerpuid, $challengedtid)
 	// Select Dates
 	$output .= '<b>'.EB_CHALLENGE_L7.'</b><br />'; // Select Dates
 	$output .= '<table class="table_left">';
-	for($date=1; $date <= $eNumDates; $date++)
+	for($date=1; $date <= $ladder->getField('MaxDatesPerChallenge'); $date++)
 	{
 		//<!-- Select date Date -->
 		$output .= '
@@ -550,15 +520,7 @@ function SubmitTeamChallenge($ladder_id, $challengerpuid, $challengedtid)
 	global $time;
 	global $pref;
 
-	$q = "SELECT ".TBL_LADDERS.".*"
-	." FROM ".TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-	$result = $sql->db_Query($q);
-
-	$eMatchesApproval = mysql_result($result,0 , TBL_LADDERS.".MatchesApproval");
-	$etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-	$ename = mysql_result($result,0 , TBL_LADDERS.".Name");
-	$eNumDates = mysql_result($result,0 , TBL_LADDERS.".MaxDatesPerChallenge");
+	$ladder = new Ladder($ladder_id);
 
 	// Challenger Info
 	// Attention here, we use user_id, so there has to be 1 user for 1 player
@@ -579,7 +541,7 @@ function SubmitTeamChallenge($ladder_id, $challengerpuid, $challengedtid)
 	// ...
 
 	$challenge_times = '';
-	for($date=1; $date <= $eNumDates; $date++)
+	for($date=1; $date <= $ladder->getField('MaxDatesPerChallenge'); $date++)
 	{
 		$challenge_date = $_POST['date'.$date];
 		$challenge_time_local = strtotime($challenge_date);
@@ -630,7 +592,7 @@ function SubmitTeamChallenge($ladder_id, $challengerpuid, $challengedtid)
 		{
 			$challengedpname = mysql_result($result, $j, TBL_USERS.".user_name");
 			$challengedpemail = mysql_result($result, $j, TBL_USERS.".user_email");
-			$message = EB_CHALLENGE_L24.$challengedpname.EB_CHALLENGE_L25.$challengertclan.EB_CHALLENGE_L26.$ename.EB_CHALLENGE_L27;
+			$message = EB_CHALLENGE_L24.$challengedpname.EB_CHALLENGE_L25.$challengertclan.EB_CHALLENGE_L26.$ladder->getField('Name').EB_CHALLENGE_L27;
 			if (check_class($pref['eb_pm_notifications_class']))
 			{
 				$sendto = mysql_result($result, $j, TBL_USERS.".user_id");

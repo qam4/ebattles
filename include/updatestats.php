@@ -58,16 +58,10 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
     $points_score = array();
 
     /* Ladder Info */
-    $q = "SELECT ".TBL_LADDERS.".*"
-    ." FROM ".TBL_LADDERS
-    ." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')";
-    $result = $sql->db_Query($q);
-    $etype = mysql_result($result,0 , TBL_LADDERS.".Type");
-    $emingames = mysql_result($result,0 , TBL_LADDERS.".nbr_games_to_rank");
-    $eminteamgames = mysql_result($result,0 , TBL_LADDERS.".nbr_team_games_to_rank");
-    $ehide_ratings_column = mysql_result($result,0 , TBL_LADDERS.".hide_ratings_column");
-    $eranking_type = mysql_result($result,0 , TBL_LADDERS.".RankingType");
-    if ($eranking_type == "Classic") $ehide_ratings_column = TRUE;
+   	$ladder = new Ladder($ladder_id);
+
+    $hide_ratings_column = $ladder->getField('hide_ratings_column');
+    if ($ladder->getField('RankingType') == "Classic") $hide_ratings_column = TRUE;
 
     // Update Players stats
     $q_Players = "SELECT ".TBL_PLAYERS.".*, "
@@ -230,7 +224,7 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
         $scorediff_score[] = ($pgames_played>0) ? ($pscore - $poppscore)/$pgames_played : 0;
         $points_score[] = $ppoints;
 
-        if (($pgames_played >= $emingames)&&($pbanned == 0))
+        if (($pgames_played >= $ladder->getField('nbr_games_to_rank'))&&($pbanned == 0))
         {
             $players_rated++;
         }
@@ -379,7 +373,7 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
             {
                 $stat_InfoOnly[$cat_index] = $cat_InfoOnly;
 
-                switch($eranking_type)
+                switch($ladder->getField('RankingType'))
                 {
                     case "CombinedStats":
                     if (($cat_InfoOnly == TRUE))
@@ -421,7 +415,7 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
                     case "Classic";
                     if (($cat_InfoOnly == TRUE))
                     {
-                        $cat_header = '<span title="'.$cat_header_title.'">'.$cat_header_text.'</span>';
+                        $cat_header = '<b title="'.$cat_header_title.'">'.$cat_header_text.'</b>';
                     }
                     else
                     {
@@ -449,7 +443,7 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
     // user rating not shown
     // $stats[0][] = '<b>'.EB_STATS_L30.'</b>';
 
-    if ($ehide_ratings_column == FALSE)
+    if ($hide_ratings_column == FALSE)
     $stats[0][] = '<b title="'.EB_STATS_L31.' ['.number_format ($rating_max,2).' '.EB_STATS_L27.']">'.EB_STATS_L32.'</b>';
     //$stats[0][] = '<b title="'.EB_STATS_L31.'">'.EB_STATS_L32.'</b><br /><div class="smalltext">['.number_format ($rating_max,2).'&nbsp;'.EB_STATS_L27.']</div>';
 
@@ -458,7 +452,7 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
         $stats[0][] = $stat_cat_header[$category];
     }
 
-    switch($eranking_type)
+    switch($ladder->getField('RankingType'))
     {
         case "CombinedStats":
         $OverallScoreThreshold = 0;
@@ -466,7 +460,7 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
         for($player=0; $player < $numPlayers; $player++)
         {
             $OverallScore[$player] = 0;
-            if (($games_played[$player] >= $emingames)&&($banned[$player] == 0))
+            if (($games_played[$player] >= $ladder->getField('nbr_games_to_rank'))&&($banned[$player] == 0))
             {
                 for ($category=0; $category < $numDisplayedCategories; $category++)
                 {
@@ -493,7 +487,7 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
         $OverallScoreThreshold = $numPlayers;
         for($player=0; $player < $numPlayers; $player++)
         {
-            if (($games_played[$player] >= $emingames)&&($banned[$player] == 0))
+            if (($games_played[$player] >= $ladder->getField('nbr_games_to_rank'))&&($banned[$player] == 0))
             {
                 $OverallScore[$player] = array_search($player, $ranks, false) + $numPlayers + 1;
             }
@@ -674,12 +668,12 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
         // user rating not shown
         //$stats_row[] = $rating[$index];
 
-        if ($ehide_ratings_column == FALSE)
+        if ($hide_ratings_column == FALSE)
         $stats_row[] = number_format ($OverallScore[$index],2);
 
         for ($category=0; $category < $numDisplayedCategories; $category++)
         {
-            if (($stat_InfoOnly[$category] == TRUE)||($eranking_type == "Classic"))
+            if (($stat_InfoOnly[$category] == TRUE)||($ladder->getField('RankingType') == "Classic"))
             {
                 $stats_row[] = $stat_display[$category][$index];
             }
