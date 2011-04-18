@@ -702,6 +702,8 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
         if ($fp == FALSE) {
             // handle error
             $error .= EB_STATS_L38;
+			echo $error;
+			exit();
         }
 
         fputs($fp, $OUTPUT);

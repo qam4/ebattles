@@ -1358,7 +1358,7 @@ else
     }
 }
 
-$ns->tablerender("$ladder->getField('Name'] ($egame - ".ladderTypeToString($ladder->getField('Type')).") - ".EB_LADDERM_L1, $text);
+$ns->tablerender($ladder->getField('Name')." ($egame - ".ladderTypeToString($ladder->getField('Type')).") - ".EB_LADDERM_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

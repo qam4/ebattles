@@ -1161,8 +1161,9 @@ else
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numChallenges; $i++)
 		{
-			$cID  = mysql_result($result,$i, TBL_CHALLENGES.".ChallengeID");
-			$text .= displayChallengeInfo($cID,eb_MATCH_NOLADDERINFO);
+			$challenge_id  = mysql_result($result,$i, TBL_CHALLENGES.".ChallengeID");
+			$challenge = new Challenge($challenge_id);
+			$text .= $challenge->displayChallengeInfo(eb_MATCH_NOLADDERINFO);
 		}
 		$text .= '</table>';
 	}
