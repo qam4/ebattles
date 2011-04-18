@@ -284,6 +284,11 @@ function updateGame($game_id)
         }
         fclose($file_handle);
     }
+    else
+    {
+    	echo "Error loading game file.";
+    	exit()
+    }
 }
 /**
 * updateAllGames - Update all games in the database, using info from Games List.csv
@@ -315,7 +320,12 @@ function updateAllGames()
         }
         fclose($file_handle);
     }
-
+    else
+    {
+    	echo "Error loading game file.";
+    	exit()
+    }
+    
     // Get info from database the game is already in database
     $query = "SELECT ".TBL_GAMES.".*"
     ." FROM ".TBL_GAMES;
@@ -378,6 +388,11 @@ function insertGames()
             }
         }
         fclose($file_handle);
+    }
+    else
+    {
+    	echo "Error loading game file.";
+    	exit()
     }
 }
 function add_faction($game_id, $faction_icon, $faction_name)
