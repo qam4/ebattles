@@ -941,7 +941,7 @@ else
                     $pbanned = mysql_result($result,$i, TBL_PLAYERS.".Banned");
                     $pgames = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
                     $pteam = mysql_result($result,$i, TBL_PLAYERS.".Team");
-                    list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+                    list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
                     $q_awards = "SELECT COUNT(*) as NbrAwards"
                     ." FROM ".TBL_AWARDS

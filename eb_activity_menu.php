@@ -186,7 +186,7 @@ function displayRecentActivity($ladder_id){
 			$aLadderName  = mysql_result($result,$i, TBL_LADDERS.".Name");
 
 			$aClanTeam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-			list($tclan, $tclantag, $tclanid) = getClanName($aClanTeam);
+			list($tclan, $tclantag, $tclanid) = getClanInfo($aClanTeam);
 
 			switch ($aType) {
 				case 'TeamTookFirstPlace':

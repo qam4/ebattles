@@ -66,11 +66,13 @@ if(isset($_POST['joindivision']))
             }
         }
     }
+    // TODO: $clan_id not defined
     header("Location: claninfo.php?clanid=$clan_id");
 }
 if(isset($_POST['quitdivision']))
 {
     $div_id = $_POST['division'];
+    $division = new Division($div_id);
 
     // Check that the member has made no games with this division
     $q_MemberScores = "SELECT ".TBL_MEMBERS.".*, "
@@ -90,9 +92,10 @@ if(isset($_POST['quitdivision']))
     $numMemberScores = mysql_numrows($result_MemberScores);
     if ($numMemberScores == 0)
     {
-        deleteMemberPlayers($div_id);
-        deleteMember($div_id);
+        $division->deleteMemberPlayers();
+        $division->deleteMember();
     }
+    // TODO: $clan_id not defined
     header("Location: claninfo.php?clanid=$clan_id");
 }
 ?>
