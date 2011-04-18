@@ -1068,8 +1068,9 @@ else
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numMatches; $i++)
 		{
-			$mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-			$text .= displayMatchInfo($mID, eb_MATCH_NOLADDERINFO);
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo(eb_MATCH_NOLADDERINFO);
 		}
 		$text .= '</table>';
 	}
@@ -1099,8 +1100,9 @@ else
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numMatches; $i++)
 		{
-			$mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-			$text .= displayMatchInfo($mID, eb_MATCH_NOLADDERINFO);
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo(eb_MATCH_NOLADDERINFO);
 		}
 		$text .= '</table>';
 	}
@@ -1129,8 +1131,9 @@ else
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numMatches; $i++)
 		{
-			$mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-			$text .= displayMatchInfo($mID, eb_MATCH_NOLADDERINFO|eb_MATCH_SCHEDULED);
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo(eb_MATCH_NOLADDERINFO|eb_MATCH_SCHEDULED);
 		}
 		$text .= '</table>';
 	}

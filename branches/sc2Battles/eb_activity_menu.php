@@ -56,10 +56,10 @@ function displayRecentActivity($ladder_id){
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-			$mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-			$ladders[$nbr_ladders][0] = $mTime;
-			$ladders[$nbr_ladders][1] = displayMatchInfo($mID);
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$ladders[$nbr_ladders][0] = $match->getField('TimeReported');
+			$ladders[$nbr_ladders][1] = $match->displayMatchInfo();
 			$nbr_ladders ++;
 		}
 	}

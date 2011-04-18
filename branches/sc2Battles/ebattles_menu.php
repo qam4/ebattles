@@ -2,6 +2,7 @@
 if(!defined("e107_INIT")){ exit(); }
 
 require_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/ladder.php");
 
 $ebattles_title = $pref['eb_links_menuheading'];
 $ladders_link    = e_PLUGIN.'ebattles/ladders.php';

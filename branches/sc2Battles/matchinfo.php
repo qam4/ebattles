@@ -89,7 +89,7 @@ else
 
 	$result = $sql->db_Query($q);
 	$ladder_id = mysql_result($result,0 , TBL_LADDERS.".LadderID");
-	$ladder = new Ladder();
+	$ladder = new Ladder($ladder_id);
 	
 	$gName = mysql_result($result,0 , TBL_GAMES.".Name");
 	$mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
