@@ -10,6 +10,7 @@ require_once(e_PLUGIN.'ebattles/include/clan.php');
 if(isset($_POST['clandelete']))
 {
     $clan_id = $_GET['clanid'];
+    $clan = new Clan($clan_id);
 
     $q_ClanScores = "SELECT ".TBL_DIVISIONS.".*, "
     .TBL_TEAMS.".*, "
@@ -36,13 +37,14 @@ if(isset($_POST['clandelete']))
         for ($i = 0; $i < $numClanDivs; $i ++)
         {
             $div_id = mysql_result($result_ClanDivs, $i, TBL_DIVISIONS.".DivisionID");
-            deleteDivPlayers($div_id);
-            deleteDivTeams($div_id);
-            deleteDivMembers($div_id);
-            deleteDiv($div_id);
+            $division = new Division($div_id);
+            $division->deleteDivPlayers();
+            $division->deleteDivTeams();
+            $division->deleteDivMembers();
+            $division->deleteDiv();
         }
 
-        deleteClan($clan_id);
+        $clan->deleteClan();
     }
     //echo "-- clandelete --<br />";
     header("Location: clans.php");
@@ -51,6 +53,7 @@ if(isset($_POST['clandeletediv']))
 {
     $clan_id = $_GET['clanid'];
     $div_id = $_POST['clandiv'];
+    $division = new Division($div_id);
 
     $q_DivScores = "SELECT ".TBL_DIVISIONS.".*, "
     .TBL_TEAMS.".*, "
@@ -69,10 +72,10 @@ if(isset($_POST['clandeletediv']))
     if ($numDivScores == 0)
     {
         // Delete players, teams, members and divison
-        deleteDivPlayers($div_id);
-        deleteDivTeams($div_id);
-        deleteDivMembers($div_id);
-        deleteDiv($div_id);
+        $division->deleteDivPlayers();
+        $division->deleteDivTeams();
+        $division->deleteDivMembers();
+        $division->deleteDiv();
     }
     echo "-- clandeletediv --<br />";
     header("Location: clanmanage.php?clanid=$clan_id");
@@ -183,16 +186,7 @@ if(isset($_POST['clanchangedivcaptain']))
     //echo "-- clanchangedivcaptain --<br />";
     header("Location: clanmanage.php?clanid=$clan_id");
 }
-/*
-if(isset($_POST['clandelete']))
-{
-$clan_id = $_GET['clanid'];
-deleteClan($clan_id);
 
-//echo "-- clandelete --<br />";
-header("Location: clans.php");
-}
-*/
 if (isset($_POST['kick']))
 {
 //fm: Not good

@@ -6,32 +6,10 @@ require_once(e_PLUGIN.'ebattles/include/match.php');
 require_once(e_PLUGIN."ebattles/include/updatestats.php");
 require_once(e_PLUGIN."ebattles/include/updateteamstats.php");
 
-class Ladder
+class Ladder extends DatabaseTable
 {
-	private $tablename = TBL_LADDERS;
-	private $primary_key = "LadderID";
-	private $fields = array();
-	
-
-	function __construct($primaryID) {
-		global $sql;
-		$q = "SELECT *"
-		." FROM $this->tablename"
-		." WHERE ($this->primary_key = '$primaryID')";
-		$result = $sql->db_Query($q);
-	
-		if ($row = mysql_fetch_assoc($result)) {
-			//dbg: var_dump($row);
-			
-	         $this->fields = $row;
-	    } // while
-	    
-	    //dbg: echo "LadderID: ".$this->fields['LadderID'];
-	}
-
-	function getField($field) {
-		return $this->fields[$field];
-	}
+	protected $tablename = TBL_LADDERS;
+	protected $primary_key = "LadderID";
 
 	/***************************************************************************************
 	Functions

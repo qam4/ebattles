@@ -632,7 +632,7 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
             }
         }
 
-        list($pclan, $pclantag, $pclanid) = getClanName($team[$index]);
+        list($pclan, $pclantag, $pclanid) = getClanInfo($team[$index]);
 
         if(strcmp(USERID,$puid) == 0)
         {

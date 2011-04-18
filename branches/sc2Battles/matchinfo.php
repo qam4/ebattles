@@ -396,14 +396,14 @@ else
 			$pname  = mysql_result($result,$i, TBL_USERS.".user_name");
 			$pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
 			$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-			list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 			break;
 			case "ClanWar":
 			$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 			$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
 			$pavatar = mysql_result($result,$i, TBL_CLANS.".Image");
 			$pteam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-			list($pclan, $pclantag, $pclanid) = getClanName($pteam); // Use this function to get other clan info like clan id?
+			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam); // Use this function to get other clan info like clan id?
 			break;
 			default:
 		}
@@ -500,7 +500,7 @@ else
 					$ouid = mysql_result($result,$opponentIndex, TBL_USERS.".user_id");
 					$ouname = mysql_result($result,$opponentIndex, TBL_USERS.".user_name");
 					$oteam  = mysql_result($result,$opponentIndex, TBL_PLAYERS.".Team");
-					list($oclan, $oclantag, $oclanid) = getClanName($oteam);
+					list($oclan, $oclantag, $oclanid) = getClanInfo($oteam);
 
 					if (($numPlayers>0)&&($ouid == USERID)&&($uteam!=$pMatchTeam)) $can_rate = TRUE;
 					if ($oMatchTeam != $pMatchTeam)

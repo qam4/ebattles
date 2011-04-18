@@ -5,29 +5,14 @@ require_once(e_PLUGIN.'ebattles/include/ELO.php');
 require_once(e_PLUGIN.'ebattles/include/trueskill.php');
 require_once(e_PLUGIN.'ebattles/include/ladder.php');
 
-class Match
+class Match extends DatabaseTable
 {
-	private $tablename = TBL_MATCHS;
-	private $primary_key = "MatchID";
-	private $fields = array();
+	protected $tablename = TBL_MATCHS;
+	protected $primary_key = "MatchID";
 
-
-	function __construct($primaryID) {
-		global $sql;
-		$q = "SELECT *"
-		." FROM $this->tablename"
-		." WHERE ($this->primary_key = '$primaryID')";
-		$result = $sql->db_Query($q);
-
-		if ($row = mysql_fetch_assoc($result)) {
-			$this->fields = $row;
-		} // while
-	}
-
-	function getField($field) {
-		return $this->fields[$field];
-	}
-
+	/***************************************************************************************
+	Functions
+	***************************************************************************************/
 	function match_scores_update()
 	{
 		global $sql;
@@ -1478,7 +1463,7 @@ class Match
 						break;
 						default:
 					}
-					list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+					list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 					$prank  = mysql_result($result,$index , TBL_SCORES.".Player_Rank");
 					$pmatchteam  = mysql_result($result,$index , TBL_SCORES.".Player_MatchTeam");
 					$pscore = mysql_result($result,$index , TBL_SCORES.".Player_Score");

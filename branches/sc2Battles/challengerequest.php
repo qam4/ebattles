@@ -171,7 +171,7 @@ function PlayerChallengeForm($ladder_id, $challengerpuid, $challengedpid)
 	$prank  = mysql_result($result,0 , TBL_PLAYERS.".Rank");
 	$pname  = mysql_result($result,0 , TBL_USERS.".user_name");
 	$pteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
-	list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+	list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
 	if ($prank==0)
 	$prank_txt = EB_LADDER_L54;
@@ -196,7 +196,7 @@ function PlayerChallengeForm($ladder_id, $challengerpuid, $challengedpid)
 	$prank  = mysql_result($result, 0, TBL_PLAYERS.".Rank");
 	$pname  = mysql_result($result, 0, TBL_USERS.".user_name");
 	$pteam  = mysql_result($result, 0, TBL_PLAYERS.".Team");
-	list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+	list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
 	if ($prank==0)
 	$prank_txt = EB_LADDER_L54;
@@ -404,7 +404,7 @@ function TeamChallengeForm($ladder_id, $challengerpuid, $challengedtid)
 
 	$uteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
 	$trank  = mysql_result($result,0 , TBL_TEAMS.".Rank");
-	list($tclan, $tclantag, $tclanid) = getClanName($uteam);
+	list($tclan, $tclantag, $tclanid) = getClanInfo($uteam);
 
 	if ($trank==0)
 	$trank_txt = EB_LADDER_L54;
@@ -422,7 +422,7 @@ function TeamChallengeForm($ladder_id, $challengerpuid, $challengedtid)
 
 	$uteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
 	$trank  = mysql_result($result, 0, TBL_TEAMS.".Rank");
-	list($tclan, $tclantag, $tclanid) = getClanName($uteam);
+	list($tclan, $tclantag, $tclanid) = getClanInfo($uteam);
 
 	if ($trank==0)
 	$trank_txt = EB_LADDER_L54;
@@ -534,7 +534,7 @@ function SubmitTeamChallenge($ladder_id, $challengerpuid, $challengedtid)
 	$result = $sql->db_Query($q);
 	$challengerpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
 	$challengertid   =mysql_result($result, 0,TBL_PLAYERS.".Team");
-	list($challengertclan, $challengertclantag, $challengertclanid) = getClanName($challengertid);
+	list($challengertclan, $challengertclantag, $challengertclanid) = getClanInfo($challengertid);
 
 	// Challenged Info
 	// Nothing needed here

@@ -46,6 +46,29 @@ $eplug_css = array(
 $tab_theme
 );
 
+class DatabaseTable
+{
+	protected $tablename;
+	protected $primary_key;
+	protected $fields = array();
+
+	function __construct($primaryID) {
+		global $sql;
+		$q = "SELECT *"
+		." FROM $this->tablename"
+		." WHERE ($this->primary_key = '$primaryID')";
+		$result = $sql->db_Query($q);
+	
+		if ($row = mysql_fetch_assoc($result)) {
+	         $this->fields = $row;
+	    } // while
+	}
+
+	function getField($field) {
+		return $this->fields[$field];
+	}
+}
+
 function multi2dSortAsc(&$arr, $key, $sort)
 {
     $sort_col = array();

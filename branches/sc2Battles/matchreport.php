@@ -109,7 +109,7 @@ switch($ladder->getField('Type'))
 		$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
 		$pname  = mysql_result($result,$i, TBL_USERS.".user_name");
 		$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-		list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+		list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 		if ($prank==0)
 		$prank_txt = EB_LADDER_L54;
 		else
@@ -240,14 +240,14 @@ if($match_id)
 			$pname  = mysql_result($result,$score, TBL_USERS.".user_name");
 			$pavatar = mysql_result($result,$score, TBL_USERS.".user_image");
 			$pteam  = mysql_result($result,$score, TBL_PLAYERS.".Team");
-			list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 			break;
 			case "ClanWar":
 			$pid  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
 			$pname  = mysql_result($result,$score, TBL_CLANS.".Name");
 			$pavatar = mysql_result($result,$score, TBL_CLANS.".Image");
 			$pteam  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
-			list($pclan, $pclantag, $pclanid) = getClanName($pteam); // Use this function to get other clan info like clan id?
+			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam); // Use this function to get other clan info like clan id?
 			break;
 			default:
 		}

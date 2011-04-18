@@ -892,7 +892,7 @@ else
 				$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
 				$pname  = mysql_result($result,$i, TBL_USERS.".user_name");
 				$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-				list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
 				if(($puid != USERID)&&(($uteam == 0)||($uteam != $pteam)))
 				{
@@ -1278,7 +1278,7 @@ else
 			$date = date("d M Y, h:i A",$aTime_local);
 
 			$aClanTeam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-			list($tclan, $tclantag, $tclanid) = getClanName($aClanTeam);
+			list($tclan, $tclantag, $tclanid) = getClanInfo($aClanTeam);
 
 			switch ($aType) {
 				case 'TeamTookFirstPlace':

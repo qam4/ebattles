@@ -485,7 +485,7 @@ function displayTeamAwards($clan_id){
 			$date = date("d M Y, h:i A",$aTime_local);
 
 			$aClanTeam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-			list($tclan, $tclantag, $tclanid) = getClanName($aClanTeam);
+			list($tclan, $tclantag, $tclanid) = getClanInfo($aClanTeam);
 
 
 			switch ($aType) {
