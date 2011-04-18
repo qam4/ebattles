@@ -36,7 +36,8 @@ if(isset($_POST['qrsubmitloss']))
 
     $last_id = mysql_insert_id();
     $match_id = $last_id;
-
+    $match = new Match($match_id);
+    
     // Create Scores ------------------------------------------
     $q =
     "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Rank)
@@ -51,7 +52,7 @@ if(isset($_POST['qrsubmitloss']))
     $result = $sql->db_Query($q);
 
     // Update scores stats
-    match_scores_update($match_id);
+    $match->match_scores_update();
 
     // Automatically Update Players stats only if Match Approval is Disabled
     if ($ladder->getField('MatchesApproval') == eb_UC_NONE)
@@ -60,10 +61,10 @@ if(isset($_POST['qrsubmitloss']))
         {
             case "One Player Ladder":
             case "Team Ladder":
-            match_players_update($match_id);
+            $match->match_players_update();
             break;
             case "ClanWar":
-            match_teams_update($match_id);
+            $match->match_teams_update();
             break;
             default:
         }
@@ -83,15 +84,16 @@ if (isset($_POST['approvematch']))
     $match_id = $_POST['matchid'];
 
     $ladder = new Ladder($ladder_id);
+    $match = new Match($match_id);
 
     switch($ladder->getField('Type'))
     {
         case "One Player Ladder":
         case "Team Ladder":
-        match_players_update($match_id);
+        $match->match_players_update();
         break;
         case "ClanWar":
-        match_teams_update($match_id);
+        $match->match_teams_update();
         break;
         default:
     }
@@ -106,13 +108,14 @@ if (isset($_POST['addmedia']))
 {
     $ladder_id = $_POST['LadderID'];
     $match_id = $_POST['matchid'];
+    $match = new Match($match_id);
     $media_type = $_POST['mediatype'];
     $media_path = $tp->toDB($_POST['mediapath']);
     $submitter = USERID;
 
     if (preg_match("/http:\/\//", $media_path))
     {
-        add_media($match_id, $submitter, $media_path, $media_type);
+        $match->add_media($submitter, $media_path, $media_type);
     }
 
     header("Location: matchinfo.php?matchid=$match_id");

@@ -42,7 +42,7 @@ class Ladder
 
 		$q = "SELECT ".TBL_PLAYERS.".*"
 		." FROM ".TBL_PLAYERS
-		." WHERE (".TBL_PLAYERS.".Ladder = '$this->fields['LadderID']')";
+		." WHERE (".TBL_PLAYERS.".Ladder = '".$this->fields['LadderID']."')";
 		$result = $sql->db_Query($q);
 		$num_players = mysql_numrows($result);
 		if ($num_players!=0)
@@ -80,7 +80,7 @@ class Ladder
 		global $sql;
 		$q = "SELECT ".TBL_TEAMS.".*"
 		." FROM ".TBL_TEAMS
-		." WHERE (".TBL_TEAMS.".Ladder = '$this->fields['LadderID']')";
+		." WHERE (".TBL_TEAMS.".Ladder = '".$this->fields['LadderID']."')";
 		$result = $sql->db_Query($q);
 		$num_teams = mysql_numrows($result);
 		if ($num_teams!=0)
@@ -103,7 +103,7 @@ class Ladder
 				."     Streak_Best = 0,"
 				."     Streak_Worst = 0"
 				." WHERE (TeamID = '$TeamID')";
-				$result2 = $sql->db_Query($TeamID);
+				$result2 = $sql->db_Query($q2);
 			}
 		}
 	}
@@ -113,19 +113,19 @@ class Ladder
 		global $sql;
 		$q2 = "SELECT ".TBL_MATCHS.".*"
 		." FROM ".TBL_MATCHS
-		." WHERE (".TBL_MATCHS.".Ladder = '$this->fields['LadderID']')";
+		." WHERE (".TBL_MATCHS.".Ladder = '".$this->fields['LadderID']."')";
 		$result2 = $sql->db_Query($q2);
 		$num_matches = mysql_numrows($result2);
 		if ($num_matches!=0)
 		{
 			for($j=0; $j<$num_matches; $j++)
 			{
-				$mID  = mysql_result($result2,$j, TBL_MATCHS.".MatchID");
+				$match_id  = mysql_result($result2,$j, TBL_MATCHS.".MatchID");
 				$q3 = "DELETE FROM ".TBL_SCORES
-				." WHERE (".TBL_SCORES.".MatchID = '$mID')";
+				." WHERE (".TBL_SCORES.".MatchID = '$match_id')";
 				$result3 = $sql->db_Query($q3);
 				$q3 = "DELETE FROM ".TBL_MATCHS
-				." WHERE (".TBL_MATCHS.".MatchID = '$mID')";
+				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')";
 				$result3 = $sql->db_Query($q3);
 			}
 		}
@@ -135,7 +135,7 @@ class Ladder
 	{
 		global $sql;
 		$q2 = "DELETE FROM ".TBL_CHALLENGES
-		." WHERE (".TBL_CHALLENGES.".Ladder = '$this->fields['LadderID']')";
+		." WHERE (".TBL_CHALLENGES.".Ladder = '".$this->fields['LadderID']."')";
 		$result2 = $sql->db_Query($q2);
 	}
 
@@ -144,7 +144,7 @@ class Ladder
 		global $sql;
 		$q2 = "SELECT ".TBL_PLAYERS.".*"
 		." FROM ".TBL_PLAYERS
-		." WHERE (".TBL_PLAYERS.".Ladder = '$this->fields['LadderID']')";
+		." WHERE (".TBL_PLAYERS.".Ladder = '".$this->fields['LadderID']."')";
 		$result2 = $sql->db_Query($q2);
 		$num_players = mysql_numrows($result2);
 		if ($num_players!=0)
@@ -162,7 +162,7 @@ class Ladder
 	{
 		global $sql;
 		$q3 = "DELETE FROM ".TBL_TEAMS
-		." WHERE (".TBL_TEAMS.".Ladder = '$this->fields['LadderID']')";
+		." WHERE (".TBL_TEAMS.".Ladder = '".$this->fields['LadderID']."')";
 		$result3 = $sql->db_Query($q3);
 	}
 
@@ -170,7 +170,7 @@ class Ladder
 	{
 		global $sql;
 		$q3 = "DELETE FROM ".TBL_LADDERMODS
-		." WHERE (".TBL_LADDERMODS.".Ladder = '$this->fields['LadderID']')";
+		." WHERE (".TBL_LADDERMODS.".Ladder = '".$this->fields['LadderID']."')";
 		$result3 = $sql->db_Query($q3);
 	}
 
@@ -178,7 +178,7 @@ class Ladder
 	{
 		global $sql;
 		$q3 = "DELETE FROM ".TBL_STATSCATEGORIES
-		." WHERE (".TBL_STATSCATEGORIES.".Ladder = '$this->fields['LadderID']')";
+		." WHERE (".TBL_STATSCATEGORIES.".Ladder = '".$this->fields['LadderID']."')";
 		$result3 = $sql->db_Query($q3);
 	}
 
@@ -192,7 +192,7 @@ class Ladder
 		$this->deleteMods();
 		$this->deleteStatsCats();
 		$q3 = "DELETE FROM ".TBL_LADDERS
-		." WHERE (".TBL_LADDERS.".LadderID = '$this->fields['LadderID']')";
+		." WHERE (".TBL_LADDERS.".LadderID = '".$this->fields['LadderID']."')";
 		$result3 = $sql->db_Query($q3);
 	}
 
@@ -210,7 +210,7 @@ class Ladder
 
 		$q = "SELECT ".TBL_MATCHS.".*"
 		." FROM ".TBL_MATCHS
-		." WHERE (".TBL_MATCHS.".Ladder = '$this->fields['LadderID']')"
+		." WHERE (".TBL_MATCHS.".Ladder = '".$this->fields['LadderID']."')"
 		." AND (".TBL_MATCHS.".Status = 'active')"
 		." ORDER BY TimeReported";
 		$result = $sql->db_Query($q);
@@ -273,34 +273,36 @@ class Ladder
 					set_time_limit(10);
 
 					$next_match = $j + 2;
-					$mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
+					$match_id  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
+					$match = new Match($match_id);
+					
 					$time_reported  = mysql_result($result,$j, TBL_MATCHS.".TimeReported");
 
-					//echo "dbg: match: $mID<br>";
+					//echo "dbg: match: $match_id<br>";
 					//echo "dbg: etype: $this->fields['Type']<br>";
 
-					match_scores_update($mID);
+					$match->match_scores_update();
 
 					switch($this->fields['Type'])
 					{
 						case "One Player Ladder":
-						match_players_update($mID);
+						$match->match_players_update();
 						updateStats($this->fields['Start_timestamp'], FALSE);
 						break;
 						case "Team Ladder":
-						match_players_update($mID);
+						$match->match_players_update();
 						updateStats($this->fields['Start_timestamp'], FALSE);
 						updateTeamStats($this->fields['Start_timestamp'], FALSE);
 						break;
 						case "ClanWar":
-						match_teams_update($mID);
+						$match->match_teams_update();
 						updateTeamStats($this->fields['Start_timestamp'], FALSE);
 						break;
 						default:
 					}
 
-					//echo 'match '.$j.': '.$mID.'<br>';
-					//echo '<div class="percents">match '.$j.': '.$mID.'</div>';
+					//echo 'match '.$j.': '.$match_id.'<br>';
+					//echo '<div class="percents">match '.$j.': '.$match_id.'</div>';
 					echo '<div class="percents">' . number_format(100*($j+1)/$num_matches, 0, '.', '') . '%&nbsp;complete</div>';
 					echo str_pad('',4096)."\n";
 					ob_flush();
@@ -338,7 +340,7 @@ class Ladder
 		// Is the user already signed up for the team?
 		$q = "SELECT ".TBL_PLAYERS.".*"
 		." FROM ".TBL_PLAYERS
-		." WHERE (".TBL_PLAYERS.".Ladder = '$this->fields['LadderID']')"
+		." WHERE (".TBL_PLAYERS.".Ladder = '".$this->fields['LadderID']."')"
 		."   AND (".TBL_PLAYERS.".Team = '$team')"
 		."   AND (".TBL_PLAYERS.".User = '$user')";
 		$result = $sql->db_Query($q);
@@ -350,7 +352,7 @@ class Ladder
 			VALUES (".$this->fields['LadderID'].",$user,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].")";
 			$sql->db_Query($q);
 			echo "player created, query: $q<br>";
-			$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$this->fields['LadderID']')";
+			$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '".$this->fields['LadderID']."')";
 			$sql->db_Query($q);
 
 			if ($notify)
@@ -383,7 +385,7 @@ class Ladder
 		// Is the division signed up
 		$q = "SELECT ".TBL_TEAMS.".*"
 		." FROM ".TBL_TEAMS
-		." WHERE (".TBL_TEAMS.".Ladder = '$this->fields['LadderID']')"
+		." WHERE (".TBL_TEAMS.".Ladder = '".$this->fields['LadderID']."')"
 		." AND (".TBL_TEAMS.".Division = '$div_id')";
 		$result = $sql->db_Query($q);
 		$numTeams = mysql_numrows($result);
@@ -412,10 +414,10 @@ class Ladder
 				{
 					for($j=0; $j<$num_rows_2; $j++)
 					{
-						$mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
-						$this->ladderAddPlayer($mid, $team_id, $notify);
+						$match_id  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+						$this->ladderAddPlayer($match_id, $team_id, $notify);
 					}
-					$q4 = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$this->fields['LadderID']')";
+					$q4 = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '".$this->fields['LadderID']."')";
 					$result = $sql->db_Query($q4);
 				}
 			}
@@ -460,8 +462,9 @@ function deletePlayerMatches($player_id)
 		for($j=0; $j<$num_matches; $j++)
 		{
 			set_time_limit(10);
-			$mID  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
-			deletePlayersMatchScores($mID);
+			$match_id  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$match->deletePlayersMatchScores();
 		}
 	}
 }

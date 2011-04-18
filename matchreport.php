@@ -162,6 +162,8 @@ $text .= '
 
 if($match_id)
 {
+	$match = new Match($match_id);
+	
 	// If match_id is not null, fill up the form information from the database
 	switch($ladder->getField('Type'))
 	{
@@ -510,7 +512,7 @@ if (isset($_POST['submit']))
 		if($match_id)
 		{
 			// Match Edit, Need to delete the match scores and re-create a new ones.
-			deleteMatchScores($ladder_id, $match_id);
+			$match->deleteMatchScores($ladder_id);
 		}
 
 		$nbr_players = $_POST['nbr_players'];
@@ -563,6 +565,7 @@ if (isset($_POST['submit']))
 			$result = $sql->db_Query($q);
 			$last_id = mysql_insert_id();
 			$match_id = $last_id;
+			$match = new Match($match_id);
 		}
 
 		// Create Scores ------------------------------------------
@@ -672,7 +675,7 @@ if (isset($_POST['submit']))
 		}
 		else
 		{
-			match_scores_update($match_id);
+			$match->match_scores_update();
 
 			// Automatically Update Players stats only if Match Approval is Disabled
 			if ($ladder->getField('MatchesApproval') == eb_UC_NONE)
@@ -681,10 +684,10 @@ if (isset($_POST['submit']))
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
-					match_players_update($match_id);
+					$match->match_players_update();
 					break;
 					case "ClanWar":
-					match_teams_update($match_id);
+					$match->match_teams_update();
 					break;
 					default:
 				}
