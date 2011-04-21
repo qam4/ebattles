@@ -16,8 +16,8 @@
 define("TBL_PREFIX", "ebattles_");
 
 define("TBL_USERS_SHORT",           "user");
-define("TBL_LADDERS_SHORT",          TBL_PREFIX."Ladders");
-define("TBL_LADDERMODS_SHORT",       TBL_PREFIX."LadderModerators");
+define("TBL_LADDERS_SHORT",         TBL_PREFIX."Ladders");
+define("TBL_LADDERMODS_SHORT",      TBL_PREFIX."LadderModerators");
 define("TBL_TEAMS_SHORT",           TBL_PREFIX."Teams");
 define("TBL_MATCHS_SHORT",          TBL_PREFIX."Matchs");
 define("TBL_PLAYERS_SHORT",         TBL_PREFIX."Players");
@@ -35,10 +35,14 @@ define("TBL_MAPS_SHORT",            TBL_PREFIX."Maps");
 define("TBL_FACTIONS_SHORT",        TBL_PREFIX."Factions");
 define("TBL_MEDIA_SHORT",           TBL_PREFIX."Media");
 define("TBL_CHALLENGES_SHORT",      TBL_PREFIX."Challenges");
+define("TBL_GAMERS_SHORT",          TBL_PREFIX."Gamers");
+define("TBL_OFFICIAL_LADDERS_SHORT",TBL_PREFIX."OfficialLadders");
+define("TBL_TOURS_SHORT",           TBL_PREFIX."Tours");
+define("TBL_ROUNDS_SHORT",          TBL_PREFIX."Rounds");
 
 define("TBL_USERS",           MPREFIX."user");
-define("TBL_LADDERS",          MPREFIX.TBL_LADDERS_SHORT);
-define("TBL_LADDERMODS",       MPREFIX.TBL_LADDERMODS_SHORT);
+define("TBL_LADDERS",         MPREFIX.TBL_LADDERS_SHORT);
+define("TBL_LADDERMODS",      MPREFIX.TBL_LADDERMODS_SHORT);
 define("TBL_TEAMS",           MPREFIX.TBL_TEAMS_SHORT);
 define("TBL_MATCHS",          MPREFIX.TBL_MATCHS_SHORT);
 define("TBL_PLAYERS",         MPREFIX.TBL_PLAYERS_SHORT);
@@ -49,13 +53,14 @@ define("TBL_MEMBERS",         MPREFIX.TBL_MEMBERS_SHORT);
 define("TBL_STATSCATEGORIES", MPREFIX.TBL_STATSCATEGORIES_SHORT);
 define("TBL_GAMES",           MPREFIX.TBL_GAMES_SHORT);
 define("TBL_AWARDS",          MPREFIX.TBL_AWARDS_SHORT);
-define("TBL_PLAYERS_RESULTS", MPREFIX.TBL_PLAYERS_RESULTS_SHORT);
-define("TBL_GAMES_GENRES",    MPREFIX.TBL_GAMES_GENRES_SHORT);
-define("TBL_GAMES_PLATFORMS", MPREFIX.TBL_GAMES_PLATFORMS_SHORT);
 define("TBL_MAPS",            MPREFIX.TBL_MAPS_SHORT);
 define("TBL_FACTIONS",        MPREFIX.TBL_FACTIONS_SHORT);
 define("TBL_MEDIA",           MPREFIX.TBL_MEDIA_SHORT);
 define("TBL_CHALLENGES",      MPREFIX.TBL_CHALLENGES_SHORT);
+define("TBL_GAMERS",          MPREFIX.TBL_GAMERS_SHORT);
+define("TBL_OFFICIAL_LADDERS", MPREFIX.TBL_OFFICIAL_LADDERS_SHORT);
+define("TBL_TOURS",           MPREFIX.TBL_TOURS_SHORT);
+define("TBL_ROUNDS",          MPREFIX.TBL_ROUNDS_SHORT);
 
 /**
  * Email Constants - these specify what goes in

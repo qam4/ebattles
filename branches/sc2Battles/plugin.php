@@ -95,13 +95,14 @@ TBL_PLAYERS_SHORT,
 TBL_SCORES_SHORT,
 TBL_STATSCATEGORIES_SHORT,
 TBL_AWARDS_SHORT,
-TBL_PLAYERS_RESULTS_SHORT,
-TBL_GAMES_GENRES_SHORT,
-TBL_GAMES_PLATFORMS_SHORT,
 TBL_MAPS_SHORT,
 TBL_FACTIONS_SHORT,
 TBL_MEDIA_SHORT,
-TBL_CHALLENGES_SHORT
+TBL_CHALLENGES_SHORT,
+TBL_GAMERS_SHORT,
+TBL_OFFICIAL_LADDERS_SHORT,
+TBL_TOURS_SHORT,
+TBL_ROUNDS_SHORT
 );
 
 // List of sql requests to create tables -----------------------------------------------------------------------------
@@ -133,6 +134,7 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Type varchar(63),
+MatchType varchar(63) DEFAULT '1v1',
 Start_timestamp int(11) unsigned not null,
 End_timestamp int(11) unsigned not null,
 nbr_games_to_rank int DEFAULT '4',
@@ -348,36 +350,6 @@ FOREIGN KEY (Player) REFERENCES ".TBL_TEAMS." (TeamID),
 Type varchar(63),
 timestamp int(11) unsigned not null
 ) TYPE = MyISAM;",
-"CREATE TABLE ".TBL_PLAYERS_RESULTS."
-(
-PlayerResultID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(PlayerResultID),
-Player int NOT NULL,
-INDEX (Player),
-FOREIGN KEY (Player) REFERENCES ".TBL_PLAYERS." (PlayerID),
-Type varchar(63),
-Value float DEFAULT '0',
-Display varchar(63),
-timestamp int(11) unsigned not null
-) TYPE = MyISAM;",
-"CREATE TABLE ".TBL_GAMES_GENRES."
-(
-GameGenreID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(GameGenreID),
-Game int NOT NULL,
-INDEX (Game),
-FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
-Genre varchar(63)
-) TYPE = MyISAM;",
-"CREATE TABLE ".TBL_GAMES_PLATFORMS."
-(
-GamePlatformID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(GamePlatformID),
-Game int NOT NULL,
-INDEX (Game),
-FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
-Platform varchar(63)
-) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_MAPS."
 (
 MapID int NOT NULL AUTO_INCREMENT,
@@ -438,6 +410,70 @@ TimeReported int(11) unsigned not null,
 Comments text NOT NULL,
 Status varchar(20) DEFAULT 'requested',
 MatchDates varchar(255) NOT NULL default ''
+) TYPE = MyISAM;",
+"CREATE TABLE ".TBL_GAMERS."
+(
+GamerID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(GamerID),
+User int(10) unsigned NOT NULL,
+INDEX (User),
+FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
+Game int NOT NULL,
+INDEX (Game),
+FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
+UniqueGameID varchar(64) NOT NULL default ''
+) TYPE = MyISAM;",
+"CREATE TABLE ".TBL_OFFICIAL_LADDERS."
+(
+OfficialLadderID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(OfficialLadderID),
+Ladder int NOT NULL,
+INDEX (Ladder),
+FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
+Game int NOT NULL,
+INDEX (Game),
+FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
+Type varchar(63),
+MatchType varchar(63) DEFAULT '1v1'
+) TYPE = MyISAM;",
+"CREATE TABLE ".TBL_TOURS."
+(
+TourID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(TourID),
+Name varchar(63),
+password varchar(32),
+Game int NOT NULL,
+INDEX (Game),
+FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
+Type varchar(63) DEFAULT 'Single Elimination',
+MatchType varchar(63) DEFAULT '1v1',
+StartDateTime datetime,
+Owner int(10) unsigned NOT NULL,
+INDEX (Owner),
+FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id),
+Rules text NOT NULL,
+Description text NOT NULL,
+NextUpdate_timestamp int(11) unsigned not null,
+IsChanged tinyint(1) DEFAULT '1',
+match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_PLAYER."',
+MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
+Status varchar(20) DEFAULT 'draft',
+PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
+MaxNumberPlayers int DEFAULT '16',
+Players text,
+Results text
+) TYPE = MyISAM;",
+"CREATE TABLE ".TBL_ROUNDS."
+(
+RoundID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(RoundID),
+Tour int(10) unsigned NOT NULL,
+INDEX (Tour),
+FOREIGN KEY (Tour) REFERENCES ".TBL_TOURS." (TourID),
+Number int(10),
+Title varchar(63),
+BestOf int(4) DEFAULT '1',
+MapPool text
 ) TYPE = MyISAM;"
 );
 
@@ -461,144 +497,6 @@ $upgrade_alter_tables = array();
 $majVersion = $eb_version[0];
 $minVersion = $eb_version[1];
 $revision = $eb_version[2];
-
-if (versionsCompare($eb_version_string, "0.8"))
-{
-	// To revision 0.8
-	array_push ($upgrade_alter_tables,
-	"ALTER TABLE ".TBL_LADDERS." ADD Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'",
-	"ALTER TABLE ".TBL_LADDERS." ADD Status varchar(20) DEFAULT 'active'",
-	"ALTER TABLE ".TBL_LADDERS." ADD PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."'",
-	"ALTER TABLE ".TBL_MATCHS." ADD Map int DEFAULT '0'",
-	"ALTER TABLE ".TBL_SCORES." ADD Faction int DEFAULT '0'",
-	"ALTER TABLE ".TBL_GAMES." ADD ShortName varchar(63) ",
-	"CREATE TABLE ".TBL_MAPS."
-	(
-	MapID int NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY(MapID),
-	Game int NOT NULL,
-	INDEX (Game),
-	FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
-	Name varchar(63) NOT NULL default '',
-	Image varchar(63) NOT NULL default '',
-	Description varchar(63) NOT NULL default ''
-	) TYPE = MyISAM;",
-	"CREATE TABLE ".TBL_FACTIONS."
-	(
-	FactionID int NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY(FactionID),
-	Game int NOT NULL,
-	INDEX (Game),
-	FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
-	Name varchar(63) NOT NULL default '',
-	Icon varchar(63) NOT NULL default ''
-	) TYPE = MyISAM;",
-	"CREATE TABLE ".TBL_MEDIA."
-	(
-	MediaID int NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY(MediaID),
-	MatchID int NOT NULL,
-	INDEX (MatchID),
-	FOREIGN KEY (MatchID) REFERENCES ".TBL_MATCHS." (MatchID),
-	Submitter int NOT NULL,
-	INDEX (Submitter),
-	FOREIGN KEY (Submitter) REFERENCES ".TBL_USERS." (user_id),
-	Path varchar(63) NOT NULL default '',
-	Type varchar(20) NOT NULL default ''
-	) TYPE = MyISAM;"
-	);
-
-	array_push_associative ($upgrade_add_prefs, array(
-	"eb_max_number_media" => 3,
-	"eb_max_map_image_size_check" => 1,
-	"eb_max_map_image_size" => 80,
-	"eb_media_submit_class" => e_UC_MEMBER
-	));
-}
-
-if (versionsCompare($eb_version_string, "0.8.4"))
-{
-	// To revision 0.8.4
-	array_push ($upgrade_alter_tables,
-	"ALTER TABLE ".TBL_LADDERS." ADD ChallengesEnable tinyint(1) DEFAULT '0'",
-	"ALTER TABLE ".TBL_MATCHS." ADD TimeScheduled int(11) unsigned not null",
-	"CREATE TABLE ".TBL_CHALLENGES."
-	(
-	ChallengeID int NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY(ChallengeID),
-	Ladder int NOT NULL,
-	INDEX (Ladder),
-	FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
-	ChallengerPlayer int NOT NULL,
-	INDEX (ChallengerPlayer),
-	FOREIGN KEY (ChallengerPlayer) REFERENCES ".TBL_PLAYERS." (PlayerID),
-	ChallengerTeam int NOT NULL,
-	INDEX (ChallengerTeam),
-	FOREIGN KEY (ChallengerTeam) REFERENCES ".TBL_TEAMS." (TeamID),
-	ChallengedPlayer int NOT NULL,
-	INDEX (ChallengedPlayer),
-	FOREIGN KEY (ChallengedPlayer) REFERENCES ".TBL_PLAYERS." (PlayerID),
-	ChallengedTeam int NOT NULL,
-	INDEX (ChallengedTeam),
-	FOREIGN KEY (ChallengedTeam) REFERENCES ".TBL_TEAMS." (TeamID),
-	ReportedBy int(10) unsigned NOT NULL,
-	INDEX (ReportedBy),
-	FOREIGN KEY (ReportedBy) REFERENCES ".TBL_USERS." (user_id),
-	TimeReported int(11) unsigned not null,
-	Comments text NOT NULL,
-	Status varchar(20) DEFAULT 'requested',
-	MatchDates varchar(255) NOT NULL default ''
-	) TYPE = MyISAM;"
-	);
-}
-
-if (versionsCompare($eb_version_string, "0.8.5"))
-{
-	// To revision 0.8.5
-	array_push ($upgrade_alter_tables,
-	"ALTER TABLE ".TBL_MATCHS." CHANGE Map Maps varchar(255) NOT NULL default '0'",
-	"ALTER TABLE ".TBL_LADDERS." ADD MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."'",
-	"ALTER TABLE ".TBL_LADDERS." ADD MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."'",
-	"ALTER TABLE ".TBL_CLANS." ADD websiteURL varchar(100) NOT NULL default ''",
-	"ALTER TABLE ".TBL_CLANS." ADD email varchar(100) NOT NULL default ''",
-	"ALTER TABLE ".TBL_CLANS." ADD IM varchar(100) NOT NULL default ''",
-	"ALTER TABLE ".TBL_CLANS." ADD Description text NOT NULL"
-	);
-}
-
-if (versionsCompare($eb_version_string, "0.8.9"))
-{
-	// To revision 0.8.9
-	array_push_associative ($upgrade_add_prefs, array(
-	"eb_pm_notifications_class" => e_UC_MEMBER,
-	"eb_email_notifications_class" => e_UC_MEMBER
-	));
-}
-
-if (versionsCompare($eb_version_string, "0.8.10"))
-{
-	// To revision 0.8.10
-	array_push_associative ($upgrade_add_prefs, array(
-	"eb_links_showcreateladder" => 1,
-	"eb_links_showcreateteam" => 1,
-	"eb_links_showmatchsplayed" => 1,
-	"eb_links_showmatchstoapprove" => 1,
-	"eb_links_showmatchspending" => 1,
-	"eb_links_showmatchesscheduled" => 1,
-	"eb_links_showchallengesrequested" => 1,
-	"eb_links_showchallengesunconfirmed" => 1
-	));
-}
-
-if (versionsCompare($eb_version_string, "0.8.11"))
-{
-	// To revision 0.8.11
-	array_push ($upgrade_alter_tables,
-        "ALTER TABLE ".TBL_AWARDS." ADD Team int NOT NULL",
-        "ALTER TABLE ".TBL_AWARDS." ADD INDEX (Team)",
-        "ALTER TABLE ".TBL_AWARDS." ADD FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID)"
-	);
-}
 
 /*
 echo "<br>Prefs upgrade:";
