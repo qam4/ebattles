@@ -199,14 +199,14 @@ class Ladder extends DatabaseTable
 			switch($this->fields['Type'])
 			{
 				case "One Player Ladder":
-				updateStats($time, TRUE);
+				updateStats($this->fields['LadderID'], $time, TRUE);
 				break;
 				case "Team Ladder":
-				updateStats($time, TRUE);
-				updateTeamStats($time, TRUE);
+				updateStats($this->fields['LadderID'], $time, TRUE);
+				updateTeamStats($this->fields['LadderID'], $time, TRUE);
 				break;
 				case "ClanWar":
-				updateTeamStats($time, TRUE);
+				updateTeamStats($this->fields['LadderID'], $time, TRUE);
 				break;
 				default:
 			}
@@ -225,14 +225,14 @@ class Ladder extends DatabaseTable
 				switch($this->fields['Type'])
 				{
 					case "One Player Ladder":
-					updateStats($this->fields['Start_timestamp'], FALSE);
+					updateStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
 					break;
 					case "Team Ladder":
-					updateStats($this->fields['Start_timestamp'], FALSE);
-					updateTeamStats($this->fields['Start_timestamp'], FALSE);
+					updateStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
+					updateTeamStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
 					break;
 					case "ClanWar":
-					updateTeamStats($this->fields['getStart_timestamp'], FALSE);
+					updateTeamStats($this->fields['LadderID'], $this->fields['getStart_timestamp'], FALSE);
 					break;
 					default:
 				}
@@ -265,16 +265,16 @@ class Ladder extends DatabaseTable
 					{
 						case "One Player Ladder":
 						$match->match_players_update();
-						updateStats($this->fields['Start_timestamp'], FALSE);
+						updateStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
 						break;
 						case "Team Ladder":
 						$match->match_players_update();
-						updateStats($this->fields['Start_timestamp'], FALSE);
-						updateTeamStats($this->fields['Start_timestamp'], FALSE);
+						updateStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
+						updateTeamStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
 						break;
 						case "ClanWar":
 						$match->match_teams_update();
-						updateTeamStats($this->fields['Start_timestamp'], FALSE);
+						updateTeamStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
 						break;
 						default:
 					}
