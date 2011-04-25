@@ -17,7 +17,7 @@ define("TBL_PREFIX", "ebattles_");
 
 define("TBL_USERS_SHORT",           "user");
 define("TBL_LADDERS_SHORT",         TBL_PREFIX."Ladders");
-define("TBL_LADDERMODS_SHORT",      TBL_PREFIX."LadderModerators");
+define("TBL_MODS_SHORT",            TBL_PREFIX."Moderators");
 define("TBL_TEAMS_SHORT",           TBL_PREFIX."Teams");
 define("TBL_MATCHS_SHORT",          TBL_PREFIX."Matchs");
 define("TBL_PLAYERS_SHORT",         TBL_PREFIX."Players");
@@ -37,12 +37,12 @@ define("TBL_MEDIA_SHORT",           TBL_PREFIX."Media");
 define("TBL_CHALLENGES_SHORT",      TBL_PREFIX."Challenges");
 define("TBL_GAMERS_SHORT",          TBL_PREFIX."Gamers");
 define("TBL_OFFICIAL_LADDERS_SHORT",TBL_PREFIX."OfficialLadders");
-define("TBL_TOURS_SHORT",           TBL_PREFIX."Tours");
+define("TBL_TOURNAMENTS_SHORT",     TBL_PREFIX."Tournaments");
 define("TBL_ROUNDS_SHORT",          TBL_PREFIX."Rounds");
 
 define("TBL_USERS",           MPREFIX."user");
 define("TBL_LADDERS",         MPREFIX.TBL_LADDERS_SHORT);
-define("TBL_LADDERMODS",      MPREFIX.TBL_LADDERMODS_SHORT);
+define("TBL_MODS",            MPREFIX.TBL_MODS_SHORT);
 define("TBL_TEAMS",           MPREFIX.TBL_TEAMS_SHORT);
 define("TBL_MATCHS",          MPREFIX.TBL_MATCHS_SHORT);
 define("TBL_PLAYERS",         MPREFIX.TBL_PLAYERS_SHORT);
@@ -58,8 +58,8 @@ define("TBL_FACTIONS",        MPREFIX.TBL_FACTIONS_SHORT);
 define("TBL_MEDIA",           MPREFIX.TBL_MEDIA_SHORT);
 define("TBL_CHALLENGES",      MPREFIX.TBL_CHALLENGES_SHORT);
 define("TBL_GAMERS",          MPREFIX.TBL_GAMERS_SHORT);
-define("TBL_OFFICIAL_LADDERS", MPREFIX.TBL_OFFICIAL_LADDERS_SHORT);
-define("TBL_TOURS",           MPREFIX.TBL_TOURS_SHORT);
+define("TBL_OFFICIAL_LADDERS",MPREFIX.TBL_OFFICIAL_LADDERS_SHORT);
+define("TBL_TOURNAMENTS",     MPREFIX.TBL_TOURNAMENTS_SHORT);
 define("TBL_ROUNDS",          MPREFIX.TBL_ROUNDS_SHORT);
 
 /**

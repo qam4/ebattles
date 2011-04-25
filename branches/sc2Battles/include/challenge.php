@@ -179,10 +179,10 @@ class Challenge extends DatabaseTable
 			// Is the user a moderator?
 			$can_delete = 0;
 
-			$q_Mods = "SELECT ".TBL_LADDERMODS.".*"
-			." FROM ".TBL_LADDERMODS
-			." WHERE (".TBL_LADDERMODS.".Ladder = '$ladder_id')"
-			."   AND (".TBL_LADDERMODS.".User = ".USERID.")";
+			$q_Mods = "SELECT ".TBL_MODS.".*"
+			." FROM ".TBL_MODS
+			." WHERE (".TBL_MODS.".Ladder = '$ladder_id')"
+			."   AND (".TBL_MODS.".User = ".USERID.")";
 			$result_Mods = $sql->db_Query($q_Mods);
 			$numMods = mysql_numrows($result_Mods);
 

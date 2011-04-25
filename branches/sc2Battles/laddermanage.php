@@ -208,12 +208,12 @@ else
         $text .= '</td>';
         $text .= '</tr>';
 
-        $q = "SELECT ".TBL_LADDERMODS.".*, "
+        $q = "SELECT ".TBL_MODS.".*, "
         .TBL_USERS.".*"
-        ." FROM ".TBL_LADDERMODS.", "
+        ." FROM ".TBL_MODS.", "
         .TBL_USERS
-        ." WHERE (".TBL_LADDERMODS.".Ladder = '$ladder_id')"
-        ."   AND (".TBL_USERS.".user_id = ".TBL_LADDERMODS.".User)";
+        ." WHERE (".TBL_MODS.".Ladder = '$ladder_id')"
+        ."   AND (".TBL_USERS.".user_id = ".TBL_MODS.".User)";
         $result = $sql->db_Query($q);
         $numMods = mysql_numrows($result);
         $text .= '
@@ -348,7 +348,20 @@ else
         </td>
         </tr>
         ';
-
+        
+        //<!-- Match Type -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_LADDERM_L126.'</b></td>
+        <td class="forumheader3"><select class="tbox" name="laddermatchtype">';
+        $text .= '<option value="1v1" '.($ladder->getField('MatchType') == "1v1" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L127.'</option>';
+        $text .= '<option value="2v2" '.($ladder->getField('MatchType') == "2v2" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L128.'</option>';
+        $text .= '<option value="FFA" '.($ladder->getField('MatchType') == "FFA" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L131.'</option>';
+        $text .= '</select>
+        </td>
+        </tr>
+        ';
+        
         //<!-- Rating Type -->
         $text .= '
         <tr>

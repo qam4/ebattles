@@ -15,9 +15,10 @@ if (!getperms("P")) {
 }
 
 if (isset($_POST['updatesettings'])) {
-	$pref['eb_ladders_update_delay'] = $_POST['eb_ladders_update_delay'];
-	$pref['eb_ladders_update_delay_enable'] = $_POST['eb_ladders_update_delay_enable'];
+	$pref['eb_update_delay'] = $_POST['eb_update_delay'];
+	$pref['eb_update_delay_enable'] = $_POST['eb_update_delay_enable'];
 	$pref['eb_ladders_create_class'] = $_POST['eb_ladders_create_class'];
+	$pref['eb_tournaments_create_class'] = $_POST['eb_tournaments_create_class'];
 	$pref['eb_teams_create_class'] = $_POST['eb_teams_create_class'];
 	$pref['eb_media_submit_class'] = $_POST['eb_media_submit_class'];
 	$pref['eb_mod_class'] = $_POST['eb_mod_class'];
@@ -42,6 +43,7 @@ if (isset($_POST['updatesettings'])) {
 if (isset($_POST['updatelinks'])) {
 	$pref['eb_links_menuheading'] = $_POST['eb_links_menuheading'];
 	$pref['eb_links_showcreateladder'] = $_POST['eb_links_showcreateladder'];
+	$pref['eb_links_showcreatetournament'] = $_POST['eb_links_showcreatetournament'];
 	$pref['eb_links_showcreateteam'] = $_POST['eb_links_showcreateteam'];
 	$pref['eb_links_showmatchsplayed'] = $_POST['eb_links_showmatchsplayed'];
 	$pref['eb_links_showmatchstoapprove'] = $_POST['eb_links_showmatchstoapprove'];
@@ -656,6 +658,13 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
 	";
 
 	$text .= "<tr>
+	<td class='forumheader3' style='width:40%'>".EB_ADMIN_L54.": </td>
+	<td class='forumheader3' style='width:60%'>". r_userclass("eb_tournaments_create_class", $pref['eb_tournaments_create_class'], 'off', "public, member, admin, classes")."
+	</td>
+	</tr>
+	";
+
+	$text .= "<tr>
 	<td class='forumheader3' style='width:40%'>".EB_ADMIN_L13.": </td>
 	<td class='forumheader3' style='width:60%'>". r_userclass("eb_teams_create_class", $pref['eb_teams_create_class'], 'off', "public, member, admin, classes")."
 	</td>
@@ -686,9 +695,9 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
 	$text .= "<tr>
 	<td class='forumheader3' style='width:40%'>".EB_ADMIN_L3.":  <div class='smalltext'>".EB_ADMIN_L4."</div></td>
 	<td class='forumheader3' style='width:60%'>
-	<input class='tbox' type='text' name='eb_ladders_update_delay' size='8' value='".$pref['eb_ladders_update_delay']."' maxlength='3' /> ".EB_ADMIN_L5."<br />
+	<input class='tbox' type='text' name='eb_update_delay' size='8' value='".$pref['eb_update_delay']."' maxlength='3' /> ".EB_ADMIN_L5."<br />
 
-	<input class='tbox' type='checkbox' name='eb_ladders_update_delay_enable' value='1' ".($pref['eb_ladders_update_delay_enable'] == 1 ? "checked='checked'" :"")."/>".EB_ADMIN_L6."
+	<input class='tbox' type='checkbox' name='eb_update_delay_enable' value='1' ".($pref['eb_update_delay_enable'] == 1 ? "checked='checked'" :"")."/>".EB_ADMIN_L6."
 	</td>
 	</tr>
 	";

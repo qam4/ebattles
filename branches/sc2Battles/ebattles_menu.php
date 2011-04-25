@@ -3,16 +3,17 @@ if(!defined("e107_INIT")){ exit(); }
 
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/ladder.php");
+require_once(e_PLUGIN."ebattles/include/tournament.php");
 
 $ebattles_title = $pref['eb_links_menuheading'];
 $ladders_link    = e_PLUGIN.'ebattles/ladders.php';
+$tournaments_link    = e_PLUGIN.'ebattles/tournaments.php';
 $teams_link     = e_PLUGIN.'ebattles/clans.php';
 $profile_link   = e_PLUGIN.'ebattles/userinfo.php?user='.USERID;
 
 $text  = '<table style="margin-left: 0px; margin-right: auto;">';
 $text .= '<tr>';
 $text .= '<td>';
-
 $text .= '<a href="'.$ladders_link.'">';
 $text .= EB_MENU_L2;
 $text .= '</a>';
@@ -28,6 +29,29 @@ if(check_class($pref['eb_ladders_create_class']) && $pref['eb_links_showcreatela
 	$text .= '</div>';
 	//$text .= ebImageTextButton('createladder', 'add.png', '', 'simple', '', EB_LADDERS_L20);
 	$text .= '<div class="buttons"><button style="display:block; float:left; margin:0 0 0 0; padding:0 0 0 0; background-color:transparent; border:0px; font-size:100%; text-decoration:none; font-weight:bold; cursor:pointer;" type="submit" name="createladder" title="'.EB_LADDERS_L20.'"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'" style="vertical-align:middle"/></button></div>
+	<div style="clear:both"></div>';
+	$text .= '</form>';
+	$text .= '</td>';
+}
+$text .= '</tr>';
+
+$text .= '<tr>';
+$text .= '<td>';
+$text .= '<a href="'.$tournaments_link.'">';
+$text .= EB_MENU_L6;
+$text .= '</a>';
+$text .= '</td>';
+
+if(check_class($pref['eb_tournaments_create_class']) && $pref['eb_links_showcreatetournament'] == 1)
+{
+	$text .= '<td>';
+	$text .= '<form action="'.e_PLUGIN.'ebattles/tournamentcreate.php" method="post">';
+	$text .= '<div>';
+	$text .= '<input type="hidden" name="userid" value="'.USERID.'"/>';
+	$text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
+	$text .= '</div>';
+	//$text .= ebImageTextButton('createtournament', 'add.png', '', 'simple', '', EB_LADDERS_L20);
+	$text .= '<div class="buttons"><button style="display:block; float:left; margin:0 0 0 0; padding:0 0 0 0; background-color:transparent; border:0px; font-size:100%; text-decoration:none; font-weight:bold; cursor:pointer;" type="submit" name="createladder" title="'.EB_TOURNAMENTS_L20.'"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_TOURNAMENTS_L20.'" style="vertical-align:middle"/></button></div>
 	<div style="clear:both"></div>';
 	$text .= '</form>';
 	$text .= '</td>';
@@ -131,9 +155,9 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 	// ladders mod
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
-	.TBL_LADDERMODS
-	." WHERE (".TBL_LADDERMODS.".User = '$req_user')"
-	."   AND (".TBL_MATCHS.".Ladder = ".TBL_LADDERMODS.".Ladder)"
+	.TBL_MODS
+	." WHERE (".TBL_MODS.".User = '$req_user')"
+	."   AND (".TBL_MATCHS.".Ladder = ".TBL_MODS.".Ladder)"
 	."   AND (".TBL_MATCHS.".Status = 'pending')";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);

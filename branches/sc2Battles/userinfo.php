@@ -266,11 +266,11 @@ else
 	$text .= '<br /><div class="spacer"><b>'.EB_USER_L20.'</b></div>';
 	$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L21.'</div>';
 	$q = " SELECT *"
-	." FROM ".TBL_LADDERMODS.", "
+	." FROM ".TBL_MODS.", "
 	.TBL_LADDERS.", "
 	.TBL_GAMES
-	." WHERE (".TBL_LADDERMODS.".User = '$req_user')"
-	."   AND (".TBL_LADDERMODS.".Ladder = ".TBL_LADDERS.".LadderID)"
+	." WHERE (".TBL_MODS.".User = '$req_user')"
+	."   AND (".TBL_MODS.".Ladder = ".TBL_LADDERS.".LadderID)"
 	."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
 
 	$result = $sql->db_Query($q);

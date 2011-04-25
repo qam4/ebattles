@@ -1,12 +1,12 @@
 <?php
 /**
-* ladders.php
+* tournaments.php
 *
 */
 
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
-require_once(e_PLUGIN."ebattles/include/ladder.php");
+require_once(e_PLUGIN."ebattles/include/tournament.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 
 require_once(HEADERF);
@@ -25,26 +25,26 @@ document.getElementById('submitform').submit();
 ";
 
 $text .= '
-<div class="tab-pane" id="tab-pane-2">
+<div class="tab-pane" id="tab-pane-14">
 ';
 /**
-* Display Current Ladders
+* Display Current Tournaments
 */
 $text .= '
 <div class="tab-page">
-<div class="tab">'.EB_LADDERS_L2.'</div>
+<div class="tab">'.EB_TOURNAMENTS_L2.'</div>
 ';
-displayCurrentLadders();
+displayCurrentTournaments();
 $text .= '</div>';
 
 /**
-* Display Recent Ladders
+* Display Recent Tournaments
 */
 $text .= '
 <div class="tab-page">
-<div class="tab">'.EB_LADDERS_L3.'</div>
+<div class="tab">'.EB_TOURNAMENTS_L3.'</div>
 ';
-displayRecentLadders();
+displayRecentTournaments();
 $text .= '
 </div>
 </div>
@@ -60,7 +60,7 @@ setupAllTabs();
 </script>
 ';
 
-$ns->tablerender(EB_LADDERS_L1, $text);
+$ns->tablerender(EB_TOURNAMENTS_L1, $text);
 require_once(FOOTERF);
 exit;
 
@@ -68,42 +68,37 @@ exit;
 Functions
 ***************************************************************************************/
 /**
-* displayLadders - Displays the ladders database table in
+* displayTournaments - Displays the tournaments database table in
 * a nicely formatted html table.
 */
-function displayCurrentLadders(){
+function displayCurrentTournaments(){
 	global $pref;
 	global $sql;
 	global $text;
 	global $time;
 	$pages = new Paginator;
 
-	if(check_class($pref['eb_ladders_create_class']))
+	if(check_class($pref['eb_tournaments_create_class']))
 	{
-		$text .= '<form action="'.e_PLUGIN.'ebattles/laddercreate.php" method="post">';
+		$text .= '<form action="'.e_PLUGIN.'ebattles/tournamentcreate.php" method="post">';
 		$text .= '<div>';
 		$text .= '<input type="hidden" name="userid" value="'.USERID.'"/>';
 		$text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
 		$text .= '</div>';
-		$text .= ebImageTextButton('createladder', 'add.png', EB_LADDERS_L20);
+		$text .= ebImageTextButton('createtournament', 'add.png', EB_TOURNAMENTS_L20);
 		$text .= '</form><br />';
-		/*
-		$text .= '<span class="buttons"><a href="'.e_PLUGIN.'ebattles/matchdelete.php?action=createladder&amp;username='.$USERNAME.'&amp;userid='.$USERID.'" title="'.EB_LADDERS_L20.'" style="text-decoration:none"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'"/>'.EB_LADDERS_L20.'</a></span>';
-		$text .= '<div><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'" style="vertical-align:middle"/>'.EB_LADDERS_L20.'</div>';
-		$text .= '<div><button type="submit" name="createladder"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'" style="vertical-align:middle"/>'.EB_LADDERS_L20.'</button></div>';
-		*/
 	}
 	else
 	{
-		//$text .= '<div>'.EB_LADDERC_L2.'</div>';
+		//$text .= '<div>'.EB_TOURNAMENTC_L2.'</div>';
 	}
 
 	$array = array(
-	'latest' => array(EB_LADDERS_L4,'LadderID'),
-	'name'   => array(EB_LADDERS_L5, TBL_LADDERS.'.Name'),
-	'game'   => array(EB_LADDERS_L6, TBL_GAMES.'.Name'),
-	'type'   => array(EB_LADDERS_L7, TBL_LADDERS.'.Type'),
-	'start'  => array(EB_LADDERS_L8, TBL_LADDERS.'.Start_timestamp')
+	'latest' => array(EB_TOURNAMENTS_L4,'TournamentID'),
+	'name'   => array(EB_TOURNAMENTS_L5, TBL_TOURNAMENTS.'.Name'),
+	'game'   => array(EB_TOURNAMENTS_L6, TBL_GAMES.'.Name'),
+	'type'   => array(EB_TOURNAMENTS_L7, TBL_TOURNAMENTS.'.Type'),
+	'start'  => array(EB_TOURNAMENTS_L8, TBL_TOURNAMENTS.'.StartDateTime')
 	);
 	if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
 	$gameid = $_GET['gameid'];
@@ -120,8 +115,8 @@ function displayCurrentLadders(){
 	// Drop down list to select Games to display
 	$q = "SELECT DISTINCT ".TBL_GAMES.".*"
 	." FROM ".TBL_GAMES.", "
-	. TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+	. TBL_TOURNAMENTS
+	." WHERE (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
 	." ORDER BY Name";
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
@@ -129,15 +124,15 @@ function displayCurrentLadders(){
 	$text .= '<div>';
 	$text .= '<table>';
 	$text .= '<tr><td>';
-	$text .= EB_LADDERS_L9.'<br />';
+	$text .= EB_TOURNAMENTS_L9.'<br />';
 	$text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
 	if ($gameid == "All")
 	{
-		$text .= '<option value="All" selected="selected">'.EB_LADDERS_L10.'</option>';
+		$text .= '<option value="All" selected="selected">'.EB_TOURNAMENTS_L10.'</option>';
 	}
 	else
 	{
-		$text .= '<option value="All">'.EB_LADDERS_L10.'</option>';
+		$text .= '<option value="All">'.EB_TOURNAMENTS_L10.'</option>';
 	}
 	for($i=0; $i<$num_rows; $i++)
 	{
@@ -161,9 +156,9 @@ function displayCurrentLadders(){
 	if ($gameid == "All")
 	{
 		$q = "SELECT count(*) "
-		." FROM ".TBL_LADDERS
-		." WHERE (   (".TBL_LADDERS.".End_timestamp = '')"
-		."        OR (".TBL_LADDERS.".End_timestamp > $time)) ";
+		." FROM ".TBL_TOURNAMENTS
+		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime = '')"
+		."        OR (".TBL_TOURNAMENTS.".StartDateTime > $time)) ";
 		$result = $sql->db_Query($q);
 		$totalItems = mysql_result($result, 0);
 		$pages->items_total = $totalItems;
@@ -171,23 +166,23 @@ function displayCurrentLadders(){
 		$pages->paginate();
 
 		$orderby_array = $array["$orderby"];
-		$q = "SELECT ".TBL_LADDERS.".*, "
+		$q = "SELECT ".TBL_TOURNAMENTS.".*, "
 		.TBL_GAMES.".*"
-		." FROM ".TBL_LADDERS.", "
+		." FROM ".TBL_TOURNAMENTS.", "
 		.TBL_GAMES
-		." WHERE (   (".TBL_LADDERS.".End_timestamp = '')"
-		."        OR (".TBL_LADDERS.".End_timestamp > $time)) "
-		."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
-		." ORDER BY $orderby_array[1] $sort, LadderID DESC"
+		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime = '')"
+		."        OR (".TBL_TOURNAMENTS.".StartDateTime > $time)) "
+		."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
+		." ORDER BY $orderby_array[1] $sort, TournamentID DESC"
 		." $pages->limit";
 	}
 	else
 	{
 		$q = "SELECT count(*) "
-		." FROM ".TBL_LADDERS
-		." WHERE (   (".TBL_LADDERS.".End_timestamp = '')"
-		."        OR (".TBL_LADDERS.".End_timestamp > $time)) "
-		."   AND (".TBL_LADDERS.".Game = '$gameid')";
+		." FROM ".TBL_TOURNAMENTS
+		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime = '')"
+		."        OR (".TBL_TOURNAMENTS.".StartDateTime > $time)) "
+		."   AND (".TBL_TOURNAMENTS.".Game = '$gameid')";
 		$result = $sql->db_Query($q);
 		$totalItems = mysql_result($result, 0);
 		$pages->items_total = $totalItems;
@@ -195,15 +190,15 @@ function displayCurrentLadders(){
 		$pages->paginate();
 
 		$orderby_array = $array["$orderby"];
-		$q = "SELECT ".TBL_LADDERS.".*, "
+		$q = "SELECT ".TBL_TOURNAMENTS.".*, "
 		.TBL_GAMES.".*"
-		." FROM ".TBL_LADDERS.", "
+		." FROM ".TBL_TOURNAMENTS.", "
 		.TBL_GAMES
-		." WHERE (   (".TBL_LADDERS.".End_timestamp = '')"
-		."        OR (".TBL_LADDERS.".End_timestamp > $time)) "
-		."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
-		."   AND (".TBL_LADDERS.".Game = '$gameid')"
-		." ORDER BY $orderby_array[1] $sort, LadderID DESC"
+		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime = '')"
+		."        OR (".TBL_TOURNAMENTS.".StartDateTime > $time)) "
+		."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
+		."   AND (".TBL_TOURNAMENTS.".Game = '$gameid')"
+		." ORDER BY $orderby_array[1] $sort, TournamentID DESC"
 		." $pages->limit";
 	}
 
@@ -212,11 +207,11 @@ function displayCurrentLadders(){
 	if(!$result || ($num_rows < 0))
 	{
 		/* Error occurred, return given name by default */
-		$text .= EB_LADDERS_L11.'</div>';
+		$text .= EB_TOURNAMENTS_L11.'</div>';
 		$text .= '</form><br/>';
 	} else if($num_rows == 0)
 	{
-		$text .= EB_LADDERS_L12.'</div>';
+		$text .= EB_TOURNAMENTS_L12.'</div>';
 		$text .= '</form><br/>';
 	}
 	else
@@ -259,44 +254,35 @@ function displayCurrentLadders(){
 		/* Display table contents */
 		$text .= '<table class="fborder" style="width:95%"><tbody>';
 		$text .= '<tr>
-		<td class="forumheader"><b>'.EB_LADDERS_L13.'</b></td>
-		<td colspan="2" class="forumheader"><b>'.EB_LADDERS_L14.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L15.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L16.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L17.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L18.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L19.'</b></td>
+		<td class="forumheader"><b>'.EB_TOURNAMENTS_L13.'</b></td>
+		<td colspan="2" class="forumheader"><b>'.EB_TOURNAMENTS_L14.'</b></td>
+		<td class="forumheader"><b>'.EB_TOURNAMENTS_L15.'</b></td>
+		<td class="forumheader"><b>'.EB_TOURNAMENTS_L32.'</b></td>
+		<td class="forumheader"><b>'.EB_TOURNAMENTS_L16.'</b></td>
+		<td class="forumheader"><b>'.EB_TOURNAMENTS_L18.'</b></td>
 		</tr>';
 		for($i=0; $i<$num_rows; $i++)
 		{
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-			$ladder_id  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$ladder = new Ladder($ladder_id);
+			$tournament_id  = mysql_result($result,$i, TBL_TOURNAMENTS.".TournamentID");
+			$tournament = new Tournament($tournament_id);
 
-			if($ladder->getField('Start_timestamp')!=0)
+			if($tournament->getField('StartDateTime')!=0)
 			{
-				$start_timestamp_local = $ladder->getField('Start_timestamp') + TIMEOFFSET;
-				$date_start = date("d M Y", $start_timestamp_local);
+				$startdatetime_local = $tournament->getField('StartDateTime') + TIMEOFFSET;
+				$date_start = date("d M Y", $startdatetime_local);
 			}
 			else
 			{
 				$date_start = "-";
 			}
-			if($ladder->getField('End_timestamp')!=0)
-			{
-				$end_timestamp_local = $ladder->getField('End_timestamp') + TIMEOFFSET;
-				$date_end = date("d M Y", $end_timestamp_local);
-			}
-			else
-			{
-				$date_end = "-";
-			}
-
+	
+			// TODO: get the number of players correct
 			/* Nbr players */
 			$q_2 = "SELECT COUNT(*) as NbrPlayers"
 			." FROM ".TBL_PLAYERS
-			." WHERE (Ladder = '$ladder_id')";
+			." WHERE (Tournament = '$tournament_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrplayers = $row['NbrPlayers'];
@@ -304,50 +290,34 @@ function displayCurrentLadders(){
 			/* Nbr Teams */
 			$q_2 = "SELECT COUNT(*) as NbrTeams"
 			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')";
+			." WHERE (".TBL_TEAMS.".Tournament = '$tournament_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrTeams = $row['NbrTeams'];
 
-			/* Nbr matches */
-			$q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
-			." FROM ".TBL_MATCHS.", "
-			.TBL_SCORES
-			." WHERE (Ladder = '$ladder_id')"
-			." AND (".TBL_MATCHS.".Status = 'active')"
-			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
-			$result_2 = $sql->db_Query($q_2);
-			$row = mysql_fetch_array($result_2);
-			$nbrmatches = $row['NbrMatches'];
-
-			switch($ladder->getField('Type'))
+			switch($tournament->getField('Type'))
 			{
-				case "One Player Ladder":
-				$nbrTeamPlayers = $nbrplayers;
-				break;
-				case "Team Ladder":
-				$nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
-				break;
-				case "ClanWar":
-				$nbrTeamPlayers = $nbrTeams;
+				case "1v1":
+				$nbrTeamPlayers = $nbrplayers.'/'.$tournament->getField('MaxNumberPlayers');
 				break;
 				default:
+				$nbrTeamPlayers = $nbrTeams.'/'.$tournament->getField('MaxNumberPlayers');
+				break;
 			}
 
 			if(
-			($ladder->getField('End_timestamp')==0)
-			||($ladder->getField('End_timestamp')>=$time)
+			($tournament->getField('StartDateTime')==0)
+			||($tournament->getField('StartDateTime')>=$time)
 			)
 			{
 				$text .= '<tr>
-				<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
+				<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>
 				<td class="forumheader3"><img '.getGameIconResize($gIcon).'/></td>
 				<td class="forumheader3">'.$gName.'</td>
-				<td class="forumheader3">'.ladderTypeToString($ladder->getField('Type')).'</td>
+				<td class="forumheader3">'.tournamentTypeToString($tournament->getField('Type')).'</td>
+				<td class="forumheader3">'.$tournament->getField('MatchType').'</td>
 				<td class="forumheader3">'.$date_start.'</td>
-				<td class="forumheader3">'.$date_end.'</td>
 				<td class="forumheader3">'.$nbrTeamPlayers.'</td>
-				<td class="forumheader3">'.$nbrmatches.'</td>
 				</tr>';
 			}
 		}
@@ -355,7 +325,7 @@ function displayCurrentLadders(){
 	}
 }
 
-function displayRecentLadders(){
+function displayRecentTournaments(){
 	global $sql;
 	global $session;
 	global $text;
@@ -372,23 +342,23 @@ function displayRecentLadders(){
 
 	$q = "SELECT DISTINCT ".TBL_GAMES.".*"
 	." FROM ".TBL_GAMES.", "
-	. TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+	. TBL_TOURNAMENTS
+	." WHERE (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
 	." ORDER BY Name";
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
 	$text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
 	$text .= '<table>';
 	$text .= '<tr><td>';
-	$text .= EB_LADDERS_L9.'<br />';
+	$text .= EB_TOURNAMENTS_L9.'<br />';
 	$text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
 	if ($gameid == "All")
 	{
-		$text .= '<option value="All" selected="selected">'.EB_LADDERS_L10.'</option>';
+		$text .= '<option value="All" selected="selected">'.EB_TOURNAMENTS_L10.'</option>';
 	}
 	else
 	{
-		$text .= '<option value="All">'.EB_LADDERS_L10.'</option>';
+		$text .= '<option value="All">'.EB_TOURNAMENTS_L10.'</option>';
 	}
 	for($i=0; $i<$num_rows; $i++)
 	{
@@ -412,25 +382,25 @@ function displayRecentLadders(){
 
 	if ($gameid == "All")
 	{
-		$q = "SELECT ".TBL_LADDERS.".*, "
+		$q = "SELECT ".TBL_TOURNAMENTS.".*, "
 		.TBL_GAMES.".*"
-		." FROM ".TBL_LADDERS.", "
+		." FROM ".TBL_TOURNAMENTS.", "
 		.TBL_GAMES
-		." WHERE (   (".TBL_LADDERS.".End_timestamp != '')"
-		."       AND (".TBL_LADDERS.".End_timestamp < $time)) "
-		."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime != '')"
+		."       AND (".TBL_TOURNAMENTS.".StartDateTime < $time)) "
+		."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
 		." LIMIT 0, $rowsPerPage";
 	}
 	else
 	{
-		$q = "SELECT ".TBL_LADDERS.".*, "
+		$q = "SELECT ".TBL_TOURNAMENTS.".*, "
 		.TBL_GAMES.".*"
-		." FROM ".TBL_LADDERS.", "
+		." FROM ".TBL_TOURNAMENTS.", "
 		.TBL_GAMES
-		." WHERE (   (".TBL_LADDERS.".End_timestamp != '')"
-		."       AND (".TBL_LADDERS.".End_timestamp < $time)) "
-		."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
-		."   AND (".TBL_LADDERS.".Game = '$gameid')"
+		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime != '')"
+		."       AND (".TBL_TOURNAMENTS.".StartDateTime < $time)) "
+		."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
+		."   AND (".TBL_TOURNAMENTS.".Game = '$gameid')"
 		." LIMIT 0, $rowsPerPage";
 	}
 
@@ -439,54 +409,45 @@ function displayRecentLadders(){
 	if(!$result || ($num_rows < 0))
 	{
 		/* Error occurred, return given name by default */
-		$text .= '<div>'.EB_LADDERS_L11.'</div>';
+		$text .= '<div>'.EB_TOURNAMENTS_L11.'</div>';
 	} else if($num_rows == 0)
 	{
-		$text .= '<div>'.EB_LADDERS_L12.'</div>';
+		$text .= '<div>'.EB_TOURNAMENTS_L12.'</div>';
 	}
 	else
 	{
 		/* Display table contents */
 		$text .= '<table class="fborder" style="width:95%"><tbody>';
 		$text .= '<tr>
-		<td class="forumheader"><b>'.EB_LADDERS_L13.'</b></td>
-		<td colspan="2" class="forumheader"><b>'.EB_LADDERS_L14.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L15.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L16.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L17.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L18.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L19.'</b></td>
+		<td class="forumheader"><b>'.EB_TOURNAMENTS_L13.'</b></td>
+		<td colspan="2" class="forumheader"><b>'.EB_TOURNAMENTS_L14.'</b></td>
+		<td class="forumheader"><b>'.EB_TOURNAMENTS_L15.'</b></td>
+		<td class="forumheader"><b>'.EB_TOURNAMENTS_L32.'</b></td>
+		<td class="forumheader"><b>'.EB_TOURNAMENTS_L16.'</b></td>
+		<td class="forumheader"><b>'.EB_TOURNAMENTS_L18.'</b></td>
 		</tr>';
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$gName  = mysql_result($result,$i, TBL_GAMES.".name");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-			$ladder_id  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$ladder = new Ladder($ladder_id);
+			$tournament_id  = mysql_result($result,$i, TBL_TOURNAMENTS.".TournamentID");
+			$tournament = new Tournament($tournament_id);
 
-			if($ladder->getField('Start_timestamp')!=0)
+			if($tournament->getField('StartDateTime')!=0)
 			{
-				$start_timestamp_local = $ladder->getField('Start_timestamp') + TIMEOFFSET;
-				$date_start = date("d M Y", $start_timestamp_local);
+				$startdatetime_local = $tournament->getField('StartDateTime') + TIMEOFFSET;
+				$date_start = date("d M Y", $startdatetime_local);
 			}
 			else
 			{
 				$date_start = "-";
 			}
-			if($ladder->getField('End_timestamp')!=0)
-			{
-				$end_timestamp_local = $ladder->getField('End_timestamp') + TIMEOFFSET;
-				$date_end = date("d M Y", $end_timestamp_local);
-			}
-			else
-			{
-				$date_end = "-";
-			}
-
+	
+			// TODO: get the number of players correct
 			/* Nbr players */
 			$q_2 = "SELECT COUNT(*) as NbrPlayers"
 			." FROM ".TBL_PLAYERS
-			." WHERE (Ladder = '$ladder_id')";
+			." WHERE (Tournament = '$tournament_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrplayers = $row['NbrPlayers'];
@@ -494,49 +455,34 @@ function displayRecentLadders(){
 			/* Nbr Teams */
 			$q_2 = "SELECT COUNT(*) as NbrTeams"
 			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')";
+			." WHERE (".TBL_TEAMS.".Tournament = '$tournament_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrTeams = $row['NbrTeams'];
 
-			/* Nbr matches */
-			$q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
-			." FROM ".TBL_MATCHS.", "
-			.TBL_SCORES
-			." WHERE (Ladder = '$ladder_id')"
-			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
-			$result_2 = $sql->db_Query($q_2);
-			$row = mysql_fetch_array($result_2);
-			$nbrmatches = $row['NbrMatches'];
-
-			switch($ladder->getField('Type'))
+			switch($tournament->getField('Type'))
 			{
-				case "One Player Ladder":
-				$nbrTeamPlayers = $nbrplayers;
-				break;
-				case "Team Ladder":
-				$nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
-				break;
-				case "ClanWar":
-				$nbrTeamPlayers = $nbrTeams;
+				case "1v1":
+				$nbrTeamPlayers = $nbrplayers.'/'.$tournament->getField('MaxNumberPlayers');
 				break;
 				default:
+				$nbrTeamPlayers = $nbrTeams.'/'.$tournament->getField('MaxNumberPlayers');
+				break;
 			}
 
 			if(
-			($ladder->getField('End_timestamp')!=0)
-			&&($ladder->getField('End_timestamp')<$time)
+			($tournament->getField('StartDateTime')==0)
+			||($tournament->getField('StartDateTime')>=$time)
 			)
 			{
 				$text .= '<tr>
-				<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
+				<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>
 				<td class="forumheader3"><img '.getGameIconResize($gIcon).'/></td>
 				<td class="forumheader3">'.$gName.'</td>
-				<td class="forumheader3">'.ladderTypeToString($ladder->getField('Type')).'</td>
+				<td class="forumheader3">'.tournamentTypeToString($tournament->getField('Type')).'</td>
+				<td class="forumheader3">'.$tournament->getField('MatchType').'</td>
 				<td class="forumheader3">'.$date_start.'</td>
-				<td class="forumheader3">'.$date_end.'</td>
 				<td class="forumheader3">'.$nbrTeamPlayers.'</td>
-				<td class="forumheader3">'.$nbrmatches.'</td>
 				</tr>';
 			}
 		}
@@ -544,7 +490,7 @@ function displayRecentLadders(){
 	}
 
 	$text .= '<p>';
-	$text .= '[<a href="'.e_PLUGIN.'ebattles/ladderspast.php">'.EB_LADDERS_L21.'</a>]';
+	$text .= '[<a href="'.e_PLUGIN.'ebattles/tournamentspast.php">'.EB_TOURNAMENTS_L21.'</a>]';
 	$text .= '</p>';
 }
 ?>

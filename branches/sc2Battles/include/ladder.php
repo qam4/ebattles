@@ -147,8 +147,8 @@ class Ladder extends DatabaseTable
 	function deleteMods()
 	{
 		global $sql;
-		$q3 = "DELETE FROM ".TBL_LADDERMODS
-		." WHERE (".TBL_LADDERMODS.".Ladder = '".$this->fields['LadderID']."')";
+		$q3 = "DELETE FROM ".TBL_MODS
+		." WHERE (".TBL_MODS.".Ladder = '".$this->fields['LadderID']."')";
 		$result3 = $sql->db_Query($q3);
 	}
 
