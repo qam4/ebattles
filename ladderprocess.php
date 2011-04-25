@@ -65,9 +65,9 @@ else
 		if(isset($_POST['ladderdeletemod']))
 		{
 			$laddermod = $_POST['laddermod'];
-			$q2 = "DELETE FROM ".TBL_LADDERMODS
-			." WHERE (".TBL_LADDERMODS.".Ladder = '$ladder_id')"
-			."   AND (".TBL_LADDERMODS.".User = '$laddermod')";
+			$q2 = "DELETE FROM ".TBL_MODS
+			." WHERE (".TBL_MODS.".Ladder = '$ladder_id')"
+			."   AND (".TBL_MODS.".User = '$laddermod')";
 			$result2 = $sql->db_Query($q2);
 
 			//echo "-- ladderdeletemod --<br />";
@@ -78,15 +78,15 @@ else
 		{
 			$laddermod = $_POST['mod'];
 
-			$q2 = "SELECT ".TBL_LADDERMODS.".*"
-			." FROM ".TBL_LADDERMODS
-			." WHERE (".TBL_LADDERMODS.".Ladder = '$ladder_id')"
-			."   AND (".TBL_LADDERMODS.".User = '$laddermod')";
+			$q2 = "SELECT ".TBL_MODS.".*"
+			." FROM ".TBL_MODS
+			." WHERE (".TBL_MODS.".Ladder = '$ladder_id')"
+			."   AND (".TBL_MODS.".User = '$laddermod')";
 			$result2 = $sql->db_Query($q2);
 			$num_rows_2 = mysql_numrows($result2);
 			if ($num_rows_2==0)
 			{
-				$q2 = "INSERT INTO ".TBL_LADDERMODS."(Ladder,User,Level)"
+				$q2 = "INSERT INTO ".TBL_MODS."(Ladder,User,Level)"
 				." VALUES ('$ladder_id','$laddermod',1)";
 				$result2 = $sql->db_Query($q2);
 			}
@@ -133,6 +133,43 @@ else
 					break;
 					case 'ClanWar':
 					$q2 = "UPDATE ".TBL_LADDERS." SET Type = 'ClanWar' WHERE (LadderID = '$ladder_id')";
+					$result2 = $sql->db_Query($q2);
+					break;
+					default:
+				}
+			}
+			
+			/* Ladder MatchType */
+			// Can change only if no players are signed up
+			$q2 = "SELECT ".TBL_PLAYERS.".*"
+			." FROM ".TBL_PLAYERS
+			." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')";
+			$result2 = $sql->db_Query($q2);
+			$num_rows_2 = mysql_numrows($result2);
+			if ($num_rows_2==0)
+			{
+				$new_laddermatchtype = $_POST['laddermatchtype'];
+
+				switch($new_laddermatchtype)
+				{
+					case '1v1':
+					$q2 = "UPDATE ".TBL_LADDERS." SET MatchType = '1v1' WHERE (LadderID = '$ladder_id')";
+					$result2 = $sql->db_Query($q2);
+					break;
+					case '2v2':
+					$q2 = "UPDATE ".TBL_LADDERS." SET MatchType = '2v2' WHERE (LadderID = '$ladder_id')";
+					$result2 = $sql->db_Query($q2);
+					break;
+					case '3v3':
+					$q2 = "UPDATE ".TBL_LADDERS." SET MatchType = '3v3' WHERE (LadderID = '$ladder_id')";
+					$result2 = $sql->db_Query($q2);
+					break;
+					case '4v4':
+					$q2 = "UPDATE ".TBL_LADDERS." SET MatchType = '4v4' WHERE (LadderID = '$ladder_id')";
+					$result2 = $sql->db_Query($q2);
+					break;
+					case 'FFA':
+					$q2 = "UPDATE ".TBL_LADDERS." SET MatchType = 'FFA' WHERE (LadderID = '$ladder_id')";
 					$result2 = $sql->db_Query($q2);
 					break;
 					default:
