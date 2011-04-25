@@ -702,9 +702,11 @@ else
 
         $q = "SELECT COUNT(*) as NbrPlayers"
         ." FROM ".TBL_PLAYERS.", "
+		.TBL_GAMERS.", "
         .TBL_USERS
         ." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-        ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+        ." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
         $result = $sql->db_Query($q);
         $row = mysql_fetch_array($result);
         $numPlayers = $row['NbrPlayers'];
@@ -905,9 +907,11 @@ else
             $q_Players = "SELECT ".TBL_PLAYERS.".*, "
             .TBL_USERS.".*"
             ." FROM ".TBL_PLAYERS.", "
+			.TBL_GAMERS.", "
             .TBL_USERS
             ." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-            ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+            ." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
             ." ORDER BY $orderby_array[1] $sort"
             ." $pages->limit";
             $result = $sql->db_Query($q_Players);

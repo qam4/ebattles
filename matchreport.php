@@ -91,10 +91,12 @@ switch($ladder->getField('Type'))
 	$q = "SELECT ".TBL_PLAYERS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS
 	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 	." AND (".TBL_PLAYERS.".Banned != 1)"
-	." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	." ORDER BY ".TBL_USERS.".user_name";
 
 	$result = $sql->db_Query($q);
@@ -176,11 +178,13 @@ if($match_id)
 		." FROM ".TBL_MATCHS.", "
 		.TBL_SCORES.", "
 		.TBL_PLAYERS.", "
+		.TBL_GAMERS.", "
 		.TBL_USERS
 		." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 		." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-		." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+		." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 		break;
 		case "ClanWar":
@@ -351,9 +355,11 @@ if (isset($_POST['submit']))
 			"SELECT ".TBL_USERS.".*, "
 			.TBL_PLAYERS.".*"
 			." FROM ".TBL_USERS.", "
-			.TBL_PLAYERS
+			.TBL_PLAYERS.", "
+			.TBL_GAMERS
 			." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
-			."   AND (".TBL_PLAYERS.".User     = ".TBL_USERS.".user_id)";
+			."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			."   AND (".TBL_GAMERS.".User     = ".TBL_USERS.".user_id)";
 			$result = $sql->db_Query($q);
 			$row = mysql_fetch_array($result);
 			$puid = $row['user_id'];
@@ -371,9 +377,11 @@ if (isset($_POST['submit']))
 				"SELECT ".TBL_USERS.".*, "
 				.TBL_PLAYERS.".*"
 				." FROM ".TBL_USERS.", "
-				.TBL_PLAYERS
+				.TBL_PLAYERS.", "
+				.TBL_GAMERS
 				." WHERE (".TBL_PLAYERS.".PlayerID = '$pjid')"
-				."   AND (".TBL_PLAYERS.".User   = ".TBL_USERS.".user_id)";
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				."   AND (".TBL_GAMERS.".User   = ".TBL_USERS.".user_id)";
 				$result = $sql->db_Query($q);
 				$row = mysql_fetch_array($result);
 				$pjuid = $row['user_id'];
@@ -619,11 +627,13 @@ if (isset($_POST['submit']))
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
 				.TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
 				.TBL_USERS
 				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 				." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-				." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 				$result_Players = $sql->db_Query($q_Players);
 				$numPlayers = mysql_numrows($result_Players);
 				echo "numPlayers: $numPlayers<br>";
@@ -635,12 +645,14 @@ if (isset($_POST['submit']))
 				.TBL_SCORES.", "
 				.TBL_TEAMS.", "
 				.TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
 				.TBL_USERS
 				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 				." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
 				." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-				." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 				$result_Players = $sql->db_Query($q_Players);
 				$numPlayers = mysql_numrows($result_Players);
 				echo "numPlayers: $numPlayers<br>";

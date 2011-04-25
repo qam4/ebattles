@@ -257,7 +257,6 @@ function displayCurrentTournaments(){
 		<td class="forumheader"><b>'.EB_TOURNAMENTS_L13.'</b></td>
 		<td colspan="2" class="forumheader"><b>'.EB_TOURNAMENTS_L14.'</b></td>
 		<td class="forumheader"><b>'.EB_TOURNAMENTS_L15.'</b></td>
-		<td class="forumheader"><b>'.EB_TOURNAMENTS_L32.'</b></td>
 		<td class="forumheader"><b>'.EB_TOURNAMENTS_L16.'</b></td>
 		<td class="forumheader"><b>'.EB_TOURNAMENTS_L18.'</b></td>
 		</tr>';
@@ -314,8 +313,7 @@ function displayCurrentTournaments(){
 				<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>
 				<td class="forumheader3"><img '.getGameIconResize($gIcon).'/></td>
 				<td class="forumheader3">'.$gName.'</td>
-				<td class="forumheader3">'.tournamentTypeToString($tournament->getField('Type')).'</td>
-				<td class="forumheader3">'.$tournament->getField('MatchType').'</td>
+				<td class="forumheader3">'.$tournament->getField('MatchType').' - '.tournamentTypeToString($tournament->getField('Type')).'</td>
 				<td class="forumheader3">'.$date_start.'</td>
 				<td class="forumheader3">'.$nbrTeamPlayers.'</td>
 				</tr>';
@@ -422,7 +420,6 @@ function displayRecentTournaments(){
 		<td class="forumheader"><b>'.EB_TOURNAMENTS_L13.'</b></td>
 		<td colspan="2" class="forumheader"><b>'.EB_TOURNAMENTS_L14.'</b></td>
 		<td class="forumheader"><b>'.EB_TOURNAMENTS_L15.'</b></td>
-		<td class="forumheader"><b>'.EB_TOURNAMENTS_L32.'</b></td>
 		<td class="forumheader"><b>'.EB_TOURNAMENTS_L16.'</b></td>
 		<td class="forumheader"><b>'.EB_TOURNAMENTS_L18.'</b></td>
 		</tr>';
@@ -479,8 +476,7 @@ function displayRecentTournaments(){
 				<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>
 				<td class="forumheader3"><img '.getGameIconResize($gIcon).'/></td>
 				<td class="forumheader3">'.$gName.'</td>
-				<td class="forumheader3">'.tournamentTypeToString($tournament->getField('Type')).'</td>
-				<td class="forumheader3">'.$tournament->getField('MatchType').'</td>
+				<td class="forumheader3">'.$tournament->getField('MatchType').' - '.tournamentTypeToString($tournament->getField('Type')).'</td>
 				<td class="forumheader3">'.$date_start.'</td>
 				<td class="forumheader3">'.$nbrTeamPlayers.'</td>
 				</tr>';

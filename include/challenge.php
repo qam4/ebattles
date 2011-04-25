@@ -74,11 +74,13 @@ class Challenge extends DatabaseTable
 			.TBL_USERS.".*, "
 			.TBL_TEAMS.".*"
 			." FROM ".TBL_PLAYERS.", "
+			.TBL_GAMERS.", "
 			.TBL_USERS.", "
 			.TBL_TEAMS
 			." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 			."   AND (".TBL_TEAMS.".TeamID = ".TBL_PLAYERS.".Team)"
-			."   AND (".TBL_PLAYERS.".User = '".USERID."')";
+			."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			."   AND (".TBL_GAMERS.".User = '".USERID."')";
 			$result = $sql->db_Query($q);
 			$uteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
 
@@ -90,9 +92,11 @@ class Challenge extends DatabaseTable
 				$q = "SELECT ".TBL_PLAYERS.".*, "
 				.TBL_USERS.".*"
 				." FROM ".TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
 				.TBL_USERS
 				." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-				."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 				."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
 				$result = $sql->db_Query($q);
 				$challengerpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
@@ -110,9 +114,11 @@ class Challenge extends DatabaseTable
 				$q = "SELECT ".TBL_PLAYERS.".*, "
 				.TBL_USERS.".*"
 				." FROM ".TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
 				.TBL_USERS
 				." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-				."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 				."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
 				$result = $sql->db_Query($q);
 				$challengedpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
@@ -302,9 +308,11 @@ class Challenge extends DatabaseTable
 				$q = "SELECT ".TBL_PLAYERS.".*, "
 				.TBL_USERS.".*"
 				." FROM ".TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
 				.TBL_USERS
 				." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-				."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 				."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
 				$result = $sql->db_Query($q);
 				$challengerpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
@@ -322,9 +330,11 @@ class Challenge extends DatabaseTable
 				$q = "SELECT ".TBL_PLAYERS.".*, "
 				.TBL_USERS.".*"
 				." FROM ".TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
 				.TBL_USERS
 				." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-				."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 				."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
 				$result = $sql->db_Query($q);
 				$challengedpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
@@ -486,11 +496,13 @@ class Challenge extends DatabaseTable
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
 				.TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
 				.TBL_USERS
 				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 				." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-				." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 				$result_Players = $sql->db_Query($q_Players);
 				$numPlayers = mysql_numrows($result_Players);
 				//echo "numPlayers: $numPlayers<br>";
@@ -502,12 +514,14 @@ class Challenge extends DatabaseTable
 				.TBL_SCORES.", "
 				.TBL_TEAMS.", "
 				.TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
 				.TBL_USERS
 				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 				." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
 				." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-				." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 				$result_Players = $sql->db_Query($q_Players);
 				$numPlayers = mysql_numrows($result_Players);
 				//echo "numPlayers: $numPlayers<br>";

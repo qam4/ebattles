@@ -363,9 +363,11 @@ else
 
 							// Is the user already signed up with that team?
 							$q = "SELECT ".TBL_PLAYERS.".*"
-							." FROM ".TBL_PLAYERS
+							." FROM ".TBL_PLAYERS.", "
+							.TBL_GAMERS
 							." WHERE (".TBL_PLAYERS.".Tournament = '$tournament_id')"
-							."   AND (".TBL_PLAYERS.".User = ".USERID.")"
+							."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+							."   AND (".TBL_GAMERS.".User = ".USERID.")"
 							."   AND (".TBL_PLAYERS.".Team = '$team_id')";
 							$result = $sql->db_Query($q);
 							if(!$result || (mysql_numrows($result) == 0))
@@ -427,9 +429,11 @@ else
 				case "One Player Tournament":
 				// Is the user already signed up?
 				$q = "SELECT ".TBL_PLAYERS.".*"
-				." FROM ".TBL_PLAYERS
+				." FROM ".TBL_PLAYERS.", "
+				.TBL_GAMERS
 				." WHERE (".TBL_PLAYERS.".Tournament = '$tournament_id')"
-				."   AND (".TBL_PLAYERS.".User = ".USERID.")";
+				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				."   AND (".TBL_GAMERS.".User = ".USERID.")";
 				$result = $sql->db_Query($q);
 				if(!$result || (mysql_numrows($result) < 1))
 				{
@@ -521,7 +525,7 @@ else
 
 	$text .= '<tr>';
 	$text .= '<td class="forumheader3">'.EB_TOURNAMENT_L37.'</td>';
-	$text .= '<td class="forumheader3">'.tournamentTypeToString($tournament->getField('Type')).'</td>';
+	$text .= '<td class="forumheader3">'.$tournament->getField('MatchType').' - '.tournamentTypeToString($tournament->getField('Type')).'</td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
@@ -690,9 +694,11 @@ else
 	$q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS
 	." WHERE (".TBL_PLAYERS.".Tournament = '$tournament_id')"
-	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	."   AND (".TBL_USERS.".user_id = ".USERID.")";
 	$result = $sql->db_Query($q);
 	$numPlayers = mysql_numrows($result);
@@ -729,9 +735,11 @@ else
 			$text .= '<tr>';
 			// "Challenge team" form
 			$q = "SELECT ".TBL_PLAYERS.".*"
-			." FROM ".TBL_PLAYERS
+			." FROM ".TBL_PLAYERS.", "
+			.TBL_GAMERS
 			." WHERE (".TBL_PLAYERS.".Tournament = '$tournament_id')"
-			."   AND (".TBL_PLAYERS.".User = '".USERID."')";
+			."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			."   AND (".TBL_GAMERS.".User = '".USERID."')";
 			$result = $sql->db_Query($q);
 			$uteam = mysql_result($result,0 , TBL_PLAYERS.".Team");
 
@@ -866,19 +874,23 @@ else
 			$text .= '<tr>';
 			// "Challenge player" form
 			$q = "SELECT ".TBL_PLAYERS.".*"
-			." FROM ".TBL_PLAYERS
+			." FROM ".TBL_PLAYERS.", "
+			.TBL_GAMERS
 			." WHERE (".TBL_PLAYERS.".Tournament = '$tournament_id')"
-			."   AND (".TBL_PLAYERS.".User = '".USERID."')";
+			."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			."   AND (".TBL_GAMERS.".User = '".USERID."')";
 			$result = $sql->db_Query($q);
 			$uteam = mysql_result($result,0 , TBL_PLAYERS.".Team");
 
 			$q = "SELECT ".TBL_PLAYERS.".*, "
 			.TBL_USERS.".*"
 			." FROM ".TBL_PLAYERS.", "
+			.TBL_GAMERS.", "
 			.TBL_USERS
 			." WHERE (".TBL_PLAYERS.".Tournament = '$tournament_id')"
 			."   AND (".TBL_PLAYERS.".Banned != 1)"
-			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+			."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 			." ORDER BY ".TBL_USERS.".user_name";
 			$result = $sql->db_Query($q);
 			$num_rows = mysql_numrows($result);
@@ -1190,9 +1202,11 @@ else
 	.TBL_USERS.".*"
 	." FROM ".TBL_AWARDS.", "
 	.TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS
 	." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
-	." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)"
 	." AND (".TBL_PLAYERS.".Tournament = '$tournament_id')"
 	." ORDER BY ".TBL_AWARDS.".timestamp DESC"
 	." LIMIT 0, $rowsPerPage";

@@ -72,11 +72,13 @@ function displayRecentActivity($ladder_id){
 	.TBL_GAMES.".*"
 	." FROM ".TBL_AWARDS.", "
 	.TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS.", "
 	.TBL_LADDERS.", "
 	.TBL_GAMES
     ." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
-	." AND     (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)"
     ." AND (".TBL_PLAYERS.".Ladder = ".TBL_LADDERS.".LadderID)"
 	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
 	.$LadderID_award

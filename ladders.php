@@ -343,7 +343,7 @@ function displayCurrentLadders(){
 				<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
 				<td class="forumheader3"><img '.getGameIconResize($gIcon).'/></td>
 				<td class="forumheader3">'.$gName.'</td>
-				<td class="forumheader3">'.ladderTypeToString($ladder->getField('Type')).'</td>
+				<td class="forumheader3">'.$ladder->getField('MatchType').' - '.ladderTypeToString($ladder->getField('Type')).'</td>
 				<td class="forumheader3">'.$date_start.'</td>
 				<td class="forumheader3">'.$date_end.'</td>
 				<td class="forumheader3">'.$nbrTeamPlayers.'</td>

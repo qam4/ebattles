@@ -160,9 +160,11 @@ function PlayerChallengeForm($ladder_id, $challengerpuid, $challengedpid)
 	$q = "SELECT ".TBL_PLAYERS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS
 	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	."   AND (".TBL_USERS.".user_id = '$challengerpuid')";
 	$result = $sql->db_Query($q);
 
@@ -185,9 +187,11 @@ function PlayerChallengeForm($ladder_id, $challengerpuid, $challengedpid)
 	$q = "SELECT ".TBL_PLAYERS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS
 	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	."   AND (".TBL_PLAYERS.".PlayerID = '$challengedpid')";
 	$result = $sql->db_Query($q);
 
@@ -301,9 +305,11 @@ function SubmitPlayerChallenge($ladder_id, $challengerpuid, $challengedpid)
 	$q = "SELECT ".TBL_PLAYERS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS
 	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	."   AND (".TBL_USERS.".user_id = '$challengerpuid')";
 	$result = $sql->db_Query($q);
 	$challengerpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");
@@ -316,9 +322,11 @@ function SubmitPlayerChallenge($ladder_id, $challengerpuid, $challengedpid)
 	$q = "SELECT ".TBL_PLAYERS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS
 	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	."   AND (".TBL_PLAYERS.".PlayerID = '$challengedpid')";
 	$result = $sql->db_Query($q);
 
@@ -394,11 +402,13 @@ function TeamChallengeForm($ladder_id, $challengerpuid, $challengedtid)
 	.TBL_USERS.".*, "
 	.TBL_TEAMS.".*"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS.", "
 	.TBL_TEAMS
 	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
 	."   AND (".TBL_TEAMS.".TeamID = ".TBL_PLAYERS.".Team)"
-	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	."   AND (".TBL_USERS.".user_id = '$challengerpuid')";
 	$result = $sql->db_Query($q);
 
@@ -527,9 +537,11 @@ function SubmitTeamChallenge($ladder_id, $challengerpuid, $challengedtid)
 	$q = "SELECT ".TBL_PLAYERS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS
 	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-	."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	."   AND (".TBL_USERS.".user_id = '$challengerpuid')";
 	$result = $sql->db_Query($q);
 	$challengerpid   = mysql_result($result, 0,TBL_PLAYERS.".PlayerID");

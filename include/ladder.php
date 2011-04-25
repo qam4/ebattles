@@ -175,7 +175,7 @@ class Ladder extends DatabaseTable
 	}
 
 	/**
-	* ladderScoresUpdate - Re-calculate the scores and players of an ladder
+	* ladderScoresUpdate - Re-calculate the scores and players of a ladder
 	*/
 	function ladderScoresUpdate($current_match)
 	{
@@ -300,7 +300,7 @@ class Ladder extends DatabaseTable
 	}
 
 	/**
-	* ladderAddPlayer - add a user to an ladder
+	* ladderAddPlayer - add a user to a ladder
 	*/
 	function ladderAddPlayer($user, $team = 0, $notify)
 	{
@@ -312,22 +312,42 @@ class Ladder extends DatabaseTable
 		$result = $sql->db_Query($q);
 		$username = mysql_result($result, 0, TBL_USERS.".user_name");
 		$useremail = mysql_result($result, 0, TBL_USERS.".user_email");
-		//dbg:echo "user: $user, $username<br>";
-		//dbg:echo "ladder_id: team: $team, user: $user<br>";
+
+		// Find gamer for that user
+		$q = "SELECT ".TBL_GAMERS.".*"
+		." FROM ".TBL_GAMERS
+		." WHERE (".TBL_GAMERS.".Game = '".$this->fields['Game']."')"
+		."   AND (".TBL_GAMERS.".User = '$user')";
+		$result = $sql->db_Query($q);
+		$num_rows = mysql_numrows($result);
+		echo "num_rows: $num_rows, $q<br>";
+		if ($num_rows==0)
+		{
+			$q = " INSERT INTO ".TBL_GAMERS."(User,Game,UniqueGameID)
+			VALUES ($user,".$this->fields['Game'].",'".$username."')";
+			$sql->db_Query($q);
+			$last_id = mysql_insert_id();
+			$gamerID = $last_id;
+		}
+		else
+		{
+			$gamerID = mysql_result($result, 0, TBL_GAMERS.".GamerID");
+		}
 
 		// Is the user already signed up for the team?
 		$q = "SELECT ".TBL_PLAYERS.".*"
-		." FROM ".TBL_PLAYERS
+		." FROM ".TBL_PLAYERS.", "
+		.TBL_GAMERS
 		." WHERE (".TBL_PLAYERS.".Ladder = '".$this->fields['LadderID']."')"
 		."   AND (".TBL_PLAYERS.".Team = '$team')"
-		."   AND (".TBL_PLAYERS.".User = '$user')";
+		."   AND (".TBL_PLAYERS.".Gamer = '$gamerID')";
 		$result = $sql->db_Query($q);
 		$num_rows = mysql_numrows($result);
-		//dbg:echo "num_rows: $num_rows<br>";
+		echo "num_rows: $num_rows<br>";
 		if ($num_rows==0)
 		{
-			$q = " INSERT INTO ".TBL_PLAYERS."(Ladder,User,Team,ELORanking,TS_mu,TS_sigma)
-			VALUES (".$this->fields['LadderID'].",$user,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].")";
+			$q = " INSERT INTO ".TBL_PLAYERS."(Ladder,Gamer,Team,ELORanking,TS_mu,TS_sigma)
+			VALUES (".$this->fields['LadderID'].",$gamerID,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].")";
 			$sql->db_Query($q);
 			echo "player created, query: $q<br>";
 			$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '".$this->fields['LadderID']."')";
@@ -336,13 +356,13 @@ class Ladder extends DatabaseTable
 			if ($notify)
 			{
 				$sendto = $user;
-				$subject = SITENAME." $ename";
-				$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$ename.EB_LADDERS_L29.EB_LADDERS_L31.USERNAME;
+				$subject = SITENAME.$this->fields['Name'];
+				$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$this->fields['Name'].EB_LADDERS_L29.EB_LADDERS_L31.USERNAME;
 				sendNotification($sendto, $subject, $message, $fromid=0);
 
 				// Send email
-				//$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$ename.EB_LADDERS_L30."<a href='".SITEURLBASE.e_PLUGIN_ABS."ebattles/ladderinfo.php?LadderID=$this->fields['LadderID']'>$ename</a>.".EB_LADDERS_L31.USERNAME.EB_LADDERS_L32;
-				$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$ename.EB_LADDERS_L30.SITEURLBASE.e_PLUGIN_ABS."ebattles/ladderinfo.php?LadderID=$this->fields['LadderID']".EB_LADDERS_L31.USERNAME;
+				//$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$this->fields['Name'].EB_LADDERS_L30."<a href='".SITEURLBASE.e_PLUGIN_ABS."ebattles/ladderinfo.php?LadderID=$this->fields['LadderID']'>$this->fields['Name']</a>.".EB_LADDERS_L31.USERNAME.EB_LADDERS_L32;
+				$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$this->fields['Name'].EB_LADDERS_L30.SITEURLBASE.e_PLUGIN_ABS."ebattles/ladderinfo.php?LadderID=$this->fields['LadderID']".EB_LADDERS_L31.USERNAME;
 				require_once(e_HANDLER."mail.php");
 				sendemail($useremail, $subject, $message);
 			}
@@ -351,7 +371,7 @@ class Ladder extends DatabaseTable
 
 
 	/**
-	* ladderAddDivision - add a division to an ladder
+	* ladderAddDivision - add a division to a ladder
 	*/
 	function ladderAddDivision($div_id, $notify)
 	{

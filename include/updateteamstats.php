@@ -169,11 +169,13 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 							." FROM ".TBL_MATCHS.", "
 							.TBL_SCORES.", "
 							.TBL_PLAYERS.", "
+							.TBL_GAMERS.", "
 							.TBL_USERS
 							." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
 							." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 							." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-							." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+							." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+							." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
 
 							$result_Scores = $sql->db_Query($q_Scores);
 							$numScores = mysql_numrows($result_Scores);
@@ -754,9 +756,11 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		}
 
 		$q_Players = "SELECT *"
-		." FROM ".TBL_PLAYERS
+		." FROM ".TBL_PLAYERS.", "
+		.TBL_GAMERS
 		." WHERE (".TBL_PLAYERS.".Team = '$tid')"
-		." AND (".TBL_PLAYERS.".User = ".USERID.")";
+		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+		." AND (".TBL_GAMERS.".User = ".USERID.")";
 		$result_Players = $sql->db_Query($q_Players);
 		$num_rows_2 = mysql_numrows($result_Players);
 		if($num_rows_2 > 0)

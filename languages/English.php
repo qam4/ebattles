@@ -353,7 +353,7 @@ define('EB_LADDERP_L3', 'Back to');
 define('EB_LADDERP_L4', 'Ladders');
 
 define('EB_LADDERC_L1', 'Create Ladder');
-define('EB_LADDERC_L2', 'You are not authorized to create an ladder.');
+define('EB_LADDERC_L2', 'You are not authorized to create a ladder.');
 define('EB_LADDERC_L3', 'Ladder');
 define('EB_LADDERC_L4', 'Put a description for your ladder here');
 
@@ -611,7 +611,7 @@ define('EB_TOURNAMENTP_L3', 'Back to');
 define('EB_TOURNAMENTP_L4', 'Tournaments');
 
 define('EB_TOURNAMENTC_L1', 'Create Tournament');
-define('EB_TOURNAMENTC_L2', 'You are not authorized to create an tournament.');
+define('EB_TOURNAMENTC_L2', 'You are not authorized to create a tournament.');
 define('EB_TOURNAMENTC_L3', 'Tournament');
 define('EB_TOURNAMENTC_L4', 'Put a description for your tournament here');
 
