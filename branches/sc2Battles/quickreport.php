@@ -28,19 +28,23 @@ else
    	$ladder = new Ladder($ladder_id);
 
     $q = "SELECT ".TBL_PLAYERS.".*"
-    ." FROM ".TBL_PLAYERS
+    ." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS
     ." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-    ."   AND (".TBL_PLAYERS.".User = '".USERID."')";
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+    ."   AND (".TBL_GAMERS.".User = '".USERID."')";
     $result = $sql->db_Query($q);
     $uteam = mysql_result($result,0 , TBL_PLAYERS.".Team");
     
     $q = "SELECT ".TBL_PLAYERS.".*, "
     .TBL_USERS.".*"
     ." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
     .TBL_USERS
     ." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
     ."   AND (".TBL_PLAYERS.".Banned != 1)"
-    ."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+    ."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
     ." ORDER BY ".TBL_USERS.".user_name";
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);

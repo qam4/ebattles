@@ -469,11 +469,13 @@ class Match extends DatabaseTable
 		." FROM ".TBL_MATCHS.", "
 		.TBL_SCORES.", "
 		.TBL_PLAYERS.", "
+		.TBL_GAMERS.", "
 		.TBL_USERS
 		." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
 		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 		." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-		." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+		." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
 		$result = $sql->db_Query($q);
 		$numPlayers = mysql_numrows($result);
 		for($i=0;$i < $numPlayers;$i++)
@@ -901,11 +903,13 @@ class Match extends DatabaseTable
 		." FROM ".TBL_MATCHS.", "
 		.TBL_SCORES.", "
 		.TBL_PLAYERS.", "
+		.TBL_GAMERS.", "
 		.TBL_USERS
 		." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
 		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 		." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-		." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+		." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
 		$result = $sql->db_Query($q);
 		$numPlayers = mysql_numrows($result);
 		for($i=0;$i < $numPlayers;$i++)
@@ -1247,11 +1251,13 @@ class Match extends DatabaseTable
 					." FROM ".TBL_MATCHS.", "
 					.TBL_SCORES.", "
 					.TBL_PLAYERS.", "
+					.TBL_GAMERS.", "
 					.TBL_USERS
 					." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
 					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 					." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-					." AND (".TBL_PLAYERS.".User = '$mReportedBy')";
+					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					." AND (".TBL_GAMERS.".User = '$mReportedBy')";
 					$result_Reporter = $sql->db_Query($q_Reporter);
 					$numRows = mysql_numrows($result_Reporter);
 					if ($numRows>0)
@@ -1264,12 +1270,14 @@ class Match extends DatabaseTable
 					." FROM ".TBL_MATCHS.", "
 					.TBL_SCORES.", "
 					.TBL_PLAYERS.", "
+					.TBL_GAMERS.", "
 					.TBL_USERS
 					." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
 					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 					." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 					." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
-					." AND (".TBL_PLAYERS.".User = ".USERID.")";
+					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					." AND (".TBL_GAMERS.".User = ".USERID.")";
 					$result_Opps = $sql->db_Query($q_Opps);
 					$numOpps = mysql_numrows($result_Opps);
 					break;
@@ -1281,12 +1289,14 @@ class Match extends DatabaseTable
 					.TBL_SCORES.", "
 					.TBL_TEAMS.", "
 					.TBL_PLAYERS.", "
+					.TBL_GAMERS.", "
 					.TBL_USERS
 					." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
 					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 					." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
 					." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-					." AND (".TBL_PLAYERS.".User = '$mReportedBy')";
+					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					." AND (".TBL_GAMERS.".User = '$mReportedBy')";
 					$result_Reporter = $sql->db_Query($q_Reporter);
 					$numRows = mysql_numrows($result_Reporter);
 					if ($numRows>0)
@@ -1300,13 +1310,15 @@ class Match extends DatabaseTable
 					.TBL_SCORES.", "
 					.TBL_TEAMS.", "
 					.TBL_PLAYERS.", "
+					.TBL_GAMERS.", "
 					.TBL_USERS
 					." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
 					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 					." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
 					." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
 					." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-					." AND (".TBL_PLAYERS.".User = ".USERID.")";
+					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					." AND (".TBL_GAMERS.".User = ".USERID.")";
 					$result_Opps = $sql->db_Query($q_Opps);
 					$numOpps = mysql_numrows($result_Opps);
 					//dbg: echo "numOpps: $numOpps, mt: $reporter_matchteam<br>";
@@ -1323,11 +1335,13 @@ class Match extends DatabaseTable
 					." FROM ".TBL_MATCHS.", "
 					.TBL_SCORES.", "
 					.TBL_PLAYERS.", "
+					.TBL_GAMERS.", "
 					.TBL_USERS
 					." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
 					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 					." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-					." AND (".TBL_PLAYERS.".User = ".USERID.")";
+					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					." AND (".TBL_GAMERS.".User = ".USERID.")";
 					$result_UserPlayers = $sql->db_Query($q_UserPlayers);
 					$numUserPlayers = mysql_numrows($result_UserPlayers);
 
@@ -1338,12 +1352,14 @@ class Match extends DatabaseTable
 					.TBL_SCORES.", "
 					.TBL_TEAMS.", "
 					.TBL_PLAYERS.", "
+					.TBL_GAMERS.", "
 					.TBL_USERS
 					." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
 					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 					." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
 					." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-					." AND (".TBL_PLAYERS.".User = ".USERID.")";
+					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					." AND (".TBL_GAMERS.".User = ".USERID.")";
 					$result_UserPlayers = $sql->db_Query($q_UserPlayers);
 					$numUserPlayers = mysql_numrows($result_UserPlayers);
 					//dbg: echo "numUserPlayers: $numUserPlayers<br>";
@@ -1402,11 +1418,13 @@ class Match extends DatabaseTable
 					." FROM ".TBL_MATCHS.", "
 					.TBL_SCORES.", "
 					.TBL_PLAYERS.", "
+					.TBL_GAMERS.", "
 					.TBL_USERS
 					." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
 					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 					." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-					." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 					.$orderby_str;
 					break;
 					case "ClanWar":

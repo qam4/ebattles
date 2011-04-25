@@ -51,7 +51,7 @@ if(check_class($pref['eb_tournaments_create_class']) && $pref['eb_links_showcrea
 	$text .= '<input type="hidden" name="username" value="'.USERNAME.'"/>';
 	$text .= '</div>';
 	//$text .= ebImageTextButton('createtournament', 'add.png', '', 'simple', '', EB_LADDERS_L20);
-	$text .= '<div class="buttons"><button style="display:block; float:left; margin:0 0 0 0; padding:0 0 0 0; background-color:transparent; border:0px; font-size:100%; text-decoration:none; font-weight:bold; cursor:pointer;" type="submit" name="createladder" title="'.EB_TOURNAMENTS_L20.'"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_TOURNAMENTS_L20.'" style="vertical-align:middle"/></button></div>
+	$text .= '<div class="buttons"><button style="display:block; float:left; margin:0 0 0 0; padding:0 0 0 0; background-color:transparent; border:0px; font-size:100%; text-decoration:none; font-weight:bold; cursor:pointer;" type="submit" name="createtournament" title="'.EB_TOURNAMENTS_L20.'"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_TOURNAMENTS_L20.'" style="vertical-align:middle"/></button></div>
 	<div style="clear:both"></div>';
 	$text .= '</form>';
 	$text .= '</td>';
@@ -116,13 +116,15 @@ if($pref['eb_links_showmatchsplayed'] == 1)
 	$q = "SELECT count(*) "
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND (".TBL_MATCHS.".Status = 'active')"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')";
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_result($result, 0);
 
@@ -172,13 +174,15 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_MATCHS.".Status = 'pending')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
@@ -219,11 +223,13 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 			." FROM ".TBL_MATCHS.", "
 			.TBL_SCORES.", "
 			.TBL_PLAYERS.", "
+			.TBL_GAMERS.", "
 			.TBL_USERS
 			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 			." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-			." AND (".TBL_PLAYERS.".User = '$reported_by')";
+	        ." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_GAMERS.".User = '$reported_by')";
 			$result_Reporter = $sql->db_Query($q_Reporter);
 			$numRows = mysql_numrows($result_Reporter);
 			if ($numRows>0)
@@ -236,12 +242,14 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 			." FROM ".TBL_MATCHS.", "
 			.TBL_SCORES.", "
 			.TBL_PLAYERS.", "
+			.TBL_GAMERS.", "
 			.TBL_USERS
 			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 			." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 			." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
-			." AND (".TBL_PLAYERS.".User = ".USERID.")";
+			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_GAMERS.".User = ".USERID.")";
 			$result_Opps = $sql->db_Query($q_Opps);
 			$numOpps = mysql_numrows($result_Opps);
 			break;
@@ -252,12 +260,14 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 			.TBL_SCORES.", "
 			.TBL_TEAMS.", "
 			.TBL_PLAYERS.", "
+			.TBL_GAMERS.", "
 			.TBL_USERS
 			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 			." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
 			." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-			." AND (".TBL_PLAYERS.".User = '$reported_by')";
+			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_GAMERS.".User = '$reported_by')";
 			$result_Reporter = $sql->db_Query($q_Reporter);
 			$numRows = mysql_numrows($result_Reporter);
 			if ($numRows>0)
@@ -271,13 +281,15 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 			.TBL_SCORES.", "
 			.TBL_TEAMS.", "
 			.TBL_PLAYERS.", "
+			.TBL_GAMERS.", "
 			.TBL_USERS
 			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 			." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
 			." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
 			." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-			." AND (".TBL_PLAYERS.".User = ".USERID.")";
+			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_GAMERS.".User = ".USERID.")";
 			$result_Opps = $sql->db_Query($q_Opps);
 			$numOpps = mysql_numrows($result_Opps);
 			break;
@@ -314,13 +326,15 @@ if($pref['eb_links_showmatchspending'] == 1)
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_MATCHS.".Status = 'pending')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
@@ -338,13 +352,15 @@ if($pref['eb_links_showmatchesscheduled'] == 1)
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_MATCHS.".Status = 'scheduled')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
@@ -378,12 +394,14 @@ if($pref['eb_links_showchallengesunconfirmed'] == 1)
 	/* Display Unconfirmed Challenges */
 	$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*"
 	." FROM ".TBL_CHALLENGES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_CHALLENGES.".Status = 'requested')"
 	."   AND ((".TBL_PLAYERS.".PlayerID = ".TBL_CHALLENGES.".ChallengedPlayer)"
 	."    OR  ((".TBL_PLAYERS.".Team = ".TBL_CHALLENGES.".ChallengedTeam)"
 	."   AND   (".TBL_PLAYERS.".Team != 0)))"
-	."   AND (".TBL_PLAYERS.".User = '$req_user')"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_CHALLENGES.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numChallenges = mysql_numrows($result);

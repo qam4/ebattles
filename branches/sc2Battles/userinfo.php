@@ -88,9 +88,11 @@ else
 	$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L9.'</div>';
 	$q = " SELECT *"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_LADDERS.", "
 	.TBL_GAMES
-	." WHERE (".TBL_PLAYERS.".User = '$req_user')"
+	." WHERE (".TBL_GAMERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 	."   AND (".TBL_PLAYERS.".Ladder = ".TBL_LADDERS.".LadderID)"
 	."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
 
@@ -549,13 +551,15 @@ else
 	$q = "SELECT count(*) "
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND (".TBL_MATCHS.".Status = 'active')"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')";
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')";
 	$result = $sql->db_Query($q);
 	$totalItems = mysql_result($result, 0);
 	$pages->items_total = $totalItems;
@@ -569,13 +573,15 @@ else
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_MATCHS.".Status = 'active')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
 	." $pages->limit";
 	$result = $sql->db_Query($q);
@@ -609,13 +615,15 @@ else
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_MATCHS.".Status = 'pending')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
@@ -644,13 +652,15 @@ else
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_MATCHS.".Status = 'scheduled')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
@@ -706,12 +716,14 @@ else
 
 	$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*"
 	." FROM ".TBL_CHALLENGES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_CHALLENGES.".Status = 'requested')"
 	."   AND ((".TBL_PLAYERS.".PlayerID = ".TBL_CHALLENGES.".ChallengedPlayer)"
 	."    OR  ((".TBL_PLAYERS.".Team = ".TBL_CHALLENGES.".ChallengedTeam)"
 	."   AND   (".TBL_PLAYERS.".Team != 0)))"
-	."   AND (".TBL_PLAYERS.".User = '$req_user')"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_CHALLENGES.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numChallenges = mysql_numrows($result);
@@ -752,12 +764,14 @@ else
 	.TBL_USERS.".*"
 	." FROM ".TBL_AWARDS.", "
 	.TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_LADDERS.", "
 	.TBL_GAMES.", "
 	.TBL_USERS
 	." WHERE (".TBL_USERS.".user_id = $req_user)"
 	." AND (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
-	." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)"
 	." AND (".TBL_PLAYERS.".Ladder = ".TBL_LADDERS.".LadderID)"
 	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
 	." ORDER BY ".TBL_AWARDS.".timestamp DESC";

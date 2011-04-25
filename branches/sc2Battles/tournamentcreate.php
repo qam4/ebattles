@@ -22,7 +22,7 @@ else
    $result = $sql->db_Query($q);
    $last_id = mysql_insert_id();
 
-   $q = "UPDATE ".TBL_TOURNAMENTS." SET Name = '".EB_TOURNAMENTC_L3." $last_id - $username' WHERE (LadderID = '$last_id')";
+   $q = "UPDATE ".TBL_TOURNAMENTS." SET Name = '".EB_TOURNAMENTC_L3." $last_id - $username' WHERE (TournamentID = '$last_id')";
    $result = $sql->db_Query($q);
    
    header("Location: tournamentmanage.php?TournamentID=".$last_id);

@@ -11,7 +11,7 @@ $ladder = new Ladder($ladder_id);
 if(isset($_POST['quitladder'])){
     $pid = $_POST['player'];
 
-    // Player can quit an ladder if he has not played yet
+    // Player can quit a ladder if he has not played yet
     $q = "SELECT ".TBL_PLAYERS.".*"
     ." FROM ".TBL_PLAYERS.", "
     .TBL_SCORES
