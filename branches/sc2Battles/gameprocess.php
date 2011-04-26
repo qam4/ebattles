@@ -287,7 +287,7 @@ function updateGame($game_id)
     else
     {
     	echo "Error loading game file.";
-    	exit()
+    	exit();
     }
 }
 /**
@@ -323,7 +323,7 @@ function updateAllGames()
     else
     {
     	echo "Error loading game file.";
-    	exit()
+    	exit();
     }
     
     // Get info from database the game is already in database
@@ -392,7 +392,7 @@ function insertGames()
     else
     {
     	echo "Error loading game file.";
-    	exit()
+    	exit();
     }
 }
 function add_faction($game_id, $faction_icon, $faction_name)

@@ -599,14 +599,14 @@ function versionsCompare($version1, $version2)
     }
 }
 
-function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title='')
+function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title='', $other='')
 {
 	$image_str   = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'" style="vertical-align:middle"/>' : '';
 	$confirm_str = ($confirm!='') ? 'onclick="return confirm(\''.$confirm.'\');"' : '';
 	$class_str   = ($class!='') ? 'class="'.$class.'"' : '';
 	$title_str   = ($title!='') ? 'title="'.$title.'"' : '';
 	$text_str    = ($text != '') ? '&nbsp;'.$text : '';
-	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" '.$title_str.' '.$confirm_str.'>'.$image_str.$text_str.'</button></div>
+	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" '.$title_str.' '.$confirm_str.' '.$other.'>'.$image_str.$text_str.'</button></div>
             <div style="clear:both"></div>';
 }
 

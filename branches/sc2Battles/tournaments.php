@@ -280,7 +280,7 @@ function displayCurrentTournaments(){
 			// TODO: get the number of players correct
 			/* Nbr players */
 			$q_2 = "SELECT COUNT(*) as NbrPlayers"
-			." FROM ".TBL_PLAYERS
+			." FROM ".TBL_TPLAYERS
 			." WHERE (Tournament = '$tournament_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
@@ -288,13 +288,13 @@ function displayCurrentTournaments(){
 
 			/* Nbr Teams */
 			$q_2 = "SELECT COUNT(*) as NbrTeams"
-			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Tournament = '$tournament_id')";
+			." FROM ".TBL_TTEAMS
+			." WHERE (".TBL_TTEAMS.".Tournament = '$tournament_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrTeams = $row['NbrTeams'];
 
-			switch($tournament->getField('Type'))
+			switch($tournament->getField('MatchType'))
 			{
 				case "1v1":
 				$nbrTeamPlayers = $nbrplayers.'/'.$tournament->getField('MaxNumberPlayers');
@@ -443,7 +443,7 @@ function displayRecentTournaments(){
 			// TODO: get the number of players correct
 			/* Nbr players */
 			$q_2 = "SELECT COUNT(*) as NbrPlayers"
-			." FROM ".TBL_PLAYERS
+			." FROM ".TBL_TPLAYERS
 			." WHERE (Tournament = '$tournament_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
@@ -451,8 +451,8 @@ function displayRecentTournaments(){
 
 			/* Nbr Teams */
 			$q_2 = "SELECT COUNT(*) as NbrTeams"
-			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Tournament = '$tournament_id')";
+			." FROM ".TBL_TTEAMS
+			." WHERE (".TBL_TTEAMS.".Tournament = '$tournament_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrTeams = $row['NbrTeams'];

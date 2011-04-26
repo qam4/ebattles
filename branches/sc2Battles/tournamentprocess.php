@@ -25,8 +25,8 @@ text-align: center;
 <body>
 ';
 
-//dbg- print_r($_POST);
-//dbg- exit;
+//var_dump($_POST);
+//exit;
 $tournament_id = $_GET['TournamentID'];
 if (!$tournament_id)
 {
@@ -114,9 +114,9 @@ else
 
 			/* Tournament Type */
 			// Can change only if no players are signed up
-			$q2 = "SELECT ".TBL_PLAYERS.".*"
-			." FROM ".TBL_PLAYERS
-			." WHERE (".TBL_PLAYERS.".Tournament = '$tournament_id')";
+			$q2 = "SELECT ".TBL_TPLAYERS.".*"
+			." FROM ".TBL_TPLAYERS
+			." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')";
 			$result2 = $sql->db_Query($q2);
 			$num_rows_2 = mysql_numrows($result2);
 			if ($num_rows_2==0)
@@ -125,16 +125,8 @@ else
 
 				switch($new_tournamenttype)
 				{
-					case 'Individual':
-					$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Type = 'One Player Tournament' WHERE (TournamentID = '$tournament_id')";
-					$result2 = $sql->db_Query($q2);
-					break;
-					case 'Team':
-					$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Type = 'Team Tournament' WHERE (TournamentID = '$tournament_id')";
-					$result2 = $sql->db_Query($q2);
-					break;
-					case 'ClanWar':
-					$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Type = 'ClanWar' WHERE (TournamentID = '$tournament_id')";
+					case 'Single Elimination':
+					$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Type = 'Single Elimination' WHERE (TournamentID = '$tournament_id')";
 					$result2 = $sql->db_Query($q2);
 					break;
 					default:
@@ -143,9 +135,9 @@ else
 			
 			/* Tournament MatchType */
 			// Can change only if no players are signed up
-			$q2 = "SELECT ".TBL_PLAYERS.".*"
-			." FROM ".TBL_PLAYERS
-			." WHERE (".TBL_PLAYERS.".Tournament = '$tournament_id')";
+			$q2 = "SELECT ".TBL_TPLAYERS.".*"
+			." FROM ".TBL_TPLAYERS
+			." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')";
 			$result2 = $sql->db_Query($q2);
 			$num_rows_2 = mysql_numrows($result2);
 			if ($num_rows_2==0)
@@ -260,41 +252,23 @@ else
 		if(isset($_POST['ban_player']) && $_POST['ban_player']!="")
 		{
 			$playerid = $_POST['ban_player'];
-			$q2 = "UPDATE ".TBL_PLAYERS." SET Banned = '1' WHERE (PlayerID = '$playerid')";
+			$q2 = "UPDATE ".TBL_TPLAYERS." SET Banned = '1' WHERE (TPlayerID = '$playerid')";
 			$result2 = $sql->db_Query($q2);
-			updateStats($tournament_id, $time, TRUE);
 			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
 			exit();
 		}
 		if(isset($_POST['unban_player']) && $_POST['unban_player']!="")
 		{
 			$playerid = $_POST['unban_player'];
-			$q2 = "UPDATE ".TBL_PLAYERS." SET Banned = '0' WHERE (PlayerID = '$playerid')";
+			$q2 = "UPDATE ".TBL_TPLAYERS." SET Banned = '0' WHERE (TPlayerID = '$playerid')";
 			$result2 = $sql->db_Query($q2);
-			updateStats($tournament_id, $time, TRUE);
 			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
 			exit();
 		}
 		if(isset($_POST['kick_player']) && $_POST['kick_player']!="")
 		{
 			$playerid = $_POST['kick_player'];
-			deletePlayer($playerid);
-			updateStats($tournament_id, $time, TRUE);
-			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
-			exit();
-		}
-		if(isset($_POST['del_player_games']) && $_POST['del_player_games']!="")
-		{
-			$playerid = $_POST['del_player_games'];
-			deletePlayerMatches($playerid);
-			updateStats($tournament_id, $time, TRUE);
-			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
-			exit();
-		}
-		if(isset($_POST['del_player_awards']) && $_POST['del_player_awards']!="")
-		{
-			$playerid = $_POST['del_player_awards'];
-			deletePlayerAwards($playerid);
+			deleteTPlayer($playerid);
 			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
 			exit();
 		}

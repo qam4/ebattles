@@ -106,6 +106,8 @@ TBL_CHALLENGES_SHORT,
 TBL_GAMERS_SHORT,
 TBL_OFFICIAL_LADDERS_SHORT,
 TBL_TOURNAMENTS_SHORT,
+TBL_TPLAYERS_SHORT,
+TBL_TTEAMS_SHORT,
 TBL_ROUNDS_SHORT
 );
 
@@ -236,9 +238,6 @@ timestamp int(11) unsigned not null
 TeamID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(TeamID),
 Ladder int NOT NULL,
-INDEX (Ladder),
-FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
-Tournament int NOT NULL,
 INDEX (Ladder),
 FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
 Division int NOT NULL,
@@ -470,20 +469,56 @@ MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 Status varchar(20) DEFAULT 'draft',
 PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 MaxNumberPlayers int DEFAULT '16',
-Players text,
+ForceFaction tinyint(1) default '0',
+Seeded tinyint(3) default '0',
+Seeds text,
 Results text
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_ROUNDS."
 (
 RoundID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(RoundID),
-Tour int(10) unsigned NOT NULL,
-INDEX (Tour),
-FOREIGN KEY (Tour) REFERENCES ".TBL_TOURNAMENTS." (TournamentID),
+Tournament int(10) unsigned NOT NULL,
+INDEX (Tournament),
+FOREIGN KEY (Tournament) REFERENCES ".TBL_TOURNAMENTS." (TournamentID),
 Number int(10),
 Title varchar(63),
 BestOf int(4) DEFAULT '1',
 MapPool text
+) TYPE = MyISAM;",
+"CREATE TABLE ".TBL_TTEAMS."
+(
+TTeamID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(TTeamID),
+Tournament int NOT NULL,
+INDEX (Tournament),
+FOREIGN KEY (Tournament) REFERENCES ".TBL_TOURNAMENTS." (TournamentID),
+Division int NOT NULL,
+INDEX (Division),
+FOREIGN KEY (Division) REFERENCES ".TBL_DIVISIONS." (DivisionID),
+Joined  int(11) unsigned not null,
+CheckedIn tinyint(1) DEFAULT '0',
+Banned tinyint(1) DEFAULT '0'
+) TYPE = MyISAM;",
+"CREATE TABLE ".TBL_TPLAYERS."
+(
+TPlayerID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(TPlayerID),
+Tournament int NOT NULL,
+INDEX (Tournament),
+FOREIGN KEY (Tournament) REFERENCES ".TBL_TOURNAMENTS." (TournamentID),
+Gamer int(10) unsigned NOT NULL,
+INDEX (Gamer),
+FOREIGN KEY (Gamer) REFERENCES ".TBL_GAMERS." (GamerID),
+Team int NOT NULL,
+INDEX (Team),
+FOREIGN KEY (Team) REFERENCES ".TBL_TTEAMS." (TTeamID),
+Faction int NOT NULL,
+INDEX (Faction),
+FOREIGN KEY (Faction) REFERENCES ".TBL_FACTIONS." (FactionID),
+Joined  int(11) unsigned not null,
+CheckedIn tinyint(1) DEFAULT '0',
+Banned tinyint(1) DEFAULT '0'
 ) TYPE = MyISAM;"
 );
 
