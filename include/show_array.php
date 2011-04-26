@@ -67,7 +67,7 @@ function html_show_2d_table($array)
 
 function html_show_table($array, $rows, $columns)
 {
-   $output = '<table class="fborder" style="width:95%"><tbody>';
+   $output = '<table class="eb_table" style="width:95%"><tbody>';
       
    for ($i=0; $i<$rows; $i++)
    {
@@ -76,19 +76,19 @@ function html_show_table($array, $rows, $columns)
      {
        if (strcasecmp($array[$i][0],"header")==0)
        {
-            $output .= '<td class="forumheader">'.$array[$i][$j].'</td>';
+            $output .= '<th class="eb_th1">'.$array[$i][$j].'</th>';
        }
        elseif (strcasecmp($array[$i][0],"row_highlight")==0)
        {
-            $output .= '<td class="forumheader3">'.$array[$i][$j].'</td>';
+            $output .= '<td class="eb_td2">'.$array[$i][$j].'</td>';
        }
        elseif ( $i % 2 == 1 )
        {
-            $output .= '<td class="forumheader3">'.$array[$i][$j].'</td>';
+            $output .= '<td class="eb_td1">'.$array[$i][$j].'</td>';
        }
        else
        {
-            $output .= '<td class="forumheader3">'.$array[$i][$j].'</td>';
+            $output .= '<td class="eb_td2">'.$array[$i][$j].'</td>';
        }
      }
      $output .= '</tr>';

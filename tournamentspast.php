@@ -12,19 +12,16 @@ require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
-
-$text .= '
-<script type="text/javascript" src="./js/tabpane.js"></script>
-';
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 /**
 * Display Past Tournaments
 */
-$text .= '
-<div class="tab-pane" id="tab-pane-9">
-<div class="tab-page">
-<div class="tab">'.EB_TOURNAMENTP_L2.'</div>
-';
+$text .= '<div id="tabs">';
+$text .= '<ul>';
+$text .= '<li><a href="#tabs-1">'.EB_TOURNAMENTP_L2.'</a></li>';
+$text .= '</ul>';
+$text .= '<div id="tabs-1">';
 displayPastTournaments();
 $text .= '
 </div>
@@ -148,14 +145,14 @@ function displayPastTournaments(){
 		$text .= '</span><br /><br />';
 
 		/* Display table contents */
-		$text .= '<table class="fborder" style="width:95%"><tbody>';
+		$text .= '<table class="eb_table" style="width:95%"><tbody>';
 		$text .= '<tr>
-		<td class="forumheader"><b>'.EB_TOURNAMENTS_L13.'</b></td>
-		<td colspan="2" class="forumheader"><b>'.EB_TOURNAMENTS_L14.'</b></td>
-		<td class="forumheader"><b>'.EB_TOURNAMENTS_L15.'</b></td>
-		<td class="forumheader"><b>'.EB_TOURNAMENTS_L32.'</b></td>
-		<td class="forumheader"><b>'.EB_TOURNAMENTS_L16.'</b></td>
-		<td class="forumheader"><b>'.EB_TOURNAMENTS_L18.'</b></td>
+		<th class="eb_th2"><b>'.EB_TOURNAMENTS_L13.'</b></th>
+		<th colspan="2" class="eb_th2"><b>'.EB_TOURNAMENTS_L14.'</b></th>
+		<th class="eb_th2"><b>'.EB_TOURNAMENTS_L15.'</b></th>
+		<th class="eb_th2"><b>'.EB_TOURNAMENTS_L32.'</b></th>
+		<th class="eb_th2"><b>'.EB_TOURNAMENTS_L16.'</b></th>
+		<th class="eb_th2"><b>'.EB_TOURNAMENTS_L18.'</b></th>
 		</tr>';
 		for($i=0; $i<$num_rows; $i++){
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
@@ -206,13 +203,13 @@ function displayPastTournaments(){
 			)
 			{
 				$text .= '<tr>
-				<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>
-				<td class="forumheader3"><img '.getGameIconResize($gIcon).'/></td>
-				<td class="forumheader3">'.$gName.'</td>
-				<td class="forumheader3">'.tournamentTypeToString($tournament->getField('Type')).'</td>
-				<td class="forumheader3">'.$tournament->getField('MatchType').'</td>
-				<td class="forumheader3">'.$date_start.'</td>
-				<td class="forumheader3">'.$nbrTeamPlayers.'</td>
+				<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>
+				<td class="eb_td1"><img '.getGameIconResize($gIcon).'/></td>
+				<td class="eb_td1">'.$gName.'</td>
+				<td class="eb_td1">'.tournamentTypeToString($tournament->getField('Type')).'</td>
+				<td class="eb_td1">'.$tournament->getField('MatchType').'</td>
+				<td class="eb_td1">'.$date_start.'</td>
+				<td class="eb_td1">'.$nbrTeamPlayers.'</td>
 				</tr>';
 			}
 		}

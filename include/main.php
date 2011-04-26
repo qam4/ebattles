@@ -42,10 +42,12 @@ switch ($pref['eb_tab_theme'])
 $eplug_css = array(
 "js/calendar/calendar-blue.css",
 "css/paginate.css",
-"css/ebattles.css",
-$tab_theme
+"css/custom-theme/jquery-ui-1.8.11.custom.css",
+"http://jqueryui.com/themes/base/ui.all.css",
+"css/ebattles.css"
 );
 
+///-------------- Functions ----------------------
 class DatabaseTable
 {
 	protected $tablename;
@@ -603,7 +605,7 @@ function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title=
 {
 	$image_str   = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'" style="vertical-align:middle"/>' : '';
 	$confirm_str = ($confirm!='') ? 'onclick="return confirm(\''.$confirm.'\');"' : '';
-	$class_str   = ($class!='') ? 'class="'.$class.'"' : '';
+	$class_str   = ($class!='') ? 'class="'.$class.' ui-button ui-state-default ui-corner-all"' : 'class="ui-button ui-state-default ui-corner-all"';
 	$title_str   = ($title!='') ? 'title="'.$title.'"' : '';
 	$text_str    = ($text != '') ? '&nbsp;'.$text : '';
 	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" '.$title_str.' '.$confirm_str.' '.$other.'>'.$image_str.$text_str.'</button></div>

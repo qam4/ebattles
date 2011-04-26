@@ -10,9 +10,9 @@ require_once(e_PLUGIN."ebattles/include/ladder.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 
 require_once(HEADERF);
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
-$text = "
-<script type='text/javascript' src='./js/tabpane.js'></script>
+$text .= "
 <script type='text/javascript'>
 <!--//
 function buttonval(v)
@@ -24,26 +24,22 @@ document.getElementById('submitform').submit();
 </script>
 ";
 
-$text .= '
-<div class="tab-pane" id="tab-pane-2">
-';
+$text .= '<div id="tabs">';
+$text .= '<ul>';
+$text .= '<li><a href="#tabs-1">'.EB_LADDERS_L2.'</a></li>';
+$text .= '<li><a href="#tabs-2">'.EB_LADDERS_L3.'</a></li>';
+$text .= '</ul>';
 /**
 * Display Current Ladders
 */
-$text .= '
-<div class="tab-page">
-<div class="tab">'.EB_LADDERS_L2.'</div>
-';
+$text .= '<div id="tabs-1">';
 displayCurrentLadders();
 $text .= '</div>';
 
 /**
 * Display Recent Ladders
 */
-$text .= '
-<div class="tab-page">
-<div class="tab">'.EB_LADDERS_L3.'</div>
-';
+$text .= '<div id="tabs-2">';
 displayRecentLadders();
 $text .= '
 </div>
@@ -51,14 +47,6 @@ $text .= '
 ';
 
 $text .= disclaimer();
-
-$text .= '
-<script type="text/javascript">
-//<![CDATA[
-setupAllTabs();
-//]]>
-</script>
-';
 
 $ns->tablerender(EB_LADDERS_L1, $text);
 require_once(FOOTERF);
@@ -257,15 +245,15 @@ function displayCurrentLadders(){
 		$text .= '</form><br/><br/>';
 
 		/* Display table contents */
-		$text .= '<table class="fborder" style="width:95%"><tbody>';
+		$text .= '<table class="eb_table" style="width:95%"><tbody>';
 		$text .= '<tr>
-		<td class="forumheader"><b>'.EB_LADDERS_L13.'</b></td>
-		<td colspan="2" class="forumheader"><b>'.EB_LADDERS_L14.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L15.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L16.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L17.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L18.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L19.'</b></td>
+		<th class="eb_th2"><b>'.EB_LADDERS_L13.'</b></th>
+		<th colspan="2" class="eb_th2"><b>'.EB_LADDERS_L14.'</b></th>
+		<th class="eb_th2"><b>'.EB_LADDERS_L15.'</b></th>
+		<th class="eb_th2"><b>'.EB_LADDERS_L16.'</b></th>
+		<th class="eb_th2"><b>'.EB_LADDERS_L17.'</b></th>
+		<th class="eb_th2"><b>'.EB_LADDERS_L18.'</b></th>
+		<th class="eb_th2"><b>'.EB_LADDERS_L19.'</b></th>
 		</tr>';
 		for($i=0; $i<$num_rows; $i++)
 		{
@@ -340,14 +328,14 @@ function displayCurrentLadders(){
 			)
 			{
 				$text .= '<tr>
-				<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
-				<td class="forumheader3"><img '.getGameIconResize($gIcon).'/></td>
-				<td class="forumheader3">'.$gName.'</td>
-				<td class="forumheader3">'.$ladder->getField('MatchType').' - '.ladderTypeToString($ladder->getField('Type')).'</td>
-				<td class="forumheader3">'.$date_start.'</td>
-				<td class="forumheader3">'.$date_end.'</td>
-				<td class="forumheader3">'.$nbrTeamPlayers.'</td>
-				<td class="forumheader3">'.$nbrmatches.'</td>
+				<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
+				<td class="eb_td1"><img '.getGameIconResize($gIcon).'/></td>
+				<td class="eb_td1">'.$gName.'</td>
+				<td class="eb_td1">'.$ladder->getField('MatchType').' - '.ladderTypeToString($ladder->getField('Type')).'</td>
+				<td class="eb_td1">'.$date_start.'</td>
+				<td class="eb_td1">'.$date_end.'</td>
+				<td class="eb_td1">'.$nbrTeamPlayers.'</td>
+				<td class="eb_td1">'.$nbrmatches.'</td>
 				</tr>';
 			}
 		}
@@ -447,15 +435,15 @@ function displayRecentLadders(){
 	else
 	{
 		/* Display table contents */
-		$text .= '<table class="fborder" style="width:95%"><tbody>';
+		$text .= '<table class="eb_table" style="width:95%"><tbody>';
 		$text .= '<tr>
-		<td class="forumheader"><b>'.EB_LADDERS_L13.'</b></td>
-		<td colspan="2" class="forumheader"><b>'.EB_LADDERS_L14.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L15.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L16.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L17.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L18.'</b></td>
-		<td class="forumheader"><b>'.EB_LADDERS_L19.'</b></td>
+		<th class="eb_th2"><b>'.EB_LADDERS_L13.'</b></th>
+		<th colspan="2" class="eb_th2"><b>'.EB_LADDERS_L14.'</b></th>
+		<th class="eb_th2"><b>'.EB_LADDERS_L15.'</b></th>
+		<th class="eb_th2"><b>'.EB_LADDERS_L16.'</b></th>
+		<th class="eb_th2"><b>'.EB_LADDERS_L17.'</b></th>
+		<th class="eb_th2"><b>'.EB_LADDERS_L18.'</b></th>
+		<th class="eb_th2"><b>'.EB_LADDERS_L19.'</b></th>
 		</tr>';
 		for($i=0; $i<$num_rows; $i++)
 		{
@@ -529,14 +517,14 @@ function displayRecentLadders(){
 			)
 			{
 				$text .= '<tr>
-				<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
-				<td class="forumheader3"><img '.getGameIconResize($gIcon).'/></td>
-				<td class="forumheader3">'.$gName.'</td>
-				<td class="forumheader3">'.ladderTypeToString($ladder->getField('Type')).'</td>
-				<td class="forumheader3">'.$date_start.'</td>
-				<td class="forumheader3">'.$date_end.'</td>
-				<td class="forumheader3">'.$nbrTeamPlayers.'</td>
-				<td class="forumheader3">'.$nbrmatches.'</td>
+				<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
+				<td class="eb_td1"><img '.getGameIconResize($gIcon).'/></td>
+				<td class="eb_td1">'.$gName.'</td>
+				<td class="eb_td1">'.ladderTypeToString($ladder->getField('Type')).'</td>
+				<td class="eb_td1">'.$date_start.'</td>
+				<td class="eb_td1">'.$date_end.'</td>
+				<td class="eb_td1">'.$nbrTeamPlayers.'</td>
+				<td class="eb_td1">'.$nbrmatches.'</td>
 				</tr>';
 			}
 		}

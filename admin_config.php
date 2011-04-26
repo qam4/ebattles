@@ -3,7 +3,12 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 // Include page header stuff for admin pages
-$eplug_css ='css/tab.css';
+$eplug_css = array(
+"js/calendar/calendar-blue.css",
+"css/paginate.css",
+"css/custom-theme/jquery-ui-1.8.11.custom.css",
+"css/ebattles.css"
+);
 require_once(e_ADMIN."auth.php");
 require_once(e_HANDLER."userclass_class.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
@@ -161,7 +166,7 @@ if((isset($qs[0]) && $qs[0] == "eb_links"))
 	";
 
 	$text .= "<tr>
-	<td  class='forumheader' colspan='3' style='text-align:center'>
+	<td  class='eb_td2' colspan='3' style='text-align:center'>
 	<input class='button' type='submit' name='updatelinks' value='".EB_ADMIN_L28."' />
 	</td>
 	</tr>
@@ -179,8 +184,8 @@ if((isset($qs[0]) && $qs[0] == "eb_links"))
 // ========================================================
 if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))))))
 {
-	$text = "
-	<script type='text/javascript' src='./js/tabpane.js'></script>
+	require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
+	$text .= "
 	<script type='text/javascript'>
 	<!--//
 	function changeTextGameIcon(v)
@@ -280,7 +285,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 
 	$text .= '
 	<tr>
-	<td><b>'.EB_GAME_L3.'</b></td>
+	<td>'.EB_GAME_L3.'</td>
 	<td>
 	<select class="tbox" name="gameid" onchange="this.form.submit()">';
 	for($i=0; $i<$numGames; $i++)
@@ -305,16 +310,17 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	$text .= '</form>';
 
 	// ============================================
-	$text .= '
-	<div class="tab-pane" id="tab-pane-13">
-	';
+	$text .= '<div id="tabs">';
+	$text .= '<ul>';
+	$text .= '<li><a href="#tabs-1">'.EB_GAME_L11.'</a></li>';
+	$text .= '<li><a href="#tabs-2">'.EB_GAME_L12.'</a></li>';
+	$text .= '<li><a href="#tabs-3">'.EB_GAME_L13.'</a></li>';
+	$text .= '</ul>';
+
 	/**
 	* Display Game Info
 	*/
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_GAME_L11.'</div>
-	';
+	$text .= '<div id="tabs-1">';
 
 	$text .= '<form id="gameform" action="'.e_PLUGIN.'ebattles/gameprocess.php?gameid='.$game_id.'" method="post">';
 	$text .= '<table class="fborder" style="width:95%">';
@@ -322,7 +328,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	//<!-- Game Name -->
 	$text .= '
 	<tr>
-	<td class="forumheader3"><b>'.EB_GAME_L4.'</b></td>
+	<td class="forumheader3">'.EB_GAME_L4.'</td>
 	<td class="forumheader3">
 	<input class="tbox" type="text" name="gameName" value="'.$game_name.'"/>
 	</td>
@@ -332,7 +338,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	//<!-- Game Short Name -->
 	$text .= '
 	<tr>
-	<td class="forumheader3"><b>'.EB_GAME_L32.'</b></td>
+	<td class="forumheader3">'.EB_GAME_L32.'</td>
 	<td class="forumheader3">
 	<input class="tbox" type="text" name="gameShortName" value="'.$game_shortname.'"/>
 	</td>
@@ -342,7 +348,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	//<!-- Game Icon -->
 	$text .= '
 	<tr>
-	<td class="forumheader3"><b>'.EB_GAME_L5.'</b></td>
+	<td class="forumheader3">'.EB_GAME_L5.'</td>
 	<td class="forumheader3">
 	<img '.getGameIconResize($game_icon).'/>
 	<input class="tbox" type="text" id="gameIcon" name="gameIcon" value="'.$game_icon.'"/>
@@ -393,10 +399,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	';
 	$text .= '</div>';  // Games Info tab-page
 
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_GAME_L12.'</div>
-	';
+	$text .= '<div id="tabs-2">';
 	//<!-- Game Factions -->
 	// List of all Factions
 	$q_Factions = "SELECT ".TBL_FACTIONS.".*"
@@ -468,10 +471,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 
 	$text .= '</div>';  // Games Factions tab-page
 
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_GAME_L13.'</div>
-	';
+	$text .= '<div id="tabs-3">';
 	//<!-- Game Maps -->
 	// List of all Maps
 	$q_Maps = "SELECT ".TBL_MAPS.".*"
@@ -551,13 +551,6 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 
 	displayGames();
 
-	$text .= '
-	<script type="text/javascript">
-	//<![CDATA[
-	setupAllTabs();
-	//]]>
-	</script>
-	';
 
 	// The usual, tell e107 what to include on the page
 	$ns->tablerender(EB_ADMIN_L10, $text);
@@ -604,7 +597,7 @@ if((isset($qs[0]) && $qs[0] == "eb_activity"))
 	";
 
 	$text .= "<tr>
-	<td  class='forumheader' colspan='3' style='text-align:center'>
+	<td  class='eb_td2' colspan='3' style='text-align:center'>
 	<input class='button' type='submit' name='update_activity' value='".EB_ADMIN_L28."' />
 	</td>
 	</tr>
@@ -845,7 +838,7 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
 	";
 
 	$text .= "<tr>
-	<td  class='forumheader' colspan='3' style='text-align:center'>
+	<td  class='eb_td2' colspan='3' style='text-align:center'>
 	<input class='button' type='submit' name='updatesettings' value='".EB_ADMIN_L9."' />
 	</td>
 	</tr>
@@ -963,10 +956,10 @@ function displayGames(){
 		$text .= '<form id="gamesform" action="'.e_PLUGIN.'ebattles/gameprocess.php" method="post">';
 		$text .= '<table class="fborder" style="width:95%"><tbody>';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader"><input class="tbox" type="checkbox" name="sAll" onclick="selectAll(this)" /> ('.EB_GAMES_L9.')</td>';
+		$text .= '<td class="eb_td2"><input class="tbox" type="checkbox" name="sAll" onclick="selectAll(this)" /> ('.EB_GAMES_L9.')</td>';
 		foreach($array as $opt=>$opt_array)
-		$text .= '<td class="forumheader"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
-		$text .= '<td class="forumheader">'.EB_GAMES_L10;
+		$text .= '<td class="eb_td2"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
+		$text .= '<td class="eb_td2">'.EB_GAMES_L10;
 		$text .= '<input type="hidden" id="delete_game" name="delete_game" value=""/></td></tr>';
 		for($i=0; $i<$num_rows; $i++){
 			$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");

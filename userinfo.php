@@ -33,7 +33,7 @@ if (!$req_user)
 }
 else
 {
-	$text .= '<script type="text/javascript" src="./js/tabpane.js"></script>';
+	require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 	/* Logged in user viewing own account */
 	if(strcmp(USERID,$req_user) == 0){
@@ -49,15 +49,21 @@ else
 	$uid  = mysql_result($result2,0, TBL_USERS.".user_id");
 	$uname  = mysql_result($result2,0, TBL_USERS.".user_name");
 
-	$text .= '<div class="tab-pane" id="tab-pane-5">';
+	$text .= '<div id="tabs">';
+	$text .= '<ul>';
+	$text .= '<li><a href="#tabs-1">'.EB_USER_L2.'</a></li>';
+	$text .= '<li><a href="#tabs-2">'.EB_USER_L3.'</a></li>';
+	$text .= '<li><a href="#tabs-3">'.EB_USER_L4.'</a></li>';
+	$text .= '<li><a href="#tabs-4">'.EB_USER_L5.'</a></li>';
+	$text .= '<li><a href="#tabs-5">'.EB_USER_L6.'</a></li>';
+	$text .= '</ul>';
 
 	/*
 	---------------------
 	Player Profile
 	---------------------
 	*/
-	$text .= '<div class="tab-page">';    // tab-page"Profile"
-	$text .= '<div class="tab">'.EB_USER_L2.'</div>';
+	$text .= '<div id="tabs-1">';    // tab-page "Profile"
 
 	$text .= '<p>';
 	$text .= EB_USER_L7.': <a href="'.e_BASE.'user.php?id.'.$req_user.'">'.$uname.'</a>';
@@ -70,9 +76,7 @@ else
 	Ladders
 	---------------------
 	*/
-	$text .= '<div class="tab-page">';    // tab-page "Ladders"
-	$text .= '<div class="tab">'.EB_USER_L3.'</div>
-	';
+	$text .= '<div id="tabs-2">';    // tab-page "Ladders"
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_ladders_create_class'])))
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/laddercreate.php" method="post">';
@@ -102,23 +106,23 @@ else
 	if ($num_rows>0)
 	{
 		/* Display table contents */
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L10;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L11;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L12;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L13;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 
 		for($i=0; $i<$num_rows; $i++)
@@ -160,20 +164,20 @@ else
 			$rating = displayRating($prating, $prating_votes);
 
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= $pRank;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= $pWinLoss;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= $rating;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -208,17 +212,17 @@ else
 	if ($num_ladders>0)
 	{
 		/* Display table contents */
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L10;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L31;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 
 		for($i=0; $i<$num_ladders; $i++)
@@ -238,11 +242,11 @@ else
 			$nbrMatchesPending = $row['nbrMatchesPending'];
 
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -256,7 +260,7 @@ else
 				$text .= EB_USER_L17;
 			}
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
 			$text .= '</td>';
 			$text .= '</tr>';
@@ -281,17 +285,17 @@ else
 	if ($num_rows>0)
 	{
 		/* Display table contents */
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L10;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L31;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 
 		for($i=0; $i<$num_rows; $i++)
@@ -311,11 +315,11 @@ else
 			$nbrMatchesPending = $row['nbrMatchesPending'];
 
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -329,7 +333,7 @@ else
 				$text .= EB_USER_L17;
 			}
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
 			$text .= '</td>';
 			$text .= '</tr>';
@@ -343,9 +347,7 @@ else
 	Divisions
 	---------------------
 	*/
-	$text .= '<div class="tab-page">';   // tab-page "Divisions"
-	$text .= '<div class="tab">'.EB_USER_L4.'</div>
-	';
+	$text .= '<div id="tabs-3">';   // tab-page "Divisions"
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_teams_create_class'])))
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/clancreate.php" method="post">';
@@ -381,14 +383,14 @@ else
 
 	if ($num_rows>0)
 	{
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L24;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L25;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
@@ -399,11 +401,11 @@ else
 			$cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 			$cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
 			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			if($cowner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -438,14 +440,14 @@ else
 
 	if ($num_rows>0)
 	{
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L28;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
@@ -454,10 +456,10 @@ else
 			$cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 			$cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			if($cowner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -495,14 +497,14 @@ else
 
 	if ($num_rows>0)
 	{
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L24;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
@@ -513,11 +515,11 @@ else
 			$dgame  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$dgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
 			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td1">';
 			if($cowner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -543,8 +545,7 @@ else
 	Matches
 	---------------------
 	*/
-	$text .= '<div class="tab-page">';   // tab-page "Matches"
-	$text .= '<div class="tab">'.EB_USER_L5.'</div>';
+	$text .= '<div id="tabs-4">';   // tab-page "Matches"
 
 	/* Display Active Matches */
 	/* set pagination variables */
@@ -569,6 +570,7 @@ else
 	$text .= '<p><b>';
 	$text .= $totalItems.'&nbsp;'.EB_LADDER_L59;
 	$text .= '</b></p>';
+	$text .= '<br />';
 
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
@@ -588,7 +590,6 @@ else
 	$num_rows = mysql_numrows($result);
 	if ($num_rows>0)
 	{
-		$text .= '<br />';
 		// Paginate
 		$text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
 		$text .= '<span style="float:right">';
@@ -753,8 +754,7 @@ else
 	Awards
 	---------------------
 	*/
-	$text .= '<div class="tab-page">';   // tab-page "Awards"
-	$text .= '<div class="tab">'.EB_USER_L6.'</div>';
+	$text .= '<div id="tabs-5">';   // tab-page "Awards"
 
 	/* Stats/Results */
 	$q = "SELECT ".TBL_AWARDS.".*, "
@@ -848,15 +848,7 @@ else
 	$text .= '<br />';
 	$text .= '</div>';   // tab-page "Awards"
 
-	$text .= '
-	</div>
-
-	<script type="text/javascript">
-	//<![CDATA[
-	setupAllTabs();
-	//]]>
-	</script>
-	';
+	$text .= '</div>';
 }
 $ns->tablerender(EB_USER_L1, $text);
 require_once(FOOTERF);

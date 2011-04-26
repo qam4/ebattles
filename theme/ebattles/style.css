@@ -8,14 +8,14 @@
 .r3c3          {  }
 
 .r4c1          {  }
-.r4c2          { width: 100%; font-size: 11px; color: #333333; text-align: center; }
+.r4c2          { width: 100%; font-size: 11px; text-align: center; }
 .r4c3          {  }
 
 .leftr5        {  }
 .rightr5       {  }
 
 .r6c1          {  }
-.r6c2          { font-size: 11px; color: #333333;  text-align: center; }
+.r6c2          { font-size: 11px; text-align: center; }
 .r6c3          {  }
 
 .mt1           {  }
@@ -24,13 +24,12 @@
                  overflow:hidden;
                  padding:0 0 4px;
                  vertical-align:bottom;
-                 font-size: 11px; color: #333333;
-                   
+                 font-size: 11px;
                  font-weight: bold; 
                }
 .mt2           {  }
 .mleft         {  }
-.middlemiddle  { background: white ; padding: 4px 5px 5px 4px;	font-size: 11px; color: #333333;  vertical-align:top; }
+.middlemiddle  { background: white ; padding: 4px 5px 5px 4px;	font-size: 11px; vertical-align:top;}
 .mright        {  }
 .md1           {  }
 .mdbg          {  }
@@ -98,7 +97,6 @@ p {
 	margin-bottom: 0px
 }
 td {
-	color: #333333;
 	padding: 0px;
 	text-align:left;
 }
@@ -109,31 +107,9 @@ td {
 	margin:2px;
 	padding:3px;
 }
-.bodytable {
-	padding: 8px;
-	color: #333333;
-}
-.bodytable2 {
-	border: #000 1px solid;
-	padding: 8px;
-	color: #000;
-}
-.bodytable3 {
-	padding: 8px;
-	color: #000;
-}
+
 .border {
 	border: #000 1px solid;
-}
-.border2 {
-	border: #000 1px solid;
-}
-.border3 {
-	border: #000 1px solid;
-}
-.bottomborder {
-	border-top: #000 1px solid;
-	border-bottom: #000 1px solid;
 }
 .button {
 	background-color: #365689;
@@ -375,7 +351,6 @@ td {
 
 .left_menu {
 	padding:0px;
-	width: 0%;
 	vertical-align:top;
 	border-right: 1px dotted #ccc;
 	width: 100px;
