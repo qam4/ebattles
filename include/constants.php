@@ -28,9 +28,6 @@ define("TBL_MEMBERS_SHORT",         TBL_PREFIX."Members");
 define("TBL_STATSCATEGORIES_SHORT", TBL_PREFIX."StatsCategories");
 define("TBL_GAMES_SHORT",           TBL_PREFIX."Games");
 define("TBL_AWARDS_SHORT",          TBL_PREFIX."Awards");
-define("TBL_PLAYERS_RESULTS_SHORT", TBL_PREFIX."PlayersResults");
-define("TBL_GAMES_GENRES_SHORT",    TBL_PREFIX."GamesGenres");
-define("TBL_GAMES_PLATFORMS_SHORT", TBL_PREFIX."GamesPlatforms");
 define("TBL_MAPS_SHORT",            TBL_PREFIX."Maps");
 define("TBL_FACTIONS_SHORT",        TBL_PREFIX."Factions");
 define("TBL_MEDIA_SHORT",           TBL_PREFIX."Media");
@@ -39,6 +36,8 @@ define("TBL_GAMERS_SHORT",          TBL_PREFIX."Gamers");
 define("TBL_OFFICIAL_LADDERS_SHORT",TBL_PREFIX."OfficialLadders");
 define("TBL_TOURNAMENTS_SHORT",     TBL_PREFIX."Tournaments");
 define("TBL_ROUNDS_SHORT",          TBL_PREFIX."Rounds");
+define("TBL_TPLAYERS_SHORT",        TBL_PREFIX."TournamentPlayers");
+define("TBL_TTEAMS_SHORT",          TBL_PREFIX."TournamentTeams");
 
 define("TBL_USERS",           MPREFIX."user");
 define("TBL_LADDERS",         MPREFIX.TBL_LADDERS_SHORT);
@@ -61,6 +60,8 @@ define("TBL_GAMERS",          MPREFIX.TBL_GAMERS_SHORT);
 define("TBL_OFFICIAL_LADDERS",MPREFIX.TBL_OFFICIAL_LADDERS_SHORT);
 define("TBL_TOURNAMENTS",     MPREFIX.TBL_TOURNAMENTS_SHORT);
 define("TBL_ROUNDS",          MPREFIX.TBL_ROUNDS_SHORT);
+define("TBL_TPLAYERS",        MPREFIX.TBL_TPLAYERS_SHORT);
+define("TBL_TTEAMS",          MPREFIX.TBL_TTEAMS_SHORT);
 
 /**
  * Email Constants - these specify what goes in

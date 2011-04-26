@@ -412,8 +412,8 @@ class Ladder extends DatabaseTable
 				{
 					for($j=0; $j<$num_rows_2; $j++)
 					{
-						$match_id  = mysql_result($result_2,$j, TBL_USERS.".user_id");
-						$this->ladderAddPlayer($match_id, $team_id, $notify);
+						$user_id  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+						$this->ladderAddPlayer($user_id, $team_id, $notify);
 					}
 					$q4 = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '".$this->fields['LadderID']."')";
 					$result = $sql->db_Query($q4);

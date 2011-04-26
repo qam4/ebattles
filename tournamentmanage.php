@@ -522,12 +522,10 @@ else
 
         $array = array(
         'name'   => array(EB_TOURNAMENTM_L55, TBL_USERS.'.user_name'),
-        'rank'   => array(EB_TOURNAMENTM_L56, TBL_PLAYERS.'.OverallScore'),
-        'games'  => array(EB_TOURNAMENTM_L57, TBL_PLAYERS.'.GamesPlayed'),
-        'awards' => array(EB_TOURNAMENTM_L58, '')
+        'joined'   => array(EB_TOURNAMENTM_L56, TBL_TPLAYERS.'.Joined')
         );
 
-        if (!isset($_GET['orderby'])) $_GET['orderby'] = 'rank';
+        if (!isset($_GET['orderby'])) $_GET['orderby'] = 'joined';
         $orderby=$_GET['orderby'];
 
         $sort = "DESC";
@@ -537,11 +535,11 @@ else
         }
 
         $q = "SELECT COUNT(*) as NbrPlayers"
-        ." FROM ".TBL_PLAYERS.", "
+        ." FROM ".TBL_TPLAYERS.", "
 		.TBL_GAMERS.", "
         .TBL_USERS
-        ." WHERE (".TBL_PLAYERS.".Tournament = '$tournament_id')"
-		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+        ." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+		." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
         ." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
         $result = $sql->db_Query($q);
         $row = mysql_fetch_array($result);
@@ -553,13 +551,14 @@ else
         $pages->paginate();
 
         /* Number of teams */
-        switch($tournament->getField('Type'))
+        switch($tournament->getField('MatchType'))
         {
-            case "Team Tournament":
-            case "ClanWar":
+            case "2v2":
+            case "3v3":
+            case "4v4":
             $q = "SELECT COUNT(*) as NbrTeams"
-            ." FROM ".TBL_TEAMS
-            ." WHERE (".TBL_TEAMS.".Tournament = '$tournament_id')";
+            ." FROM ".TBL_TTEAMS
+            ." WHERE (".TBL_TTEAMS.".Tournament = '$tournament_id')";
             $result = $sql->db_Query($q);
             $row = mysql_fetch_array($result);
             $numTeams = $row['NbrTeams'];
@@ -574,23 +573,23 @@ else
         }
 
         /* Number of players */
-        switch($tournament->getField('Type'))
+        switch($tournament->getField('MatchType'))
         {
-            case "One Player Tournament":
-            case "Team Tournament":
+            default:
             $text .= '<div class="spacer">';
             $text .= '<p>';
             $text .= $numPlayers.' '.EB_TOURNAMENTM_L40.'<br />';
             $text .= '</p>';
             $text .= '</div>';
             break;
-            default:
         }
 
         /* Add Team/Player */
         switch($tournament->getField('MatchType'))
         {
             case "2v2":
+            case "3v3":
+            case "4v4":
             // Form to add a team's division to the tournament
             $q = "SELECT ".TBL_DIVISIONS.".*, "
             .TBL_CLANS.".*"
@@ -635,7 +634,6 @@ else
             $q = "SELECT ".TBL_USERS.".*"
             ." FROM ".TBL_USERS;
             $result = $sql->db_Query($q);
-            /* Error occurred, return given name by default */
             $numUsers = mysql_numrows($result);
             $text .= '<form action="'.e_PLUGIN.'ebattles/tournamentprocess.php?TournamentID='.$tournament_id.'" method="post">';
             $text .= '
@@ -679,20 +677,21 @@ else
         $text .= '<td>'.EB_TOURNAMENTM_L50.'</td></tr>';
         $text .= '</table>';
 
-        switch($tournament->getField('Type'))
+        switch($tournament->getField('MatchType'))
         {
-            case "Team Tournament":
-            case "ClanWar":
+            case "2v2":
+            case "3v3":
+            case "4v4":
             // Show list of teams here
             $q_Teams = "SELECT ".TBL_CLANS.".*, "
-            .TBL_TEAMS.".*, "
+            .TBL_TTEAMS.".*, "
             .TBL_DIVISIONS.".* "
             ." FROM ".TBL_CLANS.", "
-            .TBL_TEAMS.", "
+            .TBL_TTEAMS.", "
             .TBL_DIVISIONS
             ." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-            ." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-            ." AND (".TBL_TEAMS.".Tournament = '$tournament_id')";
+            ." AND (".TBL_TTEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+            ." AND (".TBL_TTEAMS.".Tournament = '$tournament_id')";
             $result = $sql->db_Query($q_Teams);
             $num_rows = mysql_numrows($result);
             if(!$result || ($num_rows < 0)){
@@ -734,18 +733,17 @@ else
             default:
         }
 
-        switch($tournament->getField('Type'))
+        switch($tournament->getField('MatchType'))
         {
-            case "One Player Tournament":
-            case "Team Tournament":
+            default:
             $orderby_array = $array["$orderby"];
-            $q_Players = "SELECT ".TBL_PLAYERS.".*, "
+            $q_Players = "SELECT ".TBL_TPLAYERS.".*, "
             .TBL_USERS.".*"
-            ." FROM ".TBL_PLAYERS.", "
+            ." FROM ".TBL_TPLAYERS.", "
 			.TBL_GAMERS.", "
             .TBL_USERS
-            ." WHERE (".TBL_PLAYERS.".Tournament = '$tournament_id')"
-			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+            ." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+			." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
             ." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
             ." ORDER BY $orderby_array[1] $sort"
             ." $pages->limit";
@@ -753,8 +751,7 @@ else
             $num_rows = mysql_numrows($result);
             if(!$result || ($num_rows < 0)){
                 $text .= EB_TOURNAMENTM_L51.'<br />';
-            }
-            if($num_rows == 0){
+            } else if($num_rows == 0){
                 $text .= EB_TOURNAMENTM_L52.'<br />';
             }
             else
@@ -786,29 +783,21 @@ else
                 $text .= '</td></tr>';
                 for($i=0; $i<$num_rows; $i++)
                 {
-                    $pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+                    $pid  = mysql_result($result,$i, TBL_TPLAYERS.".TPlayerID");
                     $puid = mysql_result($result,$i, TBL_USERS.".user_id");
                     $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
-                    $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-                    $pbanned = mysql_result($result,$i, TBL_PLAYERS.".Banned");
-                    $pgames = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
-                    $pteam = mysql_result($result,$i, TBL_PLAYERS.".Team");
+                    $pjoined  = mysql_result($result,$i, TBL_TPLAYERS.".Joined");
+					$pjoined_local = $pjoined + TIMEOFFSET;
+					$date  = date("d M Y",$pjoined_local);
+                    $pbanned = mysql_result($result,$i, TBL_TPLAYERS.".Banned");
+                    $pgames = mysql_result($result,$i, TBL_TPLAYERS.".GamesPlayed");
+                    $pteam = mysql_result($result,$i, TBL_TPLAYERS.".Team");
                     list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
-
-                    $q_awards = "SELECT COUNT(*) as NbrAwards"
-                    ." FROM ".TBL_AWARDS
-                    ." WHERE (".TBL_AWARDS.".Player = '$pid')";
-                    $result_awards = $sql->db_Query($q_awards);
-                    $row = mysql_fetch_array($result_awards);
-                    $pawards = $row['NbrAwards'];
-
-                    if ($prank == 0) $prank = EB_TOURNAMENTM_L53;
 
                     $text .= '<tr>';
                     $text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
-                    $text .= '<td class="forumheader3">'.(($pbanned) ? EB_TOURNAMENTM_L54 : $prank).'</td>';
-                    $text .= '<td class="forumheader3">'.$pgames.'</td>';
-                    $text .= '<td class="forumheader3">'.$pawards.'</td>';
+                    $text .= '<td class="forumheader3">'.(($pbanned) ? EB_TOURNAMENTM_L54 : $date).'</td>';
+                    //$text .= '<td class="forumheader3">'.$pgames.'</td>';
                     $text .= '<td class="forumheader3">';
                     if ($pbanned)
                     {
@@ -837,7 +826,6 @@ else
                 $text .= '</form>';
             }
             break;
-            default:
         }
 
         $text .= '
