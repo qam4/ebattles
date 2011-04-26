@@ -22,9 +22,8 @@ if (!$clan_id)
 }
 else
 {
+	require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 	require_once(e_PLUGIN."ebattles/claninfo_process.php");
-
-	$text ='<script type="text/javascript" src="./js/tabpane.js"></script>';
 
 	$q = "SELECT ".TBL_CLANS.".*"
 	." FROM ".TBL_CLANS
@@ -34,61 +33,46 @@ else
 
 	$clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
 
-	$text .= '
-	<div class="tab-pane" id="tab-pane-6">
-	';
+	$text .= '<div id="tabs">';
+	$text .= '<ul>';
+	$text .= '<li><a href="#tabs-1">'.EB_CLAN_L2.'</a></li>';
+	$text .= '<li><a href="#tabs-2">'.EB_CLAN_L3.'</a></li>';
+	$text .= '<li><a href="#tabs-3">'.EB_CLAN_L4.'</a></li>';
+	$text .= '<li><a href="#tabs-4">'.EB_CLAN_L31.'</a></li>';
+	$text .= '</ul>';
 	/**
 	* Display Latest Games
 	*/
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_CLAN_L2.'</div>
-	';
+	$text .= '<div id="tabs-1">';
 	displayTeamSummary($clan_id);
 	$text .= '</div>';
 
 	/**
 	* Display Divisions
 	*/
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_CLAN_L3.'</div>
-	';
+	$text .= '<div id="tabs-2">';
 	displayTeamDivisions($clan_id);
 	$text .= '</div>';
 
 	/**
 	* Display Ladders
 	*/
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_CLAN_L4.'</div>
-	';
+	$text .= '<div id="tabs-3">';
 	displayTeamLadders($clan_id);
 	$text .= '</div>';
 
 	/**
 	* Display Awards
 	*/
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_CLAN_L31.'</div>
-	';
+	$text .= '<div id="tabs-4">';
 	displayTeamAwards($clan_id);
 	$text .= '</div>';
 
+	$text .= '</div>';
 	$text .= '
-	</div>
-
 	<p>
 	<br />'.EB_CLAN_L5.' [<a href="'.e_PLUGIN.'ebattles/clans.php">'.EB_CLAN_L6.'</a>]<br />
 	</p>
-
-	<script type="text/javascript">
-	//<![CDATA[
-	setupAllTabs();
-	//]]>
-	</script>
 	';
 }
 $ns->tablerender("$clan_name", $text);
@@ -279,10 +263,10 @@ function displayTeamDivisions($clan_id){
 
 			$text .= '<p>'.$numMembers.'&nbsp;'.EB_CLAN_L15.'</p>';
 
-			$text .= '<table class="fborder" style="width:95%"><tbody>';
-			$text .= '<tr><td class="forumheader"><b>'.EB_CLAN_L16.'</b></td>
-			<td class="forumheader"><b>'.EB_CLAN_L17.'</b></td>
-			<td class="forumheader"><b>'.EB_CLAN_L18.'</b></td>
+			$text .= '<table class="eb_table" style="width:95%"><tbody>';
+			$text .= '<tr><td class="eb_td2"><b>'.EB_CLAN_L16.'</b></td>
+			<td class="eb_td2"><b>'.EB_CLAN_L17.'</b></td>
+			<td class="eb_td2"><b>'.EB_CLAN_L18.'</b></td>
 			</tr>';
 
 			// Captain
@@ -299,9 +283,9 @@ function displayTeamDivisions($clan_id){
 					$status =  EB_CLAN_L9;
 
 					$text .= '<tr>';
-					$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
-					<td class="forumheader3">'.$status.'</td>
-					<td class="forumheader3">'.$date.'</td></tr>';
+					$text .= '<td class="eb_td1"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
+					<td class="eb_td1">'.$status.'</td>
+					<td class="eb_td1">'.$date.'</td></tr>';
 				}
 			}
 
@@ -319,9 +303,9 @@ function displayTeamDivisions($clan_id){
 					$status =  EB_CLAN_L26;
 
 					$text .= '<tr>';
-					$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
-					<td class="forumheader3">'.$status.'</td>
-					<td class="forumheader3">'.$date.'</td></tr>';
+					$text .= '<td class="eb_td1"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
+					<td class="eb_td1">'.$status.'</td>
+					<td class="eb_td1">'.$date.'</td></tr>';
 				}
 			}
 			$text .= '</tbody></table>';
@@ -380,9 +364,9 @@ function displayTeamLadders($clan_id){
 
 			$text .= '<p>'.$numLadders.'&nbsp;'.EB_CLAN_L20.'</p>';
 
-			$text .= '<table class="fborder" style="width:95%"><tbody>';
-			$text .= '<tr><td class="forumheader"><b>'.EB_CLAN_L21.'</b></td>
-			<td class="forumheader"><b>'.EB_CLAN_L22.'</b></td></tr>';
+			$text .= '<table class="eb_table" style="width:95%"><tbody>';
+			$text .= '<tr><td class="eb_td2"><b>'.EB_CLAN_L21.'</b></td>
+			<td class="eb_td2"><b>'.EB_CLAN_L22.'</b></td></tr>';
 			for($j=0; $j < $numLadders; $j++)
 			{
 				$ladder_id  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
@@ -390,8 +374,8 @@ function displayTeamLadders($clan_id){
 				$lRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
 				$text .= '<tr>';
-				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a></b></td>
-				<td class="forumheader3">'.$lRank.'</td></tr>';
+				$text .= '<td class="eb_td1"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a></b></td>
+				<td class="eb_td1">'.$lRank.'</td></tr>';
 			}
 			$text .= "</tbody></table>\n";
 		}
@@ -417,9 +401,9 @@ function displayTeamLadders($clan_id){
 
 			$text .= '<p>'.$numLadders.'&nbsp;'.EB_CLAN_L24.'</p>';
 
-			$text .= '<table class="fborder" style="width:95%"><tbody>';
-			$text .= '<tr><td class="forumheader"><b>'.EB_CLAN_L21.'</b></td>
-			<td class="forumheader"><b>'.EB_CLAN_L22.'</b></td></tr>';
+			$text .= '<table class="eb_table" style="width:95%"><tbody>';
+			$text .= '<tr><td class="eb_td2"><b>'.EB_CLAN_L21.'</b></td>
+			<td class="eb_td2"><b>'.EB_CLAN_L22.'</b></td></tr>';
 			for($j=0; $j<$numLadders; $j++)
 			{
 				$ladder_id  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
@@ -427,8 +411,8 @@ function displayTeamLadders($clan_id){
 				$lRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
 				$text .= '<tr>';
-				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a></b></td>
-				<td class="forumheader3">'.$lRank.'</td></tr>';
+				$text .= '<td class="eb_td1"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a></b></td>
+				<td class="eb_td1">'.$lRank.'</td></tr>';
 			}
 			$text .= '</tbody></table>';
 		}

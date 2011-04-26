@@ -2,3 +2,36 @@
 margin-left: 0px;
 margin-right: auto;
 }
+
+td.eb_td1 {
+/*	color : white; */
+}
+
+/* Jquery-UI */
+.ui-button { outline: 0; margin:0; padding: .4em 1em .5em; text-decoration:none;  !important; cursor:pointer; position: relative; text-align: center; }
+.ui-dialog .ui-state-highlight, .ui-dialog .ui-state-error { padding: .3em;  }
+
+fieldset { padding:0; border:0; }
+label
+{
+    display: block;
+	font-size: 14px;
+	padding: .5em;
+}
+
+label.error 
+{
+  display: inline!important;
+}
+
+
+.jdr-blockme
+{
+  padding: 25px;
+  margin: 10px;
+}
+
+.jdr-blockwidth
+{
+  width: 400px;
+}

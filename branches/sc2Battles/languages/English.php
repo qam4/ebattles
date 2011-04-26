@@ -442,7 +442,7 @@ define('EB_TOURNAMENT_L45', 'Teams Standings');
 define('EB_TOURNAMENT_L46', 'Next Update:');
 define('EB_TOURNAMENT_L47', 'Minimum');
 define('EB_TOURNAMENT_L48', 'team match(es) to rank.');
-define('EB_TOURNAMENT_L49', 'Players Standings');
+define('EB_TOURNAMENT_L49', 'Brackets');
 define('EB_TOURNAMENT_L50', 'Next Update:');
 define('EB_TOURNAMENT_L51', 'players');
 define('EB_TOURNAMENT_L52', 'Minimum');

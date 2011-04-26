@@ -15,9 +15,8 @@ require_once(e_PLUGIN."ebattles/include/ladder.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
-
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 $text .= "
-<script type='text/javascript' src='./js/tabpane.js'></script>
 <script type='text/javascript'>
 <!--//
 function del_media(v)
@@ -51,10 +50,12 @@ if (!$match_id)
 }
 else
 {
-	$text .= '<div class="tab-pane" id="tab-pane-12">';
-	$text .= '<div class="tab-page">';
-	$text .= '<div class="tab">'.EB_MATCHD_L1.'</div>';
+	$text .= '<div id="tabs">';
+	$text .= '<ul>';
+	$text .= '<li><a href="#tabs-1">'.EB_MATCHD_L1.'</a></li>';
+	$text .= '</ul>';
 
+	$text .= '<div id="tabs-1">';
 	// Did the user play in that match
 	$q = "SELECT DISTINCT ".TBL_SCORES.".*"
 	." FROM ".TBL_MATCHS.", "
@@ -385,16 +386,16 @@ else
 		$text .= '</form>';
 	}
 	$text .= '<br />';
-	$text .= '<table class="fborder" style="width:95%"><tbody>';
+	$text .= '<table class="eb_table" style="width:95%"><tbody>';
 	$text .= '<tr>';
-	$text .= '<td class="forumheader"><b>'.EB_MATCHD_L6.'</b></td>';
-	$text .= '<td class="forumheader"><b>'.EB_MATCHD_L7.'</b></td>';
-	$text .= '<td class="forumheader"><b>'.EB_MATCHD_L8.'</b></td>';
-	$text .= ($categoriesToShow["Score"] == TRUE) ? '<td class="forumheader"><b>'.EB_MATCHD_L9.'</b></td>' : '';
-	$text .= ($categoriesToShow["Points"] == TRUE) ? '<td class="forumheader"><b>'.EB_MATCHD_L10.'</b></td>' : '';
-	$text .= ($categoriesToShow["ELO"] == TRUE) ? '<td class="forumheader"><b>'.EB_MATCHD_L11.'</b></td>' : '';
-	$text .= ($categoriesToShow["Skill"] == TRUE) ? '<td class="forumheader"><b>'.EB_MATCHD_L12.'</b></td>' : '';
-	$text .= '<td class="forumheader"><b>'.EB_MATCHD_L13.'</b></td>';
+	$text .= '<th class="eb_th2"><b>'.EB_MATCHD_L6.'</b></th>';
+	$text .= '<th class="eb_th2"><b>'.EB_MATCHD_L7.'</b></th>';
+	$text .= '<th class="eb_th2"><b>'.EB_MATCHD_L8.'</b></th>';
+	$text .= ($categoriesToShow["Score"] == TRUE) ? '<th class="eb_th2"><b>'.EB_MATCHD_L9.'</b></th>' : '';
+	$text .= ($categoriesToShow["Points"] == TRUE) ? '<th class="eb_th2"><b>'.EB_MATCHD_L10.'</b></th>' : '';
+	$text .= ($categoriesToShow["ELO"] == TRUE) ? '<th class="eb_th2"><b>'.EB_MATCHD_L11.'</b></th>' : '';
+	$text .= ($categoriesToShow["Skill"] == TRUE) ? '<th class="eb_th2"><b>'.EB_MATCHD_L12.'</b></th>' : '';
+	$text .= '<th class="eb_th2"><b>'.EB_MATCHD_L13.'</b></th>';
 	$text .= '</tr>';
 
 	for($i=0; $i < $numScores; $i++)
@@ -475,27 +476,27 @@ else
 
 		//$text .= "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3"><b>'.$prank.'</b></td>
-		<td class="forumheader3">'.$pMatchTeam.$pfactionIcon.'</td>';
+		$text .= '<td class="eb_td1"><b>'.$prank.'</b></td>
+		<td class="eb_td1">'.$pMatchTeam.$pfactionIcon.'</td>';
 		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
-			$text .= '<td class="forumheader3">'.$image.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
+			$text .= '<td class="eb_td1">'.$image.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
 			break;
 			case "ClanWar":
-			$text .= '<td class="forumheader3">'.$image.' <a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$pclanid.'">'.$pclan.'</a></td>';
+			$text .= '<td class="eb_td1">'.$image.' <a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$pclanid.'">'.$pclan.'</a></td>';
 			break;
 			default:
 		}
 
-		$text .= ($categoriesToShow["Score"] == TRUE) ? '<td class="forumheader3">'.$pscore.'</td>' : '';
-		$text .= ($categoriesToShow["Points"] == TRUE) ? '<td class="forumheader3">'.$ppoints.'</td>' : '';
-		$text .= ($categoriesToShow["ELO"] == TRUE) ? '<td class="forumheader3">'.$pdeltaELO.'</td>' : '';
-		$text .= ($categoriesToShow["Skill"] == TRUE) ? '<td class="forumheader3">'.number_format($pdeltaTS_mu,2).'</td>' : '';
+		$text .= ($categoriesToShow["Score"] == TRUE) ? '<td class="eb_td1">'.$pscore.'</td>' : '';
+		$text .= ($categoriesToShow["Points"] == TRUE) ? '<td class="eb_td1">'.$ppoints.'</td>' : '';
+		$text .= ($categoriesToShow["ELO"] == TRUE) ? '<td class="eb_td1">'.$pdeltaELO.'</td>' : '';
+		$text .= ($categoriesToShow["Skill"] == TRUE) ? '<td class="eb_td1">'.number_format($pdeltaTS_mu,2).'</td>' : '';
 
 		// Opponent Ratings
-		$text .= '<td class="forumheader3">';
+		$text .= '<td class="eb_td1">';
 		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":

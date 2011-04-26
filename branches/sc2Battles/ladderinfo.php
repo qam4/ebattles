@@ -18,9 +18,7 @@ require_once(HEADERF);
 
 $pages = new Paginator;
 
-$text = '
-<script type="text/javascript" src="./js/tabpane.js"></script>
-';
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;
 $orderby=$_GET['orderby'];
@@ -180,24 +178,20 @@ else
 
 	}
 
-	switch($ladder->getField('Type'))
+	$text .= '<div id="tabs">';
+	$text .= '<ul>';
+	$text .= '<li><a href="#tabs-1">'.EB_LADDER_L35.'</a></li>';
+	if (($ladder->getField('Type') == "Team Ladder")||($ladder->getField('Type') == "ClanWar"))
 	{
-		case "One Player Ladder":
-		$text .= '<div class="tab-pane" id="tab-pane-1">';
-		break;
-		case "Team Ladder":
-		$text .= '<div class="tab-pane" id="tab-pane-1-team">';
-		break;
-		case "ClanWar":
-		$text .= '<div class="tab-pane" id="tab-pane-1">';
-		break;
-		default:
+		$text .= '<li><a href="#tabs-2">'.EB_LADDER_L45.'</a></li>';
 	}
+	$text .= '<li><a href="#tabs-3">'.EB_LADDER_L49.'</a></li>';
+	$text .= '<li><a href="#tabs-4">'.EB_LADDER_L58.'</a></li>';
+	$text .= '<li><a href="#tabs-5">'.EB_LADDER_L63.'</a></li>';
+	$text .= '</ul>';
 
-
-	$text .= '<div class="tab-page">';
 	/* Signup, Join/Quit Ladder */
-	$text .= '<div class="tab">'.EB_LADDER_L35.'</div>';
+	$text .= '<div id="tabs-1">';
 	$text .= '<table class="signup" style="width:95%"><tbody>';
 	$userIsDivisionCaptain = FALSE;
 	if(check_class(e_UC_MEMBER))
@@ -513,26 +507,26 @@ else
 	$text .= '</tbody></table>';
 
 	/* Info */
-	$text .= '<table class="fborder" style="width:95%"><tbody>';
+	$text .= '<table class="eb_table" style="width:95%"><tbody>';
 
 	$text .= '<tr>';
-	$text .= '<td class="forumheader3">'.EB_LADDER_L36.'</td>';
-	$text .= '<td class="forumheader3"><b>'.$ladder->getField('Name').'</b></td>';
+	$text .= '<td class="eb_td1">'.EB_LADDER_L36.'</td>';
+	$text .= '<td class="eb_td1"><b>'.$ladder->getField('Name').'</b></td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
-	$text .= '<td class="forumheader3">'.EB_LADDER_L37.'</td>';
-	$text .= '<td class="forumheader3">'.$ladder->getField('MatchType').' - '.ladderTypeToString($ladder->getField('Type')).'</td>';
+	$text .= '<td class="eb_td1">'.EB_LADDER_L37.'</td>';
+	$text .= '<td class="eb_td1">'.$ladder->getField('MatchType').' - '.ladderTypeToString($ladder->getField('Type')).'</td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
-	$text .= '<td class="forumheader3">'.EB_LADDER_L38.'</td>';
-	$text .= '<td class="forumheader3"><img '.getGameIconResize($egameicon).'/> '.$egame.'</td>';
+	$text .= '<td class="eb_td1">'.EB_LADDER_L38.'</td>';
+	$text .= '<td class="eb_td1"><img '.getGameIconResize($egameicon).'/> '.$egame.'</td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
-	$text .= '<td class="forumheader3">'.EB_LADDER_L39.'</td>';
-	$text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
+	$text .= '<td class="eb_td1">'.EB_LADDER_L39.'</td>';
+	$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
 	$can_manage = 0;
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 	if (USERID==$eowner) $can_manage = 1;
@@ -549,8 +543,8 @@ else
 	."   AND (".TBL_USERS.".user_id = ".TBL_MODS.".User)";
 	$result = $sql->db_Query($q);
 	$numMods = mysql_numrows($result);
-	$text .= '<td class="forumheader3">'.EB_LADDER_L41.'</td>';
-	$text .= '<td class="forumheader3">';
+	$text .= '<td class="eb_td1">'.EB_LADDER_L41.'</td>';
+	$text .= '<td class="eb_td1">';
 	if ($numMods>0)
 	{
 		$text .= '<ul>';
@@ -563,11 +557,11 @@ else
 	}
 	$text .= '</td></tr>';
 
-	$text .= '<tr><td class="forumheader3">'.EB_LADDER_L42.'</td><td class="forumheader3">'.$date_start.'</td></tr>';
-	$text .= '<tr><td class="forumheader3">'.EB_LADDER_L43.'</td><td class="forumheader3">'.$date_end.'</td></tr>';
-	$text .= '<tr><td class="forumheader3"></td><td class="forumheader3">'.$time_comment.'</td></tr>';
-	$text .= '<tr><td class="forumheader3">'.EB_LADDER_L44.'</td><td class="forumheader3">'.$tp->toHTML($ladder->getField('Rules'), true).'</td></tr>';
-	$text .= '<tr><td class="forumheader3"></td><td class="forumheader3">'.$tp->toHTML($ladder->getField('Description'), true).'</td></tr>';
+	$text .= '<tr><td class="eb_td1">'.EB_LADDER_L42.'</td><td class="eb_td1">'.$date_start.'</td></tr>';
+	$text .= '<tr><td class="eb_td1">'.EB_LADDER_L43.'</td><td class="eb_td1">'.$date_end.'</td></tr>';
+	$text .= '<tr><td class="eb_td1"></td><td class="eb_td1">'.$time_comment.'</td></tr>';
+	$text .= '<tr><td class="eb_td1">'.EB_LADDER_L44.'</td><td class="eb_td1">'.$tp->toHTML($ladder->getField('Rules'), true).'</td></tr>';
+	$text .= '<tr><td class="eb_td1"></td><td class="eb_td1">'.$tp->toHTML($ladder->getField('Description'), true).'</td></tr>';
 	$text .= '</tbody></table>';
 	$text .= '</div>';    // tab-page "Info"
 
@@ -720,8 +714,7 @@ else
 
 	if (($ladder->getField('Type') == "Team Ladder")||($ladder->getField('Type') == "ClanWar"))
 	{
-		$text .= '<div class="tab-page">';
-		$text .= '<div class="tab">'.EB_LADDER_L45.'</div>';
+		$text .= '<div id="tabs-2">';
 
 		if(($can_challenge != 0)&&($ladder->getField('Type') == "ClanWar"))
 		{
@@ -859,8 +852,7 @@ else
 		$stats = array_merge($header, $stats);
 		//print_r($stats);
 
-		$text .= '<div class="tab-page">';
-		$text .= '<div class="tab">'.EB_LADDER_L49.'</div>';
+		$text .= '<div id="tabs-3">';
 
 		if($can_challenge != 0)
 		{
@@ -992,11 +984,8 @@ else
 	$nbrMatchesPending = $row['NbrMatches'];
 	if ($nbrMatchesPending == 0) $can_approve = 0;
 
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_LADDER_L58;
-	$text .= ($can_approve == 1) ? ' <span style="color:red">('.$nbrMatchesPending.')</span>' : '';
-	$text .= '</div>';
+	$text .= '<div id="tabs-4">';
+//fm:	$text .= ($can_approve == 1) ? ' <span style="color:red">('.$nbrMatchesPending.')</span>' : '';
 
 	//dbg: $text .= "Userclass: $userclass<br>";
 
@@ -1183,8 +1172,7 @@ else
 
 	$text .= '</div>';    // tab-page "Matches"
 
-	$text .= '<div class="tab-page">';
-	$text .= '<div class="tab">'.EB_LADDER_L63.'</div>';
+	$text .= '<div id="tabs-5">';
 
 	$rowsPerPage = $pref['eb_default_items_per_page'];
 
@@ -1360,13 +1348,6 @@ else
 
 	$text .= disclaimer();
 
-	$text .= '
-	<script type="text/javascript">
-	//<![CDATA[
-	setupAllTabs();
-	//]]>
-	</script>
-	';
 }
 
 $ns->tablerender($ladder->getField('Name')." ($egame - ".ladderTypeToString($ladder->getField('Type')).")", $text);
