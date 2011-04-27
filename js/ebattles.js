@@ -7,11 +7,6 @@ jQuery(function() {
 	}).appendTo(document.body).themeswitcher();
 	
 	
-	// onclick action for our button
-	var abutton = $('#sign-up').click(function() {
-	    $('#my-modal-form').dialog('open');
-	});
-	
 	// this sets up a hover effect for all buttons
     var abuttonglow = $(".ui-button:not(.ui-state-disabled)")
 	.hover(
