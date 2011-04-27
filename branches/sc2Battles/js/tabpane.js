@@ -4,5 +4,5 @@
 */
 
 $(function() {
-		$( "#tabs" ).tabs();
+	$( "#tabs" ).tabs();
 });
