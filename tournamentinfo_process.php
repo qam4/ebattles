@@ -6,6 +6,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN.'ebattles/include/tournament.php');
+require_once(e_PLUGIN.'ebattles/include/gamer.php');
 
 $tournament_id = $_GET['TournamentID'];
 $tournament = new Tournament($tournament_id);
@@ -33,28 +34,15 @@ if(isset($_POST['quittournament'])){
 	header("Location: tournamentinfo.php?TournamentID=$tournament_id");
 }
 if(isset($_POST['jointournament'])){
+	
 	if ($_POST['joinTournamentPassword'] == $tournament->getField('Password'))
 	{
+		$UniqueGameID = $tp->toDB($_POST["charactername"].'#'.$_POST["code"]);
+		updateGamer(USERID, $tournament->getField('Game'), $UniqueGameID);
 		$tournament->tournamentAddPlayer(USERID, 0, FALSE);
 	}
 
-	$text = '
-	<script type="text/javascript">
-	jQuery(function() {
-	var stringMsg = "<strong>Success!</strong>"
-	$("#client-script-return-msg-rtn").html(stringMsg);
-	});
-	</script>
-
-	<div>
-	<label>Name: '.$_POST["charactername"].'</label>
-	<label>Email:'.$_POST["code"].'</label>
-	</div>
-	';
-	echo $text;
-
-
-	//header("Location: tournamentinfo.php?TournamentID=$tournament_id");
+	header("Location: tournamentinfo.php?TournamentID=$tournament_id");
 }
 if(isset($_POST['teamjointournament'])){
 	if ($_POST['joinTournamentPassword'] == $tournament->getField('Password'))
