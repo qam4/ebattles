@@ -34,14 +34,10 @@ class Tournament extends DatabaseTable
 		."   AND (".TBL_GAMERS.".User = '$user')";
 		$result = $sql->db_Query($q);
 		$num_rows = mysql_numrows($result);
-		echo "num_rows: $num_rows, $q<br>";
 		if ($num_rows==0)
 		{
-			$q = " INSERT INTO ".TBL_GAMERS."(User,Game,UniqueGameID)
-			VALUES ($user,".$this->fields['Game'].",'".$username."')";
-			$sql->db_Query($q);
-			$last_id = mysql_insert_id();
-			$gamerID = $last_id;
+			echo "Error: no gamer";
+			return;
 		}
 		else
 		{
@@ -135,6 +131,14 @@ class Tournament extends DatabaseTable
 				}
 			}
 		}
+	}
+	
+	function updateBrackets($results) {
+		global $sql;
+		
+		$new_results = serialize($results);
+		$q = "UPDATE ".TBL_TOURNAMENTS." SET Results = '".$new_results."' WHERE (TournamentID = '".$this->fields['TournamentID']."')";
+		$result = $sql->db_Query($q);		
 	}
 }
 

@@ -44,7 +44,8 @@ $eplug_css = array(
 "css/paginate.css",
 "css/custom-theme/jquery-ui-1.8.11.custom.css",
 "http://jqueryui.com/themes/base/ui.all.css",
-"css/ebattles.css"
+"css/ebattles.css",
+"css/brackets.css"
 );
 
 ///-------------- Functions ----------------------

@@ -25,13 +25,4 @@ label.error
 }
 
 
-.jdr-blockme
-{
-  padding: 25px;
-  margin: 10px;
-}
-
-.jdr-blockwidth
-{
-  width: 400px;
-}
+.hide {display: none !important;}

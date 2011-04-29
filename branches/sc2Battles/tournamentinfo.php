@@ -1,6 +1,6 @@
 <?php
 /**
-* TournamentInfo.php
+* tournamentinfo.php
 *
 */
 require_once("../../class2.php");
@@ -10,6 +10,7 @@ require_once(e_PLUGIN."ebattles/include/show_array.php");
 require_once(e_PLUGIN."ebattles/include/tournament.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/match.php");
+require_once(e_PLUGIN."ebattles/include/gamer.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -43,11 +44,8 @@ if (!$tournament_id)
 }
 else
 {
-	$self = $_SERVER['PHP_SELF'];
 	$file = 'cache/sql_cache_tournament_'.$tournament_id.'.txt';
 	$file_team = 'cache/sql_cache_tournament_team_'.$tournament_id.'.txt';
-
-	require_once(e_PLUGIN."ebattles/tournamentinfo_process.php");
 
 	$q = "SELECT ".TBL_TOURNAMENTS.".*, "
 	.TBL_GAMES.".*, "
@@ -212,7 +210,7 @@ else
 		if(($tournament->getField('StartDateTime') == 0) || ($time < $tournament->getField('StartDateTime')))
 		{
 			// If tournament is not finished
-			if (($tournament->getField('Type') == "Team Tournament")||($tournament->getField('Type') == "ClanWar"))
+			if (($tournament->getField('MatchType') == "2v2")||($tournament->getField('MatchType') == "3v3"))
 			{
 				// Find if user is captain of a division playing that game
 				// if yes, propose to join this tournament
@@ -257,7 +255,7 @@ else
 							{
 								$text .= '<td>'.EB_TOURNAMENT_L8.'</td>';
 								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'" method="post">
+								<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
 								<div>
 								<input class="tbox" type="password" title="'.EB_TOURNAMENT_L9.'" name="joinTournamentPassword"/>
 								<input type="hidden" name="division" value="'.$div_id.'"/>
@@ -271,7 +269,7 @@ else
 							{
 								$text .= '<td>'.EB_TOURNAMENT_L11.'</td>';
 								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'" method="post">
+								<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
 								<div>
 								<input type="hidden" name="joinTournamentPassword" value=""/>
 								<input type="hidden" name="division" value="'.$div_id.'"/>
@@ -377,7 +375,7 @@ else
 							if(!$result || (mysql_numrows($result) == 0))
 							{
 								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'" method="post">
+								<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
 								<div>
 								<input type="hidden" name="team" value="'.$team_id.'"/>
 								</div>
@@ -414,7 +412,7 @@ else
 									if (($nbrscores == 0)&&($user_banned!=1)&&($tournament->getField('Type')!="ClanWar"))
 									{
 										$text .= '<td>
-										<form action="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'" method="post">
+										<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
 										<div>
 										<input type="hidden" name="player" value="'.$user_pid.'"/>
 										'.ebImageTextButton('quittournament', 'user_delete.ico', EB_TOURNAMENT_L23, 'negative', EB_TOURNAMENT_L24).'
@@ -434,6 +432,27 @@ else
 				}
 				break;
 				case "1v1":
+				// Find gamer for that user
+				$q = "SELECT ".TBL_GAMERS.".*"
+				." FROM ".TBL_GAMERS
+				." WHERE (".TBL_GAMERS.".Game = '".$tournament->getField('Game')."')"
+				."   AND (".TBL_GAMERS.".User = ".USERID.")";
+				$result = $sql->db_Query($q);
+				$num_rows = mysql_numrows($result);
+				if ($num_rows!=0)
+				{
+					$gamerID = mysql_result($result,0 , TBL_GAMERS.".GamerID");
+					$gamer = new SC2Gamer($gamerID);
+					$gamerCharacterName = $gamer->getGamerName();
+					$gamerCharacterCode = $gamer->getGamerCode();
+				}
+				else
+				{
+					$gamerID = 0;
+					$gamerCharacterName = '';
+					$gamerCharacterCode = '';
+				}
+
 				// Is the user already signed up?
 				$q = "SELECT ".TBL_TPLAYERS.".*"
 				." FROM ".TBL_TPLAYERS.", "
@@ -444,39 +463,47 @@ else
 				$result = $sql->db_Query($q);
 				if(!$result || (mysql_numrows($result) < 1))
 				{
-					if ($tournament->getField('Password') != "")
-					{
-						$text .= '<tr><td>'.EB_TOURNAMENT_L25.'</td>';
-						$text .= '<td>'.EB_TOURNAMENT_L26.'</td>';
-						$text .= '<td>';
-						$text .= '
-						<form action="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'" method="post">
-						<div>
-						<input class="tbox" type="password" title="'.EB_TOURNAMENT_L27.'" name="joinTournamentPassword"/>
-						</div>
-						'.ebImageTextButton('jointournament', 'user_add.png', EB_TOURNAMENT_L19).'
-						</form></td></tr>
-						';
-					}
-					else
-					{
-						$text .= '<tr><td>'.EB_TOURNAMENT_L28.'</td>';
-						/*
-						$text .= '<td>
-						<div>
-						<input type="hidden" name="joinTournamentPassword" value=""/>
-						</div>
-						'.ebImageTextButton('jointournament', 'user_add.png', EB_TOURNAMENT_L19, '', '', '', 'id="sign-up"').'
-						</td></tr>
-						';
-						*/
-						$text .= '<td>
-						<div>
-						<button id="sign-up" class="ui-button ui-state-default ui-corner-all">Sign Up!</button>
-						</td></tr>
-						';
-						
-					}
+					$hide_password = ($tournament->getField('password') == "") ?  'hide ignore' : '';
+					
+					$text .= '<tr><td>
+					'.ebImageTextButton('jointournament', 'user_add.png', EB_TOURNAMENT_L19, '', '', EB_TOURNAMENT_L28, 'id="sign-up"').'
+					</td></tr>
+					';
+
+					// Modal form
+					$text .= '
+					<div id="modal-form-signup" title="Sign Up">
+
+					<!-- form validation error container -->
+					<div class="ui-widget ui-helper-hidden" id="errorblock-div1">
+					<div class="ui-state-error ui-corner-all" id="errorblock-div2" style="padding: 0pt 0.7em; display:none;">
+					<p>
+					<!-- fancy icon -->
+					<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
+					<strong>Alert:</strong> Errors detected!
+					</p>
+					<!-- validation plugin will target this UL for error messages -->
+					<ul></ul>
+					</div>
+					</div>
+
+					<!-- our form, no buttons (buttons generated by jQuery UI dialog() function) -->
+					<form action="tournamentinfo_process.php?TournamentID='.$tournament_id.'" name="form-signup" id="form-signup" method="post">
+					<input type="hidden" name="jointournament" value=""/>
+					<input type="hidden" name="gamerID" value="'.$gamerID.'"/>
+					<fieldset>
+					<label for="joinTournamentPassword" class="'.$hide_password.'">'.EB_TOURNAMENT_L27.'</label>
+					<input type="password" name="joinTournamentPassword" id="joinTournamentPassword" class="'.$hide_password.' text ui-widget-content ui-corner-all" />
+
+					<label for="charactername">Character Name</label>
+					<input type="text" name="charactername" id="charactername" class="text ui-widget-content ui-corner-all" value="'.$gamerCharacterName.'"/>
+
+					<label for="code">Code</label>
+					<input type="text" name="code" id="code" class="text ui-widget-content ui-corner-all" value="'.$gamerCharacterCode.'"/>
+					</fieldset>
+					</form>
+					</div>
+					';
 				}
 				else
 				{
@@ -490,8 +517,6 @@ else
 					}
 					else
 					{
-						$text .= '<tr><td>'.EB_TOURNAMENT_L31.'</td>';
-
 						// Player can quit an tournament if he has not played yet
 						$q = "SELECT ".TBL_TPLAYERS.".*"
 						." FROM ".TBL_TPLAYERS.", "
@@ -504,11 +529,11 @@ else
 						$nbrscores = 0;
 						if ($nbrscores == 0)
 						{
-							$text .= '<td>
-							<form action="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'" method="post">
+							$text .= '<tr><td>
+							<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
 							<div>
 							<input type="hidden" name="player" value="'.$user_pid.'"/>
-							'.ebImageTextButton('quittournament', 'user_delete.ico', EB_TOURNAMENT_L32, 'negative', EB_TOURNAMENT_L33).'
+							'.ebImageTextButton('quittournament', 'user_delete.ico', EB_TOURNAMENT_L32, 'negative', EB_TOURNAMENT_L33, EB_TOURNAMENT_L31).'
 							</div>
 							</form></td></tr>
 							';
@@ -530,51 +555,6 @@ else
 		$text .= '<td></td></tr>';
 	}
 	$text .= '</tbody></table>';
-
-	// Modal form
-	$text .= '
-	<!-- JDR: our return message block -->
-	<div class="ui-widget ui-helper-hidden" id="client-script-return-msg">
-		<div class="ui-state-highlight ui-corner-all" style="padding: 0pt 0.7em; margin-top: 20px;"> 
-			<p><span class="ui-icon ui-icon-circle-check" style="float: left; margin-right: 0.3em;"></span>
-			<!-- JDR: our return message will go in the following span -->
-			<span id="client-script-return-msg-rtn"></span></p>
-		</div>
-	</div>
-	
-	<!-- JDR: our return target block -->
-	<div id="client-script-return-data" class="ui-widget ui-widget-content jdr-blockme">For our example, our form post from the modal will replace this text.</div>
-
-	<div id="modal-form-signup-test" title="Game Unique ID">
-
-	<!-- JDR: form validation error container -->
-	<div class="ui-widget ui-helper-hidden" id="errorblock-div1">
-	<div class="ui-state-error ui-corner-all" id="errorblock-div2" style="padding: 0pt 0.7em; display:none;">
-	<p>
-	<!-- JDR: fancy icon -->
-	<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
-	<strong>Alert:</strong> Errors detected!
-	</p>
-	<!-- JDR: validation plugin will target this UL for error messages -->
-	<ul></ul>
-	</div>
-	</div>
-
-	<!-- JDR: our form, no buttons (buttons generated by jQuery UI dialog() function) -->
-	<form action="tournamentinfo_process.php?TournamentID='.$tournament_id.'" name="form-signup-getid" id="form-signup-getid" method="post">
-	<input type="hidden" name="jointournament" value=""/>
-	<fieldset>
-	<label for="charactername">Character Name</label>
-	<input type="text" name="charactername" id="charactername" class="text ui-widget-content ui-corner-all" />
-
-	<label for="code">Code</label>
-	<input type="text" name="code" id="code" class="text ui-widget-content ui-corner-all" />
-	</fieldset>
-	</form>
-	</div>
-	';
-
-
 
 	/* Info */
 	$text .= '<table class="eb_table" style="width:95%"><tbody>';
