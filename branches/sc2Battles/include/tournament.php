@@ -133,11 +133,35 @@ class Tournament extends DatabaseTable
 		}
 	}
 	
-	function updateBrackets($results) {
+	function updateResults($results) {
 		global $sql;
 		
 		$new_results = serialize($results);
 		$q = "UPDATE ".TBL_TOURNAMENTS." SET Results = '".$new_results."' WHERE (TournamentID = '".$this->fields['TournamentID']."')";
+		$result = $sql->db_Query($q);		
+	}
+
+	function updateRounds($rounds) {
+		global $sql;
+		
+		$new_rounds = serialize($rounds);
+		$q = "UPDATE ".TBL_TOURNAMENTS." SET Rounds = '".$new_rounds."' WHERE (TournamentID = '".$this->fields['TournamentID']."')";
+		$result = $sql->db_Query($q);		
+	}
+
+	function updateMapPool($mapPool) {
+		global $sql;
+		
+		$mapString = '';
+		for ($map = 0; $map < count($mapPool); $map++)
+		{
+			if ($map > 0) $mapString .= ',';
+			$mapString .= $mapPool[$map];
+		}
+		
+		$q = "UPDATE ".TBL_TOURNAMENTS." SET MapPool = '".$mapString."' WHERE (TournamentID = '".$this->fields['TournamentID']."')";
+		var_dump($q);
+		exit;
 		$result = $sql->db_Query($q);		
 	}
 }

@@ -122,7 +122,6 @@ else
 
 	$tournament = new Tournament($tournament_id);
 
-
 	if($tournament->getField('StartDateTime')!=0)
 	{
 		$StartDateTime_local = $tournament->getField('StartDateTime') + TIMEOFFSET;
@@ -143,13 +142,22 @@ else
 	}
 	else
 	{
+		switch ($tournament->getField('Type'))
+		{
+			default:
+			$file = 'include/brackets/se-'.$tournament->getField('MaxNumberPlayers').'.txt';
+			break;
+		}
+		$matchups = unserialize(implode('',file($file)));
+		$nbrRounds = count($matchups);
+
 		//***************************************************************************************
 		// tab-page "Tournament Summary"
 		$text .= '<div id="tabs">';
 		$text .= '<ul>';
 		$text .= '<li><a href="#tabs-1">'.EB_TOURNAMENTM_L2.'</a></li>';
 		$text .= '<li><a href="#tabs-2">'.EB_TOURNAMENTM_L3.'</a></li>';
-		$text .= '<li><a href="#tabs-3">'.EB_TOURNAMENTM_L4.'</a></li>';
+		/*$text .= '<li><a href="#tabs-3">'.EB_TOURNAMENTM_L4.'</a></li>';*/
 		$text .= '<li><a href="#tabs-4">'.EB_TOURNAMENTM_L5.'</a></li>';
 		$text .= '<li><a href="#tabs-5">'.EB_TOURNAMENTM_L6.'</a></li>';
 		$text .= '<li><a href="#tabs-6">'.EB_TOURNAMENTM_L7.'</a></li>';
@@ -162,12 +170,12 @@ else
 		<tbody>
 		';
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1"><b>'.EB_TOURNAMENTM_L8.'</b></td>';
+		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L8.'</b></td>';
 		$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>';
 		$text .= '</tr>';
 
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1"><b>'.EB_TOURNAMENTM_L9.'</b><br />';
+		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L9.'</b><br />';
 		$text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
 		$text .= '</td>';
 
@@ -178,7 +186,7 @@ else
 		$num_rows_2 = mysql_numrows($result_2);
 
 		$text .= '<td class="eb_td1">';
-		$text .= '<table>';
+		$text .= '<table class="table_left">';
 		$text .= '<tr>';
 		$text .= '<td><select class="tbox" name="tournamentowner">';
 		for($j=0; $j<$num_rows_2; $j++)
@@ -216,11 +224,11 @@ else
 		$text .= '
 		<tr>
 		';
-		$text .= '<td class="eb_td1"><b>'.EB_TOURNAMENTM_L11.'</b></td>';
+		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L11.'</b></td>';
 		$text .= '<td class="eb_td1">';
 		if ($numMods>0)
 		{
-			$text .= '<table>';
+			$text .= '<table class="table_left">';
 			for($i=0; $i<$numMods; $i++){
 				$modid  = mysql_result($result,$i, TBL_USERS.".user_id");
 				$modname  = mysql_result($result,$i, TBL_USERS.".user_name");
@@ -242,7 +250,7 @@ else
 		/* Error occurred, return given name by default */
 		$numUsers = mysql_numrows($result);
 		$text .= '
-		<table>
+		<table class="table_left">
 		<tr>
 		<td>
 		<select class="tbox" name="mod">
@@ -284,7 +292,7 @@ else
 		//<!-- Tournament Name -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_TOURNAMENTM_L15.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L15.'</b></td>
 		<td class="eb_td1">
 		<div><input class="tbox" type="text" size="40" name="tournamentname" value="'.$tournament->getField('Name').'"/></div>
 		</td>
@@ -294,7 +302,7 @@ else
 		//<!-- Tournament Password -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_TOURNAMENTM_L16.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L16.'</b></td>
 		<td class="eb_td1">
 		<div><input class="tbox" type="text" size="40" name="tournamentpassword" value="'.$tournament->getField('Password').'"/></div>
 		</td>
@@ -309,7 +317,7 @@ else
 		/* Error occurred, return given name by default */
 		$numGames = mysql_numrows($result);
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1"><b>'.EB_TOURNAMENTM_L17.'</b></td>';
+		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L17.'</b></td>';
 		$text .= '<td class="eb_td1"><select class="tbox" name="tournamentgame">';
 		for($i=0; $i<$numGames; $i++){
 			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
@@ -329,7 +337,7 @@ else
 		//<!-- Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_TOURNAMENTM_L18.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L18.'</b></td>
 		<td class="eb_td1"><select class="tbox" name="tournamenttype">';
 		$text .= '<option value="Single Elimination" '.($tournament->getField('Type') == "Single Elimination" ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L19.'</option>';
 		$text .= '</select>
@@ -340,7 +348,7 @@ else
 		//<!-- Match Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_TOURNAMENTM_L126.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L126.'</b></td>
 		<td class="eb_td1"><select class="tbox" name="tournamentmatchtype">';
 		$text .= '<option value="1v1" '.($tournament->getField('MatchType') == "1v1" ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L127.'</option>';
 		$text .= '<option value="2v2" '.($tournament->getField('MatchType') == "2v2" ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L128.'</option>';
@@ -353,7 +361,7 @@ else
 		//<!-- Max Number of Players -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_TOURNAMENTM_L132.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L132.'</b></td>
 		<td class="eb_td1"><select class="tbox" name="tournamentmaxnumberplayers">';
 		$text .= '<option value="4" '.($tournament->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 		$text .= '<option value="8" '.($tournament->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
@@ -366,7 +374,7 @@ else
 		//<!-- Match report userclass -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_TOURNAMENTM_L21.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L21.'</b></td>
 		<td class="eb_td1"><select class="tbox" name="tournamentmatchreportuserclass">';
 		$text .= '<option value="'.eb_UC_TOURNAMENT_PLAYER.'" '.($tournament->getField('match_report_userclass') == eb_UC_TOURNAMENT_PLAYER ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L22.'</option>';
 		$text .= '<option value="'.eb_UC_TOURNAMENT_MODERATOR.'" '.($tournament->getField('match_report_userclass') == eb_UC_TOURNAMENT_MODERATOR ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L23.'</option>';
@@ -390,7 +398,7 @@ else
 
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_TOURNAMENTM_L108.'</b><div class="smalltext">'.EB_TOURNAMENTM_L109.'</div></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L108.'</b><div class="smalltext">'.EB_TOURNAMENTM_L109.'</div></td>
 		<td class="eb_td1">
 		<div>';
 		$text .= '<select class="tbox" name="tournamentmatchapprovaluserclass">';
@@ -409,9 +417,9 @@ else
 		//<!-- Start Date -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_TOURNAMENTM_L32.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L32.'</b></td>
 		<td class="eb_td1">
-		<table>
+		<table class="table_left">
 		<tr>
 		<td>
 		<div><input class="tbox" type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
@@ -443,13 +451,151 @@ else
 		</tr>
 		';
 
+		//<!-- Rounds -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.($nbrRounds - 1).' '.EB_TOURNAMENTM_L4.'</b></td>
+		<td class="eb_td1">';
+
+		$rounds = unserialize($tournament->getField('Rounds'));
+		if (!isset($rounds)) $rounds = array();
+		$text .= '<table class="table_left"><tbody>';
+		$text .= '<tr>';
+		$text .= '<td><b>'.EB_TOURNAMENTM_L25.'</b></td>';
+		$text .= '<td><b>'.EB_TOURNAMENTM_L26.'</b></td>';
+		$text .= '<td><b>'.EB_TOURNAMENTM_L27.'</b></td>';
+		$text .= '</tr>';
+		for ($round = 1; $round < $nbrRounds; $round++) {
+			if (!isset($rounds[$round])) {
+				$rounds[$round] = array();
+			}
+			if (!isset($rounds[$round]['Title'])) {
+				$rounds[$round]['Title'] = EB_TOURNAMENTM_L25.' '.$round;
+			}
+			if (!isset($rounds[$round]['BestOf'])) {
+				$rounds[$round]['BestOf'] = 1;
+			}
+
+			$text .= '<tr>';
+			$text .= '<td><b>'.EB_TOURNAMENTM_L25.' '.$round.'</b></td>';
+			$text .= '<td><input class="tbox" type="text" size="40" name="round_title_'.$round.'" value="'.$rounds[$round]['Title'].'"/></td>';
+			$text .= '<td><select class="tbox" name="round_bestof_'.$round.'">';
+			$text .= '<option value="1" '.($rounds[$round]['BestOf'] == "1" ? 'selected="selected"' : '') .'>1</option>';
+			$text .= '<option value="3" '.($rounds[$round]['BestOf'] == "3" ? 'selected="selected"' : '') .'>3</option>';
+			$text .= '<option value="5" '.($rounds[$round]['BestOf'] == "5" ? 'selected="selected"' : '') .'>5</option>';
+			$text .= '<option value="7" '.($rounds[$round]['BestOf'] == "7" ? 'selected="selected"' : '') .'>7</option>';
+			$text .= '</select></td>';
+			$text .= '</tr>';
+		}
+		$text .= '</tbody></table>';
+		$text .= '</td"></tr>';
+		//var_dump($rounds);
+
+		//<!-- Map Pool -->
+		$mapPool = explode(",", $tournament->getField('MapPool'));
+		$nbrMaps = count($mapPool);
+		var_dump($mapPool);
+		var_dump($nbrMaps);
+		
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L28.'</b></td>
+		<td class="eb_td1">';
+			$text .= '<table>';
+			foreach($mapPool as $map)
+			{
+				if ($map!='')
+				{
+					$mapID = $map;
+					$q_Maps = "SELECT ".TBL_MAPS.".*"
+					." FROM ".TBL_MAPS
+					." WHERE (".TBL_MAPS.".MapID = '$mapID')";
+					$result_Maps = $sql->db_Query($q_Maps);
+					$mapName  = mysql_result($result_Maps,0, TBL_MAPS.".Name");
+					$text .= '<tr>';
+					$text .= '<td>'.$mapName.'</td>';
+					$text .= '<td>';
+					$text .= '<div>';
+					$text .= '<input type="hidden" name="tournamentmap" value="'.$mapID.'"/>';
+					$text .= ebImageTextButton('tournamentdeletemap', 'delete.png', EB_TOURNAMENTM_L31, 'negative');
+					$text .= '</div>';
+					$text .= '</td>';
+					$text .= '</tr>';
+				} else {
+				$text .= EB_TOURNAMENTM_L29;	
+				}
+			}
+			$text .= '</table>';
+		
+		// List of all Maps
+		$q_Maps = "SELECT ".TBL_MAPS.".*"
+		." FROM ".TBL_MAPS
+		." WHERE (".TBL_MAPS.".Game = '".$tournament->getField('Game')."')";
+		$result_Maps = $sql->db_Query($q_Maps);
+		$numMaps = mysql_numrows($result_Maps);
+		$text .= '
+		<table>
+		<tr>';
+		$text .= '<td><select class="tbox" name="map">';
+		for($map=0;$map < $numMaps;$map++)
+		{
+			$mID = mysql_result($result_Maps,$map , TBL_MAPS.".MapID");
+			$mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
+			$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
+			$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
+
+			$isMapInMapPool = FALSE;
+			foreach($mapPool as $poolmap)
+			{
+				if ($mID==$poolmap) {
+					$isMapInMapPool = TRUE;
+				}
+			}
+
+			if($isMapInMapPool == FALSE) {
+				$text .= '<option value="'.$mID.'"';
+				$text .= '>'.$mName.'</option>';
+			}
+		}
+		$text .= '</select></td>';
+
+		$text .= '
+		<td>
+		<div>
+		'.ebImageTextButton('tournamentaddmap', 'add.png', EB_TOURNAMENTM_L30).'
+		</div>
+		</td>
+		</tr>
+		</table>
+		';
+		$text .= '</td"></tr>';
+
+
+		//			$text .= '<td><input class="tbox" type="text" size="40" name="round_mappool_'.$round.'" value="'.$rounds[$round]['Title'].'"/></td>';
+
+
 		//<!-- Description -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_TOURNAMENTM_L36.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L36.'</b></td>
 		<td class="eb_td1">
 		';
 		$text .= '<textarea class="tbox" id="tournamentdescription" name="tournamentdescription" cols="70" '.$insertjs.'>'.$tournament->getField('Description').'</textarea>';
+		if (!e_WYSIWYG)
+		{
+			$text .= '<br />'.display_help("helpb",1);
+		}
+		$text .= '
+		</td>
+		</tr>';
+
+		//<!-- Rules -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L38.'</b></td>
+		<td class="eb_td1">
+		';
+		$text .= '<textarea class="tbox" id="tournamentrules" name="tournamentrules" cols="70" '.$insertjs.'>'.$tournament->getField('Rules').'</textarea>';
 		if (!e_WYSIWYG)
 		{
 			$text .= '<br />'.display_help("helpb",1);
@@ -474,31 +620,22 @@ else
 		';  // tab-page "Tournament Settings"
 
 		//***************************************************************************************
-		// tab-page "Tournament Rules"
+		// tab-page "Tournament"
+		/*
 		$text .= '<div id="tabs-3">';
 		$text .= '<form action="'.e_PLUGIN.'ebattles/tournamentprocess.php?TournamentID='.$tournament_id.'" method="post">';
+
+
 
 		$text .= '
 		<table class="eb_table" style="width:95%">
 		<tbody>
 		';
-		//<!-- Rules -->
 		$text .= '
-		<tr>
-		<td class="eb_td1"><b>'.EB_TOURNAMENTM_L38.'</b></td>
-		<td class="eb_td1">
-		';
-		$text .= '<textarea class="tbox" id="tournamentrules" name="tournamentrules" cols="70" '.$insertjs.'>'.$tournament->getField('Rules').'</textarea>';
-		if (!e_WYSIWYG)
-		{
-			$text .= '<br />'.display_help("helpb",1);
-		}
-		$text .= '
-		</td>
-		</tr>
 		</tbody>
 		</table>
 		';
+
 		//<!-- Save Button -->
 		$text .= '
 		<table><tr><td>
@@ -510,6 +647,7 @@ else
 		</form>
 		</div>
 		';  // tab-page "Tournament Rules"
+		*/
 
 		//***************************************************************************************
 		// tab-page "Brackets"
@@ -531,15 +669,15 @@ else
 			$nbrPlayers = mysql_numrows($result);
 			for ($player = 0; $player < $nbrPlayers; $player++)
 			{
-				$gamerID = mysql_result($result,0 , TBL_GAMERS.".GamerID");
+				$gamerID = mysql_result($result,$player , TBL_GAMERS.".GamerID");
 				$gamer = new Gamer($gamerID);
 				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
 			}
 		}
 
 		$results = unserialize($tournament->getField('Results'));
-		$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, &$results);
-		$tournament->updateBrackets($results);
+		$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, &$results, $rounds);
+		$tournament->updateResults($results);
 
 		$text .= '</div>';  // tab-page "Brackets"
 
@@ -676,56 +814,6 @@ else
 			</table>
 			';
 
-/*			$hide_password = ($tournament->getField('password') == "") ?  'hide ignore' : '';
-
-
-			// Modal form
-			$text .= '
-			<!-- our return message block -->
-			<div id="modal-form-signup" title="Add player">
-
-			<!-- form validation error container -->
-			<div class="ui-widget ui-helper-hidden" id="errorblock-div1">
-			<div class="ui-state-error ui-corner-all" id="errorblock-div2" style="padding: 0pt 0.7em; display:none;">
-			<p>
-			<!-- fancy icon -->
-			<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
-			<strong>Alert:</strong> Errors detected!
-			</p>
-			<!-- validation plugin will target this UL for error messages -->
-			<ul></ul>
-			</div>
-			</div>
-
-			<!-- our form, no buttons (buttons generated by jQuery UI dialog() function) -->
-			<form action="tournamentprocess.php?TournamentID='.$tournament_id.'" name="form-signup" id="form-signup" method="post">
-			<input type="hidden" name="jointournament" value=""/>
-			<input type="hidden" name="gamerID" value="'.$gamerID.'"/>
-
-
-			<fieldset>
-			<div><input class="tbox" type="checkbox" name="tournamentaddplayernotify"/>'.EB_TOURNAMENTM_L46.'</div>
-
-			<div><select class="tbox" name="player">
-			';
-			for($i=0; $i<$numUsers; $i++)
-			{
-				$uid  = mysql_result($result,$i, TBL_USERS.".user_id");
-				$uname  = mysql_result($result,$i, TBL_USERS.".user_name");
-				$text .= '<option value="'.$uid.'">'.$uname.'</option>';
-			}
-			$text .= '
-			</select></div>
-			<label for="charactername">Character Name</label>
-			<input type="text" name="charactername" id="charactername" class="text ui-widget-content ui-corner-all" value="'.$gamerCharacterName.'"/>
-
-			<label for="code">Code</label>
-			<input type="text" name="code" id="code" class="text ui-widget-content ui-corner-all" value="'.$gamerCharacterCode.'"/>
-			</fieldset>
-			</form>
-			</div>
-			';
-			*/
 			break;
 			default:
 		}
