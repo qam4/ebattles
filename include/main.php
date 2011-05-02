@@ -609,7 +609,7 @@ function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title=
 	$class_str   = ($class!='') ? 'class="'.$class.' ui-button ui-state-default ui-corner-all"' : 'class="ui-button ui-state-default ui-corner-all"';
 	$title_str   = ($title!='') ? 'title="'.$title.'"' : '';
 	$text_str    = ($text != '') ? '&nbsp;'.$text : '';
-	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" '.$title_str.' '.$confirm_str.' '.$other.'>'.$image_str.$text_str.'</button></div>
+	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" id="'.$name.'" '.$title_str.' '.$confirm_str.' '.$other.'>'.$image_str.$text_str.'</button></div>
             <div style="clear:both"></div>';
 }
 

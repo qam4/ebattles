@@ -89,6 +89,19 @@ document.getElementById('playersform').submit();
 //-->
 </script>
 ";
+$text .= "
+<script type='text/javascript'>
+<!--//
+	// Forms
+	$(function() {
+		$( '#radio1' ).buttonset();
+		$( '#radio2' ).buttonset();
+		//$( '#ladderchangeowner, #ladderdeletemod, #ladderaddmod, #laddersettingssave, #ladderrulessave, #ladderaddteam, #ladderaddplayer, #ladderresetscores, #ladderresetladder, #ladderdelete, #ladderupdatescores, #ladderstatssave, #ladderchallengessave' ).button();
+		$( 'button' ).button();
+	});
+//-->
+</script>
+";
 
 
 $ladder_id = $_GET['LadderID'];
@@ -340,11 +353,11 @@ else
 		<tr>
 		<td class="eb_td1"><b>'.EB_LADDERM_L18.'</b></td>
 		<td class="eb_td1">
-		<div>
+		<div id="radio1">
 		';
-		$text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($ladder->getField('Type') == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" />'.EB_LADDERM_L19;
-		$text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($ladder->getField('Type') == "Team Ladder" ? 'checked="checked"' : '').' value="Team" />'.EB_LADDERM_L20;
-		$text .= '<input class="tbox" type="radio" size="40" name="laddertype" '.($ladder->getField('Type') == "ClanWar" ? 'checked="checked"' : '').' value="ClanWar" />'.EB_LADDERM_L116;
+		$text .= '<input class="tbox" type="radio" id="radio11" size="40" name="laddertype" '.($ladder->getField('Type') == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" /><label for="radio11">'.EB_LADDERM_L19.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio12" size="40" name="laddertype" '.($ladder->getField('Type') == "Team Ladder" ? 'checked="checked"' : '').' value="Team" /><label for="radio12">'.EB_LADDERM_L20.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio13" size="40" name="laddertype" '.($ladder->getField('Type') == "ClanWar" ? 'checked="checked"' : '').' value="ClanWar" /><label for="radio13">'.EB_LADDERM_L116.'</label>';
 
 		$text .= '
 		</div>
@@ -370,11 +383,10 @@ else
 		<tr>
 		<td class="eb_td1"><b>'.EB_LADDERM_L117.'</b><div class="smalltext">'.EB_LADDERM_L118.'</div></td>
 		<td class="eb_td1">
-		<div>
+		<div id="radio2">
 		';
-		$text .= '<input class="tbox" type="radio" size="40" name="ladderrankingtype" '.($ladder->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" />'.EB_LADDERM_L119;
-		$text .= '<input class="tbox" type="radio" size="40" name="ladderrankingtype" '.($ladder->getField('RankingType') == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" />'.EB_LADDERM_L120;
-
+		$text .= '<input class="tbox" type="radio" id="radio21" size="40" name="ladderrankingtype" '.($ladder->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" /><label for="radio21">'.EB_LADDERM_L119.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio22" size="40" name="ladderrankingtype" '.($ladder->getField('RankingType') == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" /><label for="radio22">'.EB_LADDERM_L120.'</label>';
 		$text .= '
 		</div>
 		</td>

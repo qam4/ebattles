@@ -91,7 +91,30 @@ document.getElementById('playersform').submit();
 //-->
 </script>
 ";
-
+$text .= "
+<script type='text/javascript'>
+<!--//
+	// Forms
+	$(function() {
+		//$( '#tournamentchangeowner, #tournamentdeletemod, #tournamentaddmod, #tournamentdeletemap, #tournamentaddmap, #tournamentsettingssave, #tournamentrulessave, #tournamentaddteam, #tournamentaddplayer, #tournamentresettournament, #tournamentdelete' ).button();
+		$( 'button' ).button();
+	});
+//-->
+</script>
+";
+/*
+$text .= "
+<script>
+	$(function() {
+	    $('#test').datepicker({
+	    	duration: '',
+	        showTime: true,
+	        constrainInput: false
+	     });
+	});
+</script>
+";
+*/
 
 $tournament_id = $_GET['TournamentID'];
 $self = $_SERVER['PHP_SELF'];
@@ -371,6 +394,7 @@ else
 		</tr>
 		';
 
+/* for now
 		//<!-- Match report userclass -->
 		$text .= '
 		<tr>
@@ -383,7 +407,9 @@ else
 		</td>
 		</tr>
 		';
+*/
 
+/* for now
 		//<!-- Match Approval -->
 		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
 		." FROM ".TBL_MATCHS.", "
@@ -394,7 +420,6 @@ else
 		$result = $sql->db_Query($q);
 		$row = mysql_fetch_array($result);
 		$nbrMatchesPending = $row['NbrMatches'];
-
 
 		$text .= '
 		<tr>
@@ -413,6 +438,7 @@ else
 		</td>
 		</tr>
 		';
+*/
 
 		//<!-- Start Date -->
 		$text .= '
@@ -450,6 +476,12 @@ else
 		</td>
 		</tr>
 		';
+
+		/*
+		$text .= '
+		<p>Test date/time field: <input id="test" /></p>
+		';
+		*/
 
 		//<!-- Rounds -->
 		$text .= '
@@ -493,86 +525,82 @@ else
 
 		//<!-- Map Pool -->
 		$mapPool = explode(",", $tournament->getField('MapPool'));
-		$nbrMaps = count($mapPool);
-		var_dump($mapPool);
-		var_dump($nbrMaps);
-		
+		$nbrMapsInPool = count($mapPool);
+
 		$text .= '
 		<tr>
 		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L28.'</b></td>
 		<td class="eb_td1">';
-			$text .= '<table>';
-			foreach($mapPool as $map)
+		$text .= '<table class="table_left">';
+		foreach($mapPool as $key=>$map)
+		{
+			if ($map!='')
 			{
-				if ($map!='')
-				{
-					$mapID = $map;
-					$q_Maps = "SELECT ".TBL_MAPS.".*"
-					." FROM ".TBL_MAPS
-					." WHERE (".TBL_MAPS.".MapID = '$mapID')";
-					$result_Maps = $sql->db_Query($q_Maps);
-					$mapName  = mysql_result($result_Maps,0, TBL_MAPS.".Name");
-					$text .= '<tr>';
-					$text .= '<td>'.$mapName.'</td>';
-					$text .= '<td>';
-					$text .= '<div>';
-					$text .= '<input type="hidden" name="tournamentmap" value="'.$mapID.'"/>';
-					$text .= ebImageTextButton('tournamentdeletemap', 'delete.png', EB_TOURNAMENTM_L31, 'negative');
-					$text .= '</div>';
-					$text .= '</td>';
-					$text .= '</tr>';
-				} else {
-				$text .= EB_TOURNAMENTM_L29;	
-				}
+				$mapID = $map;
+				$q_Maps = "SELECT ".TBL_MAPS.".*"
+				." FROM ".TBL_MAPS
+				." WHERE (".TBL_MAPS.".MapID = '$mapID')";
+				$result_Maps = $sql->db_Query($q_Maps);
+				$mapName  = mysql_result($result_Maps,0, TBL_MAPS.".Name");
+				$text .= '<tr>';
+				$text .= '<td>'.$mapName.'</td>';
+				$text .= '<td>';
+				$text .= '<div>';
+				$text .= ebImageTextButton('tournamentdeletemap', 'delete.png', EB_TOURNAMENTM_L31, 'negative', '', '', 'value="'.$key.'"');
+				$text .= '</div>';
+				$text .= '</td>';
+				$text .= '</tr>';
+			} else {
+				$text .= EB_TOURNAMENTM_L29;
 			}
-			$text .= '</table>';
-		
+		}
+		$text .= '</table>';
+
 		// List of all Maps
 		$q_Maps = "SELECT ".TBL_MAPS.".*"
 		." FROM ".TBL_MAPS
 		." WHERE (".TBL_MAPS.".Game = '".$tournament->getField('Game')."')";
 		$result_Maps = $sql->db_Query($q_Maps);
 		$numMaps = mysql_numrows($result_Maps);
-		$text .= '
-		<table>
-		<tr>';
-		$text .= '<td><select class="tbox" name="map">';
-		for($map=0;$map < $numMaps;$map++)
+		if ($numMaps > $nbrMapsInPool)
 		{
-			$mID = mysql_result($result_Maps,$map , TBL_MAPS.".MapID");
-			$mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
-			$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
-			$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
-
-			$isMapInMapPool = FALSE;
-			foreach($mapPool as $poolmap)
+			$text .= '
+			<table class="table_left">
+			<tr>';
+			$text .= '<td><select class="tbox" name="map">';
+			for($map=0;$map < $numMaps;$map++)
 			{
-				if ($mID==$poolmap) {
-					$isMapInMapPool = TRUE;
+				$mID = mysql_result($result_Maps,$map , TBL_MAPS.".MapID");
+				$mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
+				$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
+				$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
+
+				$isMapInMapPool = FALSE;
+				foreach($mapPool as $poolmap)
+				{
+					if ($mID==$poolmap) {
+						$isMapInMapPool = TRUE;
+					}
+				}
+
+				if($isMapInMapPool == FALSE) {
+					$text .= '<option value="'.$mID.'"';
+					$text .= '>'.$mName.'</option>';
 				}
 			}
+			$text .= '</select></td>';
 
-			if($isMapInMapPool == FALSE) {
-				$text .= '<option value="'.$mID.'"';
-				$text .= '>'.$mName.'</option>';
-			}
+			$text .= '
+			<td>
+			<div>
+			'.ebImageTextButton('tournamentaddmap', 'add.png', EB_TOURNAMENTM_L30).'
+			</div>
+			</td>
+			</tr>
+			</table>
+			';
 		}
-		$text .= '</select></td>';
-
-		$text .= '
-		<td>
-		<div>
-		'.ebImageTextButton('tournamentaddmap', 'add.png', EB_TOURNAMENTM_L30).'
-		</div>
-		</td>
-		</tr>
-		</table>
-		';
 		$text .= '</td"></tr>';
-
-
-		//			$text .= '<td><input class="tbox" type="text" size="40" name="round_mappool_'.$round.'" value="'.$rounds[$round]['Title'].'"/></td>';
-
 
 		//<!-- Description -->
 		$text .= '
@@ -797,6 +825,7 @@ else
 			';
 			break;
 			case "1v1":
+			// TODO: No good...
 			// Form to add a player to the tournament
 			$q = "SELECT ".TBL_USERS.".*"
 			." FROM ".TBL_USERS;
@@ -807,7 +836,7 @@ else
 			<tbody>
 			<tr>
 			<td class="eb_td1">
-			'.ebImageTextButton('tournamentaddplayer', 'user_add.png', EB_TOURNAMENTM_L45, '', '', EB_TOURNAMENTM_L44, 'id="sign-up"').'
+			'.ebImageTextButton('tournamentaddplayer', 'user_add.png', EB_TOURNAMENTM_L45, '', '', EB_TOURNAMENTM_L44).'
 			</td>
 			</tr>
 			</tbody>
