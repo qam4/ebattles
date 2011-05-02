@@ -35,7 +35,6 @@ define("TBL_CHALLENGES_SHORT",      TBL_PREFIX."Challenges");
 define("TBL_GAMERS_SHORT",          TBL_PREFIX."Gamers");
 define("TBL_OFFICIAL_LADDERS_SHORT",TBL_PREFIX."OfficialLadders");
 define("TBL_TOURNAMENTS_SHORT",     TBL_PREFIX."Tournaments");
-define("TBL_ROUNDS_SHORT",          TBL_PREFIX."Rounds");
 define("TBL_TPLAYERS_SHORT",        TBL_PREFIX."TournamentPlayers");
 define("TBL_TTEAMS_SHORT",          TBL_PREFIX."TournamentTeams");
 
@@ -59,7 +58,6 @@ define("TBL_CHALLENGES",      MPREFIX.TBL_CHALLENGES_SHORT);
 define("TBL_GAMERS",          MPREFIX.TBL_GAMERS_SHORT);
 define("TBL_OFFICIAL_LADDERS",MPREFIX.TBL_OFFICIAL_LADDERS_SHORT);
 define("TBL_TOURNAMENTS",     MPREFIX.TBL_TOURNAMENTS_SHORT);
-define("TBL_ROUNDS",          MPREFIX.TBL_ROUNDS_SHORT);
 define("TBL_TPLAYERS",        MPREFIX.TBL_TPLAYERS_SHORT);
 define("TBL_TTEAMS",          MPREFIX.TBL_TTEAMS_SHORT);
 

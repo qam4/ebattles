@@ -46,6 +46,14 @@ else
 		exit();
 	}
 	else{
+		switch ($tournament->getField('Type'))
+		{
+			default:
+			$file = 'include/brackets/se-'.$tournament->getField('MaxNumberPlayers').'.txt';
+			break;
+		}
+		$matchups = unserialize(implode('',file($file)));
+		$nbrRounds = count($matchups);
 
 		$q = "UPDATE ".TBL_TOURNAMENTS." SET IsChanged = 1 WHERE (TournamentID = '$tournament_id')";
 		$result = $sql->db_Query($q);
@@ -209,9 +217,32 @@ else
 			//echo "$new_tournamentstart, $new_tournamentstartdate";
 
 
+			/* Tournament Rounds */
+			$rounds = unserialize($tournament->getField('Rounds'));
+			if (!isset($rounds)) $rounds = array();
+			for ($round = 1; $round < $nbrRounds; $round++) {
+				if (!isset($rounds[$round])) {
+					$rounds[$round] = array();
+				}
+				if (!isset($rounds[$round]['Title'])) {
+					$rounds[$round]['Title'] = EB_TOURNAMENTM_L25.' '.$round;
+				}
+				if (!isset($rounds[$round]['BestOf'])) {
+					$rounds[$round]['BestOf'] = 1;
+				}
+				$rounds[$round]['Title'] = $tp->toDB($_POST['round_title_'.$round]);
+				$rounds[$round]['BestOf'] = $tp->toDB($_POST['round_bestof_'.$round]);
+			}
+			$tournament->updateRounds($rounds);
+			
 			/* Tournament Description */
 			$new_tournamentdescription = $tp->toDB($_POST['tournamentdescription']);
 			$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Description = '$new_tournamentdescription' WHERE (TournamentID = '$tournament_id')";
+			$result2 = $sql->db_Query($q2);
+
+			/* Tournament Rules */
+			$new_tournamentrules = $tp->toDB($_POST['tournamentrules']);
+			$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Rules = '$new_tournamentrules' WHERE (TournamentID = '$tournament_id')";
 			$result2 = $sql->db_Query($q2);
 
 			//echo "-- tournamentsettingssave --<br />";
@@ -220,12 +251,36 @@ else
 		}
 		if(isset($_POST['tournamentrulessave']))
 		{
-			/* Tournament Rules */
-			$new_tournamentrules = $tp->toDB($_POST['tournamentrules']);
-			$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Rules = '$new_tournamentrules' WHERE (TournamentID = '$tournament_id')";
-			$result2 = $sql->db_Query($q2);
-
 			//echo "-- tournamentrulessave --<br />";
+			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
+			exit();
+		}
+		if(isset($_POST['tournamentdeletemap']))
+		{
+			$tournamentmap = $_POST['tournamentmap'];
+			$mapPool = explode(",", $tournament->getField('MapPool'));
+			if (in_array($tournamentmap, $mapPool)) {
+				$key = array_search($tournamentmap, $mapPool);
+				var_dump($tournamentmap);
+				exit();
+			    unset($mapPool[$key]);
+			    $tournament->updateMapPool($mapPool);
+			}
+
+			//echo "-- tournamentdeletemap --<br />";
+			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
+			exit();
+		}
+		if(isset($_POST['tournamentaddmap']))
+		{
+			$tournamentmap = $_POST['map'];
+			$mapPool = explode(",", $tournament->getField('MapPool'));
+			if (!in_array($tournamentmap, $mapPool)) {
+			    array_push($mapPool, $tournamentmap);
+			    $tournament->updateMapPool($mapPool);
+			}
+
+			//echo "-- tournamentaddmap --<br />";
 			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
 			exit();
 		}

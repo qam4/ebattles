@@ -192,7 +192,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 	// List of all Factions
 	$q_Factions = "SELECT ".TBL_FACTIONS.".*"
 	." FROM ".TBL_FACTIONS
-	." WHERE (".TBL_FACTIONS.".Game = '$ladder->getField('Game')')";
+	." WHERE (".TBL_FACTIONS.".Game = '".$ladder->getField('Game')."')";
 	$result_Factions = $sql->db_Query($q_Factions);
 	$numFactions = mysql_numrows($result_Factions);
 
@@ -301,7 +301,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 		// List of all Maps
 		$q_Maps = "SELECT ".TBL_MAPS.".*"
 		." FROM ".TBL_MAPS
-		." WHERE (".TBL_MAPS.".Game = '$ladder->getField('Game')')";
+		." WHERE (".TBL_MAPS.".Game = '".$ladder->getField('Game')."')";
 		$result_Maps = $sql->db_Query($q_Maps);
 		$numMaps = mysql_numrows($result_Maps);
 

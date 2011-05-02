@@ -11,6 +11,7 @@ require_once(e_PLUGIN."ebattles/include/tournament.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/match.php");
 require_once(e_PLUGIN."ebattles/include/gamer.php");
+require_once(e_PLUGIN."ebattles/include/brackets.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -60,6 +61,7 @@ else
 
 	$tournament = new Tournament($tournament_id);
 
+	$rounds = unserialize($tournament->getField('Rounds'));
 	$egame = mysql_result($result,0 , TBL_GAMES.".Name");
 	$egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
 	$egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
@@ -203,6 +205,17 @@ else
 	/* Signup, Join/Quit Tournament */
 	$text .= '<div id="tabs-1">';
 	$text .= '<table style="width:95%"><tbody>';
+	$text .= '<tr>';
+	
+	$can_manage = 0;
+	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
+	if (USERID==$eowner) $can_manage = 1;
+	if ($can_manage == 1)
+	$text .= '<td>
+	<form action="'.e_PLUGIN.'ebattles/tournamentmanage.php?TournamentID='.$tournament_id.'" method="post">
+	'.ebImageTextButton('submit', 'page_white_edit.png', EB_TOURNAMENT_L40).'
+	</form>';
+
 	$userIsDivisionCaptain = FALSE;
 	if(check_class(e_UC_MEMBER))
 	{
@@ -246,7 +259,6 @@ else
 						$result_2 = $sql->db_Query($q_2);
 						$numTeams = mysql_numrows($result_2);
 
-						$text .= '<tr>';
 						$text .= '<td>'.EB_TOURNAMENT_L7.'&nbsp;'.$div_name.'</td>';
 						if( $numTeams == 0)
 						{
@@ -285,7 +297,6 @@ else
 							// Team signed up.
 							$text .= '<td>'.EB_TOURNAMENT_L13.'</td>';
 						}
-						$text .= '</tr>';
 					}
 				}
 			}
@@ -317,8 +328,8 @@ else
 				$numMembers = mysql_numrows($result_2);
 				if(!$result_2 || ( $numMembers == 0))
 				{
-					$text .= '<tr><td>'.EB_TOURNAMENT_L14.'</td>';
-					$text .= '<td></td></tr>';
+					$text .= '<td>'.EB_TOURNAMENT_L14.'</td>';
+					$text .= '<td></td>';
 				}
 				else
 				{
@@ -354,14 +365,14 @@ else
 						{
 							if ($captain_id != USERID)
 							{
-								$text .= '<tr><td>'.EB_TOURNAMENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_TOURNAMENT_L16.'</td>';
-								$text .= '<td>'.EB_TOURNAMENT_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
+								$text .= '<td>'.EB_TOURNAMENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_TOURNAMENT_L16.'</td>';
+								$text .= '<td>'.EB_TOURNAMENT_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td>';
 							}
 						}
 						else
 						{
 							$team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-							$text .= '<tr><td>'.EB_TOURNAMENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_TOURNAMENT_L18.'</td>';
+							$text .= '<td>'.EB_TOURNAMENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_TOURNAMENT_L18.'</td>';
 
 							// Is the user already signed up with that team?
 							$q = "SELECT ".TBL_TPLAYERS.".*"
@@ -426,7 +437,6 @@ else
 									}
 								}
 							}
-							$text .= '</tr>';
 						}
 					}
 				}
@@ -465,9 +475,9 @@ else
 				{
 					$hide_password = ($tournament->getField('password') == "") ?  'hide ignore' : '';
 					
-					$text .= '<tr><td>
+					$text .= '<td style="text-align:right;">
 					'.ebImageTextButton('jointournament', 'user_add.png', EB_TOURNAMENT_L19, '', '', EB_TOURNAMENT_L28, 'id="sign-up"').'
-					</td></tr>
+					</td>
 					';
 
 					// Modal form
@@ -512,8 +522,8 @@ else
 
 					if ($user_banned)
 					{
-						$text .= '<tr><td>'.EB_TOURNAMENT_L29.'<br />
-						'.EB_TOURNAMENT_L30.'</td><td></td></tr>';
+						$text .= '<td>'.EB_TOURNAMENT_L29.'<br />
+						'.EB_TOURNAMENT_L30.'</td><td></td>';
 					}
 					else
 					{
@@ -529,18 +539,18 @@ else
 						$nbrscores = 0;
 						if ($nbrscores == 0)
 						{
-							$text .= '<tr><td>
+							$text .= '<td style="text-align:right;">
 							<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
 							<div>
 							<input type="hidden" name="player" value="'.$user_pid.'"/>
 							'.ebImageTextButton('quittournament', 'user_delete.ico', EB_TOURNAMENT_L32, 'negative', EB_TOURNAMENT_L33, EB_TOURNAMENT_L31).'
 							</div>
-							</form></td></tr>
+							</form></td>
 							';
 						}
 						else
 						{
-							$text .= '<td></td></tr>';
+							$text .= '<td></td>';
 						}
 					}
 				}
@@ -551,9 +561,10 @@ else
 	}
 	else
 	{
-		$text .= '<tr><td>'.EB_TOURNAMENT_L34.'</td>';
-		$text .= '<td></td></tr>';
+		$text .= '<td>'.EB_TOURNAMENT_L34.'</td>';
+		$text .= '<td></td>';
 	}
+	$text .= '</tr>';
 	$text .= '</tbody></table>';
 
 	/* Info */
@@ -577,11 +588,6 @@ else
 	$text .= '<tr>';
 	$text .= '<td class="eb_td1">'.EB_TOURNAMENT_L39.'</td>';
 	$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
-	$can_manage = 0;
-	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
-	if (USERID==$eowner) $can_manage = 1;
-	if ($can_manage == 1)
-	$text .= '<br /><a href="'.e_PLUGIN.'ebattles/tournamentmanage.php?TournamentID='.$tournament_id.'">'.EB_TOURNAMENT_L40.'</a>';
 	$text .= '</td></tr>';
 
 	$text .= '<tr>';
@@ -756,8 +762,34 @@ else
 		$text .= EB_TOURNAMENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
 	}
 
+		$teams = array();
+		switch($tournament->getField('MatchType'))
+		{
+			default:
+			$q_Players = "SELECT ".TBL_GAMERS.".*"
+			." FROM ".TBL_TPLAYERS.", "
+			.TBL_GAMERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+			." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+			." ORDER BY ".TBL_TPLAYERS.".Joined";
+			$result = $sql->db_Query($q_Players);
+			$nbrPlayers = mysql_numrows($result);
+			for ($player = 0; $player < $nbrPlayers; $player++)
+			{
+				$gamerID = mysql_result($result,$player , TBL_GAMERS.".GamerID");
+				$gamer = new Gamer($gamerID);
+				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+			}
+		}
+		
+		$results = unserialize($tournament->getField('Results'));
+		$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, &$results, $rounds);
+		$tournament->updateResults($results);
 
-	$text .= '</div>';    // tabs-3 "Players Standings"
+
+	$text .= '</div>';    // tabs-3 "Brackets"
 
 	/* Matches */
 	$text .= '<div id="tabs-4">';

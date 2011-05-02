@@ -108,7 +108,6 @@ TBL_OFFICIAL_LADDERS_SHORT,
 TBL_TOURNAMENTS_SHORT,
 TBL_TPLAYERS_SHORT,
 TBL_TTEAMS_SHORT,
-TBL_ROUNDS_SHORT
 );
 
 // List of sql requests to create tables -----------------------------------------------------------------------------
@@ -472,18 +471,8 @@ MaxNumberPlayers int DEFAULT '16',
 ForceFaction tinyint(1) default '0',
 Seeded tinyint(3) default '0',
 Seeds text,
-Results text
-) TYPE = MyISAM;",
-"CREATE TABLE ".TBL_ROUNDS."
-(
-RoundID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(RoundID),
-Tournament int(10) unsigned NOT NULL,
-INDEX (Tournament),
-FOREIGN KEY (Tournament) REFERENCES ".TBL_TOURNAMENTS." (TournamentID),
-Number int(10),
-Title varchar(63),
-BestOf int(4) DEFAULT '1',
+Results text,
+Rounds text,
 MapPool text
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_TTEAMS."

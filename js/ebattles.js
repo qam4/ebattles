@@ -21,6 +21,10 @@ jQuery(function() {
 	})
 	.mouseup(function() {
 	    $(this).removeClass("ui-state-active");
-	});	
+	});
+	
+	$(function() {
+		$( "#brackets" ).draggable();
+	});
 	
 }); // end main jQuery function start

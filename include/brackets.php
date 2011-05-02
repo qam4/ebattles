@@ -1,7 +1,8 @@
 <?php
 
 
-function brackets($type, $nbrPlayers = 16, $teams, &$results = '') {
+function brackets($type, $nbrPlayers = 16, $teams, &$results = array(), $rounds) {
+
 
 /*
 $teams = array(
@@ -29,12 +30,6 @@ $teams = array(
 	$matchups = unserialize(implode('',file($file)));
 	$nbrRounds = count($matchups);
 
-	if ($result = '')
-	{
-		$results = $matchups;
-		init_results($results);
-	}
-
 	/* */
 	$brackets = array ();
 	$content= array();
@@ -54,6 +49,7 @@ $teams = array(
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
 				$teamTop    = substr($matchups[$round][$matchup][0],1) - 1;
 				$teamBottom = substr($matchups[$round][$matchup][1],1) - 1;
+				if (!$results[$round][$matchup]) $results[$round][$matchup] = '';
 
 				$teamTopName = '';
 				if ($teamTop<$nbrTeams){
@@ -98,6 +94,7 @@ $teams = array(
 		else if ($round < $nbrRounds)
 		{
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+				if (!$results[$round][$matchup]) $results[$round][$matchup] = '';
 				for($match = 0; $match < 2; $match++){
 					$matchupString = $matchups[$round][$matchup][$match];
 					if ($matchupString[0]='W') {
@@ -141,13 +138,13 @@ $teams = array(
 						$contentTop = '<img src="images/ranks/a1.jpg" style="vertical-align:middle"/>'.$content[$round][$matchup][0];
 					}
 					else {
-						$contentTop = '&nbsp';
+						$contentTop = 'np&nbsp';
 					}
 					if($content[$round][$matchup][1]!='not played') {
 						$contentBottom = '<img src="images/ranks/d3.jpg" style="vertical-align:middle"/>'.$content[$round][$matchup][1];
 					}
 					else {
-						$contentBottom = '&nbsp';
+						$contentBottom = 'np&nbsp';
 					}
 
 
@@ -174,6 +171,7 @@ $teams = array(
 		{
 			/* Last round, no match */
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+				if (!$results[$round][$matchup]) $results[$round][$matchup] = '';
 				$match = 0;
 				$matchupString = $matchups[$round][$matchup][$match];
 				if ($matchupString[$match]='W') {
@@ -225,9 +223,17 @@ $teams = array(
 	}
 
 	$bracket_html = '<div id="panel_brackets">';
-	$bracket_html .= '<div id="brackets_frame">';
-	//need jqueryui: $bracket_html .= '<div id="brackets" class="ui-draggable">';
+	$bracket_html .= '<div id="brackets_frame" style="height: 2916px;">';
+	$bracket_html .= '<div id="brackets">';
 	$bracket_html .= '<table class="brackets">';
+	
+	$bracket_html .= '<theader><tr>';
+	for ($i = 1; $i < $nbrRounds; $i++) {
+		$bracket_html .= '<th colspan="2">'.$rounds[$i]['Title'].'</th>';
+	}
+	$bracket_html .= '</tr></theader>';
+	
+	$bracket_html .= '<tbody>';
 	for ($row = 1; $row <= $nbrPlayers*2; $row ++){
 		$bracket_html .= '<tr>';
 		for ($column = 1; $column <= 2*$nbrRounds; $column++){
@@ -235,13 +241,20 @@ $teams = array(
 		}
 		$bracket_html .= '</tr>';
 	}
+	$bracket_html .= '</tbody>';
 	$bracket_html .= '</table>';
-	//$bracket_html .= '</div>'; // brackets
+	$bracket_html .= '</div>'; // brackets
 	$bracket_html .= '</div>'; // brackets_frame
 	$bracket_html .= '<div class="clearer"></div>';
 	$bracket_html .= '</div>'; // panel-brackets
 
-	/**/
+	/*
+	var_dump($matchups);
+	var_dump($results);
+	var_dump($content);
+	var_dump($teams);
+	*/
+	
 	return $bracket_html;
 
 }

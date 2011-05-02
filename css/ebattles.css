@@ -5,7 +5,12 @@ margin-right: auto;
 
 td.eb_td1 {
 /*	color : white; */
+text-align: left;
 }
+.eb_w40 {
+width: 40%;
+}
+
 
 /* Jquery-UI */
 .ui-button { outline: 0; margin:0; padding: .4em 1em .5em; text-decoration:none;  !important; cursor:pointer; position: relative; text-align: center; }
