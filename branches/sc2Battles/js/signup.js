@@ -59,7 +59,7 @@ jQuery(function() {
 	});
 
 	// onclick action for our button
-	var abutton = $('#sign-up').click(function() {
+	var abutton = $('#jointournament').click(function() {
 		$('#modal-form-signup').dialog('open');
 	});
 

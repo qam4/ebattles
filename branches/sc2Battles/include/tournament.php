@@ -152,16 +152,19 @@ class Tournament extends DatabaseTable
 	function updateMapPool($mapPool) {
 		global $sql;
 		
+		$i = 0;
 		$mapString = '';
-		for ($map = 0; $map < count($mapPool); $map++)
+		foreach ($mapPool as $key=>$map)
 		{
-			if ($map > 0) $mapString .= ',';
-			$mapString .= $mapPool[$map];
+			if ($i > 0) $mapString .= ',';
+			$mapString .= $map;
+			$i++;
 		}
 		
 		$q = "UPDATE ".TBL_TOURNAMENTS." SET MapPool = '".$mapString."' WHERE (TournamentID = '".$this->fields['TournamentID']."')";
-		var_dump($q);
-		exit;
+		//var_dump($q);
+		//var_dump($mapPool);
+		//exit;
 		$result = $sql->db_Query($q);		
 	}
 }

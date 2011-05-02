@@ -257,15 +257,10 @@ else
 		}
 		if(isset($_POST['tournamentdeletemap']))
 		{
-			$tournamentmap = $_POST['tournamentmap'];
+			$tournamentmap = $_POST['tournamentdeletemap'];
 			$mapPool = explode(",", $tournament->getField('MapPool'));
-			if (in_array($tournamentmap, $mapPool)) {
-				$key = array_search($tournamentmap, $mapPool);
-				var_dump($tournamentmap);
-				exit();
-			    unset($mapPool[$key]);
-			    $tournament->updateMapPool($mapPool);
-			}
+		    unset($mapPool[$tournamentmap]);
+		    $tournament->updateMapPool($mapPool);
 
 			//echo "-- tournamentdeletemap --<br />";
 			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
@@ -274,12 +269,13 @@ else
 		if(isset($_POST['tournamentaddmap']))
 		{
 			$tournamentmap = $_POST['map'];
-			$mapPool = explode(",", $tournament->getField('MapPool'));
+			$maps = $tournament->getField('MapPool');
+			$mapPool = array();
+			if ($maps)	$mapPool = explode(",", $tournament->getField('MapPool'));
 			if (!in_array($tournamentmap, $mapPool)) {
 			    array_push($mapPool, $tournamentmap);
 			    $tournament->updateMapPool($mapPool);
 			}
-
 			//echo "-- tournamentaddmap --<br />";
 			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
 			exit();

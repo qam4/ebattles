@@ -26,5 +26,4 @@ jQuery(function() {
 	$(function() {
 		$( "#brackets" ).draggable();
 	});
-	
 }); // end main jQuery function start

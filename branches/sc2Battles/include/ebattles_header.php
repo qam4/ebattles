@@ -3,6 +3,7 @@
 /* Include common javascript files */
 
 // $text .= '<script type="text/javascript" src="http://jqueryui.com/js/jquery.js"></script>';
+//<script type="text/javascript" src="./js/timepicker.mod.js"></script>
 
 $text .= '
 <script type="text/javascript" src="./js/jquery-1.5.1.min.js"></script>
