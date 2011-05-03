@@ -184,12 +184,12 @@ else
 		<tbody>
 		';
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1"><b>'.EB_LADDERM_L8.'</b></td>';
+		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L8.'</b></td>';
 		$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>';
 		$text .= '</tr>';
 
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1"><b>'.EB_LADDERM_L9.'</b><br />';
+		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L9.'</b><br />';
 		$text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
 		$text .= '</td>';
 
@@ -200,7 +200,7 @@ else
 		$num_rows_2 = mysql_numrows($result_2);
 
 		$text .= '<td class="eb_td1">';
-		$text .= '<table>';
+		$text .= '<table class="table_left">';
 		$text .= '<tr>';
 		$text .= '<td><select class="tbox" name="ladderowner">';
 		for($j=0; $j<$num_rows_2; $j++)
@@ -238,11 +238,11 @@ else
 		$text .= '
 		<tr>
 		';
-		$text .= '<td class="eb_td1"><b>'.EB_LADDERM_L11.'</b></td>';
+		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L11.'</b></td>';
 		$text .= '<td class="eb_td1">';
 		if ($numMods>0)
 		{
-			$text .= '<table>';
+			$text .= '<table class="table_left">';
 			for($i=0; $i<$numMods; $i++){
 				$modid  = mysql_result($result,$i, TBL_USERS.".user_id");
 				$modname  = mysql_result($result,$i, TBL_USERS.".user_name");
@@ -264,7 +264,7 @@ else
 		/* Error occurred, return given name by default */
 		$numUsers = mysql_numrows($result);
 		$text .= '
-		<table>
+		<table class="table_left">
 		<tr>
 		<td>
 		<select class="tbox" name="mod">
@@ -306,7 +306,7 @@ else
 		//<!-- Ladder Name -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L15.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L15.'</b></td>
 		<td class="eb_td1">
 		<div><input class="tbox" type="text" size="40" name="laddername" value="'.$ladder->getField('Name').'"/></div>
 		</td>
@@ -316,7 +316,7 @@ else
 		//<!-- Ladder Password -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L16.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L16.'</b></td>
 		<td class="eb_td1">
 		<div><input class="tbox" type="text" size="40" name="ladderpassword" value="'.$ladder->getField('Password').'"/></div>
 		</td>
@@ -331,7 +331,7 @@ else
 		/* Error occurred, return given name by default */
 		$numGames = mysql_numrows($result);
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1"><b>'.EB_LADDERM_L17.'</b></td>';
+		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L17.'</b></td>';
 		$text .= '<td class="eb_td1"><select class="tbox" name="laddergame">';
 		for($i=0; $i<$numGames; $i++){
 			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
@@ -351,7 +351,7 @@ else
 		//<!-- Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L18.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L18.'</b></td>
 		<td class="eb_td1">
 		<div id="radio1">
 		';
@@ -368,7 +368,7 @@ else
 		//<!-- Match Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L126.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L126.'</b></td>
 		<td class="eb_td1"><select class="tbox" name="laddermatchtype">';
 		$text .= '<option value="1v1" '.($ladder->getField('MatchType') == "1v1" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L127.'</option>';
 		$text .= '<option value="2v2" '.($ladder->getField('MatchType') == "2v2" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L128.'</option>';
@@ -381,7 +381,7 @@ else
 		//<!-- Rating Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L117.'</b><div class="smalltext">'.EB_LADDERM_L118.'</div></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L117.'</b><div class="smalltext">'.EB_LADDERM_L118.'</div></td>
 		<td class="eb_td1">
 		<div id="radio2">
 		';
@@ -396,7 +396,7 @@ else
 		//<!-- Match report userclass -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L21.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L21.'</b></td>
 		<td class="eb_td1"><select class="tbox" name="laddermatchreportuserclass">';
 		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($ladder->getField('match_report_userclass') == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
 		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($ladder->getField('match_report_userclass') == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
@@ -409,7 +409,7 @@ else
 		//<!-- Allow Quick Loss Report -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L25.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L25.'</b></td>
 		<td class="eb_td1">
 		<div>
 		';
@@ -431,7 +431,7 @@ else
 		//<!-- Allow Score -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L26.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L26.'</b></td>
 		<td class="eb_td1">
 		<div>
 		';
@@ -464,7 +464,7 @@ else
 
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L108.'</b><div class="smalltext">'.EB_LADDERM_L109.'</div></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L108.'</b><div class="smalltext">'.EB_LADDERM_L109.'</div></td>
 		<td class="eb_td1">
 		<div>';
 		$text .= '<select class="tbox" name="laddermatchapprovaluserclass">';
@@ -483,7 +483,7 @@ else
 		//<!-- Allow Draws -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L27.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L27.'</b></td>
 		<td class="eb_td1">
 		<div>
 		';
@@ -505,9 +505,9 @@ else
 		//<!-- Points -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L28.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L28.'</b></td>
 		<td class="eb_td1">
-		<table>
+		<table class="table_left">
 		<tr>
 		<td>'.EB_LADDERM_L29.'</td>
 		<td>'.EB_LADDERM_L30.'</td>
@@ -534,7 +534,7 @@ else
 		//<!-- Maps -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L125.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L125.'</b></td>
 		<td class="eb_td1">
 		<div>
 		';
@@ -548,9 +548,9 @@ else
 		//<!-- Start Date -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L32.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L32.'</b></td>
 		<td class="eb_td1">
-		<table>
+		<table class="table_left">
 		<tr>
 		<td>
 		<div><input class="tbox" type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
@@ -585,9 +585,9 @@ else
 		//<!-- End Date -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L35.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L35.'</b></td>
 		<td class="eb_td1">
-		<table>
+		<table class="table_left">
 		<tr>
 		<td>
 		<div><input class="tbox" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
@@ -622,7 +622,7 @@ else
 		//<!-- Description -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L36.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L36.'</b></td>
 		<td class="eb_td1">
 		';
 		$text .= '<textarea class="tbox" id="ladderdescription" name="ladderdescription" cols="70" '.$insertjs.'>'.$ladder->getField('Description').'</textarea>';
@@ -661,7 +661,7 @@ else
 		//<!-- Rules -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L38.'</b></td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L38.'</b></td>
 		<td class="eb_td1">
 		';
 		$text .= '<textarea class="tbox" id="ladderrules" name="ladderrules" cols="70" '.$insertjs.'>'.$ladder->getField('Rules').'</textarea>';
@@ -781,7 +781,7 @@ else
 			<table class="eb_table" style="width:95%">
 			<tbody>
 			<tr>
-			<td class="eb_td1">
+			<td class="eb_td1 eb_w40">
 			<b>'.EB_LADDERM_L41.'</b>
 			</td>
 			<td class="eb_td1">
@@ -816,11 +816,11 @@ else
 			<table class="eb_table" style="width:95%">
 			<tbody>
 			<tr>
-			<td class="eb_td1">
+			<td class="eb_td1 eb_w40">
 			<b>'.EB_LADDERM_L44.'</b>
 			</td>
 			<td class="eb_td1">
-			<table>
+			<table class="table_left">
 			<tr>
 			<td><div><select class="tbox" name="player">
 			';
@@ -1028,7 +1028,7 @@ else
 		';
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L70.'</b><br />'.EB_LADDERM_L71.'</td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L70.'</b><br />'.EB_LADDERM_L71.'</td>
 		<td class="eb_td1">
 		';
 		$text .= ebImageTextButton('ladderresetscores', 'bin_closed.png', EB_LADDERM_L72, '', EB_LADDERM_L73);
@@ -1038,7 +1038,7 @@ else
 		';
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L74.'</b><br />'.EB_LADDERM_L75.'</td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L74.'</b><br />'.EB_LADDERM_L75.'</td>
 		<td class="eb_td1">
 		';
 		$text .= ebImageTextButton('ladderresetladder', 'bin_closed.png', EB_LADDERM_L76, '', EB_LADDERM_L77);
@@ -1048,7 +1048,7 @@ else
 		';
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L78.'</b><br />'.EB_LADDERM_L79.'</td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L78.'</b><br />'.EB_LADDERM_L79.'</td>
 		<td class="eb_td1">
 		';
 		$text .= ebImageTextButton('ladderdelete', 'delete.png', EB_LADDERM_L80, 'negative', EB_LADDERM_L81);
@@ -1058,7 +1058,7 @@ else
 		';
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L82.'</b><br />'.EB_LADDERM_L83.'</td>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L82.'</b><br />'.EB_LADDERM_L83.'</td>
 		<td class="eb_td1">
 		';
 		$text .= ebImageTextButton('ladderupdatescores', 'chart_curve.png', EB_LADDERM_L84, '', EB_LADDERM_L85);

@@ -34,6 +34,9 @@ else
 ********************************************************************/
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 $text .= '
+<script type="text/javascript" src="./js/tournament.js"></script>
+';
+$text .= '
 <script type="text/javascript" src="./js/slider.js"></script>
 
 <!-- main calendar program -->
@@ -307,7 +310,7 @@ else
 		//***************************************************************************************
 		// tab-page "Tournament Settings"
 		$text .= '<div id="tabs-2">';
-		$text .= '<form action="'.e_PLUGIN.'ebattles/tournamentprocess.php?TournamentID='.$tournament_id.'" method="post">';
+		$text .= '<form id="form-tournament-settings" action="'.e_PLUGIN.'ebattles/tournamentprocess.php?TournamentID='.$tournament_id.'" method="post">';
 		$text .= '
 		<table class="eb_table" style="width:95%">
 		<tbody>
