@@ -26,4 +26,13 @@ jQuery(function() {
 	$(function() {
 		$( "#brackets" ).draggable();
 	});
+
+	$(function() {
+		$( 'button' ).button();
+	});
+	
+	$(function() {
+		$( '.tbox' ).addClass("ui-widget-content ui-corner-all");
+	});
+
 }); // end main jQuery function start
