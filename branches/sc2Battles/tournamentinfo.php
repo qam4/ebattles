@@ -27,11 +27,11 @@ $text .= '
 $text .= "
 <script type='text/javascript'>
 <!--//
-	// Forms
-	$(function() {
-		//$( '#submit, #teamjointournament, #teamjointournament, #jointeamtournament, #quittournament, #jointournament, #quittournament, #matchreport' ).button();
-		$( 'button' ).button();
-	});
+// Forms
+$(function() {
+//$( '#submit, #teamjointournament, #teamjointournament, #jointeamtournament, #quittournament, #jointournament, #quittournament, #matchreport' ).button();
+$( 'button' ).button();
+});
 //-->
 </script>
 ";
@@ -216,7 +216,7 @@ else
 	$text .= '<div id="tabs-1">';
 	$text .= '<table style="width:95%"><tbody>';
 	$text .= '<tr>';
-	
+
 	$can_manage = 0;
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 	if (USERID==$eowner) $can_manage = 1;
@@ -484,7 +484,7 @@ else
 				if(!$result || (mysql_numrows($result) < 1))
 				{
 					$hide_password = ($tournament->getField('password') == "") ?  'hide ignore' : '';
-					
+
 					$text .= '<td style="text-align:right;">
 					'.ebImageTextButton('jointournament', 'user_add.png', EB_TOURNAMENT_L19, '', '', EB_TOURNAMENT_L28).'
 					</td>
@@ -772,32 +772,32 @@ else
 		$text .= EB_TOURNAMENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
 	}
 
-		$teams = array();
-		switch($tournament->getField('MatchType'))
+	$teams = array();
+	switch($tournament->getField('MatchType'))
+	{
+		default:
+		$q_Players = "SELECT ".TBL_GAMERS.".*"
+		." FROM ".TBL_TPLAYERS.", "
+		.TBL_GAMERS.", "
+		.TBL_USERS
+		." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+		." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+		." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+		." ORDER BY ".TBL_TPLAYERS.".Joined";
+		$result = $sql->db_Query($q_Players);
+		$nbrPlayers = mysql_numrows($result);
+		for ($player = 0; $player < $nbrPlayers; $player++)
 		{
-			default:
-			$q_Players = "SELECT ".TBL_GAMERS.".*"
-			." FROM ".TBL_TPLAYERS.", "
-			.TBL_GAMERS.", "
-			.TBL_USERS
-			." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
-			." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-			." ORDER BY ".TBL_TPLAYERS.".Joined";
-			$result = $sql->db_Query($q_Players);
-			$nbrPlayers = mysql_numrows($result);
-			for ($player = 0; $player < $nbrPlayers; $player++)
-			{
-				$gamerID = mysql_result($result,$player , TBL_GAMERS.".GamerID");
-				$gamer = new Gamer($gamerID);
-				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
-			}
+			$gamerID = mysql_result($result,$player , TBL_GAMERS.".GamerID");
+			$gamer = new Gamer($gamerID);
+			$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
 		}
-		
-		$results = unserialize($tournament->getField('Results'));
-		$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, &$results, $rounds);
-		$tournament->updateResults($results);
+	}
 
+	$results = unserialize($tournament->getField('Results'));
+	$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, &$results, $rounds);
+	$tournament->updateResults($results);
+	$tournament->updateDB($results);
 
 	$text .= '</div>';    // tabs-3 "Brackets"
 

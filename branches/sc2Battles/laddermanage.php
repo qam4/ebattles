@@ -163,8 +163,6 @@ else
 	}
 	else
 	{
-		//***************************************************************************************
-		// tab-page "Ladder Summary"
 		$text .= '<div id="tabs">';
 		$text .= '<ul>';
 		$text .= '<li><a href="#tabs-1">'.EB_LADDERM_L2.'</a></li>';
@@ -176,17 +174,26 @@ else
 		$text .= '<li><a href="#tabs-7">'.EB_LADDERM_L121.'</a></li>';
 		$text .= '</ul>';
 
+		//***************************************************************************************
+		// tab-page "Ladder Summary"
 		$text .= '<div id="tabs-1">';
+
+		$text .= '<table class="eb_table" style="width:95%">';
+		$text .= '<tbody>';
+		$text .= '<tr><td>';
+		$text .= '
+		<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
+		'.ebImageTextButton('submit', 'magnify.png', EB_LADDERM_L132).'
+		</form>';		
+		$text .= '</td></tr>';
+		$text .= '</tbody>';
+		$text .= '</table>';
 
 		$text .= '
 		<form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">
 		<table class="eb_table" style="width:95%">
 		<tbody>
 		';
-		$text .= '<tr>';
-		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L8.'</b></td>';
-		$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>';
-		$text .= '</tr>';
 
 		$text .= '<tr>';
 		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L9.'</b><br />';

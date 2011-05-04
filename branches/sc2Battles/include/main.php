@@ -68,6 +68,7 @@ class DatabaseTable
 					$this->fields[$v] = null;
 				}
 			}
+			$this->setDefaultFields();
 		} else {
 			$q = "SELECT *"
 			." FROM $this->tablename"
@@ -80,6 +81,13 @@ class DatabaseTable
 		}
 	}
 
+	function setDefaultFields() {
+	}
+	
+	function getId(){
+		return $this->id;
+	}
+
 	function getField($field) {
 		return $this->fields[$field];
 	}
@@ -89,8 +97,58 @@ class DatabaseTable
 		global $tp;
 		
 		$this->fields[$field] = $tp->toDB($value);
-		$q = "UPDATE $this->tablename SET ".$field." = '$value' WHERE ($this->primary_key = '$this->id')";
+	}
+	function updateDB()
+	{
+		global $sql;
+
+		$q = "UPDATE ".$this->tablename." SET ";
+		$i = 0;
+		foreach($this->fields as $key=>$value)
+		{
+			if ($i>0) $q .= ',';
+			if ($key != $this->primary_key) {
+				$q .= " ".$key." = '".$value."'";
+				$i++;
+			}
+		}
+		$q .= " WHERE (".$this->primary_key." = '$this->id')";
 		$result = $sql->db_Query($q);
+	}
+	function updateFieldDB($field) {
+		global $sql;
+		
+		$q = "UPDATE $this->tablename SET ".$field." = '".$this->fields[$field]."' WHERE ($this->primary_key = '$this->id')";
+		$result = $sql->db_Query($q);
+	}
+	function insert()
+	{
+		global $sql;
+
+		$q = "INSERT INTO ".$this->tablename."(";
+		$i = 0;
+		foreach($this->fields as $key=>$value)
+		{
+			if ($i>0) $q .= ',';
+			if ($key != $this->primary_key) {
+				$q .= " ".$key;
+				$i++;
+			}
+		}
+		$q .= ") VALUES (";
+		$i = 0;
+		foreach($this->fields as $key=>$value)
+		{
+			if ($i>0) $q .= ',';
+			if ($key != $this->primary_key) {
+				$q .= "'".$value."'";
+				$i++;
+			}
+		}
+		$q .= ")";
+		$result = $sql->db_Query($q);
+		$last_id = mysql_insert_id();
+		return $last_id;
 	}
 }
 
