@@ -53,22 +53,44 @@ class DatabaseTable
 {
 	protected $tablename;
 	protected $primary_key;
+	protected $id;
 	protected $fields = array();
 
-	function __construct($primaryID) {
+	function __construct($primaryID=0) {
 		global $sql;
-		$q = "SELECT *"
-		." FROM $this->tablename"
-		." WHERE ($this->primary_key = '$primaryID')";
-		$result = $sql->db_Query($q);
-	
-		if ($row = mysql_fetch_assoc($result)) {
-	         $this->fields = $row;
-	    } // while
+		
+		$this->id = $primaryID;
+		
+		if($primaryID==0) {
+			if ($fields = $sql->db_FieldList(substr($this->tablename, strlen(MPREFIX)))) {
+				foreach ($fields as $name => $v)
+				{
+					$this->fields[$v] = null;
+				}
+			}
+		} else {
+			$q = "SELECT *"
+			." FROM $this->tablename"
+			." WHERE ($this->primary_key = '$primaryID')";
+			$result = $sql->db_Query($q);
+		
+			if ($row = mysql_fetch_assoc($result)) {
+		         $this->fields = $row;
+		    } // while
+		}
 	}
 
 	function getField($field) {
 		return $this->fields[$field];
+	}
+	
+	function setField($field, $value) {
+		global $sql;
+		global $tp;
+		
+		$this->fields[$field] = $tp->toDB($value);
+		$q = "UPDATE $this->tablename SET ".$field." = '$value' WHERE ($this->primary_key = '$this->id')";
+		$result = $sql->db_Query($q);
 	}
 }
 

@@ -106,22 +106,18 @@ else
 		if(isset($_POST['tournamentsettingssave']))
 		{
 			/* Tournament Name */
-			$new_tournamentname = htmlspecialchars($_POST['tournamentname']);
+			$new_tournamentname = $_POST['tournamentname'];
 			if ($new_tournamentname != '')
 			{
-				$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Name = '$new_tournamentname' WHERE (TournamentID = '$tournament_id')";
-				$result2 = $sql->db_Query($q2);
+				$tournament->setField('Name', $new_tournamentname);
 			}
 
 			/* Tournament Password */
-			$new_tournamentpassword = htmlspecialchars($_POST['tournamentpassword']);
-			$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Password = '$new_tournamentpassword' WHERE (TournamentID = '$tournament_id')";
-			$result2 = $sql->db_Query($q2);
-
-
+			$tournament->setField('password', $_POST['tournamentpassword']);
 
 			/* Tournament Type */
 			// Can change only if no players are signed up
+			// TODO: should disable the select button.
 			$q2 = "SELECT ".TBL_TPLAYERS.".*"
 			." FROM ".TBL_TPLAYERS
 			." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')";
@@ -134,8 +130,7 @@ else
 				switch($new_tournamenttype)
 				{
 					case 'Single Elimination':
-					$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Type = 'Single Elimination' WHERE (TournamentID = '$tournament_id')";
-					$result2 = $sql->db_Query($q2);
+						$tournament->setField('Type', $_POST['tournamentmatchtype']);
 					break;
 					default:
 				}
@@ -143,6 +138,7 @@ else
 			
 			/* Tournament MatchType */
 			// Can change only if no players are signed up
+			// TODO: should disable the select button.
 			$q2 = "SELECT ".TBL_TPLAYERS.".*"
 			." FROM ".TBL_TPLAYERS
 			." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')";
@@ -150,56 +146,20 @@ else
 			$num_rows_2 = mysql_numrows($result2);
 			if ($num_rows_2==0)
 			{
-				$new_tournamentmatchtype = $_POST['tournamentmatchtype'];
-
-				switch($new_tournamentmatchtype)
-				{
-					case '1v1':
-					$q2 = "UPDATE ".TBL_TOURNAMENTS." SET MatchType = '1v1' WHERE (TournamentID = '$tournament_id')";
-					$result2 = $sql->db_Query($q2);
-					break;
-					case '2v2':
-					$q2 = "UPDATE ".TBL_TOURNAMENTS." SET MatchType = '2v2' WHERE (TournamentID = '$tournament_id')";
-					$result2 = $sql->db_Query($q2);
-					break;
-					case '3v3':
-					$q2 = "UPDATE ".TBL_TOURNAMENTS." SET MatchType = '3v3' WHERE (TournamentID = '$tournament_id')";
-					$result2 = $sql->db_Query($q2);
-					break;
-					case '4v4':
-					$q2 = "UPDATE ".TBL_TOURNAMENTS." SET MatchType = '4v4' WHERE (TournamentID = '$tournament_id')";
-					$result2 = $sql->db_Query($q2);
-					break;
-					case 'FFA':
-					$q2 = "UPDATE ".TBL_TOURNAMENTS." SET MatchType = 'FFA' WHERE (TournamentID = '$tournament_id')";
-					$result2 = $sql->db_Query($q2);
-					break;
-					default:
-				}
+				$tournament->setField('MatchType', $_POST['tournamentmatchtype']);
 			}
 
 			/* Tournament Max Number of Players */
-			$new_tournamentmaxnumberplayers = htmlspecialchars($_POST['tournamentmaxnumberplayers']);
-			if ($new_tournamentmaxnumberplayers != '')
-			{
-				$q2 = "UPDATE ".TBL_TOURNAMENTS." SET MaxNumberPlayers = '$new_tournamentmaxnumberplayers' WHERE (TournamentID = '$tournament_id')";
-				$result2 = $sql->db_Query($q2);
-			}
+			$tournament->setField('MaxNumberPlayers', $_POST['tournamentmaxnumberplayers']);
 
 			/* Tournament Match report userclass */
-			$new_tournamentmatchreportuserclass = $_POST['tournamentmatchreportuserclass'];
-			$q2 = "UPDATE ".TBL_TOURNAMENTS." SET match_report_userclass = '$new_tournamentmatchreportuserclass' WHERE (TournamentID = '$tournament_id')";
-			$result2 = $sql->db_Query($q2);
+			$tournament->setField('match_report_userclass', $_POST['tournamentmatchreportuserclass']);
 
 			/* Tournament Match Approval */
-			$new_MatchesApproval = $_POST['tournamentmatchapprovaluserclass'];
-			$q2 = "UPDATE ".TBL_TOURNAMENTS." SET MatchesApproval = '$new_MatchesApproval' WHERE (TournamentID = '$tournament_id')";
-			$result2 = $sql->db_Query($q2);
+			$tournament->setField('MatchesApproval', $_POST['tournamentmatchapprovaluserclass']);
 
 			/* Tournament Game */
-			$new_tournamentgame = $_POST['tournamentgame'];
-			$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Game = '$new_tournamentgame' WHERE (TournamentID = '$tournament_id')";
-			$result2 = $sql->db_Query($q2);
+			$tournament->setField('Game', $_POST['tournamentgame']);
 
 			/* Tournament Start Date */
 			$new_tournamentstartdate = $_POST['startdate'];
@@ -212,9 +172,7 @@ else
 			{
 				$new_tournamentstart = 0;
 			}
-			$q2 = "UPDATE ".TBL_TOURNAMENTS." SET StartDateTime = '$new_tournamentstart' WHERE (TournamentID = '$tournament_id')";
-			$result2 = $sql->db_Query($q2);
-			//echo "$new_tournamentstart, $new_tournamentstartdate";
+			$tournament->setField('StartDateTime', $new_tournamentstart);
 
 
 			/* Tournament Rounds */
@@ -236,22 +194,12 @@ else
 			$tournament->updateRounds($rounds);
 			
 			/* Tournament Description */
-			$new_tournamentdescription = $tp->toDB($_POST['tournamentdescription']);
-			$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Description = '$new_tournamentdescription' WHERE (TournamentID = '$tournament_id')";
-			$result2 = $sql->db_Query($q2);
+			$tournament->setField('Description', $_POST['tournamentdescription']);
 
 			/* Tournament Rules */
-			$new_tournamentrules = $tp->toDB($_POST['tournamentrules']);
-			$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Rules = '$new_tournamentrules' WHERE (TournamentID = '$tournament_id')";
-			$result2 = $sql->db_Query($q2);
+			$tournament->setField('Rules', $_POST['tournamentrules']);
 
 			//echo "-- tournamentsettingssave --<br />";
-			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
-			exit();
-		}
-		if(isset($_POST['tournamentrulessave']))
-		{
-			//echo "-- tournamentrulessave --<br />";
 			header("Location: tournamentmanage.php?TournamentID=$tournament_id");
 			exit();
 		}

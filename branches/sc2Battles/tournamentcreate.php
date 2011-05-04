@@ -5,6 +5,7 @@
  */
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/tournament.php");
 require_once(HEADERF);
 $text = '';
 
@@ -16,7 +17,7 @@ else
 {
    $userid = $_POST['userid'];
    $username = $_POST['username'];
-
+   
    $q = "INSERT INTO ".TBL_TOURNAMENTS."(Name,Password,Game,Type,Owner, Description)"
        ." VALUES ('".EB_TOURNAMENTC_L3."', '', '1', 'Single Elimination','$userid', '".EB_TOURNAMENTC_L4."')";   
    $result = $sql->db_Query($q);
