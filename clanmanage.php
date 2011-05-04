@@ -90,14 +90,15 @@ else
 		$text .= '<li><a href="#tabs-2">'.EB_CLANM_L3.'</a></li>';
 		$text .= '</ul>';
 		$text .= '<div id="tabs-1">';
-
-		$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tbody>';
 		$text .= '<!-- Clan -->';
-		$text .= '<tr>';
-		$text .= '<td class="eb_td1"><b>'.EB_CLANM_L4.'</b></td>';
-		$text .= '<td class="eb_td1"><b><a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan_name.'</a> ('.$clan_tag.')</b>';
+		$text .= '<tr><td>';
+		$text .= '
+		<form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
+		'.ebImageTextButton('submit', 'magnify.png', EB_CLANM_L35).'
+		</form>';		
+		$text .= '</td></tr>';
 
 		// Delete team
 		$q_ClanScores = "SELECT ".TBL_DIVISIONS.".*, "
@@ -116,11 +117,25 @@ else
 		$numClanScores = mysql_numrows($result_ClanScores);
 		if ($numClanScores == 0)
 		{
-			$text .= '<br />';
+			$text .= '<tr><td>';
 			$text .= ebImageTextButton('clandelete', 'delete.png', EB_CLANM_L5, 'negative', EB_CLANM_L6);
+			$text .= '</td></tr>';
 		}
-		$text .= '</td></tr>';
+		$text .= '</tbody>';
+		$text .= '</table>';
 
+		$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
+		$text .= '<table class="eb_table" style="width:95%">';
+		$text .= '<tbody>';
+		$text .= '<!-- Clan Name -->';
+		$text .= '<tr>';
+		$text .= '
+		<td class="eb_td1"><b>'.EB_CLANM_L9.'</b></td>
+		<td class="eb_td1">
+		<input class="tbox" type="text" size="40" name="clanname" value="'.$clan_name.'"/>
+		</td>
+		</tr>';
+		
 		$text .= '<!-- Clan Owner -->';
 		$text .= '<tr>';
 		$text .= '<td class="eb_td1"><b>'.EB_CLANM_L7.'</b><br />';
@@ -162,16 +177,7 @@ else
 		$text .= '</td>';
 		$text .= '</tr>';
 
-		$text .= '<!-- Clan Name -->';
-		$text .= '<tr>';
-		$text .= '
-		<td class="eb_td1"><b>'.EB_CLANM_L9.'</b></td>
-		<td class="eb_td1">
-		<input class="tbox" type="text" size="40" name="clanname" value="'.$clan_name.'"/>
-		</td>
-		</tr>
-
-		<!-- Clan Avatar -->
+		$text .= '<!-- Clan Avatar -->
 		<tr>
 		<td class="eb_td1"><b>'.EB_CLANM_L29.'</b><div class="smalltext">'.EB_CLANM_L30.'</div></td>
 		<td class="eb_td1">';

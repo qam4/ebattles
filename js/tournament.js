@@ -14,12 +14,12 @@ jQuery(function() {
 		// rules/messages are for the validation
 		rules: {
 			tournamentname: "required",
-			startdate: "required",
+			startdate: "required"
 		},
 		messages: {
 			tournamentname: "Please enter the tournament name.",
-			startdate: "Please enter the start date",
-		},
+			startdate: "Please enter the start date"
+		}
 	});
 
 }); // end main jQuery function start

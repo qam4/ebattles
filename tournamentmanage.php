@@ -13,22 +13,9 @@ require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/brackets.php");
 require_once(e_PLUGIN."ebattles/include/gamer.php");
 
-// Specify if we use WYSIWYG for text areas
-global $e_wysiwyg;
-$e_wysiwyg	= "tournamentdescription,tournamentrules";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
 // Include userclass file
 require_once(e_HANDLER."userclass_class.php");
-
-if (e_WYSIWYG)
-{
-	$insertjs = "rows='25'";
-}
-else
-{
-	require_once(e_HANDLER."ren_help.php");
-	$insertjs = "rows='15' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
-}
 
 /*******************************************************************
 ********************************************************************/
@@ -158,8 +145,6 @@ else
 	}
 	else
 	{
-		//***************************************************************************************
-		// tab-page "Tournament Summary"
 		$text .= '<div id="tabs">';
 		$text .= '<ul>';
 		$text .= '<li><a href="#tabs-1">'.EB_TOURNAMENTM_L2.'</a></li>';
@@ -171,15 +156,24 @@ else
 		$text .= '</ul>';
 		$text .= '<div id="tabs-1">';
 
+		//***************************************************************************************
+		// tab-page "Tournament Summary"
+		$text .= '<table class="eb_table" style="width:95%">';
+		$text .= '<tbody>';
+		$text .= '<tr><td>';
+		$text .= '
+		<form action="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'" method="post">
+		'.ebImageTextButton('submit', 'magnify.png', EB_TOURNAMENTM_L133).'
+		</form>';		
+		$text .= '</td></tr>';
+		$text .= '</tbody>';
+		$text .= '</table>';
+		
 		$text .= '
 		<form action="'.e_PLUGIN.'ebattles/tournamentprocess.php?TournamentID='.$tournament_id.'" method="post">
 		<table class="eb_table" style="width:95%">
 		<tbody>
 		';
-		$text .= '<tr>';
-		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L8.'</b></td>';
-		$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>';
-		$text .= '</tr>';
 
 		$text .= '<tr>';
 		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L9.'</b><br />';
@@ -292,7 +286,7 @@ else
 		// tab-page "Tournament Settings"
 		$text .= '<div id="tabs-2">';
 		
-		$text .= displayTournamentSettingsForm($tournament);
+		$text .= $tournament->displayTournamentSettingsForm();
 		
 		$text .= '
 		</div>
@@ -357,6 +351,7 @@ else
 		$results = unserialize($tournament->getField('Results'));
 		$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, &$results, $rounds);
 		$tournament->updateResults($results);
+		$tournament->updateDB($results);
 
 		$text .= '</div>';  // tab-page "Brackets"
 

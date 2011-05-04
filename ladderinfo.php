@@ -192,7 +192,18 @@ else
 
 	/* Signup, Join/Quit Ladder */
 	$text .= '<div id="tabs-1">';
-	$text .= '<table class="signup" style="width:95%"><tbody>';
+	$text .= '<table style="width:95%"><tbody>';
+	$text .= '<tr>';
+
+	$can_manage = 0;
+	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
+	if (USERID==$eowner) $can_manage = 1;
+	if ($can_manage == 1)
+	$text .= '<td>
+	<form action="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$ladder_id.'" method="post">
+	'.ebImageTextButton('submit', 'page_white_edit.png', EB_LADDER_L40).'
+	</form>';
+
 	$userIsDivisionCaptain = FALSE;
 	if(check_class(e_UC_MEMBER))
 	{
@@ -236,7 +247,6 @@ else
 						$result_2 = $sql->db_Query($q_2);
 						$numTeams = mysql_numrows($result_2);
 
-						$text .= '<tr>';
 						$text .= '<td>'.EB_LADDER_L7.'&nbsp;'.$div_name.'</td>';
 						if( $numTeams == 0)
 						{
@@ -275,7 +285,6 @@ else
 							// Team signed up.
 							$text .= '<td>'.EB_LADDER_L13.'</td>';
 						}
-						$text .= '</tr>';
 					}
 				}
 			}
@@ -306,8 +315,8 @@ else
 				$numMembers = mysql_numrows($result_2);
 				if(!$result_2 || ( $numMembers == 0))
 				{
-					$text .= '<tr><td>'.EB_LADDER_L14.'</td>';
-					$text .= '<td></td></tr>';
+					$text .= '<td>'.EB_LADDER_L14.'</td>';
+					$text .= '<td></td>';
 				}
 				else
 				{
@@ -343,14 +352,14 @@ else
 						{
 							if ($captain_id != USERID)
 							{
-								$text .= '<tr><td>'.EB_LADDER_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_LADDER_L16.'</td>';
-								$text .= '<td>'.EB_LADDER_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
+								$text .= '<td>'.EB_LADDER_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_LADDER_L16.'</td>';
+								$text .= '<td>'.EB_LADDER_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td>';
 							}
 						}
 						else
 						{
 							$team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-							$text .= '<tr><td>'.EB_LADDER_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_LADDER_L18.'</td>';
+							$text .= '<td>'.EB_LADDER_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_LADDER_L18.'</td>';
 
 							// Is the user already signed up with that team?
 							$q = "SELECT ".TBL_PLAYERS.".*"
@@ -412,7 +421,6 @@ else
 									}
 								}
 							}
-							$text .= '</tr>';
 						}
 					}
 				}
@@ -430,7 +438,7 @@ else
 				{
 					if ($ladder->getField('Password') != "")
 					{
-						$text .= '<tr><td>'.EB_LADDER_L25.'</td>';
+						$text .= '<td>'.EB_LADDER_L25.'</td>';
 						$text .= '<td>'.EB_LADDER_L26.'</td>';
 						$text .= '<td>';
 						$text .= '
@@ -439,19 +447,19 @@ else
 						<input class="tbox" type="password" title="'.EB_LADDER_L27.'" name="joinLadderPassword"/>
 						</div>
 						'.ebImageTextButton('joinladder', 'user_add.png', EB_LADDER_L19).'
-						</form></td></tr>
+						</form></td>
 						';
 					}
 					else
 					{
-						$text .= '<tr><td>'.EB_LADDER_L28.'</td>';
+						$text .= '<td>'.EB_LADDER_L28.'</td>';
 						$text .= '<td>
 						<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
 						<div>
 						<input type="hidden" name="joinLadderPassword" value=""/>
 						</div>
 						'.ebImageTextButton('joinladder', 'user_add.png', EB_LADDER_L19).'
-						</form></td></tr>
+						</form></td>
 						';
 					}
 				}
@@ -462,12 +470,12 @@ else
 
 					if ($user_banned)
 					{
-						$text .= '<tr><td>'.EB_LADDER_L29.'<br />
-						'.EB_LADDER_L30.'</td><td></td></tr>';
+						$text .= '<td>'.EB_LADDER_L29.'<br />
+						'.EB_LADDER_L30.'</td><td></td>';
 					}
 					else
 					{
-						$text .= '<tr><td>'.EB_LADDER_L31.'</td>';
+						$text .= '<td>'.EB_LADDER_L31.'</td>';
 
 						// Player can quit a ladder if he has not played yet
 						$q = "SELECT ".TBL_PLAYERS.".*"
@@ -485,12 +493,12 @@ else
 							<input type="hidden" name="player" value="'.$user_pid.'"/>
 							'.ebImageTextButton('quitladder', 'user_delete.ico', EB_LADDER_L32, 'negative', EB_LADDER_L33).'
 							</div>
-							</form></td></tr>
+							</form></td>
 							';
 						}
 						else
 						{
-							$text .= '<td></td></tr>';
+							$text .= '<td></td>';
 						}
 					}
 				}
@@ -501,9 +509,10 @@ else
 	}
 	else
 	{
-		$text .= '<tr><td>'.EB_LADDER_L34.'</td>';
-		$text .= '<td></td></tr>';
+		$text .= '<td>'.EB_LADDER_L34.'</td>';
+		$text .= '<td></td>';
 	}
+	$text .= '</tr>';
 	$text .= '</tbody></table>';
 
 	/* Info */
@@ -527,11 +536,6 @@ else
 	$text .= '<tr>';
 	$text .= '<td class="eb_td1">'.EB_LADDER_L39.'</td>';
 	$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
-	$can_manage = 0;
-	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
-	if (USERID==$eowner) $can_manage = 1;
-	if ($can_manage == 1)
-	$text .= '<br /><a href="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$ladder_id.'">'.EB_LADDER_L40.'</a>';
 	$text .= '</td></tr>';
 
 	$text .= '<tr>';

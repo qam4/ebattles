@@ -176,7 +176,7 @@ define('EB_LADDER_L36', 'Ladder');
 define('EB_LADDER_L37', 'Type');
 define('EB_LADDER_L38', 'Game');
 define('EB_LADDER_L39', 'Admin');
-define('EB_LADDER_L40', 'Click here to manage this ladder');
+define('EB_LADDER_L40', 'Manage this ladder');
 define('EB_LADDER_L41', 'Moderator(s)');
 define('EB_LADDER_L42', 'Starts');
 define('EB_LADDER_L43', 'Ends');
@@ -345,6 +345,7 @@ define('EB_LADDERM_L128', '2v2');
 define('EB_LADDERM_L129', '3v3');
 define('EB_LADDERM_L130', '4v4');
 define('EB_LADDERM_L131', 'Free for All');
+define('EB_LADDERM_L132', 'View Ladder');
 
 
 define('EB_LADDERP_L1', 'Past Ladders');
@@ -602,6 +603,7 @@ define('EB_TOURNAMENTM_L129', '3v3');
 define('EB_TOURNAMENTM_L130', '4v4');
 define('EB_TOURNAMENTM_L131', 'Free for All');
 define('EB_TOURNAMENTM_L132', 'Max number of players');
+define('EB_TOURNAMENTM_L133', 'View Tournament');
 
 
 define('EB_TOURNAMENTP_L1', 'Past Tournaments');
@@ -671,7 +673,7 @@ define('EB_CLAN_L4', 'Ladders');
 define('EB_CLAN_L5', 'Back to');
 define('EB_CLAN_L6', 'Teams');
 define('EB_CLAN_L7', 'Admin');
-define('EB_CLAN_L8', 'Click here to manage this team');
+define('EB_CLAN_L8', 'Manage this team');
 define('EB_CLAN_L9', 'Captain');
 define('EB_CLAN_L10', 'Enter the team password');
 define('EB_CLAN_L11', 'Enter the password');
@@ -735,6 +737,7 @@ define('EB_CLANM_L31', 'Website');
 define('EB_CLANM_L32', 'Email');
 define('EB_CLANM_L33', 'IM');
 define('EB_CLANM_L34', 'Description');
+define('EB_CLANM_L35', 'View Team');
 
 define('EB_MATCH_L1', 'Match');
 define('EB_MATCH_L2', 'tied');

@@ -111,29 +111,45 @@ function displayTeamSummary($clan_id){
 	$clan_IM    = mysql_result($result,0, TBL_CLANS.".IM");
 	$clan_Description    = mysql_result($result,0, TBL_CLANS.".Description");
 
-	$image = "";
-	if($clan_avatar)
-	{
-		$image = '<img '.getAvatarResize(getImagePath($clan_avatar, 'team_avatars')).' style="vertical-align:middle"/>';
-	} else if ($pref['eb_avatar_default_team_image'] != ''){
-		$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
-	}
-	$text .= $image.'<br />';
-
-	$text .= '<b>'.$clan_name.' ('.$clan_tag.')</b><br />';
-
-	$text .= '<p><b>'.EB_CLAN_L7.'</b>: <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a><br />';
 	$can_manage = 0;
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 	if (USERID==$clan_owner) $can_manage = 1;
 	if ($can_manage == 1)
-	$text .= '<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_CLAN_L8.'</a><br />';
-	$text .= '</p><br />';
+	$text .= '
+	<form action="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'" method="post">
+	'.ebImageTextButton('submit', 'page_white_edit.png', EB_CLAN_L8).'
+	</form>';
+	
+	$text .= '<b>'.$clan_name.' ('.$clan_tag.')</b><br />';
+	
+	$image = "";
+	if($clan_avatar)
+	{
+		$image = '<img '.getAvatarResize(getImagePath($clan_avatar, 'team_avatars')).'/>';
+	} else if ($pref['eb_avatar_default_team_image'] != ''){
+		$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>';
+	}
+	$text .= '<div>'.$image.'</div>';
+	
+	$text .= '<table class="eb_table table_left"><tbody>';
 
-	$text .= '<p><b>'.EB_CLAN_L27.'</b>: <a href="http://'.$clan_website.'" rel="external">'.$clan_website.'</a></p><br />';
-	$text .= '<p><b>'.EB_CLAN_L28.'</b>: <a href="mailto:'.$clan_email.'">'.$clan_email.'</a></p><br />';
-	$text .= '<p><b>'.EB_CLAN_L29.'</b>: '.$clan_IM.'</p><br />';
-	$text .= '<p><b>'.EB_CLAN_L30.'</b>: '.$tp->toHTML($clan_Description, true).'</p><br />';
+	$text .= '<tr><td class="eb_td1"><b>'.EB_CLAN_L7.'</b>:</td>';
+	$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a></td>';
+	$text .= '</tr>';
+	$text .= '<tr><td class="eb_td1"><b>'.EB_CLAN_L27.'</b>:</td>';
+	$text .= '<td class="eb_td1"><a href="http://'.$clan_website.'" rel="external">'.$clan_website.'</a></td>';
+	$text .= '</tr>';
+	$text .= '<tr><td class="eb_td1"><b>'.EB_CLAN_L28.'</b>:</td>';
+	$text .= '<td class="eb_td1"><a href="mailto:'.$clan_email.'">'.$clan_email.'</a></td>';
+	$text .= '</tr>';
+	$text .= '<tr><td class="eb_td1"><b>'.EB_CLAN_L29.'</b>:</td>';
+	$text .= '<td class="eb_td1"></td>'.$clan_IM.'</td>';
+	$text .= '</tr>';
+	$text .= '<tr><td class="eb_td1"><b>'.EB_CLAN_L30.'</b>:</td>';
+	$text .= '<td class="eb_td1">'.$tp->toHTML($clan_Description, true).'</td>';
+	$text .= '</tr>';
+	$text .= '</tbody></table>';
+
 }
 
 /**
