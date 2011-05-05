@@ -10,99 +10,19 @@ require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/ladder.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/gamer.php");
 
-// Specify if we use WYSIWYG for text areas
-global $e_wysiwyg;
-$e_wysiwyg	= "ladderdescription,ladderrules";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
 // Include userclass file
 require_once(e_HANDLER."userclass_class.php");
-
-if (e_WYSIWYG)
-{
-	$insertjs = "rows='25'";
-}
-else
-{
-	require_once(e_HANDLER."ren_help.php");
-	$insertjs = "rows='15' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
-}
 
 /*******************************************************************
 ********************************************************************/
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 $text .= '
-<script type="text/javascript" src="./js/tabpane.js"></script>
-
-<!-- main calendar program -->
-<script type="text/javascript" src="./js/calendar/calendar.js"></script>
-<!-- language for the calendar -->
-<script type="text/javascript" src="./js/calendar/lang/calendar-en.js"></script>
-<!-- the following script defines the Calendar.setup helper function, which makes
-adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript" src="./js/calendar/calendar-setup.js"></script>
-<script type="text/javascript">
-<!--//
-function clearStartDate(frm)
-{
-frm.startdate.value = ""
-}
-//-->
-</script>
-<script type="text/javascript">
-<!--//
-function clearEndDate(frm)
-{
-frm.enddate.value = ""
-}
-//-->
-</script>
+<script type="text/javascript" src="./js/ladder.js"></script>
+<script type="text/javascript" src="./js/slider.js"></script>
 ';
-$text .= "
-<script type='text/javascript'>
-<!--//
-function kick_player(v)
-{
-document.getElementById('kick_player').value=v;
-document.getElementById('playersform').submit();
-}
-function ban_player(v)
-{
-document.getElementById('ban_player').value=v;
-document.getElementById('playersform').submit();
-}
-function unban_player(v)
-{
-document.getElementById('unban_player').value=v;
-document.getElementById('playersform').submit();
-}
-function del_player_games(v)
-{
-document.getElementById('del_player_games').value=v;
-document.getElementById('playersform').submit();
-}
-function del_player_awards(v)
-{
-document.getElementById('del_player_awards').value=v;
-document.getElementById('playersform').submit();
-}
-//-->
-</script>
-";
-$text .= "
-<script type='text/javascript'>
-<!--//
-	// Forms
-	$(function() {
-		$( '#radio1' ).buttonset();
-		$( '#radio2' ).buttonset();
-		//$( '#ladderchangeowner, #ladderdeletemod, #ladderaddmod, #laddersettingssave, #ladderrulessave, #ladderaddteam, #ladderaddplayer, #ladderresetscores, #ladderresetladder, #ladderdelete, #ladderupdatescores, #ladderstatssave, #ladderchallengessave' ).button();
-		$( 'button' ).button();
-	});
-//-->
-</script>
-";
-
 
 $ladder_id = $_GET['LadderID'];
 $self = $_SERVER['PHP_SELF'];
@@ -134,25 +54,6 @@ else
 	$ladder = new Ladder($ladder_id);
 
 
-	if($ladder->getField('Start_timestamp')!=0)
-	{
-		$start_timestamp_local = $ladder->getField('Start_timestamp') + TIMEOFFSET;
-		$date_start = date("m/d/Y h:i A", $start_timestamp_local);
-	}
-	else
-	{
-		$date_start = "";
-	}
-	if($ladder->getField('End_timestamp')!=0)
-	{
-		$end_timestamp_local = $ladder->getField('End_timestamp') + TIMEOFFSET;
-		$date_end = date("m/d/Y h:i A", $end_timestamp_local);
-	}
-	else
-	{
-		$date_end = "";
-	}
-
 	$can_manage = 0;
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 	if (USERID==$eowner) $can_manage = 1;
@@ -167,7 +68,7 @@ else
 		$text .= '<ul>';
 		$text .= '<li><a href="#tabs-1">'.EB_LADDERM_L2.'</a></li>';
 		$text .= '<li><a href="#tabs-2">'.EB_LADDERM_L3.'</a></li>';
-		$text .= '<li><a href="#tabs-3">'.EB_LADDERM_L4.'</a></li>';
+		/*$text .= '<li><a href="#tabs-3">'.EB_LADDERM_L4.'</a></li>';*/
 		$text .= '<li><a href="#tabs-4">'.EB_LADDERM_L5.'</a></li>';
 		$text .= '<li><a href="#tabs-5">'.EB_LADDERM_L6.'</a></li>';
 		$text .= '<li><a href="#tabs-6">'.EB_LADDERM_L7.'</a></li>';
@@ -184,7 +85,7 @@ else
 		$text .= '
 		<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
 		'.ebImageTextButton('submit', 'magnify.png', EB_LADDERM_L132).'
-		</form>';		
+		</form>';
 		$text .= '</td></tr>';
 		$text .= '</tbody>';
 		$text .= '</table>';
@@ -305,359 +206,16 @@ else
 		//***************************************************************************************
 		// tab-page "Ladder Settings"
 		$text .= '<div id="tabs-2">';
-		$text .= '<form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
-		$text .= '
-		<table class="eb_table" style="width:95%">
-		<tbody>
-		';
-		//<!-- Ladder Name -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L15.'</b></td>
-		<td class="eb_td1">
-		<div><input class="tbox" type="text" size="40" name="laddername" value="'.$ladder->getField('Name').'"/></div>
-		</td>
-		</tr>
-		';
 
-		//<!-- Ladder Password -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L16.'</b></td>
-		<td class="eb_td1">
-		<div><input class="tbox" type="text" size="40" name="ladderpassword" value="'.$ladder->getField('Password').'"/></div>
-		</td>
-		</tr>
-		';
-		//<!-- Ladder Game -->
-
-		$q = "SELECT ".TBL_GAMES.".*"
-		." FROM ".TBL_GAMES
-		." ORDER BY Name";
-		$result = $sql->db_Query($q);
-		/* Error occurred, return given name by default */
-		$numGames = mysql_numrows($result);
-		$text .= '<tr>';
-		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L17.'</b></td>';
-		$text .= '<td class="eb_td1"><select class="tbox" name="laddergame">';
-		for($i=0; $i<$numGames; $i++){
-			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
-			$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
-			if ($egame == $gname)
-			{
-				$text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
-			}
-			else
-			{
-				$text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
-			}
-		}
-		$text .= '</select>';
-		$text .= '</td></tr>';
-
-		//<!-- Type -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L18.'</b></td>
-		<td class="eb_td1">
-		<div id="radio1">
-		';
-		$text .= '<input class="tbox" type="radio" id="radio11" size="40" name="laddertype" '.($ladder->getField('Type') == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" /><label for="radio11">'.EB_LADDERM_L19.'</label>';
-		$text .= '<input class="tbox" type="radio" id="radio12" size="40" name="laddertype" '.($ladder->getField('Type') == "Team Ladder" ? 'checked="checked"' : '').' value="Team" /><label for="radio12">'.EB_LADDERM_L20.'</label>';
-		$text .= '<input class="tbox" type="radio" id="radio13" size="40" name="laddertype" '.($ladder->getField('Type') == "ClanWar" ? 'checked="checked"' : '').' value="ClanWar" /><label for="radio13">'.EB_LADDERM_L116.'</label>';
+		$text .= $ladder->displayLadderSettingsForm();
 
 		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
-
-		//<!-- Match Type -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L126.'</b></td>
-		<td class="eb_td1"><select class="tbox" name="laddermatchtype">';
-		$text .= '<option value="1v1" '.($ladder->getField('MatchType') == "1v1" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L127.'</option>';
-		$text .= '<option value="2v2" '.($ladder->getField('MatchType') == "2v2" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L128.'</option>';
-		$text .= '<option value="FFA" '.($ladder->getField('MatchType') == "FFA" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L131.'</option>';
-		$text .= '</select>
-		</td>
-		</tr>
-		';
-
-		//<!-- Rating Type -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L117.'</b><div class="smalltext">'.EB_LADDERM_L118.'</div></td>
-		<td class="eb_td1">
-		<div id="radio2">
-		';
-		$text .= '<input class="tbox" type="radio" id="radio21" size="40" name="ladderrankingtype" '.($ladder->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" /><label for="radio21">'.EB_LADDERM_L119.'</label>';
-		$text .= '<input class="tbox" type="radio" id="radio22" size="40" name="ladderrankingtype" '.($ladder->getField('RankingType') == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" /><label for="radio22">'.EB_LADDERM_L120.'</label>';
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
-
-		//<!-- Match report userclass -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L21.'</b></td>
-		<td class="eb_td1"><select class="tbox" name="laddermatchreportuserclass">';
-		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($ladder->getField('match_report_userclass') == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($ladder->getField('match_report_userclass') == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.($ladder->getField('match_report_userclass') == eb_UC_LADDER_OWNER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L24.'</option>';
-		$text .= '</select>
-		</td>
-		</tr>
-		';
-
-		//<!-- Allow Quick Loss Report -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L25.'</b></td>
-		<td class="eb_td1">
-		<div>
-		';
-		$text .= '<input class="tbox" type="checkbox" name="ladderallowquickloss"';
-		if ($ladder->getField('quick_loss_report') == TRUE)
-		{
-			$text .= ' checked="checked"/>';
-		}
-		else
-		{
-			$text .= '/>';
-		}
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
-
-		//<!-- Allow Score -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L26.'</b></td>
-		<td class="eb_td1">
-		<div>
-		';
-		$text .= '<input class="tbox" type="checkbox" name="ladderallowscore"';
-		if ($ladder->getField('AllowScore') == TRUE)
-		{
-			$text .= ' checked="checked"/>';
-		}
-		else
-		{
-			$text .= '/>';
-		}
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
-
-		//<!-- Match Approval -->
-		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
-		." FROM ".TBL_MATCHS.", "
-		.TBL_SCORES
-		." WHERE (".TBL_MATCHS.".Ladder = '$ladder_id')"
-		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-		." AND (".TBL_MATCHS.".Status = 'pending')";
-		$result = $sql->db_Query($q);
-		$row = mysql_fetch_array($result);
-		$nbrMatchesPending = $row['NbrMatches'];
-
-
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L108.'</b><div class="smalltext">'.EB_LADDERM_L109.'</div></td>
-		<td class="eb_td1">
-		<div>';
-		$text .= '<select class="tbox" name="laddermatchapprovaluserclass">';
-		$text .= '<option value="'.eb_UC_NONE.'" '.(($ladder->getField('MatchesApproval') == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L113.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.((($ladder->getField('MatchesApproval') & eb_UC_LADDER_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L112.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.((($ladder->getField('MatchesApproval') & eb_UC_LADDER_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L111.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.((($ladder->getField('MatchesApproval') & eb_UC_LADDER_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L110.'</option>';
-		$text .= '</select>';
-		$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
-
-		//<!-- Allow Draws -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L27.'</b></td>
-		<td class="eb_td1">
-		<div>
-		';
-		$text .= '<input class="tbox" type="checkbox" name="ladderallowdraw"';
-		if ($ladder->getField('AllowDraw') == TRUE)
-		{
-			$text .= ' checked="checked"/>';
-		}
-		else
-		{
-			$text .= '/>';
-		}
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
-
-		//<!-- Points -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L28.'</b></td>
-		<td class="eb_td1">
-		<table class="table_left">
-		<tr>
-		<td>'.EB_LADDERM_L29.'</td>
-		<td>'.EB_LADDERM_L30.'</td>
-		<td>'.EB_LADDERM_L31.'</td>
-		</tr>
-		<tr>
-		<td>
-		<div><input class="tbox" type="text" name="ladderpointsperwin" value="'.$ladder->getField('PointsPerWin').'"/></div>
-		</td>
-		<td>
-		<div><input class="tbox" type="text" name="ladderpointsperdraw" value="'.$ladder->getField('PointsPerDraw').'"/></div>
-		</td>
-		<td>
-		<div><input class="tbox" type="text" name="ladderpointsperloss" value="'.$ladder->getField('PointsPerLoss').'"/></div>
-		</td>
-		</tr>
-		</table>
-		';
-		$text .= '
-		</td>
-		</tr>
-		';
-
-		//<!-- Maps -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L125.'</b></td>
-		<td class="eb_td1">
-		<div>
-		';
-		$text .= '<input class="tbox" type="text" name="laddermaxmapspermatch" size="2" value="'.$ladder->getField('MaxMapsPerMatch').'"';
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
-
-		//<!-- Start Date -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L32.'</b></td>
-		<td class="eb_td1">
-		<table class="table_left">
-		<tr>
-		<td>
-		<div><input class="tbox" type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
-		</td>
-		<td>
-		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
-		';
-		$text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
-		$text .= '
-		</td>
-		<td>
-		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearStartDate(this.form);"/></div>
-		</td>
-		</tr>
-		</table>
-		';
-		$text .= '
-		<script type="text/javascript">
-		Calendar.setup({
-		inputField     :    "f_date_start",      // id of the input field
-		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
-		showsTime      :    true,            // will display a time selector
-		button         :    "f_trigger_start",   // trigger for the calendar (button ID)
-		singleClick    :    true,           // single-click mode
-		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-		});
-		</script>
-		</td>
-		</tr>
-		';
-
-		//<!-- End Date -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L35.'</b></td>
-		<td class="eb_td1">
-		<table class="table_left">
-		<tr>
-		<td>
-		<div><input class="tbox" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
-		</td>
-		<td>
-		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
-		';
-		$text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
-		$text .= '
-		</td>
-		<td>
-		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearEndDate(this.form);"/></div>
-		</td>
-		</tr>
-		</table>
-		';
-		$text .= '
-		<script type="text/javascript">
-		Calendar.setup({
-		inputField     :    "f_date_end",      // id of the input field
-		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
-		showsTime      :    true,            // will display a time selector
-		button         :    "f_trigger_end",   // trigger for the calendar (button ID)
-		singleClick    :    true,           // single-click mode
-		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-		});
-		</script>
-		</td>
-		</tr>
-		';
-
-		//<!-- Description -->
-		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L36.'</b></td>
-		<td class="eb_td1">
-		';
-		$text .= '<textarea class="tbox" id="ladderdescription" name="ladderdescription" cols="70" '.$insertjs.'>'.$ladder->getField('Description').'</textarea>';
-		if (!e_WYSIWYG)
-		{
-			$text .= '<br />'.display_help("helpb",1);
-		}
-		$text .= '
-		</td>
-		</tr>
-		</tbody>
-		</table>
-		';
-
-		//<!-- Save Button -->
-		$text .= '
-		<table><tr><td>
-		<div>
-		'.ebImageTextButton('laddersettingssave', 'disk.png', EB_LADDERM_L37).'
-		</div>
-		</td></tr></table>
-
-		</form>
 		</div>
 		';  // tab-page "Ladder Settings"
 
 		//***************************************************************************************
 		// tab-page "Ladder Rules"
+		/*
 		$text .= '<div id="tabs-3">';
 		$text .= '<form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
 
@@ -665,23 +223,11 @@ else
 		<table class="eb_table" style="width:95%">
 		<tbody>
 		';
-		//<!-- Rules -->
 		$text .= '
-		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L38.'</b></td>
-		<td class="eb_td1">
-		';
-		$text .= '<textarea class="tbox" id="ladderrules" name="ladderrules" cols="70" '.$insertjs.'>'.$ladder->getField('Rules').'</textarea>';
-		if (!e_WYSIWYG)
-		{
-			$text .= '<br />'.display_help("helpb",1);
-		}
-		$text .= '
-		</td>
-		</tr>
 		</tbody>
 		</table>
 		';
+
 		//<!-- Save Button -->
 		$text .= '
 		<table><tr><td>
@@ -693,6 +239,7 @@ else
 		</form>
 		</div>
 		';  // tab-page "Ladder Rules"
+		*/
 
 		//***************************************************************************************
 		// tab-page "Ladder Players/Teams"
@@ -921,6 +468,7 @@ else
 			case "Team Ladder":
 			$orderby_array = $array["$orderby"];
 			$q_Players = "SELECT ".TBL_PLAYERS.".*, "
+			.TBL_GAMERS.".*, "
 			.TBL_USERS.".*"
 			." FROM ".TBL_PLAYERS.", "
 			.TBL_GAMERS.", "
@@ -934,8 +482,7 @@ else
 			$num_rows = mysql_numrows($result);
 			if(!$result || ($num_rows < 0)){
 				$text .= EB_LADDERM_L51.'<br />';
-			}
-			if($num_rows == 0){
+			} else if($num_rows == 0){
 				$text .= EB_LADDERM_L52.'<br />';
 			}
 			else
@@ -970,6 +517,7 @@ else
 					$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 					$puid = mysql_result($result,$i, TBL_USERS.".user_id");
 					$pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+					$puniquegameid  = mysql_result($result,$i, TBL_GAMERS.".UniqueGameID");
 					$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
 					$pbanned = mysql_result($result,$i, TBL_PLAYERS.".Banned");
 					$pgames = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");

@@ -59,7 +59,6 @@ function displayPastTournaments(){
 	$text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="post">';
 	$text .= '<table>';
 	$text .= '<tr><td>';
-	$text .= EB_TOURNAMENTS_L9.'<br />';
 	$text .= '<select class="tbox" name="gameid">';
 	$text .= '<option value="All">'.EB_TOURNAMENTS_L10.'</option>';
 	for($i=0; $i<$num_rows; $i++){

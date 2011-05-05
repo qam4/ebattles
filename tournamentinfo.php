@@ -24,17 +24,7 @@ $pages = new Paginator;
 $text .= '
 <script type="text/javascript" src="./js/signup.js"></script>
 ';
-$text .= "
-<script type='text/javascript'>
-<!--//
-// Forms
-$(function() {
-//$( '#submit, #teamjointournament, #teamjointournament, #jointeamtournament, #quittournament, #jointournament, #quittournament, #matchreport' ).button();
-$( 'button' ).button();
-});
-//-->
-</script>
-";
+
 if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;
 $orderby=$_GET['orderby'];
 

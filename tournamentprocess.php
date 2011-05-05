@@ -413,7 +413,6 @@ else{
 	}
 }
 
-
 header("Location: tournamentmanage.php?TournamentID=$tournament_id");
 exit;
 

@@ -148,6 +148,7 @@ class DatabaseTable
 		$q .= ")";
 		$result = $sql->db_Query($q);
 		$last_id = mysql_insert_id();
+		$this->id = $last_id;
 		return $last_id;
 	}
 }

@@ -19,8 +19,8 @@ Form (http://malsup.com/jquery/form/) plugins
 <script type="text/javascript" src="./js/ebattles.js"></script>
 <script type="text/javascript" src="./js/tabpane.js"></script>
 <script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/"></script> 
+<!--
+-->
 ';
-
-
 
 ?>

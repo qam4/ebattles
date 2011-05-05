@@ -186,6 +186,41 @@ class Tournament extends DatabaseTable
 			$insertjs = "rows='15' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
 		}
 
+		$text .= '
+		<!-- main calendar program -->
+		<script type="text/javascript" src="./js/calendar/calendar.js"></script>
+		<!-- language for the calendar -->
+		<script type="text/javascript" src="./js/calendar/lang/calendar-en.js"></script>
+		<!-- the following script defines the Calendar.setup helper function, which makes
+		adding a calendar a matter of 1 or 2 lines of code. -->
+		<script type="text/javascript" src="./js/calendar/calendar-setup.js"></script>
+		<script type="text/javascript">
+		<!--//
+		function clearStartDate(frm)
+		{
+		frm.startdate.value = ""
+		}
+		function clearEndDate(frm)
+		{
+		frm.enddate.value = ""
+		}
+		//-->
+		</script>
+		';
+		/*
+		$text .= "
+		<script>
+		$(function() {
+		$('#test').datepicker({
+		duration: '',
+		showTime: true,
+		constrainInput: false
+		});
+		});
+		</script>
+		";
+		*/
+
 		$text .= '<form id="form-tournament-settings" action="'.e_PLUGIN.'ebattles/tournamentprocess.php?TournamentID='.$this->getField('TournamentID').'" method="post">';
 		$text .= '
 		<table class="eb_table" style="width:95%">
@@ -293,7 +328,7 @@ class Tournament extends DatabaseTable
 		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
 		." FROM ".TBL_MATCHS.", "
 		.TBL_SCORES
-		." WHERE (".TBL_MATCHS.".Tournament = '$this_id')"
+		." WHERE (".TBL_MATCHS.".Tournament = '".$this->getField('TournamentID')."')"
 		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 		." AND (".TBL_MATCHS.".Status = 'pending')";
 		$result = $sql->db_Query($q);
