@@ -14,6 +14,18 @@ class Ladder extends DatabaseTable
 	/***************************************************************************************
 	Functions
 	***************************************************************************************/
+	function setDefaultFields()
+	{
+		$this->setField('Game', 1);
+		$this->setField('Type', 'One Player Ladder');
+		$this->setField('MatchType', '1v1');
+		$this->setField('RankingType', 'Classic');
+		$this->setField('PointsPerWin', '3');
+		$this->setField('PointsPerDraw', '2');
+		$this->setField('PointsPerLoss', '1');
+		$this->setField('MaxMapsPerMatch', '1');
+	}
+
 	function resetPlayers()
 	{
 		global $sql;
@@ -160,7 +172,7 @@ class Ladder extends DatabaseTable
 		$result3 = $sql->db_Query($q3);
 	}
 
- 	function deleteLadder()
+	function deleteLadder()
 	{
 		global $sql;
 		$this->deleteMatches();
@@ -193,7 +205,7 @@ class Ladder extends DatabaseTable
 		." ORDER BY TimeReported";
 		$result = $sql->db_Query($q);
 		$num_matches = mysql_numrows($result);
-	
+
 		if ($current_match > $num_matches)
 		{
 			switch($this->fields['Type'])
@@ -253,7 +265,7 @@ class Ladder extends DatabaseTable
 					$next_match = $j + 2;
 					$match_id  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
 					$match = new Match($match_id);
-					
+
 					$time_reported  = mysql_result($result,$j, TBL_MATCHS.".TimeReported");
 
 					//echo "dbg: match: $match_id<br>";
@@ -320,9 +332,9 @@ class Ladder extends DatabaseTable
 		."   AND (".TBL_GAMERS.".User = '$user')";
 		$result = $sql->db_Query($q);
 		$num_rows = mysql_numrows($result);
-		echo "num_rows: $num_rows, $q<br>";
 		if ($num_rows==0)
 		{
+			// FIXME: error here, add dialog
 			$q = " INSERT INTO ".TBL_GAMERS."(User,Game,UniqueGameID)
 			VALUES ($user,".$this->fields['Game'].",'".$username."')";
 			$sql->db_Query($q);
@@ -420,6 +432,499 @@ class Ladder extends DatabaseTable
 				}
 			}
 		}
+	}
+	function displayLadderSettingsForm()
+	{
+		global $sql;
+		// Specify if we use WYSIWYG for text areas
+		global $e_wysiwyg;
+		$e_wysiwyg	= "ladderdescription,ladderrules";  // set $e_wysiwyg before including HEADERF
+		if (e_WYSIWYG)
+		{
+			$insertjs = "rows='25'";
+		}
+		else
+		{
+			require_once(e_HANDLER."ren_help.php");
+			$insertjs = "rows='15' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
+		}
+
+		$text .= '
+		<!-- main calendar program -->
+		<script type="text/javascript" src="./js/calendar/calendar.js"></script>
+		<!-- language for the calendar -->
+		<script type="text/javascript" src="./js/calendar/lang/calendar-en.js"></script>
+		<!-- the following script defines the Calendar.setup helper function, which makes
+		adding a calendar a matter of 1 or 2 lines of code. -->
+		<script type="text/javascript" src="./js/calendar/calendar-setup.js"></script>
+		<script type="text/javascript">
+		<!--//
+		function clearStartDate(frm)
+		{
+		frm.startdate.value = ""
+		}
+		function clearEndDate(frm)
+		{
+		frm.enddate.value = ""
+		}
+		//-->
+		</script>
+		';
+		$text .= "
+		<script type='text/javascript'>
+		<!--//
+		// Forms
+		$(function() {
+		$( '#radio1' ).buttonset();
+		$( '#radio2' ).buttonset();
+		});
+		//-->
+		</script>
+		";
+
+		$text .= '<form id="form-ladder-settings" action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$this->getField('LadderID').'" method="post">';
+		$text .= '
+		<table class="eb_table" style="width:95%">
+		<tbody>
+		';
+		//<!-- Ladder Name -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L15.'</b></td>
+		<td class="eb_td1">
+		<div><input class="tbox" type="text" size="40" name="laddername" value="'.$this->getField('Name').'"/></div>
+		</td>
+		</tr>
+		';
+
+		//<!-- Ladder Password -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L16.'</b></td>
+		<td class="eb_td1">
+		<div><input class="tbox" type="text" size="40" name="ladderpassword" value="'.$this->getField('password').'"/></div>
+		</td>
+		</tr>
+		';
+		//<!-- Ladder Game -->
+
+		$q = "SELECT ".TBL_GAMES.".*"
+		." FROM ".TBL_GAMES
+		." ORDER BY Name";
+		$result = $sql->db_Query($q);
+		/* Error occurred, return given name by default */
+		$numGames = mysql_numrows($result);
+		$text .= '<tr>';
+		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L17.'</b></td>';
+		$text .= '<td class="eb_td1"><select class="tbox" name="laddergame">';
+		for($i=0; $i<$numGames; $i++){
+			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
+			if ($this->getField('Game') == $gid)
+			{
+				$text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
+			}
+			else
+			{
+				$text .= '<option value="'.$gid.'">'.htmlspecialchars($gname).'</option>';
+			}
+		}
+		$text .= '</select>';
+		$text .= '</td></tr>';
+
+		//<!-- Type -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L18.'</b></td>
+		<td class="eb_td1">
+		<div id="radio1">
+		';
+		$text .= '<input class="tbox" type="radio" id="radio11" size="40" name="laddertype" '.($this->getField('Type') == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" /><label for="radio11">'.EB_LADDERM_L19.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio12" size="40" name="laddertype" '.($this->getField('Type') == "Team Ladder" ? 'checked="checked"' : '').' value="Team" /><label for="radio12">'.EB_LADDERM_L20.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio13" size="40" name="laddertype" '.($this->getField('Type') == "ClanWar" ? 'checked="checked"' : '').' value="ClanWar" /><label for="radio13">'.EB_LADDERM_L116.'</label>';
+
+		$text .= '
+		</div>
+		</td>
+		</tr>
+		';
+
+		//<!-- Match Type -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L126.'</b></td>
+		<td class="eb_td1"><select class="tbox" name="laddermatchtype">';
+		$text .= '<option value="1v1" '.($this->getField('MatchType') == "1v1" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L127.'</option>';
+		$text .= '<option value="2v2" '.($this->getField('MatchType') == "2v2" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L128.'</option>';
+		$text .= '<option value="FFA" '.($this->getField('MatchType') == "FFA" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L131.'</option>';
+		$text .= '</select>
+		</td>
+		</tr>
+		';
+
+		//<!-- Rating Type -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L117.'</b><div class="smalltext">'.EB_LADDERM_L118.'</div></td>
+		<td class="eb_td1">
+		<div id="radio2">
+		';
+		$text .= '<input class="tbox" type="radio" id="radio21" size="40" name="ladderrankingtype" '.($this->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" /><label for="radio21">'.EB_LADDERM_L119.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio22" size="40" name="ladderrankingtype" '.($this->getField('RankingType') == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" /><label for="radio22">'.EB_LADDERM_L120.'</label>';
+		$text .= '
+		</div>
+		</td>
+		</tr>
+		';
+
+		//<!-- Match report userclass -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L21.'</b></td>
+		<td class="eb_td1"><select class="tbox" name="laddermatchreportuserclass">';
+		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($this->getField('match_report_userclass') == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
+		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($this->getField('match_report_userclass') == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
+		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.($this->getField('match_report_userclass') == eb_UC_LADDER_OWNER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L24.'</option>';
+		$text .= '</select>
+		</td>
+		</tr>
+		';
+
+		//<!-- Allow Quick Loss Report -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L25.'</b></td>
+		<td class="eb_td1">
+		<div>
+		';
+		$text .= '<input class="tbox" type="checkbox" name="ladderallowquickloss"';
+		if ($this->getField('quick_loss_report') == TRUE)
+		{
+			$text .= ' checked="checked"/>';
+		}
+		else
+		{
+			$text .= '/>';
+		}
+		$text .= '
+		</div>
+		</td>
+		</tr>
+		';
+
+		//<!-- Allow Score -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L26.'</b></td>
+		<td class="eb_td1">
+		<div>
+		';
+		$text .= '<input class="tbox" type="checkbox" name="ladderallowscore"';
+		if ($this->getField('AllowScore') == TRUE)
+		{
+			$text .= ' checked="checked"/>';
+		}
+		else
+		{
+			$text .= '/>';
+		}
+		$text .= '
+		</div>
+		</td>
+		</tr>
+		';
+
+		//<!-- Match Approval -->
+		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+		." FROM ".TBL_MATCHS.", "
+		.TBL_SCORES
+		." WHERE (".TBL_MATCHS.".Ladder = '".$this->getField('LadderID')."')"
+		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+		." AND (".TBL_MATCHS.".Status = 'pending')";
+		$result = $sql->db_Query($q);
+		$row = mysql_fetch_array($result);
+		$nbrMatchesPending = $row['NbrMatches'];
+
+
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L108.'</b><div class="smalltext">'.EB_LADDERM_L109.'</div></td>
+		<td class="eb_td1">
+		<div>';
+		$text .= '<select class="tbox" name="laddermatchapprovaluserclass">';
+		$text .= '<option value="'.eb_UC_NONE.'" '.(($this->getField('MatchesApproval') == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L113.'</option>';
+		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.((($this->getField('MatchesApproval') & eb_UC_LADDER_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L112.'</option>';
+		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.((($this->getField('MatchesApproval') & eb_UC_LADDER_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L111.'</option>';
+		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.((($this->getField('MatchesApproval') & eb_UC_LADDER_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L110.'</option>';
+		$text .= '</select>';
+		$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
+		$text .= '
+		</div>
+		</td>
+		</tr>
+		';
+
+		//<!-- Allow Draws -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L27.'</b></td>
+		<td class="eb_td1">
+		<div>
+		';
+		$text .= '<input class="tbox" type="checkbox" name="ladderallowdraw"';
+		if ($this->getField('AllowDraw') == TRUE)
+		{
+			$text .= ' checked="checked"/>';
+		}
+		else
+		{
+			$text .= '/>';
+		}
+		$text .= '
+		</div>
+		</td>
+		</tr>
+		';
+
+		//<!-- Points -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L28.'</b></td>
+		<td class="eb_td1">
+		<table class="table_left">
+		<tr>
+		<td>'.EB_LADDERM_L29.'</td>
+		<td>'.EB_LADDERM_L30.'</td>
+		<td>'.EB_LADDERM_L31.'</td>
+		</tr>
+		<tr>
+		<td>
+		<div><input class="tbox" type="text" name="ladderpointsperwin" value="'.$this->getField('PointsPerWin').'"/></div>
+		</td>
+		<td>
+		<div><input class="tbox" type="text" name="ladderpointsperdraw" value="'.$this->getField('PointsPerDraw').'"/></div>
+		</td>
+		<td>
+		<div><input class="tbox" type="text" name="ladderpointsperloss" value="'.$this->getField('PointsPerLoss').'"/></div>
+		</td>
+		</tr>
+		</table>
+		';
+		$text .= '
+		</td>
+		</tr>
+		';
+
+		//<!-- Maps -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L125.'</b></td>
+		<td class="eb_td1">
+		<div>
+		';
+		$text .= '<input class="tbox" type="text" name="laddermaxmapspermatch" size="2" value="'.$this->getField('MaxMapsPerMatch').'"';
+		$text .= '
+		</div>
+		</td>
+		</tr>
+		';
+
+		//<!-- Start Date -->
+		if($this->getField('Start_timestamp')!=0)
+		{
+			$start_timestamp_local = $this->getField('Start_timestamp') + TIMEOFFSET;
+			$date_start = date("m/d/Y h:i A", $start_timestamp_local);
+		}
+		else
+		{
+			$date_start = "";
+		}
+
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L32.'</b></td>
+		<td class="eb_td1">
+		<table class="table_left">
+		<tr>
+		<td>
+		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearStartDate(this.form);"/></div>
+		</td>
+		<td>
+		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
+		';
+		$text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
+		$text .= '
+		</td>
+		<td>
+		<div><input class="tbox" type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
+		</td>
+		</tr>
+		</table>
+		';
+		$text .= '
+		<script type="text/javascript">
+		Calendar.setup({
+		inputField     :    "f_date_start",      // id of the input field
+		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
+		showsTime      :    true,            // will display a time selector
+		button         :    "f_trigger_start",   // trigger for the calendar (button ID)
+		singleClick    :    true,           // single-click mode
+		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
+		});
+		</script>
+		</td>
+		</tr>
+		';
+
+		//<!-- End Date -->
+		if($this->getField('End_timestamp')!=0)
+		{
+			$end_timestamp_local = $this->getField('End_timestamp') + TIMEOFFSET;
+			$date_end = date("m/d/Y h:i A", $end_timestamp_local);
+		}
+		else
+		{
+			$date_end = "";
+		}
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L35.'</b></td>
+		<td class="eb_td1">
+		<table class="table_left">
+		<tr>
+		<td>
+		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearEndDate(this.form);"/></div>
+		</td>
+		<td>
+		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
+		';
+		$text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
+		$text .= '
+		</td>
+		<td>
+		<div><input class="tbox" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
+		</td>
+		</tr>
+		</table>
+		';
+		$text .= '
+		<script type="text/javascript">
+		Calendar.setup({
+		inputField     :    "f_date_end",      // id of the input field
+		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
+		showsTime      :    true,            // will display a time selector
+		button         :    "f_trigger_end",   // trigger for the calendar (button ID)
+		singleClick    :    true,           // single-click mode
+		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
+		});
+		</script>
+		</td>
+		</tr>
+		';
+
+		//<!-- Description -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L36.'</b></td>
+		<td class="eb_td1">
+		';
+		$text .= '<textarea class="tbox" id="ladderdescription" name="ladderdescription" cols="70" '.$insertjs.'>'.$this->getField('Description').'</textarea>';
+		if (!e_WYSIWYG)
+		{
+			$text .= '<br />'.display_help("helpb",1);
+		}
+		$text .= '
+		</td>
+		</tr>';
+
+		//<!-- Rules -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L38.'</b></td>
+		<td class="eb_td1">
+		';
+		$text .= '<textarea class="tbox" id="ladderrules" name="ladderrules" cols="70" '.$insertjs.'>'.$this->getField('Rules').'</textarea>';
+		if (!e_WYSIWYG)
+		{
+			$text .= '<br />'.display_help("helpb",1);
+		}
+		$text .= '
+		</td>
+		</tr>
+		</tbody>
+		</table>
+		';
+
+		//<!-- Save Button -->
+		$text .= '
+		<table><tr><td>
+		<div>
+		'.ebImageTextButton('laddersettingssave', 'disk.png', EB_LADDERM_L37).'
+		</div>
+		</td></tr></table>
+
+		</form>';
+
+		return $text;
+	}
+
+	function initStats()
+	{
+		global $sql;
+
+		$last_id = $this->id;
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		VALUES ('$last_id', 'ELO')";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue)
+		VALUES ('$last_id', 'Skill', 4)";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue, InfoOnly)
+		VALUES ('$last_id', 'GamesPlayed', 1, 1)";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue)
+		VALUES ('$last_id', 'VictoryRatio', 3)";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		VALUES ('$last_id', 'WinDrawLoss')";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		VALUES ('$last_id', 'VictoryPercent')";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		VALUES ('$last_id', 'UniqueOpponents')";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		VALUES ('$last_id', 'OpponentsELO')";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue, InfoOnly)
+		VALUES ('$last_id', 'Streaks', 2, 1)";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		VALUES ('$last_id', 'Score')";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		VALUES ('$last_id', 'ScoreAgainst')";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		VALUES ('$last_id', 'ScoreDiff')";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		VALUES ('$last_id', 'Points')";
+		$result = $sql->db_Query($q);
 	}
 }
 

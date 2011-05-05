@@ -24,15 +24,10 @@ jQuery(function() {
 	});
 	
 	$(function() {
-		$( "#brackets" ).draggable();
-	});
-
-	$(function() {
-		$( 'button' ).button();
+		$('#brackets').draggable();
+		$('button').button();
+		$('.tbox').addClass("ui-widget-content ui-corner-all");
 	});
 	
-	$(function() {
-		$( '.tbox' ).addClass("ui-widget-content ui-corner-all");
-	});
 
 }); // end main jQuery function start

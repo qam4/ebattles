@@ -112,7 +112,6 @@ function displayCurrentTournaments(){
 	$text .= '<div>';
 	$text .= '<table>';
 	$text .= '<tr><td>';
-	$text .= EB_TOURNAMENTS_L9.'<br />';
 	$text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
 	if ($gameid == "All")
 	{
@@ -336,7 +335,6 @@ function displayRecentTournaments(){
 	$text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
 	$text .= '<table>';
 	$text .= '<tr><td>';
-	$text .= EB_TOURNAMENTS_L9.'<br />';
 	$text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
 	if ($gameid == "All")
 	{
