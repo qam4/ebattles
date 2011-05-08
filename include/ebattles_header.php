@@ -15,10 +15,10 @@ Form (http://malsup.com/jquery/form/) plugins
 -->
 <script type="text/javascript" src="./js/jquery.form.js"></script>
 <script type="text/javascript" src="./js/jquery.validate.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
 <script type="text/javascript" src="./js/additional-methods.js"></script>
 <script type="text/javascript" src="./js/ebattles.js"></script>
 <script type="text/javascript" src="./js/tabpane.js"></script>
-<script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/"></script> 
 <!--
 -->
 ';
