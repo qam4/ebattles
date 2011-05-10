@@ -15,14 +15,13 @@ require_once(e_PLUGIN."ebattles/include/brackets.php");
 
 /*******************************************************************
 ********************************************************************/
-
 require_once(HEADERF);
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 $pages = new Paginator;
 
 $text .= '
-<script type="text/javascript" src="./js/signup.js"></script>
+<script type="text/javascript" src="./js/tournament.js"></script>
 ';
 
 if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;

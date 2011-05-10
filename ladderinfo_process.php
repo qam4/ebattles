@@ -3,7 +3,10 @@
 * LadderInfo_process.php
 *
 */
+require_once("../../class2.php");
+require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN.'ebattles/include/ladder.php');
+require_once(e_PLUGIN.'ebattles/include/gamer.php');
 
 $ladder_id = $_GET['LadderID'];
 $ladder = new Ladder($ladder_id);
@@ -30,6 +33,8 @@ if(isset($_POST['quitladder'])){
 if(isset($_POST['joinladder'])){
     if ($_POST['joinLadderPassword'] == $ladder->getField('Password'))
     {
+		$UniqueGameID = $tp->toDB($_POST["charactername"].'#'.$_POST["code"]);
+		updateGamer(USERID, $ladder->getField('Game'), $UniqueGameID);
         $ladder->ladderAddPlayer(USERID, 0, FALSE);
     }
     header("Location: ladderinfo.php?LadderID=$ladder_id");
