@@ -657,10 +657,12 @@ else
 	*/
 
 	// Is the user a player?
-	$q = "SELECT *"
-	." FROM ".TBL_PLAYERS
-	." WHERE (Ladder = '$ladder_id')"
-	."   AND (User = ".USERID.")";
+	$q = "SELECT ".TBL_PLAYERS.".*"
+	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS
+	." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_GAMERS.".User = ".USERID.")";
 	$result = $sql->db_Query($q);
 
 	$pbanned=0;
@@ -684,7 +686,7 @@ else
 		($search_user) ? $link_page = ceil($search_user[0]/$pages->items_per_page) : $link_page = 1;
 
 		$myPosition_txt = '<p>';
-		$myPosition_txt .= "<a href=\"$self?page=$link_page&amp;ipp=$pages->items_per_page$pages->querystring\">".EB_LADDER_L55.": $prank_txt</a><br />";
+		$myPosition_txt .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'&amp;page='.$link_page.'&amp;ipp='.$pages->items_per_page.$pages->querystring.'">'.EB_LADDER_L55.': '.$prank_txt.'</a><br />';
 		$myPosition_txt .= '</p>';
 
 		// Is the ladder started, and not ended
@@ -1033,7 +1035,7 @@ else
 	if ($nbrMatchesPending == 0) $can_approve = 0;
 
 	$text .= '<div id="tabs-4">';
-//fm:	$text .= ($can_approve == 1) ? ' <span style="color:red">('.$nbrMatchesPending.')</span>' : '';
+	//fm:	$text .= ($can_approve == 1) ? ' <span style="color:red">('.$nbrMatchesPending.')</span>' : '';
 
 	//dbg: $text .= "Userclass: $userclass<br>";
 
@@ -1103,8 +1105,8 @@ else
 	$text .= $numMatches.'&nbsp;'.EB_LADDER_L59;
 	if ($numMatches>$rowsPerPage)
 	{
-	$text .= ' [<a href="'.e_PLUGIN.'ebattles/laddermatchs.php?LadderID='.$ladder_id.'">'.EB_LADDER_L60.'</a>]';
-}
+		$text .= ' [<a href="'.e_PLUGIN.'ebattles/laddermatchs.php?LadderID='.$ladder_id.'">'.EB_LADDER_L60.'</a>]';
+	}
 	$text .= '</b></p>';
 	$text .= '<br />';
 
