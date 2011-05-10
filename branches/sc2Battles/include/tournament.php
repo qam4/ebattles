@@ -44,6 +44,7 @@ class Tournament extends DatabaseTable
 		$num_rows = mysql_numrows($result);
 		if ($num_rows==0)
 		{
+			// TODO: need to create gamer before coming here (i.e. when player joins a division.)
 			echo "Error: no gamer";
 			return;
 		}

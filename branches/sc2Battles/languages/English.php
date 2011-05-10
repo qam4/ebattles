@@ -210,6 +210,7 @@ define('EB_LADDER_L70', 'match(es) scheduled');
 define('EB_LADDER_L71', 'Challenge Team');
 define('EB_LADDER_L72', 'Match Schedule');
 define('EB_LADDER_L73', 'match(es) to approve');
+define('EB_LADDER_L74', 'Submit Replay');
 
 define('EB_LADDERM_L1', 'Manage');
 define('EB_LADDERM_L2', 'Summary');
@@ -357,6 +358,8 @@ define('EB_LADDERC_L1', 'Create Ladder');
 define('EB_LADDERC_L2', 'You are not authorized to create a ladder.');
 define('EB_LADDERC_L3', 'Ladder');
 define('EB_LADDERC_L4', 'Put a description for your ladder here');
+
+define('EB_SUBMITREPLAY_L1', 'Submit Replay');
 
 define('EB_TOURNAMENTS_L1', 'Tournaments');
 define('EB_TOURNAMENTS_L2', 'Current Tournaments');

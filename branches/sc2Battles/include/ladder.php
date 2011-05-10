@@ -334,12 +334,9 @@ class Ladder extends DatabaseTable
 		$num_rows = mysql_numrows($result);
 		if ($num_rows==0)
 		{
-			// FIXME: error here, add dialog
-			$q = " INSERT INTO ".TBL_GAMERS."(User,Game,UniqueGameID)
-			VALUES ($user,".$this->fields['Game'].",'".$username."')";
-			$sql->db_Query($q);
-			$last_id = mysql_insert_id();
-			$gamerID = $last_id;
+			// TODO: need to create gamer before coming here (i.e. when player joins a division.)
+			echo "Error: no gamer";
+			return;
 		}
 		else
 		{
