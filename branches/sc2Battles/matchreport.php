@@ -319,7 +319,7 @@ if (isset($_POST['submit']))
 	// List of all Maps
 	$q_Maps = "SELECT ".TBL_MAPS.".*"
 	." FROM ".TBL_MAPS
-	." WHERE (".TBL_MAPS.".Game = '$ladder->getField('Game')')";
+	." WHERE (".TBL_MAPS.".Game = '".$ladder->getField('Game')."')";
 	$result_Maps = $sql->db_Query($q_Maps);
 	$numMaps = mysql_numrows($result_Maps);
 	$map = '';
@@ -329,7 +329,7 @@ if (isset($_POST['submit']))
 		if ($matchMap > 0) $map .= ',';
 		$map .= $_POST['map'.$matchMap];
 	}
-
+	
 	for($i=1;$i<=$nbr_players;$i++)
 	{
 		$pid = $_POST['player'.$i];

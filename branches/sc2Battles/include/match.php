@@ -1215,6 +1215,7 @@ class Match extends DatabaseTable
 			$mTimeScheduled  = mysql_result($result, 0, TBL_MATCHS.".TimeScheduled");
 			$mTimeScheduled_local = $mTimeScheduled + TIMEOFFSET;
 			$dateScheduled = date("d M Y, h:i A",$mTimeScheduled_local);
+			$mComments = mysql_result($result, 0, TBL_MATCHS.".Comments");
 			$ladder_id  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
 			$ladder = new Ladder($ladder_id);
 
@@ -1633,6 +1634,7 @@ class Match extends DatabaseTable
 						$string .= EB_MATCH_L9.'&nbsp;'.$date.'.';
 					}
 					$nbr_comments = getCommentTotal("ebmatches", $this->fields['MatchID']);
+					$nbr_comments += ($mComments == '') ? 0 : 1 ;
 					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$this->fields['MatchID'].'" title="'.EB_MATCH_L4.'&nbsp;'.$this->fields['MatchID'].'">'.$nbr_comments.'&nbsp;';
 					$string .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
 					$string .= '</a>';
