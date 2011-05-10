@@ -495,7 +495,16 @@ class SC2Replay {
 								else if ($temp == 0x88 || $temp == 0x8A)
 									$numByte += 15;
 								if (!$this->players[$playerId]['isObs'] && $this->players[$playerId]['race'] == "") {
-									switch ($ability) {
+									$num = $ability;
+									if ($this->build >= 17326) {
+										if ($num > 0x012c00) {
+											$num -= 0x200;
+										} elseif ($num > 0x002900) {
+											$num -= 0x100;
+			 							}
+			 						}
+									
+									switch ($num) {
 										case 0x020A00: //SCV
 											$this->players[$playerId]['race'] = "Terran";
 											break;
@@ -982,7 +991,7 @@ class SC2Replay {
 		$teamCounts = array();
 		foreach ($this->getActualPlayers() as $val) {
 			if ($val['race'] == "") 
-				//fm:$this->players[$val['id']]['race'] = $val['lrace'];
+				$this->players[$val['id']]['race'] = $val['lrace'];
 			if ($this->recorderId > 0 && $val['id'] == $this->recorderId) // if the recorder is a player, add him to the player left -array
 				$playerLeft[] = $val['id'];								  // for maximum accuracy in winner detection
 			if (isset($teamCounts[$val['team']]))

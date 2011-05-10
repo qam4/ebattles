@@ -19,11 +19,32 @@ class Ladder extends DatabaseTable
 		$this->setField('Game', 1);
 		$this->setField('Type', 'One Player Ladder');
 		$this->setField('MatchType', '1v1');
+		$this->setField('nbr_games_to_rank', '1');
+		$this->setField('nbr_team_games_to_rank', '1');
+		$this->setField('ELO_default', ELO_DEFAULT);
+		$this->setField('ELO_K', ELO_K);
+		$this->setField('ELO_M', ELO_M);
+		$this->setField('TS_default_mu', floatToSQL(TS_Mu0));
+		$this->setField('TS_default_sigma', floatToSQL(TS_sigma0));
+		$this->setField('TS_beta', floatToSQL(TS_beta));
+		$this->setField('TS_epsilon', floatToSQL(TS_epsilon));
+		$this->setField('IsChanged', '1');
+		$this->setField('AllowDraw', '0');
+		$this->setField('AllowScore', '0');
+		$this->setField('PointsPerWin', PointsPerWin_DEFAULT);
+		$this->setField('PointsPerDraw', PointsPerDraw_DEFAULT);
+		$this->setField('PointsPerLoss', PointsPerLoss_DEFAULT);
+		$this->setField('match_report_userclass', eb_UC_LADDER_PLAYER);
+		$this->setField('quick_loss_report', '0');
+		$this->setField('hide_ratings_column', '0');
+		$this->setField('MatchesApproval', eb_UC_NONE);
 		$this->setField('RankingType', 'Classic');
-		$this->setField('PointsPerWin', '3');
-		$this->setField('PointsPerDraw', '2');
-		$this->setField('PointsPerLoss', '1');
-		$this->setField('MaxMapsPerMatch', '1');
+		$this->setField('Visibility', eb_UC_NONE);
+		$this->setField('Status', 'active');
+		$this->setField('PlayersApproval', eb_UC_NONE);
+		$this->setField('ChallengesEnable', '0');
+		$this->setField('MaxDatesPerChallenge', eb_MAX_CHALLENGE_DATES);
+		$this->setField('MaxMapsPerMatch', eb_MAX_MAPS_PER_MATCH);	
 	}
 
 	function resetPlayers()

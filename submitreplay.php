@@ -124,24 +124,30 @@ if (isset($_FILES['userfile'])) {
 			if ($init == false)
 				$text .= "Error parsing uploaded file, make sure it is a valid MPQ archive!<br />\n";
 			else if ($a->getFileType() == "SC2replay") {
-				$text .= sprintf("Version: %s<br />\n",$a->getVersionString());
+				$text .= '<table class="eb_table table_left"><tbody>';
+				$text .= '<td class="eb_td1">Version</td><td class="eb_td2">'.$a->getVersionString();
+
 				$b = $a->parseReplay();
 				$parseDurationString .= sprintf("Parsed replay in %d ms.<br />\n",((microtime_float() - $start)*1000));
 				$players = $b->getPlayers();
-				$recorder = $b->getRecorder();
-				$text .= sprintf("Map name: %s<br />\n",$b->getMapName());
-				$text .= sprintf("Game length: %s<br />\n",$b->getFormattedGameLength());
-				$text .= sprintf("Team size: %s<br />\n",$b->getTeamSize());
-				$text .= sprintf("Game speed: %s<br />\n",$b->getGameSpeedText());
-				$text .= sprintf("Real team size: %s<br />\n",$b->getRealTeamSize());
-				$text .= sprintf("Realm: %s<br />\n",$b->getRealm());
-				$text .= sprintf("Date and time played: %s<br />\n",date('jS \of F Y \a\t H:i' ,$b->getCtime()));
+				$recorder = $b->getRecorder();				
+
+				$text .= '<tr><td class="eb_td1">Map name</td><td class="eb_td2">'.$b->getMapName().'</td></tr>';
+				$text .= '<tr><td class="eb_td1">Game length</td><td class="eb_td2">'.$b->getFormattedGameLength().'</td></tr>';
+				$text .= '<tr><td class="eb_td1">Team size</td><td class="eb_td2">'.$b->getTeamSize().'</td></tr>';
+				$text .= '<tr><td class="eb_td1">Game speed</td><td class="eb_td2">'.$b->getGameSpeedText().'</td></tr>';
+				$text .= '<tr><td class="eb_td1">Real team size</td><td class="eb_td2">'.$b->getRealTeamSize().'</td></tr>';
+				$text .= '<tr><td class="eb_td1">Realm</td><td class="eb_td2">'.$b->getRealm().'</td></tr>';
+				$text .= '<tr><td class="eb_td1">Date and time played</td><td class="eb_td2">'.date('jS \of F Y \a\t H:i' ,$b->getCtime()).'</td></tr>';
 				if ($recorder != null)
-					$text .= sprintf("Replay recorded by: %s<br />\n",$recorder['name']);
+					$text .= '<tr><td class="eb_td1">Replay recorded by</td><td class="eb_td2">'.$recorder['name'].'</td></tr>';
+				$text .= '</tbody></table>';
+
+				
 				$apmString = "<b>APM graphs</b><br />\n";
 				$obsString = "";
 				$obsCount = 0;
-				$text .= "<table border=\"1\"><tr><th>Player name</th><th>Race</th><th>Color</th><th>Team</th><th>Average APM<br />(experimental)</th><th>Winner?</th></tr>\n";
+				$text .= '<table class="table_left" border="1"><tr><th>Player name</th><th>Race</th><th>Color</th><th>Team</th><th>Average APM<br />(experimental)</th><th>Winner?</th></tr>';
 				foreach($players as $value) {
 					if ($value['isObs']) {
 						if ($obsString == "")
