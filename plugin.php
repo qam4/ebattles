@@ -164,6 +164,7 @@ PointsPerWin int default '".PointsPerWin_DEFAULT."',
 PointsPerDraw int default '".PointsPerDraw_DEFAULT."',
 PointsPerLoss int default '".PointsPerLoss_DEFAULT."',
 match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_PLAYER."',
+match_replay_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 quick_loss_report tinyint(1) DEFAULT '1',
 hide_ratings_column tinyint(1) DEFAULT '0',
 MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
@@ -275,6 +276,10 @@ Comments text NOT NULL,
 Status varchar(20) DEFAULT 'active',
 Maps varchar(255) NOT NULL default '0',
 TimeScheduled int(11) unsigned not null
+GameLength int(11) unsigned not null,
+GameSpeed varchar(20),
+Realm varchar(20),
+TimePlayed int(11) unsigned not null
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_PLAYERS."
 (
@@ -331,7 +336,10 @@ Player_Win int DEFAULT '0',
 Player_Loss int DEFAULT '0',
 Player_Draw int DEFAULT '0',
 Player_Points int DEFAULT '0',
-Faction int DEFAULT '0'
+Faction int DEFAULT '0',
+Color varchar(20),
+sColor varchar(20),
+APM int DEFAULT '0'
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_STATSCATEGORIES."
 (
@@ -464,6 +472,7 @@ Description text NOT NULL,
 NextUpdate_timestamp int(11) unsigned not null,
 IsChanged tinyint(1) DEFAULT '1',
 match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_PLAYER."',
+match_replay_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 Status varchar(20) DEFAULT 'draft',
 PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',

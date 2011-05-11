@@ -76,10 +76,10 @@ function displayRecentActivity($ladder_id){
 	.TBL_USERS.", "
 	.TBL_LADDERS.", "
 	.TBL_GAMES
-    ." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
+	." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
 	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 	." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)"
-    ." AND (".TBL_PLAYERS.".Ladder = ".TBL_LADDERS.".LadderID)"
+	." AND (".TBL_PLAYERS.".Ladder = ".TBL_LADDERS.".LadderID)"
 	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
 	.$LadderID_award
 	." ORDER BY ".TBL_AWARDS.".timestamp DESC"
@@ -87,7 +87,7 @@ function displayRecentActivity($ladder_id){
 
 	$result = $sql->db_Query($q);
 	$numAwards = mysql_numrows($result);
-	
+
 	if ($numAwards>0)
 	{
 		/* Display table contents */
@@ -95,7 +95,9 @@ function displayRecentActivity($ladder_id){
 		{
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
-			$aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
+			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+			$gamer = new SC2Gamer($gamer_id);
+			$aUserNickName = $gamer->getGamerName();
 			$aLaddergame = mysql_result($result,$i , TBL_GAMES.".Name");
 			$aLaddergameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
@@ -162,8 +164,8 @@ function displayRecentActivity($ladder_id){
 	.TBL_TEAMS.", "
 	.TBL_LADDERS.", "
 	.TBL_GAMES
-    ." WHERE (".TBL_AWARDS.".Team = ".TBL_TEAMS.".TeamID)"
-    ." AND (".TBL_TEAMS.".Ladder = ".TBL_LADDERS.".LadderID)"
+	." WHERE (".TBL_AWARDS.".Team = ".TBL_TEAMS.".TeamID)"
+	." AND (".TBL_TEAMS.".Ladder = ".TBL_LADDERS.".LadderID)"
 	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
 	.$LadderID_award
 	." ORDER BY ".TBL_AWARDS.".timestamp DESC"
@@ -171,7 +173,7 @@ function displayRecentActivity($ladder_id){
 
 	$result = $sql->db_Query($q);
 	$numAwards = mysql_numrows($result);
-	
+
 	if ($numAwards>0)
 	{
 		/* Display table contents */
@@ -238,7 +240,7 @@ function displayRecentActivity($ladder_id){
 			$nbr_ladders ++;
 		}
 	}
-	
+
 	$text .= '<table style="margin-left: 0px; margin-right: auto;">';
 	multi2dSortAsc($ladders, 0, SORT_DESC);
 	for ($index = 0; $index<min($nbr_ladders, $rowsPerPage); $index++)

@@ -31,7 +31,7 @@ if(isset($_POST['quitladder'])){
     header("Location: ladderinfo.php?LadderID=$ladder_id");
 }
 if(isset($_POST['joinladder'])){
-    if ($_POST['joinLadderPassword'] == $ladder->getField('Password'))
+    if ($_POST['joinLadderPassword'] == $ladder->getField('password'))
     {
 		$UniqueGameID = $tp->toDB($_POST["charactername"].'#'.$_POST["code"]);
 		updateGamer(USERID, $ladder->getField('Game'), $UniqueGameID);
@@ -40,7 +40,7 @@ if(isset($_POST['joinladder'])){
     header("Location: ladderinfo.php?LadderID=$ladder_id");
 }
 if(isset($_POST['teamjoinladder'])){
-    if ($_POST['joinLadderPassword'] == $ladder->getField('Password'))
+    if ($_POST['joinLadderPassword'] == $ladder->getField('password'))
     {
         $div_id = $_POST['division'];
         $ladder->ladderAddDivision($div_id, FALSE);

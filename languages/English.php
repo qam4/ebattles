@@ -347,6 +347,7 @@ define('EB_LADDERM_L129', '3v3');
 define('EB_LADDERM_L130', '4v4');
 define('EB_LADDERM_L131', 'Free for All');
 define('EB_LADDERM_L132', 'View Ladder');
+define('EB_LADDERM_L133', 'Match replay report userclass');
 
 
 define('EB_LADDERP_L1', 'Past Ladders');
@@ -360,6 +361,18 @@ define('EB_LADDERC_L3', 'Ladder');
 define('EB_LADDERC_L4', 'Put a description for your ladder here');
 
 define('EB_SUBMITREPLAY_L1', 'Submit Replay');
+define('EB_SUBMITREPLAY_L2', 'There were errors in the information gathered from the replay you uploaded, they are listed below:');
+define('EB_SUBMITREPLAY_L3', 'The replay match type is not compatible with the ladder match type');
+define('EB_SUBMITREPLAY_L4', 'We could not get the winner from the replay');
+define('EB_SUBMITREPLAY_L5', 'One player is an AI');
+define('EB_SUBMITREPLAY_L6', 'The following player is not in the ladder: ');
+define('EB_SUBMITREPLAY_L7', '');
+define('EB_SUBMITREPLAY_L8', '');
+define('EB_SUBMITREPLAY_L9', '');
+define('EB_SUBMITREPLAY_L10', '');
+
+
+
 
 define('EB_TOURNAMENTS_L1', 'Tournaments');
 define('EB_TOURNAMENTS_L2', 'Current Tournaments');
@@ -607,6 +620,7 @@ define('EB_TOURNAMENTM_L130', '4v4');
 define('EB_TOURNAMENTM_L131', 'Free for All');
 define('EB_TOURNAMENTM_L132', 'Max number of players');
 define('EB_TOURNAMENTM_L133', 'View Tournament');
+define('EB_TOURNAMENTM_L134', 'Match replay report userclass');
 
 
 define('EB_TOURNAMENTP_L1', 'Past Tournaments');

@@ -608,6 +608,19 @@ class Ladder extends DatabaseTable
 		</tr>
 		';
 
+		//<!-- Match replay report userclass -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L133.'</b></td>
+		<td class="eb_td1"><select class="tbox" name="laddermatchreplayreportuserclass">';
+		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
+		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
+		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_OWNER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L24.'</option>';
+		$text .= '</select>
+		</td>
+		</tr>
+		';
+		
 		//<!-- Allow Quick Loss Report -->
 		$text .= '
 		<tr>

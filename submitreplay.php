@@ -8,11 +8,12 @@ require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(HEADERF);
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
+global $sql;
 $ladder_id = $_GET['LadderID'];
 
 $MAX_FILE_SIZE = 4000000;
 
-$text .= '<div class="ui-widget ui-widget-content ui-corner-all">';
+//$text .= '<div class="ui-widget ui-widget-content ui-corner-all">';
 $text .= '
 <form enctype="multipart/form-data" action="'.$SERVER['REQUEST_URI'].'" method="post">
 <input type="hidden" name="MAX_FILE_SIZE" value="'.$MAX_FILE_SIZE.'" />
@@ -60,21 +61,55 @@ if (isset($_FILES['userfile'])) {
 				$parseDurationString .= sprintf("Parsed replay in %d ms.<br />\n",((microtime_float() - $start)*1000));
 				$players = $b->getPlayers();
 				$recorder = $b->getRecorder();
-				
+
 				$error_str = '';
 
 				if ($ladder_id) {
 					$ladder = new Ladder($ladder_id);
-					
+					$match = new Match();
+
 					// Check if replay->TeamSize == ladder->MatchType
 					if ($b->getTeamSize() != $ladder->getField('MatchType'))
 					$error_str .= '<li>'.EB_SUBMITREPLAY_L3.'</li>';
-					
+
 					// Check if winner is known
 					if (!$b->isWinnerKnown())
 					$error_str .= '<li>'.EB_SUBMITREPLAY_L4.'</li>';
 					
+					// TODO: Check if the replay has already been submitted.
+					
+					$match->setField('Ladder', $ladder_id);
+					$match->setField('ReportedBy', USERID);
+					$match->setField('TimeReported', $time);
+					$match->setField('Status', 'pending');
+					$match->setField('GameLength', $b->getGameLength());
+					$match->setField('GameSpeed', $b->getGameSpeedText());
+					$match->setField('Realm', $b->getRealm());
+					$match->setField('TimePlayed', $b->getCtime());
+
+					// Map
+					$q2 = "SELECT ".TBL_MAPS.".*"
+					." FROM ".TBL_MAPS
+					." WHERE (".TBL_MAPS.".Game = '".$ladder->getField('Game')."')"
+					." AND (".TBL_MAPS.".Name = '".$tp->toDB($b->getMapName())."')";
+					$result2 = $sql->db_Query($q2);
+					$num_rows = mysql_numrows($result2);
+					if ($num_rows!=0)
+					{
+						$map = mysql_result($result2, 0, TBL_MAPS.".MapID");
+					}
+					else
+					{
+						$q2 = "INSERT INTO ".TBL_MAPS."(Game,Image,Name,Description)
+						VALUES ('".$ladder->getField('Game')."','','".$tp->toDB($b->getMapName())."','')";
+						$result2 = $sql->db_Query($q2);
+						$map = mysql_insert_id();
+					}
+					$match->setField('Maps', $map);
+
 					// Check if the replay players are ladder players
+					$i = 0;
+					$scores = array();
 					foreach($players as $player) {
 						if ($player['isObs']) {
 							if ($obsString == "")
@@ -84,22 +119,47 @@ if (isset($_FILES['userfile'])) {
 							$obsCount++;
 							continue;
 						}
-						if ($player['isComp']) 
+						if ($player['isComp'])
 						$error_str .= '<li>'.EB_SUBMITREPLAY_L5.'</li>';
-						
-						//Find player by name
-						$player['name'];
-						
-						
+
+						$q = "SELECT DISTINCT ".TBL_PLAYERS.".*"
+						." FROM ".TBL_PLAYERS.", "
+						.TBL_GAMERS
+						." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+						." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+						." AND (".TBL_GAMERS.".UniqueGameID LIKE '".$player['name']."#___')";
+						$result = $sql->db_Query($q);
+						$numPlayers = mysql_numrows($result);
+
+						if ($numPlayers == 0)
+						{
+							$error_str .= '<li>'.EB_SUBMITREPLAY_L6.$player['name'].'</li>';
+						}
+						else
+						{
+							$scores[$i]['Player'] = mysql_result($result, 0, TBL_PLAYERS.".PlayerID");
+
+							$q2 = "SELECT ".TBL_FACTIONS.".*"
+							." FROM ".TBL_FACTIONS
+							." WHERE (".TBL_FACTIONS.".Game = '".$ladder->getField('Game')."')"
+							." AND (".TBL_FACTIONS.".Name = '".$player['race']."')";
+							$result2 = $sql->db_Query($q2);
+							$scores[$i]['Faction'] = mysql_result($result2, 0, TBL_FACTIONS.".FactionID");
+
+							$scores[$i]['Player_MatchTeam'] = ($player['team'] > 0)? $player['team'] : 0;
+							$scores[$i]['Player_Rank'] = ($player['won'] == 1)?1:2;
+							$scores[$i]['Color'] = $player['color'];
+							$scores[$i]['sColor'] = $player['sColor'];
+							$scores[$i]['APM'] = ($player['team'] > 0)?(round($player['apmtotal'] / ($b->getGameLength() / 60))):0;
+							$i++;
+						}
 					}
-					
-					
-					
+					$nbr_players = $i;
+					//var_dump($match);
+					//var_dump($scores);
+				} else {
+					$error_str .= '<li>Error</li>';
 				}
-
-
-
-
 
 				if ($error_str!='')
 				{
@@ -163,6 +223,66 @@ if (isset($_FILES['userfile'])) {
 					if ($obsCount > 0) {
 						$text .= "Observers ($obsCount): $obsString<br />\n";
 					}
+				} else {
+					// No errors, create the match
+					$match_id = $match->insert();
+
+					// Create scores
+					for($i=0;$i < $nbr_players;$i++)
+					{
+						switch($ladder->getField('Type'))
+						{
+							case "One Player Ladder":
+							case "Team Ladder":
+							$q =
+							"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Faction,Color,sColor,APM)
+							VALUES (
+							$match_id,
+							'".$scores[$i]['Player']."',
+							'".$scores[$i]['Player_MatchTeam']."',
+							0,
+							'".$scores[$i]['Player_Rank']."',
+							'".$scores[$i]['Faction']."',
+							'".$scores[$i]['Color']."',
+							'".$scores[$i]['sColor']."',
+							'".$scores[$i]['APM']."'
+							)";
+							break;
+							case "ClanWar":
+							break;
+							default:
+							$q = '';
+						}
+						$result = $sql->db_Query($q);
+						
+						//var_dump($q);
+						//exit;
+					}
+
+					// Update scores stats
+					$match->match_scores_update();
+
+					// Automatically Update Players stats only if Match Approval is Disabled
+					if ($ladder->getField('MatchesApproval') == eb_UC_NONE)
+					{
+						switch($ladder->getField('Type'))
+						{
+							case "One Player Ladder":
+							case "Team Ladder":
+							$match->match_players_update();
+							break;
+							case "ClanWar":
+							$match->match_teams_update();
+							break;
+							default:
+						}
+					}
+
+					$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
+					$result = $sql->db_Query($q);
+
+					header("Location: matchinfo.php?matchid=$match_id");
+					exit;
 				}
 
 			}
@@ -179,7 +299,7 @@ if (isset($_FILES['userfile'])) {
 	}
 }
 
-$text .= '</div>'; // ui-widget
+//$text .= '</div>'; // ui-widget
 $ns->tablerender(EB_SUBMITREPLAY_L1, $text);
 require_once(FOOTERF);
 exit;

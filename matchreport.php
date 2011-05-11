@@ -89,7 +89,8 @@ switch($ladder->getField('Type'))
 	case "One Player Ladder":
 	case "Team Ladder":
 	$q = "SELECT ".TBL_PLAYERS.".*, "
-	.TBL_USERS.".*"
+	.TBL_USERS.".*, "
+	.TBL_GAMERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_GAMERS.", "
 	.TBL_USERS
@@ -97,7 +98,7 @@ switch($ladder->getField('Type'))
 	." AND (".TBL_PLAYERS.".Banned != 1)"
 	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 	." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-	." ORDER BY ".TBL_USERS.".user_name";
+	." ORDER BY ".TBL_GAMERS.".UniqueGameID";
 
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
@@ -109,7 +110,9 @@ switch($ladder->getField('Type'))
 		$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 		$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
 		$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-		$pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+       	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+       	$gamer = new SC2Gamer($gamer_id);
+       	$pname = $gamer->getGamerName();
 		$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 		list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 		if ($prank==0)
@@ -241,7 +244,9 @@ if($match_id)
 			case "Team Ladder":
 			$pid  = mysql_result($result,$score, TBL_PLAYERS.".PlayerID");
 			$puid  = mysql_result($result,$score, TBL_USERS.".user_id");
-			$pname  = mysql_result($result,$score, TBL_USERS.".user_name");
+       		$gamer_id = mysql_result($result,$score, TBL_PLAYERS.".Gamer");
+       		$gamer = new SC2Gamer($gamer_id);
+       		$pname = $gamer->getGamerName();
 			$pavatar = mysql_result($result,$score, TBL_USERS.".user_image");
 			$pteam  = mysql_result($result,$score, TBL_PLAYERS.".Team");
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
