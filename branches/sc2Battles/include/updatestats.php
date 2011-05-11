@@ -7,6 +7,7 @@
 require_once(e_HANDLER."avatar_handler.php");
 require_once(e_HANDLER."rate_class.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/gamer.php");
 
 function updateStats($ladder_id, $time, $serialize = TRUE)
 {
@@ -80,8 +81,10 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
     {
         // For each player
         $pid  = mysql_result($result_Players,$player, TBL_PLAYERS.".PlayerID");
-        $puid  = mysql_result($result_Players,$player, TBL_PLAYERS.".User");
-        $pname  = mysql_result($result_Players,$player, TBL_USERS.".user_name");
+        $puid  = mysql_result($result_Players,$player, TBL_USERS.".user_id");
+        $gamer_id = mysql_result($result_Players,$player, TBL_PLAYERS.".Gamer");
+        $gamer = new SC2Gamer($gamer_id);
+        $pname = $gamer->getGamerName();
         $pavatar = mysql_result($result_Players,$player, TBL_USERS.".user_image");
         $pteam = mysql_result($result_Players,$player, TBL_PLAYERS.".Team");
         $pgames_played = mysql_result($result_Players,$player, TBL_PLAYERS.".GamesPlayed");
@@ -519,7 +522,7 @@ function updateStats($ladder_id, $time, $serialize = TRUE)
     for($player=0; $player < $numPlayers; $player++)
     {
         $pid = mysql_result($result_Players,$player, TBL_PLAYERS.".PlayerID");
-        $puid = mysql_result($result_Players,$player, TBL_PLAYERS.".User");
+        $puid = mysql_result($result_Players,$player, TBL_USERS.".user_id");
         $prank = mysql_result($result_Players,$player, TBL_PLAYERS.".Rank");
         $prankdelta = mysql_result($result_Players,$player, TBL_PLAYERS.".RankDelta");
         $pstreak = mysql_result($result_Players,$player, TBL_PLAYERS.".Streak");

@@ -788,7 +788,9 @@ else
 		{
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
-			$aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
+			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+			$gamer = new SC2Gamer($gamer_id);
+			$aUserNickName = $gamer->getGamerName();
 			$aLadderID  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
 			$aLadderName  = mysql_result($result,$i, TBL_LADDERS.".Name");
 			$aLaddergame = mysql_result($result,$i , TBL_GAMES.".Name");

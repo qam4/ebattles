@@ -262,7 +262,7 @@ else
 						if( $numTeams == 0)
 						{
 
-							if ($tournament->getField('Password') != "")
+							if ($tournament->getField('password') != "")
 							{
 								$text .= '<td>'.EB_TOURNAMENT_L8.'</td>';
 								$text .= '<td>

@@ -147,6 +147,9 @@ else{
 		/* Ladder Match report userclass */
 		$ladder->setField('match_report_userclass', $_POST['laddermatchreportuserclass']);
 
+		/* Ladder Match replay report userclass */
+		$ladder->setField('match_replay_report_userclass', $_POST['laddermatchreplayreportuserclass']);
+
 		/* Ladder Quick Loss Report */
 		if ($_POST['ladderallowquickloss'] != "")
 		{

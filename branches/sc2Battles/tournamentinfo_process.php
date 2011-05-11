@@ -35,7 +35,7 @@ if(isset($_POST['quittournament'])){
 }
 if(isset($_POST['jointournament'])){
 	
-	if ($_POST['joinTournamentPassword'] == $tournament->getField('Password'))
+	if ($_POST['joinTournamentPassword'] == $tournament->getField('password'))
 	{
 		$UniqueGameID = $tp->toDB($_POST["charactername"].'#'.$_POST["code"]);
 		updateGamer(USERID, $tournament->getField('Game'), $UniqueGameID);
@@ -45,7 +45,7 @@ if(isset($_POST['jointournament'])){
 	header("Location: tournamentinfo.php?TournamentID=$tournament_id");
 }
 if(isset($_POST['teamjointournament'])){
-	if ($_POST['joinTournamentPassword'] == $tournament->getField('Password'))
+	if ($_POST['joinTournamentPassword'] == $tournament->getField('password'))
 	{
 		$div_id = $_POST['division'];
 		$tournament->tournamentAddDivision($div_id, FALSE);

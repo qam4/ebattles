@@ -141,6 +141,9 @@ else{
 		/* Tournament Match report userclass */
 		$tournament->setField('match_report_userclass', $_POST['tournamentmatchreportuserclass']);
 
+		/* Tournament Match report userclass */
+		$tournament->setField('match_replay_report_userclass', $_POST['tournamentmatchreplayreportuserclass']);
+
 		/* Tournament Match Approval */
 		$tournament->setField('MatchesApproval', $_POST['tournamentmatchapprovaluserclass']);
 

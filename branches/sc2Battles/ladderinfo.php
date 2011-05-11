@@ -748,9 +748,10 @@ else
 	if ($ladder->getField('AllowScore')==TRUE)
 	$can_report_quickloss = 0;
 
-	if($ladder->getField('Type') == "ClanWar") $Can_Report_Quickloss = 0;  // Disable quick loss report for clan wars for now
+	if($ladder->getField('Type') == "ClanWar") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
 	if($ladder->getField('quick_loss_report')==FALSE) $can_report_quickloss = 0;
 	if($userclass < $ladder->getField('match_report_userclass')) $can_report = 0;
+	if($userclass < $ladder->getField('match_replay_report_userclass')) $can_submit_replay = 0;
 
 	if($userclass < $ladder->getField('MatchesApproval')) $can_approve = 0;
 	if($ladder->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
@@ -940,7 +941,9 @@ else
 				$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 				$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
 				$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-				$pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+	        	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+	        	$gamer = new SC2Gamer($gamer_id);
+	        	$pname = $gamer->getGamerName();
 				$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
@@ -1262,7 +1265,9 @@ else
 		{
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
-			$aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
+        	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+        	$gamer = new SC2Gamer($gamer_id);
+        	$aUserNickName = $gamer->getGamerName();
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
 			$aTime_local = $aTime + TIMEOFFSET;

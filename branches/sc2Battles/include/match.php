@@ -485,7 +485,9 @@ class Match extends DatabaseTable
 
 			$pid           = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 			$puid          = mysql_result($result,$i, TBL_USERS.".user_id");
-			$pName         = mysql_result($result,$i, TBL_USERS.".user_name");
+			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+			$gamer = new SC2Gamer($gamer_id);
+			$pName = $gamer->getGamerName();
 			$pteam         = mysql_result($result,$i, TBL_PLAYERS.".Team");
 			$pELO          = mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
 			$pTS_mu        = mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
@@ -918,7 +920,9 @@ class Match extends DatabaseTable
 
 			$pid           = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 			$puid          = mysql_result($result,$i, TBL_USERS.".user_id");
-			$pname         = mysql_result($result,$i, TBL_USERS.".user_name");
+			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+			$gamer = new SC2Gamer($gamer_id);
+			$pname = $gamer->getGamerName();
 			$pteam         = mysql_result($result,$i, TBL_PLAYERS.".Team");
 			$pELO          = mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
 			$pTS_mu        = mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
@@ -1471,7 +1475,9 @@ class Match extends DatabaseTable
 						case "One Player Ladder":
 						case "Team Ladder":
 						$puid  = mysql_result($result,$index , TBL_USERS.".user_id");
-						$pname  = mysql_result($result,$index , TBL_USERS.".user_name");
+						$gamer_id = mysql_result($result,$index, TBL_PLAYERS.".Gamer");
+						$gamer = new SC2Gamer($gamer_id);
+						$pname = $gamer->getGamerName();
 						$pavatar = mysql_result($result,$index, TBL_USERS.".user_image");
 						$pteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");
 						break;

@@ -322,6 +322,18 @@ class Tournament extends DatabaseTable
 		</td>
 		</tr>
 		';
+		//<!-- Match replay report userclass -->
+		$text .= '
+		<tr>
+		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L134.'</b></td>
+		<td class="eb_td1"><select class="tbox" name="tournamentmatchreplayreportuserclass">';
+		$text .= '<option value="'.eb_UC_TOURNAMENT_PLAYER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_TOURNAMENT_PLAYER ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L22.'</option>';
+		$text .= '<option value="'.eb_UC_TOURNAMENT_MODERATOR.'" '.($this->getField('match_replay_report_userclass') == eb_UC_TOURNAMENT_MODERATOR ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L23.'</option>';
+		$text .= '<option value="'.eb_UC_TOURNAMENT_OWNER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_TOURNAMENT_OWNER ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L24.'</option>';
+		$text .= '</select>
+		</td>
+		</tr>
+		';
 		*/
 
 		/* for now
