@@ -84,7 +84,7 @@ function html_show_table($array, $rows, $columns)
        }
        elseif ( $i % 2 == 1 )
        {
-            $output .= '<td class="eb_td1">'.$array[$i][$j].'</td>';
+            $output .= '<td class="eb_td">'.$array[$i][$j].'</td>';
        }
        else
        {

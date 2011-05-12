@@ -487,7 +487,7 @@ class Match extends DatabaseTable
 			$puid          = mysql_result($result,$i, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
 			$gamer = new SC2Gamer($gamer_id);
-			$pName = $gamer->getGamerName();
+			$pName = $gamer->getField('Name');
 			$pteam         = mysql_result($result,$i, TBL_PLAYERS.".Team");
 			$pELO          = mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
 			$pTS_mu        = mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
@@ -922,7 +922,7 @@ class Match extends DatabaseTable
 			$puid          = mysql_result($result,$i, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
 			$gamer = new SC2Gamer($gamer_id);
-			$pname = $gamer->getGamerName();
+			$pname = $gamer->getField('Name');
 			$pteam         = mysql_result($result,$i, TBL_PLAYERS.".Team");
 			$pELO          = mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
 			$pTS_mu        = mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
@@ -1477,7 +1477,7 @@ class Match extends DatabaseTable
 						$puid  = mysql_result($result,$index , TBL_USERS.".user_id");
 						$gamer_id = mysql_result($result,$index, TBL_PLAYERS.".Gamer");
 						$gamer = new SC2Gamer($gamer_id);
-						$pname = $gamer->getGamerName();
+						$pname = $gamer->getField('Name');
 						$pavatar = mysql_result($result,$index, TBL_USERS.".user_image");
 						$pteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");
 						break;

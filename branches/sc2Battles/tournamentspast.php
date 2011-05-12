@@ -146,12 +146,12 @@ function displayPastTournaments(){
 		/* Display table contents */
 		$text .= '<table class="eb_table" style="width:95%"><tbody>';
 		$text .= '<tr>
-		<th class="eb_th2"><b>'.EB_TOURNAMENTS_L13.'</b></th>
-		<th colspan="2" class="eb_th2"><b>'.EB_TOURNAMENTS_L14.'</b></th>
-		<th class="eb_th2"><b>'.EB_TOURNAMENTS_L15.'</b></th>
-		<th class="eb_th2"><b>'.EB_TOURNAMENTS_L32.'</b></th>
-		<th class="eb_th2"><b>'.EB_TOURNAMENTS_L16.'</b></th>
-		<th class="eb_th2"><b>'.EB_TOURNAMENTS_L18.'</b></th>
+		<th class="eb_th2">'.EB_TOURNAMENTS_L13.'</th>
+		<th colspan="2" class="eb_th2">'.EB_TOURNAMENTS_L14.'</th>
+		<th class="eb_th2">'.EB_TOURNAMENTS_L15.'</th>
+		<th class="eb_th2">'.EB_TOURNAMENTS_L32.'</th>
+		<th class="eb_th2">'.EB_TOURNAMENTS_L16.'</th>
+		<th class="eb_th2">'.EB_TOURNAMENTS_L18.'</th>
 		</tr>';
 		for($i=0; $i<$num_rows; $i++){
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
@@ -202,13 +202,13 @@ function displayPastTournaments(){
 			)
 			{
 				$text .= '<tr>
-				<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>
-				<td class="eb_td1"><img '.getGameIconResize($gIcon).'/></td>
-				<td class="eb_td1">'.$gName.'</td>
-				<td class="eb_td1">'.tournamentTypeToString($tournament->getField('Type')).'</td>
-				<td class="eb_td1">'.$tournament->getField('MatchType').'</td>
-				<td class="eb_td1">'.$date_start.'</td>
-				<td class="eb_td1">'.$nbrTeamPlayers.'</td>
+				<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>
+				<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
+				<td class="eb_td">'.$gName.'</td>
+				<td class="eb_td">'.tournamentTypeToString($tournament->getField('Type')).'</td>
+				<td class="eb_td">'.$tournament->getField('MatchType').'</td>
+				<td class="eb_td">'.$date_start.'</td>
+				<td class="eb_td">'.$nbrTeamPlayers.'</td>
 				</tr>';
 			}
 		}

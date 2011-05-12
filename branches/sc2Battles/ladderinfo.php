@@ -440,7 +440,7 @@ else
 				{
 					$gamerID = mysql_result($result,0 , TBL_GAMERS.".GamerID");
 					$gamer = new SC2Gamer($gamerID);
-					$gamerCharacterName = $gamer->getGamerName();
+					$gamerCharacterName = $gamer->getField('Name');
 					$gamerCharacterCode = $gamer->getGamerCode();
 				}
 				else
@@ -488,15 +488,18 @@ else
 					<form action="ladderinfo_process.php?LadderID='.$ladder_id.'" name="form-signup" id="form-signup" method="post">
 					<input type="hidden" name="joinladder" value=""/>
 					<input type="hidden" name="gamerID" value="'.$gamerID.'"/>
+					<legend>Please provide your gamer info</legend>
 					<fieldset>
+					<p>
 					<label for="joinLadderPassword" class="'.$hide_password.'">'.EB_LADDER_L27.'</label>
-					<input type="password" name="joinLadderPassword" id="joinLadderPassword" class="'.$hide_password.' text ui-widget-content ui-corner-all" />
-
-					<label for="charactername">Character Name</label>
-					<input type="text" name="charactername" id="charactername" class="text ui-widget-content ui-corner-all" value="'.$gamerCharacterName.'"/>
-
-					<label for="code">Code</label>
-					<input type="text" name="code" id="code" class="text ui-widget-content ui-corner-all" value="'.$gamerCharacterCode.'"/>
+					<input type="password" name="joinLadderPassword" id="joinLadderPassword" class="'.$hide_password.' text" />
+					</p>
+					<p>
+					<label for="charactername">BNET Character Name/Code</label>
+					<input type="text" size="10" name="charactername" id="charactername" class="text" value="'.$gamerCharacterName.'"/>
+					#
+					<input type="text" size="3" name="code" id="code" class="text" value="'.$gamerCharacterCode.'"/>
+					</p>
 					</fieldset>
 					</form>
 					</div>
@@ -556,23 +559,23 @@ else
 	$text .= '<table class="eb_table" style="width:95%"><tbody>';
 
 	$text .= '<tr>';
-	$text .= '<td class="eb_td1">'.EB_LADDER_L36.'</td>';
-	$text .= '<td class="eb_td1"><b>'.$ladder->getField('Name').'</b></td>';
+	$text .= '<td class="eb_td eb_tdc1">'.EB_LADDER_L36.'</td>';
+	$text .= '<td class="eb_td" style="font-variant:small-caps"><b>'.$ladder->getField('Name').'</b></td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
-	$text .= '<td class="eb_td1">'.EB_LADDER_L37.'</td>';
-	$text .= '<td class="eb_td1">'.$ladder->getField('MatchType').' - '.ladderTypeToString($ladder->getField('Type')).'</td>';
+	$text .= '<td class="eb_td eb_tdc1">'.EB_LADDER_L37.'</td>';
+	$text .= '<td class="eb_td">'.$ladder->getField('MatchType').' - '.ladderTypeToString($ladder->getField('Type')).'</td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
-	$text .= '<td class="eb_td1">'.EB_LADDER_L38.'</td>';
-	$text .= '<td class="eb_td1"><img '.getGameIconResize($egameicon).'/> '.$egame.'</td>';
+	$text .= '<td class="eb_td eb_tdc1">'.EB_LADDER_L38.'</td>';
+	$text .= '<td class="eb_td"><img '.getGameIconResize($egameicon).'/> '.$egame.'</td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
-	$text .= '<td class="eb_td1">'.EB_LADDER_L39.'</td>';
-	$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
+	$text .= '<td class="eb_td eb_tdc1">'.EB_LADDER_L39.'</td>';
+	$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
 	$text .= '</td></tr>';
 
 	$text .= '<tr>';
@@ -584,8 +587,8 @@ else
 	."   AND (".TBL_USERS.".user_id = ".TBL_MODS.".User)";
 	$result = $sql->db_Query($q);
 	$numMods = mysql_numrows($result);
-	$text .= '<td class="eb_td1">'.EB_LADDER_L41.'</td>';
-	$text .= '<td class="eb_td1">';
+	$text .= '<td class="eb_td eb_tdc1">'.EB_LADDER_L41.'</td>';
+	$text .= '<td class="eb_td">';
 	if ($numMods>0)
 	{
 		$text .= '<ul>';
@@ -598,11 +601,11 @@ else
 	}
 	$text .= '</td></tr>';
 
-	$text .= '<tr><td class="eb_td1">'.EB_LADDER_L42.'</td><td class="eb_td1">'.$date_start.'</td></tr>';
-	$text .= '<tr><td class="eb_td1">'.EB_LADDER_L43.'</td><td class="eb_td1">'.$date_end.'</td></tr>';
-	$text .= '<tr><td class="eb_td1"></td><td class="eb_td1">'.$time_comment.'</td></tr>';
-	$text .= '<tr><td class="eb_td1">'.EB_LADDER_L44.'</td><td class="eb_td1">'.$tp->toHTML($ladder->getField('Rules'), true).'</td></tr>';
-	$text .= '<tr><td class="eb_td1"></td><td class="eb_td1">'.$tp->toHTML($ladder->getField('Description'), true).'</td></tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_LADDER_L42.'</td><td class="eb_td">'.$date_start.'</td></tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_LADDER_L43.'</td><td class="eb_td">'.$date_end.'</td></tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$time_comment.'</td></tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_LADDER_L44.'</td><td class="eb_td">'.$tp->toHTML($ladder->getField('Rules'), true).'</td></tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$tp->toHTML($ladder->getField('Description'), true).'</td></tr>';
 	$text .= '</tbody></table>';
 	$text .= '</div>';    // tab-page "Info"
 
@@ -943,7 +946,7 @@ else
 				$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
 	        	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
 	        	$gamer = new SC2Gamer($gamer_id);
-	        	$pname = $gamer->getGamerName();
+	        	$pname = $gamer->getField('Name');
 				$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
@@ -1267,7 +1270,7 @@ else
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
         	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
         	$gamer = new SC2Gamer($gamer_id);
-        	$aUserNickName = $gamer->getGamerName();
+        	$aUserNickName = $gamer->getField('Name');
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
 			$aTime_local = $aTime + TIMEOFFSET;
@@ -1395,7 +1398,7 @@ else
 		}
 	}
 
-	$text .= '<table style="margin-left: 0px; margin-right: auto;">';
+	$text .= '<table class="table_left">';
 	multi2dSortAsc($awards, 0, SORT_DESC);
 	for ($index = 0; $index<min($nbr_awards, $rowsPerPage); $index++)
 	{
@@ -1403,7 +1406,6 @@ else
 	}
 	$text .= '</table>';
 
-	$text .= '<br />';
 	$text .= '
 	</div>
 	</div>

@@ -130,15 +130,15 @@ else
 		$text .= '<!-- Clan Name -->';
 		$text .= '<tr>';
 		$text .= '
-		<td class="eb_td1"><b>'.EB_CLANM_L9.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td"><b>'.EB_CLANM_L9.'</b></td>
+		<td class="eb_td">
 		<input class="tbox" type="text" size="40" name="clanname" value="'.$clan_name.'"/>
 		</td>
 		</tr>';
 		
 		$text .= '<!-- Clan Owner -->';
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1"><b>'.EB_CLANM_L7.'</b><br />';
+		$text .= '<td class="eb_td"><b>'.EB_CLANM_L7.'</b><br />';
 		$text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a>';
 		$text .= '</td>';
 
@@ -149,7 +149,7 @@ else
 		$row = mysql_fetch_array($result_2);
 		$num_rows_2 = mysql_numrows($result_2);
 
-		$text .= '<td class="eb_td1">';
+		$text .= '<td class="eb_td">';
 		$text .= '<table>';
 		$text .= '<tr>';
 		$text .= '<td><select class="tbox" name="clanowner">';
@@ -179,8 +179,8 @@ else
 
 		$text .= '<!-- Clan Avatar -->
 		<tr>
-		<td class="eb_td1"><b>'.EB_CLANM_L29.'</b><div class="smalltext">'.EB_CLANM_L30.'</div></td>
-		<td class="eb_td1">';
+		<td class="eb_td"><b>'.EB_CLANM_L29.'</b><div class="smalltext">'.EB_CLANM_L30.'</div></td>
+		<td class="eb_td">';
 		if ($clan_avatar != '')
 		{
 			$text .= '<img '.getAvatarResize(getImagePath($clan_avatar, 'team_avatars')).' style="vertical-align:middle"/>&nbsp;';
@@ -212,8 +212,8 @@ else
 		$text .= '
 		<!-- Clan Tag -->
 		<tr>
-		<td class="eb_td1"><b>'.EB_CLANM_L10.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td"><b>'.EB_CLANM_L10.'</b></td>
+		<td class="eb_td">
 		<input class="tbox" type="text" size="40" name="clantag" value="'.$clan_tag.'"/>
 		</td>
 		</tr>
@@ -222,8 +222,8 @@ else
 		$text .= '
 		<!-- Clan Password -->
 		<tr>
-		<td class="eb_td1"><b>'.EB_CLANM_L11.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td"><b>'.EB_CLANM_L11.'</b></td>
+		<td class="eb_td">
 		<input class="tbox" type="text" size="40" name="clanpassword" value="'.$clan_password.'"/>
 		</td>
 		</tr>
@@ -232,8 +232,8 @@ else
 		$text .= '
 		<!-- Clan Website -->
 		<tr>
-		<td class="eb_td1"><b>'.EB_CLANM_L31.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td"><b>'.EB_CLANM_L31.'</b></td>
+		<td class="eb_td">
 		<input class="tbox" type="text" size="40" name="clanwebsite" value="'.$clan_website.'"/>
 		</td>
 		</tr>
@@ -242,8 +242,8 @@ else
 		$text .= '
 		<!-- Clan Email -->
 		<tr>
-		<td class="eb_td1"><b>'.EB_CLANM_L32.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td"><b>'.EB_CLANM_L32.'</b></td>
+		<td class="eb_td">
 		<input class="tbox" type="text" size="40" name="clanemail" value="'.$clan_email.'"/>
 		</td>
 		</tr>
@@ -252,8 +252,8 @@ else
 		$text .= '
 		<!-- Clan IM -->
 		<tr>
-		<td class="eb_td1"><b>'.EB_CLANM_L33.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td"><b>'.EB_CLANM_L33.'</b></td>
+		<td class="eb_td">
 		<input class="tbox" type="text" size="40" name="clanIM" value="'.$clan_IM.'"/>
 		</td>
 		</tr>
@@ -262,8 +262,8 @@ else
 		$text .= '
 		<!-- Clan Description -->
 		<tr>
-		<td class="eb_td1"><b>'.EB_CLANM_L34.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td"><b>'.EB_CLANM_L34.'</b></td>
+		<td class="eb_td">
 		<textarea class="tbox" type="text" size="40" id="clandescription" name="clandescription" cols="70" '.$insertjs.'>'.$clan_Description.'</textarea>
 		';
 		if (!e_WYSIWYG)
@@ -301,10 +301,10 @@ else
 		if ($numGames > 0)
 		{
 			$text .= '<tr>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= EB_CLANM_L13;
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
 			$text .= '<div>';
 			$text .= '<select class="tbox" name="divgame">';
@@ -346,7 +346,7 @@ else
 			$div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
 			$text .= '<tr>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= '<b><img '.getGameIconResize($gicon).'/> '.$gname.'</b><br />';
 			$text .= EB_CLANM_L15.': <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$div_captain.'">'.$div_captain_name.'</a>';
 
@@ -395,14 +395,14 @@ else
 			$result_2 = $sql->db_Query($q_2);
 			if(!$result_2 || (mysql_numrows($result_2) < 1))
 			{
-				$text .= '<td class="eb_td1">'.EB_CLANM_L18.'</td></tr>';
+				$text .= '<td class="eb_td">'.EB_CLANM_L18.'</td></tr>';
 			}
 			else
 			{
 				$row = mysql_fetch_array($result_2);
 				$num_rows_2 = mysql_numrows($result_2);
 
-				$text .= '<td class="eb_td1">';
+				$text .= '<td class="eb_td">';
 				$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
 				$text .= '<table>';
 				$text .= '<tr>';
@@ -434,15 +434,15 @@ else
 				$text .= '</tr>';
 
 				$text .= '<tr>';
-				$text .= '<td class="eb_td1">'.$num_rows_2.'&nbsp;'.EB_CLANM_L20.'</td>';
-				$text .= '<td class="eb_td1">';
+				$text .= '<td class="eb_td">'.$num_rows_2.'&nbsp;'.EB_CLANM_L20.'</td>';
+				$text .= '<td class="eb_td">';
 				$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
 				$text .= '<table class="eb_table" style="width:95%"><tbody>';
 				$text .= '<tr>
-				<th class="eb_th2"><b>'.EB_CLANM_L21.'</b></th>
-				<th class="eb_th2"><b>'.EB_CLANM_L22.'</b></th>
-				<th class="eb_th2"><b>'.EB_CLANM_L23.'</b></th>
-				<th class="eb_th2"><b>'.EB_CLANM_L24.'</b></th>
+				<th class="eb_th2">'.EB_CLANM_L21.'</th>
+				<th class="eb_th2">'.EB_CLANM_L22.'</th>
+				<th class="eb_th2">'.EB_CLANM_L23.'</th>
+				<th class="eb_th2">'.EB_CLANM_L24.'</th>
 				</tr>';
 				for($j=0; $j<$num_rows_2; $j++)
 				{
@@ -454,12 +454,12 @@ else
 					$date  = date("d M Y",$mjoined_local);
 
 					$text .= '<tr>';
-					$text .= '<td class="eb_td1"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$muid.'">'.$mname.'</a></b></td>
-					<td class="eb_td1">'.EB_CLANM_L25.'</td>
-					<td class="eb_td1">'.$date.'</td>';
+					$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$muid.'">'.$mname.'</a></b></td>
+					<td class="eb_td">'.EB_CLANM_L25.'</td>
+					<td class="eb_td">'.$date.'</td>';
 
 					// Checkbox to select which member to kick
-					$text .= '<td class="eb_td1"><input type="checkbox" name="del[]" value="'.$mid.'" /></td>';
+					$text .= '<td class="eb_td"><input type="checkbox" name="del[]" value="'.$mid.'" /></td>';
 					$text .= '</tr>';
 				}
 				$text .= '<tr>';

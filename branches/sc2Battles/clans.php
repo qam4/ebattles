@@ -102,8 +102,10 @@ function displayClans(){
 
 		/* Display table contents */
 		$text .= '<table class="eb_table" style="width:95%"><tbody>';
-		$text .= '<tr><td class="eb_td2"><b>'.EB_CLANS_L5.'</b></td>
-		<td class="eb_td2"><b>'.EB_CLANS_L6.'</b></td></tr>';
+		$text .= '<tr>
+		<th class="eb_th2">'.EB_CLANS_L5.'</th>
+		<th class="eb_th2">'.EB_CLANS_L6.'</th>
+		</tr>';
 		for($i=0; $i<$num_rows; $i++){
 			$clanid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 			$cname  = mysql_result($result,$i, TBL_CLANS.".Name");
@@ -123,8 +125,8 @@ function displayClans(){
 			}
 
 			$text .= '<tr>
-			<td class="eb_td1">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
-			<td class="eb_td1">'.$ctag.'</td></tr>';
+			<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
+			<td class="eb_td">'.$ctag.'</td></tr>';
 		}
 		$text .= '</tbody></table><br />';
 	}

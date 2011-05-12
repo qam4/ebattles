@@ -95,7 +95,7 @@ else
 		';
 
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L9.'</b><br />';
+		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L9.'<br />';
 		$text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
 		$text .= '</td>';
 
@@ -105,7 +105,7 @@ else
 		$row = mysql_fetch_array($result_2);
 		$num_rows_2 = mysql_numrows($result_2);
 
-		$text .= '<td class="eb_td1">';
+		$text .= '<td class="eb_td">';
 		$text .= '<table class="table_left">';
 		$text .= '<tr>';
 		$text .= '<td><select class="tbox" name="tournamentowner">';
@@ -144,8 +144,8 @@ else
 		$text .= '
 		<tr>
 		';
-		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L11.'</b></td>';
-		$text .= '<td class="eb_td1">';
+		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L11.'</td>';
+		$text .= '<td class="eb_td">';
 		if ($numMods>0)
 		{
 			$text .= '<table class="table_left">';
@@ -366,10 +366,10 @@ else
 			<table class="eb_table" style="width:95%">
 			<tbody>
 			<tr>
-			<td class="eb_td1 eb_w40">
+			<td class="eb_td eb_tdc1 eb_w40">
 			<b>'.EB_TOURNAMENTM_L41.'</b>
 			</td>
-			<td class="eb_td1">
+			<td class="eb_td">
 			<select class="tbox" name="division">
 			';
 			for($i=0; $i<$numDivisions; $i++)
@@ -400,7 +400,7 @@ else
 			<table class="eb_table" style="width:95%">
 			<tbody>
 			<tr>
-			<td class="eb_td1">
+			<td class="eb_td">
 			'.ebImageTextButton('tournamentaddplayer', 'user_add.png', EB_TOURNAMENTM_L45, '', '', EB_TOURNAMENTM_L44).'
 			</td>
 			</tr>
@@ -465,8 +465,8 @@ else
 					}
 
 					$text .= '<tr>
-					<td class="eb_td1">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
-					<td class="eb_td1">'.$ctag.'</td></tr>';
+					<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
+					<td class="eb_td">'.$ctag.'</td></tr>';
 				}
 				$text .= '</tbody></table>';
 			}
@@ -538,10 +538,10 @@ else
 					list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
 					$text .= '<tr>';
-					$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$puniquegameid.'</a></td>';
-					$text .= '<td class="eb_td1">'.(($pbanned) ? EB_TOURNAMENTM_L54 : $date).'</td>';
-					//$text .= '<td class="eb_td1">'.$pgames.'</td>';
-					$text .= '<td class="eb_td1">';
+					$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$puniquegameid.'</a></td>';
+					$text .= '<td class="eb_td">'.(($pbanned) ? EB_TOURNAMENTM_L54 : $date).'</td>';
+					//$text .= '<td class="eb_td">'.$pgames.'</td>';
+					$text .= '<td class="eb_td">';
 					if ($pbanned)
 					{
 						$text .= ' <a href="javascript:unban_player(\''.$pid.'\');" title="'.EB_TOURNAMENTM_L60.'" onclick="return confirm(\''.EB_TOURNAMENTM_L61.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_go.ico" alt="'.EB_TOURNAMENTM_L60.'"/></a>';
@@ -586,8 +586,8 @@ else
 
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L74.'</b><br />'.EB_TOURNAMENTM_L75.'</td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L74.'<div class="smalltext">'.EB_TOURNAMENTM_L75.'</div></td>
+		<td class="eb_td">
 		';
 		$text .= ebImageTextButton('tournamentresettournament', 'bin_closed.png', EB_TOURNAMENTM_L76, '', EB_TOURNAMENTM_L77);
 		$text .= '
@@ -596,8 +596,8 @@ else
 		';
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L78.'</b><br />'.EB_TOURNAMENTM_L79.'</td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L78.'<div class="smalltext">'.EB_TOURNAMENTM_L79.'</div></td>
+		<td class="eb_td">
 		';
 		$text .= ebImageTextButton('tournamentdelete', 'delete.png', EB_TOURNAMENTM_L80, 'negative', EB_TOURNAMENTM_L81);
 		$text .= '

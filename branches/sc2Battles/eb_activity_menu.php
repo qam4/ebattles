@@ -97,7 +97,7 @@ function displayRecentActivity($ladder_id){
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
 			$gamer = new SC2Gamer($gamer_id);
-			$aUserNickName = $gamer->getGamerName();
+			$aUserNickName = $gamer->getField('Name');
 			$aLaddergame = mysql_result($result,$i , TBL_GAMES.".Name");
 			$aLaddergameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");

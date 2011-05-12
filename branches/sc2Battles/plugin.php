@@ -437,6 +437,7 @@ FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
 Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
+Name varchar(64) NOT NULL default '',
 UniqueGameID varchar(64) NOT NULL default ''
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_OFFICIAL_LADDERS."

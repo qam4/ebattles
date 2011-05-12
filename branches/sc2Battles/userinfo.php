@@ -164,20 +164,20 @@ else
 			$rating = displayRating($prating, $prating_votes);
 
 			$text .= '<tr>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= $pRank;
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= $pWinLoss;
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= $rating;
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -242,11 +242,11 @@ else
 			$nbrMatchesPending = $row['nbrMatchesPending'];
 
 			$text .= '<tr>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -260,7 +260,7 @@ else
 				$text .= EB_USER_L17;
 			}
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
 			$text .= '</td>';
 			$text .= '</tr>';
@@ -315,11 +315,11 @@ else
 			$nbrMatchesPending = $row['nbrMatchesPending'];
 
 			$text .= '<tr>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -333,7 +333,7 @@ else
 				$text .= EB_USER_L17;
 			}
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
 			$text .= '</td>';
 			$text .= '</tr>';
@@ -401,11 +401,11 @@ else
 			$cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 			$cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
 			$text .= '<tr>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
 			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			if($cowner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -456,10 +456,10 @@ else
 			$cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 			$cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
 			$text .= '<tr>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			if($cowner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -515,11 +515,11 @@ else
 			$dgame  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$dgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$text .= '<tr>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
 			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
 			$text .= '</td>';
-			$text .= '<td class="eb_td1">';
+			$text .= '<td class="eb_td">';
 			if($cowner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -790,7 +790,7 @@ else
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
 			$gamer = new SC2Gamer($gamer_id);
-			$aUserNickName = $gamer->getGamerName();
+			$aUserNickName = $gamer->getField('Name');
 			$aLadderID  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
 			$aLadderName  = mysql_result($result,$i, TBL_LADDERS.".Name");
 			$aLaddergame = mysql_result($result,$i , TBL_GAMES.".Name");

@@ -133,20 +133,20 @@ function displayTeamSummary($clan_id){
 	
 	$text .= '<table class="eb_table table_left"><tbody>';
 
-	$text .= '<tr><td class="eb_td1"><b>'.EB_CLAN_L7.'</b>:</td>';
-	$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a></td>';
+	$text .= '<tr><td class="eb_td"><b>'.EB_CLAN_L7.'</b>:</td>';
+	$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a></td>';
 	$text .= '</tr>';
-	$text .= '<tr><td class="eb_td1"><b>'.EB_CLAN_L27.'</b>:</td>';
-	$text .= '<td class="eb_td1"><a href="http://'.$clan_website.'" rel="external">'.$clan_website.'</a></td>';
+	$text .= '<tr><td class="eb_td"><b>'.EB_CLAN_L27.'</b>:</td>';
+	$text .= '<td class="eb_td"><a href="http://'.$clan_website.'" rel="external">'.$clan_website.'</a></td>';
 	$text .= '</tr>';
-	$text .= '<tr><td class="eb_td1"><b>'.EB_CLAN_L28.'</b>:</td>';
-	$text .= '<td class="eb_td1"><a href="mailto:'.$clan_email.'">'.$clan_email.'</a></td>';
+	$text .= '<tr><td class="eb_td"><b>'.EB_CLAN_L28.'</b>:</td>';
+	$text .= '<td class="eb_td"><a href="mailto:'.$clan_email.'">'.$clan_email.'</a></td>';
 	$text .= '</tr>';
-	$text .= '<tr><td class="eb_td1"><b>'.EB_CLAN_L29.'</b>:</td>';
-	$text .= '<td class="eb_td1"></td>'.$clan_IM.'</td>';
+	$text .= '<tr><td class="eb_td"><b>'.EB_CLAN_L29.'</b>:</td>';
+	$text .= '<td class="eb_td"></td>'.$clan_IM.'</td>';
 	$text .= '</tr>';
-	$text .= '<tr><td class="eb_td1"><b>'.EB_CLAN_L30.'</b>:</td>';
-	$text .= '<td class="eb_td1">'.$tp->toHTML($clan_Description, true).'</td>';
+	$text .= '<tr><td class="eb_td"><b>'.EB_CLAN_L30.'</b>:</td>';
+	$text .= '<td class="eb_td">'.$tp->toHTML($clan_Description, true).'</td>';
 	$text .= '</tr>';
 	$text .= '</tbody></table>';
 
@@ -280,9 +280,10 @@ function displayTeamDivisions($clan_id){
 			$text .= '<p>'.$numMembers.'&nbsp;'.EB_CLAN_L15.'</p>';
 
 			$text .= '<table class="eb_table" style="width:95%"><tbody>';
-			$text .= '<tr><td class="eb_td2"><b>'.EB_CLAN_L16.'</b></td>
-			<td class="eb_td2"><b>'.EB_CLAN_L17.'</b></td>
-			<td class="eb_td2"><b>'.EB_CLAN_L18.'</b></td>
+			$text .= '<tr>
+			<th class="eb_th2">'.EB_CLAN_L16.'</th>
+			<th class="eb_th2">'.EB_CLAN_L17.'</th>
+			<th class="eb_th2">'.EB_CLAN_L18.'</th>
 			</tr>';
 
 			// Captain
@@ -299,9 +300,9 @@ function displayTeamDivisions($clan_id){
 					$status =  EB_CLAN_L9;
 
 					$text .= '<tr>';
-					$text .= '<td class="eb_td1"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
-					<td class="eb_td1">'.$status.'</td>
-					<td class="eb_td1">'.$date.'</td></tr>';
+					$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
+					<td class="eb_td">'.$status.'</td>
+					<td class="eb_td">'.$date.'</td></tr>';
 				}
 			}
 
@@ -319,9 +320,9 @@ function displayTeamDivisions($clan_id){
 					$status =  EB_CLAN_L26;
 
 					$text .= '<tr>';
-					$text .= '<td class="eb_td1"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
-					<td class="eb_td1">'.$status.'</td>
-					<td class="eb_td1">'.$date.'</td></tr>';
+					$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
+					<td class="eb_td">'.$status.'</td>
+					<td class="eb_td">'.$date.'</td></tr>';
 				}
 			}
 			$text .= '</tbody></table>';
@@ -381,8 +382,10 @@ function displayTeamLadders($clan_id){
 			$text .= '<p>'.$numLadders.'&nbsp;'.EB_CLAN_L20.'</p>';
 
 			$text .= '<table class="eb_table" style="width:95%"><tbody>';
-			$text .= '<tr><td class="eb_td2"><b>'.EB_CLAN_L21.'</b></td>
-			<td class="eb_td2"><b>'.EB_CLAN_L22.'</b></td></tr>';
+			$text .= '<tr>
+			<th class="eb_th2">'.EB_CLAN_L21.'</th>
+			<th class="eb_th2">'.EB_CLAN_L22.'</th>
+			</tr>';
 			for($j=0; $j < $numLadders; $j++)
 			{
 				$ladder_id  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
@@ -390,8 +393,8 @@ function displayTeamLadders($clan_id){
 				$lRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
 				$text .= '<tr>';
-				$text .= '<td class="eb_td1"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a></b></td>
-				<td class="eb_td1">'.$lRank.'</td></tr>';
+				$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a></b></td>
+				<td class="eb_td">'.$lRank.'</td></tr>';
 			}
 			$text .= "</tbody></table>\n";
 		}
@@ -418,8 +421,10 @@ function displayTeamLadders($clan_id){
 			$text .= '<p>'.$numLadders.'&nbsp;'.EB_CLAN_L24.'</p>';
 
 			$text .= '<table class="eb_table" style="width:95%"><tbody>';
-			$text .= '<tr><td class="eb_td2"><b>'.EB_CLAN_L21.'</b></td>
-			<td class="eb_td2"><b>'.EB_CLAN_L22.'</b></td></tr>';
+			$text .= '<tr>
+			<th class="eb_th2">'.EB_CLAN_L21.'</th>
+			<th class="eb_th2">'.EB_CLAN_L22.'</th>
+			</tr>';
 			for($j=0; $j<$numLadders; $j++)
 			{
 				$ladder_id  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
@@ -427,8 +432,8 @@ function displayTeamLadders($clan_id){
 				$lRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
 				$text .= '<tr>';
-				$text .= '<td class="eb_td1"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a></b></td>
-				<td class="eb_td1">'.$lRank.'</td></tr>';
+				$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a></b></td>
+				<td class="eb_td">'.$lRank.'</td></tr>';
 			}
 			$text .= '</tbody></table>';
 		}
@@ -467,10 +472,9 @@ function displayTeamAwards($clan_id){
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
 
-	$text .= '<br />';
 	if ($num_rows>0)
 	{
-		$text .= '<table class="table_left">';
+		$text .= '<table class="eb_table table_left">';
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
 		{
