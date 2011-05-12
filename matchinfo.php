@@ -595,14 +595,23 @@ else
 			$mSubmitterID = mysql_result($result_Media,$media , TBL_MEDIA.".Submitter");
 			$mSubmitterName = mysql_result($result_Media,$media , TBL_USERS.".user_name");
 
-			$shadow='';
-			if (($mType == "Video")||($mType == "Screenshot"))
-			{
-				$shadow = 'rel="shadowbox"';
-			}
-
 			$text .= '<tr>';
-			$text .= '<td><a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a></td>';
+			$text .= '<td>';
+			$shadow='';
+			switch($mType)
+			{
+				case "Video":
+				case "Screenshot":
+				$shadow = 'rel="shadowbox"';
+				$text .= '<a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a>';
+				break;
+				case "Replay":
+				//$text .= '<form><input type="button" value="'.$array_types["$mType"].'" onclick="window.open(\''.$mPath.'\', \'download\'); return false;"/></form> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a>';
+				$text .= '<a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a>';
+				break;
+			}
+				
+			$text .= '</td>';
 			$text .= '<td>';
 			if (($mSubmitterID == USERID)||($can_delete_media == 1))
 			{

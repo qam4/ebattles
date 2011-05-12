@@ -254,9 +254,6 @@ if (isset($_FILES['userfile'])) {
 							$q = '';
 						}
 						$result = $sql->db_Query($q);
-						
-						//var_dump($q);
-						//exit;
 					}
 
 					// Update scores stats
@@ -280,6 +277,18 @@ if (isset($_FILES['userfile'])) {
 
 					$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
 					$result = $sql->db_Query($q);
+					
+					// Save the replay
+					$target_path = "uploads/";
+					$target_file = $target_path . basename($name); 
+					move_uploaded_file($tmpname, $target_file);
+					
+					$raw_name = urlencode($name);
+					$target_file = $target_path . basename($raw_name); 
+					$media_type = 'Replay';
+    				$media_path = $target_file;
+    				$submitter = USERID;
+					$match->add_media($submitter , $media_path, $media_type);
 
 					header("Location: matchinfo.php?matchid=$match_id");
 					exit;
