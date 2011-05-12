@@ -275,7 +275,7 @@ TimeReported int(11) unsigned not null,
 Comments text NOT NULL,
 Status varchar(20) DEFAULT 'active',
 Maps varchar(255) NOT NULL default '0',
-TimeScheduled int(11) unsigned not null
+TimeScheduled int(11) unsigned not null,
 GameLength int(11) unsigned not null,
 GameSpeed varchar(20),
 Realm varchar(20),
@@ -397,7 +397,7 @@ FOREIGN KEY (MatchID) REFERENCES ".TBL_MATCHS." (MatchID),
 Submitter int NOT NULL,
 INDEX (Submitter),
 FOREIGN KEY (Submitter) REFERENCES ".TBL_USERS." (user_id),
-Path varchar(63) NOT NULL default '',
+Path varchar(255) NOT NULL default '',
 Type varchar(20) NOT NULL default ''
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_CHALLENGES."
