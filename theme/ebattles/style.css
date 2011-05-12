@@ -331,6 +331,7 @@ td {
 	padding : 2px;
 }
 .smalltext {
+	font-weight: normal;
 	font-size: 9px;
 	color: gray;
 }

@@ -149,13 +149,13 @@ function displayPastLadders(){
 	/* Display table contents */
 	$text .= '<table class="eb_table" style="width:95%"><tbody>';
 	$text .= '<tr>
-	<th class="eb_th2"><b>'.EB_LADDERS_L13.'</b></th>
-	<th colspan="2" class="eb_th2"><b>'.EB_LADDERS_L14.'</b></th>
-	<th class="eb_th2"><b>'.EB_LADDERS_L15.'</b></th>
-	<th class="eb_th2"><b>'.EB_LADDERS_L16.'</b></th>
-	<th class="eb_th2"><b>'.EB_LADDERS_L17.'</b></th>
-	<th class="eb_th2"><b>'.EB_LADDERS_L18.'</b></th>
-	<th class="eb_th2"><b>'.EB_LADDERS_L19.'</b></th>
+	<th class="eb_th2">'.EB_LADDERS_L13.'</th>
+	<th colspan="2" class="eb_th2">'.EB_LADDERS_L14.'</th>
+	<th class="eb_th2">'.EB_LADDERS_L15.'</th>
+	<th class="eb_th2">'.EB_LADDERS_L16.'</th>
+	<th class="eb_th2">'.EB_LADDERS_L17.'</th>
+	<th class="eb_th2">'.EB_LADDERS_L18.'</th>
+	<th class="eb_th2">'.EB_LADDERS_L19.'</th>
 	</tr>';
 	for($i=0; $i<$num_rows; $i++){
 		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
@@ -206,14 +206,14 @@ function displayPastLadders(){
 		)
 		{
 			$text .= '<tr>
-			<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
-			<td class="eb_td1"><img '.getGameIconResize($gicon).'/></td>
-			<td class="eb_td1">'.$gname.'</td>
-			<td class="eb_td1">'.ladderTypeToString($ladder->getField('Type')).'</td>
-			<td class="eb_td1">'.$date_start.'</td>
-			<td class="eb_td1">'.$date_end.'</td>
-			<td class="eb_td1">'.$nbrplayers.'</td>
-			<td class="eb_td1">'.$nbrmatches.'</td>
+			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
+			<td class="eb_td"><img '.getGameIconResize($gicon).'/></td>
+			<td class="eb_td">'.$gname.'</td>
+			<td class="eb_td">'.ladderTypeToString($ladder->getField('Type')).'</td>
+			<td class="eb_td">'.$date_start.'</td>
+			<td class="eb_td">'.$date_end.'</td>
+			<td class="eb_td">'.$nbrplayers.'</td>
+			<td class="eb_td">'.$nbrmatches.'</td>
 			</tr>';
 		}
 	}

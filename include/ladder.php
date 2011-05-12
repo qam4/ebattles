@@ -508,8 +508,8 @@ class Ladder extends DatabaseTable
 		//<!-- Ladder Name -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L15.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L15.'</td>
+		<td class="eb_td">
 		<div><input class="tbox" type="text" size="40" name="laddername" value="'.$this->getField('Name').'"/></div>
 		</td>
 		</tr>
@@ -518,8 +518,8 @@ class Ladder extends DatabaseTable
 		//<!-- Ladder Password -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L16.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L16.'</td>
+		<td class="eb_td">
 		<div><input class="tbox" type="text" size="40" name="ladderpassword" value="'.$this->getField('password').'"/></div>
 		</td>
 		</tr>
@@ -533,8 +533,8 @@ class Ladder extends DatabaseTable
 		/* Error occurred, return given name by default */
 		$numGames = mysql_numrows($result);
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L17.'</b></td>';
-		$text .= '<td class="eb_td1"><select class="tbox" name="laddergame">';
+		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L17.'</td>';
+		$text .= '<td class="eb_td"><select class="tbox" name="laddergame">';
 		for($i=0; $i<$numGames; $i++){
 			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -553,8 +553,8 @@ class Ladder extends DatabaseTable
 		//<!-- Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L18.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L18.'</td>
+		<td class="eb_td">
 		<div id="radio1">
 		';
 		$text .= '<input class="tbox" type="radio" id="radio11" size="40" name="laddertype" '.($this->getField('Type') == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" /><label for="radio11">'.EB_LADDERM_L19.'</label>';
@@ -570,8 +570,8 @@ class Ladder extends DatabaseTable
 		//<!-- Match Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L126.'</b></td>
-		<td class="eb_td1"><select class="tbox" name="laddermatchtype">';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L126.'</td>
+		<td class="eb_td"><select class="tbox" name="laddermatchtype">';
 		$text .= '<option value="1v1" '.($this->getField('MatchType') == "1v1" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L127.'</option>';
 		$text .= '<option value="2v2" '.($this->getField('MatchType') == "2v2" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L128.'</option>';
 		$text .= '<option value="FFA" '.($this->getField('MatchType') == "FFA" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L131.'</option>';
@@ -583,8 +583,8 @@ class Ladder extends DatabaseTable
 		//<!-- Rating Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L117.'</b><div class="smalltext">'.EB_LADDERM_L118.'</div></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L117.'<div class="smalltext">'.EB_LADDERM_L118.'</div></td>
+		<td class="eb_td">
 		<div id="radio2">
 		';
 		$text .= '<input class="tbox" type="radio" id="radio21" size="40" name="ladderrankingtype" '.($this->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" /><label for="radio21">'.EB_LADDERM_L119.'</label>';
@@ -598,8 +598,8 @@ class Ladder extends DatabaseTable
 		//<!-- Match report userclass -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L21.'</b></td>
-		<td class="eb_td1"><select class="tbox" name="laddermatchreportuserclass">';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L21.'</td>
+		<td class="eb_td"><select class="tbox" name="laddermatchreportuserclass">';
 		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($this->getField('match_report_userclass') == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
 		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($this->getField('match_report_userclass') == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
 		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.($this->getField('match_report_userclass') == eb_UC_LADDER_OWNER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L24.'</option>';
@@ -611,8 +611,8 @@ class Ladder extends DatabaseTable
 		//<!-- Match replay report userclass -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L133.'</b></td>
-		<td class="eb_td1"><select class="tbox" name="laddermatchreplayreportuserclass">';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L133.'</td>
+		<td class="eb_td"><select class="tbox" name="laddermatchreplayreportuserclass">';
 		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
 		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
 		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_OWNER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L24.'</option>';
@@ -624,8 +624,8 @@ class Ladder extends DatabaseTable
 		//<!-- Allow Quick Loss Report -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L25.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L25.'</td>
+		<td class="eb_td">
 		<div>
 		';
 		$text .= '<input class="tbox" type="checkbox" name="ladderallowquickloss"';
@@ -646,8 +646,8 @@ class Ladder extends DatabaseTable
 		//<!-- Allow Score -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L26.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L26.'</td>
+		<td class="eb_td">
 		<div>
 		';
 		$text .= '<input class="tbox" type="checkbox" name="ladderallowscore"';
@@ -679,8 +679,8 @@ class Ladder extends DatabaseTable
 
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L108.'</b><div class="smalltext">'.EB_LADDERM_L109.'</div></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L108.'<div class="smalltext">'.EB_LADDERM_L109.'</div></td>
+		<td class="eb_td">
 		<div>';
 		$text .= '<select class="tbox" name="laddermatchapprovaluserclass">';
 		$text .= '<option value="'.eb_UC_NONE.'" '.(($this->getField('MatchesApproval') == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L113.'</option>';
@@ -688,7 +688,7 @@ class Ladder extends DatabaseTable
 		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.((($this->getField('MatchesApproval') & eb_UC_LADDER_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L111.'</option>';
 		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.((($this->getField('MatchesApproval') & eb_UC_LADDER_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L110.'</option>';
 		$text .= '</select>';
-		$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
+		$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</div>' : '';
 		$text .= '
 		</div>
 		</td>
@@ -698,8 +698,8 @@ class Ladder extends DatabaseTable
 		//<!-- Allow Draws -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L27.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L27.'</td>
+		<td class="eb_td">
 		<div>
 		';
 		$text .= '<input class="tbox" type="checkbox" name="ladderallowdraw"';
@@ -720,8 +720,8 @@ class Ladder extends DatabaseTable
 		//<!-- Points -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L28.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L28.'</td>
+		<td class="eb_td">
 		<table class="table_left">
 		<tr>
 		<td>'.EB_LADDERM_L29.'</td>
@@ -749,8 +749,8 @@ class Ladder extends DatabaseTable
 		//<!-- Maps -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L125.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L125.'</td>
+		<td class="eb_td">
 		<div>
 		';
 		$text .= '<input class="tbox" type="text" name="laddermaxmapspermatch" size="2" value="'.$this->getField('MaxMapsPerMatch').'"';
@@ -773,8 +773,8 @@ class Ladder extends DatabaseTable
 
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L32.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L32.'</td>
+		<td class="eb_td">
 		<table class="table_left">
 		<tr>
 		<td>
@@ -819,8 +819,8 @@ class Ladder extends DatabaseTable
 		}
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L35.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L35.'</td>
+		<td class="eb_td">
 		<table class="table_left">
 		<tr>
 		<td>
@@ -856,8 +856,8 @@ class Ladder extends DatabaseTable
 		//<!-- Description -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L36.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L36.'</td>
+		<td class="eb_td">
 		';
 		$text .= '<textarea class="tbox" id="ladderdescription" name="ladderdescription" cols="70" '.$insertjs.'>'.$this->getField('Description').'</textarea>';
 		if (!e_WYSIWYG)
@@ -871,8 +871,8 @@ class Ladder extends DatabaseTable
 		//<!-- Rules -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L38.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L38.'</td>
+		<td class="eb_td">
 		';
 		$text .= '<textarea class="tbox" id="ladderrules" name="ladderrules" cols="70" '.$insertjs.'>'.$this->getField('Rules').'</textarea>';
 		if (!e_WYSIWYG)

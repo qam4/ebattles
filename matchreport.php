@@ -112,7 +112,7 @@ switch($ladder->getField('Type'))
 		$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
        	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
        	$gamer = new SC2Gamer($gamer_id);
-       	$pname = $gamer->getGamerName();
+       	$pname = $gamer->getField('Name');
 		$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 		list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 		if ($prank==0)
@@ -246,7 +246,7 @@ if($match_id)
 			$puid  = mysql_result($result,$score, TBL_USERS.".user_id");
        		$gamer_id = mysql_result($result,$score, TBL_PLAYERS.".Gamer");
        		$gamer = new SC2Gamer($gamer_id);
-       		$pname = $gamer->getGamerName();
+       		$pname = $gamer->getField('Name');
 			$pavatar = mysql_result($result,$score, TBL_USERS.".user_image");
 			$pteam  = mysql_result($result,$score, TBL_PLAYERS.".Team");
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);

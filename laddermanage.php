@@ -97,7 +97,7 @@ else
 		';
 
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L9.'</b><br />';
+		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L9.'<br />';
 		$text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
 		$text .= '</td>';
 
@@ -107,7 +107,7 @@ else
 		$row = mysql_fetch_array($result_2);
 		$num_rows_2 = mysql_numrows($result_2);
 
-		$text .= '<td class="eb_td1">';
+		$text .= '<td class="eb_td">';
 		$text .= '<table class="table_left">';
 		$text .= '<tr>';
 		$text .= '<td><select class="tbox" name="ladderowner">';
@@ -146,8 +146,8 @@ else
 		$text .= '
 		<tr>
 		';
-		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L11.'</b></td>';
-		$text .= '<td class="eb_td1">';
+		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L11.'</td>';
+		$text .= '<td class="eb_td">';
 		if ($numMods>0)
 		{
 			$text .= '<table class="table_left">';
@@ -335,10 +335,10 @@ else
 			<table class="eb_table" style="width:95%">
 			<tbody>
 			<tr>
-			<td class="eb_td1 eb_w40">
+			<td class="eb_td eb_tdc1 eb_w40">
 			<b>'.EB_LADDERM_L41.'</b>
 			</td>
-			<td class="eb_td1">
+			<td class="eb_td">
 			<select class="tbox" name="division">
 			';
 			for($i=0; $i<$numDivisions; $i++)
@@ -370,10 +370,10 @@ else
 			<table class="eb_table" style="width:95%">
 			<tbody>
 			<tr>
-			<td class="eb_td1 eb_w40">
+			<td class="eb_td eb_tdc1 eb_w40">
 			<b>'.EB_LADDERM_L44.'</b>
 			</td>
-			<td class="eb_td1">
+			<td class="eb_td">
 			<table class="table_left">
 			<tr>
 			<td><div><select class="tbox" name="player">
@@ -432,8 +432,10 @@ else
 			else
 			{
 				$text .= '<table class="eb_table" style="width:95%"><tbody>';
-				$text .= '<tr><td class="eb_td2"><b>'.EB_CLANS_L5.'</b></td>
-				<td class="eb_td2"><b>'.EB_CLANS_L6.'</b></td></tr>';
+				$text .= '<tr>
+				<th class="eb_th2">'.EB_CLANS_L5.'</th>
+				<th class="eb_th2">'.EB_CLANS_L6.'</th>
+				</tr>';
 				for($i=0; $i < $num_rows; $i++){
 					$clanid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 					$cname  = mysql_result($result,$i, TBL_CLANS.".Name");
@@ -453,8 +455,8 @@ else
 					}
 
 					$text .= '<tr>
-					<td class="eb_td1">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
-					<td class="eb_td1">'.$ctag.'</td></tr>';
+					<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
+					<td class="eb_td">'.$ctag.'</td></tr>';
 				}
 				$text .= '</tbody></table>';
 			}
@@ -503,15 +505,15 @@ else
 				$text .= '<tr>';
 				foreach($array as $opt=>$opt_array)
 				{
-					$text .= '<td class="eb_td2"><a href="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$ladder_id.'&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
+					$text .= '<th class="eb_th2"><a href="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$ladder_id.'&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></th>';
 				}
-				$text .= '<td class="eb_td2">'.EB_LADDERM_L59;
+				$text .= '<th class="eb_th2">'.EB_LADDERM_L59;
 				$text .= '<input type="hidden" id="ban_player" name="ban_player" value=""/>';
 				$text .= '<input type="hidden" id="unban_player" name="unban_player" value=""/>';
 				$text .= '<input type="hidden" id="kick_player" name="kick_player" value=""/>';
 				$text .= '<input type="hidden" id="del_player_games" name="del_player_games" value=""/>';
 				$text .= '<input type="hidden" id="del_player_awards" name="del_player_awards" value=""/>';
-				$text .= '</td></tr>';
+				$text .= '</th></tr>';
 				for($i=0; $i<$num_rows; $i++)
 				{
 					$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
@@ -534,11 +536,11 @@ else
 					if ($prank == 0) $prank = EB_LADDERM_L53;
 
 					$text .= '<tr>';
-					$text .= '<td class="eb_td1"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
-					$text .= '<td class="eb_td1">'.(($pbanned) ? EB_LADDERM_L54 : $prank).'</td>';
-					$text .= '<td class="eb_td1">'.$pgames.'</td>';
-					$text .= '<td class="eb_td1">'.$pawards.'</td>';
-					$text .= '<td class="eb_td1">';
+					$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
+					$text .= '<td class="eb_td">'.(($pbanned) ? EB_LADDERM_L54 : $prank).'</td>';
+					$text .= '<td class="eb_td">'.$pgames.'</td>';
+					$text .= '<td class="eb_td">'.$pawards.'</td>';
+					$text .= '<td class="eb_td">';
 					if ($pbanned)
 					{
 						$text .= ' <a href="javascript:unban_player(\''.$pid.'\');" title="'.EB_LADDERM_L60.'" onclick="return confirm(\''.EB_LADDERM_L61.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_go.ico" alt="'.EB_LADDERM_L60.'"/></a>';
@@ -583,8 +585,8 @@ else
 		';
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L70.'</b><br />'.EB_LADDERM_L71.'</td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L70.'<div class="smalltext">'.EB_LADDERM_L71.'</div></td>
+		<td class="eb_td">
 		';
 		$text .= ebImageTextButton('ladderresetscores', 'bin_closed.png', EB_LADDERM_L72, '', EB_LADDERM_L73);
 		$text .= '
@@ -593,8 +595,8 @@ else
 		';
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L74.'</b><br />'.EB_LADDERM_L75.'</td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L74.'<div class="smalltext">'.EB_LADDERM_L75.'</div></td>
+		<td class="eb_td">
 		';
 		$text .= ebImageTextButton('ladderresetladder', 'bin_closed.png', EB_LADDERM_L76, '', EB_LADDERM_L77);
 		$text .= '
@@ -603,8 +605,8 @@ else
 		';
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L78.'</b><br />'.EB_LADDERM_L79.'</td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L78.'<div class="smalltext">'.EB_LADDERM_L79.'</div></td>
+		<td class="eb_td">
 		';
 		$text .= ebImageTextButton('ladderdelete', 'delete.png', EB_LADDERM_L80, 'negative', EB_LADDERM_L81);
 		$text .= '
@@ -613,8 +615,8 @@ else
 		';
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_LADDERM_L82.'</b><br />'.EB_LADDERM_L83.'</td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L82.'<div class="smalltext">'.EB_LADDERM_L83.'</div></td>
+		<td class="eb_td">
 		';
 		$text .= ebImageTextButton('ladderupdatescores', 'chart_curve.png', EB_LADDERM_L84, '', EB_LADDERM_L85);
 		$text .= '
@@ -656,19 +658,19 @@ else
 
 		$text .= '
 		<tr>
-		<td class="eb_td2">'.EB_LADDERM_L87.'</td>
-		<td class="eb_td2" colspan="2">'.EB_LADDERM_L88.'</td>
-		<td class="eb_td2">'.EB_LADDERM_L89.'</td>
+		<th class="eb_th2">'.EB_LADDERM_L87.'</th>
+		<th class="eb_th2" colspan="2">'.EB_LADDERM_L88.'</th>
+		<th class="eb_th2">'.EB_LADDERM_L89.'</th>
 		</tr>';
 		if ($ladder->getField('Type') != "ClanWar")
 		{
 			$text .= '
 			<tr>
-			<td class="eb_td1">'.EB_LADDERM_L90.'</td>
-			<td class="eb_td1">
+			<td class="eb_td">'.EB_LADDERM_L90.'</td>
+			<td class="eb_td">
 			<input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
 			</td>
-			<td class="eb_td1">
+			<td class="eb_td">
 			';
 			$text .= "
 			<script type='text/javascript'>
@@ -686,7 +688,7 @@ else
 			";
 			$text .= '
 			</td>
-			<td class="eb_td1"></td>
+			<td class="eb_td"></td>
 			</tr>
 			';
 			$cat_index ++;
@@ -696,11 +698,11 @@ else
 		{
 			$text .= '
 			<tr>
-			<td class="eb_td1">'.EB_LADDERM_L91.'</td>
-			<td class="eb_td1">
+			<td class="eb_td">'.EB_LADDERM_L91.'</td>
+			<td class="eb_td">
 			<input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
 			</td>
-			<td class="eb_td1">
+			<td class="eb_td">
 			';
 			$text .= "
 			<script type='text/javascript'>
@@ -718,7 +720,7 @@ else
 			";
 			$text .= '
 			</td>
-			<td class="eb_td1"></td>
+			<td class="eb_td"></td>
 			</tr>
 			';
 			$cat_index ++;
@@ -787,11 +789,11 @@ else
 			//---------------------------------------------------
 			$text .= '
 			<tr>
-			<td class="eb_td1">'.$cat_name_display.'</td>
-			<td class="eb_td1">
+			<td class="eb_td">'.$cat_name_display.'</td>
+			<td class="eb_td">
 			<input name="sliderValue'.$cat_index.'" id="sliderValue'.$cat_index.'" class="tbox" type="text" size="3" onchange="A_SLIDERS['.$cat_index.'].f_setValue(this.value)"/>
 			</td>
-			<td class="eb_td1">
+			<td class="eb_td">
 			';
 			$text .= "
 			<script type='text/javascript'>
@@ -810,7 +812,7 @@ else
 			$text .= '</td>';
 
 			$text .= '
-			<td class="eb_td1">
+			<td class="eb_td">
 			<input class="tbox" type="checkbox" name="infoonly'.$i.'" value="1"
 			';
 			if ($cat_InfoOnly == TRUE)
@@ -832,9 +834,9 @@ else
 
 		$text .= '
 		<tr>
-		<td class="eb_td1">'.EB_LADDERM_L105.'</td>
-		<td class="eb_td1">'.$rating_max.'</td>
-		<td class="eb_td1" colspan="2">
+		<td class="eb_td">'.EB_LADDERM_L105.'</td>
+		<td class="eb_td">'.$rating_max.'</td>
+		<td class="eb_td" colspan="2">
 		<input class="tbox" type="checkbox" name="hideratings" value="1"
 		';
 		if ($ladder->getField('hide_ratings_column') == TRUE)
@@ -866,8 +868,8 @@ else
 		//<!-- Enable/Disable Challenges -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L122.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td"><b>'.EB_LADDERM_L122.'</b></td>
+		<td class="eb_td">
 		<div>
 		';
 		$text .= '<input class="tbox" type="checkbox" name="ladderchallengesenable"';
@@ -888,8 +890,8 @@ else
 		//<!-- Max number of Dates per Challenge -->
 		$text .= '
 		<tr>
-		<td class="eb_td1"><b>'.EB_LADDERM_L124.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td"><b>'.EB_LADDERM_L124.'</b></td>
+		<td class="eb_td">
 		<div>
 		';
 		$text .= '<input class="tbox" type="text" name="ladderdatesperchallenge" size="2" value="'.$ladder->getField('MaxDatesPerChallenge').'"';

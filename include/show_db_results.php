@@ -23,7 +23,7 @@ function show_db_results($result){
                 // $row is array... foreach( .. ) puts every element
                 // of $row to $cell variable
                 foreach($row as $cell)
-                echo "<td class='eb_td1'>$cell</td>";
+                echo "<td class='eb_td'>$cell</td>";
 
                 echo "</tr>";
             }

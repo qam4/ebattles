@@ -76,7 +76,16 @@ if (isset($_FILES['userfile'])) {
 					if (!$b->isWinnerKnown())
 					$error_str .= '<li>'.EB_SUBMITREPLAY_L4.'</li>';
 					
-					// TODO: Check if the replay has already been submitted.
+					// Check if the replay has already been submitted.
+					$q2 = "SELECT ".TBL_MATCHS.".*"
+					." FROM ".TBL_MATCHS
+					." WHERE (".TBL_MATCHS.".TimePlayed = '".$b->getCtime()."')";
+					$result2 = $sql->db_Query($q2);
+					$num_rows = mysql_numrows($result2);
+					if ($num_rows!=0)
+					{
+						$error_str .= '<li>'.EB_SUBMITREPLAY_L7.'</li>';
+					}					
 					
 					$match->setField('Ladder', $ladder_id);
 					$match->setField('ReportedBy', USERID);
@@ -167,22 +176,30 @@ if (isset($_FILES['userfile'])) {
 					$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
 
 					$text .= '<table class="eb_table table_left"><tbody>';
-					$text .= '<td class="eb_td1">Version</td><td class="eb_td2">'.$a->getVersionString();
-					$text .= '<tr><td class="eb_td1">Map name</td><td class="eb_td2">'.$b->getMapName().'</td></tr>';
-					$text .= '<tr><td class="eb_td1">Game length</td><td class="eb_td2">'.$b->getFormattedGameLength().'</td></tr>';
-					$text .= '<tr><td class="eb_td1">Team size</td><td class="eb_td2">'.$b->getTeamSize().'</td></tr>';
-					$text .= '<tr><td class="eb_td1">Game speed</td><td class="eb_td2">'.$b->getGameSpeedText().'</td></tr>';
-					$text .= '<tr><td class="eb_td1">Real team size</td><td class="eb_td2">'.$b->getRealTeamSize().'</td></tr>';
-					$text .= '<tr><td class="eb_td1">Realm</td><td class="eb_td2">'.$b->getRealm().'</td></tr>';
-					$text .= '<tr><td class="eb_td1">Date and time played</td><td class="eb_td2">'.date('jS \of F Y \a\t H:i' ,$b->getCtime()).'</td></tr>';
+					$text .= '<td class="eb_td eb_tdc1">Version</td><td class="eb_td2">'.$a->getVersionString();
+					$text .= '<tr><td class="eb_td eb_tdc1">Map name</td><td class="eb_td2">'.$b->getMapName().'</td></tr>';
+					$text .= '<tr><td class="eb_td eb_tdc1">Game length</td><td class="eb_td2">'.$b->getFormattedGameLength().'</td></tr>';
+					$text .= '<tr><td class="eb_td eb_tdc1">Team size</td><td class="eb_td2">'.$b->getTeamSize().'</td></tr>';
+					$text .= '<tr><td class="eb_td eb_tdc1">Game speed</td><td class="eb_td2">'.$b->getGameSpeedText().'</td></tr>';
+					$text .= '<tr><td class="eb_td eb_tdc1">Real team size</td><td class="eb_td2">'.$b->getRealTeamSize().'</td></tr>';
+					$text .= '<tr><td class="eb_td eb_tdc1">Realm</td><td class="eb_td2">'.$b->getRealm().'</td></tr>';
+					$text .= '<tr><td class="eb_td eb_tdc1">Date and time played</td><td class="eb_td2">'.date('jS \of F Y \a\t H:i' ,$b->getCtime()).'</td></tr>';
 					if ($recorder != null)
-					$text .= '<tr><td class="eb_td1">Replay recorded by</td><td class="eb_td2">'.$recorder['name'].'</td></tr>';
+					$text .= '<tr><td class="eb_td eb_tdc1">Replay recorded by</td><td class="eb_td2">'.$recorder['name'].'</td></tr>';
 					$text .= '</tbody></table>';
 
 					$apmString = "<b>APM graphs</b><br />\n";
 					$obsString = "";
 					$obsCount = 0;
-					$text .= '<table class="table_left" border="1"><tr><th>Player name</th><th>Race</th><th>Color</th><th>Team</th><th>Average APM</th><th>Winner?</th></tr>';
+					$text .= '<br />';
+					$text .= '<table class="table_left">
+					<tr>
+					<th class="eb_th2">Player name</th>
+					<th class="eb_th2">Race</th><th>Color</th>
+					<th class="eb_th2">Team</th>
+					<th class="eb_th2">Average APM</th>
+					<th class="eb_th2">Winner?</th>
+					</tr>';
 					foreach($players as $player) {
 						if ($player['isObs']) {
 							if ($obsString == "")

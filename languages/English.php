@@ -366,7 +366,7 @@ define('EB_SUBMITREPLAY_L3', 'The replay match type is not compatible with the l
 define('EB_SUBMITREPLAY_L4', 'We could not get the winner from the replay');
 define('EB_SUBMITREPLAY_L5', 'One player is an AI');
 define('EB_SUBMITREPLAY_L6', 'The following player is not in the ladder: ');
-define('EB_SUBMITREPLAY_L7', '');
+define('EB_SUBMITREPLAY_L7', 'Replay already submitted');
 define('EB_SUBMITREPLAY_L8', '');
 define('EB_SUBMITREPLAY_L9', '');
 define('EB_SUBMITREPLAY_L10', '');
@@ -476,7 +476,7 @@ define('EB_TOURNAMENT_L62', 'View details');
 define('EB_TOURNAMENT_L63', 'Players');
 define('EB_TOURNAMENT_L64', 'Race');
 define('EB_TOURNAMENT_L65', 'Name');
-define('EB_TOURNAMENT_L66', 'BBNet Character');
+define('EB_TOURNAMENT_L66', 'BNet Character');
 define('EB_TOURNAMENT_L67', '');
 define('EB_TOURNAMENT_L68', '');
 define('EB_TOURNAMENT_L69', '');

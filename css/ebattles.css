@@ -5,11 +5,22 @@ margin-left: 0px;
 margin-right: auto;
 }
 
-td.eb_td1 {
+td.eb_td {
 text-align: left;
 }
+td.eb_tdc1 {
+font-weight: bold;
+}
+td.eb_td1 {
+}
 td.eb_td2 {
-text-align: left;
+}
+td.eb_th {
+}
+td.eb_th1 {
+}
+td.eb_th2 {
+font-weight: bold;
 }
 td.eb_w40 {
 width: 40%;
@@ -48,3 +59,9 @@ border:1px solid red;
 }
 
 .hide {display: none !important;}
+
+#modal-form-signup label {
+width: 100px;	
+display: inline-block;
+vertical-align: top;
+}

@@ -52,7 +52,7 @@ jQuery(function() {
 				required: "Please enter your BBNET code.",
 				digits: "Please enter a valid 3 digits BBNET code."
 			}
-		},
+		}
 	});
 
 	// our modal dialog setup

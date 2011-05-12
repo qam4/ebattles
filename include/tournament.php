@@ -230,8 +230,8 @@ class Tournament extends DatabaseTable
 		//<!-- Tournament Name -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L15.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L15.'</td>
+		<td class="eb_td">
 		<div><input class="tbox" type="text" size="40" name="tournamentname" value="'.$this->getField('Name').'"/></div>
 		</td>
 		</tr>
@@ -240,8 +240,8 @@ class Tournament extends DatabaseTable
 		//<!-- Tournament Password -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L16.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L16.'</td>
+		<td class="eb_td">
 		<div><input class="tbox" type="text" size="40" name="tournamentpassword" value="'.$this->getField('password').'"/></div>
 		</td>
 		</tr>
@@ -255,8 +255,8 @@ class Tournament extends DatabaseTable
 		/* Error occurred, return given name by default */
 		$numGames = mysql_numrows($result);
 		$text .= '<tr>';
-		$text .= '<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L17.'</b></td>';
-		$text .= '<td class="eb_td1"><select class="tbox" name="tournamentgame">';
+		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L17.'</td>';
+		$text .= '<td class="eb_td"><select class="tbox" name="tournamentgame">';
 		for($i=0; $i<$numGames; $i++){
 			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -275,8 +275,8 @@ class Tournament extends DatabaseTable
 		//<!-- Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L18.'</b></td>
-		<td class="eb_td1"><select class="tbox" name="tournamenttype">';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L18.'</td>
+		<td class="eb_td"><select class="tbox" name="tournamenttype">';
 		$text .= '<option value="Single Elimination" '.($this->getField('Type') == "Single Elimination" ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L19.'</option>';
 		$text .= '</select>
 		</td>
@@ -286,8 +286,8 @@ class Tournament extends DatabaseTable
 		//<!-- Match Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L126.'</b></td>
-		<td class="eb_td1"><select class="tbox" name="tournamentmatchtype">';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L126.'</td>
+		<td class="eb_td"><select class="tbox" name="tournamentmatchtype">';
 		$text .= '<option value="1v1" '.($this->getField('MatchType') == "1v1" ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L127.'</option>';
 		$text .= '<option value="2v2" '.($this->getField('MatchType') == "2v2" ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L128.'</option>';
 		$text .= '<option value="FFA" '.($this->getField('MatchType') == "FFA" ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L131.'</option>';
@@ -299,8 +299,8 @@ class Tournament extends DatabaseTable
 		//<!-- Max Number of Players -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L132.'</b></td>
-		<td class="eb_td1"><select class="tbox" name="tournamentmaxnumberplayers">';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L132.'</td>
+		<td class="eb_td"><select class="tbox" name="tournamentmaxnumberplayers">';
 		$text .= '<option value="4" '.($this->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 		$text .= '<option value="8" '.($this->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
 		$text .= '<option value="16" '.($this->getField('MaxNumberPlayers') == "16" ? 'selected="selected"' : '') .'>16</option>';
@@ -313,8 +313,8 @@ class Tournament extends DatabaseTable
 		//<!-- Match report userclass -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L21.'</b></td>
-		<td class="eb_td1"><select class="tbox" name="tournamentmatchreportuserclass">';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L21.'</td>
+		<td class="eb_td"><select class="tbox" name="tournamentmatchreportuserclass">';
 		$text .= '<option value="'.eb_UC_TOURNAMENT_PLAYER.'" '.($this->getField('match_report_userclass') == eb_UC_TOURNAMENT_PLAYER ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L22.'</option>';
 		$text .= '<option value="'.eb_UC_TOURNAMENT_MODERATOR.'" '.($this->getField('match_report_userclass') == eb_UC_TOURNAMENT_MODERATOR ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L23.'</option>';
 		$text .= '<option value="'.eb_UC_TOURNAMENT_OWNER.'" '.($this->getField('match_report_userclass') == eb_UC_TOURNAMENT_OWNER ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L24.'</option>';
@@ -325,8 +325,8 @@ class Tournament extends DatabaseTable
 		//<!-- Match replay report userclass -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L134.'</b></td>
-		<td class="eb_td1"><select class="tbox" name="tournamentmatchreplayreportuserclass">';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L134.'</td>
+		<td class="eb_td"><select class="tbox" name="tournamentmatchreplayreportuserclass">';
 		$text .= '<option value="'.eb_UC_TOURNAMENT_PLAYER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_TOURNAMENT_PLAYER ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L22.'</option>';
 		$text .= '<option value="'.eb_UC_TOURNAMENT_MODERATOR.'" '.($this->getField('match_replay_report_userclass') == eb_UC_TOURNAMENT_MODERATOR ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L23.'</option>';
 		$text .= '<option value="'.eb_UC_TOURNAMENT_OWNER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_TOURNAMENT_OWNER ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L24.'</option>';
@@ -350,8 +350,8 @@ class Tournament extends DatabaseTable
 
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L108.'</b><div class="smalltext">'.EB_TOURNAMENTM_L109.'</div></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L108.'<div class="smalltext">'.EB_TOURNAMENTM_L109.'</div></td>
+		<td class="eb_td">
 		<div>';
 		$text .= '<select class="tbox" name="tournamentmatchapprovaluserclass">';
 		$text .= '<option value="'.eb_UC_NONE.'" '.(($this->getField('MatchesApproval') == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L113.'</option>';
@@ -359,7 +359,7 @@ class Tournament extends DatabaseTable
 		$text .= '<option value="'.eb_UC_TOURNAMENT_MODERATOR.'" '.((($this->getField('MatchesApproval') & eb_UC_TOURNAMENT_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L111.'</option>';
 		$text .= '<option value="'.eb_UC_TOURNAMENT_OWNER.'" '.((($this->getField('MatchesApproval') & eb_UC_TOURNAMENT_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L110.'</option>';
 		$text .= '</select>';
-		$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_TOURNAMENT_L64.'</b></div>' : '';
+		$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;'.$nbrMatchesPending.'&nbsp;'.EB_TOURNAMENT_L64.'</div>' : '';
 		$text .= '
 		</div>
 		</td>
@@ -380,8 +380,8 @@ class Tournament extends DatabaseTable
 
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L32.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L32.'</td>
+		<td class="eb_td">
 		<table class="table_left">
 		<tr>
 		<td>
@@ -429,16 +429,16 @@ class Tournament extends DatabaseTable
 
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.($nbrRounds - 1).' '.EB_TOURNAMENTM_L4.'</b></td>
-		<td class="eb_td1">';
+		<td class="eb_td eb_tdc1 eb_w40">'.($nbrRounds - 1).' '.EB_TOURNAMENTM_L4.'</td>
+		<td class="eb_td">';
 
 		$rounds = unserialize($this->getField('Rounds'));
 		if (!isset($rounds)) $rounds = array();
 		$text .= '<table class="table_left"><tbody>';
 		$text .= '<tr>';
-		$text .= '<td><b>'.EB_TOURNAMENTM_L25.'</b></td>';
-		$text .= '<td><b>'.EB_TOURNAMENTM_L26.'</b></td>';
-		$text .= '<td><b>'.EB_TOURNAMENTM_L27.'</b></td>';
+		$text .= '<td>'.EB_TOURNAMENTM_L25.'</td>';
+		$text .= '<td>'.EB_TOURNAMENTM_L26.'</td>';
+		$text .= '<td>'.EB_TOURNAMENTM_L27.'</td>';
 		$text .= '</tr>';
 		for ($round = 1; $round < $nbrRounds; $round++) {
 			if (!isset($rounds[$round])) {
@@ -452,7 +452,7 @@ class Tournament extends DatabaseTable
 			}
 
 			$text .= '<tr>';
-			$text .= '<td><b>'.EB_TOURNAMENTM_L25.' '.$round.'</b></td>';
+			$text .= '<td>'.EB_TOURNAMENTM_L25.' '.$round.'</td>';
 			$text .= '<td><input class="tbox" type="text" size="40" name="round_title_'.$round.'" value="'.$rounds[$round]['Title'].'"/></td>';
 			$text .= '<td><select class="tbox" name="round_bestof_'.$round.'">';
 			$text .= '<option value="1" '.($rounds[$round]['BestOf'] == "1" ? 'selected="selected"' : '') .'>1</option>';
@@ -474,8 +474,8 @@ class Tournament extends DatabaseTable
 
 			$text .= '
 			<tr>
-			<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L28.'</b></td>
-			<td class="eb_td1">';
+			<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L28.'</td>
+			<td class="eb_td">';
 			$text .= '<table class="table_left">';
 			foreach($mapPool as $key=>$map)
 			{
@@ -551,8 +551,8 @@ class Tournament extends DatabaseTable
 		//<!-- Description -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L36.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L36.'</td>
+		<td class="eb_td">
 		';
 		$text .= '<textarea class="tbox" id="tournamentdescription" name="tournamentdescription" cols="70" '.$insertjs.'>'.$this->getField('Description').'</textarea>';
 		if (!e_WYSIWYG)
@@ -566,8 +566,8 @@ class Tournament extends DatabaseTable
 		//<!-- Rules -->
 		$text .= '
 		<tr>
-		<td class="eb_td1 eb_w40"><b>'.EB_TOURNAMENTM_L38.'</b></td>
-		<td class="eb_td1">
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L38.'</td>
+		<td class="eb_td">
 		';
 		$text .= '<textarea class="tbox" id="tournamentrules" name="tournamentrules" cols="70" '.$insertjs.'>'.$this->getField('Rules').'</textarea>';
 		if (!e_WYSIWYG)
