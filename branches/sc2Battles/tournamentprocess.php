@@ -35,6 +35,7 @@ $tournament = new Tournament($tournament_id);
 $can_manage = 0;
 if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 if (USERID==$tournament->getField('Owner')) $can_manage = 1;
+if (!$tournament_id) $can_manage = 1;	// tournament creation
 if ($can_manage == 0)
 {
 	header("Location: ./tournamentinfo.php?TournamentID=$tournament_id");
@@ -197,9 +198,6 @@ else{
 		/* Tournament Rules */
 		$tournament->setField('Rules', $_POST['tournamentrules']);
 
-		//var_dump($tournament);
-		//exit;
-		
 		if ($tournament_id) {
 			// Need to update the tournament in database
 			$tournament->updateDB();

@@ -175,7 +175,7 @@ else
 		<td>
 		<select class="tbox" name="mod">
 		';
-		for($i=0; $i<$numUsers; $i++)
+		for($i=0; $i < $numUsers; $i++)
 		{
 			$uid  = mysql_result($result,$i, TBL_USERS.".user_id");
 			$uname  = mysql_result($result,$i, TBL_USERS.".user_name");
@@ -268,9 +268,9 @@ else
 		}
 
 		$results = unserialize($tournament->getField('Results'));
-		$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, &$results, $rounds);
-		$tournament->updateResults($results);
-		$tournament->updateDB($results);
+		$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, $results, $rounds);
+		//$tournament->updateResults($results);
+		//$tournament->updateDB($results);
 
 		$text .= '</div>';  // tab-page "Brackets"
 
@@ -392,26 +392,51 @@ else
 			case "1v1":
 			// TODO: No good...
 			// Form to add a player to the tournament
-			$q = "SELECT ".TBL_USERS.".*"
-			." FROM ".TBL_USERS;
+			$q = "SELECT ".TBL_GAMERS.".*, "
+			.TBL_USERS.".*"
+			." FROM ".TBL_GAMERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_GAMERS.".Game = '$egameid')"
+			."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
 			$result = $sql->db_Query($q);
 			$numUsers = mysql_numrows($result);
+			$text .= '<form action="'.e_PLUGIN.'ebattles/tournamentprocess.php?TournamentID='.$tournament_id.'" method="post">';
 			$text .= '
 			<table class="eb_table" style="width:95%">
 			<tbody>
 			<tr>
+			<td class="eb_td eb_tdc1 eb_w40">
+			<b>'.EB_TOURNAMENTM_L44.'</b>
+			</td>
 			<td class="eb_td">
-			'.ebImageTextButton('tournamentaddplayer', 'user_add.png', EB_TOURNAMENTM_L45, '', '', EB_TOURNAMENTM_L44).'
+			<table class="table_left">
+			<tr>
+			<td><div><select class="tbox" name="player">
+			';
+			for($i=0; $i<$numUsers; $i++)
+			{
+				$uid  = mysql_result($result,$i, TBL_USERS.".user_id");
+				$uname  = mysql_result($result,$i, TBL_GAMERS.".Name");
+				$text .= '<option value="'.$uid.'">'.$uname.'</option>';
+			}
+			$text .= '
+			</select></div></td>
+			<td>'.ebImageTextButton('tournamentaddplayer', 'user_add.png', EB_TOURNAMENTM_L45).'</td>
+			<td><div><input class="tbox" type="checkbox" name="tournamentaddplayernotify"/>'.EB_TOURNAMENTM_L46.'</div></td>
+			</tr>
+			</table>
 			</td>
 			</tr>
 			</tbody>
 			</table>
+			</form>
 			';
 			break;
 			default:
 		}
 
-		$text .= '<br /><table>';
+		$text .= '<br />';
+		$text .= '<table>';
 		$text .= '<tr><td style="vertical-align:top">'.EB_TOURNAMENTM_L47.':</td>';
 		$text .= '<td>'.EB_TOURNAMENTM_L48.'</td></tr>';
 		$text .= '<tr><td style="vertical-align:top">'.EB_TOURNAMENTM_L49.':</td>';
@@ -444,8 +469,10 @@ else
 			else
 			{
 				$text .= '<table class="eb_table" style="width:95%"><tbody>';
-				$text .= '<tr><td class="eb_td2"><b>'.EB_CLANS_L5.'</b></td>
-				<td class="eb_td2"><b>'.EB_CLANS_L6.'</b></td></tr>';
+				$text .= '<tr>
+				<th class="eb_th2">'.EB_CLANS_L5.'</th>
+				<th class="eb_th2">'.EB_CLANS_L6.'</th>
+				</tr>';
 				for($i=0; $i < $num_rows; $i++){
 					$clanid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 					$cname  = mysql_result($result,$i, TBL_CLANS.".Name");
@@ -466,7 +493,8 @@ else
 
 					$text .= '<tr>
 					<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
-					<td class="eb_td">'.$ctag.'</td></tr>';
+					<td class="eb_td">'.$ctag.'</td>
+					</tr>';
 				}
 				$text .= '</tbody></table>';
 			}
@@ -514,15 +542,15 @@ else
 				$text .= '<tr>';
 				foreach($array as $opt=>$opt_array)
 				{
-					$text .= '<td class="eb_td2"><a href="'.e_PLUGIN.'ebattles/tournamentmanage.php?TournamentID='.$tournament_id.'&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
+					$text .= '<th class="eb_th2"><a href="'.e_PLUGIN.'ebattles/tournamentmanage.php?TournamentID='.$tournament_id.'&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></th>';
 				}
-				$text .= '<td class="eb_td2">'.EB_TOURNAMENTM_L59;
+				$text .= '<th class="eb_th2">'.EB_TOURNAMENTM_L59;
 				$text .= '<input type="hidden" id="ban_player" name="ban_player" value=""/>';
 				$text .= '<input type="hidden" id="unban_player" name="unban_player" value=""/>';
 				$text .= '<input type="hidden" id="kick_player" name="kick_player" value=""/>';
 				$text .= '<input type="hidden" id="del_player_games" name="del_player_games" value=""/>';
 				$text .= '<input type="hidden" id="del_player_awards" name="del_player_awards" value=""/>';
-				$text .= '</td></tr>';
+				$text .= '</th></tr>';
 				for($i=0; $i<$num_rows; $i++)
 				{
 					$pid  = mysql_result($result,$i, TBL_TPLAYERS.".TPlayerID");
