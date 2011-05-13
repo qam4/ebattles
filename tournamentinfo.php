@@ -787,9 +787,9 @@ else
 	}
 
 	$results = unserialize($tournament->getField('Results'));
-	$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, &$results, $rounds);
-	$tournament->updateResults($results);
-	$tournament->updateDB($results);
+	$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, $results, $rounds);
+	//$tournament->updateResults($results);
+	//$tournament->updateDB($results);
 
 	$text .= '</div>';    // tabs-3 "Brackets"
 

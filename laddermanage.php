@@ -360,10 +360,13 @@ else
 			break;
 			case "One Player Ladder":
 			// Form to add a player to the ladder
-			$q = "SELECT ".TBL_USERS.".*"
-			." FROM ".TBL_USERS;
+			$q = "SELECT ".TBL_GAMERS.".*, "
+			.TBL_USERS.".*"
+			." FROM ".TBL_GAMERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_GAMERS.".Game = '$egameid')"
+			."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
 			$result = $sql->db_Query($q);
-			/* Error occurred, return given name by default */
 			$numUsers = mysql_numrows($result);
 			$text .= '<form action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$ladder_id.'" method="post">';
 			$text .= '

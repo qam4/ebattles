@@ -1,9 +1,28 @@
 <?php
 
+/*
+ function brackets()
+ 
+ 
+ variables:
+  - $matchup[round][matchup][0(top)-1(bottom)]
+    . 'T1-16': team 1 to 16
+    . 'Wr,m': winner of matchup
+    . 'Lw,m': loser of matchup
+  - brackets[row][column] -> actual html content of a table cell
+  - results[round][matchup]
+    . ''
+    . 'bye'
+    . 'top'/'bottom'
+  - content[round][matchup][0(top)-1(bottom)]: content of the top/bottom cells for a matchup
+    . 0-15: team index in teams list
+    . '': no team (should be 0 ?) 
+    . 'not played'
+ 
+ */
 
-function brackets($type, $nbrPlayers = 16, $teams, &$results = array(), $rounds) {
 
-
+function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) {
 /*
 $teams = array(
 'QamFour',
@@ -47,46 +66,38 @@ $teams = array(
 		if ($round == 1) {
 			/* Round 1 */
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
-				$teamTop    = substr($matchups[$round][$matchup][0],1) - 1;
-				$teamBottom = substr($matchups[$round][$matchup][1],1) - 1;
+				$teamTop    = substr($matchups[$round][$matchup][0],1);
+				$teamBottom = substr($matchups[$round][$matchup][1],1);
 				if (!$results[$round][$matchup]) $results[$round][$matchup] = '';
 
-				$teamTopName = '';
-				if ($teamTop<$nbrTeams){
-					$teamTopName = $teams[$teamTop]['Name'];
-				}
-				else
-				{
+				$content[$round][$matchup][0] = '';
+				if ($teamTop <= $nbrTeams){
+					$content[$round][$matchup][0] = $teamTop;
+				} else {
 					$results[$round][$matchup] = 'bye';
 				}
-				$teamBottomName = '';
-				if ($teamBottom<$nbrTeams){
-					$teamBottomName = $teams[$teamBottom]['Name'];
-				}
-				else
-				{
+				$content[$round][$matchup][1] = '';
+				if ($teamBottom <= $nbrTeams){
+					$content[$round][$matchup][1] = $teamBottom;
+				} else {
 					$results[$round][$matchup] = 'bye';
 				}
 
-				if(($teamTopName!='')&&($teamBottomName!='')){
+				if(($content[$round][$matchup][0]!='')&&($content[$round][$matchup][1]!='')){
 					if ($results[$round][$matchup] == 'top') {
-						$brackets[$matchup*4-3][2*$round-1] = '<td><div class="container winner"><div class="player"><img src="images/ranks/a1.jpg" style="vertical-align:middle"/>'.$teamTopName.'</div><div class="wins">W</div></div></td>';
-						$brackets[$matchup*4-1][2*$round-1] = '<td><div class="container loser"><div class="player"><img src="images/ranks/d3.jpg" style="vertical-align:middle"/>'.$teamBottomName.'</div><div class="wins">L</div></div></td>';
-					}
-					else if ($results[$round][$matchup] == 'bottom') {
-						$brackets[$matchup*4-3][2*$round-1] = '<td><div class="container loser"><div class="player"><img src="images/ranks/a1.jpg" style="vertical-align:middle"/>'.$teamTopName.'</div><div class="wins">L</div></div></td>';
-						$brackets[$matchup*4-1][2*$round-1] = '<td><div class="container winner"><div class="player"><img src="images/ranks/d3.jpg" style="vertical-align:middle"/>'.$teamBottomName.'</div><div class="wins">W</div></div></td>';
-					}
-					else {
-						$brackets[$matchup*4-3][2*$round-1] = '<td><div class="container"><div class="player"><img src="images/ranks/a1.jpg" style="vertical-align:middle"/>'.$teamTopName.'</div></div></td>';
-						$brackets[$matchup*4-1][2*$round-1] = '<td><div class="container"><div class="player"><img src="images/ranks/d3.jpg" style="vertical-align:middle"/>'.$teamBottomName.'</div></div></td>';
+						$brackets[$matchup*4-3][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], 'winner');
+						$brackets[$matchup*4-1][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], 'loser');
+					} else if ($results[$round][$matchup] == 'bottom') {
+						$brackets[$matchup*4-3][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], 'loser');
+						$brackets[$matchup*4-1][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], 'winner');
+					} else {
+						$brackets[$matchup*4-3][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0]);
+						$brackets[$matchup*4-1][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1]);
 					}
 					$brackets[$matchup*4-2][2*$round-1] = '<td rowspan='.$rowspan.' class="match-details" title="'.'M'.$round.','.$matchup.'"></td>';
 				}
 
-				$content[$round][$matchup][0] = $teamTopName;
 				$matchupsRows[$round][$matchup][0] = $matchup*4-3;
-				$content[$round][$matchup][1] = $teamBottomName;
 				$matchupsRows[$round][$matchup][1] = $matchup*4-1;
 			}
 
@@ -102,20 +113,21 @@ $teams = array(
 						$matchupRound = $matchupArray[0];
 						$matchupMatchup = $matchupArray[1];
 
+						// Get result of matchup
 						$result = $results[$matchupRound][$matchupMatchup];
-						$test = $result;
 
 						$rowTop    = $matchupsRows[$matchupRound][$matchupMatchup][0];
 						$rowBottom = $matchupsRows[$matchupRound][$matchupMatchup][1];
 						$row = ($rowBottom - $rowTop)/2 + $rowTop;
 
+						// If result is not a bye, we draw the grid
 						if($result != 'bye'){
 							$brackets[$rowTop][2*$round-2] = '<td class="grid border-top"></td>';
 							$brackets[$rowBottom][2*$round-2] = '<td class="grid border-bottom"></td>';
 							for ($i = $rowTop+1; $i < $rowBottom; $i++){
 								$brackets[$i][2*$round-2] = '<td class="grid border-vertical"></td>';
 							}
-							for ($i = $rowTop+2; $i <$rowBottom; $i++){
+							for ($i = $rowTop+2; $i < $rowBottom; $i++){
 								$brackets[$i][2*$round-3] = '';
 							}
 							$brackets[$row][2*$round-2] = '<td class="grid border-middle"></td>';
@@ -128,37 +140,21 @@ $teams = array(
 						else if ($result == 'bottom') {
 							$content[$round][$matchup][$match] = $content[$matchupRound][$matchupMatchup][1];
 						}
-						else{
+						else {
 							$content[$round][$matchup][$match] = 'not played';
 						}
 					}
 				}
 				if (($content[$round][$matchup][0]!='')&&($content[$round][$matchup][1]!='')) {
-					if($content[$round][$matchup][0]!='not played') {
-						$contentTop = '<img src="images/ranks/a1.jpg" style="vertical-align:middle"/>'.$content[$round][$matchup][0];
-					}
-					else {
-						$contentTop = 'np&nbsp';
-					}
-					if($content[$round][$matchup][1]!='not played') {
-						$contentBottom = '<img src="images/ranks/d3.jpg" style="vertical-align:middle"/>'.$content[$round][$matchup][1];
-					}
-					else {
-						$contentBottom = 'np&nbsp';
-					}
-
-
 					if ($results[$round][$matchup] == 'top') {
-						$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = '<td><div class="container winner"><div class="player">'.$contentTop.'</div><div class="wins">W</div></div></td>';
-						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = '<td><div class="container loser"><div class="player">'.$contentBottom.'</div><div class="wins">L</div></div></td>';
-					}
-					else if ($results[$round][$matchup] == 'bottom') {
-						$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = '<td><div class="container loser"><div class="player">'.$contentTop.'</div><div class="wins">L</div></div></td>';
-						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = '<td><div class="container winner"><div class="player">'.$contentBottom.'</div><div class="wins">W</div></div></td>';
-					}
-					else {
-						$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = '<td><div class="container"><div class="player">'.$contentTop.'</div></div></td>';
-						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = '<td><div class="container"><div class="player">'.$contentBottom.'</div></div></td>';
+						$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], 'winner');
+						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], 'loser');
+					} else if ($results[$round][$matchup] == 'bottom') {
+						$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], 'loser');
+						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], 'winner');
+					} else {
+						$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0]);
+						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1]);
 					}
 					$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan='.$rowspan.' class="match-details" title="'.'M'.$round.','.$matchup.'"></div></td>';
 				}
@@ -192,30 +188,26 @@ $teams = array(
 						for ($i = $rowTop+1; $i < $rowBottom; $i++){
 							$brackets[$i][2*$round-2] = '<td class="grid border-vertical"></td>';
 						}
-						for ($i = $rowTop+2; $i <$rowBottom; $i++){
+						for ($i = $rowTop+2; $i < $rowBottom; $i++){
 							$brackets[$i][2*$round-3] = '';
 						}
 						$brackets[$row][2*$round-2] = '<td class="grid border-middle"></td>';
 					}
 
-
 					$matchupsRows[$round][$matchup][$match] = $rowTop;
 					if (($result == 'top')||($result == 'bye')) {
 						$content[$round][$matchup][$match] = $content[$matchupRound][$matchupMatchup][0];
-					}
-					else if ($result = 'bottom'){
+					} else if ($result == 'bottom') {
 						$content[$round][$matchup][$match] = $content[$matchupRound][$matchupMatchup][1];
+					} else{
+						$content[$round][$matchup][$match] = 'not played';
 					}
 
-
-					if($content[$round][$matchup][0]!='not played') {
-						$contentFinal = '<img src="images/ranks/a1.jpg" style="vertical-align:middle"/>'.$content[$round][$matchup][0];
+					if ($results[$round][$matchup] == 'top') {
+						$brackets[$row][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][$match], 'winner');
+					} else {
+						$brackets[$row][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][$match]);
 					}
-					else
-					{
-						$contentFinal = '&nbsp';
-					}
-					$brackets[$row][2*$round-1] = '<td><div class="container"><div class="player">'.$contentFinal.'</div></div></td>';
 				}
 			}
 		}
@@ -223,7 +215,7 @@ $teams = array(
 	}
 
 	$bracket_html = '<div id="panel_brackets">';
-	$bracket_html .= '<div id="brackets_frame" style="height: 2916px;">';
+	$bracket_html .= '<div id="brackets_frame" style="height: 800px;">';
 	$bracket_html .= '<div id="brackets">';
 	$bracket_html .= '<table class="brackets">';
 	
@@ -259,6 +251,7 @@ $teams = array(
 
 }
 
+/*
 function init_results(&$results)
 {
 	foreach ($results as $matchups) {
@@ -266,6 +259,35 @@ function init_results(&$results)
 			$matchup = '';
 		}
 	}
+}
+*/
+
+function html_bracket_team_cell($teams, $team, $container_class='') {
+	$text = '<td><div class="container '.$container_class.'">';
+	switch ($team) {
+		case 'not played':
+			$text .= '&nbsp';
+			break;
+		case '':
+			break;
+		default:
+			$team_name = $teams[$team-1]['Name'];
+			$team_image = 'images/ranks/a1.jpg';
+			$text .= '<div class="player">';
+			//$text .= '<img src="'.$team_image.'" style="vertical-align:middle"/>';
+			$text .= $team_name;
+			$text .= '</div>';
+			if ($container_class == 'winner') {
+				$text .= '<div class="wins">W</div>';
+			}
+			if ($container_class == 'loser') {
+				$text .= '<div class="wins">L</div>';
+			}
+			break;
+	}
+
+	$text .= '</div></td>';
+	return $text;
 }
 
 ?>
