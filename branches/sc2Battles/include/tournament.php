@@ -18,6 +18,8 @@ class Tournament extends DatabaseTable
 		$this->setField('Type', 'Single Elimination');
 		$this->setField('MatchType', '1v1');
 		$this->setField('MaxNumberPlayers', 16);
+		$this->setField('match_report_userclass', eb_UC_LADDER_MODERATOR);
+		$this->setField('match_replay_report_userclass', eb_UC_LADDER_PLAYER);
 	}
 
 	/**

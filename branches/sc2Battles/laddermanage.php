@@ -384,7 +384,7 @@ else
 			for($i=0; $i<$numUsers; $i++)
 			{
 				$uid  = mysql_result($result,$i, TBL_USERS.".user_id");
-				$uname  = mysql_result($result,$i, TBL_USERS.".user_name");
+				$uname  = mysql_result($result,$i, TBL_GAMERS.".Name");
 				$text .= '<option value="'.$uid.'">'.$uname.'</option>';
 			}
 			$text .= '
@@ -403,7 +403,8 @@ else
 			default:
 		}
 
-		$text .= '<br /><table>';
+		$text .= '<br />';
+		$text .= '<table>';
 		$text .= '<tr><td style="vertical-align:top">'.EB_LADDERM_L47.':</td>';
 		$text .= '<td>'.EB_LADDERM_L48.'</td></tr>';
 		$text .= '<tr><td style="vertical-align:top">'.EB_LADDERM_L49.':</td>';
@@ -459,7 +460,8 @@ else
 
 					$text .= '<tr>
 					<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
-					<td class="eb_td">'.$ctag.'</td></tr>';
+					<td class="eb_td">'.$ctag.'</td>
+					</tr>';
 				}
 				$text .= '</tbody></table>';
 			}
