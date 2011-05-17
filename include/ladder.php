@@ -34,7 +34,8 @@ class Ladder extends DatabaseTable
 		$this->setField('PointsPerWin', PointsPerWin_DEFAULT);
 		$this->setField('PointsPerDraw', PointsPerDraw_DEFAULT);
 		$this->setField('PointsPerLoss', PointsPerLoss_DEFAULT);
-		$this->setField('match_report_userclass', eb_UC_LADDER_PLAYER);
+		$this->setField('match_report_userclass', eb_UC_LADDER_MODERATOR);
+		$this->setField('match_replay_report_userclass', eb_UC_LADDER_PLAYER);
 		$this->setField('quick_loss_report', '0');
 		$this->setField('hide_ratings_column', '0');
 		$this->setField('MatchesApproval', eb_UC_NONE);
