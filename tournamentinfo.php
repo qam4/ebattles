@@ -627,6 +627,7 @@ else
 	$can_report = 0;
 	$can_schedule = 0;
 	$can_report_quickloss = 0;
+	$can_submit_replay = 0;
 	$can_challenge = 0;
 	$userclass = 0;
 	// Check if user can report
@@ -635,6 +636,7 @@ else
 	{
 		$userclass |= eb_UC_EB_MODERATOR;
 		$can_report = 1;
+		$can_submit_replay = 1;
 		$can_schedule = 1;
 		$can_approve = 1;
 	}
@@ -643,6 +645,7 @@ else
 	{
 		$userclass |= eb_UC_TOURNAMENT_OWNER;
 		$can_report = 1;
+		$can_submit_replay = 1;
 		$can_schedule = 1;
 		$can_approve = 1;
 	}
@@ -657,6 +660,7 @@ else
 	{
 		$userclass |= eb_UC_TOURNAMENT_MODERATOR;
 		$can_report = 1;
+		$can_submit_replay = 1;
 		$can_schedule = 1;
 		$can_approve = 1;
 	}
@@ -669,10 +673,15 @@ else
 	*/
 
 	// Is the user a player?
-	$q = "SELECT *"
-	." FROM ".TBL_TPLAYERS
-	." WHERE (Tournament = '$tournament_id')"
-	."   AND (User = ".USERID.")";
+	$q = "SELECT ".TBL_TPLAYERS.".*, "
+	.TBL_USERS.".*"
+	." FROM ".TBL_TPLAYERS.", "
+	.TBL_GAMERS.", "
+	.TBL_USERS
+	." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+	."   AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+	."   AND (".TBL_USERS.".user_id = ".USERID.")";
 	$result = $sql->db_Query($q);
 
 	$pbanned=0;
@@ -680,10 +689,14 @@ else
 	{
 		$userclass |= eb_UC_TOURNAMENT_PLAYER;
 
-		// Show link to my position
-		$row = mysql_fetch_array($result);
-		$prank = $row['Rank'];
-		$pbanned = $row['Banned'];
+		// Is the tournament started, and not ended
+		if (($tournament->getField('StartDateTime') <= $time))
+		{
+			//$can_report = 1;
+			//$can_report_quickloss = 1;
+			$can_submit_replay = 1;
+			//$can_challenge = 1;
+		}
 	}
 
 	switch($tournament->getField('Type'))
@@ -695,6 +708,7 @@ else
 			$can_report = 0;
 			$can_schedule = 0;
 			$can_report_quickloss = 0;
+			$can_submit_replay = 0;
 			$can_challenge = 0;
 		}
 		break;
@@ -704,6 +718,7 @@ else
 			$can_report = 0;
 			$can_schedule = 0;
 			$can_report_quickloss = 0;
+			$can_submit_replay = 0;
 			$can_challenge = 0;
 		}
 		break;
@@ -732,6 +747,7 @@ else
 	if($tournament->getField('Type') == "ClanWar") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
 	if($tournament->getField('quick_loss_report')==FALSE) $can_report_quickloss = 0;
 	if($userclass < $tournament->getField('match_report_userclass')) $can_report = 0;
+	if($userclass < $tournament->getField('match_replay_report_userclass')) $can_submit_replay = 0;
 
 	if($userclass < $tournament->getField('MatchesApproval')) $can_approve = 0;
 	if($tournament->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
@@ -787,7 +803,8 @@ else
 	}
 
 	$results = unserialize($tournament->getField('Results'));
-	$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, $results, $rounds);
+	list($bracket_html) = brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, $results, $rounds);
+	$text .= $bracket_html;
 	//$tournament->updateResults($results);
 	//$tournament->updateDB($results);
 
@@ -795,12 +812,20 @@ else
 
 	/* Matches */
 	$text .= '<div id="tabs-4">';
-
+	
 	/* Display Match Report buttons */
-	if(($can_report_quickloss != 0)||($can_report != 0))
+	if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||($can_schedule != 0))
 	{
 		$text .= '<table>';
 		$text .= '<tr>';
+		if($can_submit_replay != 0)
+		{
+			$text .= '<td>';
+			$text .= '<form action="'.e_PLUGIN.'ebattles/submitreplay.php?TournamentID='.$tournament_id.'" method="post">';
+			$text .= ebImageTextButton('submitreplay', 'flag_red.png', EB_LADDER_L74);
+			$text .= '</form>';
+			$text .= '</td>';
+		}
 		if($can_report != 0)
 		{
 			$text .= '<td>';

@@ -10,8 +10,8 @@ require_once(e_PLUGIN."ebattles/include/show_array.php");
 require_once(e_PLUGIN."ebattles/include/ladder.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/match.php");
-require_once(e_PLUGIN."ebattles/include/challenge.php");
 require_once(e_PLUGIN."ebattles/include/gamer.php");
+require_once(e_PLUGIN."ebattles/include/challenge.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -44,11 +44,8 @@ if (!$ladder_id)
 }
 else
 {
-	$self = $_SERVER['PHP_SELF'];
 	$file = 'cache/sql_cache_ladder_'.$ladder_id.'.txt';
 	$file_team = 'cache/sql_cache_ladder_team_'.$ladder_id.'.txt';
-
-	require_once(e_PLUGIN."ebattles/ladderinfo_process.php");
 
 	$q = "SELECT ".TBL_LADDERS.".*, "
 	.TBL_GAMES.".*, "
@@ -258,7 +255,7 @@ else
 							{
 								$text .= '<td>'.EB_LADDER_L8.'</td>';
 								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
+								<form action="'.e_PLUGIN.'ebattles/ladderinfo_process.php?LadderID='.$ladder_id.'" method="post">
 								<div>
 								<input class="tbox" type="password" title="'.EB_LADDER_L9.'" name="joinLadderPassword"/>
 								<input type="hidden" name="division" value="'.$div_id.'"/>
@@ -272,7 +269,7 @@ else
 							{
 								$text .= '<td>'.EB_LADDER_L11.'</td>';
 								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
+								<form action="'.e_PLUGIN.'ebattles/ladderinfo_process.php?LadderID='.$ladder_id.'" method="post">
 								<div>
 								<input type="hidden" name="joinLadderPassword" value=""/>
 								<input type="hidden" name="division" value="'.$div_id.'"/>
@@ -376,7 +373,7 @@ else
 							if(!$result || (mysql_numrows($result) == 0))
 							{
 								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
+								<form action="'.e_PLUGIN.'ebattles/ladderinfo_process.php?LadderID='.$ladder_id.'" method="post">
 								<div>
 								<input type="hidden" name="team" value="'.$team_id.'"/>
 								</div>
@@ -410,7 +407,7 @@ else
 									if (($nbrscores == 0)&&($user_banned!=1)&&($ladder->getField('Type')!="ClanWar"))
 									{
 										$text .= '<td>
-										<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
+										<form action="'.e_PLUGIN.'ebattles/ladderinfo.php_process?LadderID='.$ladder_id.'" method="post">
 										<div>
 										<input type="hidden" name="player" value="'.$user_pid.'"/>
 										'.ebImageTextButton('quitladder', 'user_delete.ico', EB_LADDER_L23, 'negative', EB_LADDER_L24).'
@@ -607,7 +604,7 @@ else
 	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_LADDER_L44.'</td><td class="eb_td">'.$tp->toHTML($ladder->getField('Rules'), true).'</td></tr>';
 	$text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$tp->toHTML($ladder->getField('Description'), true).'</td></tr>';
 	$text .= '</tbody></table>';
-	$text .= '</div>';    // tab-page "Info"
+	$text .= '</div>';    // tabs-1 "Info"
 
 	/* Teams Standings */
 	$can_approve = 0;
@@ -673,7 +670,6 @@ else
 	{
 		$userclass |= eb_UC_LADDER_PLAYER;
 
-		// Show link to my position
 		$row = mysql_fetch_array($result);
 		$prank = $row['Rank'];
 		$pbanned = $row['Banned'];

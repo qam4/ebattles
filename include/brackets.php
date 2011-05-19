@@ -2,42 +2,36 @@
 
 /*
  function brackets()
- 
+ inputs:
+  - type: 'Single elimination', ...
+  - nbrPlayers: max number of players
+  - teams[player]
+    . 'Name'
+    . 'PlayerID'
+  - results[round][matchup]
+    . 'winner'
+      . ''
+      . 'bye'
+      . 'top'/'bottom'
+  - rounds[round]
+    . 'Title'
+    . 'BestOf'
  
  variables:
-  - $matchup[round][matchup][0(top)-1(bottom)]
+  - $matchup[round][matchup][0(top)-1(bottom)] unserialized from file
     . 'T1-16': team 1 to 16
-    . 'Wr,m': winner of matchup
-    . 'Lw,m': loser of matchup
+    . 'Wr,m': winner of matchup r/m
+    . 'Lr,m': loser of matchup r/m
   - brackets[row][column] -> actual html content of a table cell
-  - results[round][matchup]
-    . ''
-    . 'bye'
-    . 'top'/'bottom'
   - content[round][matchup][0(top)-1(bottom)]: content of the top/bottom cells for a matchup
     . 0-15: team index in teams list
     . '': no team (should be 0 ?) 
     . 'not played'
  
- */
+*/
 
 
 function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) {
-/*
-$teams = array(
-'QamFour',
-'Artosis',
-'TLO',
-'LiquidHuk',
-'WISPEEL',
-'CrunCher',
-'Player7',
-'Player8',
-'Player9',
-'Player10',
-'Player11',
-);
-*/
 	$nbrTeams=count($teams);
 
 	switch ($type)
@@ -68,26 +62,26 @@ $teams = array(
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
 				$teamTop    = substr($matchups[$round][$matchup][0],1);
 				$teamBottom = substr($matchups[$round][$matchup][1],1);
-				if (!$results[$round][$matchup]) $results[$round][$matchup] = '';
+				if (!$results[$round][$matchup]['winner']) $results[$round][$matchup]['winner'] = '';
 
 				$content[$round][$matchup][0] = '';
 				if ($teamTop <= $nbrTeams){
 					$content[$round][$matchup][0] = $teamTop;
 				} else {
-					$results[$round][$matchup] = 'bye';
+					$results[$round][$matchup]['winner'] = 'bye';
 				}
 				$content[$round][$matchup][1] = '';
 				if ($teamBottom <= $nbrTeams){
 					$content[$round][$matchup][1] = $teamBottom;
 				} else {
-					$results[$round][$matchup] = 'bye';
+					$results[$round][$matchup]['winner'] = 'bye';
 				}
 
 				if(($content[$round][$matchup][0]!='')&&($content[$round][$matchup][1]!='')){
-					if ($results[$round][$matchup] == 'top') {
+					if ($results[$round][$matchup]['winner'] == 'top') {
 						$brackets[$matchup*4-3][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], 'winner');
 						$brackets[$matchup*4-1][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], 'loser');
-					} else if ($results[$round][$matchup] == 'bottom') {
+					} else if ($results[$round][$matchup]['winner'] == 'bottom') {
 						$brackets[$matchup*4-3][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], 'loser');
 						$brackets[$matchup*4-1][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], 'winner');
 					} else {
@@ -105,7 +99,7 @@ $teams = array(
 		else if ($round < $nbrRounds)
 		{
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
-				if (!$results[$round][$matchup]) $results[$round][$matchup] = '';
+				if (!$results[$round][$matchup]['winner']) $results[$round][$matchup]['winner'] = '';
 				for($match = 0; $match < 2; $match++){
 					$matchupString = $matchups[$round][$matchup][$match];
 					if ($matchupString[0]='W') {
@@ -114,7 +108,7 @@ $teams = array(
 						$matchupMatchup = $matchupArray[1];
 
 						// Get result of matchup
-						$result = $results[$matchupRound][$matchupMatchup];
+						$result = $results[$matchupRound][$matchupMatchup]['winner'];
 
 						$rowTop    = $matchupsRows[$matchupRound][$matchupMatchup][0];
 						$rowBottom = $matchupsRows[$matchupRound][$matchupMatchup][1];
@@ -146,10 +140,10 @@ $teams = array(
 					}
 				}
 				if (($content[$round][$matchup][0]!='')&&($content[$round][$matchup][1]!='')) {
-					if ($results[$round][$matchup] == 'top') {
+					if ($results[$round][$matchup]['winner'] == 'top') {
 						$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], 'winner');
 						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], 'loser');
-					} else if ($results[$round][$matchup] == 'bottom') {
+					} else if ($results[$round][$matchup]['winner'] == 'bottom') {
 						$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], 'loser');
 						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], 'winner');
 					} else {
@@ -159,7 +153,7 @@ $teams = array(
 					$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan='.$rowspan.' class="match-details" title="'.'M'.$round.','.$matchup.'"></div></td>';
 				}
 				if (($content[$round][$matchup][0]=='')||($content[$round][$matchup][1]=='')) {
-					$results[$round][$matchup] = 'bye';
+					$results[$round][$matchup]['winner'] = 'bye';
 				}
 			}
 		}
@@ -167,7 +161,7 @@ $teams = array(
 		{
 			/* Last round, no match */
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
-				if (!$results[$round][$matchup]) $results[$round][$matchup] = '';
+				if (!$results[$round][$matchup]['winner']) $results[$round][$matchup]['winner'] = '';
 				$match = 0;
 				$matchupString = $matchups[$round][$matchup][$match];
 				if ($matchupString[$match]='W') {
@@ -176,7 +170,7 @@ $teams = array(
 					$matchupRound = $matchupArray[0];
 					$matchupMatchup = $matchupArray[1];
 
-					$result = $results[$matchupRound][$matchupMatchup];
+					$result = $results[$matchupRound][$matchupMatchup]['winner'];
 
 					$rowTop    = $matchupsRows[$matchupRound][$matchupMatchup][0];
 					$rowBottom = $matchupsRows[$matchupRound][$matchupMatchup][1];
@@ -203,7 +197,7 @@ $teams = array(
 						$content[$round][$matchup][$match] = 'not played';
 					}
 
-					if ($results[$round][$matchup] == 'top') {
+					if ($results[$round][$matchup]['winner'] == 'top') {
 						$brackets[$row][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][$match], 'winner');
 					} else {
 						$brackets[$row][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][$match]);
@@ -247,7 +241,7 @@ $teams = array(
 	var_dump($teams);
 	*/
 	
-	return $bracket_html;
+	return array($bracket_html);
 
 }
 

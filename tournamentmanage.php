@@ -261,14 +261,17 @@ else
 			$nbrPlayers = mysql_numrows($result);
 			for ($player = 0; $player < $nbrPlayers; $player++)
 			{
+				$playerID = mysql_result($result,$player , TBL_TPLAYERS.".PlayerID");
 				$gamerID = mysql_result($result,$player , TBL_GAMERS.".GamerID");
 				$gamer = new Gamer($gamerID);
 				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+				$teams[$player]['PlayerID'] = $playerID;
 			}
 		}
 
 		$results = unserialize($tournament->getField('Results'));
-		$text .= brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, $results, $rounds);
+		list($bracket_html) = brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, $results, $rounds);
+		$text .= $bracket_html;
 		//$tournament->updateResults($results);
 		//$tournament->updateDB($results);
 

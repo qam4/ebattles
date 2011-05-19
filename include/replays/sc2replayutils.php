@@ -1036,6 +1036,10 @@ class SC2ReplayUtils {
 	// return false if the ability code is unknown
 	static function getAbilityArray($num, $build) {
 		while ($build > 0) {
+			if ($build >= 18574) {
+				$num += 0x010000;
+				$build = 17326;
+			}
 		       if ($build >= 17326) {
 			 if ($num > 0x012c00) {
 			   $num -= 0x200;
@@ -1054,6 +1058,7 @@ class SC2ReplayUtils {
 				$build = 0;
 			}
 
+			//echo sprintf(" (%06X)\n<br />",$num);
 			if (isset($array[$num])) {
 				if (isset($array[$num]['link'])) {
 					$num = $array[$num]['link'];

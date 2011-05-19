@@ -455,7 +455,7 @@ function displayRecentTournaments(){
 
 			if(
 			($tournament->getField('StartDateTime')==0)
-			||($tournament->getField('StartDateTime')>=$time)
+			||($tournament->getField('StartDateTime')<$time)
 			)
 			{
 				$text .= '<tr>
