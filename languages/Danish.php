@@ -207,6 +207,7 @@ define('EB_EVENT_L70', 'Planlagt kamp(e)');
 define('EB_EVENT_L71', 'Udfordring Hold');
 define('EB_EVENT_L72', 'Planlæg en kamp');
 define('EB_EVENT_L73', 'kamp(e) at godkende');
+define('EB_EVENT_L74', 'Tilmelding lukket.');
 
 define('EB_EVENTM_L1', 'Administrer');
 define('EB_EVENTM_L2', 'Turnerings Detaljer');
@@ -336,6 +337,7 @@ define('EB_EVENTM_L122', 'Aktiver/Deaktiver Udfordringer');
 define('EB_EVENTM_L123', 'Gem Udfordringer indstillinger');
 define('EB_EVENTM_L124', 'Max antal datoer per udfordring');
 define('EB_EVENTM_L125', 'Max antal kort per kamp');
+define('EB_EVENTM_L126', 'Max antal spillere/hold (0 betyder ingen max)');
 
 define('EB_EVENTP_L1', 'Tidligere Turneringer');
 define('EB_EVENTP_L2', 'Tidligere Turneringer');

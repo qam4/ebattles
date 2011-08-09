@@ -243,6 +243,14 @@ else
 				$result2 = $sql->db_Query($q2);
 			}
 
+			/* Event Max number of Players */
+			$new_eventmaxplayers = htmlspecialchars($_POST['eventmaxplayers']);
+			if (preg_match("/^\d+$/", $new_eventmaxplayers))
+			{
+				$q2 = "UPDATE ".TBL_EVENTS." SET MaxPlayers = '$new_eventmaxplayers' WHERE (EventID = '$event_id')";
+				$result2 = $sql->db_Query($q2);
+			}
+			
 			/* Event Game */
 			$new_eventgame = $_POST['eventgame'];
 			$q2 = "UPDATE ".TBL_EVENTS." SET Game = '$new_eventgame' WHERE (EventID = '$event_id')";

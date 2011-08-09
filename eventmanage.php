@@ -143,6 +143,7 @@ else
     $echallengesenabled = mysql_result($result,0 , TBL_EVENTS.".ChallengesEnable");
     $eMaxDatesPerChallenge = mysql_result($result,0 , TBL_EVENTS.".MaxDatesPerChallenge");
     $eMaxMapsPerMatch = mysql_result($result,0 , TBL_EVENTS.".MaxMapsPerMatch");
+    $eMaxPlayers = mysql_result($result,0 , TBL_EVENTS.".MaxPlayers");
 
     if($estart!=0)
     {
@@ -540,6 +541,20 @@ else
         </tr>
         '; 
 
+        //<!-- Players -->
+         $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L126.'</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<input class="tbox" type="text" name="eventmaxplayers" size="2" value="'.$eMaxPlayers.'"';
+        $text .= '
+        </div>
+        </td>
+        </tr>
+        '; 
+        
         //<!-- Start Date -->
         $text .= '
         <tr>
