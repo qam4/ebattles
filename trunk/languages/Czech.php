@@ -197,6 +197,7 @@ define('EB_EVENT_L70', 'naplánované zápasy');
 define('EB_EVENT_L71', 'Vyzvat tým');
 define('EB_EVENT_L72', 'Rozvrh zápasů');
 define('EB_EVENT_L73', 'zápas(y) o schválení');
+define('EB_EVENT_L74', 'Registrace uzavřen.');
 
 define('EB_EVENTM_L1', 'Upravit');
 define('EB_EVENTM_L2', 'Přehled');
@@ -326,6 +327,7 @@ define('EB_EVENTM_L122', 'Povolit/zakázat výzvy');
 define('EB_EVENTM_L123', 'Uložit nastavení výzev');
 define('EB_EVENTM_L124', 'Maximální počet datumů pro výzvy');
 define('EB_EVENTM_L125', 'Maximální počet map pro zápas');
+define('EB_EVENTM_L126', 'Maximální počet hráčů/týmů (0 znamená bez max)');
 
 
 define('EB_EVENTP_L1', 'Minulé soutěže');

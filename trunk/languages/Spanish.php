@@ -206,6 +206,7 @@ define('EB_EVENT_L70', 'partido(s) solicitada');
 define('EB_EVENT_L71', 'Desaf�o de un Equipo');
 define('EB_EVENT_L72', 'Horario de un partido');
 define('EB_EVENT_L73', 'partido(s) para aprobar');
+define('EB_EVENT_L74', 'Registro cerrado.');
 
 define('EB_EVENTM_L1', 'Gestionar - EVENTO');
 define('EB_EVENTM_L2', 'Resumen');
@@ -335,6 +336,7 @@ define('EB_EVENTM_L122', 'Activar/Desactivar Desaf�os');
 define('EB_EVENTM_L123', 'Guardar configuracion de los desaf�os');
 define('EB_EVENTM_L124', 'Numero maximo de fechas por Desafio');
 define('EB_EVENTM_L125', 'Numero maximo de mapas por partido');
+define('EB_EVENTM_L126', 'Número máximo de jugadores/equipos (0 significa que no hay máximo)');
 
 define('EB_EVENTP_L1', 'Eventos anteriores');
 define('EB_EVENTP_L2', 'Eventos anteriores');

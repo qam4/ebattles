@@ -115,7 +115,7 @@ ShortName varchar(63),
 Icon varchar(63),
 Style varchar(63) NOT NULL default '',
 Genre varchar(63) NOT NULL default '',
-Description text NOT NULL default '',
+Description text NOT NULL,
 Developer varchar(63) NOT NULL default '',
 Publisher varchar(63) NOT NULL default '',
 ReleaseDate varchar(63) NOT NULL default '',
@@ -166,7 +166,8 @@ Status varchar(20) DEFAULT 'active',
 PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 ChallengesEnable tinyint(1) DEFAULT '0',
 MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."',
-MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."'
+MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."',
+MaxPlayers int DEFAULT '0'
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
@@ -600,6 +601,14 @@ if (versionsCompare($eb_version_string, "0.8.11"))
         "ALTER TABLE ".TBL_AWARDS." ADD Team int NOT NULL",
         "ALTER TABLE ".TBL_AWARDS." ADD INDEX (Team)",
         "ALTER TABLE ".TBL_AWARDS." ADD FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID)"
+	);
+}
+
+if (versionsCompare($eb_version_string, "0.8.12"))
+{
+	// To revision 0.8.12
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_EVENTS." ADD MaxPlayers int DEFAULT '0'"
 	);
 }
 

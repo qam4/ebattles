@@ -205,6 +205,7 @@ define('EB_EVENT_L70', 'match(s) prévu(s)');
 define('EB_EVENT_L71', 'Défier cette équipe');
 define('EB_EVENT_L72', 'Planifier un match');
 define('EB_EVENT_L73', 'match(s) à approuver');
+define('EB_EVENT_L74', 'Inscription fermée.');
 
 define('EB_EVENTM_L1', 'Gérer');
 define('EB_EVENTM_L2', 'Sommaire');
@@ -334,6 +335,7 @@ define('EB_EVENTM_L122', 'Activer/Désactiver les Challenges');
 define('EB_EVENTM_L123', 'Sauver les Paramètres des Challenges');
 define('EB_EVENTM_L124', 'Nombre maximum de dates par Challenge');
 define('EB_EVENTM_L125', 'Nombre maximum de maps par match');
+define('EB_EVENTM_L126', 'Nombre maximum de joueurs/équipes (0 signifie pas de max)');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');
