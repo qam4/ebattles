@@ -2,6 +2,13 @@
 #labels Featured
 = Release 0.8.12 =
 == Features ==
+ * Max number of players/teams for events (Fixes issue 81)
+
+== Bug Fixes ==
+ * Fix issue in database tables creation with some versions of mySql
+
+= Release 0.8.11 =
+== Features ==
  * Added team awards (Fixes issue 78)
  * Added stats category "streaks" for teams events.
 
