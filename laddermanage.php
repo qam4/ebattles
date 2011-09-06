@@ -159,7 +159,7 @@ else
 				$text .= '<td>';
 				$text .= '<div>';
 				$text .= '<input type="hidden" name="laddermod" value="'.$modid.'"/>';
-				$text .= ebImageTextButton('ladderdeletemod', 'user_delete.ico', EB_LADDERM_L12, 'negative', EB_LADDERM_L13);
+				$text .= ebImageTextButton('ladderdeletemod', 'user_delete.ico', EB_LADDERM_L12, 'negative jq-button', EB_LADDERM_L13);
 				$text .= '</div>';
 				$text .= '</td>';
 				$text .= '</tr>';
@@ -613,7 +613,7 @@ else
 		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L78.'<div class="smalltext">'.EB_LADDERM_L79.'</div></td>
 		<td class="eb_td">
 		';
-		$text .= ebImageTextButton('ladderdelete', 'delete.png', EB_LADDERM_L80, 'negative', EB_LADDERM_L81);
+		$text .= ebImageTextButton('ladderdelete', 'delete.png', EB_LADDERM_L80, 'negative jq-button', EB_LADDERM_L81);
 		$text .= '
 		</td>
 		</tr>

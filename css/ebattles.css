@@ -65,3 +65,61 @@ width: 100px;
 display: inline-block;
 vertical-align: top;
 }
+
+/* css for timepicker */
+.ui-timepicker-div .ui-widget-header{ margin-bottom: 8px; }
+.ui-timepicker-div dl{ text-align: left; }
+.ui-timepicker-div dl dt{ height: 25px; }
+.ui-timepicker-div dl dd{ margin: -25px 0 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+
+
+/* BUTTONS */
+.buttons a, .buttons button{
+	font:inherit;
+    font-size:100%;
+}
+
+/* POSITIVE */
+button.positive, .buttons a.positive{
+    color:#529214;
+}
+.buttons a.positive:hover, button.positive:hover{
+    background-color:#E6EFC2;
+    border:1px solid #C6D880;
+    color:#529214;
+}
+.buttons a.positive:active{
+    background-color:#529214;
+    border:1px solid #529214;
+    color:#fff;
+}
+
+/* NEGATIVE */
+.buttons a.negative, button.negative{
+    color:#d12f19;
+}
+.buttons a.negative:hover, button.negative:hover{
+    background:#fbe3e4;
+    border:1px solid #fbc2c4;
+    color:#d12f19;
+}
+.buttons a.negative:active{
+    background-color:#d12f19;
+    border:1px solid #d12f19;
+    color:#fff;
+}
+
+/* SIMPLE */
+.buttons a.simple, button.simple{
+    background-color:transparent;
+    border:0px;
+
+    outline: 0;
+    margin:0;
+    padding: 0;
+    text-decoration:none;  !important;
+    cursor:pointer;
+    position: relative;
+    text-align: center;
+}

@@ -245,7 +245,7 @@ function displayTeamDivisions($clan_id){
 					<div>
 					<input type="hidden" name="division" value="'.$div_id.'"/>
 					</div>
-					'.ebImageTextButton('quitdivision', 'user_delete.ico', EB_CLAN_L13, 'negative', EB_CLAN_L25).'
+					'.ebImageTextButton('quitdivision', 'user_delete.ico', EB_CLAN_L13, 'negative jq-button', EB_CLAN_L25).'
 					</form>';
 				}
 			}

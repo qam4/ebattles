@@ -4,9 +4,8 @@ require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 // Include page header stuff for admin pages
 $eplug_css = array(
-"js/calendar/calendar-blue.css",
 "css/paginate.css",
-"css/custom-theme/jquery-ui-1.8.11.custom.css",
+"css/custom-theme/jquery-ui-1.8.16.custom.css",
 "css/ebattles.css"
 );
 require_once(e_ADMIN."auth.php");

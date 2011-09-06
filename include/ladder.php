@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // functions for ladders.
 //___________________________________________________________________
 require_once(e_PLUGIN.'ebattles/include/main.php');
@@ -468,14 +468,26 @@ class Ladder extends DatabaseTable
 			$insertjs = "rows='15' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
 		}
 
+		$text .= "
+		<script type='text/javascript'>
+		<!--//
+		// Forms
+		$(function() {
+		$( '#radio1' ).buttonset();
+		$( '#radio2' ).buttonset();
+		$('.timepicker').datetimepicker({
+		ampm: true,
+		timeFormat: 'hh:mm TT',
+		stepHour: 1,
+		stepMinute: 10,
+		minDate: 0
+		});
+		});
+		//-->
+		</script>
+		";
+		
 		$text .= '
-		<!-- main calendar program -->
-		<script type="text/javascript" src="./js/calendar/calendar.js"></script>
-		<!-- language for the calendar -->
-		<script type="text/javascript" src="./js/calendar/lang/calendar-en.js"></script>
-		<!-- the following script defines the Calendar.setup helper function, which makes
-		adding a calendar a matter of 1 or 2 lines of code. -->
-		<script type="text/javascript" src="./js/calendar/calendar-setup.js"></script>
 		<script type="text/javascript">
 		<!--//
 		function clearStartDate(frm)
@@ -489,17 +501,6 @@ class Ladder extends DatabaseTable
 		//-->
 		</script>
 		';
-		$text .= "
-		<script type='text/javascript'>
-		<!--//
-		// Forms
-		$(function() {
-		$( '#radio1' ).buttonset();
-		$( '#radio2' ).buttonset();
-		});
-		//-->
-		</script>
-		";
 
 		$text .= '<form id="form-ladder-settings" action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$this->getField('LadderID').'" method="post">';
 		$text .= '
@@ -782,28 +783,10 @@ class Ladder extends DatabaseTable
 		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearStartDate(this.form);"/></div>
 		</td>
 		<td>
-		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_start" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
-		';
-		$text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
-		$text .= '
-		</td>
-		<td>
-		<div><input class="tbox" type="text" name="startdate" id="f_date_start"  value="'.$date_start.'" readonly="readonly" /></div>
+		<div><input class="tbox timepicker" type="text" name="startdate" id="f_date_start" value="'.$date_start.'" readonly="readonly" /></div>
 		</td>
 		</tr>
 		</table>
-		';
-		$text .= '
-		<script type="text/javascript">
-		Calendar.setup({
-		inputField     :    "f_date_start",      // id of the input field
-		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
-		showsTime      :    true,            // will display a time selector
-		button         :    "f_trigger_start",   // trigger for the calendar (button ID)
-		singleClick    :    true,           // single-click mode
-		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-		});
-		</script>
 		</td>
 		</tr>
 		';
@@ -828,28 +811,10 @@ class Ladder extends DatabaseTable
 		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearEndDate(this.form);"/></div>
 		</td>
 		<td>
-		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger_end" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
-		';
-		$text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
-		$text .= '
-		</td>
-		<td>
-		<div><input class="tbox" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
+		<div><input class="tbox timepicker" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
 		</td>
 		</tr>
 		</table>
-		';
-		$text .= '
-		<script type="text/javascript">
-		Calendar.setup({
-		inputField     :    "f_date_end",      // id of the input field
-		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
-		showsTime      :    true,            // will display a time selector
-		button         :    "f_trigger_end",   // trigger for the calendar (button ID)
-		singleClick    :    true,           // single-click mode
-		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-		});
-		</script>
 		</td>
 		</tr>
 		';

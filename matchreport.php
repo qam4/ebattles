@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
 * matchreport.php
 *
@@ -20,8 +20,7 @@ require_once(e_PLUGIN."ebattles/include/clan.php");
 global $e_wysiwyg;
 $e_wysiwyg = "match_comment";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
-
-$text = '';
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 $text .= '
 <script type="text/javascript">
@@ -61,14 +60,24 @@ if (rank_txt == new_rank_txt) {select.selectedIndex=old_rank-1}
 $text .= '
 </script>
 ';
-$text = '
-<!-- main calendar program -->
-<script type="text/javascript" src="./js/calendar/calendar.js"></script>
-<!-- language for the calendar -->
-<script type="text/javascript" src="./js/calendar/lang/calendar-en.js"></script>
-<!-- the following script defines the Calendar.setup helper function, which makes
-adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript" src="./js/calendar/calendar-setup.js"></script>
+$text .= "
+<script type='text/javascript'>
+<!--//
+// Forms
+$(function() {
+$('.timepicker').datetimepicker({
+ampm: true,
+timeFormat: 'hh:mm TT',
+stepHour: 1,
+stepMinute: 10,
+minDate: 0
+});
+});
+//-->
+</script>
+";
+		
+$text .= '
 <script type="text/javascript">
 <!--//
 function clearDate(frm)

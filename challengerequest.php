@@ -16,6 +16,7 @@ require_once(e_PLUGIN."ebattles/include/challenge.php");
 global $e_wysiwyg;
 $e_wysiwyg = "challenge_comments";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 /*
 /*
@@ -36,14 +37,24 @@ else
 	$insertjs = "rows='5' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
 }
 
-$text = '
-<!-- main calendar program -->
-<script type="text/javascript" src="./js/calendar/calendar.js"></script>
-<!-- language for the calendar -->
-<script type="text/javascript" src="./js/calendar/lang/calendar-en.js"></script>
-<!-- the following script defines the Calendar.setup helper function, which makes
-adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript" src="./js/calendar/calendar-setup.js"></script>
+$text .= "
+<script type='text/javascript'>
+<!--//
+// Forms
+$(function() {
+$('.timepicker').datetimepicker({
+ampm: true,
+timeFormat: 'hh:mm TT',
+stepHour: 1,
+stepMinute: 10,
+minDate: 0
+});
+});
+//-->
+</script>
+";
+
+$text .= '
 <script type="text/javascript">
 <!--//
 function clearDate(frm, index)
@@ -224,31 +235,13 @@ function PlayerChallengeForm($ladder_id, $challengerpuid, $challengedpid)
 		<table>
 		<tr>
 		<td>
-		<div><input class="tbox" type="text" name="date'.$date.'" id="f_date'.$date.'" value="'.$_POST['date'.$date].'" readonly="readonly" /></div>
-		</td>
-		<td>
-		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger'.$date.'" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
-		';
-		$output .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
-		$output .= '
+		<div><input class="tbox timepicker" type="text" name="date'.$date.'" id="f_date'.$date.'" value="'.$_POST['date'.$date].'" readonly="readonly" /></div>
 		</td>
 		<td>
 		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
 		</td>
 		</tr>
 		</table>
-		';
-		$output .= '
-		<script type="text/javascript">
-		Calendar.setup({
-		inputField     :    "f_date'.$date.'",      // id of the input field
-		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
-		showsTime      :    true,            // will display a time selector
-		button         :    "f_trigger'.$date.'",   // trigger for the calendar (button ID)
-		singleClick    :    true,           // single-click mode
-		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-		});
-		</script>
 		</td>
 		</tr>
 		';
@@ -456,31 +449,13 @@ function TeamChallengeForm($ladder_id, $challengerpuid, $challengedtid)
 		<table>
 		<tr>
 		<td>
-		<div><input class="tbox" type="text" name="date'.$date.'" id="f_date'.$date.'" value="'.$_POST['date'.$date].'" readonly="readonly" /></div>
-		</td>
-		<td>
-		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger'.$date.'" style="cursor: pointer; border: 1px solid red;" title="'.EB_LADDERM_L33.'"
-		';
-		$output .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
-		$output .= '
+		<div><input class="tbox timepicker" type="text" name="date'.$date.'" id="f_date'.$date.'" value="'.$_POST['date'.$date].'" readonly="readonly" /></div>
 		</td>
 		<td>
 		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
 		</td>
 		</tr>
 		</table>
-		';
-		$output .= '
-		<script type="text/javascript">
-		Calendar.setup({
-		inputField     :    "f_date'.$date.'",      // id of the input field
-		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
-		showsTime      :    true,            // will display a time selector
-		button         :    "f_trigger'.$date.'",   // trigger for the calendar (button ID)
-		singleClick    :    true,           // single-click mode
-		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-		});
-		</script>
 		</td>
 		</tr>
 		';

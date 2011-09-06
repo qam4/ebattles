@@ -75,11 +75,6 @@ function displayCurrentLadders(){
 		$text .= '</div>';
 		$text .= ebImageTextButton('createladder', 'add.png', EB_LADDERS_L20);
 		$text .= '</form><br />';
-		/*
-		$text .= '<span class="buttons"><a href="'.e_PLUGIN.'ebattles/matchdelete.php?action=createladder&amp;username='.$USERNAME.'&amp;userid='.$USERID.'" title="'.EB_LADDERS_L20.'" style="text-decoration:none"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'"/>'.EB_LADDERS_L20.'</a></span>';
-		$text .= '<div><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'" style="vertical-align:middle"/>'.EB_LADDERS_L20.'</div>';
-		$text .= '<div><button type="submit" name="createladder"><img src="'.e_PLUGIN.'ebattles/images/add.png" alt="'.EB_LADDERS_L20.'" style="vertical-align:middle"/>'.EB_LADDERS_L20.'</button></div>';
-		*/
 	}
 	else
 	{
