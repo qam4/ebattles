@@ -64,20 +64,20 @@ function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) 
 				$teamBottom = substr($matchups[$round][$matchup][1],1);
 				if (!$results[$round][$matchup]['winner']) $results[$round][$matchup]['winner'] = '';
 
-				$content[$round][$matchup][0] = '';
+				$content[$round][$matchup][0] = '0';
 				if ($teamTop <= $nbrTeams){
 					$content[$round][$matchup][0] = $teamTop;
 				} else {
 					$results[$round][$matchup]['winner'] = 'bye';
 				}
-				$content[$round][$matchup][1] = '';
+				$content[$round][$matchup][1] = '0';
 				if ($teamBottom <= $nbrTeams){
 					$content[$round][$matchup][1] = $teamBottom;
 				} else {
 					$results[$round][$matchup]['winner'] = 'bye';
 				}
 
-				if(($content[$round][$matchup][0]!='')&&($content[$round][$matchup][1]!='')){
+				if(($content[$round][$matchup][0]!='0')&&($content[$round][$matchup][1]!='0')){
 					if ($results[$round][$matchup]['winner'] == 'top') {
 						$brackets[$matchup*4-3][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], 'winner');
 						$brackets[$matchup*4-1][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], 'loser');
@@ -139,7 +139,7 @@ function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) 
 						}
 					}
 				}
-				if (($content[$round][$matchup][0]!='')&&($content[$round][$matchup][1]!='')) {
+				if (($content[$round][$matchup][0]!='0')&&($content[$round][$matchup][1]!='0')) {
 					if ($results[$round][$matchup]['winner'] == 'top') {
 						$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], 'winner');
 						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], 'loser');
@@ -152,7 +152,7 @@ function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) 
 					}
 					$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan='.$rowspan.' class="match-details" title="'.'M'.$round.','.$matchup.'"></div></td>';
 				}
-				if (($content[$round][$matchup][0]=='')||($content[$round][$matchup][1]=='')) {
+				if (($content[$round][$matchup][0]=='0')||($content[$round][$matchup][1]=='0')) {
 					$results[$round][$matchup]['winner'] = 'bye';
 				}
 			}

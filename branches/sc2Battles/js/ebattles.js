@@ -19,7 +19,7 @@ jQuery(function() {
 	
 	$(function() {
 		$('#brackets').draggable();
-		$('button').button();
+		$('.jq-button').button();
 		$('.tbox').addClass("ui-widget-content ui-corner-all");
 	});
 	

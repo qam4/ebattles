@@ -484,6 +484,7 @@ define('EB_TOURNAMENT_L70', 'match(es) scheduled');
 define('EB_TOURNAMENT_L71', '');
 define('EB_TOURNAMENT_L72', 'Match Schedule');
 define('EB_TOURNAMENT_L73', 'match(es) to approve');
+define('EB_TOURNAMENT_L74', 'Tournament ended');
 
 define('EB_TOURNAMENTM_L1', 'Manage');
 define('EB_TOURNAMENTM_L2', 'Summary');

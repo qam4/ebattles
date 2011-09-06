@@ -118,7 +118,7 @@ else
 		if ($numClanScores == 0)
 		{
 			$text .= '<tr><td>';
-			$text .= ebImageTextButton('clandelete', 'delete.png', EB_CLANM_L5, 'negative', EB_CLANM_L6);
+			$text .= ebImageTextButton('clandelete', 'delete.png', EB_CLANM_L5, 'negative jq-button', EB_CLANM_L6);
 			$text .= '</td></tr>';
 		}
 		$text .= '</tbody>';
@@ -370,7 +370,7 @@ else
 				$text .= '<br /><form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
 				$text .= '<div>';
 				$text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"/>';
-				$text .= ebImageTextButton('clandeletediv', 'delete.png', EB_CLANM_L16, 'negative', EB_CLANM_L17);
+				$text .= ebImageTextButton('clandeletediv', 'delete.png', EB_CLANM_L16, 'negative jq-button', EB_CLANM_L17);
 				$text .= '</div></form>';
 			}
 

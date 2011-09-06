@@ -361,31 +361,13 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 		<table>
 		<tr>
 		<td>
-		<div><input class="tbox" type="text" name="date_scheduled" id="f_date"  value="'.$date_scheduled.'" readonly="readonly" /></div>
-		</td>
-		<td>
-		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger" style="cursor: pointer; border: 1px solid red;" title="'.EB_MATCHR_L50.'"
-		';
-		$text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
-		$text .= '
+		<div><input class="tbox timepicker" type="text" name="date_scheduled" id="f_date"  value="'.$date_scheduled.'" readonly="readonly" /></div>
 		</td>
 		<td>
 		<div><input class="button" type="button" value="'.EB_MATCHR_L51.'" onclick="clearDate(this.form);"/></div>
 		</td>
 		</tr>
 		</table>
-		';
-		$text .= '
-		<script type="text/javascript">
-		Calendar.setup({
-		inputField     :    "f_date",      // id of the input field
-		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
-		showsTime      :    true,            // will display a time selector
-		button         :    "f_trigger",   // trigger for the calendar (button ID)
-		singleClick    :    true,           // single-click mode
-		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-		});
-		</script>
 		</td>
 		</tr>
 		</table>

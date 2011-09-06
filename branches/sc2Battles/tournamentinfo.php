@@ -425,7 +425,7 @@ else
 										<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
 										<div>
 										<input type="hidden" name="player" value="'.$user_pid.'"/>
-										'.ebImageTextButton('quittournament', 'user_delete.ico', EB_TOURNAMENT_L23, 'negative', EB_TOURNAMENT_L24).'
+										'.ebImageTextButton('quittournament', 'user_delete.ico', EB_TOURNAMENT_L23, 'negative jq-button', EB_TOURNAMENT_L24).'
 										</div>
 										</form></td>
 										';
@@ -545,7 +545,7 @@ else
 							<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
 							<div>
 							<input type="hidden" name="player" value="'.$user_pid.'"/>
-							'.ebImageTextButton('quittournament', 'user_delete.ico', EB_TOURNAMENT_L32, 'negative', EB_TOURNAMENT_L33, EB_TOURNAMENT_L31).'
+							'.ebImageTextButton('quittournament', 'user_delete.ico', EB_TOURNAMENT_L32, 'negative jq-button', EB_TOURNAMENT_L33, EB_TOURNAMENT_L31).'
 							</div>
 							</form></td>
 							';
@@ -559,6 +559,11 @@ else
 				break;
 				default:
 			}
+		}
+		else
+		{
+			$text .= '<td>'.EB_TOURNAMENT_L74.'</td>';
+			$text .= '<td></td>';
 		}
 	}
 	else
@@ -640,6 +645,7 @@ else
 		$can_schedule = 1;
 		$can_approve = 1;
 	}
+
 	// Is the user tournament owner?
 	if (USERID==$eowner)
 	{

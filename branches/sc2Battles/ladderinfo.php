@@ -410,7 +410,7 @@ else
 										<form action="'.e_PLUGIN.'ebattles/ladderinfo.php_process?LadderID='.$ladder_id.'" method="post">
 										<div>
 										<input type="hidden" name="player" value="'.$user_pid.'"/>
-										'.ebImageTextButton('quitladder', 'user_delete.ico', EB_LADDER_L23, 'negative', EB_LADDER_L24).'
+										'.ebImageTextButton('quitladder', 'user_delete.ico', EB_LADDER_L23, 'negative jq-button', EB_LADDER_L24).'
 										</div>
 										</form></td>
 										';
@@ -528,7 +528,7 @@ else
 							<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
 							<div>
 							<input type="hidden" name="player" value="'.$user_pid.'"/>
-							'.ebImageTextButton('quitladder', 'user_delete.ico', EB_LADDER_L32, 'negative', EB_LADDER_L33).'
+							'.ebImageTextButton('quitladder', 'user_delete.ico', EB_LADDER_L32, 'negative jq-button', EB_LADDER_L33).'
 							</div>
 							</form></td>
 							';

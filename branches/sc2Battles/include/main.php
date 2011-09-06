@@ -40,9 +40,8 @@ switch ($pref['eb_tab_theme'])
 }
 
 $eplug_css = array(
-"js/calendar/calendar-blue.css",
 "css/paginate.css",
-"css/custom-theme/jquery-ui-1.8.11.custom.css",
+"css/custom-theme/jquery-ui-1.8.16.custom.css",
 "css/ebattles.css",
 "css/brackets.css"
 );
@@ -687,7 +686,7 @@ function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title=
 {
 	$image_str   = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'" style="vertical-align:middle"/>' : '';
 	$confirm_str = ($confirm!='') ? 'onclick="return confirm(\''.$confirm.'\');"' : '';
-	$class_str   = ($class!='') ? 'class="'.$class.' ui-button ui-state-default ui-corner-all"' : 'class="ui-button ui-state-default ui-corner-all"';
+	$class_str   = ($class!='') ? 'class="'.$class.'"' : 'class="jq-button"';
 	$title_str   = ($title!='') ? 'title="'.$title.'"' : '';
 	$text_str    = ($text != '') ? '&nbsp;'.$text : '';
 	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" id="'.$name.'" '.$title_str.' '.$confirm_str.' '.$other.'>'.$image_str.$text_str.'</button></div>

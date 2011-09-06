@@ -363,7 +363,7 @@ else
 		$text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '</div>';
-		$text .= ebImageTextButton('deletematch', 'cross.png', EB_MATCHD_L4, 'negative', EB_MATCHD_L5);
+		$text .= ebImageTextButton('deletematch', 'cross.png', EB_MATCHD_L4, 'negative jq-button', EB_MATCHD_L5);
 		$text .= '</form>';
 	}
 	if($can_approve != 0)
@@ -373,7 +373,7 @@ else
 		$text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '</div>';
-		$text .= ebImageTextButton('approvematch', 'accept.png', EB_MATCHD_L17, 'positive');
+		$text .= ebImageTextButton('approvematch', 'accept.png', EB_MATCHD_L17, 'positive jq-button');
 		$text .= '</form>';
 	}
 	if($can_edit != 0)

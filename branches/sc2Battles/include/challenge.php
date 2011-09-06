@@ -408,8 +408,8 @@ class Challenge extends DatabaseTable
 			$output .= '
 			<br />
 			<table class="table_left"><tr>
-			<td>'.ebImageTextButton('challenge_accept', 'thumb_up.png', EB_CHALLENGE_L20, 'positive').'</td>
-			<td>'.ebImageTextButton('challenge_decline', 'thumb_down.png', EB_CHALLENGE_L21, 'negative').'</td>
+			<td>'.ebImageTextButton('challenge_accept', 'thumb_up.png', EB_CHALLENGE_L20, 'positive jq-button').'</td>
+			<td>'.ebImageTextButton('challenge_decline', 'thumb_down.png', EB_CHALLENGE_L21, 'negative jq-button').'</td>
 			</tr></table>
 			</form>
 			';
