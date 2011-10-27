@@ -1,5 +1,10 @@
 #summary eBattles Release Notes.
 #labels Featured
+= Release 0.8.13 =
+== Features ==
+ * Support for forfeit
+ * Support for match types (1v1, 2v2, ...)
+
 = Release 0.8.12 =
 == Features ==
  * Max number of players/teams for events (Fixes issue 81)
