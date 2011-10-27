@@ -124,6 +124,16 @@ else
 			$q2 = "UPDATE ".TBL_EVENTS." SET Password = '$new_eventpassword' WHERE (EventID = '$event_id')";
 			$result2 = $sql->db_Query($q2);
 
+			/* Event Game */
+			$new_eventgame = $_POST['eventgame'];
+			if ($new_eventgame != '')
+			{
+				$q2 = "UPDATE ".TBL_EVENTS." SET Game = '$new_eventgame' WHERE (EventID = '$event_id')";
+				$result2 = $sql->db_Query($q2);
+				$q2 = "UPDATE ".TBL_EVENTS." SET MatchType = '' WHERE (EventID = '$event_id')";
+				$result2 = $sql->db_Query($q2);
+			}
+			
 			/* Event Type */
 			// Can change only if no players are signed up
 			$q2 = "SELECT ".TBL_PLAYERS.".*"
@@ -152,7 +162,12 @@ else
 					default:
 				}
 			}
-
+			
+			/* Event Match Type */
+			$new_MatchType = $_POST['eventmatchtype'];
+			$q2 = "UPDATE ".TBL_EVENTS." SET MatchType = '$new_MatchType' WHERE (EventID = '$event_id')";
+			$result2 = $sql->db_Query($q2);
+			
 			/* Event Ranking Type */
 			$new_eventrankingtype = $_POST['eventrankingtype'];
 
@@ -210,6 +225,40 @@ else
 				$result2 = $sql->db_Query($q2);
 			}
 
+			/* Event Allow Forfeit */
+			if ($_POST['eventallowforfeit'] != "")
+			{
+				$q2 = "UPDATE ".TBL_EVENTS." SET AllowForfeit = 1 WHERE (EventID = '$event_id')";
+				$result2 = $sql->db_Query($q2);
+			}
+			else
+			{
+				$q2 = "UPDATE ".TBL_EVENTS." SET AllowForfeit = 0 WHERE (EventID = '$event_id')";
+				$result2 = $sql->db_Query($q2);
+			}
+			if ($_POST['eventForfeitWinLossUpdate'] != "")
+			{
+				$q2 = "UPDATE ".TBL_EVENTS." SET ForfeitWinLossUpdate = 1 WHERE (EventID = '$event_id')";
+				$result2 = $sql->db_Query($q2);
+			}
+			else
+			{
+				$q2 = "UPDATE ".TBL_EVENTS." SET ForfeitWinLossUpdate = 0 WHERE (EventID = '$event_id')";
+				$result2 = $sql->db_Query($q2);
+			}
+			$new_eventforfeitwinpoints = htmlspecialchars($_POST['eventforfeitwinpoints']);
+			if (preg_match("/^\d+$/", $new_eventforfeitwinpoints))
+			{
+				$q2 = "UPDATE ".TBL_EVENTS." SET ForfeitWinPoints = '$new_eventforfeitwinpoints' WHERE (EventID = '$event_id')";
+				$result2 = $sql->db_Query($q2);
+			}
+			$new_eventforfeitlosspoints = htmlspecialchars($_POST['eventforfeitlosspoints']);
+			if (preg_match("/^-?\d+$/", $new_eventforfeitlosspoints))
+			{
+				$q2 = "UPDATE ".TBL_EVENTS." SET ForfeitLossPoints = '$new_eventforfeitlosspoints' WHERE (EventID = '$event_id')";
+				$result2 = $sql->db_Query($q2);
+			}
+			
 			/* Event Match Approval */
 			$new_MatchesApproval = $_POST['eventmatchapprovaluserclass'];
 			$q2 = "UPDATE ".TBL_EVENTS." SET MatchesApproval = '$new_MatchesApproval' WHERE (EventID = '$event_id')";
@@ -251,11 +300,6 @@ else
 				$result2 = $sql->db_Query($q2);
 			}
 			
-			/* Event Game */
-			$new_eventgame = $_POST['eventgame'];
-			$q2 = "UPDATE ".TBL_EVENTS." SET Game = '$new_eventgame' WHERE (EventID = '$event_id')";
-			$result2 = $sql->db_Query($q2);
-
 			/* Event Start Date */
 			$new_eventstartdate = $_POST['startdate'];
 			if ($new_eventstartdate != '')

@@ -106,7 +106,7 @@ define('EB_EVENTS_L5', 'jména');
 define('EB_EVENTS_L6', 'hry');
 define('EB_EVENTS_L7', 'typu');
 define('EB_EVENTS_L8', 'data začátku');
-define('EB_EVENTS_L9', 'Hry:');
+define('EB_EVENTS_L9', 'Hry');
 define('EB_EVENTS_L10', 'Vše');
 define('EB_EVENTS_L11', 'Chyba při zobrazení soutěže');
 define('EB_EVENTS_L12', 'Žádné soutěže');
@@ -123,6 +123,7 @@ define('EB_EVENTS_L22', 'Soutěž jednotlivců');
 define('EB_EVENTS_L23', 'Soutěž týmů/jednotlivců');
 define('EB_EVENTS_L24', 'Filtr');
 define('EB_EVENTS_L25', 'Soutěž týmů');
+define('EB_EVENTS_L32', 'Match Type');
 
 define('EB_EVENT_L1', 'Soutěž');
 define('EB_EVENT_L2', 'Soutěž začíná');
@@ -328,7 +329,12 @@ define('EB_EVENTM_L123', 'Uložit nastavení výzev');
 define('EB_EVENTM_L124', 'Maximální počet datumů pro výzvy');
 define('EB_EVENTM_L125', 'Maximální počet map pro zápas');
 define('EB_EVENTM_L126', 'Maximální počet hráčů/týmů (0 znamená bez max)');
-
+define('EB_EVENTM_L127', 'Allow Forfeits');
+define('EB_EVENTM_L128', 'Enable forfeits');
+define('EB_EVENTM_L129', 'Affects win/loss count');
+define('EB_EVENTM_L130', 'Forfeit Win Points');
+define('EB_EVENTM_L131', 'Forfeit Loss Points');
+define('EB_EVENTM_L132', 'Match Type');
 
 define('EB_EVENTP_L1', 'Minulé soutěže');
 define('EB_EVENTP_L2', 'Minulé soutěže');
@@ -507,6 +513,7 @@ define('EB_MATCHD_L24', 'nahrál');
 define('EB_MATCHD_L25', 'Smazat');
 define('EB_MATCHD_L26', 'Opravdu chcete smazat toto médium?');
 define('EB_MATCHD_L27', 'Editovat tento zápas');
+define('EB_MATCHD_L28', 'Forfeit');
 
 define('EB_MATCHDEL_L1', 'Smazání zápasu');
 define('EB_MATCHDEL_L2', 'Nemáte oprávnění pro smazání zápasu.');
@@ -586,6 +593,7 @@ define('EB_MATCHQL_L3', 'Zpět na');
 define('EB_MATCHQL_L4', 'Soutěž');
 define('EB_MATCHQL_L5', 'Vyberte hráče');
 define('EB_MATCHQL_L6', 'Potvrdit prohru');
+define('EB_MATCHR_L57', 'Forfeit?');
 
 define('EB_GAME_L1', 'Neznámá hra');
 define('EB_GAME_L2', 'Upravit hru');
@@ -619,6 +627,8 @@ define('EB_GAME_L29', 'Smazat');
 define('EB_GAME_L30', 'Opravdu chcete smazat tuto mapu?');
 define('EB_GAME_L31', 'Editovat');
 define('EB_GAME_L32', 'Zkratka jména');
+define('EB_GAME_L33', 'Match types');
+define('EB_GAME_L34', 'Comma separated (ex: 1v1,2v2,FFA)');
 
 define('EB_GAMES_L1', 'Hry');
 define('EB_GAMES_L2', 'Hry');

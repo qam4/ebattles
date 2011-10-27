@@ -421,6 +421,7 @@ else
 		$pOppScore  = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
 		$ppoints  = mysql_result($result,$i, TBL_SCORES.".Player_Points");
 		$pfaction  = mysql_result($result,$i, TBL_SCORES.".Faction");
+		$pforfeit  = mysql_result($result,$i, TBL_SCORES.".Player_Forfeit");
 
 		$pfactionIcon = "";
 		if ($pfaction!=0)
@@ -467,8 +468,12 @@ else
 
 		//$text .= "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3"><b>'.$prank.'</b></td>
-		<td class="forumheader3">'.$pMatchTeam.$pfactionIcon.'</td>';
+		if ($pforfeit == 1) {
+			$text .= '<td class="forumheader3"><b>'.EB_MATCHD_L28.'</b></td>';
+		} else {
+			$text .= '<td class="forumheader3"><b>'.$prank.'</b></td>';
+		}
+		$text .= '<td class="forumheader3">'.$pMatchTeam.$pfactionIcon.'</td>';
 		switch($etype)
 		{
 			case "One Player Ladder":
