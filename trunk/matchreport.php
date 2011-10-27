@@ -93,10 +93,11 @@ $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
 $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
 $eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
 $eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
-$ePointPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
-$ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
-$ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
+$ePointsPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
+$ePointsPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
+$ePointsPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
 $eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
+$eAllowForfeit = mysql_result($result,0 , TBL_EVENTS.".AllowForfeit");
 $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
 $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
 $eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
@@ -518,7 +519,7 @@ if (isset($_POST['submit']))
 
 	if (!empty($error_str)) {
 		// show form again
-		user_form($players_id, $players_name, $event_id, $match_id, $eAllowDraw, $eAllowScore,$userclass);
+		user_form($players_id, $players_name, $event_id, $match_id, $eAllowDraw, $eAllowForfeit, $eAllowScore,$userclass);
 		// errors have occured, halt execution and show form again.
 		$text .= '<p style="color:red">'.EB_MATCHR_L14;
 		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
@@ -598,20 +599,25 @@ if (isset($_POST['submit']))
 
 			$pscore = $_POST['score'.$i];
 			$pfaction = $_POST['faction'.$i];
+			if ($_POST['forfeit'.$i] != "") {
+				$pforfeit = 1;
+			} else {
+				$pforfeit = 0;
+			}
 
 			switch($etype)
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
 				$q =
-				"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Faction)
-				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pfaction)
+				"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
+				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
 				";
 				break;
 				case "ClanWar":
 				$q =
-				"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Faction)
-				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pfaction)
+				"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit,Faction)
+				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
 				";
 				break;
 				default:
@@ -733,7 +739,7 @@ if (isset($_POST['submit']))
 	{
 		$userclass = $_POST['userclass'];
 		// the form has not been submitted, let's show it
-		user_form($players_id, $players_name, $event_id, $match_id, $eAllowDraw, $eAllowScore,$userclass);
+		user_form($players_id, $players_name, $event_id, $match_id, $eAllowDraw, $eAllowForfeit, $eAllowScore,$userclass);
 	}
 }
 

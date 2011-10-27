@@ -117,7 +117,9 @@ else
     $egame = mysql_result($result,0 , TBL_GAMES.".Name");
     $egameicon  = mysql_result($result,0 , TBL_GAMES.".Icon");
     $egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
+   	$ematchtypes = explode(",", mysql_result($result,0, TBL_GAMES.".MatchTypes"));
     $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+    $ematchtype = mysql_result($result,0 , TBL_EVENTS.".MatchType");
     $eowner = mysql_result($result,0 , TBL_USERS.".user_id");
     $eownername = mysql_result($result,0 , TBL_USERS.".user_name");
     $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
@@ -125,15 +127,19 @@ else
     $erules = mysql_result($result,0 , TBL_EVENTS.".Rules");
     $edescription = mysql_result($result,0 , TBL_EVENTS.".Description");
     $eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
+	$eAllowForfeit = mysql_result($result,0 , TBL_EVENTS.".AllowForfeit");
+	$eForfeitWinLossUpdate = mysql_result($result,0 , TBL_EVENTS.".ForfeitWinLossUpdate");
+	$eForfeitWinPoints = mysql_result($result,0 , TBL_EVENTS.".ForfeitWinPoints");
+	$eForfeitLossPoints = mysql_result($result,0 , TBL_EVENTS.".ForfeitLossPoints");
     $eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
     $eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
     $eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
     $eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
     $eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
     $eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
-    $ePointPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
-    $ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
-    $ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
+    $ePointsPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
+    $ePointsPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
+    $ePointsPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
     $estart = mysql_result($result,0 , TBL_EVENTS.".Start_timestamp");
     $eend = mysql_result($result,0 , TBL_EVENTS.".End_timestamp");
     $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
@@ -373,6 +379,26 @@ else
         </tr>
         ';
 
+		//<!-- Match Type -->
+		$text .= '
+		<tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L132.'</b></td>
+        <td class="forumheader3">
+        <div>
+        ';
+        $text .= '<select class="tbox" name="eventmatchtype">';
+		$text .= '<option value="" '.(($ematchtype == "") ? 'selected="selected"' : '') .'>-</option>';
+		foreach($ematchtypes as $matchtype)
+		{
+			if ($matchtype!='') {
+				$text .= '<option value="'.$matchtype.'" '.(($ematchtype == $matchtype) ? 'selected="selected"' : '') .'>'.$matchtype.'</option>';
+			}
+		}
+		$text .= '</select>
+		</td>
+		</tr>
+		';
+
         //<!-- Rating Type -->
         $text .= '
         <tr>
@@ -511,13 +537,13 @@ else
         </tr>
         <tr>
         <td>
-        <div><input class="tbox" type="text" name="eventpointsperwin" value="'.$ePointPerWin.'"/></div>
+        <div><input class="tbox" type="text" name="eventpointsperwin" value="'.$ePointsPerWin.'"/></div>
         </td>
         <td>
-        <div><input class="tbox" type="text" name="eventpointsperdraw" value="'.$ePointPerDraw.'"/></div>
+        <div><input class="tbox" type="text" name="eventpointsperdraw" value="'.$ePointsPerDraw.'"/></div>
         </td>
         <td>
-        <div><input class="tbox" type="text" name="eventpointsperloss" value="'.$ePointPerLoss.'"/></div>
+        <div><input class="tbox" type="text" name="eventpointsperloss" value="'.$ePointsPerLoss.'"/></div>
         </td>
         </tr>
         </table>
@@ -527,8 +553,60 @@ else
         </tr>
         ';
 
+        //<!-- Allow Forfeits -->
+        $text .= '
+        <tr>
+        <td class="forumheader3"><b>'.EB_EVENTM_L127.'</b></td>
+        <td class="forumheader3">
+        <div>';
+        $text .= '<input class="tbox" type="checkbox" name="eventallowforfeit"';
+        if ($eAllowForfeit == TRUE)
+        {
+            $text .= ' checked="checked"/>';
+        }
+        else
+        {
+            $text .= '/>';
+        }
+        $text .= EB_EVENTM_L128;
+        $text .= '</div>';
+        $text .= '<div>';
+        $text .= '<input class="tbox" type="checkbox" name="eventForfeitWinLossUpdate"';
+        if ($eForfeitWinLossUpdate == TRUE)
+        {
+            $text .= ' checked="checked"/>';
+        }
+        else
+        {
+            $text .= '/>';
+        }
+        $text .= EB_EVENTM_L129;
+        $text .= '</div>';
+        $text .= '
+        <div>
+        <table class="table_left">
+        <tr>
+        <td>'.EB_EVENTM_L130.'</td>
+        <td>'.EB_EVENTM_L131.'</td>
+        </tr>
+        <tr>
+        <td>
+        <div><input class="tbox" type="text" name="eventforfeitwinpoints" value="'.$eForfeitWinPoints.'"/></div>
+        </td>
+        <td>
+        <div><input class="tbox" type="text" name="eventforfeitlosspoints" value="'.$eForfeitLossPoints.'"/></div>
+        </td>
+        </tr>
+        </table>
+        </div>
+        ';
+        $text .= '
+        </td>
+        </tr>
+        ';
+
         //<!-- Maps -->
-         $text .= '
+        $text .= '
         <tr>
         <td class="forumheader3"><b>'.EB_EVENTM_L125.'</b></td>
         <td class="forumheader3">

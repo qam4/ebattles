@@ -73,7 +73,9 @@ else
 	$egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
 	$egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
 	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+	$ematchtype = mysql_result($result,0 , TBL_EVENTS.".MatchType");
 	$eallowdraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
+	$eallowforfeit = mysql_result($result,0 , TBL_EVENTS.".AllowForfeit");
 	$eallowscore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
 	$eowner = mysql_result($result,0 , TBL_USERS.".user_id");
 	$eownername = mysql_result($result,0 , TBL_USERS.".user_name");
@@ -557,7 +559,7 @@ else
 
 	$text .= '<tr>';
 	$text .= '<td class="forumheader3">'.EB_EVENT_L37.'</td>';
-	$text .= '<td class="forumheader3">'.eventType($etype).'</td>';
+	$text .= '<td class="forumheader3">'.(($ematchtype!='') ? $ematchtype.' - ' : '').eventType($etype).'</td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';

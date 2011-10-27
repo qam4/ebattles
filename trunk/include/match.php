@@ -20,9 +20,12 @@ function match_scores_update($match_id)
 	$eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
 	$eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
 	$eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
-	$ePointPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
-	$ePointPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
-	$ePointPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
+	$eForfeitWinLossUpdate = mysql_result($result,0 , TBL_EVENTS.".ForfeitWinLossUpdate");
+	$eForfeitWinPoints = mysql_result($result,0 , TBL_EVENTS.".ForfeitWinPoints");
+	$eForfeitLossPoints = mysql_result($result,0 , TBL_EVENTS.".ForfeitLossPoints");
+	$ePointsPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
+	$ePointsPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
+	$ePointsPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
 	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
 
 	// Initialize scores ELO/TrueSkill
@@ -86,6 +89,7 @@ function match_scores_update($match_id)
 
 					$NbrPlayersTeamA = mysql_numrows($resultA);
 					$teamA_Rank= mysql_result($resultA,0, TBL_SCORES.".Player_Rank");
+					$teamA_Forfeit= mysql_result($resultA,0, TBL_SCORES.".Player_Forfeit");
 					$teamA_ELO=0;
 					$teamA_TS_mu=0;
 					$teamA_TS_sigma2=0;
@@ -102,6 +106,7 @@ function match_scores_update($match_id)
 
 					$NbrPlayersTeamB = mysql_numrows($resultB);
 					$teamB_Rank= mysql_result($resultB,0, TBL_SCORES.".Player_Rank");
+					$teamB_Forfeit= mysql_result($resultB,0, TBL_SCORES.".Player_Forfeit");
 					$teamB_ELO=0;
 					$teamB_TS_mu=0;
 					$teamB_TS_sigma2=0;
@@ -142,6 +147,7 @@ function match_scores_update($match_id)
 
 					$NbrPlayersTeamA = mysql_numrows($resultA);
 					$teamA_Rank= mysql_result($resultA,0, TBL_SCORES.".Player_Rank");
+					$teamA_Forfeit= mysql_result($resultA,0, TBL_SCORES.".Player_Forfeit");
 					$teamA_ELO=0;
 					$teamA_TS_mu=0;
 					$teamA_TS_sigma2=0;
@@ -158,6 +164,7 @@ function match_scores_update($match_id)
 
 					$NbrPlayersTeamB = mysql_numrows($resultB);
 					$teamB_Rank= mysql_result($resultB,0, TBL_SCORES.".Player_Rank");
+					$teamB_Forfeit= mysql_result($resultB,0, TBL_SCORES.".Player_Forfeit");
 					$teamB_ELO=0;
 					$teamB_TS_mu=0;
 					$teamB_TS_sigma2=0;
@@ -196,21 +203,64 @@ function match_scores_update($match_id)
 					$teamA_draw = 1;
 					$teamB_draw = 1;
 				}
-				$teamA_Points = $teamA_win*$ePointPerWin + $teamA_draw*$ePointPerDraw + $teamA_loss*$ePointPerLoss;
-				$teamB_Points = $teamB_win*$ePointPerWin + $teamB_draw*$ePointPerDraw + $teamB_loss*$ePointPerLoss;
+				
+				/* Forfeit */
+				$teamA_fwin  = 0;
+				$teamA_floss = 0;
+				$teamB_fwin  = 0;
+				$teamB_floss = 0;
+				if($teamA_Forfeit == 1)
+				{
+					$teamA_floss = 1;
+					$teamB_fwin = 1;
+					$teamA_loss = 0;
+					$teamB_win = 0;
+				} 
+				else if ($teamB_Forfeit == 1)
+				{
+					$teamB_floss = 1;
+					$teamA_fwin = 1;
+					$teamB_loss = 0;
+					$teamA_win = 0;
+				}
+			 	
+				$teamA_Points = $teamA_win*$ePointsPerWin + $teamA_draw*$ePointsPerDraw + $teamA_loss*$ePointsPerLoss + $teamA_fwin*$eForfeitWinPoints + $teamA_floss*$eForfeitLossPoints;
+				$teamB_Points = $teamB_win*$ePointsPerWin + $teamB_draw*$ePointsPerDraw + $teamB_loss*$ePointsPerLoss + $teamB_fwin*$eForfeitWinPoints + $teamB_floss*$eForfeitLossPoints;
 				$output .= "Team A: $teamA_Points, $teamA_win, $teamA_draw, $teamA_loss, <br />";
 				$output .= "Team B: $teamB_Points, $teamB_win, $teamB_draw, $teamB_loss, <br />";
+
+				if ($eForfeitWinLossUpdate == 1)
+				{
+					$teamA_win = $teamA_fwin;
+					$teamB_win = $teamA_fwin;
+					$teamA_loss = $teamA_floss;
+					$teamB_loss = $teamB_floss;
+				}
 
 				// New ELO ------------------------------------------
 				$M=min($NbrPlayersTeamA,$NbrPlayersTeamB)*$eELO_M;      // Span
 				$K=$eELO_K;	// Max adjustment per game
-				$deltaELO = ELO($M, $K, $teamA_ELO, $teamB_ELO, $teamA_Rank, $teamB_Rank);
+				if (($teamA_Forfeit == 1)||($teamB_Forfeit == 1))
+				{
+					$deltaELO=0;
+				}
+				else
+				{
+					$deltaELO = ELO($M, $K, $teamA_ELO, $teamB_ELO, $teamA_Rank, $teamB_Rank);
+				}
 				$output .= "deltaELO: $deltaELO<br />";
 
 				// New TrueSkill ------------------------------------------
 				$beta=$eTS_beta;          // beta
 				$epsilon=$eTS_epsilon;    // draw probability
-				$update = Trueskill_update($epsilon,$beta, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Rank, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Rank);
+				if (($teamA_Forfeit == 1)||($teamB_Forfeit == 1))
+				{
+					$update = array(0,0,0,0);
+				}
+				else
+				{
+					$update = Trueskill_update($epsilon,$beta, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Rank, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Rank);
+				}
 
 				$teamA_deltaTS_mu = $update[0];
 				$teamA_deltaTS_sigma = $update[1];
@@ -539,7 +589,7 @@ function match_players_update($match_id)
 		$output .= "Match id: $match_id<br>";
 
 		$gain = mysql_result($result,$i, TBL_SCORES.".Player_Win") - mysql_result($result,$i, TBL_SCORES.".Player_Loss");
-		if ($gain * $pStreak > 0)
+		if ($gain * $pStreak >= 0)
 		{
 			// same sign
 			$pStreak += $gain;
@@ -756,7 +806,7 @@ function match_teams_update($match_id)
 		$output .= "Match id: $match_id<br>";
 
 		$gain = mysql_result($result,$i, TBL_SCORES.".Player_Win") - mysql_result($result,$i, TBL_SCORES.".Player_Loss");
-		if ($gain * $tStreak > 0)
+		if ($gain * $tStreak >= 0)
 		{
 			// same sign
 			$tStreak += $gain;

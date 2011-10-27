@@ -104,7 +104,7 @@ define('EB_EVENTS_L5', 'Nom');
 define('EB_EVENTS_L6', 'Jeu');
 define('EB_EVENTS_L7', 'Type');
 define('EB_EVENTS_L8', 'Date de début');
-define('EB_EVENTS_L9', 'Jeux:');
+define('EB_EVENTS_L9', 'Jeux');
 define('EB_EVENTS_L10', 'Tous');
 define('EB_EVENTS_L11', 'Erreur lors de l’affichage des tournois');
 define('EB_EVENTS_L12', 'Pas de Tournois');
@@ -131,6 +131,7 @@ define('EB_EVENTS_L30', '"
 define('EB_EVENTS_L31', '
 	Cordialement,
 	L’admin du tournoi');
+define('EB_EVENTS_L32', 'Type de Match');
 
 define('EB_EVENT_L1', 'Tournois');
 define('EB_EVENT_L2', 'Le tournoi débute dans');
@@ -336,6 +337,12 @@ define('EB_EVENTM_L123', 'Sauver les Paramètres des Challenges');
 define('EB_EVENTM_L124', 'Nombre maximum de dates par Challenge');
 define('EB_EVENTM_L125', 'Nombre maximum de maps par match');
 define('EB_EVENTM_L126', 'Nombre maximum de joueurs/équipes (0 signifie pas de max)');
+define('EB_EVENTM_L127', 'Activer/Désactiver les Forfaits');
+define('EB_EVENTM_L128', 'Activer les forfaits');
+define('EB_EVENTM_L129', 'Affecte le nombre de victoires et défaites');
+define('EB_EVENTM_L130', 'Points pour Victoire par Forfait');
+define('EB_EVENTM_L131', 'Points pour Défaite par Forfait');
+define('EB_EVENTM_L132', 'Type de Match');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');
@@ -514,6 +521,7 @@ define('EB_MATCHD_L24', 'soumis par');
 define('EB_MATCHD_L25', 'Effacer');
 define('EB_MATCHD_L26', 'Êtes-vous sûr de vouloir effacer ce media?');
 define('EB_MATCHD_L27', 'Editer ce match');
+define('EB_MATCHD_L28', 'Forfait');
 
 define('EB_MATCHDEL_L1', 'Match');
 define('EB_MATCHDEL_L2', 'Vous n’êtes pas autorisé à effacer ce match.');
@@ -588,6 +596,7 @@ define('EB_MATCHR_L56', '".
 	
 	Cordialement,
 	L’admin du tournoi');
+define('EB_MATCHR_L57', 'Forfait?');
 
 define('EB_MATCHQL_L1', 'Rapport rapide de défaite');
 define('EB_MATCHQL_L2', 'Vous n’êtes pas authorisé a soumettre un match.');
@@ -628,6 +637,8 @@ define('EB_GAME_L29', 'Effacer');
 define('EB_GAME_L30', 'Êtes-vous sûr de vouloir supprimer cette map?');
 define('EB_GAME_L31', 'Editer');
 define('EB_GAME_L32', 'Nom Court');
+define('EB_GAME_L33', 'Types de Match');
+define('EB_GAME_L34', 'Séparés par de virgules (ex: 1v1,2v2,FFA)');
 
 define('EB_GAMES_L1', 'Jeux');
 define('EB_GAMES_L2', 'Jeux');

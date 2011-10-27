@@ -106,7 +106,7 @@ define('EB_EVENTS_L5', 'Name');
 define('EB_EVENTS_L6', 'Game');
 define('EB_EVENTS_L7', 'Type');
 define('EB_EVENTS_L8', 'Start date');
-define('EB_EVENTS_L9', 'Games:');
+define('EB_EVENTS_L9', 'Game');
 define('EB_EVENTS_L10', 'All');
 define('EB_EVENTS_L11', 'Error displaying events');
 define('EB_EVENTS_L12', 'No events');
@@ -133,6 +133,7 @@ define('EB_EVENTS_L30', '"
 define('EB_EVENTS_L31', '
 	Cordially,
 	The ladder admin ');
+define('EB_EVENTS_L32', 'Match Type');
 
 define('EB_EVENT_L1', 'Events');
 define('EB_EVENT_L2', 'Event starts in');
@@ -338,6 +339,12 @@ define('EB_EVENTM_L123', 'Save Challenges settings');
 define('EB_EVENTM_L124', 'Max number of dates per Challenge request');
 define('EB_EVENTM_L125', 'Max number of maps per match');
 define('EB_EVENTM_L126', 'Max number of players/teams (0 means no max)');
+define('EB_EVENTM_L127', 'Allow Forfeits');
+define('EB_EVENTM_L128', 'Enable forfeits');
+define('EB_EVENTM_L129', 'Affects win/loss count');
+define('EB_EVENTM_L130', 'Forfeit Win Points');
+define('EB_EVENTM_L131', 'Forfeit Loss Points');
+define('EB_EVENTM_L132', 'Match Type');
 
 define('EB_EVENTP_L1', 'Past Events');
 define('EB_EVENTP_L2', 'Past Events');
@@ -516,6 +523,7 @@ define('EB_MATCHD_L24', 'submitted by');
 define('EB_MATCHD_L25', 'Delete');
 define('EB_MATCHD_L26', 'Are you sure you want to delete this media?');
 define('EB_MATCHD_L27', 'Edit this match');
+define('EB_MATCHD_L28', 'Forfeit');
 
 define('EB_MATCHDEL_L1', 'Match Delete');
 define('EB_MATCHDEL_L2', 'You are not authorized to delete this match.');
@@ -590,6 +598,7 @@ define('EB_MATCHR_L56', '" ladder.
 	
 	Cordially,
 	The ladder admin');
+define('EB_MATCHR_L57', 'Forfeit?');
 
 define('EB_MATCHQL_L1', 'Quick Loss Report');
 define('EB_MATCHQL_L2', 'You are not authorized to report a match.');
@@ -630,6 +639,8 @@ define('EB_GAME_L29', 'Delete');
 define('EB_GAME_L30', 'Are you sure you want to delete this map?');
 define('EB_GAME_L31', 'Edit');
 define('EB_GAME_L32', 'Short Name');
+define('EB_GAME_L33', 'Match types');
+define('EB_GAME_L34', 'Comma separated (ex: 1v1,2v2,FFA)');
 
 define('EB_GAMES_L1', 'Games');
 define('EB_GAMES_L2', 'Games');

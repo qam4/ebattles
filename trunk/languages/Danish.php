@@ -106,7 +106,7 @@ define('EB_EVENTS_L5', 'Navn');
 define('EB_EVENTS_L6', 'Spil');
 define('EB_EVENTS_L7', 'Type');
 define('EB_EVENTS_L8', 'Start Dato');
-define('EB_EVENTS_L9', 'Spil:');
+define('EB_EVENTS_L9', 'Spil');
 define('EB_EVENTS_L10', 'Alle');
 define('EB_EVENTS_L11', 'Fejl, kan ikke vise Turneringer');
 define('EB_EVENTS_L12', 'Ingen Turneringer');
@@ -133,6 +133,7 @@ define('EB_EVENTS_L30', '"
 define('EB_EVENTS_L31', '
 	Hjerteligt,
 	Turnering admin ');
+define('EB_EVENTS_L32', 'Typen af Kamp');
 
 define('EB_EVENT_L1', 'Turneringer');
 define('EB_EVENT_L2', 'Turnering starter d.');
@@ -338,6 +339,12 @@ define('EB_EVENTM_L123', 'Gem Udfordringer indstillinger');
 define('EB_EVENTM_L124', 'Max antal datoer per udfordring');
 define('EB_EVENTM_L125', 'Max antal kort per kamp');
 define('EB_EVENTM_L126', 'Max antal spillere/hold (0 betyder ingen max)');
+define('EB_EVENTM_L127', 'Aktiver/Deaktiver Miste');
+define('EB_EVENTM_L128', 'Aktiver Miste');
+define('EB_EVENTM_L129', 'Påvirker Vind/Tabt tæller');
+define('EB_EVENTM_L130', 'Miste Vind Points');
+define('EB_EVENTM_L131', 'Miste Tabt Points');
+define('EB_EVENTM_L132', 'Typen af Kamp');
 
 define('EB_EVENTP_L1', 'Tidligere Turneringer');
 define('EB_EVENTP_L2', 'Tidligere Turneringer');
@@ -516,6 +523,7 @@ define('EB_MATCHD_L24', 'indsendt af');
 define('EB_MATCHD_L25', 'Slet');
 define('EB_MATCHD_L26', 'Er du sikker på du vil slette denne medier?');
 define('EB_MATCHD_L27', 'Rediger denne kamp');
+define('EB_MATCHD_L28', 'Miste');
 
 define('EB_MATCHDEL_L1', 'Kampen er slettet');
 define('EB_MATCHDEL_L2', 'Du har IKKE rettigheder til, at slette denne kamp.');
@@ -590,6 +598,7 @@ define('EB_MATCHR_L56', '".
 
 	Venlig hilsen,
 	Turnering admin');
+define('EB_MATCHR_L57', 'Miste?');
 
 define('EB_MATCHQL_L1', 'Skrivebords resultat');
 define('EB_MATCHQL_L2', 'Du har IKKE tilladelse til, at rappotere fra en kamp.');
@@ -630,6 +639,8 @@ define('EB_GAME_L29', 'Slet');
 define('EB_GAME_L30', 'Er du sikker på du vil slette dette kort?');
 define('EB_GAME_L31', 'Rediger');
 define('EB_GAME_L32', 'Kort Navn');
+define('EB_GAME_L33', 'Typen af Kamp');
+define('EB_GAME_L34', 'Kommasepareret (ex: 1v1,2v2,FFA)');
 
 define('EB_GAMES_L1', 'Spil');
 define('EB_GAMES_L2', 'Spil');

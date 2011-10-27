@@ -115,7 +115,8 @@ ShortName varchar(63),
 Icon varchar(63),
 Style varchar(63) NOT NULL default '',
 Genre varchar(63) NOT NULL default '',
-Description text NOT NULL,
+MatchTypes varchar(255) NOT NULL default '',
+Description text NOT NULL default '',
 Developer varchar(63) NOT NULL default '',
 Publisher varchar(63) NOT NULL default '',
 ReleaseDate varchar(63) NOT NULL default '',
@@ -133,6 +134,7 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Type varchar(63),
+MatchType varchar(63) DEFAULT '',
 Start_timestamp int(11) unsigned not null,
 End_timestamp int(11) unsigned not null,
 nbr_games_to_rank int DEFAULT '4',
@@ -152,6 +154,10 @@ Description text NOT NULL,
 NextUpdate_timestamp int(11) unsigned not null,
 IsChanged tinyint(1) DEFAULT '1',
 AllowDraw tinyint(1) DEFAULT '0',
+AllowForfeit tinyint(1) DEFAULT '0',
+ForfeitWinLossUpdate tinyint(1) DEFAULT '0',
+ForfeitWinPoints int default '".PointsPerWin_DEFAULT."',
+ForfeitLossPoints int default '".PointsPerLoss_DEFAULT."',
 AllowScore tinyint(1) DEFAULT '0',
 PointsPerWin int default '".PointsPerWin_DEFAULT."',
 PointsPerDraw int default '".PointsPerDraw_DEFAULT."',
@@ -322,6 +328,7 @@ Player_Win int DEFAULT '0',
 Player_Loss int DEFAULT '0',
 Player_Draw int DEFAULT '0',
 Player_Points int DEFAULT '0',
+Player_Forfeit tinyint(1) DEFAULT '0',
 Faction int DEFAULT '0'
 ) TYPE = MyISAM;",
 "CREATE TABLE ".TBL_STATSCATEGORIES."
@@ -609,6 +616,20 @@ if (versionsCompare($eb_version_string, "0.8.12"))
 	// To revision 0.8.12
 	array_push ($upgrade_alter_tables,
 	"ALTER TABLE ".TBL_EVENTS." ADD MaxPlayers int DEFAULT '0'"
+	);
+}
+
+if (versionsCompare($eb_version_string, "0.8.13"))
+{
+	// To revision 0.8.13
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_GAMES." MatchTypes varchar(255) NOT NULL default ''",
+	"ALTER TABLE ".TBL_EVENTS." MatchType varchar(63) DEFAULT ''",
+	"ALTER TABLE ".TBL_EVENTS." AllowForfeit tinyint(1) DEFAULT '0'",
+	"ALTER TABLE ".TBL_EVENTS." ForfeitWinLossUpdate tinyint(1) DEFAULT '0'",
+	"ALTER TABLE ".TBL_EVENTS." ForfeitWinPoints int default '".PointsPerWin_DEFAULT."'",
+	"ALTER TABLE ".TBL_EVENTS." ForfeitLossPoints int default '".PointsPerLoss_DEFAULT."'",
+	"ALTER TABLE ".TBL_SCORES." Player_Forfeit tinyint(1) DEFAULT '0'"
 	);
 }
 

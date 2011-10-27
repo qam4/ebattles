@@ -1,6 +1,6 @@
 <?php
 // function to output form and hold previously entered values.
-function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw, $allowScore, $userclass) {
+function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw, $allowForfeit, $allowScore, $userclass) {
 	global $sql;
 	global $text;
 	global $tp;
@@ -272,6 +272,7 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 		$text .= '<table id="matchresult_rankTeams"><tbody>';
 		$text .= '<tr><td></td><td>'.EB_MATCHR_L25.'</td>';
 		if ($allowDraw == TRUE) $text .= '<td>'.EB_MATCHR_L27.'</td>';
+		if ($allowForfeit == TRUE) $text .= '<td>'.EB_MATCHR_L57.'</td>';
 		$text .= '</tr>';
 
 		for($i=1;$i<=$nbr_teams;$i++)
@@ -295,6 +296,17 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 				{
 					$text .= '<input class="tbox" type="checkbox" name="draw'.$i.'" value="1"';
 					if (strtolower($_POST['draw'.$i]) != "") $text .= ' checked="checked"';
+					$text .= '/>';
+				}
+				$text .= '</td>';
+			}
+			if ($allowForfeit == TRUE)
+			{
+				$text .= '<td>';
+				if ($i>1)
+				{
+					$text .= '<input class="tbox" type="checkbox" name="forfeit'.$i.'" value="1"';
+					if (strtolower($_POST['forfeit'.$i]) != "") $text .= ' checked="checked"';
 					$text .= '/>';
 				}
 				$text .= '</td>';
