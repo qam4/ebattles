@@ -623,13 +623,13 @@ if (versionsCompare($eb_version_string, "0.8.13"))
 {
 	// To revision 0.8.13
 	array_push ($upgrade_alter_tables,
-	"ALTER TABLE ".TBL_GAMES." MatchTypes varchar(255) NOT NULL default ''",
-	"ALTER TABLE ".TBL_EVENTS." MatchType varchar(63) DEFAULT ''",
-	"ALTER TABLE ".TBL_EVENTS." AllowForfeit tinyint(1) DEFAULT '0'",
-	"ALTER TABLE ".TBL_EVENTS." ForfeitWinLossUpdate tinyint(1) DEFAULT '0'",
-	"ALTER TABLE ".TBL_EVENTS." ForfeitWinPoints int default '".PointsPerWin_DEFAULT."'",
-	"ALTER TABLE ".TBL_EVENTS." ForfeitLossPoints int default '".PointsPerLoss_DEFAULT."'",
-	"ALTER TABLE ".TBL_SCORES." Player_Forfeit tinyint(1) DEFAULT '0'"
+	"ALTER TABLE ".TBL_GAMES." ADD MatchTypes varchar(255) NOT NULL default ''",
+	"ALTER TABLE ".TBL_EVENTS." ADD MatchType varchar(63) DEFAULT ''",
+	"ALTER TABLE ".TBL_EVENTS." ADD AllowForfeit tinyint(1) DEFAULT '0'",
+	"ALTER TABLE ".TBL_EVENTS." ADD ForfeitWinLossUpdate tinyint(1) DEFAULT '0'",
+	"ALTER TABLE ".TBL_EVENTS." ADD ForfeitWinPoints int default '".PointsPerWin_DEFAULT."'",
+	"ALTER TABLE ".TBL_EVENTS." ADD ForfeitLossPoints int default '".PointsPerLoss_DEFAULT."'",
+	"ALTER TABLE ".TBL_SCORES." ADD Player_Forfeit tinyint(1) DEFAULT '0'"
 	);
 }
 
