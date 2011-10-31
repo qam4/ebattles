@@ -271,6 +271,8 @@ function eventScoresUpdate($event_id, $current_match)
 			// Reset players stats
 			resetPlayers($event_id);
 			resetTeams($event_id);
+			
+			if ($estart = '') $estart = $time;
 
 			switch($etype)
 			{
@@ -313,16 +315,16 @@ function eventScoresUpdate($event_id, $current_match)
 				{
 					case "One Player Ladder":
 					match_players_update($mID);
-					updateStats($event_id, $estart, FALSE);
+					updateStats($event_id, $time_reported+1, FALSE);
 					break;
 					case "Team Ladder":
 					match_players_update($mID);
-					updateStats($event_id, $estart, FALSE);
-					updateTeamStats($event_id, $estart, FALSE);
+					updateStats($event_id, $time_reported+1, FALSE);
+					updateTeamStats($event_id, $time_reported+1, FALSE);
 					break;
 					case "ClanWar":
 					match_teams_update($mID);
-					updateTeamStats($event_id, $estart, FALSE);
+					updateTeamStats($event_id, $time_reported+1, FALSE);
 					break;
 					default:
 				}

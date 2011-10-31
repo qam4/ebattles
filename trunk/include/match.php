@@ -231,10 +231,10 @@ function match_scores_update($match_id)
 
 				if ($eForfeitWinLossUpdate == 1)
 				{
-					$teamA_win = $teamA_fwin;
-					$teamB_win = $teamA_fwin;
-					$teamA_loss = $teamA_floss;
-					$teamB_loss = $teamB_floss;
+					$teamA_win += $teamA_fwin;
+					$teamB_win += $teamA_fwin;
+					$teamA_loss += $teamA_floss;
+					$teamB_loss += $teamB_floss;
 				}
 
 				// New ELO ------------------------------------------
