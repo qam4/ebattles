@@ -20,6 +20,7 @@ function match_scores_update($match_id)
 	$eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
 	$eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
 	$eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
+	$eAllowForfeit = mysql_result($result,0 , TBL_EVENTS.".AllowForfeit");
 	$eForfeitWinLossUpdate = mysql_result($result,0 , TBL_EVENTS.".ForfeitWinLossUpdate");
 	$eForfeitWinPoints = mysql_result($result,0 , TBL_EVENTS.".ForfeitWinPoints");
 	$eForfeitLossPoints = mysql_result($result,0 , TBL_EVENTS.".ForfeitLossPoints");
@@ -209,21 +210,24 @@ function match_scores_update($match_id)
 				$teamA_floss = 0;
 				$teamB_fwin  = 0;
 				$teamB_floss = 0;
-				if($teamA_Forfeit == 1)
+				if($eAllowForfeit==1)
 				{
-					$teamA_floss = 1;
-					$teamB_fwin = 1;
-					$teamA_loss = 0;
-					$teamB_win = 0;
-				} 
-				else if ($teamB_Forfeit == 1)
-				{
-					$teamB_floss = 1;
-					$teamA_fwin = 1;
-					$teamB_loss = 0;
-					$teamA_win = 0;
+						if($teamA_Forfeit == 1)
+					{
+						$teamA_floss = 1;
+						$teamB_fwin = 1;
+						$teamA_loss = 0;
+						$teamB_win = 0;
+					} 
+					else if ($teamB_Forfeit == 1)
+					{
+						$teamB_floss = 1;
+						$teamA_fwin = 1;
+						$teamB_loss = 0;
+						$teamA_win = 0;
+					}
 				}
-			 	
+				 	
 				$teamA_Points = $teamA_win*$ePointsPerWin + $teamA_draw*$ePointsPerDraw + $teamA_loss*$ePointsPerLoss + $teamA_fwin*$eForfeitWinPoints + $teamA_floss*$eForfeitLossPoints;
 				$teamB_Points = $teamB_win*$ePointsPerWin + $teamB_draw*$ePointsPerDraw + $teamB_loss*$ePointsPerLoss + $teamB_fwin*$eForfeitWinPoints + $teamB_floss*$eForfeitLossPoints;
 				$output .= "Team A: $teamA_Points, $teamA_win, $teamA_draw, $teamA_loss, <br />";
@@ -232,7 +236,7 @@ function match_scores_update($match_id)
 				if ($eForfeitWinLossUpdate == 1)
 				{
 					$teamA_win += $teamA_fwin;
-					$teamB_win += $teamA_fwin;
+					$teamB_win += $teamB_fwin;
 					$teamA_loss += $teamA_floss;
 					$teamB_loss += $teamB_floss;
 				}
