@@ -71,52 +71,61 @@ function displayPastEvents(){
 		$sort = ($_GET["sort"]=="ASC") ? "DESC" : "ASC";
 	}
 
+	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_EVENTS.".Game = '$gameid')";
+	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_GAMES.".MatchTypes LIKE '%$matchtype%')";
+
 	// Drop down list to select Games to display
-	$q = "SELECT DISTINCT ".TBL_GAMES.".*"
+	$q_Games = "SELECT DISTINCT ".TBL_GAMES.".*"
 	." FROM ".TBL_GAMES.", "
 	. TBL_EVENTS
 	." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+	.$matchtype_string
 	." ORDER BY Name";
-	$result = $sql->db_Query($q);
-	/* Error occurred, return given name by default */
-	$num_Games = mysql_numrows($result);
+	$result_Games = $sql->db_Query($q_Games);
+	$num_Games = mysql_numrows($result_Games);
+
+	// Drop down list to select Match type to display
+	$q_mt = "SELECT ".TBL_GAMES.".*"
+	." FROM ".TBL_GAMES.", "
+	. TBL_EVENTS
+	." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+	.$game_string;
+	$result_mt = $sql->db_Query($q_mt);
+	$num_mt = mysql_numrows($result_mt);
+	$gmatchtypes = '';
+	for($i=0; $i<$num_mt; $i++)
+	{
+		$gmatchtypes  .= ','.mysql_result($result_mt,$i, TBL_GAMES.".MatchTypes");
+	}
+
 	$text .= '<form id="submitform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
 	$text .= '<div>';
 	$text .= '<table>';
 	$text .= '<tr>';
+	// Games drop down
 	$text .= '<td>'.EB_EVENTS_L9.'<br />';
 	$text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
 	$text .= '<option value="All" '.(($gameid == "All") ? 'selected="selected"' : '').'>'.EB_EVENTS_L10.'</option>';
 	for($i=0; $i<$num_Games; $i++)
 	{
-		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
-		$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
+		$gname  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
+		$gid  = mysql_result($result_Games,$i, TBL_GAMES.".GameID");
 		$text .= '<option value="'.$gid.'" '.(($gameid == $gid) ? 'selected="selected"': '').'>'.htmlspecialchars($gname).'</option>';
 	}
 	$text .= '</select>';
 	$text .= '</td>';
+	// Match Types drop down
 	$text .= '<td>'.EB_EVENTS_L32.'<br />';
 	$text .= '<select class="tbox" name="matchtype" onchange="this.form.submit()">';
-	if ($gameid == "All")
-	{
-		$text .= '<option value="All" selected="selected">'.EB_EVENTS_L10.'</option>';
-	}
-	else
-	{
 		$text .= '<option value="All" '.(($matchtype == "All") ? 'selected="selected"' : '').'>'.EB_EVENTS_L10.'</option>';
-		$q_mt = "SELECT ".TBL_GAMES.".*"
-		." FROM ".TBL_GAMES
-		." WHERE (".TBL_GAMES.".GameID = '$gameid')";
-		$result_mt = $sql->db_Query($q_mt);
-		/* Error occurred, return given name by default */
-		$num_mt = mysql_numrows($result_mt);
 
-		$gmatchtypes  = explode(",", mysql_result($result_mt,0, TBL_GAMES.".MatchTypes"));
-		foreach($gmatchtypes as $gmatchtype)
-		{
-			if ($gmatchtype!='') {
-				$text .= '<option value="'.$gmatchtype.'" '.(($gmatchtype == $matchtype) ? 'selected="selected"' : '').'>'.htmlspecialchars($gmatchtype).'</option>';
-			}
+	$gmatchtypes  = explode(",", $gmatchtypes);
+	$gmatchtypes = array_unique($gmatchtypes);
+	sort($gmatchtypes);
+	foreach($gmatchtypes as $gmatchtype)
+	{
+		if ($gmatchtype!='') {
+			$text .= '<option value="'.$gmatchtype.'" '.(($gmatchtype == $matchtype) ? 'selected="selected"' : '').'>'.htmlspecialchars($gmatchtype).'</option>';
 		}
 	}
 	$text .= '</select>';
