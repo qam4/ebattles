@@ -1,6 +1,15 @@
 #summary eBattles Release Notes.
 #labels Featured
 = Release 0.8.13 =
+== Changes ==
+ * Improved events filtering by games & match type
+== Bug Fixes ==
+ * Fixed bug in forfeit win/loss count.
+ * Fixed bug in event score re-calculation.
+  * Timestamp for awards was not correct.
+
+
+= Release 0.8.13 =
 == Features ==
  * Support for forfeit
  * Support for match types (1v1, 2v2, ...)
