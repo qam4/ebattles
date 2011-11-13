@@ -20,6 +20,7 @@ class Tournament extends DatabaseTable
 		$this->setField('MaxNumberPlayers', 16);
 		$this->setField('match_report_userclass', eb_UC_LADDER_MODERATOR);
 		$this->setField('match_replay_report_userclass', eb_UC_LADDER_PLAYER);
+		$this->setField('Status', 'draft');
 	}
 
 	/**
@@ -153,7 +154,7 @@ class Tournament extends DatabaseTable
 
 	function updateRounds($rounds) {
 		global $sql;
-
+		
 		$new_rounds = serialize($rounds);
 		$this->setField('Rounds', $new_rounds);
 	}
@@ -574,6 +575,145 @@ class Tournament extends DatabaseTable
 
 		return $text;
 	}
+
+	function scheduleNextMatches() {
+		global $sql;
+
+		$type = $this->fields['Type'];
+		$teams = array();
+		switch($this->fields['MatchType'])
+		{
+			default:
+			$q_Players = "SELECT ".TBL_GAMERS.".*"
+			." FROM ".TBL_TPLAYERS.", "
+			.TBL_GAMERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_TPLAYERS.".Tournament = '".$this->fields['TournamentID']."')"
+			." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+			." ORDER BY ".TBL_TPLAYERS.".Joined";
+			$result = $sql->db_Query($q_Players);
+			$nbrPlayers = mysql_numrows($result);
+			for ($player = 0; $player < $nbrPlayers; $player++)
+			{
+				$gamerID = mysql_result($result,$player , TBL_GAMERS.".GamerID");
+				$gamer = new Gamer($gamerID);
+				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+			}
+		}
+		$nbrPlayers = $this->fields['MaxNumberPlayers'];
+		$results = unserialize($this->fields['Results']);
+		$rounds = unserialize($this->fields['Rounds']);
+
+		$nbrTeams=count($teams);
+
+		switch ($type)
+		{
+			default:
+			$file = 'include/brackets/se-'.$nbrPlayers.'.txt';
+			break;
+		}
+		$matchups = unserialize(implode('',file($file)));
+		$nbrRounds = count($matchups);
+
+		/* */
+		$content= array();
+
+		$rowspan = 1;
+		for ($round = 1; $round <= $nbrRounds; $round++){
+			$nbrMatchups = count($matchups[$round]);
+			if ($round == 1) {
+				/* Round 1 */
+				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+					$teamTop    = substr($matchups[$round][$matchup][0],1);
+					$teamBottom = substr($matchups[$round][$matchup][1],1);
+					if (!$results[$round][$matchup]['winner']) $results[$round][$matchup]['winner'] = '';
+
+					$content[$round][$matchup][0] = '0';
+					if ($teamTop <= $nbrTeams){
+						$content[$round][$matchup][0] = $teamTop;
+					} else {
+						$results[$round][$matchup]['winner'] = 'bye';
+					}
+					$content[$round][$matchup][1] = '0';
+					if ($teamBottom <= $nbrTeams){
+						$content[$round][$matchup][1] = $teamBottom;
+					} else {
+						$results[$round][$matchup]['winner'] = 'bye';
+					}
+
+					if(($content[$round][$matchup][0]!='0')&&($content[$round][$matchup][1]!='0')){
+						if ($results[$round][$matchup]['winner'] == '') {
+							// Matchup not finished, no winner yet
+						}
+					}
+				}
+			}
+			else if ($round < $nbrRounds)
+			{
+				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+					if (!$results[$round][$matchup]['winner']) $results[$round][$matchup]['winner'] = '';
+					for($match = 0; $match < 2; $match++){
+						$matchupString = $matchups[$round][$matchup][$match];
+						if ($matchupString[0]='W') {
+							$matchupArray = explode(',',substr($matchupString,1));
+							$matchupRound = $matchupArray[0];
+							$matchupMatchup = $matchupArray[1];
+
+							// Get result of matchup
+							$result = $results[$matchupRound][$matchupMatchup]['winner'];
+
+							if (($result == 'top')||($result == 'bye')) {
+								$content[$round][$matchup][$match] = $content[$matchupRound][$matchupMatchup][0];
+							}
+							else if ($result == 'bottom') {
+								$content[$round][$matchup][$match] = $content[$matchupRound][$matchupMatchup][1];
+							}
+							else {
+								$content[$round][$matchup][$match] = 'not played';
+							}
+						}
+					}
+					if (($content[$round][$matchup][0]!='0')
+					    &&($content[$round][$matchup][1]!='0')
+					    &&($content[$round][$matchup][0]!='not played')
+					    &&($content[$round][$matchup][1]!='not played')) {
+						if ($results[$round][$matchup]['winner'] == '') {
+							// Matchup not finished yet
+							$matchPlayed = count($results[$round][$matchup]['matchs']);
+
+							$match = array();
+							//$match['']
+							
+							$results[$round][$matchup]['matchs'][$matchPlayed] = $match;
+							
+							echo "R$round M$matchup: Matchs played=$matchPlayed<br>";
+							var_dump($results[$round][$matchup]);
+
+
+						}
+					}
+					if (($content[$round][$matchup][0]=='0')||($content[$round][$matchup][1]=='0')) {
+						$results[$round][$matchup]['winner'] = 'bye';
+					}
+				}
+			}
+			else
+			{
+				/* Last round, no match */
+			}
+		}
+
+		/*
+		var_dump($matchups);
+		var_dump($results);
+		var_dump($content);
+		var_dump($teams);
+		*/
+
+		//return array($bracket_html);
+
+	}
 }
 
 function tournamentTypeToString($type)
@@ -595,7 +735,5 @@ function deleteTPlayer($player_id)
 	." WHERE (".TBL_TPLAYERS.".TPlayerID = '$player_id')";
 	$result = $sql->db_Query($q);
 }
-
-
 
 ?>

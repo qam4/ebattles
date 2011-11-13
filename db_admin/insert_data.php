@@ -46,4 +46,13 @@ $query =
 VALUES ($last_id, 'Steppes Of War', 'sc2-SteppesOfWar.jpg')";
 array_push($eplug_tables, $query);
 
+// Debug
+// Insert gamers
+for($i = 2; $i < 20; $i++) {
+	$query =
+	"INSERT INTO ".TBL_GAMERS."(User, Game, Name, UniqueGameID)
+	VALUES ($i, $last_id, 'Player".$i."', 'Player#".$i."')";
+	array_push($eplug_tables, $query);
+}
+
 ?>

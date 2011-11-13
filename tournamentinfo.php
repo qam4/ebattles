@@ -68,70 +68,12 @@ else
 	$eownername = mysql_result($result,0 , TBL_USERS.".user_name");
 
 	$tournamentIsChanged = $tournament->getField('IsChanged');
+	$tournamentStatus = $tournament->getField('Status');
 
-	if ($pref['eb_update_delay_enable'] == 1)
-	{
-		$eneedupdate = 0;
-	}
-	else
-	{
-		// Force always update
-		$eneedupdate = 1;
-	}
-
-	/*
-	if (
-	(($time > $nextupdate_timestamp_local) && ($tournamentIsChanged == 1))
-	||(file_exists($file) == FALSE)
-	||((file_exists($file_team) == FALSE) && (($tournament->getField('Type') == "Team Tournament")||($tournament->getField('Type') == "ClanWar")))
-	)
-	{
-	$eneedupdate = 1;
-	}
-	*/
-
-	if($tournament->getField('StartDateTime')!=0)
-	{
-		$start_timestamp_local = $tournament->getField('StartDateTime') + TIMEOFFSET;
-		$date_start = date("d M Y, h:i A",$start_timestamp_local);
-	}
-	else
-	{
-		$date_start = "-";
-	}
-	/*
-	if($tournament->getField('End_timestamp')!=0)
-	{
-	$end_timestamp_local = $tournament->getField('End_timestamp') + TIMEOFFSET;
-	$date_end = date("d M Y, h:i A",$end_timestamp_local);
-	}
-	else
-	{
-	$date_end = "-";
-	}
-	*/
+	$start_timestamp_local = $tournament->getField('StartDateTime') + TIMEOFFSET;
+	$date_start = date("d M Y, h:i A",$start_timestamp_local);
 
 	$time_comment = '';
-	if (  ($tournament->getField('StartDateTime') != 0)
-	&&($time <= $tournament->getField('StartDateTime'))
-	)
-	{
-		$time_comment = EB_TOURNAMENT_L2.'&nbsp;'.get_formatted_timediff($time, $tournament->getField('StartDateTime'));
-	}
-	/*
-	else if (  ($tournament->getField('End_timestamp') != 0)
-	&&($time <= $tournament->getField('End_timestamp'))
-	)
-	{
-	$time_comment = EB_TOURNAMENT_L3.'&nbsp;'.get_formatted_timediff($time, $tournament->getField('End_timestamp'));
-	}
-	else if (  ($tournament->getField('End_timestamp') != 0)
-	&&($time > $tournament->getField('End_timestamp'))
-	)
-	{
-	$time_comment = EB_TOURNAMENT_L4;
-	}
-	*/
 
 	/* Nbr players */
 	$q = "SELECT COUNT(*) as NbrPlayers"
@@ -156,38 +98,61 @@ else
 	$result = $sql->db_Query($q);
 	$row = mysql_fetch_array($result);
 	$nbrteams = $row['NbrTeams'];
+	
+	$checkinDuration = 0; // TDO: add this.
+	switch($tournamentStatus)
+	{
+		case 'draft':
+			header("Location: ./tournaments.php");
+			exit();
+			break;
+		case 'signup':
+			if($time < ($tournament->getField('StartDateTime' - $checkinDuration)))
+			{
+				$time_comment = EB_TOURNAMENT_L2.'&nbsp;'.get_formatted_timediff($time, $tournament->getField('StartDateTime'));
+			}
+			else
+			{
+				$q = "UPDATE ".TBL_TOURNAMENTS." SET Status = 'checkin' WHERE (TournamentID = '$tournament_id')";
+				$result = $sql->db_Query($q);		
+			}
+			break;
+		case 'checkin':
+			if($time < $tournament->getField('StartDateTime'))
+			{
+				$time_comment = EB_TOURNAMENT_L2.'&nbsp;'.get_formatted_timediff($time, $tournament->getField('StartDateTime'));
+			}
+			else
+			{
+				$q = "UPDATE ".TBL_TOURNAMENTS." SET Status = 'active' WHERE (TournamentID = '$tournament_id')";
+				$result = $sql->db_Query($q);
+				$q = "UPDATE ".TBL_TOURNAMENTS." SET IsChanged = 1 WHERE (TournamentID = '$tournament_id')";
+				$result = $sql->db_Query($q);
+				$tournamentIsChanged = 1;
+			}
+			break;
+		case 'active':
+			break;
+		case 'finished':
+			break;
+	}
+	
 
 	/* Update Stats */
-	if ($eneedupdate == 1)
+	if ($tournamentIsChanged == 1)
 	{
-		$new_nextupdate = $time + 60*$pref['eb_update_delay'];
-		$q = "UPDATE ".TBL_TOURNAMENTS." SET NextUpdate_timestamp = $new_nextupdate WHERE (TournamentID = '$tournament_id')";
-		$result = $sql->db_Query($q);
-		$nextupdate_timestamp_local = $new_nextupdate;
-
 		$q = "UPDATE ".TBL_TOURNAMENTS." SET IsChanged = 0 WHERE (TournamentID = '$tournament_id')";
-		$result = $sql->db_Query($q);
+		//fm: $result = $sql->db_Query($q);
 		$tournamentIsChanged = 0;
 
-		// TODO: update brackets here
-		/*
-		switch($tournament->getField('Type'))
-		{
-		case "One Player Tournament":
-		updateStats($tournament_id, $time, TRUE);
-		break;
-		case "Team Tournament":
-		updateStats($tournament_id, $time, TRUE);
-		updateTeamStats($tournament_id, $time, TRUE);
-		case "ClanWar":
-		updateTeamStats($tournament_id, $time, TRUE);
-		break;
-		default:
-		}
-		*/
-
+		// TODO: Schedule upcoming matches here
+		$tournament->scheduleNextMatches();
 	}
-
+	
+	
+	/*----------------------------------------------------------------------------------------
+	   Display Info
+	----------------------------------------------------------------------------------------*/
 	$text .= '<div id="tabs">';
 	$text .= '<ul>';
 	$text .= '<li><a href="#tabs-1">'.EB_TOURNAMENT_L35.'</a></li>'; /* Signup, Join/Quit Tournament */
@@ -219,7 +184,7 @@ else
 	if(check_class(e_UC_MEMBER))
 	{
 		// If logged in
-		if(($tournament->getField('StartDateTime') == 0) || ($time < $tournament->getField('StartDateTime')))
+		if($time < $tournament->getField('StartDateTime'))
 		{
 			// If tournament is not finished
 			if (($tournament->getField('MatchType') == "2v2")||($tournament->getField('MatchType') == "3v3"))

@@ -52,6 +52,8 @@ else
 	$eownername = mysql_result($result,0 , TBL_USERS.".user_name");
 
 	$tournament = new Tournament($tournament_id);
+	$tournamentStatus = $tournament->getField('Status');
+	$rounds = unserialize($tournament->getField('Rounds'));
 
 	$can_manage = 0;
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
@@ -83,16 +85,49 @@ else
 		$text .= '
 		<form action="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'" method="post">
 		'.ebImageTextButton('submit', 'magnify.png', EB_TOURNAMENTM_L133).'
-		</form>';		
+		</form>';
 		$text .= '</td></tr>';
 		$text .= '</tbody>';
 		$text .= '</table>';
-		
+
 		$text .= '
 		<form action="'.e_PLUGIN.'ebattles/tournamentprocess.php?TournamentID='.$tournament_id.'" method="post">
 		<table class="eb_table" style="width:95%">
 		<tbody>
 		';
+
+		$text .= '<tr>';
+		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L135.'<br />';
+		$text .= '</td>';
+		$text .= '<td class="eb_td">';
+
+		switch($tournamentStatus)
+		{
+			case 'draft':
+			$text .= '<table class="table_left">';
+			$text .= '<tr>';
+			$text .= '<td>'.EB_TOURNAMENTM_L136.'</td>';
+			$text .= '<td>'.ebImageTextButton('tournamentpublish', 'thumb_up.png', EB_TOURNAMENTM_L137).'</td>';
+			$text .= '</tr>';
+			$text .= '</table>';
+			break;
+			case 'signup':
+			$text .= EB_TOURNAMENTM_L138;
+			break;
+			case 'checkin':
+			$text .= EB_TOURNAMENTM_L139;
+			break;
+			case 'active':
+			$text .= EB_TOURNAMENTM_L140;
+			break;
+			case 'finished':
+			$text .= EB_TOURNAMENTM_L141;
+			break;
+		}
+
+		$text .= '</td>';
+
+
 
 		$text .= '<tr>';
 		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L9.'<br />';
@@ -204,9 +239,9 @@ else
 		//***************************************************************************************
 		// tab-page "Tournament Settings"
 		$text .= '<div id="tabs-2">';
-		
+
 		$text .= $tournament->displayTournamentSettingsForm();
-		
+
 		$text .= '
 		</div>
 		';  // tab-page "Tournament Settings"

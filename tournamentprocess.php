@@ -45,6 +45,16 @@ else{
 	$q = "UPDATE ".TBL_TOURNAMENTS." SET IsChanged = 1 WHERE (TournamentID = '$tournament_id')";
 	$result = $sql->db_Query($q);
 
+	if(isset($_POST['tournamentpublish']))
+	{
+		/* Tournament Status */
+		$q2 = "UPDATE ".TBL_TOURNAMENTS." SET Status = 'signup' WHERE (TournamentID = '$tournament_id')";
+		$result2 = $sql->db_Query($q2);
+
+		//echo "-- tournamentpublish --<br />";
+		header("Location: tournamentmanage.php?TournamentID=$tournament_id");
+		exit();
+	}
 	if(isset($_POST['tournamentchangeowner']))
 	{
 		$tournament_owner = $_POST['tournamentowner'];
