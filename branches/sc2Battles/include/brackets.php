@@ -44,7 +44,7 @@ function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) 
 	$nbrRounds = count($matchups);
 
 	/* */
-	$brackets = array ();
+	$brackets = array();
 	$content= array();
 	// Initialize grid
 	for ($row = 1; $row <= 2*$nbrPlayers; $row ++){
@@ -235,6 +235,7 @@ function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) 
 	$bracket_html .= '</div>'; // panel-brackets
 
 	/*
+	var_dump($rounds);
 	var_dump($matchups);
 	var_dump($results);
 	var_dump($content);

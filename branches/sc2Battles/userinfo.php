@@ -53,9 +53,10 @@ else
 	$text .= '<ul>';
 	$text .= '<li><a href="#tabs-1">'.EB_USER_L2.'</a></li>';
 	$text .= '<li><a href="#tabs-2">'.EB_USER_L3.'</a></li>';
-	$text .= '<li><a href="#tabs-3">'.EB_USER_L4.'</a></li>';
-	$text .= '<li><a href="#tabs-4">'.EB_USER_L5.'</a></li>';
-	$text .= '<li><a href="#tabs-5">'.EB_USER_L6.'</a></li>';
+	$text .= '<li><a href="#tabs-3">'.EB_USER_L33.'</a></li>';
+	$text .= '<li><a href="#tabs-4">'.EB_USER_L4.'</a></li>';
+	$text .= '<li><a href="#tabs-5">'.EB_USER_L5.'</a></li>';
+	$text .= '<li><a href="#tabs-6">'.EB_USER_L6.'</a></li>';
 	$text .= '</ul>';
 
 	/*
@@ -344,10 +345,251 @@ else
 
 	/*
 	---------------------
-	Divisions
+	Tournaments
 	---------------------
 	*/
-	$text .= '<div id="tabs-3">';   // tab-page "Divisions"
+	$text .= '<div id="tabs-3">';    // tab-page "Tournaments"
+	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_tournaments_create_class'])))
+	{
+		$text .= '<form action="'.e_PLUGIN.'ebattles/tournamentscreate.php" method="post">';
+		$text .= '<div>';
+		$text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
+		$text .= '<input type="hidden" name="username" value="'.$uname.'"/>';
+		$text .= ebImageTextButton('createladder', 'add.png', EB_TOURNAMENTS_L20);
+		$text .= '</div>';
+		$text .= '</form><br />';
+	}
+	/* Display list of ladders where the user is a player */
+	$text .= '<div class="spacer"><b>'.EB_USER_L8.'</b></div>';
+	$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L34.'</div>';
+	$q = " SELECT *"
+	." FROM ".TBL_TPLAYERS.", "
+	.TBL_GAMERS.", "
+	.TBL_TOURNAMENTS.", "
+	.TBL_GAMES
+	." WHERE (".TBL_GAMERS.".User = '$req_user')"
+	." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_TPLAYERS.".Tournament = ".TBL_TOURNAMENTS.".TournamentID)"
+	."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)";
+
+	$result = $sql->db_Query($q);
+	$num_rows = mysql_numrows($result);
+
+	if ($num_rows>0)
+	{
+		/* Display table contents */
+		$text .= '<table class="eb_table" style="width:95%">';
+		$text .= '<tr>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L10;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L12;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L14;
+		$text .= '</th>';
+		$text .= '</tr>';
+
+		for($i=0; $i<$num_rows; $i++)
+		{
+			$ladder_id = mysql_result($result,$i, TBL_LADDERS.".LadderID");
+			$lName  = mysql_result($result,$i, TBL_LADDERS.".Name");
+			$lOwner = mysql_result($result,$i, TBL_LADDERS.".Owner");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
+			$player_id =  mysql_result($result,$i, TBL_TPLAYERS.".TPlayerID");
+			$pWinLoss  = mysql_result($result,$i, TBL_TPLAYERS.".Win")."/".mysql_result($result,$i, TBL_TPLAYERS.".Draw")."/".mysql_result($result,$i, TBL_TPLAYERS.".Loss");
+
+			$text .= '<tr>';
+			$text .= '<td class="eb_td">';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
+			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
+			$text .= $pWinLoss;
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
+			if($lOwner == $req_user)
+			{
+				$text .= EB_USER_L15;
+				if ($lOwner == USERID)
+				{
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/tournamentmanage.php?LadderID='.$ladder_id.'">'.EB_USER_L16.'</a>)';
+				}
+			}
+			else
+			{
+				$text .= EB_USER_L17;
+			}
+
+			$text .= '</td>';
+			$text .= '</tr>';
+		}
+		$text .= '</table>';
+	}
+
+	/* Display list of ladders where the user is the owner */
+	$text .= '<br /><div class="spacer"><b>'.EB_USER_L18.'</b></div>';
+	$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L35.'</div>';
+	$q = " SELECT *"
+	." FROM ".TBL_TOURNAMENTS.", "
+	.TBL_GAMES
+	." WHERE (".TBL_TOURNAMENTS.".Owner = '$req_user')"
+	."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)";
+
+	$result = $sql->db_Query($q);
+	$num_tournaments = mysql_numrows($result);
+
+	if ($num_tournaments>0)
+	{
+		/* Display table contents */
+		$text .= '<table class="eb_table" style="width:95%">';
+		$text .= '<tr>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L10;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L14;
+		$text .= '</th>';
+		/*
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L31;
+		$text .= '</th>';
+		*/
+		$text .= '</tr>';
+
+		for($i=0; $i < $num_tournaments; $i++)
+		{
+			$tournament_id  = mysql_result($result,$i, TBL_TOURNAMENTS.".TournamentID");
+			$tName  = mysql_result($result,$i, TBL_TOURNAMENTS.".Name");
+			$tOwner  = mysql_result($result,$i, TBL_TOURNAMENTS.".Owner");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
+
+			/* TODO
+			$q_pending = "SELECT COUNT(*) as nbrMatchesPending"
+			." FROM ".TBL_MATCHS
+			." WHERE (".TBL_MATCHS.".Ladder = '$ladder_id')"
+			."   AND (".TBL_MATCHS.".Status = 'pending')";
+			$result_pending = $sql->db_Query($q_pending);
+			$row = mysql_fetch_array($result_pending);
+			$nbrMatchesPending = $row['nbrMatchesPending'];
+			*/
+
+			$text .= '<tr>';
+			$text .= '<td class="eb_td">';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tName.'</a><br />';
+			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
+			if($tOwner == $req_user)
+			{
+				$text .= EB_USER_L15;
+				if ($tOwner == USERID)
+				{
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/tournamentmanage.php?TournamentID='.$tournament_id.'">'.EB_USER_L16.'</a>)';
+				}
+			}
+			else
+			{
+				$text .= EB_USER_L17;
+			}
+			$text .= '</td>';
+			/*
+			$text .= '<td class="eb_td">';
+			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
+			$text .= '</td>';
+			*/
+			$text .= '</tr>';
+		}
+		$text .= '</table>';
+	}
+
+	/* Display list of ladders where the user is a moderator */
+	$text .= '<br /><div class="spacer"><b>'.EB_USER_L20.'</b></div>';
+	$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L21.'</div>';
+	$q = " SELECT *"
+	." FROM ".TBL_MODS.", "
+	.TBL_TOURNAMENTS.", "
+	.TBL_GAMES
+	." WHERE (".TBL_MODS.".User = '$req_user')"
+	."   AND (".TBL_MODS.".Tournament = ".TBL_TOURNAMENTS.".TournamentID)"
+	."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)";
+
+	$result = $sql->db_Query($q);
+	$num_rows = mysql_numrows($result);
+
+	if ($num_rows>0)
+	{
+		/* Display table contents */
+		$text .= '<table class="eb_table" style="width:95%">';
+		$text .= '<tr>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L10;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L14;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L31;
+		$text .= '</th>';
+		$text .= '</tr>';
+
+		for($i=0; $i < $num_rows; $i++)
+		{
+			$tournament_id  = mysql_result($result,$i, TBL_TOURNAMENTS.".TournamentID");
+			$tName  = mysql_result($result,$i, TBL_TOURNAMENTS.".Name");
+			$tOwner  = mysql_result($result,$i, TBL_TOURNAMENTS.".Owner");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
+
+			/* TODO
+			$q_pending = "SELECT COUNT(*) as nbrMatchesPending"
+			." FROM ".TBL_MATCHS
+			." WHERE (".TBL_MATCHS.".Ladder = '$ladder_id')"
+			."   AND (".TBL_MATCHS.".Status = 'pending')";
+			$result_pending = $sql->db_Query($q_pending);
+			$row = mysql_fetch_array($result_pending);
+			$nbrMatchesPending = $row['nbrMatchesPending'];
+			*/
+
+			$text .= '<tr>';
+			$text .= '<td class="eb_td">';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?LadderID='.$tournament_id.'">'.$tName.'</a><br />';
+			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
+			if($tOwner == $req_user)
+			{
+				$text .= EB_USER_L15;
+				if ($tOwner == USERID)
+				{
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/tournamentmanage.php?LadderID='.$tournament_id.'">'.EB_USER_L16.'</a>)';
+				}
+			}
+			else
+			{
+				$text .= EB_USER_L17;
+			}
+			$text .= '</td>';
+			/*
+			$text .= '<td class="eb_td">';
+			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</b></div>' : '';
+			$text .= '</td>';
+			*/
+			$text .= '</tr>';
+		}
+		$text .= '</table>';
+	}
+	$text .= '</div>';   // tab-page"Ladders"
+
+	/*
+	---------------------
+	Teams
+	---------------------
+	*/
+	$text .= '<div id="tabs-4">';   // tab-page "Teams"
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_teams_create_class'])))
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/clancreate.php" method="post">';
@@ -545,7 +787,7 @@ else
 	Matches
 	---------------------
 	*/
-	$text .= '<div id="tabs-4">';   // tab-page "Matches"
+	$text .= '<div id="tabs-5">';   // tab-page "Matches"
 
 	/* Display Active Matches */
 	/* set pagination variables */
@@ -754,7 +996,7 @@ else
 	Awards
 	---------------------
 	*/
-	$text .= '<div id="tabs-5">';   // tab-page "Awards"
+	$text .= '<div id="tabs-6">';   // tab-page "Awards"
 
 	/* Stats/Results */
 	$q = "SELECT ".TBL_AWARDS.".*, "

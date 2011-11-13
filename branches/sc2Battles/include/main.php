@@ -87,11 +87,12 @@ class DatabaseTable
 	}
 
 	function getField($field) {
-		return $this->fields[$field];
+		global $tp;
+
+		return $tp->toHTML($this->fields[$field]);
 	}
 	
 	function setField($field, $value) {
-		global $sql;
 		global $tp;
 		
 		$this->fields[$field] = $tp->toDB($value);

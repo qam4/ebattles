@@ -107,7 +107,7 @@ function displayCurrentTournaments(){
 	." WHERE (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
 	." ORDER BY Name";
 	$result = $sql->db_Query($q);
-	$num_rows = mysql_numrows($result);
+	$numGames = mysql_numrows($result);
 	$text .= '<form id="submitform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
 	$text .= '<div>';
 	$text .= '<table>';
@@ -121,7 +121,7 @@ function displayCurrentTournaments(){
 	{
 		$text .= '<option value="All">'.EB_TOURNAMENTS_L10.'</option>';
 	}
-	for($i=0; $i<$num_rows; $i++)
+	for($i=0; $i < $numGames; $i++)
 	{
 		$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 		$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -144,8 +144,8 @@ function displayCurrentTournaments(){
 	{
 		$q = "SELECT count(*) "
 		." FROM ".TBL_TOURNAMENTS
-		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime = '')"
-		."        OR (".TBL_TOURNAMENTS.".StartDateTime > $time)) ";
+		." WHERE (".TBL_TOURNAMENTS.".Status != 'finished')"
+		."   AND (".TBL_TOURNAMENTS.".Status != 'draft')";
 		$result = $sql->db_Query($q);
 		$totalItems = mysql_result($result, 0);
 		$pages->items_total = $totalItems;
@@ -157,8 +157,8 @@ function displayCurrentTournaments(){
 		.TBL_GAMES.".*"
 		." FROM ".TBL_TOURNAMENTS.", "
 		.TBL_GAMES
-		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime = '')"
-		."        OR (".TBL_TOURNAMENTS.".StartDateTime > $time)) "
+		." WHERE (".TBL_TOURNAMENTS.".Status != 'finished')"
+		."   AND (".TBL_TOURNAMENTS.".Status != 'draft')"
 		."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
 		." ORDER BY $orderby_array[1] $sort, TournamentID DESC"
 		." $pages->limit";
@@ -167,8 +167,7 @@ function displayCurrentTournaments(){
 	{
 		$q = "SELECT count(*) "
 		." FROM ".TBL_TOURNAMENTS
-		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime = '')"
-		."        OR (".TBL_TOURNAMENTS.".StartDateTime > $time)) "
+		." WHERE (".TBL_TOURNAMENTS.".Status != 'finished')"
 		."   AND (".TBL_TOURNAMENTS.".Game = '$gameid')";
 		$result = $sql->db_Query($q);
 		$totalItems = mysql_result($result, 0);
@@ -181,8 +180,8 @@ function displayCurrentTournaments(){
 		.TBL_GAMES.".*"
 		." FROM ".TBL_TOURNAMENTS.", "
 		.TBL_GAMES
-		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime = '')"
-		."        OR (".TBL_TOURNAMENTS.".StartDateTime > $time)) "
+		." WHERE (".TBL_TOURNAMENTS.".Status != 'finished')"
+		."   AND (".TBL_TOURNAMENTS.".Status != 'draft')"
 		."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
 		."   AND (".TBL_TOURNAMENTS.".Game = '$gameid')"
 		." ORDER BY $orderby_array[1] $sort, TournamentID DESC"
@@ -190,20 +189,19 @@ function displayCurrentTournaments(){
 	}
 
 	$result = $sql->db_Query($q);
-	$num_rows = mysql_numrows($result);
-	if(!$result || ($num_rows < 0))
+	$numTournaments = mysql_numrows($result);
+	if(!$result || ($numTournaments < 0))
 	{
 		/* Error occurred, return given name by default */
 		$text .= EB_TOURNAMENTS_L11.'</div>';
 		$text .= '</form><br/>';
-	} else if($num_rows == 0)
+	} else if($numTournaments == 0)
 	{
 		$text .= EB_TOURNAMENTS_L12.'</div>';
 		$text .= '</form><br/>';
 	}
 	else
 	{
-
 		// Paginate & Sorting
 		$items = '';
 		foreach($array as $opt=>$opt_array)	$items .= ($opt == $orderby) ? '<option selected="selected" value="'.$opt.'">'.$opt_array[0].'</option>':'<option value="'.$opt.'">'.$opt_array[0].'</option>';
@@ -246,12 +244,14 @@ function displayCurrentTournaments(){
 		<th class="eb_th2">'.EB_TOURNAMENTS_L15.'</th>
 		<th class="eb_th2">'.EB_TOURNAMENTS_L16.'</th>
 		<th class="eb_th2">'.EB_TOURNAMENTS_L18.'</th>
+		<th class="eb_th2">'.EB_TOURNAMENTS_L33.'</th>
 		</tr>';
-		for($i=0; $i<$num_rows; $i++)
+		for($i=0; $i < $numTournaments; $i++)
 		{
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon  = mysql_result($result,$i, TBL_GAMES.".Icon");
 			$tournament_id  = mysql_result($result,$i, TBL_TOURNAMENTS.".TournamentID");
+			
 			$tournament = new Tournament($tournament_id);
 
 			if($tournament->getField('StartDateTime')!=0)
@@ -291,20 +291,16 @@ function displayCurrentTournaments(){
 				break;
 			}
 
-			if(
-			($tournament->getField('StartDateTime')==0)
-			||($tournament->getField('StartDateTime')>=$time)
-			)
-			{
-				$text .= '<tr>
-				<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>
-				<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
-				<td class="eb_td">'.$gName.'</td>
-				<td class="eb_td">'.$tournament->getField('MatchType').' - '.tournamentTypeToString($tournament->getField('Type')).'</td>
-				<td class="eb_td">'.$date_start.'</td>
-				<td class="eb_td">'.$nbrTeamPlayers.'</td>
-				</tr>';
-			}
+			$text .= '<tr>
+			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tournament->getField('Name').'</a></td>
+			<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
+			<td class="eb_td">'.$gName.'</td>
+			<td class="eb_td">'.$tournament->getField('MatchType').' - '.tournamentTypeToString($tournament->getField('Type')).'</td>
+			<td class="eb_td">'.$date_start.'</td>
+			<td class="eb_td">'.$nbrTeamPlayers.'</td>
+			<td class="eb_td">'.$tournament->getField('Status').'</td>
+			</tr>';
+			// TODO: status2string
 		}
 		$text .= '</tbody></table><br />';
 	}
@@ -331,7 +327,7 @@ function displayRecentTournaments(){
 	." WHERE (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
 	." ORDER BY Name";
 	$result = $sql->db_Query($q);
-	$num_rows = mysql_numrows($result);
+	$numGames = mysql_numrows($result);
 	$text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
 	$text .= '<table>';
 	$text .= '<tr><td>';
@@ -344,7 +340,7 @@ function displayRecentTournaments(){
 	{
 		$text .= '<option value="All">'.EB_TOURNAMENTS_L10.'</option>';
 	}
-	for($i=0; $i<$num_rows; $i++)
+	for($i=0; $i < $numGames; $i++)
 	{
 		$gName  = mysql_result($result,$i, TBL_GAMES.".name");
 		$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -370,8 +366,7 @@ function displayRecentTournaments(){
 		.TBL_GAMES.".*"
 		." FROM ".TBL_TOURNAMENTS.", "
 		.TBL_GAMES
-		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime != '')"
-		."       AND (".TBL_TOURNAMENTS.".StartDateTime < $time)) "
+		." WHERE (".TBL_TOURNAMENTS.".Status = 'finished')"
 		."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
 		." LIMIT 0, $rowsPerPage";
 	}
@@ -381,20 +376,19 @@ function displayRecentTournaments(){
 		.TBL_GAMES.".*"
 		." FROM ".TBL_TOURNAMENTS.", "
 		.TBL_GAMES
-		." WHERE (   (".TBL_TOURNAMENTS.".StartDateTime != '')"
-		."       AND (".TBL_TOURNAMENTS.".StartDateTime < $time)) "
+		." WHERE (".TBL_TOURNAMENTS.".Status = 'finished')"
 		."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
 		."   AND (".TBL_TOURNAMENTS.".Game = '$gameid')"
 		." LIMIT 0, $rowsPerPage";
 	}
 
 	$result = $sql->db_Query($q);
-	$num_rows = mysql_numrows($result);
-	if(!$result || ($num_rows < 0))
+	$numTournaments = mysql_numrows($result);
+	if(!$result || ($numTournaments < 0))
 	{
 		/* Error occurred, return given name by default */
 		$text .= '<div>'.EB_TOURNAMENTS_L11.'</div>';
-	} else if($num_rows == 0)
+	} else if($numTournaments == 0)
 	{
 		$text .= '<div>'.EB_TOURNAMENTS_L12.'</div>';
 	}
@@ -409,7 +403,7 @@ function displayRecentTournaments(){
 		<th class="eb_th2">'.EB_TOURNAMENTS_L16.'</th>
 		<th class="eb_th2">'.EB_TOURNAMENTS_L18.'</th>
 		</tr>';
-		for($i=0; $i<$num_rows; $i++)
+		for($i=0; $i < $numTournaments; $i++)
 		{
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon  = mysql_result($result,$i, TBL_GAMES.".Icon");

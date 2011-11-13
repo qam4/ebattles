@@ -410,6 +410,7 @@ define('EB_TOURNAMENTS_L31', '
 	Cordially,
 	The tournament admin ');
 define('EB_TOURNAMENTS_L32', 'Match Type');
+define('EB_TOURNAMENTS_L33', 'Status');
 
 define('EB_TOURNAMENT_L1', 'Tournaments');
 define('EB_TOURNAMENT_L2', 'Tournament starts in');
@@ -484,7 +485,7 @@ define('EB_TOURNAMENT_L70', 'match(es) scheduled');
 define('EB_TOURNAMENT_L71', '');
 define('EB_TOURNAMENT_L72', 'Match Schedule');
 define('EB_TOURNAMENT_L73', 'match(es) to approve');
-define('EB_TOURNAMENT_L74', 'Tournament ended');
+define('EB_TOURNAMENT_L74', 'Tournament started');
 
 define('EB_TOURNAMENTM_L1', 'Manage');
 define('EB_TOURNAMENTM_L2', 'Summary');
@@ -622,6 +623,13 @@ define('EB_TOURNAMENTM_L131', 'Free for All');
 define('EB_TOURNAMENTM_L132', 'Max number of players');
 define('EB_TOURNAMENTM_L133', 'View Tournament');
 define('EB_TOURNAMENTM_L134', 'Match replay report userclass');
+define('EB_TOURNAMENTM_L135', 'Status');
+define('EB_TOURNAMENTM_L136', 'Draft');
+define('EB_TOURNAMENTM_L137', 'Publish');
+define('EB_TOURNAMENTM_L138', 'Sign Up');
+define('EB_TOURNAMENTM_L139', 'Check In');
+define('EB_TOURNAMENTM_L140', 'Active');
+define('EB_TOURNAMENTM_L141', 'Finished');
 
 
 define('EB_TOURNAMENTP_L1', 'Past Tournaments');
@@ -999,7 +1007,7 @@ define('EB_AWARD_L11', '25 in a row');
 define('EB_USER_L1', 'Player Information');
 define('EB_USER_L2', 'Profile');
 define('EB_USER_L3', 'Ladders');
-define('EB_USER_L4', 'Teams membership');
+define('EB_USER_L4', 'Teams');
 define('EB_USER_L5', 'Matches');
 define('EB_USER_L6', 'Awards');
 define('EB_USER_L7', 'User Profile');
@@ -1028,6 +1036,11 @@ define('EB_USER_L29', 'Captain');
 define('EB_USER_L30', 'is captain of the following divisions');
 define('EB_USER_L31', 'Info');
 define('EB_USER_L32', 'Pending matches: ');
+define('EB_USER_L33', 'Tournaments');
+define('EB_USER_L34', 'plays in the following tournaments');
+define('EB_USER_L35', 'is admin of the following tournaments');
+define('EB_USER_L36', 'moderates in the following tournaments');
+
 
 define('EB_PGN_L1', 'Go To Page');
 define('EB_PGN_L2', 'Previous');
