@@ -89,6 +89,7 @@ class Match extends DatabaseTable
 
 						$NbrPlayersTeamA = mysql_numrows($resultA);
 						$teamA_Rank= mysql_result($resultA,0, TBL_SCORES.".Player_Rank");
+						$teamA_Forfeit= mysql_result($resultA,0, TBL_SCORES.".Player_Forfeit");
 						$teamA_ELO=0;
 						$teamA_TS_mu=0;
 						$teamA_TS_sigma2=0;
@@ -105,6 +106,7 @@ class Match extends DatabaseTable
 
 						$NbrPlayersTeamB = mysql_numrows($resultB);
 						$teamB_Rank= mysql_result($resultB,0, TBL_SCORES.".Player_Rank");
+						$teamB_Forfeit= mysql_result($resultB,0, TBL_SCORES.".Player_Forfeit");
 						$teamB_ELO=0;
 						$teamB_TS_mu=0;
 						$teamB_TS_sigma2=0;
@@ -145,6 +147,7 @@ class Match extends DatabaseTable
 
 						$NbrPlayersTeamA = mysql_numrows($resultA);
 						$teamA_Rank= mysql_result($resultA,0, TBL_SCORES.".Player_Rank");
+						$teamA_Forfeit= mysql_result($resultA,0, TBL_SCORES.".Player_Forfeit");
 						$teamA_ELO=0;
 						$teamA_TS_mu=0;
 						$teamA_TS_sigma2=0;
@@ -161,6 +164,7 @@ class Match extends DatabaseTable
 
 						$NbrPlayersTeamB = mysql_numrows($resultB);
 						$teamB_Rank= mysql_result($resultB,0, TBL_SCORES.".Player_Rank");
+						$teamB_Forfeit= mysql_result($resultB,0, TBL_SCORES.".Player_Forfeit");
 						$teamB_ELO=0;
 						$teamB_TS_mu=0;
 						$teamB_TS_sigma2=0;
@@ -199,21 +203,67 @@ class Match extends DatabaseTable
 						$teamA_draw = 1;
 						$teamB_draw = 1;
 					}
-					$teamA_Points = $teamA_win*$ladder->getField('PointsPerWin') + $teamA_draw*$ladder->getField('PointsPerDraw') + $teamA_loss*$ladder->getField('PointsPerLoss');
-					$teamB_Points = $teamB_win*$ladder->getField('PointsPerWin') + $teamB_draw*$ladder->getField('PointsPerDraw') + $teamB_loss*$ladder->getField('PointsPerLoss');
+
+					/* Forfeit */
+					$teamA_fwin  = 0;
+					$teamA_floss = 0;
+					$teamB_fwin  = 0;
+					$teamB_floss = 0;
+					if($ladder->getField('AllowForfeit')==1)
+					{
+						if($teamA_Forfeit == 1)
+						{
+							$teamA_floss = 1;
+							$teamB_fwin = 1;
+							$teamA_loss = 0;
+							$teamB_win = 0;
+						}
+						else if ($teamB_Forfeit == 1)
+						{
+							$teamB_floss = 1;
+							$teamA_fwin = 1;
+							$teamB_loss = 0;
+							$teamA_win = 0;
+						}
+					}
+
+					$teamA_Points = $teamA_win*$ladder->getField('PointsPerWin') + $teamA_draw*$ladder->getField('PointsPerDraw') + $teamA_loss*$ladder->getField('PointsPerLoss') + $teamA_fwin*$ladder->getField('ForfeitWinPoints') + $teamA_floss*$ladder->getField('ForfeitLossPoints');
+					$teamB_Points = $teamB_win*$ladder->getField('PointsPerWin') + $teamB_draw*$ladder->getField('PointsPerDraw') + $teamB_loss*$ladder->getField('PointsPerLoss') + $teamB_fwin*$ladder->getField('ForfeitWinPoints') + $teamB_floss*$ladder->getField('ForfeitLossPoints');
 					$output .= "Team A: $teamA_Points, $teamA_win, $teamA_draw, $teamA_loss, <br />";
 					$output .= "Team B: $teamB_Points, $teamB_win, $teamB_draw, $teamB_loss, <br />";
+
+					if ($ladder->getField('ForfeitWinLossUpdate') == 1)
+					{
+						$teamA_win += $teamA_fwin;
+						$teamB_win += $teamB_fwin;
+						$teamA_loss += $teamA_floss;
+						$teamB_loss += $teamB_floss;
+					}
 
 					// New ELO ------------------------------------------
 					$M=min($NbrPlayersTeamA,$NbrPlayersTeamB)*$ladder->getField('ELO_M');      // Span
 					$K=$ladder->getField('ELO_K');	// Max adjustment per game
-					$deltaELO = ELO($M, $K, $teamA_ELO, $teamB_ELO, $teamA_Rank, $teamB_Rank);
+					if (($teamA_Forfeit == 1)||($teamB_Forfeit == 1))
+					{
+						$deltaELO=0;
+					}
+					else
+					{
+						$deltaELO = ELO($M, $K, $teamA_ELO, $teamB_ELO, $teamA_Rank, $teamB_Rank);
+					}
 					$output .= "deltaELO: $deltaELO<br />";
 
 					// New TrueSkill ------------------------------------------
 					$beta=$ladder->getField('TS_beta');          // beta
 					$epsilon=$ladder->getField('TS_epsilon');    // draw probability
-					$update = Trueskill_update($epsilon,$beta, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Rank, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Rank);
+					if (($teamA_Forfeit == 1)||($teamB_Forfeit == 1))
+					{
+						$update = array(0,0,0,0);
+					}
+					else
+					{
+						$update = Trueskill_update($epsilon,$beta, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Rank, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Rank);
+					}
 
 					$teamA_deltaTS_mu = $update[0];
 					$teamA_deltaTS_sigma = $update[1];
@@ -546,7 +596,7 @@ class Match extends DatabaseTable
 			$output .= "Match id: ".$this->fields['MatchID']."<br>";
 
 			$gain = mysql_result($result,$i, TBL_SCORES.".Player_Win") - mysql_result($result,$i, TBL_SCORES.".Player_Loss");
-			if ($gain * $pStreak > 0)
+			if ($gain * $pStreak >= 0)
 			{
 				// same sign
 				$pStreak += $gain;
@@ -764,7 +814,7 @@ class Match extends DatabaseTable
 			$output .= "Match id: ".$this->fields['MatchID']."<br>";
 
 			$gain = mysql_result($result,$i, TBL_SCORES.".Player_Win") - mysql_result($result,$i, TBL_SCORES.".Player_Loss");
-			if ($gain * $tStreak > 0)
+			if ($gain * $tStreak >= 0)
 			{
 				// same sign
 				$tStreak += $gain;

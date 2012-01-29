@@ -92,7 +92,7 @@ else
 	$result = $sql->db_Query($q);
 	$ladder_id = mysql_result($result,0 , TBL_LADDERS.".LadderID");
 	$ladder = new Ladder($ladder_id);
-	
+
 	$gName = mysql_result($result,0 , TBL_GAMES.".Name");
 	$mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
 	$reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
@@ -134,7 +134,7 @@ else
 				$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
 				$mDescrition = ($mDescrition!='') ? ' - '.$mDescrition : '';
 
-				$mapImage .= EB_MATCHR_L44.':<br>';
+				$mapImage .= EB_MATCHR_L44.':<br />';
 				$mapImage .= ($mImage!='') ? '<a href="'.getImagePath($mImage, 'games_maps').'" rel="shadowbox"><img '.getMapImageResize($mImage).' title="'.$mName.'" style="vertical-align:middle"/>' : '';
 				$mapImage .= '</a> '.$mName.$mDescrition.'<br /><br />';
 			}
@@ -292,7 +292,7 @@ else
 		." AND (".TBL_GAMERS.".User = ".USERID.")";
 		$result_Opps = $sql->db_Query($q_Opps);
 		$numOpps = mysql_numrows($result_Opps);
-		//dbg: echo "numOpps: $numOpps, mt: $reporter_matchteam<br>";
+		//dbg: echo "numOpps: $numOpps, mt: $reporter_matchteam<br />";
 		break;
 		default:
 	}
@@ -406,9 +406,9 @@ else
 			case "Team Ladder":
 			$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 			$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
-        	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-        	$gamer = new SC2Gamer($gamer_id);
-        	$pname = $gamer->getField('Name');
+			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+			$gamer = new SC2Gamer($gamer_id);
+			$pname = $gamer->getField('Name');
 			$pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
 			$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
@@ -432,6 +432,7 @@ else
 		$pOppScore  = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
 		$ppoints  = mysql_result($result,$i, TBL_SCORES.".Player_Points");
 		$pfaction  = mysql_result($result,$i, TBL_SCORES.".Faction");
+		$pforfeit  = mysql_result($result,$i, TBL_SCORES.".Player_Forfeit");
 
 		$pfactionIcon = "";
 		if ($pfaction!=0)
@@ -478,8 +479,12 @@ else
 
 		//$text .= "Rank #$prank - $pname (team #$pMatchTeam)- score: $pscore (ELO:$pdeltaELO)<br />";
 		$text .= '<tr>';
-		$text .= '<td class="eb_td"><b>'.$prank.'</b></td>
-		<td class="eb_td">'.$pMatchTeam.$pfactionIcon.'</td>';
+		if ($pforfeit == 1) {
+			$text .= '<td class="eb_td"><b>'.EB_MATCHD_L28.'</b></td>';
+		} else {
+			$text .= '<td class="eb_td"><b>'.$prank.'</b></td>';
+		}
+		$text .= '<td class="eb_td">'.$pMatchTeam.$pfactionIcon.'</td>';
 		switch($ladder->getField('Type'))
 		{
 			case "One Player Ladder":
@@ -567,7 +572,7 @@ else
 	."   AND (".TBL_MEDIA.".Submitter = ".USERID.")";
 	$result_UserMedia = $sql->db_Query($q_UserMedia);
 	$numUserMedia = mysql_numrows($result_UserMedia);
-	//dbg: echo "numUserMedia $numUserMedia - ".$pref['eb_max_number_media']."<br>";
+	//dbg: echo "numUserMedia $numUserMedia - ".$pref['eb_max_number_media']."<br />";
 	if ($numUserMedia >= $pref['eb_max_number_media']) $can_submit_media = 0;
 
 	$q_Media = "SELECT ".TBL_MEDIA.".*, "
@@ -611,7 +616,7 @@ else
 				$text .= '<a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a>';
 				break;
 			}
-				
+
 			$text .= '</td>';
 			$text .= '<td>';
 			if (($mSubmitterID == USERID)||($can_delete_media == 1))
@@ -626,7 +631,7 @@ else
 	}
 
 	/*
-	$text .= "<a href='http://img269.imageshack.us/img269/7034/966b.png' rel='shadowbox'>My Image</a><br>";
+	$text .= "<a href='http://img269.imageshack.us/img269/7034/966b.png' rel='shadowbox'>My Image</a><br />";
 	$text .= "<a href='http://www.youtube.com/v/iSZoeNuX4gk' rel='shadowbox'>My Video</a>";
 	*/
 

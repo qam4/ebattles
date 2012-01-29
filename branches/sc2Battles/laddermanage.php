@@ -52,7 +52,7 @@ else
 	$eownername = mysql_result($result,0 , TBL_USERS.".user_name");
 
 	$ladder = new Ladder($ladder_id);
-
+	$ladderStatus = $ladder->getField('Status');
 
 	$can_manage = 0;
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
@@ -84,7 +84,7 @@ else
 		$text .= '<tr><td>';
 		$text .= '
 		<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
-		'.ebImageTextButton('submit', 'magnify.png', EB_LADDERM_L132).'
+		'.ebImageTextButton('submit', 'magnify.png', EB_LADDERM_L133).'
 		</form>';
 		$text .= '</td></tr>';
 		$text .= '</tbody>';
@@ -95,6 +95,32 @@ else
 		<table class="eb_table" style="width:95%">
 		<tbody>
 		';
+
+		$text .= '<tr>';
+		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L135.'<br />';
+		$text .= '</td>';
+		$text .= '<td class="eb_td">';
+
+		switch($ladderStatus)
+		{
+			case 'draft':
+			$text .= '<table class="table_left">';
+			$text .= '<tr>';
+			$text .= '<td>'.EB_LADDERM_L136.'</td>';
+			$text .= '<td>'.ebImageTextButton('ladderpublish', 'thumb_up.png', EB_LADDERM_L137).'</td>';
+			$text .= '</tr>';
+			$text .= '</table>';
+			break;
+			case 'active':
+			$text .= EB_LADDERM_L140;
+			break;
+			case 'finished':
+			$text .= EB_LADDERM_L141;
+			break;
+		}
+
+		$text .= '</td>';
+		$text .= '</tr>';
 
 		$text .= '<tr>';
 		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L9.'<br />';
@@ -343,6 +369,7 @@ else
 			';
 			for($i=0; $i<$numDivisions; $i++)
 			{
+				// TODO: remove teams already signed up
 				$did  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 				$dname  = mysql_result($result,$i, TBL_CLANS.".Name");
 				$text .= '<option value="'.$did.'">'.$dname.'</option>';
@@ -385,7 +412,21 @@ else
 			{
 				$uid  = mysql_result($result,$i, TBL_USERS.".user_id");
 				$uname  = mysql_result($result,$i, TBL_GAMERS.".Name");
-				$text .= '<option value="'.$uid.'">'.$uname.'</option>';
+				
+				// fm: can we do this in 1 query?
+				$q_Players = "SELECT COUNT(*) as NbrPlayers"
+				." FROM ".TBL_PLAYERS.", "
+				.TBL_GAMERS
+				." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				." AND (".TBL_GAMERS.".User = '$uid')";
+				$result_Players = $sql->db_Query($q_Players);
+				$row = mysql_fetch_array($result_Players);
+				$nbrPlayers = $row['NbrPlayers'];
+				if ($nbrPlayers==0)
+				{
+					$text .= '<option value="'.$uid.'">'.$uname.'</option>';
+				}
 			}
 			$text .= '
 			</select></div></td>
@@ -899,7 +940,7 @@ else
 		<td class="eb_td">
 		<div>
 		';
-		$text .= '<input class="tbox" type="text" name="ladderdatesperchallenge" size="2" value="'.$ladder->getField('MaxDatesPerChallenge').'"';
+		$text .= '<input class="tbox" type="text" name="ladderdatesperchallenge" size="2" value="'.$ladder->getField('MaxDatesPerChallenge').'"/>';
 		$text .= '
 		</div>
 		</td>

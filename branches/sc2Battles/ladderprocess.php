@@ -45,6 +45,16 @@ else{
 	$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
 	$result = $sql->db_Query($q);
 
+	if(isset($_POST['ladderpublish']))
+	{
+		/* Tournament Status */
+		$q2 = "UPDATE ".TBL_LADDERS." SET Status = 'active' WHERE (LadderID = '$ladder_id')";
+		$result2 = $sql->db_Query($q2);
+
+		//echo "-- tournamentpublish --<br />";
+		header("Location: laddermanage.php?LadderID=$ladder_id");
+		exit();
+	}
 	if(isset($_POST['ladderchangeowner']))
 	{
 		$ladder_owner = $_POST['ladderowner'];
@@ -102,6 +112,14 @@ else{
 		/* Ladder Password */
 		$ladder->setField('password', $_POST['ladderpassword']);
 
+		/* Ladder Game */
+		$new_laddergame = $_POST['laddergame'];
+		if ($$_POST['laddergame'] != 0)
+		{
+			$ladder->setField('Game', $_POST['laddergame']);
+			$ladder->setField('MatchType', $_POST['matchtype']);
+		}
+
 		/* Ladder Type */
 		// Can change only if no players are signed up
 		// TODO: should disable the select button.
@@ -139,6 +157,13 @@ else{
 		if ($num_rows_2==0)
 		{
 			$ladder->setField('MatchType', $_POST['laddermatchtype']);
+		}
+
+		/* Ladder Max number of Players */
+		$new_laddernumbermaxplayers = htmlspecialchars($_POST['laddernumbermaxplayers']);
+		if (preg_match("/^\d+$/", $new_laddernumbermaxplayers))
+		{
+			$ladder->setField('MaxNumberPlayers', $new_laddernumbermaxplayers);
 		}
 
 		/* Ladder Ranking Type */
@@ -180,6 +205,34 @@ else{
 			$ladder->setField('AllowDraw', 0);
 		}
 
+		/* Ladder Forfeit */
+		if ($_POST['ladderallowforfeit'] != "")
+		{
+			$ladder->setField('AllowForfeit', 1);
+		}
+		else
+		{
+			$ladder->setField('AllowForfeit', 0);
+		}
+		if ($_POST['ladderForfeitWinLossUpdate'] != "")
+		{
+			$ladder->setField('ForfeitWinLossUpdate', 1);
+		}
+		else
+		{
+			$ladder->setField('ForfeitWinLossUpdate', 0);
+		}
+		$new_ladderforfeitwinpoints = htmlspecialchars($_POST['ladderforfeitwinpoints']);
+		if (preg_match("/^\d+$/", $new_ladderforfeitwinpoints))
+		{
+			$ladder->setField('ForfeitWinPoints', $new_ladderforfeitwinpoints);
+		}
+		$new_ladderforfeitlosspoints = htmlspecialchars($_POST['$ladderforfeitlosspoints']);
+		if (preg_match("/^-?\d+$/", $new_ladderforfeitlosspoints))
+		{
+			$ladder->setField('ForfeitLossPoints', $new_ladderforfeitlosspoints);
+		}
+
 		/* Ladder Match Approval */
 		$ladder->setField('MatchesApproval', $_POST['laddermatchapprovaluserclass']);
 
@@ -206,9 +259,6 @@ else{
 		{
 			$ladder->setField('MaxMapsPerMatch', $new_laddermaxmapspermatch);
 		}
-
-		/* Ladder Game */
-		$ladder->setField('Game', $_POST['laddergame']);
 
 		/* Ladder Start Date */
 		$new_ladderstartdate = $_POST['startdate'];

@@ -88,7 +88,7 @@ function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) 
 						$brackets[$matchup*4-3][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0]);
 						$brackets[$matchup*4-1][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1]);
 					}
-					$brackets[$matchup*4-2][2*$round-1] = '<td rowspan='.$rowspan.' class="match-details" title="'.'M'.$round.','.$matchup.'"></td>';
+					$brackets[$matchup*4-2][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.'M'.$round.','.$matchup.'"></td>';
 				}
 
 				$matchupsRows[$round][$matchup][0] = $matchup*4-3;
@@ -150,7 +150,7 @@ function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) 
 						$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0]);
 						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1]);
 					}
-					$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan='.$rowspan.' class="match-details" title="'.'M'.$round.','.$matchup.'"></div></td>';
+					$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.'M'.$round.','.$matchup.'"></td>';
 				}
 				if (($content[$round][$matchup][0]=='0')||($content[$round][$matchup][1]=='0')) {
 					$results[$round][$matchup]['winner'] = 'bye';
@@ -209,15 +209,15 @@ function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) 
 	}
 
 	$bracket_html = '<div id="panel_brackets">';
-	$bracket_html .= '<div id="brackets_frame" style="height: 800px;">';
+	$bracket_html .= '<div id="brackets_frame" style="height: 400px;">';
 	$bracket_html .= '<div id="brackets">';
 	$bracket_html .= '<table class="brackets">';
 	
-	$bracket_html .= '<theader><tr>';
+	$bracket_html .= '<thead><tr>';
 	for ($i = 1; $i < $nbrRounds; $i++) {
 		$bracket_html .= '<th colspan="2">'.$rounds[$i]['Title'].'</th>';
 	}
-	$bracket_html .= '</tr></theader>';
+	$bracket_html .= '</tr></thead>';
 	
 	$bracket_html .= '<tbody>';
 	for ($row = 1; $row <= $nbrPlayers*2; $row ++){
@@ -261,7 +261,7 @@ function html_bracket_team_cell($teams, $team, $container_class='') {
 	$text = '<td><div class="container '.$container_class.'">';
 	switch ($team) {
 		case 'not played':
-			$text .= '&nbsp';
+			$text .= '&nbsp;';
 			break;
 		case '':
 			break;

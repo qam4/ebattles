@@ -146,6 +146,12 @@ class DatabaseTable
 		}
 		$q .= ")";
 		$result = $sql->db_Query($q);
+		if(!$result) {
+			echo '[dB insert] Error!';
+			var_dump($q);
+			exit;
+			return 0;
+		}
 		$last_id = mysql_insert_id();
 		$this->id = $last_id;
 		$this->setField($this->primary_key, $last_id);

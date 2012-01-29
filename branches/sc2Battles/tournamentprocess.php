@@ -155,6 +155,26 @@ else{
 		/* Tournament Match report userclass */
 		$tournament->setField('match_replay_report_userclass', $_POST['tournamentmatchreplayreportuserclass']);
 
+		/* Tournament Allow Score */
+		if ($_POST['tournamentallowscore'] != "")
+		{
+			$tournament->setField('AllowScore', 1);
+		}
+		else
+		{
+			$tournament->setField('AllowScore', 0);
+		}
+
+		/* Tournament Forfeit */
+		if ($_POST['tournamentallowforfeit'] != "")
+		{
+			$tournament->setField('AllowForfeit', 1);
+		}
+		else
+		{
+			$tournament->setField('AllowForfeit', 0);
+		}
+
 		/* Tournament Match Approval */
 		$tournament->setField('MatchesApproval', $_POST['tournamentmatchapprovaluserclass']);
 

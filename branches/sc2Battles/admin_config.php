@@ -280,6 +280,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	$result2 = $sql->db_Query($q2);
 	$game_name  = mysql_result($result2,0 , TBL_GAMES.".Name");
 	$game_shortname  = mysql_result($result2,0 , TBL_GAMES.".ShortName");
+	$game_matchtypes  = mysql_result($result2,0 , TBL_GAMES.".MatchTypes");
 	$game_icon  = mysql_result($result2,0 , TBL_GAMES.".Icon");
 
 	$text .= '
@@ -340,6 +341,17 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	<td class="forumheader3">'.EB_GAME_L32.'</td>
 	<td class="forumheader3">
 	<input class="tbox" type="text" name="gameShortName" value="'.$game_shortname.'"/>
+	</td>
+	</tr>
+	';
+
+	//<!-- Match types -->
+	$text .= '
+	<tr>
+	<td class="forumheader3">'.EB_GAME_L33.'</td>
+	<td class="forumheader3">
+	<input class="tbox" type="text" name="gameMatchTypes" value="'.$game_matchtypes.'"/>
+	<div class="smalltext">'.EB_GAME_L34.'</div>
 	</td>
 	</tr>
 	';

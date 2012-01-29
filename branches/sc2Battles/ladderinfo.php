@@ -178,6 +178,25 @@ else
 
 	}
 
+	$can_signup = 0;
+	$eMaxNumberPlayers = $ladder->getField('MaxNumberPlayers');
+	switch($ladder->getField('Type'))
+	{
+		case "One Player Ladder":
+		if(($eMaxNumberPlayers == 0)||($nbrplayers < $eMaxNumberPlayers))	$can_signup = 1;
+		break;
+		case "Team Ladder":
+		if(($eMaxNumberPlayers == 0)||($nbrplayers < $eMaxNumberPlayers))	$can_signup = 1;
+		break;
+		case "ClanWar":
+		if(($eMaxNumberPlayers == 0)||($nbrteams < $eMaxNumberPlayers))	$can_signup = 1;
+		break;
+		default:
+	}
+
+	/*----------------------------------------------------------------------------------------
+	   Display Info
+	----------------------------------------------------------------------------------------*/
 	$text .= '<div id="tabs">';
 	$text .= '<ul>';
 	$text .= '<li><a href="#tabs-1">'.EB_LADDER_L35.'</a></li>';
@@ -199,358 +218,369 @@ else
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 	if (USERID==$eowner) $can_manage = 1;
 	if ($can_manage == 1)
-	$text .= '<td>
-	<form action="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$ladder_id.'" method="post">
-	'.ebImageTextButton('submit', 'page_white_edit.png', EB_LADDER_L40).'
-	</form>';
-
-	$userIsDivisionCaptain = FALSE;
-	if(check_class(e_UC_MEMBER))
 	{
-		// If logged in
-		if(($ladder->getField('End_timestamp') == 0) || ($time < $ladder->getField('End_timestamp')))
+		$text .= '<td>
+		<form action="'.e_PLUGIN.'ebattles/laddermanage.php?LadderID='.$ladder_id.'" method="post"><div>
+		'.ebImageTextButton('submit', 'page_white_edit.png', EB_LADDER_L40).'
+		</div></form></td>';
+	}
+	
+	if ($can_signup==1)
+	{
+		$userIsDivisionCaptain = FALSE;
+		if(check_class(e_UC_MEMBER))
 		{
-			// If ladder is not finished
-			if (($ladder->getField('Type') == "Team Ladder")||($ladder->getField('Type') == "ClanWar"))
+			// If logged in
+			if(($ladder->getField('End_timestamp') == 0) || ($time < $ladder->getField('End_timestamp')))
 			{
-				// Find if user is captain of a division playing that game
-				// if yes, propose to join this ladder
-				$q = "SELECT ".TBL_DIVISIONS.".*, "
-				.TBL_CLANS.".*, "
-				.TBL_GAMES.".*, "
-				.TBL_USERS.".*"
-				." FROM ".TBL_DIVISIONS.", "
-				.TBL_CLANS.", "
-				.TBL_GAMES.", "
-				.TBL_USERS
-				." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
-				." AND (".TBL_GAMES.".GameID = '$egameid')"
-				." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-				." AND (".TBL_USERS.".user_id = ".USERID.")"
-				." AND (".TBL_DIVISIONS.".Captain = ".USERID.")";
-
-				$result = $sql->db_Query($q);
-				$numDivs = mysql_numrows($result);
-				if($numDivs > 0)
+				// If ladder is not finished
+				if (($ladder->getField('Type') == "Team Ladder")||($ladder->getField('Type') == "ClanWar"))
 				{
-					$userIsDivisionCaptain = TRUE;
-					for($i=0;$i < $numDivs;$i++)
+					// Find if user is captain of a division playing that game
+					// if yes, propose to join this ladder
+					$q = "SELECT ".TBL_DIVISIONS.".*, "
+					.TBL_CLANS.".*, "
+					.TBL_GAMES.".*, "
+					.TBL_USERS.".*"
+					." FROM ".TBL_DIVISIONS.", "
+					.TBL_CLANS.", "
+					.TBL_GAMES.", "
+					.TBL_USERS
+					." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
+					." AND (".TBL_GAMES.".GameID = '$egameid')"
+					." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+					." AND (".TBL_USERS.".user_id = ".USERID.")"
+					." AND (".TBL_DIVISIONS.".Captain = ".USERID.")";
+
+					$result = $sql->db_Query($q);
+					$numDivs = mysql_numrows($result);
+					if($numDivs > 0)
 					{
-						$div_name  = mysql_result($result,$i, TBL_CLANS.".Name");
-						$div_id    = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
-
-						// Is the division signed up
-						$q_2 = "SELECT ".TBL_TEAMS.".*"
-						." FROM ".TBL_TEAMS
-						." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')"
-						." AND (".TBL_TEAMS.".Division = '$div_id')";
-						$result_2 = $sql->db_Query($q_2);
-						$numTeams = mysql_numrows($result_2);
-
-						$text .= '<td>'.EB_LADDER_L7.'&nbsp;'.$div_name.'</td>';
-						if( $numTeams == 0)
+						$userIsDivisionCaptain = TRUE;
+						for($i=0;$i < $numDivs;$i++)
 						{
+							$div_name  = mysql_result($result,$i, TBL_CLANS.".Name");
+							$div_id    = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 
-							if ($ladder->getField('Password') != "")
+							// Is the division signed up
+							$q_2 = "SELECT ".TBL_TEAMS.".*"
+							." FROM ".TBL_TEAMS
+							." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')"
+							." AND (".TBL_TEAMS.".Division = '$div_id')";
+							$result_2 = $sql->db_Query($q_2);
+							$numTeams = mysql_numrows($result_2);
+
+							$text .= '<td>'.EB_LADDER_L7.'&nbsp;'.$div_name.'</td>';
+							if( $numTeams == 0)
 							{
-								$text .= '<td>'.EB_LADDER_L8.'</td>';
-								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/ladderinfo_process.php?LadderID='.$ladder_id.'" method="post">
-								<div>
-								<input class="tbox" type="password" title="'.EB_LADDER_L9.'" name="joinLadderPassword"/>
-								<input type="hidden" name="division" value="'.$div_id.'"/>
-								</div>
-								'.ebImageTextButton('teamjoinladder', 'user_add.png', EB_LADDER_L10).'
-								';
-								$text .= '</form>';
-								$text .= '</td>';
+								if ($ladder->getField('Password') != "")
+								{
+									$text .= '<td>'.EB_LADDER_L8.'</td>';
+									$text .= '<td>
+									<form action="'.e_PLUGIN.'ebattles/ladderinfo_process.php?LadderID='.$ladder_id.'" method="post">
+									<div>
+									<input class="tbox" type="password" title="'.EB_LADDER_L9.'" name="joinLadderPassword"/>
+									<input type="hidden" name="division" value="'.$div_id.'"/>
+									'.ebImageTextButton('teamjoinladder', 'user_add.png', EB_LADDER_L10).'
+									</div>
+									';
+									$text .= '</form>';
+									$text .= '</td>';
+								}
+								else
+								{
+									$text .= '<td>'.EB_LADDER_L11.'</td>';
+									$text .= '<td>
+									<form action="'.e_PLUGIN.'ebattles/ladderinfo_process.php?LadderID='.$ladder_id.'" method="post">
+									<div>
+									<input type="hidden" name="joinLadderPassword" value=""/>
+									<input type="hidden" name="division" value="'.$div_id.'"/>
+									'.ebImageTextButton('teamjoinladder', 'user_add.png', EB_LADDER_L12).'
+									</div>
+									';
+									$text .= '</form>';
+									$text .= '</td>';
+								}
 							}
 							else
 							{
-								$text .= '<td>'.EB_LADDER_L11.'</td>';
-								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/ladderinfo_process.php?LadderID='.$ladder_id.'" method="post">
-								<div>
-								<input type="hidden" name="joinLadderPassword" value=""/>
-								<input type="hidden" name="division" value="'.$div_id.'"/>
-								</div>
-								'.ebImageTextButton('teamjoinladder', 'user_add.png', EB_LADDER_L12).'
-								';
-								$text .= '</form>';
-								$text .= '</td>';
+								// Team signed up.
+								$text .= '<td>'.EB_LADDER_L13.'</td>';
 							}
-						}
-						else
-						{
-							// Team signed up.
-							$text .= '<td>'.EB_LADDER_L13.'</td>';
 						}
 					}
 				}
-			}
 
-			switch($ladder->getField('Type'))
-			{
-				case "Team Ladder":
-				case "ClanWar":
-				// Is the user a member of a division for that game?
-				$q_2 = "SELECT ".TBL_CLANS.".*, "
-				.TBL_MEMBERS.".*, "
-				.TBL_DIVISIONS.".*, "
-				.TBL_GAMES.".*, "
-				.TBL_USERS.".*"
-				." FROM ".TBL_CLANS.", "
-				.TBL_MEMBERS.", "
-				.TBL_DIVISIONS.", "
-				.TBL_GAMES.", "
-				.TBL_USERS
-				." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
-				." AND (".TBL_GAMES.".GameID = '$egameid')"
-				." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-				." AND (".TBL_USERS.".user_id = ".USERID.")"
-				." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-				." AND (".TBL_MEMBERS.".User = ".USERID.")";
+				switch($ladder->getField('Type'))
+				{
+					case "Team Ladder":
+					case "ClanWar":
+					// Is the user a member of a division for that game?
+					$q_2 = "SELECT ".TBL_CLANS.".*, "
+					.TBL_MEMBERS.".*, "
+					.TBL_DIVISIONS.".*, "
+					.TBL_GAMES.".*, "
+					.TBL_USERS.".*"
+					." FROM ".TBL_CLANS.", "
+					.TBL_MEMBERS.", "
+					.TBL_DIVISIONS.", "
+					.TBL_GAMES.", "
+					.TBL_USERS
+					." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
+					." AND (".TBL_GAMES.".GameID = '$egameid')"
+					." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+					." AND (".TBL_USERS.".user_id = ".USERID.")"
+					." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+					." AND (".TBL_MEMBERS.".User = ".USERID.")";
 
-				$result_2 = $sql->db_Query($q_2);
-				$numMembers = mysql_numrows($result_2);
-				if(!$result_2 || ( $numMembers == 0))
-				{
-					$text .= '<td>'.EB_LADDER_L14.'</td>';
-					$text .= '<td></td>';
-				}
-				else
-				{
-					for($i=0;$i < $numMembers;$i++)
+					$result_2 = $sql->db_Query($q_2);
+					$numMembers = mysql_numrows($result_2);
+					if(!$result_2 || ( $numMembers == 0))
 					{
-						$clan_name  = mysql_result($result_2,$i , TBL_CLANS.".Name");
-						$div_id  = mysql_result($result_2,$i , TBL_DIVISIONS.".DivisionID");
-						$q_3 = "SELECT ".TBL_DIVISIONS.".*, "
-						.TBL_USERS.".*"
-						." FROM ".TBL_DIVISIONS.", "
-						.TBL_USERS
-						." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
-						." AND (".TBL_USERS.".user_id = ".TBL_DIVISIONS.".Captain)";
-						$result_3 = $sql->db_Query($q_3);
-						if($result_3)
+						$text .= '<td>'.EB_LADDER_L14.'</td>';
+						$text .= '<td></td>';
+					}
+					else
+					{
+						for($i=0;$i < $numMembers;$i++)
 						{
-							$captain_name  = mysql_result($result_3,0, TBL_USERS.".user_name");
-							$captain_id  = mysql_result($result_3,0, TBL_USERS.".user_id");
-						}
-
-						$q_3 = "SELECT ".TBL_CLANS.".*, "
-						.TBL_TEAMS.".*, "
-						.TBL_DIVISIONS.".* "
-						." FROM ".TBL_CLANS.", "
-						.TBL_TEAMS.", "
-						.TBL_DIVISIONS
-						." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
-						." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-						." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-						." AND (".TBL_TEAMS.".Ladder = '$ladder_id')";
-						$result_3 = $sql->db_Query($q_3);
-						if(!$result_3 || (mysql_numrows($result_3) == 0))
-						{
-							if ($captain_id != USERID)
+							$clan_name  = mysql_result($result_2,$i , TBL_CLANS.".Name");
+							$div_id  = mysql_result($result_2,$i , TBL_DIVISIONS.".DivisionID");
+							$q_3 = "SELECT ".TBL_DIVISIONS.".*, "
+							.TBL_USERS.".*"
+							." FROM ".TBL_DIVISIONS.", "
+							.TBL_USERS
+							." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+							." AND (".TBL_USERS.".user_id = ".TBL_DIVISIONS.".Captain)";
+							$result_3 = $sql->db_Query($q_3);
+							if($result_3)
 							{
-								$text .= '<td>'.EB_LADDER_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_LADDER_L16.'</td>';
-								$text .= '<td>'.EB_LADDER_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td>';
+								$captain_name  = mysql_result($result_3,0, TBL_USERS.".user_name");
+								$captain_id  = mysql_result($result_3,0, TBL_USERS.".user_id");
 							}
+
+							$q_3 = "SELECT ".TBL_CLANS.".*, "
+							.TBL_TEAMS.".*, "
+							.TBL_DIVISIONS.".* "
+							." FROM ".TBL_CLANS.", "
+							.TBL_TEAMS.", "
+							.TBL_DIVISIONS
+							." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+							." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+							." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+							." AND (".TBL_TEAMS.".Ladder = '$ladder_id')";
+							$result_3 = $sql->db_Query($q_3);
+							if(!$result_3 || (mysql_numrows($result_3) == 0))
+							{
+								if ($captain_id != USERID)
+								{
+									$text .= '<td>'.EB_LADDER_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_LADDER_L16.'</td>';
+									$text .= '<td>'.EB_LADDER_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td>';
+								}
+							}
+							else
+							{
+								$team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
+								$text .= '<td>'.EB_LADDER_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_LADDER_L18.'</td>';
+
+								// Is the user already signed up with that team?
+								$q = "SELECT ".TBL_PLAYERS.".*"
+								." FROM ".TBL_PLAYERS.", "
+								.TBL_GAMERS
+								." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+								."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+								."   AND (".TBL_GAMERS.".User = ".USERID.")"
+								."   AND (".TBL_PLAYERS.".Team = '$team_id')";
+								$result = $sql->db_Query($q);
+								if(!$result || (mysql_numrows($result) == 0))
+								{
+									$text .= '<td>
+									<form action="'.e_PLUGIN.'ebattles/ladderinfo_process.php?LadderID='.$ladder_id.'" method="post">
+									<div>
+									<input type="hidden" name="team" value="'.$team_id.'"/>
+									'.ebImageTextButton('jointeamladder', 'user_add.png', EB_LADDER_L19).'
+									</div>
+									</form></td>
+									';
+								}
+								else
+								{
+									$user_pid  = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
+									$user_banned  = mysql_result($result,0 , TBL_PLAYERS.".Banned");
+
+									if ($user_banned)
+									{
+										$text .= '<td>'.EB_LADDER_L20.'<br />
+										'.EB_LADDER_L21.'</td>';
+									}
+									else
+									{
+										// Player signed up
+										$text .= '<td>'.EB_LADDER_L22.'</td>';
+
+										// Player can quit a ladder if he has not played yet
+										$q = "SELECT ".TBL_PLAYERS.".*"
+										." FROM ".TBL_PLAYERS.", "
+										.TBL_SCORES
+										." WHERE (".TBL_PLAYERS.".PlayerID = '$user_pid')"
+										." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+										$result = $sql->db_Query($q);
+										$nbrscores = mysql_numrows($result);
+										if (($nbrscores == 0)&&($user_banned!=1)&&($ladder->getField('Type')!="ClanWar"))
+										{
+											$text .= '<td>
+											<form action="'.e_PLUGIN.'ebattles/ladderinfo.php_process?LadderID='.$ladder_id.'" method="post">
+											<div>
+											<input type="hidden" name="player" value="'.$user_pid.'"/>
+											'.ebImageTextButton('quitladder', 'user_delete.ico', EB_LADDER_L23, 'negative jq-button', EB_LADDER_L24).'
+											</div>
+											</form></td>
+											';
+										}
+										else
+										{
+											$text .= '<td></td>';
+										}
+									}
+								}
+							}
+						}
+					}
+					break;
+					case "One Player Ladder":
+					// Find gamer for that user
+					$q = "SELECT ".TBL_GAMERS.".*"
+					." FROM ".TBL_GAMERS
+					." WHERE (".TBL_GAMERS.".Game = '".$ladder->getField('Game')."')"
+					."   AND (".TBL_GAMERS.".User = ".USERID.")";
+					$result = $sql->db_Query($q);
+					$num_rows = mysql_numrows($result);
+					if ($num_rows!=0)
+					{
+						$gamerID = mysql_result($result,0 , TBL_GAMERS.".GamerID");
+						$gamer = new SC2Gamer($gamerID);
+						$gamerCharacterName = $gamer->getField('Name');
+						$gamerCharacterCode = $gamer->getGamerCode();
+					}
+					else
+					{
+						$gamerID = 0;
+						$gamerCharacterName = '';
+						$gamerCharacterCode = '';
+					}
+
+					// Is the user already signed up?
+					$q = "SELECT ".TBL_PLAYERS.".*"
+					." FROM ".TBL_PLAYERS.", "
+					.TBL_GAMERS
+					." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+					."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					."   AND (".TBL_GAMERS.".User = ".USERID.")";
+					$result = $sql->db_Query($q);
+					if(!$result || (mysql_numrows($result) < 1))
+					{
+						$hide_password = ($ladder->getField('password') == "") ?  'hide ignore' : '';
+
+						$text .= '<td style="text-align:right">
+						<div>
+						'.ebImageTextButton('joinladder', 'user_add.png', EB_LADDER_L19, '', '', EB_LADDER_L28).'
+						</div>
+						';
+
+						// Modal form
+						$text .= '
+						<div id="modal-form-signup" title="Sign Up">
+
+						<!-- form validation error container -->
+						<div class="ui-widget ui-helper-hidden" id="errorblock-div1">
+						<div class="ui-state-error ui-corner-all" id="errorblock-div2" style="padding: 0pt 0.7em; display:none;">
+						<p>
+						<!-- fancy icon -->
+						<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
+						<strong>Alert:</strong> Errors detected!
+						</p>
+						<!-- validation plugin will target this UL for error messages -->
+						<ul></ul>
+						</div>
+						</div>
+
+						<!-- our form, no buttons (buttons generated by jQuery UI dialog() function) -->
+						<form action="ladderinfo_process.php?LadderID='.$ladder_id.'" name="form-signup" id="form-signup" method="post">
+						<div>
+						<input type="hidden" name="joinladder" value=""/>
+						<input type="hidden" name="gamerID" value="'.$gamerID.'"/>
+						<fieldset>
+						<legend>Please provide your gamer info</legend>
+						<p>
+						<label for="joinLadderPassword" class="'.$hide_password.'">'.EB_LADDER_L27.'</label>
+						<input type="password" name="joinLadderPassword" id="joinLadderPassword" class="'.$hide_password.' text" />
+						</p>
+						<p>
+						<label for="charactername">BNET Character Name/Code</label>
+						<input type="text" size="10" name="charactername" id="charactername" class="text" value="'.$gamerCharacterName.'"/>
+						#
+						<input type="text" size="3" name="code" id="code" class="text" value="'.$gamerCharacterCode.'"/>
+						</p>
+						</fieldset>
+						</div>
+						</form>
+						</div>
+						</td>';
+					}
+					else
+					{
+						$user_pid  = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
+						$user_banned  = mysql_result($result,0 , TBL_PLAYERS.".Banned");
+
+						if ($user_banned)
+						{
+							$text .= '<td>'.EB_LADDER_L29.'<br />
+							'.EB_LADDER_L30.'</td><td></td>';
 						}
 						else
 						{
-							$team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-							$text .= '<td>'.EB_LADDER_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_LADDER_L18.'</td>';
-
-							// Is the user already signed up with that team?
+							// Player can quit a ladder if he has not played yet
 							$q = "SELECT ".TBL_PLAYERS.".*"
 							." FROM ".TBL_PLAYERS.", "
-							.TBL_GAMERS
-							." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-							."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-							."   AND (".TBL_GAMERS.".User = ".USERID.")"
-							."   AND (".TBL_PLAYERS.".Team = '$team_id')";
+							.TBL_SCORES
+							." WHERE (".TBL_PLAYERS.".PlayerID = '$user_pid')"
+							." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
 							$result = $sql->db_Query($q);
-							if(!$result || (mysql_numrows($result) == 0))
+							$nbrscores = mysql_numrows($result);
+							if ($nbrscores == 0)
 							{
 								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/ladderinfo_process.php?LadderID='.$ladder_id.'" method="post">
+								<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
 								<div>
-								<input type="hidden" name="team" value="'.$team_id.'"/>
+								<input type="hidden" name="player" value="'.$user_pid.'"/>
+								'.ebImageTextButton('quitladder', 'user_delete.ico', EB_LADDER_L32, 'negative jq-button', EB_LADDER_L33).'
 								</div>
-								'.ebImageTextButton('jointeamladder', 'user_add.png', EB_LADDER_L19).'
 								</form></td>
 								';
 							}
 							else
 							{
-								$user_pid  = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
-								$user_banned  = mysql_result($result,0 , TBL_PLAYERS.".Banned");
-
-								if ($user_banned)
-								{
-									$text .= '<td>'.EB_LADDER_L20.'<br />
-									'.EB_LADDER_L21.'</td>';
-								}
-								else
-								{
-									// Player signed up
-									$text .= '<td>'.EB_LADDER_L22.'</td>';
-
-									// Player can quit a ladder if he has not played yet
-									$q = "SELECT ".TBL_PLAYERS.".*"
-									." FROM ".TBL_PLAYERS.", "
-									.TBL_SCORES
-									." WHERE (".TBL_PLAYERS.".PlayerID = '$user_pid')"
-									." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
-									$result = $sql->db_Query($q);
-									$nbrscores = mysql_numrows($result);
-									if (($nbrscores == 0)&&($user_banned!=1)&&($ladder->getField('Type')!="ClanWar"))
-									{
-										$text .= '<td>
-										<form action="'.e_PLUGIN.'ebattles/ladderinfo.php_process?LadderID='.$ladder_id.'" method="post">
-										<div>
-										<input type="hidden" name="player" value="'.$user_pid.'"/>
-										'.ebImageTextButton('quitladder', 'user_delete.ico', EB_LADDER_L23, 'negative jq-button', EB_LADDER_L24).'
-										</div>
-										</form></td>
-										';
-									}
-									else
-									{
-										$text .= '<td></td>';
-									}
-								}
+								$text .= '<td></td>';
 							}
 						}
 					}
+					break;
+					default:
 				}
-				break;
-				case "One Player Ladder":
-				// Find gamer for that user
-				$q = "SELECT ".TBL_GAMERS.".*"
-				." FROM ".TBL_GAMERS
-				." WHERE (".TBL_GAMERS.".Game = '".$ladder->getField('Game')."')"
-				."   AND (".TBL_GAMERS.".User = ".USERID.")";
-				$result = $sql->db_Query($q);
-				$num_rows = mysql_numrows($result);
-				if ($num_rows!=0)
-				{
-					$gamerID = mysql_result($result,0 , TBL_GAMERS.".GamerID");
-					$gamer = new SC2Gamer($gamerID);
-					$gamerCharacterName = $gamer->getField('Name');
-					$gamerCharacterCode = $gamer->getGamerCode();
-				}
-				else
-				{
-					$gamerID = 0;
-					$gamerCharacterName = '';
-					$gamerCharacterCode = '';
-				}
-
-				// Is the user already signed up?
-				$q = "SELECT ".TBL_PLAYERS.".*"
-				." FROM ".TBL_PLAYERS.", "
-				.TBL_GAMERS
-				." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
-				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				."   AND (".TBL_GAMERS.".User = ".USERID.")";
-				$result = $sql->db_Query($q);
-				if(!$result || (mysql_numrows($result) < 1))
-				{
-					$hide_password = ($ladder->getField('password') == "") ?  'hide ignore' : '';
-
-					$text .= '<td style="text-align:right;">
-					'.ebImageTextButton('joinladder', 'user_add.png', EB_LADDER_L19, '', '', EB_LADDER_L28).'
-					</td>
-					';
-
-					// Modal form
-					$text .= '
-					<div id="modal-form-signup" title="Sign Up">
-
-					<!-- form validation error container -->
-					<div class="ui-widget ui-helper-hidden" id="errorblock-div1">
-					<div class="ui-state-error ui-corner-all" id="errorblock-div2" style="padding: 0pt 0.7em; display:none;">
-					<p>
-					<!-- fancy icon -->
-					<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
-					<strong>Alert:</strong> Errors detected!
-					</p>
-					<!-- validation plugin will target this UL for error messages -->
-					<ul></ul>
-					</div>
-					</div>
-
-					<!-- our form, no buttons (buttons generated by jQuery UI dialog() function) -->
-					<form action="ladderinfo_process.php?LadderID='.$ladder_id.'" name="form-signup" id="form-signup" method="post">
-					<input type="hidden" name="joinladder" value=""/>
-					<input type="hidden" name="gamerID" value="'.$gamerID.'"/>
-					<legend>Please provide your gamer info</legend>
-					<fieldset>
-					<p>
-					<label for="joinLadderPassword" class="'.$hide_password.'">'.EB_LADDER_L27.'</label>
-					<input type="password" name="joinLadderPassword" id="joinLadderPassword" class="'.$hide_password.' text" />
-					</p>
-					<p>
-					<label for="charactername">BNET Character Name/Code</label>
-					<input type="text" size="10" name="charactername" id="charactername" class="text" value="'.$gamerCharacterName.'"/>
-					#
-					<input type="text" size="3" name="code" id="code" class="text" value="'.$gamerCharacterCode.'"/>
-					</p>
-					</fieldset>
-					</form>
-					</div>
-					';
-				}
-				else
-				{
-					$user_pid  = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
-					$user_banned  = mysql_result($result,0 , TBL_PLAYERS.".Banned");
-
-					if ($user_banned)
-					{
-						$text .= '<td>'.EB_LADDER_L29.'<br />
-						'.EB_LADDER_L30.'</td><td></td>';
-					}
-					else
-					{
-						// Player can quit a ladder if he has not played yet
-						$q = "SELECT ".TBL_PLAYERS.".*"
-						." FROM ".TBL_PLAYERS.", "
-						.TBL_SCORES
-						." WHERE (".TBL_PLAYERS.".PlayerID = '$user_pid')"
-						." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
-						$result = $sql->db_Query($q);
-						$nbrscores = mysql_numrows($result);
-						if ($nbrscores == 0)
-						{
-							$text .= '<td>
-							<form action="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'" method="post">
-							<div>
-							<input type="hidden" name="player" value="'.$user_pid.'"/>
-							'.ebImageTextButton('quitladder', 'user_delete.ico', EB_LADDER_L32, 'negative jq-button', EB_LADDER_L33).'
-							</div>
-							</form></td>
-							';
-						}
-						else
-						{
-							$text .= '<td></td>';
-						}
-					}
-				}
-				break;
-				default:
 			}
 		}
+		else
+		{
+			$text .= '<td>'.EB_LADDER_L34.'</td>';
+			$text .= '<td></td>';
+		}
+		$text .= '</tr>';
+		$text .= '</tbody></table>';
 	}
 	else
 	{
-		$text .= '<td>'.EB_LADDER_L34.'</td>';
-		$text .= '<td></td>';
+		$text .= EB_EVENT_L74;
 	}
-	$text .= '</tr>';
-	$text .= '</tbody></table>';
 
 	/* Info */
 	$text .= '<table class="eb_table" style="width:95%"><tbody>';
@@ -562,7 +592,7 @@ else
 
 	$text .= '<tr>';
 	$text .= '<td class="eb_td eb_tdc1">'.EB_LADDER_L37.'</td>';
-	$text .= '<td class="eb_td">'.$ladder->getField('MatchType').' - '.ladderTypeToString($ladder->getField('Type')).'</td>';
+	$text .= '<td class="eb_td">'.(($ladder->getField('MatchType')!='') ? $ladder->getField('MatchType').' - ' : '').ladderTypeToString($ladder->getField('Type')).'</td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
@@ -940,9 +970,9 @@ else
 				$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 				$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
 				$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-	        	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-	        	$gamer = new SC2Gamer($gamer_id);
-	        	$pname = $gamer->getField('Name');
+				$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+				$gamer = new SC2Gamer($gamer_id);
+				$pname = $gamer->getField('Name');
 				$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
@@ -1049,17 +1079,17 @@ else
 		if($can_submit_replay != 0)
 		{
 			$text .= '<td>';
-			$text .= '<form action="'.e_PLUGIN.'ebattles/submitreplay.php?LadderID='.$ladder_id.'" method="post">';
+			$text .= '<form action="'.e_PLUGIN.'ebattles/submitreplay.php?LadderID='.$ladder_id.'" method="post"><div>';
 			$text .= ebImageTextButton('submitreplay', 'flag_red.png', EB_LADDER_L74);
-			$text .= '</form>';
+			$text .= '</div></form>';
 			$text .= '</td>';
 		}
 		if($can_report_quickloss != 0)
 		{
 			$text .= '<td>';
-			$text .= '<form action="'.e_PLUGIN.'ebattles/quickreport.php?LadderID='.$ladder_id.'" method="post">';
+			$text .= '<form action="'.e_PLUGIN.'ebattles/quickreport.php?LadderID='.$ladder_id.'" method="post"><div>';
 			$text .= ebImageTextButton('quicklossreport', 'flag_red.png', EB_LADDER_L56);
-			$text .= '</form>';
+			$text .= '</div></form>';
 			$text .= '</td>';
 		}
 		if($can_report != 0)
@@ -1264,9 +1294,9 @@ else
 		{
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
-        	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-        	$gamer = new SC2Gamer($gamer_id);
-        	$aUserNickName = $gamer->getField('Name');
+			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+			$gamer = new SC2Gamer($gamer_id);
+			$aUserNickName = $gamer->getField('Name');
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
 			$aTime_local = $aTime + TIMEOFFSET;
@@ -1394,13 +1424,16 @@ else
 		}
 	}
 
-	$text .= '<table class="table_left">';
-	multi2dSortAsc($awards, 0, SORT_DESC);
-	for ($index = 0; $index<min($nbr_awards, $rowsPerPage); $index++)
+	if ($nbr_awards>0)
 	{
-		$text .= $awards[$index][1];
-	}
+		$text .= '<table class="table_left">';
+		multi2dSortAsc($awards, 0, SORT_DESC);
+		for ($index = 0; $index<min($nbr_awards, $rowsPerPage); $index++)
+		{
+			$text .= $awards[$index][1];
+		}
 	$text .= '</table>';
+	}
 
 	$text .= '
 	</div>

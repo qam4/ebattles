@@ -2,7 +2,6 @@
 // functions for tournaments.
 //___________________________________________________________________
 require_once(e_PLUGIN.'ebattles/include/main.php');
-require_once(e_PLUGIN.'ebattles/include/match.php');
 
 class Tournament extends DatabaseTable
 {
@@ -17,10 +16,13 @@ class Tournament extends DatabaseTable
 		$this->setField('Game', 1);
 		$this->setField('Type', 'Single Elimination');
 		$this->setField('MatchType', '1v1');
-		$this->setField('MaxNumberPlayers', 16);
+		$this->setField('AllowForfeit', '0');
+		$this->setField('AllowScore', '0');
 		$this->setField('match_report_userclass', eb_UC_LADDER_MODERATOR);
 		$this->setField('match_replay_report_userclass', eb_UC_LADDER_PLAYER);
+		$this->setField('Visibility', eb_UC_NONE);
 		$this->setField('Status', 'draft');
+		$this->setField('MaxNumberPlayers', 16);
 	}
 
 	/**
@@ -154,7 +156,7 @@ class Tournament extends DatabaseTable
 
 	function updateRounds($rounds) {
 		global $sql;
-		
+
 		$new_rounds = serialize($rounds);
 		$this->setField('Rounds', $new_rounds);
 	}
@@ -222,6 +224,38 @@ class Tournament extends DatabaseTable
 		</script>
 		';
 
+		$text .= "
+		<script type='text/javascript'>
+		<!--//
+		function kick_player(v)
+		{
+		document.getElementById('kick_player').value=v;
+		document.getElementById('playersform').submit();
+		}
+		function ban_player(v)
+		{
+		document.getElementById('ban_player').value=v;
+		document.getElementById('playersform').submit();
+		}
+		function unban_player(v)
+		{
+		document.getElementById('unban_player').value=v;
+		document.getElementById('playersform').submit();
+		}
+		function del_player_games(v)
+		{
+		document.getElementById('del_player_games').value=v;
+		document.getElementById('playersform').submit();
+		}
+		function del_player_awards(v)
+		{
+		document.getElementById('del_player_awards').value=v;
+		document.getElementById('playersform').submit();
+		}
+		//-->
+		</script>
+		";
+
 		$text .= '<form id="form-tournament-settings" action="'.e_PLUGIN.'ebattles/tournamentprocess.php?TournamentID='.$this->getField('TournamentID').'" method="post">';
 		$text .= '
 		<table class="eb_table" style="width:95%">
@@ -263,6 +297,7 @@ class Tournament extends DatabaseTable
 			if ($this->getField('Game') == $gid)
 			{
 				$text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
+				$ematchtypes = explode(",", mysql_result($result,$i, TBL_GAMES.".MatchTypes"));
 			}
 			else
 			{
@@ -287,11 +322,19 @@ class Tournament extends DatabaseTable
 		$text .= '
 		<tr>
 		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L126.'</td>
-		<td class="eb_td"><select class="tbox" name="tournamentmatchtype">';
-		$text .= '<option value="1v1" '.($this->getField('MatchType') == "1v1" ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L127.'</option>';
-		$text .= '<option value="2v2" '.($this->getField('MatchType') == "2v2" ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L128.'</option>';
-		$text .= '<option value="FFA" '.($this->getField('MatchType') == "FFA" ? 'selected="selected"' : '') .'>'.EB_TOURNAMENTM_L131.'</option>';
+		<td class="eb_td">
+		<div>
+		';
+		$text .= '<select class="tbox" name="tournamentmatchtype">';
+		$text .= '<option value="" '.($this->getField('MatchType') == "" ? 'selected="selected"' : '') .'>-</option>';
+		foreach($ematchtypes as $matchtype)
+		{
+			if ($matchtype!='') {
+				$text .= '<option value="'.$matchtype.'" '.(($this->getField('MatchType') == $matchtype) ? 'selected="selected"' : '') .'>'.$matchtype.'</option>';
+			}
+		}
 		$text .= '</select>
+		</div>
 		</td>
 		</tr>
 		';
@@ -300,16 +343,21 @@ class Tournament extends DatabaseTable
 		$text .= '
 		<tr>
 		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L132.'</td>
-		<td class="eb_td"><select class="tbox" name="tournamentmaxnumberplayers">';
+		<td class="eb_td">
+		<div>
+		';
+		$text .= '<select class="tbox" name="tournamentmaxnumberplayers">';
 		$text .= '<option value="4" '.($this->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 		$text .= '<option value="8" '.($this->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
 		$text .= '<option value="16" '.($this->getField('MaxNumberPlayers') == "16" ? 'selected="selected"' : '') .'>16</option>';
-		$text .= '</select>
+		$text .= '</select>';
+		$text .= '
+		</div>
 		</td>
 		</tr>
 		';
 
-		/* for now
+		/* TODO:
 		//<!-- Match report userclass -->
 		$text .= '
 		<tr>
@@ -322,6 +370,7 @@ class Tournament extends DatabaseTable
 		</td>
 		</tr>
 		';
+
 		//<!-- Match replay report userclass -->
 		$text .= '
 		<tr>
@@ -336,6 +385,28 @@ class Tournament extends DatabaseTable
 		';
 		*/
 
+		//<!-- Allow Score -->
+		$text .= '
+		<tr>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L20.'</td>
+		<td class="eb_td">
+		<div>
+		';
+		$text .= '<input class="tbox" type="checkbox" name="tournamentallowscore"';
+		if ($this->getField('AllowScore') == TRUE)
+		{
+			$text .= ' checked="checked"/>';
+		}
+		else
+		{
+			$text .= '/>';
+		}
+		$text .= '
+		</div>
+		</td>
+		</tr>
+		';
+
 		/* for now
 		//<!-- Match Approval -->
 		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
@@ -347,6 +418,7 @@ class Tournament extends DatabaseTable
 		$result = $sql->db_Query($q);
 		$row = mysql_fetch_array($result);
 		$nbrMatchesPending = $row['NbrMatches'];
+
 
 		$text .= '
 		<tr>
@@ -366,6 +438,28 @@ class Tournament extends DatabaseTable
 		</tr>
 		';
 		*/
+
+		//<!-- Allow Forfeits -->
+		$text .= '
+		<tr>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L127.'</td>
+		<td class="eb_td">
+		<div>';
+		$text .= '<input class="tbox" type="checkbox" name="tournamentallowforfeit"';
+		if ($this->getField('AllowForfeit') == TRUE)
+		{
+			$text .= ' checked="checked"/>';
+		}
+		else
+		{
+			$text .= '/>';
+		}
+		$text .= EB_TOURNAMENTM_L128;
+		$text .= '
+		</div>
+		</td>
+		</tr>
+		';
 
 		//<!-- Start Date -->
 		if($this->getField('StartDateTime')!=0)
@@ -445,7 +539,7 @@ class Tournament extends DatabaseTable
 			$text .= '</tr>';
 		}
 		$text .= '</tbody></table>';
-		$text .= '</td"></tr>';
+		$text .= '</td></tr>';
 		//var_dump($rounds);
 
 		//<!-- Map Pool -->
@@ -478,7 +572,11 @@ class Tournament extends DatabaseTable
 					$text .= '</td>';
 					$text .= '</tr>';
 				} else {
+					$text .= '<tr>';
+					$text .= '<td><div>';
 					$text .= EB_TOURNAMENTM_L29;
+					$text .= '</div></td>';
+					$text .= '</tr>';
 				}
 			}
 			$text .= '</table>';
@@ -527,7 +625,7 @@ class Tournament extends DatabaseTable
 				</table>
 				';
 			}
-			$text .= '</td"></tr>';
+			$text .= '</td></tr>';
 		}
 
 		//<!-- Description -->
@@ -675,18 +773,18 @@ class Tournament extends DatabaseTable
 						}
 					}
 					if (($content[$round][$matchup][0]!='0')
-					    &&($content[$round][$matchup][1]!='0')
-					    &&($content[$round][$matchup][0]!='not played')
-					    &&($content[$round][$matchup][1]!='not played')) {
+					&&($content[$round][$matchup][1]!='0')
+					&&($content[$round][$matchup][0]!='not played')
+					&&($content[$round][$matchup][1]!='not played')) {
 						if ($results[$round][$matchup]['winner'] == '') {
 							// Matchup not finished yet
 							$matchPlayed = count($results[$round][$matchup]['matchs']);
 
 							$match = array();
 							//$match['']
-							
+
 							$results[$round][$matchup]['matchs'][$matchPlayed] = $match;
-							
+
 							echo "R$round M$matchup: Matchs played=$matchPlayed<br>";
 							var_dump($results[$round][$matchup]);
 

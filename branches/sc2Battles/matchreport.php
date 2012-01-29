@@ -523,7 +523,7 @@ if (isset($_POST['submit']))
 
 	if (!empty($error_str)) {
 		// show form again
-		user_form($players_id, $players_name, $ladder_id, $match_id, $ladder->getField('AllowDraw'), $ladder->getField('AllowScore'),$userclass);
+		user_form($players_id, $players_name, $ladder_id, $match_id, $ladder->getField('AllowDraw'), $ladder->getField('AllowForfeit'), $ladder->getField('AllowScore'),$userclass);
 		// errors have occured, halt execution and show form again.
 		$text .= '<p style="color:red">'.EB_MATCHR_L14;
 		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
@@ -604,20 +604,25 @@ if (isset($_POST['submit']))
 
 			$pscore = $_POST['score'.$i];
 			$pfaction = $_POST['faction'.$i];
+			if ($_POST['forfeit'.$i] != "") {
+				$pforfeit = 1;
+			} else {
+				$pforfeit = 0;
+			}
 
 			switch($ladder->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
 				$q =
-				"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Faction)
-				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pfaction)
+				"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
+				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
 				";
 				break;
 				case "ClanWar":
 				$q =
-				"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Faction)
-				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pfaction)
+				"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
+				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
 				";
 				break;
 				default:
@@ -743,7 +748,7 @@ if (isset($_POST['submit']))
 	{
 		$userclass = $_POST['userclass'];
 		// the form has not been submitted, let's show it
-		user_form($players_id, $players_name, $ladder_id, $match_id, $ladder->getField('AllowDraw'), $ladder->getField('AllowScore'),$userclass);
+		user_form($players_id, $players_name, $ladder_id, $match_id, $ladder->getField('AllowDraw'), $ladder->getField('AllowForfeit'), $ladder->getField('AllowScore'),$userclass);
 	}
 }
 
