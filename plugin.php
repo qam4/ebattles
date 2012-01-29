@@ -121,6 +121,7 @@ ShortName varchar(63),
 Icon varchar(63),
 Style varchar(63) NOT NULL default '',
 Genre varchar(63) NOT NULL default '',
+MatchTypes varchar(255) NOT NULL default '',
 Description text NOT NULL default '',
 Developer varchar(63) NOT NULL default '',
 Publisher varchar(63) NOT NULL default '',
@@ -128,7 +129,7 @@ ReleaseDate varchar(63) NOT NULL default '',
 OfficialWebsite varchar(63) NOT NULL default '',
 ESRB varchar(63) NOT NULL default '',
 Banner varchar(63) NOT NULL default ''
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_LADDERS."
 (
 LadderID int NOT NULL AUTO_INCREMENT,
@@ -139,7 +140,7 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Type varchar(63),
-MatchType varchar(63) DEFAULT '1v1',
+MatchType varchar(63) DEFAULT '',
 Start_timestamp int(11) unsigned not null,
 End_timestamp int(11) unsigned not null,
 nbr_games_to_rank int DEFAULT '4',
@@ -159,6 +160,10 @@ Description text NOT NULL,
 NextUpdate_timestamp int(11) unsigned not null,
 IsChanged tinyint(1) DEFAULT '1',
 AllowDraw tinyint(1) DEFAULT '0',
+AllowForfeit tinyint(1) DEFAULT '0',
+ForfeitWinLossUpdate tinyint(1) DEFAULT '0',
+ForfeitWinPoints int default '".PointsPerWin_DEFAULT."',
+ForfeitLossPoints int default '".PointsPerLoss_DEFAULT."',
 AllowScore tinyint(1) DEFAULT '0',
 PointsPerWin int default '".PointsPerWin_DEFAULT."',
 PointsPerDraw int default '".PointsPerDraw_DEFAULT."',
@@ -170,12 +175,13 @@ hide_ratings_column tinyint(1) DEFAULT '0',
 MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 RankingType varchar(20) DEFAULT 'Classic',
 Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-Status varchar(20) DEFAULT 'active',
+Status varchar(20) DEFAULT 'draft',
 PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 ChallengesEnable tinyint(1) DEFAULT '0',
 MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."',
-MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."'
-) TYPE = MyISAM;",
+MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."',
+MaxNumberPlayers int DEFAULT '0'
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MODS."
 (
 ModeratorID int NOT NULL AUTO_INCREMENT,
@@ -190,7 +196,7 @@ User int(10) unsigned NOT NULL,
 INDEX (User),
 FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
 Level int DEFAULT '0'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_CLANS."
 (
 ClanID int NOT NULL AUTO_INCREMENT,
@@ -206,7 +212,7 @@ websiteURL varchar(100) NOT NULL default '',
 email varchar(100) NOT NULL default '',
 IM varchar(100) NOT NULL default '',
 Description text NOT NULL
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_DIVISIONS."
 (
 DivisionID int NOT NULL AUTO_INCREMENT,
@@ -220,7 +226,7 @@ FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Captain int(10) unsigned NOT NULL,
 INDEX (Captain),
 FOREIGN KEY (Captain) REFERENCES ".TBL_USERS." (user_id)
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MEMBERS."
 (
 MemberID int NOT NULL AUTO_INCREMENT,
@@ -232,7 +238,7 @@ User int(10) unsigned NOT NULL,
 INDEX (User),
 FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
 timestamp int(11) unsigned not null
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_TEAMS."
 (
 TeamID int NOT NULL AUTO_INCREMENT,
@@ -260,7 +266,7 @@ Score int DEFAULT '0',
 ScoreAgainst int DEFAULT '0',
 Points int DEFAULT '0',
 Banned tinyint(1) DEFAULT '0'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MATCHS."
 (
 MatchID int NOT NULL AUTO_INCREMENT,
@@ -280,7 +286,7 @@ GameLength int(11) unsigned not null,
 GameSpeed varchar(20),
 Realm varchar(20),
 TimePlayed int(11) unsigned not null
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_PLAYERS."
 (
 PlayerID int NOT NULL AUTO_INCREMENT,
@@ -311,7 +317,7 @@ Score int DEFAULT '0',
 ScoreAgainst int DEFAULT '0',
 Points int DEFAULT '0',
 Banned tinyint(1) DEFAULT '0'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_SCORES."
 (
 ScoreID int NOT NULL AUTO_INCREMENT,
@@ -336,11 +342,12 @@ Player_Win int DEFAULT '0',
 Player_Loss int DEFAULT '0',
 Player_Draw int DEFAULT '0',
 Player_Points int DEFAULT '0',
+Player_Forfeit tinyint(1) DEFAULT '0',
 Faction int DEFAULT '0',
 Color varchar(20),
 sColor varchar(20),
 APM int DEFAULT '0'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_STATSCATEGORIES."
 (
 StatsCategoryID int NOT NULL AUTO_INCREMENT,
@@ -352,7 +359,7 @@ CategoryName varchar(63),
 CategoryMinValue int DEFAULT '1',
 CategoryMaxValue int DEFAULT '0',
 InfoOnly tinyint(1) DEFAULT '0'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_AWARDS."
 (
 AwardID int NOT NULL AUTO_INCREMENT,
@@ -365,7 +372,7 @@ INDEX (Team),
 FOREIGN KEY (Player) REFERENCES ".TBL_TEAMS." (TeamID),
 Type varchar(63),
 timestamp int(11) unsigned not null
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MAPS."
 (
 MapID int NOT NULL AUTO_INCREMENT,
@@ -376,7 +383,7 @@ FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Name varchar(63) NOT NULL default '',
 Image varchar(63) NOT NULL default '',
 Description varchar(63) NOT NULL default ''
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_FACTIONS."
 (
 FactionID int NOT NULL AUTO_INCREMENT,
@@ -386,7 +393,7 @@ INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Name varchar(63) NOT NULL default '',
 Icon varchar(63) NOT NULL default ''
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MEDIA."
 (
 MediaID int NOT NULL AUTO_INCREMENT,
@@ -399,7 +406,7 @@ INDEX (Submitter),
 FOREIGN KEY (Submitter) REFERENCES ".TBL_USERS." (user_id),
 Path varchar(255) NOT NULL default '',
 Type varchar(20) NOT NULL default ''
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_CHALLENGES."
 (
 ChallengeID int NOT NULL AUTO_INCREMENT,
@@ -426,7 +433,7 @@ TimeReported int(11) unsigned not null,
 Comments text NOT NULL,
 Status varchar(20) DEFAULT 'requested',
 MatchDates varchar(255) NOT NULL default ''
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_GAMERS."
 (
 GamerID int NOT NULL AUTO_INCREMENT,
@@ -439,7 +446,7 @@ INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Name varchar(64) NOT NULL default '',
 UniqueGameID varchar(64) NOT NULL default ''
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_OFFICIAL_LADDERS."
 (
 OfficialLadderID int NOT NULL AUTO_INCREMENT,
@@ -452,7 +459,7 @@ INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Type varchar(63),
 MatchType varchar(63) DEFAULT '1v1'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_TOURNAMENTS."
 (
 TournamentID int NOT NULL AUTO_INCREMENT,
@@ -472,9 +479,12 @@ Rules text NOT NULL,
 Description text NOT NULL,
 NextUpdate_timestamp int(11) unsigned not null,
 IsChanged tinyint(1) DEFAULT '1',
+AllowForfeit tinyint(1) DEFAULT '0',
+AllowScore tinyint(1) DEFAULT '0',
 match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_MODERATOR."',
 match_replay_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_PLAYER."',
 MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
+Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 Status varchar(20) DEFAULT 'draft',
 PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 MaxNumberPlayers int DEFAULT '16',
@@ -484,7 +494,7 @@ Seeds text,
 Results text,
 Rounds text,
 MapPool text
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_TTEAMS."
 (
 TTeamID int NOT NULL AUTO_INCREMENT,
@@ -498,7 +508,7 @@ FOREIGN KEY (Division) REFERENCES ".TBL_DIVISIONS." (DivisionID),
 Joined  int(11) unsigned not null,
 CheckedIn tinyint(1) DEFAULT '0',
 Banned tinyint(1) DEFAULT '0'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_TPLAYERS."
 (
 TPlayerID int NOT NULL AUTO_INCREMENT,
@@ -518,7 +528,7 @@ FOREIGN KEY (Faction) REFERENCES ".TBL_FACTIONS." (FactionID),
 Joined  int(11) unsigned not null,
 CheckedIn tinyint(1) DEFAULT '0',
 Banned tinyint(1) DEFAULT '0'
-) TYPE = MyISAM;"
+) ENGINE = MyISAM;"
 );
 
 // Insert "Starcraft 2"

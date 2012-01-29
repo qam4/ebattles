@@ -1,8 +1,8 @@
-﻿<?php
+<?php
 // functions for ladders.
 //___________________________________________________________________
 require_once(e_PLUGIN.'ebattles/include/main.php');
-require_once(e_PLUGIN.'ebattles/include/match.php');
+//??FM:require_once(e_PLUGIN.'ebattles/include/match.php');
 require_once(e_PLUGIN."ebattles/include/updatestats.php");
 require_once(e_PLUGIN."ebattles/include/updateteamstats.php");
 
@@ -18,7 +18,7 @@ class Ladder extends DatabaseTable
 	{
 		$this->setField('Game', 1);
 		$this->setField('Type', 'One Player Ladder');
-		$this->setField('MatchType', '1v1');
+		$this->setField('MatchType', '');
 		$this->setField('nbr_games_to_rank', '1');
 		$this->setField('nbr_team_games_to_rank', '1');
 		$this->setField('ELO_default', ELO_DEFAULT);
@@ -30,6 +30,10 @@ class Ladder extends DatabaseTable
 		$this->setField('TS_epsilon', floatToSQL(TS_epsilon));
 		$this->setField('IsChanged', '1');
 		$this->setField('AllowDraw', '0');
+		$this->setField('AllowForfeit', '0');
+		$this->setField('ForfeitWinLossUpdate', '0');
+		$this->setField('ForfeitWinPoints', PointsPerWin_DEFAULT);
+		$this->setField('ForfeitLossPoints', PointsPerDraw_DEFAULT);
 		$this->setField('AllowScore', '0');
 		$this->setField('PointsPerWin', PointsPerWin_DEFAULT);
 		$this->setField('PointsPerDraw', PointsPerDraw_DEFAULT);
@@ -41,11 +45,12 @@ class Ladder extends DatabaseTable
 		$this->setField('MatchesApproval', eb_UC_NONE);
 		$this->setField('RankingType', 'Classic');
 		$this->setField('Visibility', eb_UC_NONE);
-		$this->setField('Status', 'active');
+		$this->setField('Status', 'draft');
 		$this->setField('PlayersApproval', eb_UC_NONE);
 		$this->setField('ChallengesEnable', '0');
 		$this->setField('MaxDatesPerChallenge', eb_MAX_CHALLENGE_DATES);
-		$this->setField('MaxMapsPerMatch', eb_MAX_MAPS_PER_MATCH);	
+		$this->setField('MaxMapsPerMatch', eb_MAX_MAPS_PER_MATCH);
+		$this->setField('MaxNumberPlayers', '0');
 	}
 
 	function resetPlayers()
@@ -486,7 +491,7 @@ class Ladder extends DatabaseTable
 		//-->
 		</script>
 		";
-		
+
 		$text .= '
 		<script type="text/javascript">
 		<!--//
@@ -501,6 +506,38 @@ class Ladder extends DatabaseTable
 		//-->
 		</script>
 		';
+
+		$text .= "
+		<script type='text/javascript'>
+		<!--//
+		function kick_player(v)
+		{
+		document.getElementById('kick_player').value=v;
+		document.getElementById('playersform').submit();
+		}
+		function ban_player(v)
+		{
+		document.getElementById('ban_player').value=v;
+		document.getElementById('playersform').submit();
+		}
+		function unban_player(v)
+		{
+		document.getElementById('unban_player').value=v;
+		document.getElementById('playersform').submit();
+		}
+		function del_player_games(v)
+		{
+		document.getElementById('del_player_games').value=v;
+		document.getElementById('playersform').submit();
+		}
+		function del_player_awards(v)
+		{
+		document.getElementById('del_player_awards').value=v;
+		document.getElementById('playersform').submit();
+		}
+		//-->
+		</script>
+		";
 
 		$text .= '<form id="form-ladder-settings" action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$this->getField('LadderID').'" method="post">';
 		$text .= '
@@ -543,6 +580,7 @@ class Ladder extends DatabaseTable
 			if ($this->getField('Game') == $gid)
 			{
 				$text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
+				$ematchtypes = explode(",", mysql_result($result,$i, TBL_GAMES.".MatchTypes"));
 			}
 			else
 			{
@@ -572,12 +610,34 @@ class Ladder extends DatabaseTable
 		//<!-- Match Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L126.'</td>
-		<td class="eb_td"><select class="tbox" name="laddermatchtype">';
-		$text .= '<option value="1v1" '.($this->getField('MatchType') == "1v1" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L127.'</option>';
-		$text .= '<option value="2v2" '.($this->getField('MatchType') == "2v2" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L128.'</option>';
-		$text .= '<option value="FFA" '.($this->getField('MatchType') == "FFA" ? 'selected="selected"' : '') .'>'.EB_LADDERM_L131.'</option>';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L132.'</td>
+		<td class="eb_td">
+		<div>
+		';
+		$text .= '<select class="tbox" name="laddermatchtype">';
+		$text .= '<option value="" '.($this->getField('MatchType') == "" ? 'selected="selected"' : '') .'>-</option>';
+		foreach($ematchtypes as $matchtype)
+		{
+			if ($matchtype!='') {
+				$text .= '<option value="'.$matchtype.'" '.(($this->getField('MatchType') == $matchtype) ? 'selected="selected"' : '') .'>'.$matchtype.'</option>';
+			}
+		}
 		$text .= '</select>
+		</div>
+		</td>
+		</tr>
+		';
+
+		//<!-- Max Number of Players -->
+		$text .= '
+		<tr>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L126.'</td>
+		<td class="eb_td">
+		<div>
+		';
+		$text .= '<input class="tbox" type="text" name="laddernumbermaxplayers" size="2" value="'.$this->getField('MaxNumberPlayers').'"/>';
+		$text .= '
+		</div>
 		</td>
 		</tr>
 		';
@@ -613,7 +673,7 @@ class Ladder extends DatabaseTable
 		//<!-- Match replay report userclass -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L133.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L134.'</td>
 		<td class="eb_td"><select class="tbox" name="laddermatchreplayreportuserclass">';
 		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
 		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
@@ -622,7 +682,7 @@ class Ladder extends DatabaseTable
 		</td>
 		</tr>
 		';
-		
+
 		//<!-- Allow Quick Loss Report -->
 		$text .= '
 		<tr>
@@ -702,8 +762,7 @@ class Ladder extends DatabaseTable
 		<tr>
 		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L27.'</td>
 		<td class="eb_td">
-		<div>
-		';
+		<div>';
 		$text .= '<input class="tbox" type="checkbox" name="ladderallowdraw"';
 		if ($this->getField('AllowDraw') == TRUE)
 		{
@@ -742,6 +801,56 @@ class Ladder extends DatabaseTable
 		</td>
 		</tr>
 		</table>
+		</td>
+		</tr>
+		';
+
+		//<!-- Allow Forfeits -->
+		$text .= '
+		<tr>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L127.'</td>
+		<td class="eb_td">
+		<div>';
+		$text .= '<input class="tbox" type="checkbox" name="ladderallowforfeit"';
+		if ($this->getField('AllowForfeit') == TRUE)
+		{
+			$text .= ' checked="checked"/>';
+		}
+		else
+		{
+			$text .= '/>';
+		}
+		$text .= EB_LADDERM_L128;
+		$text .= '</div>';
+		$text .= '<div>';
+		$text .= '<input class="tbox" type="checkbox" name="ladderForfeitWinLossUpdate"';
+		if ($this->getField('ForfeitWinLossUpdate') == TRUE)
+		{
+			$text .= ' checked="checked"/>';
+		}
+		else
+		{
+			$text .= '/>';
+		}
+		$text .= EB_LADDERM_L129;
+		$text .= '</div>';
+		$text .= '
+		<div>
+		<table class="table_left">
+		<tr>
+		<td>'.EB_LADDERM_L130.'</td>
+		<td>'.EB_LADDERM_L131.'</td>
+		</tr>
+		<tr>
+		<td>
+		<div><input class="tbox" type="text" name="ladderforfeitwinpoints" value="'.$this->getField('ForfeitWinPoints').'"/></div>
+		</td>
+		<td>
+		<div><input class="tbox" type="text" name="ladderforfeitlosspoints" value="'.$this->getField('ForfeitLossPoints').'"/></div>
+		</td>
+		</tr>
+		</table>
+		</div>
 		';
 		$text .= '
 		</td>
@@ -755,7 +864,7 @@ class Ladder extends DatabaseTable
 		<td class="eb_td">
 		<div>
 		';
-		$text .= '<input class="tbox" type="text" name="laddermaxmapspermatch" size="2" value="'.$this->getField('MaxMapsPerMatch').'"';
+		$text .= '<input class="tbox" type="text" name="laddermaxmapspermatch" size="2" value="'.$this->getField('MaxMapsPerMatch').'"/>';
 		$text .= '
 		</div>
 		</td>

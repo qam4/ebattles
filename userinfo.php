@@ -113,6 +113,9 @@ else
 		$text .= EB_USER_L10;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L37;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L11;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
@@ -166,7 +169,9 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a>';
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
@@ -219,6 +224,9 @@ else
 		$text .= EB_USER_L10;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L37;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
@@ -244,7 +252,9 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a>';
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
@@ -292,6 +302,9 @@ else
 		$text .= EB_USER_L10;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L37;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
@@ -317,7 +330,9 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a>';
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
@@ -351,11 +366,11 @@ else
 	$text .= '<div id="tabs-3">';    // tab-page "Tournaments"
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_tournaments_create_class'])))
 	{
-		$text .= '<form action="'.e_PLUGIN.'ebattles/tournamentscreate.php" method="post">';
+		$text .= '<form action="'.e_PLUGIN.'ebattles/tournamentcreate.php" method="post">';
 		$text .= '<div>';
 		$text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
 		$text .= '<input type="hidden" name="username" value="'.$uname.'"/>';
-		$text .= ebImageTextButton('createladder', 'add.png', EB_TOURNAMENTS_L20);
+		$text .= ebImageTextButton('createtournament', 'add.png', EB_TOURNAMENTS_L20);
 		$text .= '</div>';
 		$text .= '</form><br />';
 	}
@@ -384,6 +399,9 @@ else
 		$text .= EB_USER_L10;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L37;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L12;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
@@ -393,29 +411,32 @@ else
 
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$ladder_id = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$lName  = mysql_result($result,$i, TBL_LADDERS.".Name");
-			$lOwner = mysql_result($result,$i, TBL_LADDERS.".Owner");
+			$tournament_id = mysql_result($result,$i, TBL_TOURNAMENTS.".TournamentID");
+			$tName  = mysql_result($result,$i, TBL_TOURNAMENTS.".Name");
+			$tOwner = mysql_result($result,$i, TBL_TOURNAMENTS.".Owner");
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$player_id =  mysql_result($result,$i, TBL_TPLAYERS.".TPlayerID");
-			$pWinLoss  = mysql_result($result,$i, TBL_TPLAYERS.".Win")."/".mysql_result($result,$i, TBL_TPLAYERS.".Draw")."/".mysql_result($result,$i, TBL_TPLAYERS.".Loss");
+			//$pWinLoss  = mysql_result($result,$i, TBL_TPLAYERS.".Win")."/".mysql_result($result,$i, TBL_TPLAYERS.".Draw")."/".mysql_result($result,$i, TBL_TPLAYERS.".Loss");
 
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?LadderID='.$ladder_id.'">'.$lName.'</a><br />';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tName.'</a>';
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			$text .= $pWinLoss;
+			// TODO
+			//$text .= $pWinLoss;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			if($lOwner == $req_user)
+			if($tOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
-				if ($lOwner == USERID)
+				if ($tOwner == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/tournamentmanage.php?LadderID='.$ladder_id.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/tournamentmanage.php?TournamentID='.$tournament_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else
@@ -450,6 +471,9 @@ else
 		$text .= EB_USER_L10;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L37;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
 		$text .= '</th>';
 		/*
@@ -479,7 +503,9 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tName.'</a><br />';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tName.'</a>';
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
@@ -529,6 +555,9 @@ else
 		$text .= EB_USER_L10;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L37;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
@@ -556,7 +585,9 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?LadderID='.$tournament_id.'">'.$tName.'</a><br />';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/tournamentinfo.php?TournamentID='.$tournament_id.'">'.$tName.'</a>';
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
@@ -565,7 +596,7 @@ else
 				$text .= EB_USER_L15;
 				if ($tOwner == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/tournamentmanage.php?LadderID='.$tournament_id.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/tournamentmanage.php?TournamentID='.$tournament_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else

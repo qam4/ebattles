@@ -126,8 +126,7 @@ else
 		}
 
 		$text .= '</td>';
-
-
+		$text .= '</tr>';
 
 		$text .= '<tr>';
 		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_TOURNAMENTM_L9.'<br />';
@@ -412,6 +411,7 @@ else
 			';
 			for($i=0; $i<$numDivisions; $i++)
 			{
+				// TODO: remove teams already signed up
 				$did  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 				$dname  = mysql_result($result,$i, TBL_CLANS.".Name");
 				$text .= '<option value="'.$did.'">'.$dname.'</option>';
@@ -427,6 +427,7 @@ else
 			</form>
 			';
 			break;
+			case "":
 			case "1v1":
 			// TODO: No good...
 			// Form to add a player to the tournament
@@ -455,7 +456,20 @@ else
 			{
 				$uid  = mysql_result($result,$i, TBL_USERS.".user_id");
 				$uname  = mysql_result($result,$i, TBL_GAMERS.".Name");
+				
+				$q_Players = "SELECT COUNT(*) as NbrPlayers"
+				." FROM ".TBL_TPLAYERS.", "
+				.TBL_GAMERS
+				." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+				." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				." AND (".TBL_GAMERS.".User = '$uid')";
+				$result_Players = $sql->db_Query($q_Players);
+				$row = mysql_fetch_array($result_Players);
+				$nbrPlayers = $row['NbrPlayers'];
+				if ($nbrPlayers==0)
+				{
 				$text .= '<option value="'.$uid.'">'.$uname.'</option>';
+				}
 			}
 			$text .= '
 			</select></div></td>
