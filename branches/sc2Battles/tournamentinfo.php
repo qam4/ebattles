@@ -758,25 +758,29 @@ else
 	}
 
 	$teams = array();
-	switch($tournament->getField('MatchType'))
+	$type = $tournament->getField('MatchType');
+	switch($type)
 	{
 		default:
-		$q_Players = "SELECT ".TBL_GAMERS.".*"
-		." FROM ".TBL_TPLAYERS.", "
-		.TBL_GAMERS.", "
-		.TBL_USERS
-		." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
-		." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-		." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-		." ORDER BY ".TBL_TPLAYERS.".Joined";
-		$result = $sql->db_Query($q_Players);
-		$nbrPlayers = mysql_numrows($result);
-		for ($player = 0; $player < $nbrPlayers; $player++)
-		{
-			$gamerID = mysql_result($result,$player , TBL_GAMERS.".GamerID");
-			$gamer = new Gamer($gamerID);
-			$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
-		}
+			$q_Players = "SELECT ".TBL_GAMERS.".*, "
+			.TBL_TPLAYERS.".*"
+			." FROM ".TBL_GAMERS.", "
+			.TBL_TPLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_TPLAYERS.".Tournament = '".$tournament->getField('TournamentID')."')"
+			." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+			." ORDER BY ".TBL_TPLAYERS.".Joined";
+			$result = $sql->db_Query($q_Players);
+			$nbrPlayers = mysql_numrows($result);
+			for ($player = 0; $player < $nbrPlayers; $player++)
+			{
+				$playerID = mysql_result($result, $player, TBL_TPLAYERS.".TPlayerID");
+				$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
+				$gamer = new Gamer($gamerID);
+				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+				$teams[$player]['PlayerID'] = $playerID;
+			}
 	}
 
 	$results = unserialize($tournament->getField('Results'));
@@ -789,17 +793,29 @@ else
 
 	/* Matches */
 	$text .= '<div id="tabs-4">';
-	
+	$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES
+	." WHERE (".TBL_MATCHS.".Tournament = '$tournament_id')"
+	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+	." AND (".TBL_MATCHS.".Status = 'pending')";
+	$result = $sql->db_Query($q);
+	$row = mysql_fetch_array($result);
+	$nbrMatchesPending = $row['NbrMatches'];
+	if ($nbrMatchesPending == 0) $can_approve = 0;
+
+
 	/* Display Match Report buttons */
 	if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||($can_schedule != 0))
 	{
 		$text .= '<table>';
 		$text .= '<tr>';
+		/*
 		if($can_submit_replay != 0)
 		{
 			$text .= '<td>';
 			$text .= '<form action="'.e_PLUGIN.'ebattles/submitreplay.php?TournamentID='.$tournament_id.'" method="post"><div>';
-			$text .= ebImageTextButton('submitreplay', 'flag_red.png', EB_LADDER_L74);
+			$text .= ebImageTextButton('submitreplay', 'flag_red.png', EB_TOURNAMENT_L74);
 			$text .= '</div></form>';
 			$text .= '</td>';
 		}
@@ -814,11 +830,122 @@ else
 			$text .= '</form>';
 			$text .= '</td>';
 		}
+		*/
 		$text .= '</tr>';
 		$text .= '</table>';
 	}
 	$text .= '<br />';
 
+	/* Display Active Matches */
+	$rowsPerPage = $pref['eb_default_items_per_page'];
+
+	$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES
+	." WHERE (Tournament = '$tournament_id')"
+	." AND (".TBL_MATCHS.".Status = 'active')"
+	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
+	$result = $sql->db_Query($q);
+
+	$row = mysql_fetch_array($result);
+	$numMatches = $row['NbrMatches'];
+
+	$text .= '<p><b>';
+	$text .= $numMatches.'&nbsp;'.EB_TOURNAMENT_L59;
+	if ($numMatches>$rowsPerPage)
+	{
+		$text .= ' [<a href="'.e_PLUGIN.'ebattles/tournamentmatchs.php?TournamentID='.$tournament_id.'">'.EB_TOURNAMENT_L60.'</a>]';
+	}
+	$text .= '</b></p>';
+	$text .= '<br />';
+
+	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES.", "
+	.TBL_USERS
+	." WHERE (".TBL_MATCHS.".Tournament = '$tournament_id')"
+	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+	." AND (".TBL_MATCHS.".Status = 'active')"
+	." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
+	." LIMIT 0, $rowsPerPage";
+	$result = $sql->db_Query($q);
+	$numMatches = mysql_numrows($result);
+
+	if ($numMatches>0)
+	{
+		/* Display table contents */
+		$text .= '<table class="table_left">';
+		for($i=0; $i < $numMatches; $i++)
+		{
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfoTournament(eb_MATCH_NOLADDERINFO);
+		}
+		$text .= '</table>';
+	}
+
+	$text .= '<br />';
+
+	/* Display Pending Matches */
+	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES.", "
+	.TBL_USERS
+	." WHERE (".TBL_MATCHS.".Tournament = '$tournament_id')"
+	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+	." AND (".TBL_MATCHS.".Status = 'pending')"
+	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
+	$result = $sql->db_Query($q);
+	$numMatches = mysql_numrows($result);
+
+	if ($numMatches>0)
+	{
+		$text .= '<p><b>';
+		$text .= $numMatches.'&nbsp;'.EB_TOURNAMENT_L64;
+		$text .= '</b></p>';
+		$text .= '<br />';
+
+		/* Display table contents */
+		$text .= '<table class="table_left">';
+		for($i=0; $i < $numMatches; $i++)
+		{
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfoTournament(eb_MATCH_NOLADDERINFO);
+		}
+		$text .= '</table>';
+	}
+
+	/* Display Scheduled Matches */
+	$text .= '<br />';
+
+	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES
+	." WHERE (".TBL_MATCHS.".Tournament = '$tournament_id')"
+	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+	." AND (".TBL_MATCHS.".Status = 'scheduled')"
+	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
+	$result = $sql->db_Query($q);
+	$numMatches = mysql_numrows($result);
+
+	if ($numMatches>0)
+	{
+		$text .= '<p><b>';
+		$text .= $numMatches.'&nbsp;'.EB_TOURNAMENT_L70;
+		$text .= '</b></p>';
+		$text .= '<br />';
+
+		/* Display table contents */
+		$text .= '<table class="table_left">';
+		for($i=0; $i < $numMatches; $i++)
+		{
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfoTournament(eb_MATCH_NOLADDERINFO|eb_MATCH_SCHEDULED);
+		}
+		$text .= '</table>';
+	}
 
 	$text .= '</div>';    // tabs-4 "Matches"
 

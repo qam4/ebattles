@@ -94,6 +94,7 @@ define("eb_PAGINATION_MIDRANGE", 7);
 
 define("eb_MATCH_NOLADDERINFO", 1);
 define("eb_MATCH_SCHEDULED", 2);
+define("eb_MATCH_NOTOURNAMENTINFO", 4);
 
 define("eb_MAX_CHALLENGE_DATES", 3);
 define("eb_MAX_MAPS_PER_MATCH", 1);

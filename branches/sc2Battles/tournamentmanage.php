@@ -280,27 +280,29 @@ else
 		$text .= '<div id="tabs-4">';
 
 		$teams = array();
-		switch($tournament->getField('MatchType'))
+		$type = $tournament->getField('MatchType');
+		switch($type)
 		{
 			default:
-			$q_Players = "SELECT ".TBL_GAMERS.".*"
-			." FROM ".TBL_TPLAYERS.", "
-			.TBL_GAMERS.", "
-			.TBL_USERS
-			." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
-			." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-			." ORDER BY ".TBL_TPLAYERS.".Joined";
-			$result = $sql->db_Query($q_Players);
-			$nbrPlayers = mysql_numrows($result);
-			for ($player = 0; $player < $nbrPlayers; $player++)
-			{
-				$playerID = mysql_result($result,$player , TBL_TPLAYERS.".PlayerID");
-				$gamerID = mysql_result($result,$player , TBL_GAMERS.".GamerID");
-				$gamer = new Gamer($gamerID);
-				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
-				$teams[$player]['PlayerID'] = $playerID;
-			}
+				$q_Players = "SELECT ".TBL_GAMERS.".*, "
+				.TBL_TPLAYERS.".*"
+				." FROM ".TBL_GAMERS.", "
+				.TBL_TPLAYERS.", "
+				.TBL_USERS
+				." WHERE (".TBL_TPLAYERS.".Tournament = '".$tournament->getField('TournamentID')."')"
+				." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+				." ORDER BY ".TBL_TPLAYERS.".Joined";
+				$result = $sql->db_Query($q_Players);
+				$nbrPlayers = mysql_numrows($result);
+				for ($player = 0; $player < $nbrPlayers; $player++)
+				{
+					$playerID = mysql_result($result, $player, TBL_TPLAYERS.".TPlayerID");
+					$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
+					$gamer = new Gamer($gamerID);
+					$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+					$teams[$player]['PlayerID'] = $playerID;
+				}
 		}
 
 		$results = unserialize($tournament->getField('Results'));

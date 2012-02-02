@@ -676,15 +676,19 @@ class Tournament extends DatabaseTable
 
 	function scheduleNextMatches() {
 		global $sql;
+		global $time;
+		//dbg
+		global $tp;
 
-		$type = $this->fields['Type'];
 		$teams = array();
-		switch($this->fields['MatchType'])
+		$type = $this->fields['MatchType'];
+		switch($type)
 		{
 			default:
-			$q_Players = "SELECT ".TBL_GAMERS.".*"
-			." FROM ".TBL_TPLAYERS.", "
-			.TBL_GAMERS.", "
+			$q_Players = "SELECT ".TBL_GAMERS.".*, "
+			.TBL_TPLAYERS.".*"
+			." FROM ".TBL_GAMERS.", "
+			.TBL_TPLAYERS.", "
 			.TBL_USERS
 			." WHERE (".TBL_TPLAYERS.".Tournament = '".$this->fields['TournamentID']."')"
 			." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
@@ -694,14 +698,17 @@ class Tournament extends DatabaseTable
 			$nbrPlayers = mysql_numrows($result);
 			for ($player = 0; $player < $nbrPlayers; $player++)
 			{
-				$gamerID = mysql_result($result,$player , TBL_GAMERS.".GamerID");
+				$playerID = mysql_result($result, $player, TBL_TPLAYERS.".TPlayerID");
+				$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
 				$gamer = new Gamer($gamerID);
 				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+				$teams[$player]['PlayerID'] = $playerID;
 			}
 		}
 		$nbrPlayers = $this->fields['MaxNumberPlayers'];
-		$results = unserialize($this->fields['Results']);
-		$rounds = unserialize($this->fields['Rounds']);
+		$results = unserialize($this->getField('Results'));
+		// TODO: check for error (return false)
+		$rounds = unserialize($this->getField('Rounds'));
 
 		$nbrTeams=count($teams);
 
@@ -743,6 +750,7 @@ class Tournament extends DatabaseTable
 					if(($content[$round][$matchup][0]!='0')&&($content[$round][$matchup][1]!='0')){
 						if ($results[$round][$matchup]['winner'] == '') {
 							// Matchup not finished, no winner yet
+							// TODO: Round 1
 						}
 					}
 				}
@@ -775,21 +783,67 @@ class Tournament extends DatabaseTable
 					if (($content[$round][$matchup][0]!='0')
 					&&($content[$round][$matchup][1]!='0')
 					&&($content[$round][$matchup][0]!='not played')
-					&&($content[$round][$matchup][1]!='not played')) {
-						if ($results[$round][$matchup]['winner'] == '') {
-							// Matchup not finished yet
-							$matchPlayed = count($results[$round][$matchup]['matchs']);
+					&&($content[$round][$matchup][1]!='not played')
+					&&($results[$round][$matchup]['winner'] == '')) {
+						// Matchup not finished yet
+						$matchs = count($results[$round][$matchup]['matchs']);
+						
+						$current_match = $results[$round][$matchup]['matchs'][$matchs-1];
+						//var_dump($current_match);
+						if((!isset($current_match)) || ($current_match['played'] == true))
+						{
+							// Need to schedule the next match
+							// Create Match ------------------------------------------
+							$tournament_id = $this->fields['TournamentID'];
+							$reported_by = ADMINID;
+							$time_reported = $time;
+							$comments = '';
+							$time_scheduled = $time_reported;
+							
+							$q =
+							"INSERT INTO ".TBL_MATCHS."(Tournament,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
+							VALUES ($tournament_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled)";
+							$result = $sql->db_Query($q);
+							
+							$last_id = mysql_insert_id();
+							$match_id = $last_id;
 
+ 						 	// Create Scores ------------------------------------------
+ 						 	$teamTop    = $content[$round][$matchup][0];
+ 						 	$teamBottom = $content[$round][$matchup][1];
+ 						 	
+ 						 	$teamTopID = $teams[$teamTop-1]['PlayerID'];
+ 						 	$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
+ 						 	
+ 							switch($type)
+							{
+								default:
+									// 1v1
+									// TODO: 2v2...
+									echo "hello";
+									$q =
+									"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
+									VALUES ($match_id,$teamTopID,0,1,1)
+									";
+									$result = $sql->db_Query($q);
+						
+									$q =
+									"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
+									VALUES ($match_id,$teamBottomID,0,2,2)
+									";
+									$result = $sql->db_Query($q);
+							}
+							
 							$match = array();
-							//$match['']
-
-							$results[$round][$matchup]['matchs'][$matchPlayed] = $match;
-
-							echo "R$round M$matchup: Matchs played=$matchPlayed<br>";
-							var_dump($results[$round][$matchup]);
-
-
+							$match['played'] = false;
+							$match['match_id'] = $match_id;
+							$results[$round][$matchup]['matchs'][$matchs] = $match;
+							
+							$this->updateResults($results);
+							$this->updateDB($results);
 						}
+						echo "R$round M$matchup: Nbr of matchs=$matchs<br>";
+						var_dump($results[$round][$matchup]);
 					}
 					if (($content[$round][$matchup][0]=='0')||($content[$round][$matchup][1]=='0')) {
 						$results[$round][$matchup]['winner'] = 'bye';
