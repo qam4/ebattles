@@ -8,13 +8,13 @@ require_once(e_HANDLER."avatar_handler.php");
 require_once(e_HANDLER."rate_class.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 
-function updateTeamStats($ladder_id, $time, $serialize = TRUE)
+function updateTeamStats($event_id, $time, $serialize = TRUE)
 {
 	global $sql;
 	global $pref;
 
 	$rater = new rater();
-	$file_team = 'cache/sql_cache_ladder_team_'.$ladder_id.'.txt';
+	$file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
 
 	$id = array();
 	$uid = array();
@@ -60,11 +60,11 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 	$scorediff_score = array();
 	$points_score = array();
 
-	/* Ladder Info */
-   	$ladder = new Ladder($ladder_id);
+	/* Event Info */
+   	$event = new Event($event_id);
 
-    $hide_ratings_column = $ladder->getField('hide_ratings_column');
-    if ($ladder->getField('RankingType') == "Classic") $hide_ratings_column = TRUE;
+    $hide_ratings_column = $event->getField('hide_ratings_column');
+    if ($event->getField('RankingType') == "Classic") $hide_ratings_column = TRUE;
     
     //Update Teams stats
 	$q_Teams = "SELECT ".TBL_TEAMS.".*, "
@@ -73,7 +73,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 	." FROM ".TBL_TEAMS.", "
 	.TBL_DIVISIONS.", "
 	.TBL_CLANS
-	." WHERE (".TBL_TEAMS.".Ladder = '$ladder_id')"
+	." WHERE (".TBL_TEAMS.".Event = '$event_id')"
 	." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
 	." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
 
@@ -109,7 +109,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		$tpoints = mysql_result($result_Teams,$team, TBL_TEAMS.".Points");
 		$tbanned  = mysql_result($result_Teams,$team, TBL_TEAMS.".Banned");
 
-		switch($ladder->getField('Type'))
+		switch($event->getField('Type'))
 		{
 			case "Team Ladder":
 			$tunique_opponents = 0;
@@ -117,10 +117,10 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 			$topponents = 0;
 			$tplayers = array();
 
-			// Find all players for that ladder and that team
+			// Find all players for that event and that team
 			$q_Players = "SELECT * "
 			." FROM ".TBL_PLAYERS." "
-			." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 			." AND (".TBL_PLAYERS.".Team = '$tid')";
 			$result_Players = $sql->db_Query($q_Players);
 			$tnumPlayers = mysql_numrows($result_Players);
@@ -218,7 +218,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 			$tunique_opponents = count(array_unique($tplayers));
 
 			break;
-			case "ClanWar":
+			case "Clan Ladder":
 			$topponentsELO = 0;
 			$topponents = 0;
 			$trating = 0;
@@ -339,7 +339,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		$scorediff_score[] = ($tgames_played>0) ? ($tscore - $toppscore)/$tgames_played : 0;
 		$points_score[] = $tpoints;
 
-		if ($tgames_played >= $ladder->getField('nbr_team_games_to_rank'))
+		if ($tgames_played >= $event->getField('nbr_team_games_to_rank'))
 		{
 			$teams_rated++;
 		}
@@ -349,7 +349,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 
 	$q_Categories = "SELECT ".TBL_STATSCATEGORIES.".*"
 	." FROM ".TBL_STATSCATEGORIES
-	." WHERE (".TBL_STATSCATEGORIES.".Ladder = '$ladder_id')"
+	." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')"
 	." ORDER BY ".TBL_STATSCATEGORIES.".CategoryMaxValue DESC";
 	$result_Categories = $sql->db_Query($q_Categories);
 	$numCategories = mysql_numrows($result_Categories);
@@ -441,12 +441,12 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 				$stat_display[$cat_index] = $opponentsELO;
 				break;
 				case "Streaks":
-				switch($ladder->getField('Type'))
+				switch($event->getField('Type'))
 				{
 					case "Team Ladder":
 					$display_cat = 0;
 					break;
-					case "ClanWar":
+					case "Clan Ladder":
 					$cat_header_title = EB_STATS_L17;
 					$cat_header_text = EB_STATS_L18;
 					$min = min($streaks_score);
@@ -497,7 +497,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 			{
 				$stat_InfoOnly[$cat_index] = $cat_InfoOnly;
 
-				switch($ladder->getField('RankingType'))
+				switch($event->getField('RankingType'))
 				{
 					case "CombinedStats":
 					if (($cat_InfoOnly == TRUE))
@@ -560,7 +560,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 	"0"=>array('header','<b>'.EB_STATS_L28.'</b>','<b>'.EB_STATS_L39.'</b>')
 	);
 
-	switch($ladder->getField('Type'))
+	switch($event->getField('Type'))
 	{
 		case "Team Ladder":
 		$stats[0][] = '<b>'.EB_STATS_L40.'</b>';
@@ -580,7 +580,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		$stats[0][] = $stat_cat_header[$category];
 	}
 
-	switch($ladder->getField('RankingType'))
+	switch($event->getField('RankingType'))
 	{
 		case "CombinedStats":
 		$OverallScoreThreshold = 0;
@@ -588,7 +588,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		for($team=0; $team < $numTeams; $team++)
 		{
 			$OverallScore[$team]=0;
-			if ($games_played[$team] >= $ladder->getField('nbr_team_games_to_rank'))
+			if ($games_played[$team] >= $event->getField('nbr_team_games_to_rank'))
 			{
 				for ($category=0; $category < $numDisplayedCategories; $category++)
 				{
@@ -610,7 +610,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 			$q_update = "UPDATE ".TBL_TEAMS
 			." SET OverallScore = '".floatToSQL($OverallScore[$team])."'"
 			." WHERE (TeamID = '$id[$team]')"
-			."   AND (Ladder = '$ladder_id')";
+			."   AND (Event = '$event_id')";
 			$result_update = $sql->db_Query($q_update);
 		}
 		break;
@@ -618,7 +618,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		$OverallScoreThreshold = $numTeams;
 		for($team=0; $team < $numTeams; $team++)
 		{
-			if ($games_played[$team] >= $ladder->getField('nbr_team_games_to_rank'))
+			if ($games_played[$team] >= $event->getField('nbr_team_games_to_rank'))
 			{
 				$OverallScore[$team] = array_search($team, $ranks, false) + $numTeams + 1;
 			}
@@ -631,7 +631,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 			$q_update = "UPDATE ".TBL_TEAMS
 			." SET OverallScore = '".floatToSQL($OverallScore[$team])."'"
 			." WHERE (TeamID = '$id[$team]')"
-			."   AND (Ladder = '$ladder_id')";
+			."   AND (Event = '$event_id')";
 			$result_update = $sql->db_Query($q_update);
 		}
 		break;
@@ -642,7 +642,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 	//--------------------
 	$q_Teams = "SELECT *"
 	." FROM ".TBL_TEAMS
-	." WHERE (Ladder = '$ladder_id')"
+	." WHERE (Event = '$event_id')"
 	." ORDER BY ".TBL_TEAMS.".OverallScore DESC, ".TBL_TEAMS.".ELORanking DESC";
 	$result_Teams = $sql->db_Query($q_Teams);
 	$ranknumber = 1;
@@ -665,14 +665,14 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		{
 			$rank = $ranknumber;
 			$ranknumber++; // increases $ranknumber by 1
-			$q_update = "UPDATE ".TBL_TEAMS." SET Rank = $rank WHERE (TeamID = '$tid') AND (Ladder = '$ladder_id')";
+			$q_update = "UPDATE ".TBL_TEAMS." SET Rank = $rank WHERE (TeamID = '$tid') AND (Event = '$event_id')";
 			$result_update = $sql->db_Query($q_update);
 
 			$new_rankdelta = $trank - $rank;
 			if ($new_rankdelta != 0)
 			{
 				$trankdelta += $new_rankdelta;
-				$q_update = "UPDATE ".TBL_TEAMS." SET RankDelta = $trankdelta WHERE (TeamID = '$tid') AND (Ladder = '$ladder_id')";
+				$q_update = "UPDATE ".TBL_TEAMS." SET RankDelta = $trankdelta WHERE (TeamID = '$tid') AND (Event = '$event_id')";
 				$result_update = $sql->db_Query($q_update);
 			}
 
@@ -794,7 +794,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 		$stats_row[] = $image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan[$index].'"><b>'.$name[$index].'</b></a>';
 		//  ('.$clantag[$index].')
 
-		switch($ladder->getField('Type'))
+		switch($event->getField('Type'))
 		{
 			case "Team Ladder":
 			$stats_row[] = "$nbr_players[$index]";
@@ -806,7 +806,7 @@ function updateTeamStats($ladder_id, $time, $serialize = TRUE)
 
 		for ($category=0; $category < $numDisplayedCategories; $category++)
 		{
-			if (($stat_InfoOnly[$category] == TRUE)||($ladder->getField('RankingType') == "Classic"))
+			if (($stat_InfoOnly[$category] == TRUE)||($event->getField('RankingType') == "Classic"))
 			{
 				$stats_row[] = $stat_display[$category][$index];
 			}

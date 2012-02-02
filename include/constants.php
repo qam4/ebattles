@@ -16,7 +16,7 @@
 define("TBL_PREFIX", "ebattles_");
 
 define("TBL_USERS_SHORT",           "user");
-define("TBL_LADDERS_SHORT",         TBL_PREFIX."Ladders");
+define("TBL_EVENTS_SHORT",         TBL_PREFIX."Events");
 define("TBL_MODS_SHORT",            TBL_PREFIX."Moderators");
 define("TBL_TEAMS_SHORT",           TBL_PREFIX."Teams");
 define("TBL_MATCHS_SHORT",          TBL_PREFIX."Matchs");
@@ -33,13 +33,10 @@ define("TBL_FACTIONS_SHORT",        TBL_PREFIX."Factions");
 define("TBL_MEDIA_SHORT",           TBL_PREFIX."Media");
 define("TBL_CHALLENGES_SHORT",      TBL_PREFIX."Challenges");
 define("TBL_GAMERS_SHORT",          TBL_PREFIX."Gamers");
-define("TBL_OFFICIAL_LADDERS_SHORT",TBL_PREFIX."OfficialLadders");
-define("TBL_TOURNAMENTS_SHORT",     TBL_PREFIX."Tournaments");
-define("TBL_TPLAYERS_SHORT",        TBL_PREFIX."TournamentPlayers");
-define("TBL_TTEAMS_SHORT",          TBL_PREFIX."TournamentTeams");
+define("TBL_OFFICIAL_EVENTS_SHORT",TBL_PREFIX."OfficialEvents");
 
 define("TBL_USERS",           MPREFIX."user");
-define("TBL_LADDERS",         MPREFIX.TBL_LADDERS_SHORT);
+define("TBL_EVENTS",         MPREFIX.TBL_EVENTS_SHORT);
 define("TBL_MODS",            MPREFIX.TBL_MODS_SHORT);
 define("TBL_TEAMS",           MPREFIX.TBL_TEAMS_SHORT);
 define("TBL_MATCHS",          MPREFIX.TBL_MATCHS_SHORT);
@@ -56,10 +53,7 @@ define("TBL_FACTIONS",        MPREFIX.TBL_FACTIONS_SHORT);
 define("TBL_MEDIA",           MPREFIX.TBL_MEDIA_SHORT);
 define("TBL_CHALLENGES",      MPREFIX.TBL_CHALLENGES_SHORT);
 define("TBL_GAMERS",          MPREFIX.TBL_GAMERS_SHORT);
-define("TBL_OFFICIAL_LADDERS",MPREFIX.TBL_OFFICIAL_LADDERS_SHORT);
-define("TBL_TOURNAMENTS",     MPREFIX.TBL_TOURNAMENTS_SHORT);
-define("TBL_TPLAYERS",        MPREFIX.TBL_TPLAYERS_SHORT);
-define("TBL_TTEAMS",          MPREFIX.TBL_TTEAMS_SHORT);
+define("TBL_OFFICIAL_EVENTS",MPREFIX.TBL_OFFICIAL_EVENTS_SHORT);
 
 /**
  * Email Constants - these specify what goes in
@@ -85,16 +79,15 @@ define("PointsPerLoss_DEFAULT" , 0);
 
 // Match report userclass
 define("eb_UC_EB_MODERATOR", 8);
-define("eb_UC_LADDER_OWNER", 4);
-define("eb_UC_LADDER_MODERATOR", 2);
-define("eb_UC_LADDER_PLAYER", 1);
+define("eb_UC_EVENT_OWNER", 4);
+define("eb_UC_EVENT_MODERATOR", 2);
+define("eb_UC_EVENT_PLAYER", 1);
 define("eb_UC_NONE", 0);
 
 define("eb_PAGINATION_MIDRANGE", 7);
 
-define("eb_MATCH_NOLADDERINFO", 1);
+define("eb_MATCH_NOEVENTINFO", 1);
 define("eb_MATCH_SCHEDULED", 2);
-define("eb_MATCH_NOTOURNAMENTINFO", 4);
 
 define("eb_MAX_CHALLENGE_DATES", 3);
 define("eb_MAX_MAPS_PER_MATCH", 1);

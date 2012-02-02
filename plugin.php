@@ -47,10 +47,10 @@ $eplug_prefs = array(
 "eb_mod_class" => e_UC_ADMIN,
 "eb_update_delay" => 60,
 "eb_update_delay_enable" => 0,
-"eb_ladders_create_class" => e_UC_ADMIN,
-"eb_tournaments_update_delay" => 60,
-"eb_tournaments_update_delay_enable" => 0,
-"eb_tournaments_create_class" => e_UC_MEMBER,
+"eb_events_create_class" => e_UC_ADMIN,
+"eb_events_update_delay" => 60,
+"eb_events_update_delay_enable" => 0,
+"eb_events_create_class" => e_UC_MEMBER,
 "eb_teams_create_class" => e_UC_MEMBER,
 "eb_media_submit_class" => e_UC_MEMBER,
 "eb_tab_theme" => 'default',
@@ -74,8 +74,7 @@ $eplug_prefs = array(
 "eb_max_map_image_size" => 80,
 "eb_pm_notifications_class" => e_UC_MEMBER,
 "eb_email_notifications_class" => e_UC_MEMBER,
-"eb_links_showcreateladder" => 1,
-"eb_links_showcreatetournament" => 1,
+"eb_links_showcreateevent" => 1,
 "eb_links_showcreateteam" => 1,
 "eb_links_showmatchsplayed" => 1,
 "eb_links_showmatchstoapprove" => 1,
@@ -88,7 +87,7 @@ $eplug_prefs = array(
 // List of table names -----------------------------------------------------------------------------------------------
 $eplug_table_names = array(
 TBL_GAMES_SHORT,
-TBL_LADDERS_SHORT,
+TBL_EVENTS_SHORT,
 TBL_MODS_SHORT,
 TBL_CLANS_SHORT,
 TBL_DIVISIONS_SHORT,
@@ -104,10 +103,7 @@ TBL_FACTIONS_SHORT,
 TBL_MEDIA_SHORT,
 TBL_CHALLENGES_SHORT,
 TBL_GAMERS_SHORT,
-TBL_OFFICIAL_LADDERS_SHORT,
-TBL_TOURNAMENTS_SHORT,
-TBL_TPLAYERS_SHORT,
-TBL_TTEAMS_SHORT,
+TBL_OFFICIAL_EVENTS_SHORT
 );
 
 // List of sql requests to create tables -----------------------------------------------------------------------------
@@ -130,10 +126,10 @@ OfficialWebsite varchar(63) NOT NULL default '',
 ESRB varchar(63) NOT NULL default '',
 Banner varchar(63) NOT NULL default ''
 ) ENGINE = MyISAM;",
-"CREATE TABLE ".TBL_LADDERS."
+"CREATE TABLE ".TBL_EVENTS."
 (
-LadderID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(LadderID),
+EventID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(EventID),
 Name varchar(63),
 password varchar(32),
 Game int NOT NULL,
@@ -168,8 +164,8 @@ AllowScore tinyint(1) DEFAULT '0',
 PointsPerWin int default '".PointsPerWin_DEFAULT."',
 PointsPerDraw int default '".PointsPerDraw_DEFAULT."',
 PointsPerLoss int default '".PointsPerLoss_DEFAULT."',
-match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_MODERATOR."',
-match_replay_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_PLAYER."',
+match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_MODERATOR."',
+match_replay_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."',
 quick_loss_report tinyint(1) DEFAULT '1',
 hide_ratings_column tinyint(1) DEFAULT '0',
 MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
@@ -186,12 +182,9 @@ MaxNumberPlayers int DEFAULT '0'
 (
 ModeratorID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(ModeratorID),
-Ladder int NOT NULL,
-INDEX (Ladder),
-FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
-Tournament int NOT NULL,
-INDEX (Tournament),
-FOREIGN KEY (Tournament) REFERENCES ".TBL_TOURNAMENTS." (TournamentID),
+Event int NOT NULL,
+INDEX (Event),
+FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
 User int(10) unsigned NOT NULL,
 INDEX (User),
 FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
@@ -243,9 +236,9 @@ timestamp int(11) unsigned not null
 (
 TeamID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(TeamID),
-Ladder int NOT NULL,
-INDEX (Ladder),
-FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
+Event int NOT NULL,
+INDEX (Event),
+FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
 Division int NOT NULL,
 INDEX (Division),
 FOREIGN KEY (Division) REFERENCES ".TBL_DIVISIONS." (DivisionID),
@@ -271,12 +264,9 @@ Banned tinyint(1) DEFAULT '0'
 (
 MatchID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(MatchID),
-Ladder int NOT NULL,
-INDEX (Ladder),
-FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
-Tournament int NOT NULL,
-INDEX (Tournament),
-FOREIGN KEY (Tournament) REFERENCES ".TBL_TOURNAMENTS." (TournamentID),
+Event int NOT NULL,
+INDEX (Event),
+FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
 ReportedBy int(10) unsigned NOT NULL,
 INDEX (ReportedBy),
 FOREIGN KEY (ReportedBy) REFERENCES ".TBL_USERS." (user_id),
@@ -294,9 +284,9 @@ TimePlayed int(11) unsigned not null
 (
 PlayerID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(PlayerID),
-Ladder int NOT NULL,
-INDEX (Ladder),
-FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
+Event int NOT NULL,
+INDEX (Event),
+FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
 Gamer int(10) unsigned NOT NULL,
 INDEX (Gamer),
 FOREIGN KEY (Gamer) REFERENCES ".TBL_GAMERS." (GamerID),
@@ -355,9 +345,9 @@ APM int DEFAULT '0'
 (
 StatsCategoryID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(StatsCategoryID),
-Ladder int NOT NULL,
-INDEX (Ladder),
-FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
+Event int NOT NULL,
+INDEX (Event),
+FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
 CategoryName varchar(63),
 CategoryMinValue int DEFAULT '1',
 CategoryMaxValue int DEFAULT '0',
@@ -414,9 +404,9 @@ Type varchar(20) NOT NULL default ''
 (
 ChallengeID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(ChallengeID),
-Ladder int NOT NULL,
-INDEX (Ladder),
-FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
+Event int NOT NULL,
+INDEX (Event),
+FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
 ChallengerPlayer int NOT NULL,
 INDEX (ChallengerPlayer),
 FOREIGN KEY (ChallengerPlayer) REFERENCES ".TBL_PLAYERS." (PlayerID),
@@ -450,97 +440,28 @@ FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Name varchar(64) NOT NULL default '',
 UniqueGameID varchar(64) NOT NULL default ''
 ) ENGINE = MyISAM;",
-"CREATE TABLE ".TBL_OFFICIAL_LADDERS."
+"CREATE TABLE ".TBL_OFFICIAL_EVENTS."
 (
-OfficialLadderID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(OfficialLadderID),
-Ladder int NOT NULL,
-INDEX (Ladder),
-FOREIGN KEY (Ladder) REFERENCES ".TBL_LADDERS." (LadderID),
+OfficialEventID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(OfficialEventID),
+Event int NOT NULL,
+INDEX (Event),
+FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
 Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Type varchar(63),
 MatchType varchar(63) DEFAULT '1v1'
-) ENGINE = MyISAM;",
-"CREATE TABLE ".TBL_TOURNAMENTS."
-(
-TournamentID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(TournamentID),
-Name varchar(63),
-password varchar(32),
-Game int NOT NULL,
-INDEX (Game),
-FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
-Type varchar(63) DEFAULT 'Single Elimination',
-MatchType varchar(63) DEFAULT '1v1',
-StartDateTime  int(11) unsigned not null,
-Owner int(10) unsigned NOT NULL,
-INDEX (Owner),
-FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id),
-Rules text NOT NULL,
-Description text NOT NULL,
-NextUpdate_timestamp int(11) unsigned not null,
-IsChanged tinyint(1) DEFAULT '1',
-AllowForfeit tinyint(1) DEFAULT '0',
-AllowScore tinyint(1) DEFAULT '0',
-match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_MODERATOR."',
-match_replay_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_LADDER_PLAYER."',
-MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-Status varchar(20) DEFAULT 'draft',
-PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-MaxNumberPlayers int DEFAULT '16',
-ForceFaction tinyint(1) default '0',
-Seeded tinyint(3) default '0',
-Seeds text,
-Results text,
-Rounds text,
-MapPool text
-) ENGINE = MyISAM;",
-"CREATE TABLE ".TBL_TTEAMS."
-(
-TTeamID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(TTeamID),
-Tournament int NOT NULL,
-INDEX (Tournament),
-FOREIGN KEY (Tournament) REFERENCES ".TBL_TOURNAMENTS." (TournamentID),
-Division int NOT NULL,
-INDEX (Division),
-FOREIGN KEY (Division) REFERENCES ".TBL_DIVISIONS." (DivisionID),
-Joined  int(11) unsigned not null,
-CheckedIn tinyint(1) DEFAULT '0',
-Banned tinyint(1) DEFAULT '0'
-) ENGINE = MyISAM;",
-"CREATE TABLE ".TBL_TPLAYERS."
-(
-TPlayerID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(TPlayerID),
-Tournament int NOT NULL,
-INDEX (Tournament),
-FOREIGN KEY (Tournament) REFERENCES ".TBL_TOURNAMENTS." (TournamentID),
-Gamer int(10) unsigned NOT NULL,
-INDEX (Gamer),
-FOREIGN KEY (Gamer) REFERENCES ".TBL_GAMERS." (GamerID),
-Team int NOT NULL,
-INDEX (Team),
-FOREIGN KEY (Team) REFERENCES ".TBL_TTEAMS." (TTeamID),
-Faction int NOT NULL,
-INDEX (Faction),
-FOREIGN KEY (Faction) REFERENCES ".TBL_FACTIONS." (FactionID),
-Joined  int(11) unsigned not null,
-CheckedIn tinyint(1) DEFAULT '0',
-Banned tinyint(1) DEFAULT '0'
 ) ENGINE = MyISAM;"
 );
 
-// Insert "Starcraft 2"
+// Insert "data"
 @require_once e_PLUGIN.'ebattles/db_admin/insert_data.php';
 
 // Create a link in main menu (yes=TRUE, no=FALSE) -------------------------------------------------------------
 $eplug_link = TRUE;
 $eplug_link_name = EB_L5;
-$eplug_link_url = e_PLUGIN."ebattles/ladders.php";
+$eplug_link_url = e_PLUGIN."ebattles/events.php";
 
 
 // Text to display after plugin successfully installed ------------------------------------------------------------------
@@ -579,5 +500,42 @@ if(!function_exists("ebattles_uninstall"))
 	}
 }
 
+/*
+"CREATE TABLE ".TBL_EVENTS."
+(
+EventID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(EventID),
+Name varchar(63),
+password varchar(32),
+Game int NOT NULL,
+INDEX (Game),
+FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
+Type varchar(63) DEFAULT 'Single Elimination',
+MatchType varchar(63) DEFAULT '1v1',
+StartDateTime  int(11) unsigned not null,
+Owner int(10) unsigned NOT NULL,
+INDEX (Owner),
+FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id),
+Rules text NOT NULL,
+Description text NOT NULL,
+NextUpdate_timestamp int(11) unsigned not null,
+IsChanged tinyint(1) DEFAULT '1',
+AllowForfeit tinyint(1) DEFAULT '0',
+AllowScore tinyint(1) DEFAULT '0',
+match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_MODERATOR."',
+match_replay_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."',
+MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
+Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
+Status varchar(20) DEFAULT 'draft',
+PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
+MaxNumberPlayers int DEFAULT '16',
+ForceFaction tinyint(1) default '0',
+Seeded tinyint(3) default '0',
+Seeds text,
+Results text,
+Rounds text,
+MapPool text
+) ENGINE = MyISAM;"
+*/
 
 ?>

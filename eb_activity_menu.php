@@ -10,10 +10,10 @@ require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/match.php");
 
-$ladder_id = $_GET['LadderID'];
+$event_id = $_GET['EventID'];
 
 $ebattles_title = $pref['eb_activity_menuheading'];
-$text = displayRecentActivity($ladder_id);
+$text = displayRecentActivity($event_id);
 
 $ns->tablerender($ebattles_title,$text);
 
@@ -23,18 +23,18 @@ Functions
 /**
 * displayRecentActivity - Displays Recent Activity
 */
-function displayRecentActivity($ladder_id){
+function displayRecentActivity($event_id){
 	global $sql;
 	global $time;
 	global $pref;
 
-	$ladders = array();
-	$nbr_ladders = 0;
+	$events = array();
+	$nbr_events = 0;
 
-	if ($ladder_id != '')
+	if ($event_id != '')
 	{
-		$LadderID_match = " AND (".TBL_MATCHS.".Ladder = '$ladder_id')";
-		$LadderID_award = " AND (".TBL_LADDERS.".LadderID = '$ladder_id')";
+		$EventID_match = " AND (".TBL_MATCHS.".Event = '$event_id')";
+		$EventID_award = " AND (".TBL_EVENTS.".EventID = '$event_id')";
 	}
 
 	// Add recent games
@@ -45,7 +45,7 @@ function displayRecentActivity($ladder_id){
 	.TBL_SCORES
 	." WHERE (".TBL_MATCHS.".Status = 'active')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-	.$LadderID_match
+	.$EventID_match
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
 	." LIMIT 0, $rowsPerPage";
 
@@ -58,30 +58,30 @@ function displayRecentActivity($ladder_id){
 		{
 			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
 			$match = new Match($match_id);
-			$ladders[$nbr_ladders][0] = $match->getField('TimeReported');
-			$ladders[$nbr_ladders][1] = $match->displayMatchInfo();
-			$nbr_ladders ++;
+			$events[$nbr_events][0] = $match->getField('TimeReported');
+			$events[$nbr_events][1] = $match->displayMatchInfo();
+			$nbr_events ++;
 		}
 	}
 
-	// Add Awards ladders
+	// Add Awards events
 	$q = "SELECT ".TBL_AWARDS.".*, "
 	.TBL_PLAYERS.".*, "
 	.TBL_USERS.".*, "
-	.TBL_LADDERS.".*, "
+	.TBL_EVENTS.".*, "
 	.TBL_GAMES.".*"
 	." FROM ".TBL_AWARDS.", "
 	.TBL_PLAYERS.", "
 	.TBL_GAMERS.", "
 	.TBL_USERS.", "
-	.TBL_LADDERS.", "
+	.TBL_EVENTS.", "
 	.TBL_GAMES
 	." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
 	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 	." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)"
-	." AND (".TBL_PLAYERS.".Ladder = ".TBL_LADDERS.".LadderID)"
-	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
-	.$LadderID_award
+	." AND (".TBL_PLAYERS.".Event = ".TBL_EVENTS.".EventID)"
+	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+	.$EventID_award
 	." ORDER BY ".TBL_AWARDS.".timestamp DESC"
 	." LIMIT 0, $rowsPerPage";
 
@@ -98,14 +98,14 @@ function displayRecentActivity($ladder_id){
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
 			$gamer = new SC2Gamer($gamer_id);
 			$aUserNickName = $gamer->getField('Name');
-			$aLaddergame = mysql_result($result,$i , TBL_GAMES.".Name");
-			$aLaddergameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
+			$aEventgame = mysql_result($result,$i , TBL_GAMES.".Name");
+			$aEventgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
 			$aTime_local = $aTime + TIMEOFFSET;
 			$date = date("d M Y, h:i A",$aTime_local);
-			$aLadderID  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$aLadderName  = mysql_result($result,$i, TBL_LADDERS.".Name");
+			$aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
+			$aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
 
 			switch ($aType) {
 				case 'PlayerTookFirstPlace':
@@ -133,7 +133,7 @@ function displayRecentActivity($ladder_id){
 			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
 			$award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
 			$award_string .= ' '.$award;
-			$award_string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$aLadderID.'">'.$aLadderName.'</a> ('.$aLaddergame.')';
+			$award_string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$aEventID.'">'.$aEventName.'</a> ('.$aEventgame.')';
 
 			$award_string .= ' <div class="smalltext">';
 			if (($time-$aTime) < INT_MINUTE )
@@ -150,24 +150,24 @@ function displayRecentActivity($ladder_id){
 			}
 			$award_string .= '</div></td></tr>';
 
-			$ladders[$nbr_ladders][0] = $aTime;
-			$ladders[$nbr_ladders][1] = $award_string;
-			$nbr_ladders ++;
+			$events[$nbr_events][0] = $aTime;
+			$events[$nbr_events][1] = $award_string;
+			$nbr_events ++;
 		}
 	}
 
 	$q = "SELECT ".TBL_AWARDS.".*, "
 	.TBL_TEAMS.".*, "
-	.TBL_LADDERS.".*, "
+	.TBL_EVENTS.".*, "
 	.TBL_GAMES.".*"
 	." FROM ".TBL_AWARDS.", "
 	.TBL_TEAMS.", "
-	.TBL_LADDERS.", "
+	.TBL_EVENTS.", "
 	.TBL_GAMES
 	." WHERE (".TBL_AWARDS.".Team = ".TBL_TEAMS.".TeamID)"
-	." AND (".TBL_TEAMS.".Ladder = ".TBL_LADDERS.".LadderID)"
-	." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
-	.$LadderID_award
+	." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
+	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+	.$EventID_award
 	." ORDER BY ".TBL_AWARDS.".timestamp DESC"
 	." LIMIT 0, $rowsPerPage";
 
@@ -180,14 +180,14 @@ function displayRecentActivity($ladder_id){
 		for($i=0; $i < $numAwards; $i++)
 		{
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
-			$aLaddergame = mysql_result($result,$i , TBL_GAMES.".Name");
-			$aLaddergameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
+			$aEventgame = mysql_result($result,$i , TBL_GAMES.".Name");
+			$aEventgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
 			$aTime_local = $aTime + TIMEOFFSET;
 			$date = date("d M Y, h:i A",$aTime_local);
-			$aLadderID  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$aLadderName  = mysql_result($result,$i, TBL_LADDERS.".Name");
+			$aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
+			$aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
 
 			$aClanTeam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 			list($tclan, $tclantag, $tclanid) = getClanInfo($aClanTeam);
@@ -218,7 +218,7 @@ function displayRecentActivity($ladder_id){
 			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
 			$award_string .= '<td><a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$tclanid.'">'.$tclan.'</a>';
 			$award_string .= ' '.$award;
-			$award_string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$aLadderID.'">'.$aLadderName.'</a> ('.$aLaddergame.')';
+			$award_string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$aEventID.'">'.$aEventName.'</a> ('.$aEventgame.')';
 
 			$award_string .= ' <div class="smalltext">';
 			if (($time-$aTime) < INT_MINUTE )
@@ -235,17 +235,17 @@ function displayRecentActivity($ladder_id){
 			}
 			$award_string .= '</div></td></tr>';
 
-			$ladders[$nbr_ladders][0] = $aTime;
-			$ladders[$nbr_ladders][1] = $award_string;
-			$nbr_ladders ++;
+			$events[$nbr_events][0] = $aTime;
+			$events[$nbr_events][1] = $award_string;
+			$nbr_events ++;
 		}
 	}
 
 	$text .= '<table style="margin-left: 0px; margin-right: auto;">';
-	multi2dSortAsc($ladders, 0, SORT_DESC);
-	for ($index = 0; $index<min($nbr_ladders, $rowsPerPage); $index++)
+	multi2dSortAsc($events, 0, SORT_DESC);
+	for ($index = 0; $index<min($nbr_events, $rowsPerPage); $index++)
 	{
-		$text .= $ladders[$index][1];
+		$text .= $events[$index][1];
 	}
 	if($index==0)
 	$text .= "<tr><td>No activity</td></tr>";

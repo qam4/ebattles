@@ -1,7 +1,7 @@
 <?php
 // functions for clan.
 //___________________________________________________________________
-require_once(e_PLUGIN.'ebattles/include/ladder.php');
+require_once(e_PLUGIN.'ebattles/include/event.php');
 
 class Clan extends DatabaseTable
 {

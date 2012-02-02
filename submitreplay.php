@@ -9,7 +9,7 @@ require_once(HEADERF);
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 global $sql;
-$ladder_id = $_GET['LadderID'];
+$event_id = $_GET['EventID'];
 
 $MAX_FILE_SIZE = 4000000;
 
@@ -64,12 +64,12 @@ if (isset($_FILES['userfile'])) {
 
 				$error_str = '';
 
-				if ($ladder_id) {
-					$ladder = new Ladder($ladder_id);
+				if ($event_id) {
+					$event = new Event($event_id);
 					$match = new Match();
 
-					// Check if replay->TeamSize == ladder->MatchType
-					if ($b->getTeamSize() != $ladder->getField('MatchType'))
+					// Check if replay->TeamSize == event->MatchType
+					if ($b->getTeamSize() != $event->getField('MatchType'))
 					$error_str .= '<li>'.EB_SUBMITREPLAY_L3.'</li>';
 
 					// Check if winner is known
@@ -87,7 +87,7 @@ if (isset($_FILES['userfile'])) {
 						$error_str .= '<li>'.EB_SUBMITREPLAY_L7.'</li>';
 					}					
 					
-					$match->setField('Ladder', $ladder_id);
+					$match->setField('Event', $event_id);
 					$match->setField('ReportedBy', USERID);
 					$match->setField('TimeReported', $time);
 					$match->setField('Status', 'pending');
@@ -99,7 +99,7 @@ if (isset($_FILES['userfile'])) {
 					// Map
 					$q2 = "SELECT ".TBL_MAPS.".*"
 					." FROM ".TBL_MAPS
-					." WHERE (".TBL_MAPS.".Game = '".$ladder->getField('Game')."')"
+					." WHERE (".TBL_MAPS.".Game = '".$event->getField('Game')."')"
 					." AND (".TBL_MAPS.".Name = '".$tp->toDB($b->getMapName())."')";
 					$result2 = $sql->db_Query($q2);
 					$num_rows = mysql_numrows($result2);
@@ -110,13 +110,13 @@ if (isset($_FILES['userfile'])) {
 					else
 					{
 						$q2 = "INSERT INTO ".TBL_MAPS."(Game,Image,Name,Description)
-						VALUES ('".$ladder->getField('Game')."','','".$tp->toDB($b->getMapName())."','')";
+						VALUES ('".$event->getField('Game')."','','".$tp->toDB($b->getMapName())."','')";
 						$result2 = $sql->db_Query($q2);
 						$map = mysql_insert_id();
 					}
 					$match->setField('Maps', $map);
 
-					// Check if the replay players are ladder players
+					// Check if the replay players are event players
 					$i = 0;
 					$scores = array();
 					foreach($players as $player) {
@@ -134,7 +134,7 @@ if (isset($_FILES['userfile'])) {
 						$q = "SELECT DISTINCT ".TBL_PLAYERS.".*"
 						." FROM ".TBL_PLAYERS.", "
 						.TBL_GAMERS
-						." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+						." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 						." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 						." AND (".TBL_GAMERS.".UniqueGameID LIKE '".$player['name']."#___')";
 						$result = $sql->db_Query($q);
@@ -150,7 +150,7 @@ if (isset($_FILES['userfile'])) {
 
 							$q2 = "SELECT ".TBL_FACTIONS.".*"
 							." FROM ".TBL_FACTIONS
-							." WHERE (".TBL_FACTIONS.".Game = '".$ladder->getField('Game')."')"
+							." WHERE (".TBL_FACTIONS.".Game = '".$event->getField('Game')."')"
 							." AND (".TBL_FACTIONS.".Name = '".$player['race']."')";
 							$result2 = $sql->db_Query($q2);
 							$scores[$i]['Faction'] = mysql_result($result2, 0, TBL_FACTIONS.".FactionID");
@@ -247,7 +247,7 @@ if (isset($_FILES['userfile'])) {
 					// Create scores
 					for($i=0;$i < $nbr_players;$i++)
 					{
-						switch($ladder->getField('Type'))
+						switch($event->getField('Type'))
 						{
 							case "One Player Ladder":
 							case "Team Ladder":
@@ -265,7 +265,7 @@ if (isset($_FILES['userfile'])) {
 							'".$scores[$i]['APM']."'
 							)";
 							break;
-							case "ClanWar":
+							case "Clan Ladder":
 							break;
 							default:
 							$q = '';
@@ -277,22 +277,22 @@ if (isset($_FILES['userfile'])) {
 					$match->match_scores_update();
 
 					// Automatically Update Players stats only if Match Approval is Disabled
-					if ($ladder->getField('MatchesApproval') == eb_UC_NONE)
+					if ($event->getField('MatchesApproval') == eb_UC_NONE)
 					{
-						switch($ladder->getField('Type'))
+						switch($event->getField('Type'))
 						{
 							case "One Player Ladder":
 							case "Team Ladder":
 							$match->match_players_update();
 							break;
-							case "ClanWar":
+							case "Clan Ladder":
 							$match->match_teams_update();
 							break;
 							default:
 						}
 					}
 
-					$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
+					$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
 					$result = $sql->db_Query($q);
 					
 					// Save the replay

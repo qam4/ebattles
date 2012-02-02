@@ -4,7 +4,7 @@ jQuery(function() {
 	});
 
 	// our form submit and valiation
-	var aform = $("#form-tournament-settings").validate({
+	var aform = $("#form-event-settings").validate({
 
 		// make sure we show/hide both blocks
 		errorContainer: "#errorblock-div1",
@@ -13,11 +13,11 @@ jQuery(function() {
 
 		// rules/messages are for the validation
 		rules: {
-			tournamentname: "required",
+			eventname: "required",
 			startdate: "required"
 		},
 		messages: {
-			tournamentname: "Please enter the tournament name.",
+			eventname: "Please enter the event name.",
 			startdate: "Please enter the start date"
 		}
 	});
@@ -38,7 +38,7 @@ jQuery(function() {
 
 		// rules/messages are for the validation
 		rules: {
-			joinTournamentPassword: "required",
+			joinEventPassword: "required",
 			charactername: "required",
 			code: {
 				required: true,
@@ -46,7 +46,7 @@ jQuery(function() {
 			}
 		},
 		messages: {
-			joinTournamentPassword: "Please enter the tournament password.",
+			joinEventPassword: "Please enter the event password.",
 			charactername: "Please enter your BBNET character name.",
 			code: {
 				required: "Please enter your BBNET code.",
@@ -78,7 +78,7 @@ jQuery(function() {
 	});
 
 	// onclick action for our button
-	var abutton = $('#jointournament').click(function() {
+	var abutton = $('#joinevent').click(function() {
 		$('#modal-form-signup').dialog('open');
 	});
 

@@ -21,8 +21,8 @@ if (!getperms("P")) {
 if (isset($_POST['updatesettings'])) {
 	$pref['eb_update_delay'] = $_POST['eb_update_delay'];
 	$pref['eb_update_delay_enable'] = $_POST['eb_update_delay_enable'];
-	$pref['eb_ladders_create_class'] = $_POST['eb_ladders_create_class'];
-	$pref['eb_tournaments_create_class'] = $_POST['eb_tournaments_create_class'];
+	$pref['eb_events_create_class'] = $_POST['eb_events_create_class'];
+	$pref['eb_events_create_class'] = $_POST['eb_events_create_class'];
 	$pref['eb_teams_create_class'] = $_POST['eb_teams_create_class'];
 	$pref['eb_media_submit_class'] = $_POST['eb_media_submit_class'];
 	$pref['eb_mod_class'] = $_POST['eb_mod_class'];
@@ -46,8 +46,8 @@ if (isset($_POST['updatesettings'])) {
 }
 if (isset($_POST['updatelinks'])) {
 	$pref['eb_links_menuheading'] = $_POST['eb_links_menuheading'];
-	$pref['eb_links_showcreateladder'] = $_POST['eb_links_showcreateladder'];
-	$pref['eb_links_showcreatetournament'] = $_POST['eb_links_showcreatetournament'];
+	$pref['eb_links_showcreateevent'] = $_POST['eb_links_showcreateevent'];
+	$pref['eb_links_showcreateevent'] = $_POST['eb_links_showcreateevent'];
 	$pref['eb_links_showcreateteam'] = $_POST['eb_links_showcreateteam'];
 	$pref['eb_links_showmatchsplayed'] = $_POST['eb_links_showmatchsplayed'];
 	$pref['eb_links_showmatchstoapprove'] = $_POST['eb_links_showmatchstoapprove'];
@@ -71,7 +71,7 @@ if (e_QUERY)
 {
 	$qs = explode(".", e_QUERY);
 }
-if (isset($_POST['eb_ladders_insert_data']))
+if (isset($_POST['eb_events_insert_data']))
 {
 	@require_once e_PLUGIN."ebattles/db_admin/insert_data.php";
 	$message .= EB_ADMIN_L11;
@@ -103,7 +103,7 @@ if((isset($qs[0]) && $qs[0] == "eb_links"))
 	$text .= "<tr>
 	<td class='forumheader3' style='width:40%'>".EB_ADMIN_L46.":</td>
 	<td class='forumheader3' style='width:60%'>
-	<input class='tbox' type='checkbox' name='eb_links_showcreateladder' value='1' ".($pref['eb_links_showcreateladder'] == 1 ? "checked='checked'" :"")."/>
+	<input class='tbox' type='checkbox' name='eb_links_showcreateevent' value='1' ".($pref['eb_links_showcreateevent'] == 1 ? "checked='checked'" :"")."/>
 	</td>
 	</tr>
 	";
@@ -656,14 +656,14 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
 
 	$text .= "<tr>
 	<td class='forumheader3' style='width:40%'>".EB_ADMIN_L12.": </td>
-	<td class='forumheader3' style='width:60%'>". r_userclass("eb_ladders_create_class", $pref['eb_ladders_create_class'], 'off', "public, member, admin, classes")."
+	<td class='forumheader3' style='width:60%'>". r_userclass("eb_events_create_class", $pref['eb_events_create_class'], 'off', "public, member, admin, classes")."
 	</td>
 	</tr>
 	";
 
 	$text .= "<tr>
 	<td class='forumheader3' style='width:40%'>".EB_ADMIN_L54.": </td>
-	<td class='forumheader3' style='width:60%'>". r_userclass("eb_tournaments_create_class", $pref['eb_tournaments_create_class'], 'off', "public, member, admin, classes")."
+	<td class='forumheader3' style='width:60%'>". r_userclass("eb_events_create_class", $pref['eb_events_create_class'], 'off', "public, member, admin, classes")."
 	</td>
 	</tr>
 	";
@@ -834,7 +834,7 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
 	$text .= "<tr>
 	<td class='forumheader3' style='width:40%'>".EB_ADMIN_L7.": </td>
 	<td class='forumheader3' style='width:60%'>
-	<input class='button' type='submit' name='eb_ladders_insert_data' value='".EB_ADMIN_L8."'/>
+	<input class='button' type='submit' name='eb_events_insert_data' value='".EB_ADMIN_L8."'/>
 	</td>
 	</tr>
 	";

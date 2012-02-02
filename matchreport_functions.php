@@ -1,13 +1,13 @@
 <?php
 // function to output form and hold previously entered values.
-function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw, $allowScore, $userclass) {
+function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw, $allowScore, $userclass) {
 	global $sql;
 	global $text;
 	global $tp;
 	global $time;
 
-	/* Ladder Info */
-	$ladder = new Ladder($ladder_id);
+	/* Event Info */
+	$event = new Event($event_id);
 	
 	if (e_WYSIWYG)
 	{
@@ -67,7 +67,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 		$comment = '';
 	}
 
-	for ($matchMap = 0; $matchMap<min($numMaps, $ladder->getField('MaxMapsPerMatch')); $matchMap++)
+	for ($matchMap = 0; $matchMap<min($numMaps, $event->getField('MaxMapsPerMatch')); $matchMap++)
 	{
 		if (!isset($_POST['map'.$matchMap])) $_POST['map'.$matchMap] = 0;
 	}
@@ -126,7 +126,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 	/////////////////
 	/// MAIN FORM ///
 	/////////////////
-	$text .= '<form id="matchreport" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?LadderID='.$ladder_id.$match_str.'" method="post">';
+	$text .= '<form id="matchreport" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?EventID='.$event_id.$match_str.'" method="post">';
 	$text .= '<div>';
 	// TABLE - Player/Teams Add/Remove
 	//----------------------------------
@@ -192,7 +192,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 	// List of all Factions
 	$q_Factions = "SELECT ".TBL_FACTIONS.".*"
 	." FROM ".TBL_FACTIONS
-	." WHERE (".TBL_FACTIONS.".Game = '".$ladder->getField('Game')."')";
+	." WHERE (".TBL_FACTIONS.".Game = '".$event->getField('Game')."')";
 	$result_Factions = $sql->db_Query($q_Factions);
 	$numFactions = mysql_numrows($result_Factions);
 
@@ -313,7 +313,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 		// List of all Maps
 		$q_Maps = "SELECT ".TBL_MAPS.".*"
 		." FROM ".TBL_MAPS
-		." WHERE (".TBL_MAPS.".Game = '".$ladder->getField('Game')."')";
+		." WHERE (".TBL_MAPS.".Game = '".$event->getField('Game')."')";
 		$result_Maps = $sql->db_Query($q_Maps);
 		$numMaps = mysql_numrows($result_Maps);
 
@@ -322,7 +322,7 @@ function user_form($players_id, $players_name, $ladder_id, $match_id, $allowDraw
 			$text .= EB_MATCHR_L42;
 			$text .= '<table id="matchresult_selectMap"><tbody>';
 
-			for ($matchMap = 0; $matchMap<min($numMaps, $ladder->getField('MaxMapsPerMatch')); $matchMap++)
+			for ($matchMap = 0; $matchMap<min($numMaps, $event->getField('MaxMapsPerMatch')); $matchMap++)
 			{
 				$text .= '<tr>';
 

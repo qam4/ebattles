@@ -4,7 +4,7 @@ jQuery(function() {
 	});
 
 	// our form submit and valiation
-	var aform = $("#form-ladder-settings").validate({
+	var aform = $("#form-event-settings").validate({
 
 		// make sure we show/hide both blocks
 		errorContainer: "#errorblock-div1",
@@ -13,10 +13,10 @@ jQuery(function() {
 
 		// rules/messages are for the validation
 		rules: {
-			laddername: "required"
+			eventname: "required"
 		},
 		messages: {
-			laddername: "Please enter the ladder name."
+			eventname: "Please enter the event name."
 		}
 	});
 
@@ -36,7 +36,7 @@ jQuery(function() {
 
 		// rules/messages are for the validation
 		rules: {
-			joinLadderPassword: "required",
+			joinEventPassword: "required",
 			charactername: "required",
 			code: {
 				required: true,
@@ -44,7 +44,7 @@ jQuery(function() {
 			}
 		},
 		messages: {
-			joinLadderPassword: "Please enter the ladder password.",
+			joinEventPassword: "Please enter the event password.",
 			charactername: "Please enter your BBNET character name.",
 			code: {
 				required: "Please enter your BBNET code.",
@@ -76,7 +76,7 @@ jQuery(function() {
 	});
 
 	// onclick action for our button
-	var abutton = $('#joinladder').click(function() {
+	var abutton = $('#joinevent').click(function() {
 		$('#modal-form-signup').dialog('open');
 	});
 
