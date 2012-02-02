@@ -35,7 +35,7 @@ $e_comment['db_id']    = "MatchID"; // This is the name of the field in your plu
 $e_comment['qry'] = "
 SELECT m.*, e.*
 FROM #".TBL_MATCHS_SHORT." as m
-LEFT JOIN #".TBL_LADDERS_SHORT." as e ON m.Ladder = e.LadderID
+LEFT JOIN #".TBL_EVENTS_SHORT." as e ON m.Event = e.EventID
 WHERE m.MatchID='{NID}'";
 
 ?>

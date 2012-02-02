@@ -1,12 +1,12 @@
 <?php
 /**
-* ladderspast.php
+* eventspast.php
 *
 */
 
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
-require_once(e_PLUGIN."ebattles/include/ladder.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 
 /*******************************************************************
@@ -27,20 +27,20 @@ document.getElementById('submitform').submit();
 ";
 
 /**
-* Display Past Ladders
+* Display Past Events
 */
 $text .= '<div id="tabs">';
 $text .= '<ul>';
-$text .= '<li><a href="#tabs-1">'.EB_LADDERP_L2.'</a></li>';
+$text .= '<li><a href="#tabs-1">'.EB_EVENTP_L2.'</a></li>';
 $text .= '</ul>';
 $text .= '<div id="tabs-1">';
-displayPastLadders();
+displayPastEvents();
 $text .= '
 </div>
 </div>
 ';
 
-$ns->tablerender(EB_LADDERP_L1, $text);
+$ns->tablerender(EB_EVENTP_L1, $text);
 require_once(FOOTERF);
 exit;
 
@@ -48,10 +48,10 @@ exit;
 Functions
 ***************************************************************************************/
 /**
-* displayLadders - Displays the ladders database table in
+* displayEvents - Displays the events database table in
 * a nicely formatted html table.
 */
-function displayPastLadders(){
+function displayPastEvents(){
 	global $sql;
 	global $text;
 	global $time;
@@ -59,11 +59,11 @@ function displayPastLadders(){
 	$pages = new Paginator;
 
 	$array = array(
-	'latest' => array(EB_LADDERS_L4,'LadderID'),
-	'name'   => array(EB_LADDERS_L5, TBL_LADDERS.'.Name'),
-	'game'   => array(EB_LADDERS_L6, TBL_GAMES.'.Name'),
-	'type'   => array(EB_LADDERS_L7, TBL_LADDERS.'.Type'),
-	'start'  => array(EB_LADDERS_L8, TBL_LADDERS.'.Start_timestamp')
+	'latest' => array(EB_EVENTS_L4,'EventID'),
+	'name'   => array(EB_EVENTS_L5, TBL_EVENTS.'.Name'),
+	'game'   => array(EB_EVENTS_L6, TBL_GAMES.'.Name'),
+	'type'   => array(EB_EVENTS_L7, TBL_EVENTS.'.Type'),
+	'start'  => array(EB_EVENTS_L8, TBL_EVENTS.'.Start_timestamp')
 	);
 	if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
 	$gameid = $_GET['gameid'];
@@ -80,14 +80,14 @@ function displayPastLadders(){
 		$sort = ($_GET["sort"]=="ASC") ? "DESC" : "ASC";
 	}
 
-	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_LADDERS.".Game = '$gameid')";
+	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_EVENTS.".Game = '$gameid')";
 	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_GAMES.".MatchTypes LIKE '%$matchtype%')";
 
 	// Drop down list to select Games to display
 	$q_Games = "SELECT DISTINCT ".TBL_GAMES.".*"
 	." FROM ".TBL_GAMES.", "
-	. TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+	. TBL_EVENTS
+	." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 	.$matchtype_string
 	." ORDER BY Name";
 	$result_Games = $sql->db_Query($q_Games);
@@ -96,8 +96,8 @@ function displayPastLadders(){
 	// Drop down list to select Match type to display
 	$q_mt = "SELECT ".TBL_GAMES.".*"
 	." FROM ".TBL_GAMES.", "
-	. TBL_LADDERS
-	." WHERE (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+	. TBL_EVENTS
+	." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 	.$game_string;
 	$result_mt = $sql->db_Query($q_mt);
 	$num_mt = mysql_numrows($result_mt);
@@ -112,9 +112,9 @@ function displayPastLadders(){
 	$text .= '<table>';
 	$text .= '<tr>';
 	// Games drop down
-	$text .= '<td>'.EB_LADDERS_L9.'<br />';
+	$text .= '<td>'.EB_EVENTS_L9.'<br />';
 	$text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
-	$text .= '<option value="All" '.(($gameid == "All") ? 'selected="selected"' : '').'>'.EB_LADDERS_L10.'</option>';
+	$text .= '<option value="All" '.(($gameid == "All") ? 'selected="selected"' : '').'>'.EB_EVENTS_L10.'</option>';
 	for($i=0; $i<$num_Games; $i++)
 	{
 		$gname  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
@@ -124,9 +124,9 @@ function displayPastLadders(){
 	$text .= '</select>';
 	$text .= '</td>';
 	// Match Types drop down
-	$text .= '<td>'.EB_LADDERS_L32.'<br />';
+	$text .= '<td>'.EB_EVENTS_L32.'<br />';
 	$text .= '<select class="tbox" name="matchtype" onchange="this.form.submit()">';
-	$text .= '<option value="All" '.(($matchtype == "All") ? 'selected="selected"' : '').'>'.EB_LADDERS_L10.'</option>';
+	$text .= '<option value="All" '.(($matchtype == "All") ? 'selected="selected"' : '').'>'.EB_EVENTS_L10.'</option>';
 
 	$gmatchtypes  = explode(",", $gmatchtypes);
 	$gmatchtypes = array_unique($gmatchtypes);
@@ -143,13 +143,13 @@ function displayPastLadders(){
 	$text .= '</table>';
 	$text .= '<br />';
 
-	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_LADDERS.".Game = '$gameid')";
-	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_LADDERS.".MatchType = '$matchtype')";
+	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_EVENTS.".Game = '$gameid')";
+	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_EVENTS.".MatchType = '$matchtype')";
 
 	$q = "SELECT count(*) "
-	." FROM ".TBL_LADDERS
-	." WHERE (   (".TBL_LADDERS.".End_timestamp != '')"
-	."       AND (".TBL_LADDERS.".End_timestamp < $time)) "
+	." FROM ".TBL_EVENTS
+	." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
+	."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
 	.$game_string
 	.$matchtype_string;
 	$result = $sql->db_Query($q);
@@ -159,26 +159,26 @@ function displayPastLadders(){
 	$pages->paginate();
 
 	$orderby_array = $array["$orderby"];
-	$q = "SELECT ".TBL_LADDERS.".*, "
+	$q = "SELECT ".TBL_EVENTS.".*, "
 	.TBL_GAMES.".*"
-	." FROM ".TBL_LADDERS.", "
+	." FROM ".TBL_EVENTS.", "
 	.TBL_GAMES
-	." WHERE (   (".TBL_LADDERS.".End_timestamp != '')"
-	."       AND (".TBL_LADDERS.".End_timestamp < $time)) "
+	." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
+	."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
 	.$game_string
 	.$matchtype_string
-	." ORDER BY $orderby_array[1] $sort, LadderID DESC"
+	." ORDER BY $orderby_array[1] $sort, EventID DESC"
 	." $pages->limit";
 	$result = $sql->db_Query($q);
 	/* Error occurred, return given name by default */
 	$num_rows = mysql_numrows($result);
 	if(!$result || ($num_rows < 0)){
-		$text .= EB_LADDERS_L11;
+		$text .= EB_EVENTS_L11;
 		return;
 	}
 	if($num_rows == 0)
 	{
-		$text .= EB_LADDERS_L12.'</div>';
+		$text .= EB_EVENTS_L12.'</div>';
 		$text .= '</form><br/>';
 	}
 	else
@@ -221,32 +221,32 @@ function displayPastLadders(){
 		/* Display table contents */
 		$text .= '<table class="eb_table" style="width:95%"><tbody>';
 		$text .= '<tr>
-		<th class="eb_th2">'.EB_LADDERS_L13.'</th>
-		<th colspan="2" class="eb_th2">'.EB_LADDERS_L14.'</th>
-		<th class="eb_th2">'.EB_LADDERS_L15.'</th>
-		<th class="eb_th2">'.EB_LADDERS_L16.'</th>
-		<th class="eb_th2">'.EB_LADDERS_L17.'</th>
-		<th class="eb_th2">'.EB_LADDERS_L18.'</th>
-		<th class="eb_th2">'.EB_LADDERS_L19.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L13.'</th>
+		<th colspan="2" class="eb_th2">'.EB_EVENTS_L14.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L15.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L16.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L17.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L18.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L19.'</th>
 		</tr>';
 		for($i=0; $i<$num_rows; $i++){
 			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
-			$ladder_id  = mysql_result($result,$i, TBL_LADDERS.".LadderID");
-			$ladder = new Ladder($ladder_id);
+			$event_id  = mysql_result($result,$i, TBL_EVENTS.".EventID");
+			$event = new Event($event_id);
 
-			if($ladder->getField('Start_timestamp')!=0)
+			if($event->getField('Start_timestamp')!=0)
 			{
-				$start_timestamp_local = $ladder->getField('Start_timestamp') + TIMEOFFSET;
+				$start_timestamp_local = $event->getField('Start_timestamp') + TIMEOFFSET;
 				$date_start = date("d M Y", $start_timestamp_local);
 			}
 			else
 			{
 				$date_start = "-";
 			}
-			if($ladder->getField('End_timestamp')!=0)
+			if($event->getField('End_timestamp')!=0)
 			{
-				$end_timestamp_local = $ladder->getField('End_timestamp') + TIMEOFFSET;
+				$end_timestamp_local = $event->getField('End_timestamp') + TIMEOFFSET;
 				$date_end = date("d M Y", $end_timestamp_local);
 			}
 			else
@@ -257,7 +257,7 @@ function displayPastLadders(){
 			/* Nbr players */
 			$q_2 = "SELECT COUNT(*) as NbrPlayers"
 			." FROM ".TBL_PLAYERS
-			." WHERE (Ladder = '$ladder_id')";
+			." WHERE (Event = '$event_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrplayers = $row['NbrPlayers'];
@@ -265,7 +265,7 @@ function displayPastLadders(){
 			/* Nbr Teams */
 			$q_2 = "SELECT COUNT(*) as NbrTeams"
 			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Ladder = '$eid')";
+			." WHERE (".TBL_TEAMS.".Event = '$eid')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrTeams = $row['NbrTeams'];
@@ -274,14 +274,14 @@ function displayPastLadders(){
 			$q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
 			." FROM ".TBL_MATCHS.", "
 			.TBL_SCORES
-			." WHERE (Ladder = '$ladder_id')"
+			." WHERE (Event = '$event_id')"
 			." AND (".TBL_MATCHS.".Status = 'active')"
 			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrmatches = $row['NbrMatches'];
 
-			switch($ladder->getField('Type'))
+			switch($event->getField('Type'))
 			{
 				case "One Player Ladder":
 				$nbrTeamPlayers = $nbrplayers;
@@ -289,25 +289,25 @@ function displayPastLadders(){
 				case "Team Ladder":
 				$nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
 				break;
-				case "ClanWar":
+				case "Clan Ladder":
 				$nbrTeamPlayers = $nbrTeams;
 				break;
 				default:
 			}
 
 			if(
-			($ladder->getField('End_timestamp')!=0)
-			||($ladder->getField('End_timestamp')<=$time)
+			($event->getField('End_timestamp')!=0)
+			||($event->getField('End_timestamp')<=$time)
 			)
 			{
 				$text .= '<tr>
-				<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a></td>
+				<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a></td>
 				<td class="eb_td"><img '.getGameIconResize($gicon).'/></td>
 				<td class="eb_td">'.$gname.'</td>
-				<td class="eb_td">'.ladderTypeToString($ladder->getField('Type')).'</td>
+				<td class="eb_td">'.eventTypeToString($event->getField('Type')).'</td>
 				<td class="eb_td">'.$date_start.'</td>
 				<td class="eb_td">'.$date_end.'</td>
-				<td class="eb_td">'.$nbrplayers.'</td>
+				<td class="eb_td">'.$nbrTeamPlayers.'</td>
 				<td class="eb_td">'.$nbrmatches.'</td>
 				</tr>';
 			}
@@ -315,7 +315,7 @@ function displayPastLadders(){
 		$text .= '</tbody></table><br />';
 
 		$text .= '<p>';
-		$text .= EB_LADDERP_L3.' [<a href="'.e_PLUGIN.'ebattles/ladders.php">'.EB_LADDERP_L4.'</a>]';
+		$text .= EB_EVENTP_L3.' [<a href="'.e_PLUGIN.'ebattles/events.php">'.EB_EVENTP_L4.'</a>]';
 		$text .= '</p>';
 	}
 }

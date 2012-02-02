@@ -243,7 +243,7 @@ function deleteGame($game_id)
 {
     global $sql;
 
-    //fm: Should check if the game is used in a team or ladder?
+    //fm: Should check if the game is used in a team or event?
     // Do not delete game 1 (unknown game)
     if ($game_id != 1)
     {

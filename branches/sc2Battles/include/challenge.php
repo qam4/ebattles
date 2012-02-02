@@ -6,7 +6,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN.'ebattles/include/main.php');
 require_once(e_PLUGIN.'ebattles/include/match.php');
-require_once(e_PLUGIN."ebattles/include/ladder.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 
 class Challenge extends DatabaseTable
@@ -27,16 +27,16 @@ class Challenge extends DatabaseTable
 		// Get info about the challenge
 		$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*, "
 		.TBL_USERS.".*, "
-		.TBL_LADDERS.".*, "
+		.TBL_EVENTS.".*, "
 		.TBL_GAMES.".*"
 		." FROM ".TBL_CHALLENGES.", "
 		.TBL_USERS.", "
-		.TBL_LADDERS.", "
+		.TBL_EVENTS.", "
 		.TBL_GAMES
 		." WHERE (".TBL_CHALLENGES.".ChallengeID = '".$this->fields['ChallengeID']."')"
 		." AND (".TBL_USERS.".user_id = ".TBL_CHALLENGES.".ReportedBy)"
-		." AND (".TBL_CHALLENGES.".Ladder = ".TBL_LADDERS.".LadderID)"
-		." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
+		." AND (".TBL_CHALLENGES.".Event = ".TBL_EVENTS.".EventID)"
+		." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
 
 		$result = $sql->db_Query($q);
 		$numChallenges = mysql_numrows($result);
@@ -44,14 +44,14 @@ class Challenge extends DatabaseTable
 		{
 			$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 			$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
-			$cLaddergame = mysql_result($result, 0, TBL_GAMES.".Name");
-			$cLaddergameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
+			$cEventgame = mysql_result($result, 0, TBL_GAMES.".Name");
+			$cEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
 			$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 			$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
 			$cTime_local = $cTime + TIMEOFFSET;
 			$date = date("d M Y, h:i A",$cTime_local);
-			$ladder_id  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
-			$ladder = new Ladder($ladder_id);
+			$event_id  = mysql_result($result, 0, TBL_EVENTS.".EventID");
+			$event = new Event($event_id);
 
 			$cChallengerpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerPlayer");
 			$cChallengedpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedPlayer");
@@ -60,10 +60,10 @@ class Challenge extends DatabaseTable
 
 			$string .= '<tr>';
 			// Game icon
-			if (($type & eb_MATCH_NOLADDERINFO) == 0)
+			if (($type & eb_MATCH_NOEVENTINFO) == 0)
 			{
-				$string .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder->getField('LadderID').'" title="'.$cLaddergame.'">';
-				$string .= '<img '.getActivityGameIconResize($cLaddergameicon).'/>';
+				$string .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event->getField('EventID').'" title="'.$cEventgame.'">';
+				$string .= '<img '.getActivityGameIconResize($cEventgameicon).'/>';
 				$string .= '</a></td>';
 			}
 
@@ -77,14 +77,14 @@ class Challenge extends DatabaseTable
 			.TBL_GAMERS.", "
 			.TBL_USERS.", "
 			.TBL_TEAMS
-			." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 			."   AND (".TBL_TEAMS.".TeamID = ".TBL_PLAYERS.".Team)"
 			."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 			."   AND (".TBL_GAMERS.".User = '".USERID."')";
 			$result = $sql->db_Query($q);
 			$uteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
 
-			switch($ladder->getField('Type'))
+			switch($event->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -94,7 +94,7 @@ class Challenge extends DatabaseTable
 				." FROM ".TBL_PLAYERS.", "
 				.TBL_GAMERS.", "
 				.TBL_USERS
-				." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 				."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 				."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
@@ -116,7 +116,7 @@ class Challenge extends DatabaseTable
 				." FROM ".TBL_PLAYERS.", "
 				.TBL_GAMERS.", "
 				.TBL_USERS
-				." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 				."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 				."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
@@ -130,7 +130,7 @@ class Challenge extends DatabaseTable
 				$isUserChallenged = (USERID == $challengedpuid) ? TRUE : FALSE;
 				$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
 				break;
-				case "ClanWar":
+				case "Clan Ladder":
 				// Challenger Info
 				$q = "SELECT ".TBL_TEAMS.".*"
 				."   AND (".TBL_TEAMS.".TeamID = '$cChallengertID')";
@@ -156,10 +156,10 @@ class Challenge extends DatabaseTable
 				default:
 			}
 
-			// Ladder
-			if (($type & eb_MATCH_NOLADDERINFO) == 0)
+			// Event
+			if (($type & eb_MATCH_NOEVENTINFO) == 0)
 			{
-				$string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.$ladder->getField('Name').'</a>';
+				$string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a>';
 			}
 
 			// Submitted by
@@ -187,7 +187,7 @@ class Challenge extends DatabaseTable
 
 			$q_Mods = "SELECT ".TBL_MODS.".*"
 			." FROM ".TBL_MODS
-			." WHERE (".TBL_MODS.".Ladder = '$ladder_id')"
+			." WHERE (".TBL_MODS.".Event = '$event_id')"
 			."   AND (".TBL_MODS.".User = ".USERID.")";
 			$result_Mods = $sql->db_Query($q_Mods);
 			$numMods = mysql_numrows($result_Mods);
@@ -195,7 +195,7 @@ class Challenge extends DatabaseTable
 			if (check_class($pref['eb_mod_class']))  $can_delete = 1;
 			if (USERID==$eowner)
 			{
-				$userclass |= eb_UC_LADDER_OWNER;
+				$userclass |= eb_UC_EVENT_OWNER;
 				$can_delete = 1;
 			}
 			if ($numMods>0)
@@ -214,7 +214,7 @@ class Challenge extends DatabaseTable
 			if($can_delete != 0)
 			{
 				$string .= '<td>';
-				$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?LadderID='.$ladder_id.'&amp;challengeid='.$this->fields['ChallengeID'].'" method="post">';
+				$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?EventID='.$event_id.'&amp;challengeid='.$this->fields['ChallengeID'].'" method="post">';
 				$string .= '<div>';
 				$string .= ebImageTextButton('challenge_withdraw', 'delete.png', '', 'simple', EB_CHALLENGE_L16, EB_CHALLENGE_L15);
 				$string .= '</div>';
@@ -225,7 +225,7 @@ class Challenge extends DatabaseTable
 			if ($isUserChallenged == TRUE)
 			{
 				$string .= '<td>';
-				$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?LadderID='.$ladder_id.'&amp;challengeid='.$this->fields['ChallengeID'].'" method="post">';
+				$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?EventID='.$event_id.'&amp;challengeid='.$this->fields['ChallengeID'].'" method="post">';
 				$string .= '<div>';
 				$string .= ebImageTextButton('challenge_confirm', 'page_white_edit.png', '', 'simple', '', EB_CHALLENGE_L17);
 				$string .= '</div>';
@@ -260,29 +260,29 @@ class Challenge extends DatabaseTable
 		// Get info about the challenge
 		$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*, "
 		.TBL_USERS.".*, "
-		.TBL_LADDERS.".*, "
+		.TBL_EVENTS.".*, "
 		.TBL_GAMES.".*"
 		." FROM ".TBL_CHALLENGES.", "
 		.TBL_USERS.", "
-		.TBL_LADDERS.", "
+		.TBL_EVENTS.", "
 		.TBL_GAMES
 		." WHERE (".TBL_CHALLENGES.".ChallengeID = '".$this->fields['ChallengeID']."')"
 		." AND (".TBL_USERS.".user_id = ".TBL_CHALLENGES.".ReportedBy)"
-		." AND (".TBL_CHALLENGES.".Ladder = ".TBL_LADDERS.".LadderID)"
-		." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
+		." AND (".TBL_CHALLENGES.".Event = ".TBL_EVENTS.".EventID)"
+		." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
 
 		$result = $sql->db_Query($q);
 		$numChallenges = mysql_numrows($result);
 
 		if ($numChallenges > 0)
 		{
-			$ladder_id  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
-			$ladder = new Ladder($ladder_id);
+			$event_id  = mysql_result($result, 0, TBL_EVENTS.".EventID");
+			$event = new Event($event_id);
 
 			$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 			$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
-			$cLaddergame = mysql_result($result, 0, TBL_GAMES.".Name");
-			$cLaddergameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
+			$cEventgame = mysql_result($result, 0, TBL_GAMES.".Name");
+			$cEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
 			$cComments  = mysql_result($result,0, TBL_CHALLENGES.".Comments");
 			$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 			$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
@@ -295,12 +295,12 @@ class Challenge extends DatabaseTable
 			$cChallengertID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerTeam");
 			$cChallengedtID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengedTeam");
 
-			$output .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?LadderID='.$ladder_id.'&amp;challengeid='.$this->fields['ChallengeID'].'" method="post">';
+			$output .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?EventID='.$event_id.'&amp;challengeid='.$this->fields['ChallengeID'].'" method="post">';
 
 			$output .= '<b>'.EB_CHALLENGE_L18.'</b><br />';
 			$output .= '<br />';
 
-			switch($ladder->getField('Type'))
+			switch($event->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -310,7 +310,7 @@ class Challenge extends DatabaseTable
 				." FROM ".TBL_PLAYERS.", "
 				.TBL_GAMERS.", "
 				.TBL_USERS
-				." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 				."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 				."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengerpID')";
@@ -332,7 +332,7 @@ class Challenge extends DatabaseTable
 				." FROM ".TBL_PLAYERS.", "
 				.TBL_GAMERS.", "
 				.TBL_USERS
-				." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 				."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 				."   AND (".TBL_PLAYERS.".PlayerID = '$cChallengedpID')";
@@ -346,7 +346,7 @@ class Challenge extends DatabaseTable
 				$isUserChallenged = (USERID == $challengedpuid) ? TRUE : FALSE;
 				$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
 				break;
-				case "ClanWar":
+				case "Clan Ladder":
 				// Challenger Info
 				$q = "SELECT ".TBL_TEAMS.".*"
 				."   AND (".TBL_TEAMS.".TeamID = '$cChallengertID')";
@@ -430,29 +430,29 @@ class Challenge extends DatabaseTable
 		// Get info about the challenge
 		$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*, "
 		.TBL_USERS.".*, "
-		.TBL_LADDERS.".*, "
+		.TBL_EVENTS.".*, "
 		.TBL_GAMES.".*"
 		." FROM ".TBL_CHALLENGES.", "
 		.TBL_USERS.", "
-		.TBL_LADDERS.", "
+		.TBL_EVENTS.", "
 		.TBL_GAMES
 		." WHERE (".TBL_CHALLENGES.".ChallengeID = '".$this->fields['ChallengeID']."')"
 		." AND (".TBL_USERS.".user_id = ".TBL_CHALLENGES.".ReportedBy)"
-		." AND (".TBL_CHALLENGES.".Ladder = ".TBL_LADDERS.".LadderID)"
-		." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
+		." AND (".TBL_CHALLENGES.".Event = ".TBL_EVENTS.".EventID)"
+		." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
 
 		$result = $sql->db_Query($q);
 		$numChallenges = mysql_numrows($result);
 
 		if ($numChallenges > 0)
 		{
-			$ladder_id  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
-			$ladder = new Ladder($ladder_id);
+			$event_id  = mysql_result($result, 0, TBL_EVENTS.".EventID");
+			$event = new Event($event_id);
 
 			$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 			$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
-			$cLaddergame = mysql_result($result, 0, TBL_GAMES.".Name");
-			$cLaddergameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
+			$cEventgame = mysql_result($result, 0, TBL_GAMES.".Name");
+			$cEventgameicon = mysql_result($result, 0, TBL_GAMES.".Icon");
 			$cStatus  = mysql_result($result,0, TBL_CHALLENGES.".Status");
 			$cTime  = mysql_result($result, 0, TBL_CHALLENGES.".TimeReported");
 			$cChallengerpID  = mysql_result($result, 0, TBL_CHALLENGES.".ChallengerPlayer");
@@ -463,8 +463,8 @@ class Challenge extends DatabaseTable
 			// Create Match ------------------------------------------
 			$comments = '';
 			$q =
-			"INSERT INTO ".TBL_MATCHS."(Ladder,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
-			VALUES ($ladder_id,".USERID.", $time, '$comments', 'scheduled', $challenge_time)";
+			"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
+			VALUES ($event_id,".USERID.", $time, '$comments', 'scheduled', $challenge_time)";
 			$result = $sql->db_Query($q);
 
 			$last_id = mysql_insert_id();
@@ -488,7 +488,7 @@ class Challenge extends DatabaseTable
 			$fromid = 0;
 			$subject = SITENAME." ".EB_MATCHR_L52;
 
-			switch($ladder->getField('Type'))
+			switch($event->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -508,7 +508,7 @@ class Challenge extends DatabaseTable
 				//echo "numPlayers: $numPlayers<br>";
 
 				break;
-				case "ClanWar":
+				case "Clan Ladder":
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
@@ -536,7 +536,7 @@ class Challenge extends DatabaseTable
 				{
 					$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
 					$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
-					$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$ladder->getField('Name').EB_MATCHR_L56;
+					$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$event->getField('Name').EB_MATCHR_L56;
 					if (check_class($pref['eb_pm_notifications_class']))
 					{
 						$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
@@ -563,16 +563,16 @@ class Challenge extends DatabaseTable
 		// Get info about the challenge
 		$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*, "
 		.TBL_USERS.".*, "
-		.TBL_LADDERS.".*, "
+		.TBL_EVENTS.".*, "
 		.TBL_GAMES.".*"
 		." FROM ".TBL_CHALLENGES.", "
 		.TBL_USERS.", "
-		.TBL_LADDERS.", "
+		.TBL_EVENTS.", "
 		.TBL_GAMES
 		." WHERE (".TBL_CHALLENGES.".ChallengeID = '".$this->fields['ChallengeID']."')"
 		." AND (".TBL_USERS.".user_id = ".TBL_CHALLENGES.".ReportedBy)"
-		." AND (".TBL_CHALLENGES.".Ladder = ".TBL_LADDERS.".LadderID)"
-		." AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
+		." AND (".TBL_CHALLENGES.".Event = ".TBL_EVENTS.".EventID)"
+		." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
 
 		$result = $sql->db_Query($q);
 		$numChallenges = mysql_numrows($result);
@@ -582,11 +582,11 @@ class Challenge extends DatabaseTable
 			$cReportedBy  = mysql_result($result, 0, TBL_USERS.".user_id");
 			$cReportedByNickName  = mysql_result($result, 0, TBL_USERS.".user_name");
 			$cReportedByEmail  = mysql_result($result, 0, TBL_USERS.".user_email");
-			$ladder_id  = mysql_result($result, 0, TBL_LADDERS.".LadderID");
-			$ladder = new Ladder($ladder_id);
+			$event_id  = mysql_result($result, 0, TBL_EVENTS.".EventID");
+			$event = new Event($event_id);
 
 			$subject = SITENAME." ".EB_CHALLENGE_L29;
-			$message = EB_CHALLENGE_L30.$cReportedByNickName.EB_CHALLENGE_L31.USERNAME.EB_CHALLENGE_L32.$ladder->getField('Name').EB_CHALLENGE_L33;
+			$message = EB_CHALLENGE_L30.$cReportedByNickName.EB_CHALLENGE_L31.USERNAME.EB_CHALLENGE_L32.$event->getField('Name').EB_CHALLENGE_L33;
 			$fromid = 0;
 			$sendto = $cReportedBy;
 			$sendtoemail = $cReportedByEmail;

@@ -13,24 +13,24 @@ require_once(HEADERF);
 
 $text = '';
 
-/* Ladder Name */
-$ladder_id = $_GET['LadderID'];
+/* Event Name */
+$event_id = $_GET['EventID'];
 
-if ( (!isset($_POST['quicklossreport'])) || (!isset($_GET['LadderID'])))
+if ( (!isset($_POST['quicklossreport'])) || (!isset($_GET['EventID'])))
 {
     $text .= '<br />'.EB_MATCHQL_L2.'<br />';
-    $text .= '<br />'.EB_MATCHQL_L3.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_MATCHQL_L4.'</a>]<br />';
+    $text .= '<br />'.EB_MATCHQL_L3.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.EB_MATCHQL_L4.'</a>]<br />';
 }
 else
 {
     $text .= EB_MATCHQL_L5;
 
-   	$ladder = new Ladder($ladder_id);
+   	$event = new Event($event_id);
 
     $q = "SELECT ".TBL_PLAYERS.".*"
     ." FROM ".TBL_PLAYERS.", "
 	.TBL_GAMERS
-    ." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
     ."   AND (".TBL_GAMERS.".User = '".USERID."')";
     $result = $sql->db_Query($q);
@@ -41,7 +41,7 @@ else
     ." FROM ".TBL_PLAYERS.", "
 	.TBL_GAMERS.", "
     .TBL_USERS
-    ." WHERE (".TBL_PLAYERS.".Ladder = '$ladder_id')"
+    ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
     ."   AND (".TBL_PLAYERS.".Banned != 1)"
 	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
     ."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
@@ -76,7 +76,7 @@ else
         if(($puid != USERID)&&(($uteam == 0)||($uteam != $pteam)))
         {
             if ($prank==0)
-            $prank_txt = EB_LADDER_L54;
+            $prank_txt = EB_EVENT_L54;
             else
             $prank_txt = "#$prank";
             $text .= '<option value="'.$pid.'">'.$pclantag.$pname.' ('.$prank_txt.')</option>';
@@ -93,7 +93,7 @@ else
 
     $reported_by = USERID;
     $text .= '<div>';
-    $text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
+    $text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
     $text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 
     $text .= '
@@ -107,7 +107,7 @@ else
     ';
 }
 
-$ns->tablerender($ladder->getField('Name')." ($egame - ".ladderTypeToString($ladder->getField('Type')).") - ".EB_MATCHQL_L1, $text);
+$ns->tablerender($event->getField('Name')." ($egame - ".eventTypeToString($event->getField('Type')).") - ".EB_MATCHQL_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

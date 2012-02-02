@@ -1,13 +1,13 @@
 <?php
 /**
-* tournamentinfo.php
+* eventinfo.php
 *
 */
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 require_once(e_PLUGIN."ebattles/include/show_array.php");
-require_once(e_PLUGIN."ebattles/include/tournament.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/match.php");
 require_once(e_PLUGIN."ebattles/include/gamer.php");
@@ -21,7 +21,7 @@ require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 $pages = new Paginator;
 
 $text .= '
-<script type="text/javascript" src="./js/tournament.js"></script>
+<script type="text/javascript" src="./js/event.js"></script>
 ';
 
 if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;
@@ -34,43 +34,43 @@ if(isset($_GET["sort"]) && !empty($_GET["sort"]))
 	$sort_type = ($_GET["sort"]=="ASC") ? SORT_ASC : SORT_DESC;
 }
 
-/* Tournament Name */
-$tournament_id = $_GET['TournamentID'];
+/* Event Name */
+$event_id = $_GET['EventID'];
 
-if (!$tournament_id)
+if (!$event_id)
 {
-	header("Location: ./tournaments.php");
+	header("Location: ./events.php");
 	exit();
 }
 else
 {
-	$file = 'cache/sql_cache_tournament_'.$tournament_id.'.txt';
-	$file_team = 'cache/sql_cache_tournament_team_'.$tournament_id.'.txt';
+	$file = 'cache/sql_cache_event_'.$event_id.'.txt';
+	$file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
 
-	$q = "SELECT ".TBL_TOURNAMENTS.".*, "
+	$q = "SELECT ".TBL_EVENTS.".*, "
 	.TBL_GAMES.".*, "
 	.TBL_USERS.".*"
-	." FROM ".TBL_TOURNAMENTS.", "
+	." FROM ".TBL_EVENTS.", "
 	.TBL_GAMES.", "
 	.TBL_USERS
-	." WHERE (".TBL_TOURNAMENTS.".TournamentID = '$tournament_id')"
-	."   AND (".TBL_TOURNAMENTS.".Game = ".TBL_GAMES.".GameID)"
-	."   AND (".TBL_USERS.".user_id = ".TBL_TOURNAMENTS.".Owner)";
+	." WHERE (".TBL_EVENTS.".EventID = '$event_id')"
+	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+	."   AND (".TBL_USERS.".user_id = ".TBL_EVENTS.".Owner)";
 	$result = $sql->db_Query($q);
 
-	$tournament = new Tournament($tournament_id);
+	$event = new Event($event_id);
 
-	$rounds = unserialize($tournament->getField('Rounds'));
+	$rounds = unserialize($event->getField('Rounds'));
 	$egame = mysql_result($result,0 , TBL_GAMES.".Name");
 	$egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
 	$egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
 	$eowner = mysql_result($result,0 , TBL_USERS.".user_id");
 	$eownername = mysql_result($result,0 , TBL_USERS.".user_name");
 
-	$tournamentIsChanged = $tournament->getField('IsChanged');
-	$tournamentStatus = $tournament->getField('Status');
+	$eventIsChanged = $event->getField('IsChanged');
+	$eventStatus = $event->getField('Status');
 
-	$start_timestamp_local = $tournament->getField('StartDateTime') + TIMEOFFSET;
+	$start_timestamp_local = $event->getField('StartDateTime') + TIMEOFFSET;
 	$date_start = date("d M Y, h:i A",$start_timestamp_local);
 
 	$time_comment = '';
@@ -78,14 +78,14 @@ else
 	/* Nbr players */
 	$q = "SELECT COUNT(*) as NbrPlayers"
 	." FROM ".TBL_TPLAYERS
-	." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')";
+	." WHERE (".TBL_TPLAYERS.".Event = '$event_id')";
 	$result = $sql->db_Query($q);
 	$row = mysql_fetch_array($result);
 	$nbrplayers = $row['NbrPlayers'];
 
 	$q = "SELECT COUNT(*) as NbrPlayers"
 	." FROM ".TBL_TPLAYERS
-	." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+	." WHERE (".TBL_TPLAYERS.".Event = '$event_id')"
 	."   AND (".TBL_TPLAYERS.".Banned != 1)";
 	$result = $sql->db_Query($q);
 	$row = mysql_fetch_array($result);
@@ -94,42 +94,42 @@ else
 	/* Nbr Teams */
 	$q = "SELECT COUNT(*) as NbrTeams"
 	." FROM ".TBL_TEAMS
-	." WHERE (Tournament = '$tournament_id')";
+	." WHERE (Event = '$event_id')";
 	$result = $sql->db_Query($q);
 	$row = mysql_fetch_array($result);
 	$nbrteams = $row['NbrTeams'];
 	
 	$checkinDuration = 0; // TODO: add this.
 	
-	switch($tournamentStatus)
+	switch($eventStatus)
 	{
 		case 'draft':
-			header("Location: ./tournaments.php");
+			header("Location: ./events.php");
 			exit();
 			break;
 		case 'signup':
-			if($time < ($tournament->getField('StartDateTime') - $checkinDuration))
+			if($time < ($event->getField('StartDateTime') - $checkinDuration))
 			{
-				$time_comment = EB_TOURNAMENT_L2.'&nbsp;'.get_formatted_timediff($time, $tournament->getField('StartDateTime'));
+				$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $event->getField('StartDateTime'));
 			}
 			else
 			{
-				$q = "UPDATE ".TBL_TOURNAMENTS." SET Status = 'checkin' WHERE (TournamentID = '$tournament_id')";
+				$q = "UPDATE ".TBL_EVENTS." SET Status = 'checkin' WHERE (EventID = '$event_id')";
 				$result = $sql->db_Query($q);		
 			}
 			break;
 		case 'checkin':
-			if($time < $tournament->getField('StartDateTime'))
+			if($time < $event->getField('StartDateTime'))
 			{
-				$time_comment = EB_TOURNAMENT_L2.'&nbsp;'.get_formatted_timediff($time, $tournament->getField('StartDateTime'));
+				$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $event->getField('StartDateTime'));
 			}
 			else
 			{
-				$q = "UPDATE ".TBL_TOURNAMENTS." SET Status = 'active' WHERE (TournamentID = '$tournament_id')";
+				$q = "UPDATE ".TBL_EVENTS." SET Status = 'active' WHERE (EventID = '$event_id')";
 				$result = $sql->db_Query($q);
-				$q = "UPDATE ".TBL_TOURNAMENTS." SET IsChanged = 1 WHERE (TournamentID = '$tournament_id')";
+				$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
 				$result = $sql->db_Query($q);
-				$tournamentIsChanged = 1;
+				$eventIsChanged = 1;
 			}
 			break;
 		case 'active':
@@ -140,14 +140,14 @@ else
 	
 
 	/* Update Stats */
-	if ($tournamentIsChanged == 1)
+	if ($eventIsChanged == 1)
 	{
-		$q = "UPDATE ".TBL_TOURNAMENTS." SET IsChanged = 0 WHERE (TournamentID = '$tournament_id')";
+		$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 0 WHERE (EventID = '$event_id')";
 		//fm: $result = $sql->db_Query($q);
-		$tournamentIsChanged = 0;
+		$eventIsChanged = 0;
 
 		// TODO: Schedule upcoming matches here
-		$tournament->scheduleNextMatches();
+		$event->scheduleNextMatches();
 	}
 	
 	
@@ -156,18 +156,18 @@ else
 	----------------------------------------------------------------------------------------*/
 	$text .= '<div id="tabs">';
 	$text .= '<ul>';
-	$text .= '<li><a href="#tabs-1">'.EB_TOURNAMENT_L35.'</a></li>'; /* Signup, Join/Quit Tournament */
-	if (($tournament->getField('MatchType') == "2v2")||($tournament->getField('MatchType') == "3v3"))
+	$text .= '<li><a href="#tabs-1">'.EB_EVENT_L35.'</a></li>'; /* Signup, Join/Quit Event */
+	if (($event->getField('MatchType') == "2v2")||($event->getField('MatchType') == "3v3"))
 	{
-		$text .= '<li><a href="#tabs-2">'.EB_TOURNAMENT_L45.'</a></li>';
+		$text .= '<li><a href="#tabs-2">'.EB_EVENT_L45.'</a></li>';
 	}
-	$text .= '<li><a href="#tabs-3">'.EB_TOURNAMENT_L49.'</a></li>';
-	$text .= '<li><a href="#tabs-4">'.EB_TOURNAMENT_L58.'</a></li>';
-	$text .= '<li><a href="#tabs-5">'.EB_TOURNAMENT_L63.'</a></li>';
+	$text .= '<li><a href="#tabs-3">'.EB_EVENT_L49.'</a></li>';
+	$text .= '<li><a href="#tabs-4">'.EB_EVENT_L58.'</a></li>';
+	$text .= '<li><a href="#tabs-5">'.EB_EVENT_L63.'</a></li>';
 	$text .= '</ul>';
 
 
-	/* Signup, Join/Quit Tournament */
+	/* Signup, Join/Quit Event */
 	$text .= '<div id="tabs-1">';
 	$text .= '<table style="width:95%"><tbody>';
 	$text .= '<tr>';
@@ -178,8 +178,8 @@ else
 	if ($can_manage == 1)
 	{
 		$text .= '<td>
-		<form action="'.e_PLUGIN.'ebattles/tournamentmanage.php?TournamentID='.$tournament_id.'" method="post"><div>
-		'.ebImageTextButton('submit', 'page_white_edit.png', EB_TOURNAMENT_L40).'
+		<form action="'.e_PLUGIN.'ebattles/eventmanage.php?EventID='.$event_id.'" method="post"><div>
+		'.ebImageTextButton('submit', 'page_white_edit.png', EB_EVENT_L40).'
 		</div></form></td>';
 	}
 
@@ -187,13 +187,13 @@ else
 	if(check_class(e_UC_MEMBER))
 	{
 		// If logged in
-		if($time < $tournament->getField('StartDateTime'))
+		if($time < $event->getField('StartDateTime'))
 		{
-			// If tournament is not finished
-			if (($tournament->getField('MatchType') == "2v2")||($tournament->getField('MatchType') == "3v3"))
+			// If event is not finished
+			if (($event->getField('MatchType') == "2v2")||($event->getField('MatchType') == "3v3"))
 			{
 				// Find if user is captain of a division playing that game
-				// if yes, propose to join this tournament
+				// if yes, propose to join this event
 				$q = "SELECT ".TBL_DIVISIONS.".*, "
 				.TBL_CLANS.".*, "
 				.TBL_GAMES.".*, "
@@ -221,23 +221,23 @@ else
 						// Is the division signed up
 						$q_2 = "SELECT ".TBL_TEAMS.".*"
 						." FROM ".TBL_TEAMS
-						." WHERE (".TBL_TEAMS.".Tournament = '$tournament_id')"
+						." WHERE (".TBL_TEAMS.".Event = '$event_id')"
 						." AND (".TBL_TEAMS.".Division = '$div_id')";
 						$result_2 = $sql->db_Query($q_2);
 						$numTeams = mysql_numrows($result_2);
 
-						$text .= '<td>'.EB_TOURNAMENT_L7.'&nbsp;'.$div_name.'</td>';
+						$text .= '<td>'.EB_EVENT_L7.'&nbsp;'.$div_name.'</td>';
 						if( $numTeams == 0)
 						{
-							if ($tournament->getField('password') != "")
+							if ($event->getField('password') != "")
 							{
-								$text .= '<td>'.EB_TOURNAMENT_L8.'</td>';
+								$text .= '<td>'.EB_EVENT_L8.'</td>';
 								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
+								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?EventID='.$event_id.'" method="post">
 								<div>
-								<input class="tbox" type="password" title="'.EB_TOURNAMENT_L9.'" name="joinTournamentPassword"/>
+								<input class="tbox" type="password" title="'.EB_EVENT_L9.'" name="joinEventPassword"/>
 								<input type="hidden" name="division" value="'.$div_id.'"/>
-								'.ebImageTextButton('teamjointournament', 'user_add.png', EB_TOURNAMENT_L10).'
+								'.ebImageTextButton('teamjoinevent', 'user_add.png', EB_EVENT_L10).'
 								</div>
 								';
 								$text .= '</form>';
@@ -245,13 +245,13 @@ else
 							}
 							else
 							{
-								$text .= '<td>'.EB_TOURNAMENT_L11.'</td>';
+								$text .= '<td>'.EB_EVENT_L11.'</td>';
 								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
+								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?EventID='.$event_id.'" method="post">
 								<div>
-								<input type="hidden" name="joinTournamentPassword" value=""/>
+								<input type="hidden" name="joinEventPassword" value=""/>
 								<input type="hidden" name="division" value="'.$div_id.'"/>
-								'.ebImageTextButton('teamjointournament', 'user_add.png', EB_TOURNAMENT_L12).'
+								'.ebImageTextButton('teamjoinevent', 'user_add.png', EB_EVENT_L12).'
 								</div>
 								';
 								$text .= '</form>';
@@ -261,13 +261,13 @@ else
 						else
 						{
 							// Team signed up.
-							$text .= '<td>'.EB_TOURNAMENT_L13.'</td>';
+							$text .= '<td>'.EB_EVENT_L13.'</td>';
 						}
 					}
 				}
 			}
 
-			switch($tournament->getField('MatchType'))
+			switch($event->getField('MatchType'))
 			{
 				case "2v2":
 				case "3v3":
@@ -294,7 +294,7 @@ else
 				$numMembers = mysql_numrows($result_2);
 				if(!$result_2 || ( $numMembers == 0))
 				{
-					$text .= '<td>'.EB_TOURNAMENT_L14.'</td>';
+					$text .= '<td>'.EB_EVENT_L14.'</td>';
 					$text .= '<td></td>';
 				}
 				else
@@ -325,26 +325,26 @@ else
 						." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
 						." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
 						." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-						." AND (".TBL_TEAMS.".Tournament = '$tournament_id')";
+						." AND (".TBL_TEAMS.".Event = '$event_id')";
 						$result_3 = $sql->db_Query($q_3);
 						if(!$result_3 || (mysql_numrows($result_3) == 0))
 						{
 							if ($captain_id != USERID)
 							{
-								$text .= '<td>'.EB_TOURNAMENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_TOURNAMENT_L16.'</td>';
-								$text .= '<td>'.EB_TOURNAMENT_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td>';
+								$text .= '<td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L16.'</td>';
+								$text .= '<td>'.EB_EVENT_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td>';
 							}
 						}
 						else
 						{
 							$team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-							$text .= '<td>'.EB_TOURNAMENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_TOURNAMENT_L18.'</td>';
+							$text .= '<td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L18.'</td>';
 
 							// Is the user already signed up with that team?
 							$q = "SELECT ".TBL_TPLAYERS.".*"
 							." FROM ".TBL_TPLAYERS.", "
 							.TBL_GAMERS
-							." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+							." WHERE (".TBL_TPLAYERS.".Event = '$event_id')"
 							."   AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 							."   AND (".TBL_GAMERS.".User = ".USERID.")"
 							."   AND (".TBL_TPLAYERS.".Team = '$team_id')";
@@ -352,10 +352,10 @@ else
 							if(!$result || (mysql_numrows($result) == 0))
 							{
 								$text .= '<td>
-								<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
+								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?EventID='.$event_id.'" method="post">
 								<div>
 								<input type="hidden" name="team" value="'.$team_id.'"/>
-								'.ebImageTextButton('jointeamtournament', 'user_add.png', EB_TOURNAMENT_L19).'
+								'.ebImageTextButton('jointeamevent', 'user_add.png', EB_EVENT_L19).'
 								</div>
 								</form></td>
 								';
@@ -367,15 +367,15 @@ else
 
 								if ($user_banned)
 								{
-									$text .= '<td>'.EB_TOURNAMENT_L20.'<br />
-									'.EB_TOURNAMENT_L21.'</td>';
+									$text .= '<td>'.EB_EVENT_L20.'<br />
+									'.EB_EVENT_L21.'</td>';
 								}
 								else
 								{
 									// Player signed up
-									$text .= '<td>'.EB_TOURNAMENT_L22.'</td>';
+									$text .= '<td>'.EB_EVENT_L22.'</td>';
 
-									// Player can quit an tournament if he has not played yet
+									// Player can quit an event if he has not played yet
 									$q = "SELECT ".TBL_TPLAYERS.".*"
 									." FROM ".TBL_TPLAYERS.", "
 									.TBL_SCORES
@@ -386,13 +386,13 @@ else
 
 									// TODO: change conditions to quit
 									$nbrscores = 0;
-									if (($nbrscores == 0)&&($user_banned!=1)&&($tournament->getField('Type')!="ClanWar"))
+									if (($nbrscores == 0)&&($user_banned!=1)&&($event->getField('Type')!="Clan Ladder"))
 									{
 										$text .= '<td>
-										<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
+										<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?EventID='.$event_id.'" method="post">
 										<div>
 										<input type="hidden" name="player" value="'.$user_pid.'"/>
-										'.ebImageTextButton('quittournament', 'user_delete.ico', EB_TOURNAMENT_L23, 'negative jq-button', EB_TOURNAMENT_L24).'
+										'.ebImageTextButton('quitevent', 'user_delete.ico', EB_EVENT_L23, 'negative jq-button', EB_EVENT_L24).'
 										</div>
 										</form></td>
 										';
@@ -413,7 +413,7 @@ else
 				// Find gamer for that user
 				$q = "SELECT ".TBL_GAMERS.".*"
 				." FROM ".TBL_GAMERS
-				." WHERE (".TBL_GAMERS.".Game = '".$tournament->getField('Game')."')"
+				." WHERE (".TBL_GAMERS.".Game = '".$event->getField('Game')."')"
 				."   AND (".TBL_GAMERS.".User = ".USERID.")";
 				$result = $sql->db_Query($q);
 				$num_rows = mysql_numrows($result);
@@ -435,17 +435,17 @@ else
 				$q = "SELECT ".TBL_TPLAYERS.".*"
 				." FROM ".TBL_TPLAYERS.", "
 				.TBL_GAMERS
-				." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+				." WHERE (".TBL_TPLAYERS.".Event = '$event_id')"
 				."   AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 				."   AND (".TBL_GAMERS.".User = ".USERID.")";
 				$result = $sql->db_Query($q);
 				if(!$result || (mysql_numrows($result) < 1))
 				{
-					$hide_password = ($tournament->getField('password') == "") ?  'hide ignore' : '';
+					$hide_password = ($event->getField('password') == "") ?  'hide ignore' : '';
 
 					$text .= '<td style="text-align:right">
 					<div>
-					'.ebImageTextButton('jointournament', 'user_add.png', EB_TOURNAMENT_L19, '', '', EB_TOURNAMENT_L28).'
+					'.ebImageTextButton('joinevent', 'user_add.png', EB_EVENT_L19, '', '', EB_EVENT_L28).'
 					</div>
 					';
 
@@ -467,15 +467,15 @@ else
 					</div>
 
 					<!-- our form, no buttons (buttons generated by jQuery UI dialog() function) -->
-					<form action="tournamentinfo_process.php?TournamentID='.$tournament_id.'" name="form-signup" id="form-signup" method="post">
+					<form action="eventinfo_process.php?EventID='.$event_id.'" name="form-signup" id="form-signup" method="post">
 					<div>
-					<input type="hidden" name="jointournament" value=""/>
+					<input type="hidden" name="joinevent" value=""/>
 					<input type="hidden" name="gamerID" value="'.$gamerID.'"/>
 					<fieldset>
 					<legend>Please provide your gamer info</legend>
 					<p>
-					<label for="joinTournamentPassword" class="'.$hide_password.'">'.EB_TOURNAMENT_L27.'</label>
-					<input type="password" name="joinTournamentPassword" id="joinTournamentPassword" class="'.$hide_password.' text" />
+					<label for="joinEventPassword" class="'.$hide_password.'">'.EB_EVENT_L27.'</label>
+					<input type="password" name="joinEventPassword" id="joinEventPassword" class="'.$hide_password.' text" />
 					</p>
 					<p>
 					<label for="charactername">BNET Character Name/Code</label>
@@ -496,12 +496,12 @@ else
 
 					if ($user_banned)
 					{
-						$text .= '<td>'.EB_TOURNAMENT_L29.'<br />
-						'.EB_TOURNAMENT_L30.'</td><td></td>';
+						$text .= '<td>'.EB_EVENT_L29.'<br />
+						'.EB_EVENT_L30.'</td><td></td>';
 					}
 					else
 					{
-						// Player can quit an tournament if he has not played yet
+						// Player can quit an event if he has not played yet
 						$q = "SELECT ".TBL_TPLAYERS.".*"
 						." FROM ".TBL_TPLAYERS.", "
 						.TBL_SCORES
@@ -514,10 +514,10 @@ else
 						if ($nbrscores == 0)
 						{
 							$text .= '<td style="text-align:right">
-							<form action="'.e_PLUGIN.'ebattles/tournamentinfo_process.php?TournamentID='.$tournament_id.'" method="post">
+							<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?EventID='.$event_id.'" method="post">
 							<div>
 							<input type="hidden" name="player" value="'.$user_pid.'"/>
-							'.ebImageTextButton('quittournament', 'user_delete.ico', EB_TOURNAMENT_L32, 'negative jq-button', EB_TOURNAMENT_L33, EB_TOURNAMENT_L31).'
+							'.ebImageTextButton('quitevent', 'user_delete.ico', EB_EVENT_L32, 'negative jq-button', EB_EVENT_L33, EB_EVENT_L31).'
 							</div>
 							</form></td>
 							';
@@ -534,7 +534,7 @@ else
 		}
 		else
 		{
-			$text .= '<td>'.EB_TOURNAMENT_L74.'</td>';
+			$text .= '<td>'.EB_EVENT_L74.'</td>';
 			$text .= '<td></td>';
 		}
 		$text .= '</tr>';
@@ -542,29 +542,29 @@ else
 	}
 	else
 	{
-		$text .= EB_TOURNAMENT_L34;
+		$text .= EB_EVENT_L34;
 	}
 
 	/* Info */
 	$text .= '<table class="eb_table" style="width:95%"><tbody>';
 
 	$text .= '<tr>';
-	$text .= '<td class="eb_td eb_tdc1">'.EB_TOURNAMENT_L36.'</td>';
-	$text .= '<td class="eb_td" style="font-variant:small-caps"><b>'.$tournament->getField('Name').'</b></td>';
+	$text .= '<td class="eb_td eb_tdc1">'.EB_EVENT_L36.'</td>';
+	$text .= '<td class="eb_td" style="font-variant:small-caps"><b>'.$event->getField('Name').'</b></td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
-	$text .= '<td class="eb_td eb_tdc1">'.EB_TOURNAMENT_L37.'</td>';
-	$text .= '<td class="eb_td">'.(($tournament->getField('MatchType')!='') ? $tournament->getField('MatchType').' - ' : '').tournamentTypeToString($tournament->getField('Type')).'</td>';
+	$text .= '<td class="eb_td eb_tdc1">'.EB_EVENT_L37.'</td>';
+	$text .= '<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
-	$text .= '<td class="eb_td eb_tdc1">'.EB_TOURNAMENT_L38.'</td>';
+	$text .= '<td class="eb_td eb_tdc1">'.EB_EVENT_L38.'</td>';
 	$text .= '<td class="eb_td"><img '.getGameIconResize($egameicon).'/> '.$egame.'</td>';
 	$text .= '</tr>';
 
 	$text .= '<tr>';
-	$text .= '<td class="eb_td eb_tdc1">'.EB_TOURNAMENT_L39.'</td>';
+	$text .= '<td class="eb_td eb_tdc1">'.EB_EVENT_L39.'</td>';
 	$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
 	$text .= '</td></tr>';
 
@@ -573,11 +573,11 @@ else
 	.TBL_USERS.".*"
 	." FROM ".TBL_MODS.", "
 	.TBL_USERS
-	." WHERE (".TBL_MODS.".Tournament = '$tournament_id')"
+	." WHERE (".TBL_MODS.".Event = '$event_id')"
 	."   AND (".TBL_USERS.".user_id = ".TBL_MODS.".User)";
 	$result = $sql->db_Query($q);
 	$numMods = mysql_numrows($result);
-	$text .= '<td class="eb_td eb_tdc1">'.EB_TOURNAMENT_L41.'</td>';
+	$text .= '<td class="eb_td eb_tdc1">'.EB_EVENT_L41.'</td>';
 	$text .= '<td class="eb_td">';
 	if ($numMods>0)
 	{
@@ -591,10 +591,10 @@ else
 	}
 	$text .= '</td></tr>';
 
-	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_TOURNAMENT_L42.'</td><td class="eb_td">'.$date_start.'</td></tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L42.'</td><td class="eb_td">'.$date_start.'</td></tr>';
 	$text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$time_comment.'</td></tr>';
-	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_TOURNAMENT_L44.'</td><td class="eb_td">'.$tp->toHTML($tournament->getField('Rules'), true).'</td></tr>';
-	$text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$tp->toHTML($tournament->getField('Description'), true).'</td></tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L44.'</td><td class="eb_td">'.$tp->toHTML($event->getField('Rules'), true).'</td></tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$tp->toHTML($event->getField('Description'), true).'</td></tr>';
 	$text .= '</tbody></table>';
 	$text .= '</div>';    // tabs-1 "Info"
 
@@ -617,10 +617,10 @@ else
 		$can_approve = 1;
 	}
 
-	// Is the user tournament owner?
+	// Is the user event owner?
 	if (USERID==$eowner)
 	{
-		$userclass |= eb_UC_TOURNAMENT_OWNER;
+		$userclass |= eb_UC_EVENT_OWNER;
 		$can_report = 1;
 		$can_submit_replay = 1;
 		$can_schedule = 1;
@@ -629,13 +629,13 @@ else
 	// Is the user a moderator?
 	$q_2 = "SELECT ".TBL_MODS.".*"
 	." FROM ".TBL_MODS
-	." WHERE (".TBL_MODS.".Tournament = '$tournament_id')"
+	." WHERE (".TBL_MODS.".Event = '$event_id')"
 	."   AND (".TBL_MODS.".User = ".USERID.")";
 	$result_2 = $sql->db_Query($q_2);
 	$numMods = mysql_numrows($result_2);
 	if ($numMods>0)
 	{
-		$userclass |= eb_UC_TOURNAMENT_MODERATOR;
+		$userclass |= eb_UC_EVENT_MODERATOR;
 		$can_report = 1;
 		$can_submit_replay = 1;
 		$can_schedule = 1;
@@ -644,7 +644,7 @@ else
 	/*
 	if ($userIsDivisionCaptain == TRUE)
 	{
-	$userclass |= eb_UC_TOURNAMENT_PLAYER;
+	$userclass |= eb_UC_EVENT_PLAYER;
 	$can_report = 1;
 	}
 	*/
@@ -655,7 +655,7 @@ else
 	." FROM ".TBL_TPLAYERS.", "
 	.TBL_GAMERS.", "
 	.TBL_USERS
-	." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+	." WHERE (".TBL_TPLAYERS.".Event = '$event_id')"
 	."   AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	."   AND (".TBL_USERS.".user_id = ".USERID.")";
@@ -664,10 +664,10 @@ else
 	$pbanned=0;
 	if(mysql_numrows($result) == 1)
 	{
-		$userclass |= eb_UC_TOURNAMENT_PLAYER;
+		$userclass |= eb_UC_EVENT_PLAYER;
 
-		// Is the tournament started, and not ended
-		if (($tournament->getField('StartDateTime') <= $time))
+		// Is the event started, and not ended
+		if (($event->getField('StartDateTime') <= $time))
 		{
 			//$can_report = 1;
 			//$can_report_quickloss = 1;
@@ -676,10 +676,10 @@ else
 		}
 	}
 
-	switch($tournament->getField('Type'))
+	switch($event->getField('Type'))
 	{
-		case "One Player Tournament":
-		case "Team Tournament":
+		case "One Player Ladder":
+		case "Team Ladder":
 		if (($nbrplayersNotBanned < 2)||($pbanned))
 		{
 			$can_report = 0;
@@ -689,7 +689,7 @@ else
 			$can_challenge = 0;
 		}
 		break;
-		case "ClanWar":
+		case "Clan Ladder":
 		if ($nbrteams < 2)
 		{
 			$can_report = 0;
@@ -708,7 +708,7 @@ else
 	." FROM ".TBL_TPLAYERS.", "
 	.TBL_GAMERS.", "
 	.TBL_USERS
-	." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+	." WHERE (".TBL_TPLAYERS.".Event = '$event_id')"
 	."   AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	."   AND (".TBL_USERS.".user_id = ".USERID.")";
@@ -718,31 +718,31 @@ else
 	$can_report_quickloss = 0;
 
 	// Check if AllowScore is set
-	if ($tournament->getField('AllowScore')==TRUE)
+	if ($event->getField('AllowScore')==TRUE)
 	$can_report_quickloss = 0;
 
-	if($tournament->getField('Type') == "ClanWar") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
-	if($tournament->getField('quick_loss_report')==FALSE) $can_report_quickloss = 0;
-	if($userclass < $tournament->getField('match_report_userclass')) $can_report = 0;
-	if($userclass < $tournament->getField('match_replay_report_userclass')) $can_submit_replay = 0;
+	if($event->getField('Type') == "Clan Ladder") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
+	if($event->getField('quick_loss_report')==FALSE) $can_report_quickloss = 0;
+	if($userclass < $event->getField('match_report_userclass')) $can_report = 0;
+	if($userclass < $event->getField('match_replay_report_userclass')) $can_submit_replay = 0;
 
-	if($userclass < $tournament->getField('MatchesApproval')) $can_approve = 0;
-	if($tournament->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
+	if($userclass < $event->getField('MatchesApproval')) $can_approve = 0;
+	if($event->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
 
-	if($tournament->getField('ChallengesEnable')==FALSE) $can_challenge= 0;
+	if($event->getField('ChallengesEnable')==FALSE) $can_challenge= 0;
 
 	//fm: Need userclass for match scheduling
 
 	$nextupdate_timestamp_local_local = $nextupdate_timestamp_local + TIMEOFFSET;
 	$date_nextupdate = date("d M Y, h:i A",$nextupdate_timestamp_local_local);
 
-	if (($tournament->getField('Type') == "Team Tournament")||($tournament->getField('Type') == "ClanWar"))
+	if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "Clan Ladder"))
 	{
 		$text .= '<div id="tabs-2">';
 
-		if (($time < $nextupdate_timestamp_local) && ($tournamentIsChanged == 1))
+		if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
 		{
-			$text .= EB_TOURNAMENT_L46.'&nbsp;'.$date_nextupdate.'<br />';
+			$text .= EB_EVENT_L46.'&nbsp;'.$date_nextupdate.'<br />';
 		}
 
 
@@ -752,13 +752,13 @@ else
 	/* Players Standings */
 	$text .= '<div id="tabs-3">';
 
-	if (($time < $nextupdate_timestamp_local) && ($tournamentIsChanged == 1))
+	if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
 	{
-		$text .= EB_TOURNAMENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
+		$text .= EB_EVENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
 	}
 
 	$teams = array();
-	$type = $tournament->getField('MatchType');
+	$type = $event->getField('MatchType');
 	switch($type)
 	{
 		default:
@@ -767,7 +767,7 @@ else
 			." FROM ".TBL_GAMERS.", "
 			.TBL_TPLAYERS.", "
 			.TBL_USERS
-			." WHERE (".TBL_TPLAYERS.".Tournament = '".$tournament->getField('TournamentID')."')"
+			." WHERE (".TBL_TPLAYERS.".Event = '".$event->getField('EventID')."')"
 			." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 			." ORDER BY ".TBL_TPLAYERS.".Joined";
@@ -783,11 +783,11 @@ else
 			}
 	}
 
-	$results = unserialize($tournament->getField('Results'));
-	list($bracket_html) = brackets($tournament->getField('Type'), $tournament->getField('MaxNumberPlayers'), $teams, $results, $rounds);
+	$results = unserialize($event->getField('Results'));
+	list($bracket_html) = brackets($event->getField('Type'), $event->getField('MaxNumberPlayers'), $teams, $results, $rounds);
 	$text .= $bracket_html;
-	//$tournament->updateResults($results);
-	//$tournament->updateDB($results);
+	//$event->updateResults($results);
+	//$event->updateDB($results);
 
 	$text .= '</div>';    // tabs-3 "Brackets"
 
@@ -796,7 +796,7 @@ else
 	$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES
-	." WHERE (".TBL_MATCHS.".Tournament = '$tournament_id')"
+	." WHERE (".TBL_MATCHS.".Event = '$event_id')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND (".TBL_MATCHS.".Status = 'pending')";
 	$result = $sql->db_Query($q);
@@ -814,18 +814,18 @@ else
 		if($can_submit_replay != 0)
 		{
 			$text .= '<td>';
-			$text .= '<form action="'.e_PLUGIN.'ebattles/submitreplay.php?TournamentID='.$tournament_id.'" method="post"><div>';
-			$text .= ebImageTextButton('submitreplay', 'flag_red.png', EB_TOURNAMENT_L74);
+			$text .= '<form action="'.e_PLUGIN.'ebattles/submitreplay.php?EventID='.$event_id.'" method="post"><div>';
+			$text .= ebImageTextButton('submitreplay', 'flag_red.png', EB_EVENT_L74);
 			$text .= '</div></form>';
 			$text .= '</td>';
 		}
 		if($can_report != 0)
 		{
 			$text .= '<td>';
-			$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?TournamentID='.$tournament_id.'" method="post">';
+			$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?EventID='.$event_id.'" method="post">';
 			$text .= '<div>';
 			$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
-			$text .= ebImageTextButton('matchreport', 'page_white_edit.png', EB_TOURNAMENT_L57);
+			$text .= ebImageTextButton('matchreport', 'page_white_edit.png', EB_EVENT_L57);
 			$text .= '</div>';
 			$text .= '</form>';
 			$text .= '</td>';
@@ -842,7 +842,7 @@ else
 	$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES
-	." WHERE (Tournament = '$tournament_id')"
+	." WHERE (Event = '$event_id')"
 	." AND (".TBL_MATCHS.".Status = 'active')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
 	$result = $sql->db_Query($q);
@@ -851,10 +851,10 @@ else
 	$numMatches = $row['NbrMatches'];
 
 	$text .= '<p><b>';
-	$text .= $numMatches.'&nbsp;'.EB_TOURNAMENT_L59;
+	$text .= $numMatches.'&nbsp;'.EB_EVENT_L59;
 	if ($numMatches>$rowsPerPage)
 	{
-		$text .= ' [<a href="'.e_PLUGIN.'ebattles/tournamentmatchs.php?TournamentID='.$tournament_id.'">'.EB_TOURNAMENT_L60.'</a>]';
+		$text .= ' [<a href="'.e_PLUGIN.'ebattles/eventmatchs.php?EventID='.$event_id.'">'.EB_EVENT_L60.'</a>]';
 	}
 	$text .= '</b></p>';
 	$text .= '<br />';
@@ -863,7 +863,7 @@ else
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
 	.TBL_USERS
-	." WHERE (".TBL_MATCHS.".Tournament = '$tournament_id')"
+	." WHERE (".TBL_MATCHS.".Event = '$event_id')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND (".TBL_MATCHS.".Status = 'active')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
@@ -879,7 +879,7 @@ else
 		{
 			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
 			$match = new Match($match_id);
-			$text .= $match->displayMatchInfoTournament(eb_MATCH_NOLADDERINFO);
+			$text .= $match->displayMatchInfoEvent(eb_MATCH_NOEVENTINFO);
 		}
 		$text .= '</table>';
 	}
@@ -891,7 +891,7 @@ else
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
 	.TBL_USERS
-	." WHERE (".TBL_MATCHS.".Tournament = '$tournament_id')"
+	." WHERE (".TBL_MATCHS.".Event = '$event_id')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND (".TBL_MATCHS.".Status = 'pending')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
@@ -901,7 +901,7 @@ else
 	if ($numMatches>0)
 	{
 		$text .= '<p><b>';
-		$text .= $numMatches.'&nbsp;'.EB_TOURNAMENT_L64;
+		$text .= $numMatches.'&nbsp;'.EB_EVENT_L64;
 		$text .= '</b></p>';
 		$text .= '<br />';
 
@@ -911,7 +911,7 @@ else
 		{
 			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
 			$match = new Match($match_id);
-			$text .= $match->displayMatchInfoTournament(eb_MATCH_NOLADDERINFO);
+			$text .= $match->displayMatchInfoEvent(eb_MATCH_NOEVENTINFO);
 		}
 		$text .= '</table>';
 	}
@@ -922,7 +922,7 @@ else
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES
-	." WHERE (".TBL_MATCHS.".Tournament = '$tournament_id')"
+	." WHERE (".TBL_MATCHS.".Event = '$event_id')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND (".TBL_MATCHS.".Status = 'scheduled')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
@@ -932,7 +932,7 @@ else
 	if ($numMatches>0)
 	{
 		$text .= '<p><b>';
-		$text .= $numMatches.'&nbsp;'.EB_TOURNAMENT_L70;
+		$text .= $numMatches.'&nbsp;'.EB_EVENT_L70;
 		$text .= '</b></p>';
 		$text .= '<br />';
 
@@ -942,7 +942,7 @@ else
 		{
 			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
 			$match = new Match($match_id);
-			$text .= $match->displayMatchInfoTournament(eb_MATCH_NOLADDERINFO|eb_MATCH_SCHEDULED);
+			$text .= $match->displayMatchInfoEvent(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
 		}
 		$text .= '</table>';
 	}
@@ -956,7 +956,7 @@ else
 	." FROM ".TBL_TPLAYERS.", "
 	.TBL_GAMERS.", "
 	.TBL_USERS
-	." WHERE (".TBL_TPLAYERS.".Tournament = '$tournament_id')"
+	." WHERE (".TBL_TPLAYERS.".Event = '$event_id')"
 	."   AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
 	$result = $sql->db_Query($q);
@@ -965,9 +965,9 @@ else
 	{
 		$text .= '<table style="width:90%"><tbody>';
 		$text .= '<tr>';
-		$text .= '<td><b>'.EB_TOURNAMENT_L64.'</b></td>';
-		$text .= '<td><b>'.EB_TOURNAMENT_L65.'</b></td>';
-		$text .= '<td><b>'.EB_TOURNAMENT_L66.'</b></td>';
+		$text .= '<td><b>'.EB_EVENT_L64.'</b></td>';
+		$text .= '<td><b>'.EB_EVENT_L65.'</b></td>';
+		$text .= '<td><b>'.EB_EVENT_L66.'</b></td>';
 		$text .= '</tr>';
 		for ($player = 0; $player < $numPlayers; $player++)
 		{
@@ -1002,7 +1002,7 @@ else
 
 }
 
-$ns->tablerender($tournament->getField('Name')." ($egame - ".tournamentTypeToString($tournament->getField('Type')).")", $text);
+$ns->tablerender($event->getField('Name')." ($egame - ".eventTypeToString($event->getField('Type')).")", $text);
 require_once(FOOTERF);
 exit;
 

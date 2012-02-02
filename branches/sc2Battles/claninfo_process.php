@@ -24,15 +24,15 @@ if(isset($_POST['joindivision']))
 		VALUES ($div_id,".USERID.",$time)";
 		$sql->db_Query($q);
 
-		// User will automatically be signed up to all current ladders this division participates in
+		// User will automatically be signed up to all current events this division participates in
 		$q_2 = "SELECT ".TBL_TEAMS.".*, "
-		.TBL_LADDERS.".*"
+		.TBL_EVENTS.".*"
 		." FROM ".TBL_TEAMS.", "
-		.TBL_LADDERS
+		.TBL_EVENTS
 		." WHERE (".TBL_TEAMS.".Division = '$div_id')"
-		." AND (".TBL_TEAMS.".Ladder = ".TBL_LADDERS.".LadderID)"
-		." AND (   (".TBL_LADDERS.".End_timestamp = '')"
-		."        OR (".TBL_LADDERS.".End_timestamp > $time)) ";
+		." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
+		." AND (   (".TBL_EVENTS.".End_timestamp = '')"
+		."        OR (".TBL_EVENTS.".End_timestamp > $time)) ";
 
 		$result_2 = $sql->db_Query($q_2);
 		$num_rows_2 = mysql_numrows($result_2);
@@ -40,24 +40,24 @@ if(isset($_POST['joindivision']))
 		{
 			for($j=0; $j<$num_rows_2; $j++)
 			{
-				$ladder_id  = mysql_result($result_2,$j, TBL_LADDERS.".LadderID");
-				$lGame  = mysql_result($result_2,$j, TBL_LADDERS.".Game");
-				$lELO_default  = mysql_result($result_2,$j, TBL_LADDERS.".ELO_default");
-				$lTS_default_mu  = mysql_result($result_2,$j, TBL_LADDERS.".TS_default_mu");
-				$lTS_default_sigma  = mysql_result($result_2,$j, TBL_LADDERS.".TS_default_sigma");
+				$event_id  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
+				$eGame  = mysql_result($result_2,$j, TBL_EVENTS.".Game");
+				$eELO_default  = mysql_result($result_2,$j, TBL_EVENTS.".ELO_default");
+				$eTS_default_mu  = mysql_result($result_2,$j, TBL_EVENTS.".TS_default_mu");
+				$eTS_default_sigma  = mysql_result($result_2,$j, TBL_EVENTS.".TS_default_sigma");
 				$team_id = mysql_result($result_2,$j, TBL_TEAMS.".TeamID");
 
 				// Find gamer for that user
 				$q = "SELECT ".TBL_GAMERS.".*"
 				." FROM ".TBL_GAMERS
-				." WHERE (".TBL_GAMERS.".Game = '".$lGame."')"
+				." WHERE (".TBL_GAMERS.".Game = '".$eGame."')"
 				."   AND (".TBL_GAMERS.".User = '".USERID."')";
 				$result = $sql->db_Query($q);
 				$num_rows = mysql_numrows($result);
 				if ($num_rows==0)
 				{
 					$q = " INSERT INTO ".TBL_GAMERS."(User,Game,UniqueGameID)
-					VALUES ($user,".$lGame.",'".USERNAME."')";
+					VALUES ($user,".$eGame.",'".USERNAME."')";
 					$sql->db_Query($q);
 					$last_id = mysql_insert_id();
 					$gamerID = $last_id;
@@ -67,10 +67,10 @@ if(isset($_POST['joindivision']))
 					$gamerID = mysql_result($result, 0, TBL_GAMERS.".GamerID");
 				}
 
-				// Verify there is no other player for that user/ladder/team
+				// Verify there is no other player for that user/event/team
 				$q = "SELECT COUNT(*) as NbrPlayers"
 				." FROM ".TBL_PLAYERS
-				." WHERE (Ladder = '$ladder_id')"
+				." WHERE (Event = '$event_id')"
 				." AND (Team = '$team_id')"
 				." AND (User = ".USERID.")";
 				$result = $sql->db_Query($q);
@@ -78,10 +78,10 @@ if(isset($_POST['joindivision']))
 				$nbrplayers = $row['NbrPlayers'];
 				if ($nbrplayers == 0)
 				{
-					$q = " INSERT INTO ".TBL_PLAYERS."(Ladder,Gamer,Team,ELORanking,TS_mu,TS_sigma)
-					VALUES ($ladder_id,$gamerID,$team_id,$lELO_default,$lTS_default_mu,$lTS_default_sigma)";
+					$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma)
+					VALUES ($event_id,$gamerID,$team_id,$eELO_default,$eTS_default_mu,$eTS_default_sigma)";
 					$sql->db_Query($q);
-					$q4 = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
+					$q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
 					$result = $sql->db_Query($q4);
 				}
 			}

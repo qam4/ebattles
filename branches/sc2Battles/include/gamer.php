@@ -1,5 +1,5 @@
 <?php
-// functions for ladders.
+// functions for events.
 //___________________________________________________________________
 require_once(e_PLUGIN.'ebattles/include/main.php');
 

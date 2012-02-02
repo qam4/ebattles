@@ -1,13 +1,13 @@
 <?php
 /**
-* LadderMatchs.php
+* EventMatchs.php
 *
 */
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
-require_once(e_PLUGIN."ebattles/include/ladder.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
 require_once(e_PLUGIN."ebattles/include/match.php");
 
 /*******************************************************************
@@ -17,25 +17,25 @@ require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 $pages = new Paginator;
 
-/* Ladder Name */
-$ladder_id = $_GET['LadderID'];
+/* Event Name */
+$event_id = $_GET['EventID'];
 
-if (!$ladder_id)
+if (!$event_id)
 {
-	header("Location: ./ladders.php");
+	header("Location: ./events.php");
 	exit();
 }
 else
 {
-	$q = "SELECT ".TBL_LADDERS.".*, "
+	$q = "SELECT ".TBL_EVENTS.".*, "
 	.TBL_GAMES.".*"
-	." FROM ".TBL_LADDERS.", "
+	." FROM ".TBL_EVENTS.", "
 	.TBL_GAMES
-	." WHERE (".TBL_LADDERS.".LadderID = '$ladder_id')"
-	."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)";
+	." WHERE (".TBL_EVENTS.".EventID = '$event_id')"
+	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
 
 	$result = $sql->db_Query($q);
-	$ladder = new Ladder($ladder_id);
+	$event = new Event($event_id);
 
 	$gName = mysql_result($result,0 , TBL_GAMES.".Name");
 	$gIcon = mysql_result($result,0 , TBL_GAMES.".Icon");
@@ -49,7 +49,7 @@ else
 	$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES
-	." WHERE (Ladder = '$ladder_id')"
+	." WHERE (Event = '$event_id')"
 	." AND (".TBL_MATCHS.".Status = 'active')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
 	$result = $sql->db_Query($q);
@@ -80,7 +80,7 @@ else
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES
-	." WHERE (".TBL_MATCHS.".Ladder = '$ladder_id')"
+	." WHERE (".TBL_MATCHS.".Event = '$event_id')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND (".TBL_MATCHS.".Status = 'active')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
@@ -96,20 +96,20 @@ else
 		{
 			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
 			$match = new Match($match_id);
-			$text .= $match->displayMatchInfo(eb_MATCH_NOLADDERINFO);
+			$text .= $match->displayMatchInfo(eb_MATCH_NOEVENTINFO);
 		}
 		$text .= '</table>';
 	}
 	$text .= '<br />';
 
 	$text .= '<p>';
-	$text .= EB_MATCHS_L3.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_MATCHS_L4.'</a>]<br />';
+	$text .= EB_MATCHS_L3.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.EB_MATCHS_L4.'</a>]<br />';
 	$text .= '</p>';
 
 	$text .= '</div>';
 	$text .= '</div>';
 }
-$ns->tablerender("$ladder->getField('Name') ($gName - ".ladderTypeToString($ladder->getField('Type')).")", $text);
+$ns->tablerender("$event->getField('Name') ($gName - ".eventTypeToString($event->getField('Type')).")", $text);
 require_once(FOOTERF);
 exit;
 ?>

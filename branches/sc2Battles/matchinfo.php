@@ -11,7 +11,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
-require_once(e_PLUGIN."ebattles/include/ladder.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
@@ -44,7 +44,7 @@ $match_id = $_GET['matchid'];
 
 if (!$match_id)
 {
-	header("Location: ./ladders.php");
+	header("Location: ./events.php");
 	exit();
 }
 else
@@ -75,23 +75,23 @@ else
 		$uteam = mysql_result($result,0 , TBL_SCORES.".Player_MatchTeam");
 	}
 
-	// Get ladder information
-	$q = "SELECT ".TBL_LADDERS.".*, "
+	// Get event information
+	$q = "SELECT ".TBL_EVENTS.".*, "
 	.TBL_GAMES.".*, "
 	.TBL_MATCHS.".*, "
 	.TBL_USERS.".*"
-	." FROM ".TBL_LADDERS.", "
+	." FROM ".TBL_EVENTS.", "
 	.TBL_GAMES.", "
 	.TBL_MATCHS.", "
 	.TBL_USERS
 	." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-	."   AND (".TBL_LADDERS.".LadderID = ".TBL_MATCHS.".Ladder)"
-	."   AND (".TBL_LADDERS.".Game = ".TBL_GAMES.".GameID)"
+	."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)"
+	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 	."   AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)";
 
 	$result = $sql->db_Query($q);
-	$ladder_id = mysql_result($result,0 , TBL_LADDERS.".LadderID");
-	$ladder = new Ladder($ladder_id);
+	$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
+	$event = new Event($event_id);
 
 	$gName = mysql_result($result,0 , TBL_GAMES.".Name");
 	$mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
@@ -102,7 +102,7 @@ else
 	$categoriesToShow = array();
 	$q_Categories = "SELECT ".TBL_STATSCATEGORIES.".*"
 	." FROM ".TBL_STATSCATEGORIES
-	." WHERE (".TBL_STATSCATEGORIES.".Ladder = '$ladder_id')";
+	." WHERE (".TBL_STATSCATEGORIES.".Event = '$event_id')";
 
 	$result_Categories = $sql->db_Query($q_Categories);
 	$numCategories = mysql_numrows($result_Categories);
@@ -143,7 +143,7 @@ else
 
 
 	// Get the scores for this match
-	switch($ladder->getField('Type'))
+	switch($event->getField('Type'))
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
@@ -163,7 +163,7 @@ else
 		." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 		break;
-		case "ClanWar":
+		case "Clan Ladder":
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_CLANS.".*, "
@@ -209,12 +209,12 @@ else
 	// Is the user a moderator?
 	$q_Mods = "SELECT ".TBL_MODS.".*"
 	." FROM ".TBL_MODS
-	." WHERE (".TBL_MODS.".Ladder = '$ladder_id')"
+	." WHERE (".TBL_MODS.".Event = '$event_id')"
 	."   AND (".TBL_MODS.".User = ".USERID.")";
 	$result_Mods = $sql->db_Query($q_Mods);
 	$numMods = mysql_numrows($result_Mods);
 
-	switch($ladder->getField('Type'))
+	switch($event->getField('Type'))
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
@@ -253,7 +253,7 @@ else
 		$result_Opps = $sql->db_Query($q_Opps);
 		$numOpps = mysql_numrows($result_Opps);
 		break;
-		case "ClanWar":
+		case "Clan Ladder":
 		$reporter_matchteam = 0;
 		$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 		." FROM ".TBL_MATCHS.", "
@@ -305,17 +305,17 @@ else
 	$can_delete_media = 0;
 	/*
 	if ((USERID==$reported_by)
-	&& (($ladder->getField('End_timestamp')==0)
-	|| (($ladder->getField('End_timestamp')>=$time)&&($ladder->getField('Start_timestamp')<=$time))))
+	&& (($event->getField('End_timestamp')==0)
+	|| (($event->getField('End_timestamp')>=$time)&&($event->getField('Start_timestamp')<=$time))))
 	$can_delete = 1;
 	*/
 
 	if ((USERID==$reported_by)&&($mStatus == 'pending')) $can_edit = 1;
 
 	if (check_class($pref['eb_mod_class']))  $can_delete = 1;
-	if (USERID==$ladder->getField('Owner'))
+	if (USERID==$event->getField('Owner'))
 	{
-		$userclass |= eb_UC_LADDER_OWNER;
+		$userclass |= eb_UC_EVENT_OWNER;
 		$can_delete = 1;
 		$can_approve = 1;
 		$can_edit = 1;
@@ -341,7 +341,7 @@ else
 	}
 	if ($numOpps>0)
 	{
-		$userclass |= eb_UC_LADDER_PLAYER;
+		$userclass |= eb_UC_EVENT_PLAYER;
 		$can_approve = 1;
 	}
 	if (($numPlayed>0)&&(check_class($pref['eb_media_submit_class'])))
@@ -349,8 +349,8 @@ else
 		$can_submit_media = 1;
 	}
 
-	if($userclass < $ladder->getField('MatchesApproval')) $can_approve = 0;
-	if($ladder->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
+	if($userclass < $event->getField('MatchesApproval')) $can_approve = 0;
+	if($event->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
 	if ($mStatus == 'active') $can_approve = 0;
 
 	if ($mStatus == 'pending')
@@ -358,9 +358,9 @@ else
 
 	if($can_delete != 0)
 	{
-		$text .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?LadderID='.$ladder_id.'" method="post">';
+		$text .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?EventID='.$event_id.'" method="post">';
 		$text .= '<div>';
-		$text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
+		$text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '</div>';
 		$text .= ebImageTextButton('deletematch', 'cross.png', EB_MATCHD_L4, 'negative jq-button', EB_MATCHD_L5);
@@ -370,7 +370,7 @@ else
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
 		$text .= '<div>';
-		$text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
+		$text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '</div>';
 		$text .= ebImageTextButton('approvematch', 'accept.png', EB_MATCHD_L17, 'positive jq-button');
@@ -378,7 +378,7 @@ else
 	}
 	if($can_edit != 0)
 	{
-		$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?LadderID='.$ladder_id.'&amp;matchid='.$match_id.'" method="post">';
+		$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?EventID='.$event_id.'&amp;matchid='.$match_id.'" method="post">';
 		$text .= '<div>';
 		$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 		$text .= '</div>';
@@ -400,7 +400,7 @@ else
 
 	for($i=0; $i < $numScores; $i++)
 	{
-		switch($ladder->getField('Type'))
+		switch($event->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -413,7 +413,7 @@ else
 			$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 			break;
-			case "ClanWar":
+			case "Clan Ladder":
 			$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 			$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
 			$pavatar = mysql_result($result,$i, TBL_CLANS.".Image");
@@ -454,7 +454,7 @@ else
 		$image = "";
 		if ($pref['eb_avatar_enable_playersstandings'] == 1)
 		{
-			switch($ladder->getField('Type'))
+			switch($event->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
@@ -465,7 +465,7 @@ else
 					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).' style="vertical-align:middle"/>';
 				}
 				break;
-				case "ClanWar":
+				case "Clan Ladder":
 				if($pavatar)
 				{
 					$image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).' style="vertical-align:middle"/>';
@@ -485,13 +485,13 @@ else
 			$text .= '<td class="eb_td"><b>'.$prank.'</b></td>';
 		}
 		$text .= '<td class="eb_td">'.$pMatchTeam.$pfactionIcon.'</td>';
-		switch($ladder->getField('Type'))
+		switch($event->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
 			$text .= '<td class="eb_td">'.$image.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
 			break;
-			case "ClanWar":
+			case "Clan Ladder":
 			$text .= '<td class="eb_td">'.$image.' <a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$pclanid.'">'.$pclan.'</a></td>';
 			break;
 			default:
@@ -504,7 +504,7 @@ else
 
 		// Opponent Ratings
 		$text .= '<td class="eb_td">';
-		switch($ladder->getField('Type'))
+		switch($event->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
@@ -545,7 +545,7 @@ else
 				$text .= '</table>';
 			}
 			break;
-			case "ClanWar":
+			case "Clan Ladder":
 			break;
 			default:
 		}
@@ -588,7 +588,7 @@ else
 	{
 		$text .= '<form id="mediaform" action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
 		$text .= '<div>';
-		$text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
+		$text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '<input type="hidden" id="del_media" name="del_media" value=""/>';
 		$text .= '</div>';
@@ -639,7 +639,7 @@ else
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
 		$text .= '<div>';
-		$text .= '<input type="hidden" name="LadderID" value="'.$ladder_id.'"/>';
+		$text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '</div>';
 		$text .= '<table class="table_left"><tr>';
@@ -670,10 +670,10 @@ else
 	$text .= '</div>'; // tabs
 
 	$text .= '<p>';
-	$text .= '<br />'.EB_MATCHD_L15.' [<a href="'.e_PLUGIN.'ebattles/ladderinfo.php?LadderID='.$ladder_id.'">'.EB_MATCHD_L16.'</a>]<br />';
+	$text .= '<br />'.EB_MATCHD_L15.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.EB_MATCHD_L16.'</a>]<br />';
 	$text .= '</p>';
 
-	$ns->tablerender($ladder->getField('Name')." ($gName - ".ladderTypeToString($ladder->getField('Type')).")", $text);
+	$ns->tablerender($event->getField('Name')." ($gName - ".eventTypeToString($event->getField('Type')).")", $text);
 
 	unset($text);
 

@@ -1,15 +1,15 @@
 <?php
-// functions for ladders.
+// functions for events.
 //___________________________________________________________________
 require_once(e_PLUGIN.'ebattles/include/main.php');
 //??FM:require_once(e_PLUGIN.'ebattles/include/match.php');
 require_once(e_PLUGIN."ebattles/include/updatestats.php");
 require_once(e_PLUGIN."ebattles/include/updateteamstats.php");
 
-class Ladder extends DatabaseTable
+class Event extends DatabaseTable
 {
-	protected $tablename = TBL_LADDERS;
-	protected $primary_key = "LadderID";
+	protected $tablename = TBL_EVENTS;
+	protected $primary_key = "EventID";
 
 	/***************************************************************************************
 	Functions
@@ -38,8 +38,8 @@ class Ladder extends DatabaseTable
 		$this->setField('PointsPerWin', PointsPerWin_DEFAULT);
 		$this->setField('PointsPerDraw', PointsPerDraw_DEFAULT);
 		$this->setField('PointsPerLoss', PointsPerLoss_DEFAULT);
-		$this->setField('match_report_userclass', eb_UC_LADDER_MODERATOR);
-		$this->setField('match_replay_report_userclass', eb_UC_LADDER_PLAYER);
+		$this->setField('match_report_userclass', eb_UC_EVENT_MODERATOR);
+		$this->setField('match_replay_report_userclass', eb_UC_EVENT_PLAYER);
 		$this->setField('quick_loss_report', '0');
 		$this->setField('hide_ratings_column', '0');
 		$this->setField('MatchesApproval', eb_UC_NONE);
@@ -59,7 +59,7 @@ class Ladder extends DatabaseTable
 
 		$q = "SELECT ".TBL_PLAYERS.".*"
 		." FROM ".TBL_PLAYERS
-		." WHERE (".TBL_PLAYERS.".Ladder = '".$this->fields['LadderID']."')";
+		." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')";
 		$result = $sql->db_Query($q);
 		$num_players = mysql_numrows($result);
 		if ($num_players!=0)
@@ -97,7 +97,7 @@ class Ladder extends DatabaseTable
 		global $sql;
 		$q = "SELECT ".TBL_TEAMS.".*"
 		." FROM ".TBL_TEAMS
-		." WHERE (".TBL_TEAMS.".Ladder = '".$this->fields['LadderID']."')";
+		." WHERE (".TBL_TEAMS.".Event = '".$this->fields['EventID']."')";
 		$result = $sql->db_Query($q);
 		$num_teams = mysql_numrows($result);
 		if ($num_teams!=0)
@@ -130,7 +130,7 @@ class Ladder extends DatabaseTable
 		global $sql;
 		$q2 = "SELECT ".TBL_MATCHS.".*"
 		." FROM ".TBL_MATCHS
-		." WHERE (".TBL_MATCHS.".Ladder = '".$this->fields['LadderID']."')";
+		." WHERE (".TBL_MATCHS.".Event = '".$this->fields['EventID']."')";
 		$result2 = $sql->db_Query($q2);
 		$num_matches = mysql_numrows($result2);
 		if ($num_matches!=0)
@@ -152,7 +152,7 @@ class Ladder extends DatabaseTable
 	{
 		global $sql;
 		$q2 = "DELETE FROM ".TBL_CHALLENGES
-		." WHERE (".TBL_CHALLENGES.".Ladder = '".$this->fields['LadderID']."')";
+		." WHERE (".TBL_CHALLENGES.".Event = '".$this->fields['EventID']."')";
 		$result2 = $sql->db_Query($q2);
 	}
 
@@ -161,7 +161,7 @@ class Ladder extends DatabaseTable
 		global $sql;
 		$q2 = "SELECT ".TBL_PLAYERS.".*"
 		." FROM ".TBL_PLAYERS
-		." WHERE (".TBL_PLAYERS.".Ladder = '".$this->fields['LadderID']."')";
+		." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')";
 		$result2 = $sql->db_Query($q2);
 		$num_players = mysql_numrows($result2);
 		if ($num_players!=0)
@@ -179,7 +179,7 @@ class Ladder extends DatabaseTable
 	{
 		global $sql;
 		$q3 = "DELETE FROM ".TBL_TEAMS
-		." WHERE (".TBL_TEAMS.".Ladder = '".$this->fields['LadderID']."')";
+		." WHERE (".TBL_TEAMS.".Event = '".$this->fields['EventID']."')";
 		$result3 = $sql->db_Query($q3);
 	}
 
@@ -187,7 +187,7 @@ class Ladder extends DatabaseTable
 	{
 		global $sql;
 		$q3 = "DELETE FROM ".TBL_MODS
-		." WHERE (".TBL_MODS.".Ladder = '".$this->fields['LadderID']."')";
+		." WHERE (".TBL_MODS.".Event = '".$this->fields['EventID']."')";
 		$result3 = $sql->db_Query($q3);
 	}
 
@@ -195,11 +195,11 @@ class Ladder extends DatabaseTable
 	{
 		global $sql;
 		$q3 = "DELETE FROM ".TBL_STATSCATEGORIES
-		." WHERE (".TBL_STATSCATEGORIES.".Ladder = '".$this->fields['LadderID']."')";
+		." WHERE (".TBL_STATSCATEGORIES.".Event = '".$this->fields['EventID']."')";
 		$result3 = $sql->db_Query($q3);
 	}
 
-	function deleteLadder()
+	function deleteEvent()
 	{
 		global $sql;
 		$this->deleteMatches();
@@ -208,15 +208,15 @@ class Ladder extends DatabaseTable
 		$this->deleteTeams();
 		$this->deleteMods();
 		$this->deleteStatsCats();
-		$q3 = "DELETE FROM ".TBL_LADDERS
-		." WHERE (".TBL_LADDERS.".LadderID = '".$this->fields['LadderID']."')";
+		$q3 = "DELETE FROM ".TBL_EVENTS
+		." WHERE (".TBL_EVENTS.".EventID = '".$this->fields['EventID']."')";
 		$result3 = $sql->db_Query($q3);
 	}
 
 	/**
-	* ladderScoresUpdate - Re-calculate the scores and players of a ladder
+	* eventScoresUpdate - Re-calculate the scores and players of a event
 	*/
-	function ladderScoresUpdate($current_match)
+	function eventScoresUpdate($current_match)
 	{
 		global $sql;
 		global $time;
@@ -227,7 +227,7 @@ class Ladder extends DatabaseTable
 
 		$q = "SELECT ".TBL_MATCHS.".*"
 		." FROM ".TBL_MATCHS
-		." WHERE (".TBL_MATCHS.".Ladder = '".$this->fields['LadderID']."')"
+		." WHERE (".TBL_MATCHS.".Event = '".$this->fields['EventID']."')"
 		." AND (".TBL_MATCHS.".Status = 'active')"
 		." ORDER BY TimeReported";
 		$result = $sql->db_Query($q);
@@ -238,19 +238,19 @@ class Ladder extends DatabaseTable
 			switch($this->fields['Type'])
 			{
 				case "One Player Ladder":
-				updateStats($this->fields['LadderID'], $time, TRUE);
+				updateStats($this->fields['EventID'], $time, TRUE);
 				break;
 				case "Team Ladder":
-				updateStats($this->fields['LadderID'], $time, TRUE);
-				updateTeamStats($this->fields['LadderID'], $time, TRUE);
+				updateStats($this->fields['EventID'], $time, TRUE);
+				updateTeamStats($this->fields['EventID'], $time, TRUE);
 				break;
-				case "ClanWar":
-				updateTeamStats($this->fields['LadderID'], $time, TRUE);
+				case "Clan Ladder":
+				updateTeamStats($this->fields['EventID'], $time, TRUE);
 				break;
 				default:
 			}
 			echo "Done.";
-			echo '<META HTTP-EQUIV="Refresh" Content="0; URL=laddermanage.php?LadderID='.$this->fields['LadderID'].'">';
+			echo '<META HTTP-EQUIV="Refresh" Content="0; URL=eventmanage.php?EventID='.$this->fields['EventID'].'">';
 		}
 		else
 		{
@@ -264,14 +264,14 @@ class Ladder extends DatabaseTable
 				switch($this->fields['Type'])
 				{
 					case "One Player Ladder":
-					updateStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
+					updateStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
 					break;
 					case "Team Ladder":
-					updateStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
-					updateTeamStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
+					updateStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
+					updateTeamStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
 					break;
-					case "ClanWar":
-					updateTeamStats($this->fields['LadderID'], $this->fields['getStart_timestamp'], FALSE);
+					case "Clan Ladder":
+					updateTeamStats($this->fields['EventID'], $this->fields['getStart_timestamp'], FALSE);
 					break;
 					default:
 				}
@@ -304,16 +304,16 @@ class Ladder extends DatabaseTable
 					{
 						case "One Player Ladder":
 						$match->match_players_update();
-						updateStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
+						updateStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
 						break;
 						case "Team Ladder":
 						$match->match_players_update();
-						updateStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
-						updateTeamStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
+						updateStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
+						updateTeamStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
 						break;
-						case "ClanWar":
+						case "Clan Ladder":
 						$match->match_teams_update();
-						updateTeamStats($this->fields['LadderID'], $this->fields['Start_timestamp'], FALSE);
+						updateTeamStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
 						break;
 						default:
 					}
@@ -327,9 +327,9 @@ class Ladder extends DatabaseTable
 				}
 			}
 
-			echo '<form name="updateform" action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$this->fields['LadderID'].'" method="post">';
+			echo '<form name="updateform" action="'.e_PLUGIN.'ebattles/eventprocess.php?EventID='.$this->fields['EventID'].'" method="post">';
 			echo '<input type="hidden" name="match" value="'.$next_match.'"/>';
-			echo '<input type="hidden" name="ladderupdatescores" value="1"/>';
+			echo '<input type="hidden" name="eventupdatescores" value="1"/>';
 			echo '</form>';
 			echo '<script language="javascript">document.updateform.submit()</script>';
 
@@ -339,9 +339,9 @@ class Ladder extends DatabaseTable
 	}
 
 	/**
-	* ladderAddPlayer - add a user to a ladder
+	* eventAddPlayer - add a user to a event
 	*/
-	function ladderAddPlayer($user, $team = 0, $notify)
+	function eventAddPlayer($user, $team = 0, $notify)
 	{
 		global $sql;
 
@@ -374,7 +374,7 @@ class Ladder extends DatabaseTable
 		$q = "SELECT ".TBL_PLAYERS.".*"
 		." FROM ".TBL_PLAYERS.", "
 		.TBL_GAMERS
-		." WHERE (".TBL_PLAYERS.".Ladder = '".$this->fields['LadderID']."')"
+		." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')"
 		."   AND (".TBL_PLAYERS.".Team = '$team')"
 		."   AND (".TBL_PLAYERS.".Gamer = '$gamerID')";
 		$result = $sql->db_Query($q);
@@ -382,23 +382,23 @@ class Ladder extends DatabaseTable
 		echo "num_rows: $num_rows<br>";
 		if ($num_rows==0)
 		{
-			$q = " INSERT INTO ".TBL_PLAYERS."(Ladder,Gamer,Team,ELORanking,TS_mu,TS_sigma)
-			VALUES (".$this->fields['LadderID'].",$gamerID,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].")";
+			$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma)
+			VALUES (".$this->fields['EventID'].",$gamerID,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].")";
 			$sql->db_Query($q);
 			echo "player created, query: $q<br>";
-			$q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '".$this->fields['LadderID']."')";
+			$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '".$this->fields['EventID']."')";
 			$sql->db_Query($q);
 
 			if ($notify)
 			{
 				$sendto = $user;
 				$subject = SITENAME.$this->fields['Name'];
-				$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$this->fields['Name'].EB_LADDERS_L29.EB_LADDERS_L31.USERNAME;
+				$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$this->fields['Name'].EB_EVENTS_L29.EB_EVENTS_L31.USERNAME;
 				sendNotification($sendto, $subject, $message, $fromid=0);
 
 				// Send email
-				//$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$this->fields['Name'].EB_LADDERS_L30."<a href='".SITEURLBASE.e_PLUGIN_ABS."ebattles/ladderinfo.php?LadderID=$this->fields['LadderID']'>$this->fields['Name']</a>.".EB_LADDERS_L31.USERNAME.EB_LADDERS_L32;
-				$message = EB_LADDERS_L26.$username.EB_LADDERS_L27.$this->fields['Name'].EB_LADDERS_L30.SITEURLBASE.e_PLUGIN_ABS."ebattles/ladderinfo.php?LadderID=$this->fields['LadderID']".EB_LADDERS_L31.USERNAME;
+				//$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$this->fields['Name'].EB_EVENTS_L30."<a href='".SITEURLBASE.e_PLUGIN_ABS."ebattles/eventinfo.php?EventID=$this->fields['EventID']'>$this->fields['Name']</a>.".EB_EVENTS_L31.USERNAME.EB_EVENTS_L32;
+				$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$this->fields['Name'].EB_EVENTS_L30.SITEURLBASE.e_PLUGIN_ABS."ebattles/eventinfo.php?EventID=$this->fields['EventID']".EB_EVENTS_L31.USERNAME;
 				require_once(e_HANDLER."mail.php");
 				sendemail($useremail, $subject, $message);
 			}
@@ -407,32 +407,32 @@ class Ladder extends DatabaseTable
 
 
 	/**
-	* ladderAddDivision - add a division to a ladder
+	* eventAddDivision - add a division to a event
 	*/
-	function ladderAddDivision($div_id, $notify)
+	function eventAddDivision($div_id, $notify)
 	{
 		global $sql;
 
-		//$add_players = ( $this->fields['Type'] == "ClanWar" ? FALSE : TRUE);
+		//$add_players = ( $this->fields['Type'] == "Clan Ladder" ? FALSE : TRUE);
 		$add_players = TRUE;
 
 		// Is the division signed up
 		$q = "SELECT ".TBL_TEAMS.".*"
 		." FROM ".TBL_TEAMS
-		." WHERE (".TBL_TEAMS.".Ladder = '".$this->fields['LadderID']."')"
+		." WHERE (".TBL_TEAMS.".Event = '".$this->fields['EventID']."')"
 		." AND (".TBL_TEAMS.".Division = '$div_id')";
 		$result = $sql->db_Query($q);
 		$numTeams = mysql_numrows($result);
 		if($numTeams == 0)
 		{
-			$q = "INSERT INTO ".TBL_TEAMS."(Ladder,Division,ELORanking,TS_mu,TS_sigma)
-			VALUES (".$this->fields['LadderID'].",$div_id,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].")";
+			$q = "INSERT INTO ".TBL_TEAMS."(Event,Division,ELORanking,TS_mu,TS_sigma)
+			VALUES (".$this->fields['EventID'].",$div_id,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].")";
 			$sql->db_Query($q);
 			$team_id =  mysql_insert_id();
 
 			if ($add_players == TRUE)
 			{
-				// All members of this division will automatically be signed up to this ladder
+				// All members of this division will automatically be signed up to this event
 				$q_2 = "SELECT ".TBL_DIVISIONS.".*, "
 				.TBL_MEMBERS.".*, "
 				.TBL_USERS.".*"
@@ -449,20 +449,20 @@ class Ladder extends DatabaseTable
 					for($j=0; $j<$num_rows_2; $j++)
 					{
 						$user_id  = mysql_result($result_2,$j, TBL_USERS.".user_id");
-						$this->ladderAddPlayer($user_id, $team_id, $notify);
+						$this->eventAddPlayer($user_id, $team_id, $notify);
 					}
-					$q4 = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '".$this->fields['LadderID']."')";
+					$q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '".$this->fields['EventID']."')";
 					$result = $sql->db_Query($q4);
 				}
 			}
 		}
 	}
-	function displayLadderSettingsForm()
+	function displayEventSettingsForm()
 	{
 		global $sql;
 		// Specify if we use WYSIWYG for text areas
 		global $e_wysiwyg;
-		$e_wysiwyg	= "ladderdescription,ladderrules";  // set $e_wysiwyg before including HEADERF
+		$e_wysiwyg	= "eventdescription,eventrules";  // set $e_wysiwyg before including HEADERF
 		if (e_WYSIWYG)
 		{
 			$insertjs = "rows='25'";
@@ -539,31 +539,31 @@ class Ladder extends DatabaseTable
 		</script>
 		";
 
-		$text .= '<form id="form-ladder-settings" action="'.e_PLUGIN.'ebattles/ladderprocess.php?LadderID='.$this->getField('LadderID').'" method="post">';
+		$text .= '<form id="form-event-settings" action="'.e_PLUGIN.'ebattles/eventprocess.php?EventID='.$this->getField('EventID').'" method="post">';
 		$text .= '
 		<table class="eb_table" style="width:95%">
 		<tbody>
 		';
-		//<!-- Ladder Name -->
+		//<!-- Event Name -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L15.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L15.'</td>
 		<td class="eb_td">
-		<div><input class="tbox" type="text" size="40" name="laddername" value="'.$this->getField('Name').'"/></div>
+		<div><input class="tbox" type="text" size="40" name="eventname" value="'.$this->getField('Name').'"/></div>
 		</td>
 		</tr>
 		';
 
-		//<!-- Ladder Password -->
+		//<!-- Event Password -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L16.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L16.'</td>
 		<td class="eb_td">
-		<div><input class="tbox" type="text" size="40" name="ladderpassword" value="'.$this->getField('password').'"/></div>
+		<div><input class="tbox" type="text" size="40" name="eventpassword" value="'.$this->getField('password').'"/></div>
 		</td>
 		</tr>
 		';
-		//<!-- Ladder Game -->
+		//<!-- Event Game -->
 
 		$q = "SELECT ".TBL_GAMES.".*"
 		." FROM ".TBL_GAMES
@@ -572,8 +572,8 @@ class Ladder extends DatabaseTable
 		/* Error occurred, return given name by default */
 		$numGames = mysql_numrows($result);
 		$text .= '<tr>';
-		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L17.'</td>';
-		$text .= '<td class="eb_td"><select class="tbox" name="laddergame">';
+		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L17.'</td>';
+		$text .= '<td class="eb_td"><select class="tbox" name="eventgame">';
 		for($i=0; $i<$numGames; $i++){
 			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -593,13 +593,13 @@ class Ladder extends DatabaseTable
 		//<!-- Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L18.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L18.'</td>
 		<td class="eb_td">
 		<div id="radio1">
 		';
-		$text .= '<input class="tbox" type="radio" id="radio11" size="40" name="laddertype" '.($this->getField('Type') == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" /><label for="radio11">'.EB_LADDERM_L19.'</label>';
-		$text .= '<input class="tbox" type="radio" id="radio12" size="40" name="laddertype" '.($this->getField('Type') == "Team Ladder" ? 'checked="checked"' : '').' value="Team" /><label for="radio12">'.EB_LADDERM_L20.'</label>';
-		$text .= '<input class="tbox" type="radio" id="radio13" size="40" name="laddertype" '.($this->getField('Type') == "ClanWar" ? 'checked="checked"' : '').' value="ClanWar" /><label for="radio13">'.EB_LADDERM_L116.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio11" size="40" name="eventtype" '.($this->getField('Type') == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" /><label for="radio11">'.EB_EVENTM_L19.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio12" size="40" name="eventtype" '.($this->getField('Type') == "Team Ladder" ? 'checked="checked"' : '').' value="Team" /><label for="radio12">'.EB_EVENTM_L20.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio13" size="40" name="eventtype" '.($this->getField('Type') == "Clan Ladder" ? 'checked="checked"' : '').' value="Clan" /><label for="radio13">'.EB_EVENTM_L116.'</label>';
 
 		$text .= '
 		</div>
@@ -610,11 +610,11 @@ class Ladder extends DatabaseTable
 		//<!-- Match Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L132.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L132.'</td>
 		<td class="eb_td">
 		<div>
 		';
-		$text .= '<select class="tbox" name="laddermatchtype">';
+		$text .= '<select class="tbox" name="eventmatchtype">';
 		$text .= '<option value="" '.($this->getField('MatchType') == "" ? 'selected="selected"' : '') .'>-</option>';
 		foreach($ematchtypes as $matchtype)
 		{
@@ -631,11 +631,11 @@ class Ladder extends DatabaseTable
 		//<!-- Max Number of Players -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L126.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L126.'</td>
 		<td class="eb_td">
 		<div>
 		';
-		$text .= '<input class="tbox" type="text" name="laddernumbermaxplayers" size="2" value="'.$this->getField('MaxNumberPlayers').'"/>';
+		$text .= '<input class="tbox" type="text" name="eventnumbermaxplayers" size="2" value="'.$this->getField('MaxNumberPlayers').'"/>';
 		$text .= '
 		</div>
 		</td>
@@ -645,12 +645,12 @@ class Ladder extends DatabaseTable
 		//<!-- Rating Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L117.'<div class="smalltext">'.EB_LADDERM_L118.'</div></td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L117.'<div class="smalltext">'.EB_EVENTM_L118.'</div></td>
 		<td class="eb_td">
 		<div id="radio2">
 		';
-		$text .= '<input class="tbox" type="radio" id="radio21" size="40" name="ladderrankingtype" '.($this->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" /><label for="radio21">'.EB_LADDERM_L119.'</label>';
-		$text .= '<input class="tbox" type="radio" id="radio22" size="40" name="ladderrankingtype" '.($this->getField('RankingType') == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" /><label for="radio22">'.EB_LADDERM_L120.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio21" size="40" name="eventrankingtype" '.($this->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" /><label for="radio21">'.EB_EVENTM_L119.'</label>';
+		$text .= '<input class="tbox" type="radio" id="radio22" size="40" name="eventrankingtype" '.($this->getField('RankingType') == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" /><label for="radio22">'.EB_EVENTM_L120.'</label>';
 		$text .= '
 		</div>
 		</td>
@@ -660,11 +660,11 @@ class Ladder extends DatabaseTable
 		//<!-- Match report userclass -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L21.'</td>
-		<td class="eb_td"><select class="tbox" name="laddermatchreportuserclass">';
-		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($this->getField('match_report_userclass') == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($this->getField('match_report_userclass') == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.($this->getField('match_report_userclass') == eb_UC_LADDER_OWNER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L24.'</option>';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L21.'</td>
+		<td class="eb_td"><select class="tbox" name="eventmatchreportuserclass">';
+		$text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.($this->getField('match_report_userclass') == eb_UC_EVENT_PLAYER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L22.'</option>';
+		$text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.($this->getField('match_report_userclass') == eb_UC_EVENT_MODERATOR ? 'selected="selected"' : '') .'>'.EB_EVENTM_L23.'</option>';
+		$text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.($this->getField('match_report_userclass') == eb_UC_EVENT_OWNER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L24.'</option>';
 		$text .= '</select>
 		</td>
 		</tr>
@@ -673,11 +673,11 @@ class Ladder extends DatabaseTable
 		//<!-- Match replay report userclass -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L134.'</td>
-		<td class="eb_td"><select class="tbox" name="laddermatchreplayreportuserclass">';
-		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_PLAYER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L22.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_MODERATOR ? 'selected="selected"' : '') .'>'.EB_LADDERM_L23.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_LADDER_OWNER ? 'selected="selected"' : '') .'>'.EB_LADDERM_L24.'</option>';
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L134.'</td>
+		<td class="eb_td"><select class="tbox" name="eventmatchreplayreportuserclass">';
+		$text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_EVENT_PLAYER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L22.'</option>';
+		$text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.($this->getField('match_replay_report_userclass') == eb_UC_EVENT_MODERATOR ? 'selected="selected"' : '') .'>'.EB_EVENTM_L23.'</option>';
+		$text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.($this->getField('match_replay_report_userclass') == eb_UC_EVENT_OWNER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L24.'</option>';
 		$text .= '</select>
 		</td>
 		</tr>
@@ -686,11 +686,11 @@ class Ladder extends DatabaseTable
 		//<!-- Allow Quick Loss Report -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L25.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L25.'</td>
 		<td class="eb_td">
 		<div>
 		';
-		$text .= '<input class="tbox" type="checkbox" name="ladderallowquickloss"';
+		$text .= '<input class="tbox" type="checkbox" name="eventallowquickloss"';
 		if ($this->getField('quick_loss_report') == TRUE)
 		{
 			$text .= ' checked="checked"/>';
@@ -708,11 +708,11 @@ class Ladder extends DatabaseTable
 		//<!-- Allow Score -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L26.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L26.'</td>
 		<td class="eb_td">
 		<div>
 		';
-		$text .= '<input class="tbox" type="checkbox" name="ladderallowscore"';
+		$text .= '<input class="tbox" type="checkbox" name="eventallowscore"';
 		if ($this->getField('AllowScore') == TRUE)
 		{
 			$text .= ' checked="checked"/>';
@@ -731,7 +731,7 @@ class Ladder extends DatabaseTable
 		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
 		." FROM ".TBL_MATCHS.", "
 		.TBL_SCORES
-		." WHERE (".TBL_MATCHS.".Ladder = '".$this->getField('LadderID')."')"
+		." WHERE (".TBL_MATCHS.".Event = '".$this->getField('EventID')."')"
 		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 		." AND (".TBL_MATCHS.".Status = 'pending')";
 		$result = $sql->db_Query($q);
@@ -741,16 +741,16 @@ class Ladder extends DatabaseTable
 
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L108.'<div class="smalltext">'.EB_LADDERM_L109.'</div></td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L108.'<div class="smalltext">'.EB_EVENTM_L109.'</div></td>
 		<td class="eb_td">
 		<div>';
-		$text .= '<select class="tbox" name="laddermatchapprovaluserclass">';
-		$text .= '<option value="'.eb_UC_NONE.'" '.(($this->getField('MatchesApproval') == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L113.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_PLAYER.'" '.((($this->getField('MatchesApproval') & eb_UC_LADDER_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L112.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_MODERATOR.'" '.((($this->getField('MatchesApproval') & eb_UC_LADDER_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L111.'</option>';
-		$text .= '<option value="'.eb_UC_LADDER_OWNER.'" '.((($this->getField('MatchesApproval') & eb_UC_LADDER_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_LADDERM_L110.'</option>';
+		$text .= '<select class="tbox" name="eventmatchapprovaluserclass">';
+		$text .= '<option value="'.eb_UC_NONE.'" '.(($this->getField('MatchesApproval') == eb_UC_NONE) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L113.'</option>';
+		$text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.((($this->getField('MatchesApproval') & eb_UC_EVENT_PLAYER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L112.'</option>';
+		$text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.((($this->getField('MatchesApproval') & eb_UC_EVENT_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L111.'</option>';
+		$text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.((($this->getField('MatchesApproval') & eb_UC_EVENT_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L110.'</option>';
 		$text .= '</select>';
-		$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;'.$nbrMatchesPending.'&nbsp;'.EB_LADDER_L64.'</div>' : '';
+		$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</div>' : '';
 		$text .= '
 		</div>
 		</td>
@@ -760,10 +760,10 @@ class Ladder extends DatabaseTable
 		//<!-- Allow Draws -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L27.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L27.'</td>
 		<td class="eb_td">
 		<div>';
-		$text .= '<input class="tbox" type="checkbox" name="ladderallowdraw"';
+		$text .= '<input class="tbox" type="checkbox" name="eventallowdraw"';
 		if ($this->getField('AllowDraw') == TRUE)
 		{
 			$text .= ' checked="checked"/>';
@@ -781,23 +781,23 @@ class Ladder extends DatabaseTable
 		//<!-- Points -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L28.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L28.'</td>
 		<td class="eb_td">
 		<table class="table_left">
 		<tr>
-		<td>'.EB_LADDERM_L29.'</td>
-		<td>'.EB_LADDERM_L30.'</td>
-		<td>'.EB_LADDERM_L31.'</td>
+		<td>'.EB_EVENTM_L29.'</td>
+		<td>'.EB_EVENTM_L30.'</td>
+		<td>'.EB_EVENTM_L31.'</td>
 		</tr>
 		<tr>
 		<td>
-		<div><input class="tbox" type="text" name="ladderpointsperwin" value="'.$this->getField('PointsPerWin').'"/></div>
+		<div><input class="tbox" type="text" name="eventpointsperwin" value="'.$this->getField('PointsPerWin').'"/></div>
 		</td>
 		<td>
-		<div><input class="tbox" type="text" name="ladderpointsperdraw" value="'.$this->getField('PointsPerDraw').'"/></div>
+		<div><input class="tbox" type="text" name="eventpointsperdraw" value="'.$this->getField('PointsPerDraw').'"/></div>
 		</td>
 		<td>
-		<div><input class="tbox" type="text" name="ladderpointsperloss" value="'.$this->getField('PointsPerLoss').'"/></div>
+		<div><input class="tbox" type="text" name="eventpointsperloss" value="'.$this->getField('PointsPerLoss').'"/></div>
 		</td>
 		</tr>
 		</table>
@@ -808,10 +808,10 @@ class Ladder extends DatabaseTable
 		//<!-- Allow Forfeits -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L127.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L127.'</td>
 		<td class="eb_td">
 		<div>';
-		$text .= '<input class="tbox" type="checkbox" name="ladderallowforfeit"';
+		$text .= '<input class="tbox" type="checkbox" name="eventallowforfeit"';
 		if ($this->getField('AllowForfeit') == TRUE)
 		{
 			$text .= ' checked="checked"/>';
@@ -820,10 +820,10 @@ class Ladder extends DatabaseTable
 		{
 			$text .= '/>';
 		}
-		$text .= EB_LADDERM_L128;
+		$text .= EB_EVENTM_L128;
 		$text .= '</div>';
 		$text .= '<div>';
-		$text .= '<input class="tbox" type="checkbox" name="ladderForfeitWinLossUpdate"';
+		$text .= '<input class="tbox" type="checkbox" name="eventForfeitWinLossUpdate"';
 		if ($this->getField('ForfeitWinLossUpdate') == TRUE)
 		{
 			$text .= ' checked="checked"/>';
@@ -832,21 +832,21 @@ class Ladder extends DatabaseTable
 		{
 			$text .= '/>';
 		}
-		$text .= EB_LADDERM_L129;
+		$text .= EB_EVENTM_L129;
 		$text .= '</div>';
 		$text .= '
 		<div>
 		<table class="table_left">
 		<tr>
-		<td>'.EB_LADDERM_L130.'</td>
-		<td>'.EB_LADDERM_L131.'</td>
+		<td>'.EB_EVENTM_L130.'</td>
+		<td>'.EB_EVENTM_L131.'</td>
 		</tr>
 		<tr>
 		<td>
-		<div><input class="tbox" type="text" name="ladderforfeitwinpoints" value="'.$this->getField('ForfeitWinPoints').'"/></div>
+		<div><input class="tbox" type="text" name="eventforfeitwinpoints" value="'.$this->getField('ForfeitWinPoints').'"/></div>
 		</td>
 		<td>
-		<div><input class="tbox" type="text" name="ladderforfeitlosspoints" value="'.$this->getField('ForfeitLossPoints').'"/></div>
+		<div><input class="tbox" type="text" name="eventforfeitlosspoints" value="'.$this->getField('ForfeitLossPoints').'"/></div>
 		</td>
 		</tr>
 		</table>
@@ -860,11 +860,11 @@ class Ladder extends DatabaseTable
 		//<!-- Maps -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L125.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L125.'</td>
 		<td class="eb_td">
 		<div>
 		';
-		$text .= '<input class="tbox" type="text" name="laddermaxmapspermatch" size="2" value="'.$this->getField('MaxMapsPerMatch').'"/>';
+		$text .= '<input class="tbox" type="text" name="eventmaxmapspermatch" size="2" value="'.$this->getField('MaxMapsPerMatch').'"/>';
 		$text .= '
 		</div>
 		</td>
@@ -884,12 +884,12 @@ class Ladder extends DatabaseTable
 
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L32.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L32.'</td>
 		<td class="eb_td">
 		<table class="table_left">
 		<tr>
 		<td>
-		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearStartDate(this.form);"/></div>
+		<div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearStartDate(this.form);"/></div>
 		</td>
 		<td>
 		<div><input class="tbox timepicker" type="text" name="startdate" id="f_date_start" value="'.$date_start.'" readonly="readonly" /></div>
@@ -912,12 +912,12 @@ class Ladder extends DatabaseTable
 		}
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L35.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L35.'</td>
 		<td class="eb_td">
 		<table class="table_left">
 		<tr>
 		<td>
-		<div><input class="button" type="button" value="'.EB_LADDERM_L34.'" onclick="clearEndDate(this.form);"/></div>
+		<div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearEndDate(this.form);"/></div>
 		</td>
 		<td>
 		<div><input class="tbox timepicker" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
@@ -931,10 +931,10 @@ class Ladder extends DatabaseTable
 		//<!-- Description -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L36.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L36.'</td>
 		<td class="eb_td">
 		';
-		$text .= '<textarea class="tbox" id="ladderdescription" name="ladderdescription" cols="70" '.$insertjs.'>'.$this->getField('Description').'</textarea>';
+		$text .= '<textarea class="tbox" id="eventdescription" name="eventdescription" cols="70" '.$insertjs.'>'.$this->getField('Description').'</textarea>';
 		if (!e_WYSIWYG)
 		{
 			$text .= '<br />'.display_help("helpb",1);
@@ -946,10 +946,10 @@ class Ladder extends DatabaseTable
 		//<!-- Rules -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_LADDERM_L38.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L38.'</td>
 		<td class="eb_td">
 		';
-		$text .= '<textarea class="tbox" id="ladderrules" name="ladderrules" cols="70" '.$insertjs.'>'.$this->getField('Rules').'</textarea>';
+		$text .= '<textarea class="tbox" id="eventrules" name="eventrules" cols="70" '.$insertjs.'>'.$this->getField('Rules').'</textarea>';
 		if (!e_WYSIWYG)
 		{
 			$text .= '<br />'.display_help("helpb",1);
@@ -965,7 +965,7 @@ class Ladder extends DatabaseTable
 		$text .= '
 		<table><tr><td>
 		<div>
-		'.ebImageTextButton('laddersettingssave', 'disk.png', EB_LADDERM_L37).'
+		'.ebImageTextButton('eventsettingssave', 'disk.png', EB_EVENTM_L37).'
 		</div>
 		</td></tr></table>
 
@@ -980,72 +980,72 @@ class Ladder extends DatabaseTable
 
 		$last_id = $this->id;
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
 		VALUES ('$last_id', 'ELO')";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMaxValue)
 		VALUES ('$last_id', 'Skill', 4)";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue, InfoOnly)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMaxValue, InfoOnly)
 		VALUES ('$last_id', 'GamesPlayed', 1, 1)";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMaxValue)
 		VALUES ('$last_id', 'VictoryRatio', 3)";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
 		VALUES ('$last_id', 'WinDrawLoss')";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
 		VALUES ('$last_id', 'VictoryPercent')";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
 		VALUES ('$last_id', 'UniqueOpponents')";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
 		VALUES ('$last_id', 'OpponentsELO')";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName, CategoryMaxValue, InfoOnly)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMaxValue, InfoOnly)
 		VALUES ('$last_id', 'Streaks', 2, 1)";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
 		VALUES ('$last_id', 'Score')";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
 		VALUES ('$last_id', 'ScoreAgainst')";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
 		VALUES ('$last_id', 'ScoreDiff')";
 		$result = $sql->db_Query($q);
 		$q =
-		"INSERT INTO ".TBL_STATSCATEGORIES."(Ladder, CategoryName)
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
 		VALUES ('$last_id', 'Points')";
 		$result = $sql->db_Query($q);
 	}
 }
 
-function ladderTypeToString($type)
+function eventTypeToString($type)
 {
 	switch($type)
 	{
 		case "One Player Ladder":
-		return EB_LADDERS_L22;
+		return EB_EVENTS_L22;
 		break;
 		case "Team Ladder":
-		return EB_LADDERS_L23;
+		return EB_EVENTS_L23;
 		break;
-		case "ClanWar":
-		return EB_LADDERS_L25;
+		case "Clan Ladder":
+		return EB_EVENTS_L25;
 		break;
 		default:
 		return $type;

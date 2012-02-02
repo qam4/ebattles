@@ -7,21 +7,21 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN.'ebattles/include/main.php');
 require_once(e_PLUGIN.'ebattles/include/match.php');
-require_once(e_PLUGIN.'ebattles/include/ladder.php');
+require_once(e_PLUGIN.'ebattles/include/event.php');
 
 if(isset($_POST['qrsubmitloss']))
 {
-    $ladder_id = $_POST['LadderID'];
+    $event_id = $_POST['EventID'];
     $reported_by = $_POST['reported_by'];
     $pwinnerID = $_POST['Player'];
 
-    $ladder = new Ladder($ladder_id);
+    $event = new Event($event_id);
 
     // Attention here, we use user_id, so there has to be 1 user for 1 player
     $plooserUser = $reported_by;
     $q = "SELECT *"
     ." FROM ".TBL_PLAYERS
-    ." WHERE (Ladder = '$ladder_id')"
+    ." WHERE (Event = '$event_id')"
     ."   AND (User = '$plooserUser')";
     $result = $sql->db_Query($q);
     $row = mysql_fetch_array($result);
@@ -30,8 +30,8 @@ if(isset($_POST['qrsubmitloss']))
     // Create Match ------------------------------------------
     $comments = '';
     $q =
-    "INSERT INTO ".TBL_MATCHS."(Ladder,ReportedBy,TimeReported, Comments, Status)
-    VALUES ($ladder_id,'$reported_by',$time, '$comments', 'pending')";
+    "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status)
+    VALUES ($event_id,'$reported_by',$time, '$comments', 'pending')";
     $result = $sql->db_Query($q);
 
     $last_id = mysql_insert_id();
@@ -55,24 +55,24 @@ if(isset($_POST['qrsubmitloss']))
     $match->match_scores_update();
 
     // Automatically Update Players stats only if Match Approval is Disabled
-    if ($ladder->getField('MatchesApproval') == eb_UC_NONE)
+    if ($event->getField('MatchesApproval') == eb_UC_NONE)
     {
-        switch($ladder->getField('Type'))
+        switch($event->getField('Type'))
         {
             case "One Player Ladder":
             case "Team Ladder":
             $match->match_players_update();
             break;
-            case "ClanWar":
+            case "Clan Ladder":
             $match->match_teams_update();
             break;
             default:
         }
-        $q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
+        $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
         $result = $sql->db_Query($q);
     }
 
-    $q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
+    $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
     $result = $sql->db_Query($q);
 
     header("Location: matchinfo.php?matchid=$match_id");
@@ -80,25 +80,25 @@ if(isset($_POST['qrsubmitloss']))
 }
 if (isset($_POST['approvematch']))
 {
-    $ladder_id = $_POST['LadderID'];
+    $event_id = $_POST['EventID'];
     $match_id = $_POST['matchid'];
 
-    $ladder = new Ladder($ladder_id);
+    $event = new Event($event_id);
     $match = new Match($match_id);
 
-    switch($ladder->getField('Type'))
+    switch($event->getField('Type'))
     {
         case "One Player Ladder":
         case "Team Ladder":
         $match->match_players_update();
         break;
-        case "ClanWar":
+        case "Clan Ladder":
         $match->match_teams_update();
         break;
         default:
     }
 
-    $q = "UPDATE ".TBL_LADDERS." SET IsChanged = 1 WHERE (LadderID = '$ladder_id')";
+    $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
     $result = $sql->db_Query($q);
 
     header("Location: matchinfo.php?matchid=$match_id");
@@ -106,7 +106,7 @@ if (isset($_POST['approvematch']))
 }
 if (isset($_POST['addmedia']))
 {
-    $ladder_id = $_POST['LadderID'];
+    $event_id = $_POST['EventID'];
     $match_id = $_POST['matchid'];
     $match = new Match($match_id);
     $media_type = $_POST['mediatype'];
@@ -133,6 +133,6 @@ if (isset($_POST['del_media']) && $_POST['del_media']!="")
 }
 
 // should not be here -> redirect
-header("Location: ladders.php");
+header("Location: events.php");
 
 ?>

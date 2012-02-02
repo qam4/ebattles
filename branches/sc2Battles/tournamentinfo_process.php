@@ -1,21 +1,21 @@
 <?php
 /**
-* TournamentInfo_process.php
+* EventInfo_process.php
 *
 */
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
-require_once(e_PLUGIN.'ebattles/include/tournament.php');
+require_once(e_PLUGIN.'ebattles/include/event.php');
 require_once(e_PLUGIN.'ebattles/include/gamer.php');
 
-$tournament_id = $_GET['TournamentID'];
-$tournament = new Tournament($tournament_id);
+$event_id = $_GET['EventID'];
+$event = new Event($event_id);
 
-if(isset($_POST['quittournament'])){
+if(isset($_POST['quitevent'])){
 	$pid = $_POST['player'];
 
-	// Player can quit an tournament if he has not played yet
-	// TODO - can quit if tournament not started.
+	// Player can quit an event if he has not played yet
+	// TODO - can quit if event not started.
 	$q = "SELECT ".TBL_TPLAYERS.".*"
 	." FROM ".TBL_TPLAYERS.", "
 	.TBL_SCORES
@@ -28,34 +28,34 @@ if(isset($_POST['quittournament'])){
 	if ($nbrscores == 0)
 	{
 		deleteTPlayer($pid);
-		$q = "UPDATE ".TBL_TOURNAMENTS." SET IsChanged = 1 WHERE (TournamentID = '$tournament_id')";
+		$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
 		$result = $sql->db_Query($q);
 	}
-	header("Location: tournamentinfo.php?TournamentID=$tournament_id");
+	header("Location: eventinfo.php?EventID=$event_id");
 }
-if(isset($_POST['jointournament'])){
+if(isset($_POST['joinevent'])){
 	
-	if ($_POST['joinTournamentPassword'] == $tournament->getField('password'))
+	if ($_POST['joinEventPassword'] == $event->getField('password'))
 	{
 		$UniqueGameID = $tp->toDB($_POST["charactername"].'#'.$_POST["code"]);
-		updateGamer(USERID, $tournament->getField('Game'), $UniqueGameID);
-		$tournament->tournamentAddPlayer(USERID, 0, FALSE);
+		updateGamer(USERID, $event->getField('Game'), $UniqueGameID);
+		$event->eventAddPlayer(USERID, 0, FALSE);
 	}
 
-	header("Location: tournamentinfo.php?TournamentID=$tournament_id");
+	header("Location: eventinfo.php?EventID=$event_id");
 }
-if(isset($_POST['teamjointournament'])){
-	if ($_POST['joinTournamentPassword'] == $tournament->getField('password'))
+if(isset($_POST['teamjoinevent'])){
+	if ($_POST['joinEventPassword'] == $event->getField('password'))
 	{
 		$div_id = $_POST['division'];
-		$tournament->tournamentAddDivision($div_id, FALSE);
+		$event->eventAddDivision($div_id, FALSE);
 	}
-	header("Location: tournamentinfo.php?TournamentID=$tournament_id");
+	header("Location: eventinfo.php?EventID=$event_id");
 }
-if(isset($_POST['jointeamtournament'])){
+if(isset($_POST['jointeamevent'])){
 	$team_id = $_POST['team'];
-	$tournament->tournamentAddPlayer (USERID, $team_id, FALSE);
-	header("Location: tournamentinfo.php?TournamentID=$tournament_id");
+	$event->eventAddPlayer (USERID, $team_id, FALSE);
+	header("Location: eventinfo.php?EventID=$event_id");
 }
 
 ?>

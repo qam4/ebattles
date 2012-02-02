@@ -35,20 +35,20 @@ $event = new Event($event_id);
 $can_manage = 0;
 if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 if (USERID==$event->getField('Owner')) $can_manage = 1;
-if (!$event_id) $can_manage = 1;	// event creation
 if ($can_manage == 0)
 {
 	header("Location: ./eventinfo.php?EventID=$event_id");
 	exit();
 }
 else{
+
 	$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
 	$result = $sql->db_Query($q);
 
 	if(isset($_POST['eventpublish']))
 	{
 		/* Event Status */
-		$q2 = "UPDATE ".TBL_EVENTS." SET Status = 'signup' WHERE (EventID = '$event_id')";
+		$q2 = "UPDATE ".TBL_EVENTS." SET Status = 'active' WHERE (EventID = '$event_id')";
 		$result2 = $sql->db_Query($q2);
 
 		//echo "-- eventpublish --<br />";
@@ -112,12 +112,20 @@ else{
 		/* Event Password */
 		$event->setField('password', $_POST['eventpassword']);
 
+		/* Event Game */
+		$new_eventgame = $_POST['eventgame'];
+		if ($$_POST['eventgame'] != 0)
+		{
+			$event->setField('Game', $_POST['eventgame']);
+			$event->setField('MatchType', $_POST['matchtype']);
+		}
+
 		/* Event Type */
 		// Can change only if no players are signed up
 		// TODO: should disable the select button.
-		$q2 = "SELECT ".TBL_TPLAYERS.".*"
-		." FROM ".TBL_TPLAYERS
-		." WHERE (".TBL_TPLAYERS.".Event = '$event_id')";
+		$q2 = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
 		$result2 = $sql->db_Query($q2);
 		$num_rows_2 = mysql_numrows($result2);
 		if ($num_rows_2==0)
@@ -126,8 +134,14 @@ else{
 
 			switch($new_eventtype)
 			{
-				case 'Single Elimination':
-				$event->setField('Type', $_POST['eventtype']);
+				case 'Individual':
+				$event->setField('Type', 'One Player Ladder');
+				break;
+				case 'Team':
+				$event->setField('Type', 'Team Ladder');
+				break;
+				case 'Clan':
+				$event->setField('Type', 'Clan Ladder');
 				break;
 				default:
 			}
@@ -135,10 +149,9 @@ else{
 
 		/* Event MatchType */
 		// Can change only if no players are signed up
-		// TODO: should disable the select button.
-		$q2 = "SELECT ".TBL_TPLAYERS.".*"
-		." FROM ".TBL_TPLAYERS
-		." WHERE (".TBL_TPLAYERS.".Event = '$event_id')";
+		$q2 = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
 		$result2 = $sql->db_Query($q2);
 		$num_rows_2 = mysql_numrows($result2);
 		if ($num_rows_2==0)
@@ -146,14 +159,31 @@ else{
 			$event->setField('MatchType', $_POST['eventmatchtype']);
 		}
 
-		/* Event Max Number of Players */
-		$event->setField('MaxNumberPlayers', $_POST['eventmaxnumberplayers']);
+		/* Event Max number of Players */
+		$new_eventnumbermaxplayers = htmlspecialchars($_POST['eventnumbermaxplayers']);
+		if (preg_match("/^\d+$/", $new_eventnumbermaxplayers))
+		{
+			$event->setField('MaxNumberPlayers', $new_eventnumbermaxplayers);
+		}
+
+		/* Event Ranking Type */
+		$event->setField('RankingType', $_POST['eventrankingtype']);
 
 		/* Event Match report userclass */
 		$event->setField('match_report_userclass', $_POST['eventmatchreportuserclass']);
 
-		/* Event Match report userclass */
+		/* Event Match replay report userclass */
 		$event->setField('match_replay_report_userclass', $_POST['eventmatchreplayreportuserclass']);
+
+		/* Event Quick Loss Report */
+		if ($_POST['eventallowquickloss'] != "")
+		{
+			$event->setField('quick_loss_report', 1);
+		}
+		else
+		{
+			$event->setField('quick_loss_report', 0);
+		}
 
 		/* Event Allow Score */
 		if ($_POST['eventallowscore'] != "")
@@ -165,6 +195,16 @@ else{
 			$event->setField('AllowScore', 0);
 		}
 
+		/* Event Allow Draw */
+		if ($_POST['eventallowdraw'] != "")
+		{
+			$event->setField('AllowDraw', 1);
+		}
+		else
+		{
+			$event->setField('AllowDraw', 0);
+		}
+
 		/* Event Forfeit */
 		if ($_POST['eventallowforfeit'] != "")
 		{
@@ -174,12 +214,51 @@ else{
 		{
 			$event->setField('AllowForfeit', 0);
 		}
+		if ($_POST['eventForfeitWinLossUpdate'] != "")
+		{
+			$event->setField('ForfeitWinLossUpdate', 1);
+		}
+		else
+		{
+			$event->setField('ForfeitWinLossUpdate', 0);
+		}
+		$new_eventforfeitwinpoints = htmlspecialchars($_POST['eventforfeitwinpoints']);
+		if (preg_match("/^\d+$/", $new_eventforfeitwinpoints))
+		{
+			$event->setField('ForfeitWinPoints', $new_eventforfeitwinpoints);
+		}
+		$new_eventforfeitlosspoints = htmlspecialchars($_POST['$eventforfeitlosspoints']);
+		if (preg_match("/^-?\d+$/", $new_eventforfeitlosspoints))
+		{
+			$event->setField('ForfeitLossPoints', $new_eventforfeitlosspoints);
+		}
 
 		/* Event Match Approval */
 		$event->setField('MatchesApproval', $_POST['eventmatchapprovaluserclass']);
 
-		/* Event Game */
-		$event->setField('Game', $_POST['eventgame']);
+		/* Points */
+		$new_eventpointsperwin = htmlspecialchars($_POST['eventpointsperwin']);
+		if (preg_match("/^\d+$/", $new_eventpointsperwin))
+		{
+			$event->setField('PointsPerWin', $new_eventpointsperwin);
+		}
+		$new_eventpointsperdraw = htmlspecialchars($_POST['eventpointsperdraw']);
+		if (preg_match("/^\d+$/", $new_eventpointsperdraw))
+		{
+			$event->setField('PointsPerDraw', $new_eventpointsperdraw);
+		}
+		$new_eventpointsperloss = htmlspecialchars($_POST['eventpointsperloss']);
+		if (preg_match("/^-?\d+$/", $new_eventpointsperloss))
+		{
+			$event->setField('PointsPerLoss', $new_eventpointsperloss);
+		}
+
+		/* Event Max number of Maps Per Match */
+		$new_eventmaxmapspermatch = htmlspecialchars($_POST['eventmaxmapspermatch']);
+		if (preg_match("/^\d+$/", $new_eventmaxmapspermatch))
+		{
+			$event->setField('MaxMapsPerMatch', $new_eventmaxmapspermatch);
+		}
 
 		/* Event Start Date */
 		$new_eventstartdate = $_POST['startdate'];
@@ -192,41 +271,33 @@ else{
 		{
 			$new_eventstart = 0;
 		}
-		$event->setField('StartDateTime', $new_eventstart);
+		$event->setField('Start_timestamp', $new_eventstart);
 
-
-		/* Event Rounds */
-		switch ($event->getField('Type'))
+		/* Event End Date */
+		$new_eventenddate = $_POST['enddate'];
+		if ($new_eventenddate != '')
 		{
-			default:
-			$file = 'include/brackets/se-'.$event->getField('MaxNumberPlayers').'.txt';
-			break;
+			$new_eventend_local = strtotime($new_eventenddate);
+			$new_eventend = $new_eventend_local - TIMEOFFSET;	// Convert to GMT time
 		}
-		$matchups = unserialize(implode('',file($file)));
-		$nbrRounds = count($matchups);
-
-		$rounds = unserialize($event->getField('Rounds'));
-		if (!isset($rounds)) $rounds = array();
-		for ($round = 1; $round < $nbrRounds; $round++) {
-			if (!isset($rounds[$round])) {
-				$rounds[$round] = array();
-			}
-			if (!isset($rounds[$round]['Title'])) {
-				$rounds[$round]['Title'] = EB_EVENTM_L25.' '.$round;
-			}
-			if (!isset($rounds[$round]['BestOf'])) {
-				$rounds[$round]['BestOf'] = 1;
-			}
-			$rounds[$round]['Title'] = $tp->toDB($_POST['round_title_'.$round]);
-			$rounds[$round]['BestOf'] = $tp->toDB($_POST['round_bestof_'.$round]);
+		else
+		{
+			$new_eventend = 0;
 		}
-		$event->updateRounds($rounds);
+		if ($new_eventend < $new_eventstart)
+		{
+			$new_eventend = $new_eventstart;
+		}
+		$event->setField('End_timestamp', $new_eventend);
 
 		/* Event Description */
 		$event->setField('Description', $_POST['eventdescription']);
 
 		/* Event Rules */
 		$event->setField('Rules', $_POST['eventrules']);
+
+		//var_dump($event);
+		//exit;
 
 		if ($event_id) {
 			// Need to update the event in database
@@ -236,36 +307,10 @@ else{
 			// Need to create a event.
 			$event->setField('Owner', USERID);
 			$event_id = $event->insert();
+			$event->initStats();
 		}
-		
-		//echo "-- eventsettingssave --<br />";
-		header("Location: eventmanage.php?EventID=$event_id");
-		exit();
-	}
-	if(isset($_POST['eventdeletemap']))
-	{
-		$eventmap = $_POST['eventdeletemap'];
-		$mapPool = explode(",", $event->getField('MapPool'));
-		unset($mapPool[$eventmap]);
-		$event->updateMapPool($mapPool);
-		$event->updateDB();
 
-		//echo "-- eventdeletemap --<br />";
-		header("Location: eventmanage.php?EventID=$event_id");
-		exit();
-	}
-	if(isset($_POST['eventaddmap']))
-	{
-		$eventmap = $_POST['map'];
-		$maps = $event->getField('MapPool');
-		$mapPool = array();
-		if ($maps)	$mapPool = explode(",", $event->getField('MapPool'));
-		if (!in_array($eventmap, $mapPool)) {
-			array_push($mapPool, $eventmap);
-			$event->updateMapPool($mapPool);
-			$event->updateDB();
-		}
-		//echo "-- eventaddmap --<br />";
+		//echo "-- eventsettingssave --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
 	}
@@ -292,23 +337,41 @@ else{
 	if(isset($_POST['ban_player']) && $_POST['ban_player']!="")
 	{
 		$playerid = $_POST['ban_player'];
-		$q2 = "UPDATE ".TBL_TPLAYERS." SET Banned = '1' WHERE (TPlayerID = '$playerid')";
+		$q2 = "UPDATE ".TBL_PLAYERS." SET Banned = '1' WHERE (PlayerID = '$playerid')";
 		$result2 = $sql->db_Query($q2);
+		updateStats($event_id, $time, TRUE);
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
 	}
 	if(isset($_POST['unban_player']) && $_POST['unban_player']!="")
 	{
 		$playerid = $_POST['unban_player'];
-		$q2 = "UPDATE ".TBL_TPLAYERS." SET Banned = '0' WHERE (TPlayerID = '$playerid')";
+		$q2 = "UPDATE ".TBL_PLAYERS." SET Banned = '0' WHERE (PlayerID = '$playerid')";
 		$result2 = $sql->db_Query($q2);
+		updateStats($event_id, $time, TRUE);
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
 	}
 	if(isset($_POST['kick_player']) && $_POST['kick_player']!="")
 	{
 		$playerid = $_POST['kick_player'];
-		deleteTPlayer($playerid);
+		deletePlayer($playerid);
+		updateStats($event_id, $time, TRUE);
+		header("Location: eventmanage.php?EventID=$event_id");
+		exit();
+	}
+	if(isset($_POST['del_player_games']) && $_POST['del_player_games']!="")
+	{
+		$playerid = $_POST['del_player_games'];
+		deletePlayerMatches($playerid);
+		updateStats($event_id, $time, TRUE);
+		header("Location: eventmanage.php?EventID=$event_id");
+		exit();
+	}
+	if(isset($_POST['del_player_awards']) && $_POST['del_player_awards']!="")
+	{
+		$playerid = $_POST['del_player_awards'];
+		deletePlayerAwards($playerid);
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
 	}
