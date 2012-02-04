@@ -40,6 +40,8 @@ $text .= '
 </div>
 ';
 
+$text .= disclaimer();
+
 $ns->tablerender(EB_EVENTP_L1, $text);
 require_once(FOOTERF);
 exit;
@@ -63,7 +65,7 @@ function displayPastEvents(){
 	'name'   => array(EB_EVENTS_L5, TBL_EVENTS.'.Name'),
 	'game'   => array(EB_EVENTS_L6, TBL_GAMES.'.Name'),
 	'type'   => array(EB_EVENTS_L7, TBL_EVENTS.'.Type'),
-	'start'  => array(EB_EVENTS_L8, TBL_EVENTS.'.Start_timestamp')
+	'start'  => array(EB_EVENTS_L8, TBL_EVENTS.'.StartDateTime')
 	);
 	if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
 	$gameid = $_GET['gameid'];
@@ -91,7 +93,7 @@ function displayPastEvents(){
 	.$matchtype_string
 	." ORDER BY Name";
 	$result_Games = $sql->db_Query($q_Games);
-	$num_Games = mysql_numrows($result_Games);
+	$numGames = mysql_numrows($result_Games);
 
 	// Drop down list to select Match type to display
 	$q_mt = "SELECT ".TBL_GAMES.".*"
@@ -115,11 +117,11 @@ function displayPastEvents(){
 	$text .= '<td>'.EB_EVENTS_L9.'<br />';
 	$text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
 	$text .= '<option value="All" '.(($gameid == "All") ? 'selected="selected"' : '').'>'.EB_EVENTS_L10.'</option>';
-	for($i=0; $i<$num_Games; $i++)
+	for($i=0; $i<$numGames; $i++)
 	{
-		$gname  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
+		$gName  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
 		$gid  = mysql_result($result_Games,$i, TBL_GAMES.".GameID");
-		$text .= '<option value="'.$gid.'" '.(($gameid == $gid) ? 'selected="selected"': '').'>'.htmlspecialchars($gname).'</option>';
+		$text .= '<option value="'.$gid.'" '.(($gameid == $gid) ? 'selected="selected"': '').'>'.htmlspecialchars($gName).'</option>';
 	}
 	$text .= '</select>';
 	$text .= '</td>';
@@ -148,8 +150,7 @@ function displayPastEvents(){
 
 	$q = "SELECT count(*) "
 	." FROM ".TBL_EVENTS
-	." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
-	."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
+	." WHERE (".TBL_EVENTS.".Status = 'finished')"
 	.$game_string
 	.$matchtype_string;
 	$result = $sql->db_Query($q);
@@ -163,27 +164,25 @@ function displayPastEvents(){
 	.TBL_GAMES.".*"
 	." FROM ".TBL_EVENTS.", "
 	.TBL_GAMES
-	." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
-	."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
+	." WHERE (".TBL_EVENTS.".Status = 'finished')"
 	.$game_string
 	.$matchtype_string
 	." ORDER BY $orderby_array[1] $sort, EventID DESC"
 	." $pages->limit";
 	$result = $sql->db_Query($q);
-	/* Error occurred, return given name by default */
-	$num_rows = mysql_numrows($result);
-	if(!$result || ($num_rows < 0)){
-		$text .= EB_EVENTS_L11;
-		return;
-	}
-	if($num_rows == 0)
+	$numEvents = mysql_numrows($result);
+	if(!$result || ($numEvents < 0))
+	{
+		/* Error occurred, return given name by default */
+		$text .= EB_EVENTS_L11.'</div>';
+		$text .= '</form><br/>';
+	} else if($numEvents == 0)
 	{
 		$text .= EB_EVENTS_L12.'</div>';
 		$text .= '</form><br/>';
 	}
 	else
 	{
-
 		// Paginate & Sorting
 		$items = '';
 		foreach($array as $opt=>$opt_array)	$items .= ($opt == $orderby) ? '<option selected="selected" value="'.$opt.'">'.$opt_array[0].'</option>':'<option value="'.$opt.'">'.$opt_array[0].'</option>';
@@ -228,26 +227,27 @@ function displayPastEvents(){
 		<th class="eb_th2">'.EB_EVENTS_L17.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L18.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L19.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L34.'</th>
 		</tr>';
-		for($i=0; $i<$num_rows; $i++){
-			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
-			$gicon  = mysql_result($result,$i, TBL_GAMES.".Icon");
+		for($i=0; $i < $numEvents; $i++)
+		{
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon  = mysql_result($result,$i, TBL_GAMES.".Icon");
 			$event_id  = mysql_result($result,$i, TBL_EVENTS.".EventID");
 			$event = new Event($event_id);
-
-			if($event->getField('Start_timestamp')!=0)
+			if($event->getField('StartDateTime')!=0)
 			{
-				$start_timestamp_local = $event->getField('Start_timestamp') + TIMEOFFSET;
-				$date_start = date("d M Y", $start_timestamp_local);
+				$startdatetime_local = $event->getField('StartDateTime') + TIMEOFFSET;
+				$date_start = date("d M Y", $startdatetime_local);
 			}
 			else
 			{
 				$date_start = "-";
 			}
-			if($event->getField('End_timestamp')!=0)
+			if($event->getField('EndDateTime')!=0)
 			{
-				$end_timestamp_local = $event->getField('End_timestamp') + TIMEOFFSET;
-				$date_end = date("d M Y", $end_timestamp_local);
+				$enddatetime_local = $event->getField('EndDateTime') + TIMEOFFSET;
+				$date_end = date("d M Y", $enddatetime_local);
 			}
 			else
 			{
@@ -265,7 +265,7 @@ function displayPastEvents(){
 			/* Nbr Teams */
 			$q_2 = "SELECT COUNT(*) as NbrTeams"
 			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Event = '$eid')";
+			." WHERE (".TBL_TEAMS.".Event = '$event_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrTeams = $row['NbrTeams'];
@@ -284,6 +284,7 @@ function displayPastEvents(){
 			switch($event->getField('Type'))
 			{
 				case "One Player Ladder":
+				case "One Player Tournament":
 				$nbrTeamPlayers = $nbrplayers;
 				break;
 				case "Team Ladder":
@@ -295,22 +296,18 @@ function displayPastEvents(){
 				default:
 			}
 
-			if(
-			($event->getField('End_timestamp')!=0)
-			||($event->getField('End_timestamp')<=$time)
-			)
-			{
-				$text .= '<tr>
-				<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a></td>
-				<td class="eb_td"><img '.getGameIconResize($gicon).'/></td>
-				<td class="eb_td">'.$gname.'</td>
-				<td class="eb_td">'.eventTypeToString($event->getField('Type')).'</td>
-				<td class="eb_td">'.$date_start.'</td>
-				<td class="eb_td">'.$date_end.'</td>
-				<td class="eb_td">'.$nbrTeamPlayers.'</td>
-				<td class="eb_td">'.$nbrmatches.'</td>
-				</tr>';
-			}
+			$text .= '<tr>
+			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a></td>
+			<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
+			<td class="eb_td">'.$gName.'</td>
+			<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>
+			<td class="eb_td">'.$date_start.'</td>
+			<td class="eb_td">'.$date_end.'</td>
+			<td class="eb_td">'.$nbrTeamPlayers.'</td>
+			<td class="eb_td">'.$nbrmatches.'</td>
+			<td class="eb_td">'.$event->getField('Status').'</td>
+			</tr>';
+			// TODO: status2string
 		}
 		$text .= '</tbody></table><br />';
 

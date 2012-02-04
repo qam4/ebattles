@@ -35,20 +35,20 @@ $event = new Event($event_id);
 $can_manage = 0;
 if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 if (USERID==$event->getField('Owner')) $can_manage = 1;
+if (!$event_id) $can_manage = 1;	// event creation
 if ($can_manage == 0)
 {
 	header("Location: ./eventinfo.php?EventID=$event_id");
 	exit();
 }
 else{
-
 	$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
 	$result = $sql->db_Query($q);
 
 	if(isset($_POST['eventpublish']))
 	{
 		/* Event Status */
-		$q2 = "UPDATE ".TBL_EVENTS." SET Status = 'active' WHERE (EventID = '$event_id')";
+		$q2 = "UPDATE ".TBL_EVENTS." SET Status = 'signup' WHERE (EventID = '$event_id')";
 		$result2 = $sql->db_Query($q2);
 
 		//echo "-- eventpublish --<br />";
@@ -117,7 +117,7 @@ else{
 		if ($$_POST['eventgame'] != 0)
 		{
 			$event->setField('Game', $_POST['eventgame']);
-			$event->setField('MatchType', $_POST['matchtype']);
+			$event->setField('MatchType', $_POST['eventmatchtype']);
 		}
 
 		/* Event Type */
@@ -142,13 +142,22 @@ else{
 				break;
 				case 'Clan':
 				$event->setField('Type', 'Clan Ladder');
+				case 'One Player Tournament':
+				$event->setField('Type', 'One Player Tournament');
 				break;
 				default:
 			}
 		}
 
+		/* Event Format */
+		if ($_POST['eventformat'] != "")
+		{
+			$event->setField('Format', $_POST['eventformat']);
+		}
+
 		/* Event MatchType */
 		// Can change only if no players are signed up
+		// TODO: should disable the select button.
 		$q2 = "SELECT ".TBL_PLAYERS.".*"
 		." FROM ".TBL_PLAYERS
 		." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
@@ -159,7 +168,7 @@ else{
 			$event->setField('MatchType', $_POST['eventmatchtype']);
 		}
 
-		/* Event Max number of Players */
+		/* Event Max Number of Players */
 		$new_eventnumbermaxplayers = htmlspecialchars($_POST['eventnumbermaxplayers']);
 		if (preg_match("/^\d+$/", $new_eventnumbermaxplayers))
 		{
@@ -167,7 +176,10 @@ else{
 		}
 
 		/* Event Ranking Type */
-		$event->setField('RankingType', $_POST['eventrankingtype']);
+		if ($_POST['eventrankingtype'] != "")
+		{
+			$event->setField('RankingType', $_POST['eventrankingtype']);
+		}
 
 		/* Event Match report userclass */
 		$event->setField('match_report_userclass', $_POST['eventmatchreportuserclass']);
@@ -271,7 +283,7 @@ else{
 		{
 			$new_eventstart = 0;
 		}
-		$event->setField('Start_timestamp', $new_eventstart);
+		$event->setField('StartDateTime', $new_eventstart);
 
 		/* Event End Date */
 		$new_eventenddate = $_POST['enddate'];
@@ -279,25 +291,50 @@ else{
 		{
 			$new_eventend_local = strtotime($new_eventenddate);
 			$new_eventend = $new_eventend_local - TIMEOFFSET;	// Convert to GMT time
+
+			if ($new_eventend < $new_eventstart)
+			{
+				$new_eventend = $new_eventstart;
+			}
 		}
 		else
 		{
 			$new_eventend = 0;
 		}
-		if ($new_eventend < $new_eventstart)
+		$event->setField('EndDateTime', $new_eventend);
+
+		/* Event Rounds */
+		switch ($event->getField('Type'))
 		{
-			$new_eventend = $new_eventstart;
+			default:
+			$file = 'include/brackets/se-'.$event->getField('MaxNumberPlayers').'.txt';
+			break;
 		}
-		$event->setField('End_timestamp', $new_eventend);
+		$matchups = unserialize(implode('',file($file)));
+		$nbrRounds = count($matchups);
+
+		$rounds = unserialize($event->getField('Rounds'));
+		if (!isset($rounds)) $rounds = array();
+		for ($round = 1; $round < $nbrRounds; $round++) {
+			if (!isset($rounds[$round])) {
+				$rounds[$round] = array();
+			}
+			if (!isset($rounds[$round]['Title'])) {
+				$rounds[$round]['Title'] = EB_EVENTM_L144.' '.$round;
+			}
+			if (!isset($rounds[$round]['BestOf'])) {
+				$rounds[$round]['BestOf'] = 1;
+			}
+			$rounds[$round]['Title'] = $tp->toDB($_POST['round_title_'.$round]);
+			$rounds[$round]['BestOf'] = $tp->toDB($_POST['round_bestof_'.$round]);
+		}
+		$event->updateRounds($rounds);
 
 		/* Event Description */
 		$event->setField('Description', $_POST['eventdescription']);
 
 		/* Event Rules */
 		$event->setField('Rules', $_POST['eventrules']);
-
-		//var_dump($event);
-		//exit;
 
 		if ($event_id) {
 			// Need to update the event in database
@@ -307,10 +344,38 @@ else{
 			// Need to create a event.
 			$event->setField('Owner', USERID);
 			$event_id = $event->insert();
+			// TODO: only for ladders?
 			$event->initStats();
 		}
 
 		//echo "-- eventsettingssave --<br />";
+		header("Location: eventmanage.php?EventID=$event_id");
+		exit();
+	}
+	if(isset($_POST['eventdeletemap']))
+	{
+		$eventmap = $_POST['eventdeletemap'];
+		$mapPool = explode(",", $event->getField('MapPool'));
+		unset($mapPool[$eventmap]);
+		$event->updateMapPool($mapPool);
+		$event->updateDB();
+
+		//echo "-- eventdeletemap --<br />";
+		header("Location: eventmanage.php?EventID=$event_id");
+		exit();
+	}
+	if(isset($_POST['eventaddmap']))
+	{
+		$eventmap = $_POST['map'];
+		$maps = $event->getField('MapPool');
+		$mapPool = array();
+		if ($maps)	$mapPool = explode(",", $event->getField('MapPool'));
+		if (!in_array($eventmap, $mapPool)) {
+			array_push($mapPool, $eventmap);
+			$event->updateMapPool($mapPool);
+			$event->updateDB();
+		}
+		//echo "-- eventaddmap --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
 	}
@@ -339,6 +404,7 @@ else{
 		$playerid = $_POST['ban_player'];
 		$q2 = "UPDATE ".TBL_PLAYERS." SET Banned = '1' WHERE (PlayerID = '$playerid')";
 		$result2 = $sql->db_Query($q2);
+		// TODO: only for ladders?
 		updateStats($event_id, $time, TRUE);
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
@@ -348,6 +414,7 @@ else{
 		$playerid = $_POST['unban_player'];
 		$q2 = "UPDATE ".TBL_PLAYERS." SET Banned = '0' WHERE (PlayerID = '$playerid')";
 		$result2 = $sql->db_Query($q2);
+		// TODO: only for ladders?
 		updateStats($event_id, $time, TRUE);
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
@@ -356,6 +423,7 @@ else{
 	{
 		$playerid = $_POST['kick_player'];
 		deletePlayer($playerid);
+		// TODO: only for ladders?
 		updateStats($event_id, $time, TRUE);
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();

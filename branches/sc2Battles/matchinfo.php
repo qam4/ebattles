@@ -303,12 +303,6 @@ else
 	$can_delete = 0;
 	$can_submit_media = 0;
 	$can_delete_media = 0;
-	/*
-	if ((USERID==$reported_by)
-	&& (($event->getField('End_timestamp')==0)
-	|| (($event->getField('End_timestamp')>=$time)&&($event->getField('Start_timestamp')<=$time))))
-	$can_delete = 1;
-	*/
 
 	if ((USERID==$reported_by)&&($mStatus == 'pending')) $can_edit = 1;
 

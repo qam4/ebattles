@@ -115,9 +115,9 @@ else{
 		/* Event Type */
 		// Can change only if no players are signed up
 		// TODO: should disable the select button.
-		$q2 = "SELECT ".TBL_TPLAYERS.".*"
-		." FROM ".TBL_TPLAYERS
-		." WHERE (".TBL_TPLAYERS.".Event = '$event_id')";
+		$q2 = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
 		$result2 = $sql->db_Query($q2);
 		$num_rows_2 = mysql_numrows($result2);
 		if ($num_rows_2==0)
@@ -126,7 +126,7 @@ else{
 
 			switch($new_eventtype)
 			{
-				case 'Single Elimination':
+				case 'One Player Tournament':
 				$event->setField('Type', $_POST['eventtype']);
 				break;
 				default:
@@ -135,10 +135,10 @@ else{
 
 		/* Event MatchType */
 		// Can change only if no players are signed up
-		// TODO: should disable the select button.
-		$q2 = "SELECT ".TBL_TPLAYERS.".*"
-		." FROM ".TBL_TPLAYERS
-		." WHERE (".TBL_TPLAYERS.".Event = '$event_id')";
+		// TODO: should disable the select button, and fix this for teams.
+		$q2 = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
 		$result2 = $sql->db_Query($q2);
 		$num_rows_2 = mysql_numrows($result2);
 		if ($num_rows_2==0)
@@ -212,7 +212,7 @@ else{
 				$rounds[$round] = array();
 			}
 			if (!isset($rounds[$round]['Title'])) {
-				$rounds[$round]['Title'] = EB_EVENTM_L25.' '.$round;
+				$rounds[$round]['Title'] = EB_EVENTM_L144.' '.$round;
 			}
 			if (!isset($rounds[$round]['BestOf'])) {
 				$rounds[$round]['BestOf'] = 1;
@@ -292,7 +292,7 @@ else{
 	if(isset($_POST['ban_player']) && $_POST['ban_player']!="")
 	{
 		$playerid = $_POST['ban_player'];
-		$q2 = "UPDATE ".TBL_TPLAYERS." SET Banned = '1' WHERE (TPlayerID = '$playerid')";
+		$q2 = "UPDATE ".TBL_PLAYERS." SET Banned = '1' WHERE (PlayerID = '$playerid')";
 		$result2 = $sql->db_Query($q2);
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
@@ -300,7 +300,7 @@ else{
 	if(isset($_POST['unban_player']) && $_POST['unban_player']!="")
 	{
 		$playerid = $_POST['unban_player'];
-		$q2 = "UPDATE ".TBL_TPLAYERS." SET Banned = '0' WHERE (TPlayerID = '$playerid')";
+		$q2 = "UPDATE ".TBL_PLAYERS." SET Banned = '0' WHERE (PlayerID = '$playerid')";
 		$result2 = $sql->db_Query($q2);
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
@@ -308,7 +308,7 @@ else{
 	if(isset($_POST['kick_player']) && $_POST['kick_player']!="")
 	{
 		$playerid = $_POST['kick_player'];
-		deleteTPlayer($playerid);
+		deletePlayer($playerid);
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
 	}

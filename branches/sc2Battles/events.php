@@ -66,6 +66,7 @@ function displayCurrentEvents(){
 	global $sql;
 	global $text;
 	global $time;
+
 	$pages = new Paginator;
 
 	if(check_class($pref['eb_events_create_class']))
@@ -88,7 +89,7 @@ function displayCurrentEvents(){
 	'name'   => array(EB_EVENTS_L5, TBL_EVENTS.'.Name'),
 	'game'   => array(EB_EVENTS_L6, TBL_GAMES.'.Name'),
 	'type'   => array(EB_EVENTS_L7, TBL_EVENTS.'.Type'),
-	'start'  => array(EB_EVENTS_L8, TBL_EVENTS.'.Start_timestamp')
+	'start'  => array(EB_EVENTS_L8, TBL_EVENTS.'.StartDateTime')
 	);
 	if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
 	$gameid = $_GET['gameid'];
@@ -142,9 +143,9 @@ function displayCurrentEvents(){
 	$text .= '<option value="All" '.(($gameid == "All") ? 'selected="selected"' : '').'>'.EB_EVENTS_L10.'</option>';
 	for($i=0; $i<$numGames; $i++)
 	{
-		$gname  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
+		$gName  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
 		$gid  = mysql_result($result_Games,$i, TBL_GAMES.".GameID");
-		$text .= '<option value="'.$gid.'" '.(($gameid == $gid) ? 'selected="selected"': '').'>'.htmlspecialchars($gname).'</option>';
+		$text .= '<option value="'.$gid.'" '.(($gameid == $gid) ? 'selected="selected"': '').'>'.htmlspecialchars($gName).'</option>';
 	}
 	$text .= '</select>';
 	$text .= '</td>';
@@ -173,8 +174,7 @@ function displayCurrentEvents(){
 
 	$q = "SELECT count(*) "
 	." FROM ".TBL_EVENTS
-	." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
-	."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
+	." WHERE (".TBL_EVENTS.".Status != 'finished')"
 	."   AND (".TBL_EVENTS.".Status != 'draft')"
 	.$game_string
 	.$matchtype_string;
@@ -189,14 +189,12 @@ function displayCurrentEvents(){
 	.TBL_GAMES.".*"
 	." FROM ".TBL_EVENTS.", "
 	.TBL_GAMES
-	." WHERE (   (".TBL_EVENTS.".End_timestamp = '')"
-	."        OR (".TBL_EVENTS.".End_timestamp > $time)) "
+	." WHERE (".TBL_EVENTS.".Status != 'finished')"
 	."   AND (".TBL_EVENTS.".Status != 'draft')"
 	.$game_string
 	.$matchtype_string
 	." ORDER BY $orderby_array[1] $sort, EventID DESC"
 	." $pages->limit";
-
 	$result = $sql->db_Query($q);
 	$numEvents = mysql_numrows($result);
 	if(!$result || ($numEvents < 0))
@@ -255,26 +253,27 @@ function displayCurrentEvents(){
 		<th class="eb_th2">'.EB_EVENTS_L17.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L18.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L19.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L34.'</th>
 		</tr>';
-		for($i=0; $i<$numEvents; $i++)
+		for($i=0; $i < $numEvents; $i++)
 		{
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon  = mysql_result($result,$i, TBL_GAMES.".Icon");
 			$event_id  = mysql_result($result,$i, TBL_EVENTS.".EventID");
 			$event = new Event($event_id);
-			if($event->getField('Start_timestamp')!=0)
+			if($event->getField('StartDateTime')!=0)
 			{
-				$start_timestamp_local = $event->getField('Start_timestamp') + TIMEOFFSET;
-				$date_start = date("d M Y", $start_timestamp_local);
+				$startdatetime_local = $event->getField('StartDateTime') + TIMEOFFSET;
+				$date_start = date("d M Y", $startdatetime_local);
 			}
 			else
 			{
 				$date_start = "-";
 			}
-			if($event->getField('End_timestamp')!=0)
+			if($event->getField('EndDateTime')!=0)
 			{
-				$end_timestamp_local = $event->getField('End_timestamp') + TIMEOFFSET;
-				$date_end = date("d M Y", $end_timestamp_local);
+				$enddatetime_local = $event->getField('EndDateTime') + TIMEOFFSET;
+				$date_end = date("d M Y", $enddatetime_local);
 			}
 			else
 			{
@@ -311,6 +310,7 @@ function displayCurrentEvents(){
 			switch($event->getField('Type'))
 			{
 				case "One Player Ladder":
+				case "One Player Tournament":
 				$nbrTeamPlayers = $nbrplayers;
 				break;
 				case "Team Ladder":
@@ -322,22 +322,18 @@ function displayCurrentEvents(){
 				default:
 			}
 
-			if(
-			($event->getField('End_timestamp')==0)
-			||($event->getField('End_timestamp')>=$time)
-			)
-			{
-				$text .= '<tr>
-				<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a></td>
-				<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
-				<td class="eb_td">'.$gName.'</td>
-				<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>
-				<td class="eb_td">'.$date_start.'</td>
-				<td class="eb_td">'.$date_end.'</td>
-				<td class="eb_td">'.$nbrTeamPlayers.'</td>
-				<td class="eb_td">'.$nbrmatches.'</td>
-				</tr>';
-			}
+			$text .= '<tr>
+			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a></td>
+			<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
+			<td class="eb_td">'.$gName.'</td>
+			<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>
+			<td class="eb_td">'.$date_start.'</td>
+			<td class="eb_td">'.$date_end.'</td>
+			<td class="eb_td">'.$nbrTeamPlayers.'</td>
+			<td class="eb_td">'.$nbrmatches.'</td>
+			<td class="eb_td">'.$event->getField('Status').'</td>
+			</tr>';
+			// TODO: status2string
 		}
 		$text .= '</tbody></table><br />';
 	}
@@ -395,9 +391,9 @@ function displayRecentEvents(){
 	$text .= '<option value="All" '.(($gameid == "All") ? 'selected="selected"' : '').'>'.EB_EVENTS_L10.'</option>';
 	for($i=0; $i<$numGames; $i++)
 	{
-		$gname  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
+		$gName  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
 		$gid  = mysql_result($result_Games,$i, TBL_GAMES.".GameID");
-		$text .= '<option value="'.$gid.'" '.(($gameid == $gid) ? 'selected="selected"': '').'>'.htmlspecialchars($gname).'</option>';
+		$text .= '<option value="'.$gid.'" '.(($gameid == $gid) ? 'selected="selected"': '').'>'.htmlspecialchars($gName).'</option>';
 	}
 	$text .= '</select>';
 	$text .= '</td>';
@@ -429,8 +425,7 @@ function displayRecentEvents(){
 	.TBL_GAMES.".*"
 	." FROM ".TBL_EVENTS.", "
 	.TBL_GAMES
-	." WHERE (   (".TBL_EVENTS.".End_timestamp != '')"
-	."       AND (".TBL_EVENTS.".End_timestamp < $time)) "
+	." WHERE (".TBL_EVENTS.".Status = 'finished')"
 	.$game_string
 	.$matchtype_string
 	." LIMIT 0, $rowsPerPage";
@@ -457,27 +452,27 @@ function displayRecentEvents(){
 		<th class="eb_th2">'.EB_EVENTS_L17.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L18.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L19.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L34.'</th>
 		</tr>';
-		for($i=0; $i<$numEvents; $i++)
+		for($i=0; $i < $numEvents; $i++)
 		{
-			$gName  = mysql_result($result,$i, TBL_GAMES.".name");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon  = mysql_result($result,$i, TBL_GAMES.".Icon");
 			$event_id  = mysql_result($result,$i, TBL_EVENTS.".EventID");
 			$event = new Event($event_id);
-
-			if($event->getField('Start_timestamp')!=0)
+			if($event->getField('StartDateTime')!=0)
 			{
-				$start_timestamp_local = $event->getField('Start_timestamp') + TIMEOFFSET;
-				$date_start = date("d M Y", $start_timestamp_local);
+				$startdatetime_local = $event->getField('StartDateTime') + TIMEOFFSET;
+				$date_start = date("d M Y", $startdatetime_local);
 			}
 			else
 			{
 				$date_start = "-";
 			}
-			if($event->getField('End_timestamp')!=0)
+			if($event->getField('EndDateTime')!=0)
 			{
-				$end_timestamp_local = $event->getField('End_timestamp') + TIMEOFFSET;
-				$date_end = date("d M Y", $end_timestamp_local);
+				$enddatetime_local = $event->getField('EndDateTime') + TIMEOFFSET;
+				$date_end = date("d M Y", $enddatetime_local);
 			}
 			else
 			{
@@ -514,6 +509,7 @@ function displayRecentEvents(){
 			switch($event->getField('Type'))
 			{
 				case "One Player Ladder":
+				case "One Player Tournament":
 				$nbrTeamPlayers = $nbrplayers;
 				break;
 				case "Team Ladder":
@@ -525,29 +521,21 @@ function displayRecentEvents(){
 				default:
 			}
 
-			if(
-			($event->getField('End_timestamp')!=0)
-			&&($event->getField('End_timestamp')<$time)
-			)
-			{
-				$text .= '<tr>
-				<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a></td>
-				<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
-				<td class="eb_td">'.$gName.'</td>
-				<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>
-				<td class="eb_td">'.$date_start.'</td>
-				<td class="eb_td">'.$date_end.'</td>
-				<td class="eb_td">'.$nbrTeamPlayers.'</td>
-				<td class="eb_td">'.$nbrmatches.'</td>
-				</tr>';
-			}
+			$text .= '<tr>
+			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a></td>
+			<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
+			<td class="eb_td">'.$gName.'</td>
+			<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>
+			<td class="eb_td">'.$date_start.'</td>
+			<td class="eb_td">'.$date_end.'</td>
+			<td class="eb_td">'.$nbrTeamPlayers.'</td>
+			<td class="eb_td">'.$nbrmatches.'</td>
+			<td class="eb_td">'.$event->getField('Status').'</td>
+			</tr>';
+			// TODO: status2string
 		}
-		$text .= '</tbody></table><br />';
 	}
-
-	$text .= '<p>';
-	$text .= '[<a href="'.e_PLUGIN.'ebattles/eventspast.php">'.EB_EVENTS_L21.'</a>]';
-	$text .= '</p>';
+	$text .= '</tbody></table><br />';
 }
 
 ?>
