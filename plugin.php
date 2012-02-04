@@ -136,9 +136,10 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Type varchar(63),
+Format varchar(63),
 MatchType varchar(63) DEFAULT '',
-Start_timestamp int(11) unsigned not null,
-End_timestamp int(11) unsigned not null,
+StartDateTime int(11) unsigned not null,
+EndDateTime int(11) unsigned not null,
 nbr_games_to_rank int DEFAULT '4',
 nbr_team_games_to_rank int DEFAULT '4',
 ELO_default int DEFAULT '".ELO_DEFAULT."',
@@ -176,7 +177,13 @@ PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 ChallengesEnable tinyint(1) DEFAULT '0',
 MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."',
 MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."',
-MaxNumberPlayers int DEFAULT '0'
+MaxNumberPlayers int DEFAULT '0',
+ForceFaction tinyint(1) default '0',
+Seeded tinyint(3) default '0',
+Seeds text,
+Results text,
+Rounds text,
+MapPool text
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MODS."
 (
@@ -258,6 +265,8 @@ Streak_Worst int DEFAULT '0',
 Score int DEFAULT '0',
 ScoreAgainst int DEFAULT '0',
 Points int DEFAULT '0',
+Joined  int(11) unsigned not null,
+CheckedIn tinyint(1) DEFAULT '0',
 Banned tinyint(1) DEFAULT '0'
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MATCHS."
@@ -309,6 +318,8 @@ Streak_Worst int DEFAULT '0',
 Score int DEFAULT '0',
 ScoreAgainst int DEFAULT '0',
 Points int DEFAULT '0',
+Joined  int(11) unsigned not null,
+CheckedIn tinyint(1) DEFAULT '0',
 Banned tinyint(1) DEFAULT '0'
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_SCORES."
@@ -451,7 +462,7 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Type varchar(63),
-MatchType varchar(63) DEFAULT '1v1'
+MatchType varchar(63) DEFAULT ''
 ) ENGINE = MyISAM;"
 );
 
@@ -499,43 +510,5 @@ if(!function_exists("ebattles_uninstall"))
 		purgeRatings("ebscores");
 	}
 }
-
-/*
-"CREATE TABLE ".TBL_EVENTS."
-(
-EventID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(EventID),
-Name varchar(63),
-password varchar(32),
-Game int NOT NULL,
-INDEX (Game),
-FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
-Type varchar(63) DEFAULT 'Single Elimination',
-MatchType varchar(63) DEFAULT '1v1',
-StartDateTime  int(11) unsigned not null,
-Owner int(10) unsigned NOT NULL,
-INDEX (Owner),
-FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id),
-Rules text NOT NULL,
-Description text NOT NULL,
-NextUpdate_timestamp int(11) unsigned not null,
-IsChanged tinyint(1) DEFAULT '1',
-AllowForfeit tinyint(1) DEFAULT '0',
-AllowScore tinyint(1) DEFAULT '0',
-match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_MODERATOR."',
-match_replay_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."',
-MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-Status varchar(20) DEFAULT 'draft',
-PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-MaxNumberPlayers int DEFAULT '16',
-ForceFaction tinyint(1) default '0',
-Seeded tinyint(3) default '0',
-Seeds text,
-Results text,
-Rounds text,
-MapPool text
-) ENGINE = MyISAM;"
-*/
 
 ?>

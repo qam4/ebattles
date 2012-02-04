@@ -16,18 +16,18 @@ if(isset($_POST['quitevent'])){
 
 	// Player can quit an event if he has not played yet
 	// TODO - can quit if event not started.
-	$q = "SELECT ".TBL_TPLAYERS.".*"
-	." FROM ".TBL_TPLAYERS.", "
+	$q = "SELECT ".TBL_PLAYERS.".*"
+	." FROM ".TBL_PLAYERS.", "
 	.TBL_SCORES
-	." WHERE (".TBL_TPLAYERS.".TPlayerID = '$pid')"
-	." AND (".TBL_SCORES.".Player = ".TBL_TPLAYERS.".TPlayerID)";
+	." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
+	." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
 	$result = $sql->db_Query($q);
 	$nbrscores = mysql_numrows($result);
 
 	$nbrscores = 0;
 	if ($nbrscores == 0)
 	{
-		deleteTPlayer($pid);
+		deletePlayer($pid);
 		$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
 		$result = $sql->db_Query($q);
 	}

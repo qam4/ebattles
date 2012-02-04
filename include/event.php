@@ -18,6 +18,7 @@ class Event extends DatabaseTable
 	{
 		$this->setField('Game', 1);
 		$this->setField('Type', 'One Player Ladder');
+		$this->setField('Format', 'Single Elimination');
 		$this->setField('MatchType', '');
 		$this->setField('nbr_games_to_rank', '1');
 		$this->setField('nbr_team_games_to_rank', '1');
@@ -50,7 +51,7 @@ class Event extends DatabaseTable
 		$this->setField('ChallengesEnable', '0');
 		$this->setField('MaxDatesPerChallenge', eb_MAX_CHALLENGE_DATES);
 		$this->setField('MaxMapsPerMatch', eb_MAX_MAPS_PER_MATCH);
-		$this->setField('MaxNumberPlayers', '0');
+		$this->setField('MaxNumberPlayers', '16');
 	}
 
 	function resetPlayers()
@@ -264,14 +265,14 @@ class Event extends DatabaseTable
 				switch($this->fields['Type'])
 				{
 					case "One Player Ladder":
-					updateStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
+					updateStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
 					break;
 					case "Team Ladder":
-					updateStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
-					updateTeamStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
+					updateStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
+					updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
 					break;
 					case "Clan Ladder":
-					updateTeamStats($this->fields['EventID'], $this->fields['getStart_timestamp'], FALSE);
+					updateTeamStats($this->fields['EventID'], $this->fields['getStartDateTime'], FALSE);
 					break;
 					default:
 				}
@@ -304,16 +305,16 @@ class Event extends DatabaseTable
 					{
 						case "One Player Ladder":
 						$match->match_players_update();
-						updateStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
+						updateStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
 						break;
 						case "Team Ladder":
 						$match->match_players_update();
-						updateStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
-						updateTeamStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
+						updateStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
+						updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
 						break;
 						case "Clan Ladder":
 						$match->match_teams_update();
-						updateTeamStats($this->fields['EventID'], $this->fields['Start_timestamp'], FALSE);
+						updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
 						break;
 						default:
 					}
@@ -344,6 +345,7 @@ class Event extends DatabaseTable
 	function eventAddPlayer($user, $team = 0, $notify)
 	{
 		global $sql;
+		global $time;
 
 		$q = "SELECT ".TBL_USERS.".*"
 		." FROM ".TBL_USERS
@@ -382,8 +384,8 @@ class Event extends DatabaseTable
 		echo "num_rows: $num_rows<br>";
 		if ($num_rows==0)
 		{
-			$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma)
-			VALUES (".$this->fields['EventID'].",$gamerID,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].")";
+			$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma,Joined)
+			VALUES (".$this->fields['EventID'].",$gamerID,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].",$time)";
 			$sql->db_Query($q);
 			echo "player created, query: $q<br>";
 			$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '".$this->fields['EventID']."')";
@@ -412,6 +414,7 @@ class Event extends DatabaseTable
 	function eventAddDivision($div_id, $notify)
 	{
 		global $sql;
+		global $time;
 
 		//$add_players = ( $this->fields['Type'] == "Clan Ladder" ? FALSE : TRUE);
 		$add_players = TRUE;
@@ -457,7 +460,37 @@ class Event extends DatabaseTable
 			}
 		}
 	}
-	function displayEventSettingsForm()
+
+	function updateResults($results) {
+		global $sql;
+
+		$new_results = serialize($results);
+		$this->setField('Results', $new_results);
+	}
+
+	function updateRounds($rounds) {
+		global $sql;
+
+		$new_rounds = serialize($rounds);
+		$this->setField('Rounds', $new_rounds);
+	}
+
+	function updateMapPool($mapPool) {
+		global $sql;
+
+		$i = 0;
+		$mapString = '';
+		foreach ($mapPool as $key=>$map)
+		{
+			if ($i > 0) $mapString .= ',';
+			$mapString .= $map;
+			$i++;
+		}
+
+		$this->setField('MapPool', $mapString);
+	}
+
+	function displayEventSettingsForm($create=false)
 	{
 		global $sql;
 		// Specify if we use WYSIWYG for text areas
@@ -473,12 +506,25 @@ class Event extends DatabaseTable
 			$insertjs = "rows='15' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
 		}
 
+		$type = $this->fields['Type'];
+		switch($type)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			case "Clan Ladder":
+			$event_type = 'Ladder';
+			break;
+			case "One Player Tournament":
+			case "Team Tournament":
+			$event_type = 'Tournament';
+			default:
+		}
+
 		$text .= "
 		<script type='text/javascript'>
 		<!--//
 		// Forms
 		$(function() {
-		$( '#radio1' ).buttonset();
 		$( '#radio2' ).buttonset();
 		$('.timepicker').datetimepicker({
 		ampm: true,
@@ -591,71 +637,109 @@ class Event extends DatabaseTable
 		$text .= '</td></tr>';
 
 		//<!-- Type -->
+		$disabled_str = ($create==true) ? '' : 'disabled="disabled"';
 		$text .= '
 		<tr>
 		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L18.'</td>
-		<td class="eb_td">
-		<div id="radio1">
-		';
-		$text .= '<input class="tbox" type="radio" id="radio11" size="40" name="eventtype" '.($this->getField('Type') == "One Player Ladder" ? 'checked="checked"' : '').' value="Individual" /><label for="radio11">'.EB_EVENTM_L19.'</label>';
-		$text .= '<input class="tbox" type="radio" id="radio12" size="40" name="eventtype" '.($this->getField('Type') == "Team Ladder" ? 'checked="checked"' : '').' value="Team" /><label for="radio12">'.EB_EVENTM_L20.'</label>';
-		$text .= '<input class="tbox" type="radio" id="radio13" size="40" name="eventtype" '.($this->getField('Type') == "Clan Ladder" ? 'checked="checked"' : '').' value="Clan" /><label for="radio13">'.EB_EVENTM_L116.'</label>';
-
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
-
-		//<!-- Match Type -->
-		$text .= '
-		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L132.'</td>
-		<td class="eb_td">
-		<div>
-		';
-		$text .= '<select class="tbox" name="eventmatchtype">';
-		$text .= '<option value="" '.($this->getField('MatchType') == "" ? 'selected="selected"' : '') .'>-</option>';
-		foreach($ematchtypes as $matchtype)
-		{
-			if ($matchtype!='') {
-				$text .= '<option value="'.$matchtype.'" '.(($this->getField('MatchType') == $matchtype) ? 'selected="selected"' : '') .'>'.$matchtype.'</option>';
-			}
-		}
+		<td class="eb_td"><select class="tbox" name="eventtype" '.$disabled_str.'>';
+		$text .= '<option value="Individual Ladder" '.($this->getField('Type') == "One Player Ladder" ? 'selected="selected"' : '').'>'.EB_EVENTS_L22.'</option>';
+		$text .= '<option value="Team Ladder" '.($this->getField('Type') == "Team Ladder" ? 'selected="selected"' : '').'>'.EB_EVENTS_L23.'</option>';
+		$text .= '<option value="Clan Ladder" '.($this->getField('Type') == "Clan Ladder" ? 'selected="selected"' : '').'>'.EB_EVENTS_L25.'</option>';
+		$text .= '<option value="One Player Tournament" '.($this->getField('Type') == "One Player Tournament" ? 'selected="selected"' : '').'>'.EB_EVENTS_L33.'</option>';
+		$text .= '<option value="Team Tournament" '.($this->getField('Type') == "Team Tournament" ? 'selected="selected"' : '').'>'.EB_EVENTS_L35.'</option>';
 		$text .= '</select>
-		</div>
 		</td>
 		</tr>
 		';
 
-		//<!-- Max Number of Players -->
-		$text .= '
-		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L126.'</td>
-		<td class="eb_td">
-		<div>
-		';
-		$text .= '<input class="tbox" type="text" name="eventnumbermaxplayers" size="2" value="'.$this->getField('MaxNumberPlayers').'"/>';
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
+		if ($create==false)
+		{
+			switch($event_type)
+			{
+				case "Ladder":
+				break;
+				case "Tournament":
+				//<!-- Format -->
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L152.'</td>
+				<td class="eb_td"><select class="tbox" name="eventformat">';
+				$text .= '<option value="Single Elimination" '.($this->getField('Format') == "Single Elimination" ? 'selected="selected"' : '').'>'.EB_EVENTM_L153.'</option>';
+				$text .= '</select>
+				</td>
+				</tr>
+				';
+				break;
+			}
 
-		//<!-- Rating Type -->
-		$text .= '
-		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L117.'<div class="smalltext">'.EB_EVENTM_L118.'</div></td>
-		<td class="eb_td">
-		<div id="radio2">
-		';
-		$text .= '<input class="tbox" type="radio" id="radio21" size="40" name="eventrankingtype" '.($this->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" /><label for="radio21">'.EB_EVENTM_L119.'</label>';
-		$text .= '<input class="tbox" type="radio" id="radio22" size="40" name="eventrankingtype" '.($this->getField('RankingType') == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" /><label for="radio22">'.EB_EVENTM_L120.'</label>';
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
+			//<!-- Match Type -->
+			$text .= '
+			<tr>
+			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L132.'</td>
+			<td class="eb_td">
+			<div>
+			';
+			$text .= '<select class="tbox" name="eventmatchtype">';
+			$text .= '<option value="" '.($this->getField('MatchType') == "" ? 'selected="selected"' : '') .'>-</option>';
+			foreach($ematchtypes as $matchtype)
+			{
+				if ($matchtype!='') {
+					$text .= '<option value="'.$matchtype.'" '.(($this->getField('MatchType') == $matchtype) ? 'selected="selected"' : '') .'>'.$matchtype.'</option>';
+				}
+			}
+			$text .= '</select>
+			</div>
+			</td>
+			</tr>
+			';
+		}
+
+		if ($create==false)
+		{
+			//<!-- Max Number of Players -->
+			$text .= '
+			<tr>
+			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L126.'</td>
+			<td class="eb_td">
+			<div>
+			';
+			switch($event_type)
+			{
+				case "Ladder":
+				$text .= '<input class="tbox" type="text" name="eventnumbermaxplayers" size="2" value="'.$this->getField('MaxNumberPlayers').'"/>';
+				break;
+				case "Tournament":
+				$text .= '<select class="tbox" name="eventmaxnumberplayers">';
+				$text .= '<option value="4" '.($this->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
+				$text .= '<option value="8" '.($this->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
+				$text .= '<option value="16" '.($this->getField('MaxNumberPlayers') == "16" ? 'selected="selected"' : '') .'>16</option>';
+				$text .= '</select>';
+			}
+			$text .= '
+			</div>
+			</td>
+			</tr>
+			';
+
+			//<!-- Rating Type -->
+			switch($event_type)
+			{
+				case "Ladder":
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L117.'<div class="smalltext">'.EB_EVENTM_L118.'</div></td>
+				<td class="eb_td">
+				<div id="radio2">
+				';
+				$text .= '<input class="tbox" type="radio" id="radio21" size="40" name="eventrankingtype" '.($this->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" /><label for="radio21">'.EB_EVENTM_L119.'</label>';
+				$text .= '<input class="tbox" type="radio" id="radio22" size="40" name="eventrankingtype" '.($this->getField('RankingType') == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" /><label for="radio22">'.EB_EVENTM_L120.'</label>';
+			}
+			$text .= '
+			</div>
+			</td>
+			</tr>
+			';
+		}
 
 		//<!-- Match report userclass -->
 		$text .= '
@@ -683,28 +767,34 @@ class Event extends DatabaseTable
 		</tr>
 		';
 
-		//<!-- Allow Quick Loss Report -->
-		$text .= '
-		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L25.'</td>
-		<td class="eb_td">
-		<div>
-		';
-		$text .= '<input class="tbox" type="checkbox" name="eventallowquickloss"';
-		if ($this->getField('quick_loss_report') == TRUE)
+		if ($create==false)
 		{
-			$text .= ' checked="checked"/>';
+			//<!-- Allow Quick Loss Report -->
+			switch($event_type)
+			{
+				case "Ladder":
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L25.'</td>
+				<td class="eb_td">
+				<div>
+				';
+				$text .= '<input class="tbox" type="checkbox" name="eventallowquickloss"';
+				if ($this->getField('quick_loss_report') == TRUE)
+				{
+					$text .= ' checked="checked"/>';
+				}
+				else
+				{
+					$text .= '/>';
+				}
+				$text .= '
+				</div>
+				</td>
+				</tr>
+				';
+			}
 		}
-		else
-		{
-			$text .= '/>';
-		}
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
-
 		//<!-- Allow Score -->
 		$text .= '
 		<tr>
@@ -757,114 +847,126 @@ class Event extends DatabaseTable
 		</tr>
 		';
 
-		//<!-- Allow Draws -->
-		$text .= '
-		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L27.'</td>
-		<td class="eb_td">
-		<div>';
-		$text .= '<input class="tbox" type="checkbox" name="eventallowdraw"';
-		if ($this->getField('AllowDraw') == TRUE)
+		if ($create==false)
 		{
-			$text .= ' checked="checked"/>';
-		}
-		else
-		{
-			$text .= '/>';
-		}
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
+			//<!-- Allow Draws -->
+			switch($event_type)
+			{
+				case "Ladder":
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L27.'</td>
+				<td class="eb_td">
+				<div>';
+				$text .= '<input class="tbox" type="checkbox" name="eventallowdraw"';
+				if ($this->getField('AllowDraw') == TRUE)
+				{
+					$text .= ' checked="checked"/>';
+				}
+				else
+				{
+					$text .= '/>';
+				}
+				$text .= '
+				</div>
+				</td>
+				</tr>
+				';
 
-		//<!-- Points -->
-		$text .= '
-		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L28.'</td>
-		<td class="eb_td">
-		<table class="table_left">
-		<tr>
-		<td>'.EB_EVENTM_L29.'</td>
-		<td>'.EB_EVENTM_L30.'</td>
-		<td>'.EB_EVENTM_L31.'</td>
-		</tr>
-		<tr>
-		<td>
-		<div><input class="tbox" type="text" name="eventpointsperwin" value="'.$this->getField('PointsPerWin').'"/></div>
-		</td>
-		<td>
-		<div><input class="tbox" type="text" name="eventpointsperdraw" value="'.$this->getField('PointsPerDraw').'"/></div>
-		</td>
-		<td>
-		<div><input class="tbox" type="text" name="eventpointsperloss" value="'.$this->getField('PointsPerLoss').'"/></div>
-		</td>
-		</tr>
-		</table>
-		</td>
-		</tr>
-		';
-
-		//<!-- Allow Forfeits -->
-		$text .= '
-		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L127.'</td>
-		<td class="eb_td">
-		<div>';
-		$text .= '<input class="tbox" type="checkbox" name="eventallowforfeit"';
-		if ($this->getField('AllowForfeit') == TRUE)
-		{
-			$text .= ' checked="checked"/>';
+				//<!-- Points -->
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L28.'</td>
+				<td class="eb_td">
+				<table class="table_left">
+				<tr>
+				<td>'.EB_EVENTM_L29.'</td>
+				<td>'.EB_EVENTM_L30.'</td>
+				<td>'.EB_EVENTM_L31.'</td>
+				</tr>
+				<tr>
+				<td>
+				<div><input class="tbox" type="text" name="eventpointsperwin" value="'.$this->getField('PointsPerWin').'"/></div>
+				</td>
+				<td>
+				<div><input class="tbox" type="text" name="eventpointsperdraw" value="'.$this->getField('PointsPerDraw').'"/></div>
+				</td>
+				<td>
+				<div><input class="tbox" type="text" name="eventpointsperloss" value="'.$this->getField('PointsPerLoss').'"/></div>
+				</td>
+				</tr>
+				</table>
+				</td>
+				</tr>
+				';
+			}
 		}
-		else
+		if ($create==false)
 		{
-			$text .= '/>';
+			//<!-- Allow Forfeits -->
+			$text .= '
+			<tr>
+			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L127.'</td>
+			<td class="eb_td">
+			<div>';
+			$text .= '<input class="tbox" type="checkbox" name="eventallowforfeit"';
+			if ($this->getField('AllowForfeit') == TRUE)
+			{
+				$text .= ' checked="checked"/>';
+			}
+			else
+			{
+				$text .= '/>';
+			}
+			$text .= EB_EVENTM_L128;
+			switch($event_type)
+			{
+				case "Ladder":
+				$text .= '</div>';
+				$text .= '<div>';
+				$text .= '<input class="tbox" type="checkbox" name="eventForfeitWinLossUpdate"';
+				if ($this->getField('ForfeitWinLossUpdate') == TRUE)
+				{
+					$text .= ' checked="checked"/>';
+				}
+				else
+				{
+					$text .= '/>';
+				}
+				$text .= EB_EVENTM_L129;
+				$text .= '</div>';
+				$text .= '
+				<div>
+				<table class="table_left">
+				<tr>
+				<td>'.EB_EVENTM_L130.'</td>
+				<td>'.EB_EVENTM_L131.'</td>
+				</tr>
+				<tr>
+				<td>
+				<div><input class="tbox" type="text" name="eventforfeitwinpoints" value="'.$this->getField('ForfeitWinPoints').'"/></div>
+				</td>
+				<td>
+				<div><input class="tbox" type="text" name="eventforfeitlosspoints" value="'.$this->getField('ForfeitLossPoints').'"/></div>
+				</td>
+				</tr>
+				</table>
+				</div>
+				';
+				$text .= '
+				</td>
+				</tr>
+				';
+			}
+			//<!-- Maps -->
+			$text .= '
+			<tr>
+			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L125.'</td>
+			<td class="eb_td">
+			<div>
+			';
+			$text .= '<input class="tbox" type="text" name="eventmaxmapspermatch" size="2" value="'.$this->getField('MaxMapsPerMatch').'"/>';
 		}
-		$text .= EB_EVENTM_L128;
-		$text .= '</div>';
-		$text .= '<div>';
-		$text .= '<input class="tbox" type="checkbox" name="eventForfeitWinLossUpdate"';
-		if ($this->getField('ForfeitWinLossUpdate') == TRUE)
-		{
-			$text .= ' checked="checked"/>';
-		}
-		else
-		{
-			$text .= '/>';
-		}
-		$text .= EB_EVENTM_L129;
-		$text .= '</div>';
-		$text .= '
-		<div>
-		<table class="table_left">
-		<tr>
-		<td>'.EB_EVENTM_L130.'</td>
-		<td>'.EB_EVENTM_L131.'</td>
-		</tr>
-		<tr>
-		<td>
-		<div><input class="tbox" type="text" name="eventforfeitwinpoints" value="'.$this->getField('ForfeitWinPoints').'"/></div>
-		</td>
-		<td>
-		<div><input class="tbox" type="text" name="eventforfeitlosspoints" value="'.$this->getField('ForfeitLossPoints').'"/></div>
-		</td>
-		</tr>
-		</table>
-		</div>
-		';
-		$text .= '
-		</td>
-		</tr>
-		';
-
-		//<!-- Maps -->
-		$text .= '
-		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L125.'</td>
-		<td class="eb_td">
-		<div>
-		';
-		$text .= '<input class="tbox" type="text" name="eventmaxmapspermatch" size="2" value="'.$this->getField('MaxMapsPerMatch').'"/>';
 		$text .= '
 		</div>
 		</td>
@@ -872,10 +974,10 @@ class Event extends DatabaseTable
 		';
 
 		//<!-- Start Date -->
-		if($this->getField('Start_timestamp')!=0)
+		if($this->getField('StartDateTime')!=0)
 		{
-			$start_timestamp_local = $this->getField('Start_timestamp') + TIMEOFFSET;
-			$date_start = date("m/d/Y h:i A", $start_timestamp_local);
+			$startdatetime_local = $this->getField('StartDateTime') + TIMEOFFSET;
+			$date_start = date("m/d/Y h:i A", $startdatetime_local);
 		}
 		else
 		{
@@ -901,10 +1003,10 @@ class Event extends DatabaseTable
 		';
 
 		//<!-- End Date -->
-		if($this->getField('End_timestamp')!=0)
+		if($this->getField('EndDateTime')!=0)
 		{
-			$end_timestamp_local = $this->getField('End_timestamp') + TIMEOFFSET;
-			$date_end = date("m/d/Y h:i A", $end_timestamp_local);
+			$enddatetime_local = $this->getField('EndDateTime') + TIMEOFFSET;
+			$date_end = date("m/d/Y h:i A", $enddatetime_local);
 		}
 		else
 		{
@@ -928,6 +1030,147 @@ class Event extends DatabaseTable
 		</tr>
 		';
 
+		if ($create==false)
+		{
+			//<!-- Rounds -->
+			switch($event_type)
+			{
+				case "Tournament":
+				switch ($this->getField('Type'))
+				{
+					default:
+					$file = 'include/brackets/se-'.$this->getField('MaxNumberPlayers').'.txt';
+					break;
+				}
+				$matchups = unserialize(implode('',file($file)));
+				$nbrRounds = count($matchups);
+
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.($nbrRounds - 1).' '.EB_EVENTM_L4.'</td>
+				<td class="eb_td">';
+
+				$rounds = unserialize($this->getField('Rounds'));
+				if (!isset($rounds)) $rounds = array();
+				$text .= '<table class="table_left"><tbody>';
+				$text .= '<tr>';
+				$text .= '<th>'.EB_EVENTM_L144.'</th>';
+				$text .= '<th>'.EB_EVENTM_L145.'</th>';
+				$text .= '<th>'.EB_EVENTM_L146.'</th>';
+				$text .= '</tr>';
+				for ($round = 1; $round < $nbrRounds; $round++) {
+					if (!isset($rounds[$round])) {
+						$rounds[$round] = array();
+					}
+					if (!isset($rounds[$round]['Title'])) {
+						$rounds[$round]['Title'] = EB_EVENTM_L144.' '.$round;
+					}
+					if (!isset($rounds[$round]['BestOf'])) {
+						$rounds[$round]['BestOf'] = 1;
+					}
+
+					$text .= '<tr>';
+					$text .= '<td>'.EB_EVENTM_L144.' '.$round.'</td>';
+					$text .= '<td><input class="tbox" type="text" size="40" name="round_title_'.$round.'" value="'.$rounds[$round]['Title'].'"/></td>';
+					$text .= '<td><select class="tbox" name="round_bestof_'.$round.'">';
+					$text .= '<option value="1" '.($rounds[$round]['BestOf'] == "1" ? 'selected="selected"' : '') .'>1</option>';
+					$text .= '<option value="3" '.($rounds[$round]['BestOf'] == "3" ? 'selected="selected"' : '') .'>3</option>';
+					$text .= '<option value="5" '.($rounds[$round]['BestOf'] == "5" ? 'selected="selected"' : '') .'>5</option>';
+					$text .= '<option value="7" '.($rounds[$round]['BestOf'] == "7" ? 'selected="selected"' : '') .'>7</option>';
+					$text .= '</select></td>';
+					$text .= '</tr>';
+				}
+				$text .= '</tbody></table>';
+				$text .= '</td></tr>';
+				//var_dump($rounds);
+
+				//<!-- Map Pool -->
+				if ($this->getID() != 0)
+				{
+					$mapPool = explode(",", $this->getField('MapPool'));
+					$nbrMapsInPool = count($mapPool);
+
+					$text .= '
+					<tr>
+					<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L147.'</td>
+					<td class="eb_td">';
+					$text .= '<table class="table_left">';
+					foreach($mapPool as $key=>$map)
+					{
+						if ($map!='')
+						{
+							$mapID = $map;
+							$q_Maps = "SELECT ".TBL_MAPS.".*"
+							." FROM ".TBL_MAPS
+							." WHERE (".TBL_MAPS.".MapID = '$mapID')";
+							$result_Maps = $sql->db_Query($q_Maps);
+							$mapName  = mysql_result($result_Maps,0, TBL_MAPS.".Name");
+							$text .= '<tr>';
+							$text .= '<td>'.$mapName.'</td>';
+							$text .= '<td>';
+							$text .= '<div>';
+							$text .= ebImageTextButton('eventdeletemap', 'delete.png', EB_EVENTM_L150, 'negative jq-button', '', '', 'value="'.$key.'"');
+							$text .= '</div>';
+							$text .= '</td>';
+							$text .= '</tr>';
+						} else {
+							$text .= '<tr>';
+							$text .= '<td><div>';
+							$text .= EB_EVENTM_L148;
+							$text .= '</div></td>';
+							$text .= '</tr>';
+						}
+					}
+					$text .= '</table>';
+
+					// List of all Maps
+					$q_Maps = "SELECT ".TBL_MAPS.".*"
+					." FROM ".TBL_MAPS
+					." WHERE (".TBL_MAPS.".Game = '".$this->getField('Game')."')";
+					$result_Maps = $sql->db_Query($q_Maps);
+					$numMaps = mysql_numrows($result_Maps);
+					if ($numMaps > $nbrMapsInPool)
+					{
+						$text .= '
+						<table class="table_left">
+						<tr>';
+						$text .= '<td><select class="tbox" name="map">';
+						for($map=0;$map < $numMaps;$map++)
+						{
+							$mID = mysql_result($result_Maps,$map , TBL_MAPS.".MapID");
+							$mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
+							$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
+							$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
+
+							$isMapInMapPool = FALSE;
+							foreach($mapPool as $poolmap)
+							{
+								if ($mID==$poolmap) {
+									$isMapInMapPool = TRUE;
+								}
+							}
+
+							if($isMapInMapPool == FALSE) {
+								$text .= '<option value="'.$mID.'"';
+								$text .= '>'.$mName.'</option>';
+							}
+						}
+						$text .= '</select></td>';
+
+						$text .= '
+						<td>
+						<div>
+						'.ebImageTextButton('eventaddmap', 'add.png', EB_EVENTM_L149).'
+						</div>
+						</td>
+						</tr>
+						</table>
+						';
+					}
+					$text .= '</td></tr>';
+				}
+			}
+		}
 		//<!-- Description -->
 		$text .= '
 		<tr>
@@ -1032,6 +1275,198 @@ class Event extends DatabaseTable
 		VALUES ('$last_id', 'Points')";
 		$result = $sql->db_Query($q);
 	}
+
+	function scheduleNextMatches() {
+		global $sql;
+		global $time;
+		//dbg
+		global $tp;
+
+		$teams = array();
+		$type = $this->fields['Type'];
+		switch($type)
+		{
+			default:
+			// TODO: Team...
+			$q_Players = "SELECT ".TBL_GAMERS.".*, "
+			.TBL_PLAYERS.".*"
+			." FROM ".TBL_GAMERS.", "
+			.TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')"
+			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+			." ORDER BY ".TBL_PLAYERS.".Joined";
+			$result = $sql->db_Query($q_Players);
+			$nbrPlayers = mysql_numrows($result);
+			for ($player = 0; $player < $nbrPlayers; $player++)
+			{
+				$playerID = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
+				$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
+				$gamer = new Gamer($gamerID);
+				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+				$teams[$player]['PlayerID'] = $playerID;
+			}
+		}
+		$nbrPlayers = $this->fields['MaxNumberPlayers'];
+		$results = unserialize($this->getField('Results'));
+		// TODO: check for error (return false)
+		$rounds = unserialize($this->getField('Rounds'));
+
+		$nbrTeams=count($teams);
+
+		switch ($type)
+		{
+			default:
+			$file = 'include/brackets/se-'.$nbrPlayers.'.txt';
+			break;
+		}
+		$matchups = unserialize(implode('',file($file)));
+		$nbrRounds = count($matchups);
+
+		/* */
+		$content= array();
+
+		$rowspan = 1;
+		for ($round = 1; $round <= $nbrRounds; $round++){
+			$nbrMatchups = count($matchups[$round]);
+			if ($round == 1) {
+				/* Round 1 */
+				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+					$teamTop    = substr($matchups[$round][$matchup][0],1);
+					$teamBottom = substr($matchups[$round][$matchup][1],1);
+					if (!$results[$round][$matchup]['winner']) $results[$round][$matchup]['winner'] = '';
+
+					$content[$round][$matchup][0] = '0';
+					if ($teamTop <= $nbrTeams){
+						$content[$round][$matchup][0] = $teamTop;
+					} else {
+						$results[$round][$matchup]['winner'] = 'bye';
+					}
+					$content[$round][$matchup][1] = '0';
+					if ($teamBottom <= $nbrTeams){
+						$content[$round][$matchup][1] = $teamBottom;
+					} else {
+						$results[$round][$matchup]['winner'] = 'bye';
+					}
+
+					if(($content[$round][$matchup][0]!='0')&&($content[$round][$matchup][1]!='0')){
+						if ($results[$round][$matchup]['winner'] == '') {
+							// Matchup not finished, no winner yet
+							// TODO: Round 1
+						}
+					}
+				}
+			}
+			else if ($round < $nbrRounds)
+			{
+				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+					if (!$results[$round][$matchup]['winner']) $results[$round][$matchup]['winner'] = '';
+					for($match = 0; $match < 2; $match++){
+						$matchupString = $matchups[$round][$matchup][$match];
+						if ($matchupString[0]='W') {
+							$matchupArray = explode(',',substr($matchupString,1));
+							$matchupRound = $matchupArray[0];
+							$matchupMatchup = $matchupArray[1];
+
+							// Get result of matchup
+							$result = $results[$matchupRound][$matchupMatchup]['winner'];
+
+							if (($result == 'top')||($result == 'bye')) {
+								$content[$round][$matchup][$match] = $content[$matchupRound][$matchupMatchup][0];
+							}
+							else if ($result == 'bottom') {
+								$content[$round][$matchup][$match] = $content[$matchupRound][$matchupMatchup][1];
+							}
+							else {
+								$content[$round][$matchup][$match] = 'not played';
+							}
+						}
+					}
+					if (($content[$round][$matchup][0]!='0')
+					&&($content[$round][$matchup][1]!='0')
+					&&($content[$round][$matchup][0]!='not played')
+					&&($content[$round][$matchup][1]!='not played')
+					&&($results[$round][$matchup]['winner'] == '')) {
+						// Matchup not finished yet
+						$matchs = count($results[$round][$matchup]['matchs']);
+
+						$current_match = $results[$round][$matchup]['matchs'][$matchs-1];
+						//var_dump($current_match);
+						if((!isset($current_match)) || ($current_match['played'] == true))
+						{
+							// Need to schedule the next match
+							// Create Match ------------------------------------------
+							$event_id = $this->fields['EventID'];
+							$reported_by = ADMINID;
+							$time_reported = $time;
+							$comments = '';
+							$time_scheduled = $time_reported;
+
+							$q =
+							"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
+							VALUES ($event_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled)";
+							$result = $sql->db_Query($q);
+
+							$last_id = mysql_insert_id();
+							$match_id = $last_id;
+
+							// Create Scores ------------------------------------------
+							$teamTop    = $content[$round][$matchup][0];
+							$teamBottom = $content[$round][$matchup][1];
+
+							$teamTopID = $teams[$teamTop-1]['PlayerID'];
+							$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
+
+							switch($type)
+							{
+								case "One Player Tournament":
+								// TODO: Team...
+								$q =
+								"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
+								VALUES ($match_id,$teamTopID,0,1,1)
+								";
+								$result = $sql->db_Query($q);
+
+								$q =
+								"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
+								VALUES ($match_id,$teamBottomID,0,2,2)
+								";
+								$result = $sql->db_Query($q);
+							}
+
+							$match = array();
+							$match['played'] = false;
+							$match['match_id'] = $match_id;
+							$results[$round][$matchup]['matchs'][$matchs] = $match;
+
+							$this->updateResults($results);
+							$this->updateDB($results);
+						}
+						echo "R$round M$matchup: Nbr of matchs=$matchs<br>";
+						var_dump($results[$round][$matchup]);
+					}
+					if (($content[$round][$matchup][0]=='0')||($content[$round][$matchup][1]=='0')) {
+						$results[$round][$matchup]['winner'] = 'bye';
+					}
+				}
+			}
+			else
+			{
+				/* Last round, no match */
+			}
+		}
+
+		/*
+		var_dump($matchups);
+		var_dump($results);
+		var_dump($content);
+		var_dump($teams);
+		*/
+
+		//return array($bracket_html);
+
+	}
 }
 
 function eventTypeToString($type)
@@ -1046,6 +1481,12 @@ function eventTypeToString($type)
 		break;
 		case "Clan Ladder":
 		return EB_EVENTS_L25;
+		break;
+		case "One Player Tournament":
+		return EB_EVENTS_L33;
+		break;
+		case "Team Tournament":
+		return EB_EVENTS_L35;
 		break;
 		default:
 		return $type;

@@ -21,7 +21,7 @@ if ((!isset($_POST['createevent']))||(!check_class($pref['eb_events_create_class
 }
 else
 {
-	$text .= $event->displayEventSettingsForm();
+	$text .= $event->displayEventSettingsForm(true);
 }
 
 $ns->tablerender(EB_EVENTC_L1, $text);

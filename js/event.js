@@ -13,10 +13,12 @@ jQuery(function() {
 
 		// rules/messages are for the validation
 		rules: {
-			eventname: "required"
+			eventname: "required",
+			startdate: "required"
 		},
 		messages: {
-			eventname: "Please enter the event name."
+			eventname: "Please enter the event name.",
+			startdate: "Please enter the start date"
 		}
 	});
 
@@ -50,7 +52,7 @@ jQuery(function() {
 				required: "Please enter your BBNET code.",
 				digits: "Please enter a valid 3 digits BBNET code."
 			}
-		},
+		}
 	});
 
 	// our modal dialog setup

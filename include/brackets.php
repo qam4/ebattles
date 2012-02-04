@@ -3,7 +3,7 @@
 /*
  function brackets()
  inputs:
-  - type: 'Single elimination', ...
+  - format: 'Single elimination', ...
   - nbrPlayers: max number of players
   - teams[player]
     . 'Name'
@@ -31,10 +31,10 @@
 */
 
 
-function brackets($type, $nbrPlayers = 16, $teams, $results = array(), $rounds) {
+function brackets($format, $nbrPlayers = 16, $teams, $results = array(), $rounds) {
 	$nbrTeams=count($teams);
 
-	switch ($type)
+	switch ($format)
 	{
 		default:
 		$file = 'include/brackets/se-'.$nbrPlayers.'.txt';

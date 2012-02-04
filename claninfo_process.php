@@ -31,8 +31,7 @@ if(isset($_POST['joindivision']))
 		.TBL_EVENTS
 		." WHERE (".TBL_TEAMS.".Division = '$div_id')"
 		." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
-		." AND (   (".TBL_EVENTS.".End_timestamp = '')"
-		."        OR (".TBL_EVENTS.".End_timestamp > $time)) ";
+		." AND (".TBL_EVENTS.".Status != 'finished')";
 
 		$result_2 = $sql->db_Query($q_2);
 		$num_rows_2 = mysql_numrows($result_2);

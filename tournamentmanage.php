@@ -246,67 +246,38 @@ else
 		';  // tab-page "Event Settings"
 
 		//***************************************************************************************
-		// tab-page "Event"
-		/*
-		$text .= '<div id="tabs-3">';
-		$text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?EventID='.$event_id.'" method="post">';
-
-
-
-		$text .= '
-		<table class="eb_table" style="width:95%">
-		<tbody>
-		';
-		$text .= '
-		</tbody>
-		</table>
-		';
-
-		//<!-- Save Button -->
-		$text .= '
-		<table><tr><td>
-		<div>
-		'.ebImageTextButton('eventrulessave', 'disk.png', EB_EVENTM_L39).'
-		</div>
-		</td></tr></table>
-
-		</form>
-		</div>
-		';  // tab-page "Event Rules"
-		*/
-
-		//***************************************************************************************
 		// tab-page "Brackets"
 		$text .= '<div id="tabs-4">';
 
 		$teams = array();
-		$type = $event->getField('MatchType');
+		$type = $event->getField('Type');
 		switch($type)
 		{
 			default:
-				$q_Players = "SELECT ".TBL_GAMERS.".*, "
-				.TBL_TPLAYERS.".*"
-				." FROM ".TBL_GAMERS.", "
-				.TBL_TPLAYERS.", "
-				.TBL_USERS
-				." WHERE (".TBL_TPLAYERS.".Event = '".$event->getField('EventID')."')"
-				." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-				." ORDER BY ".TBL_TPLAYERS.".Joined";
-				$result = $sql->db_Query($q_Players);
-				$nbrPlayers = mysql_numrows($result);
-				for ($player = 0; $player < $nbrPlayers; $player++)
-				{
-					$playerID = mysql_result($result, $player, TBL_TPLAYERS.".TPlayerID");
-					$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
-					$gamer = new Gamer($gamerID);
-					$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
-					$teams[$player]['PlayerID'] = $playerID;
-				}
+			// TODO: Team...
+			$q_Players = "SELECT ".TBL_GAMERS.".*, "
+			.TBL_PLAYERS.".*"
+			." FROM ".TBL_GAMERS.", "
+			.TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_PLAYERS.".Event = '".$event->getField('EventID')."')"
+			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+			." ORDER BY ".TBL_PLAYERS.".Joined";
+			$result = $sql->db_Query($q_Players);
+			$nbrPlayers = mysql_numrows($result);
+			for ($player = 0; $player < $nbrPlayers; $player++)
+			{
+				$playerID = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
+				$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
+				$gamer = new Gamer($gamerID);
+				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+				$teams[$player]['PlayerID'] = $playerID;
+			}
 		}
 
 		$results = unserialize($event->getField('Results'));
-		list($bracket_html) = brackets($event->getField('Type'), $event->getField('MaxNumberPlayers'), $teams, $results, $rounds);
+		list($bracket_html) = brackets($event->getField('Format'), $event->getField('MaxNumberPlayers'), $teams, $results, $rounds);
 		$text .= $bracket_html;
 		//$event->updateResults($results);
 		//$event->updateDB($results);
@@ -321,7 +292,7 @@ else
 
 		$array = array(
 		'name'   => array(EB_EVENTM_L55, TBL_USERS.'.user_name'),
-		'joined'   => array(EB_EVENTM_L56, TBL_TPLAYERS.'.Joined')
+		'joined'   => array(EB_EVENTM_L56, TBL_PLAYERS.'.Joined')
 		);
 
 		if (!isset($_GET['orderby'])) $_GET['orderby'] = 'joined';
@@ -334,11 +305,11 @@ else
 		}
 
 		$q = "SELECT COUNT(*) as NbrPlayers"
-		." FROM ".TBL_TPLAYERS.", "
+		." FROM ".TBL_PLAYERS.", "
 		.TBL_GAMERS.", "
 		.TBL_USERS
-		." WHERE (".TBL_TPLAYERS.".Event = '$event_id')"
-		." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 		." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
 		$result = $sql->db_Query($q);
 		$row = mysql_fetch_array($result);
@@ -350,14 +321,12 @@ else
 		$pages->paginate();
 
 		/* Number of teams */
-		switch($event->getField('MatchType'))
+		switch($event->getField('Type'))
 		{
-			case "2v2":
-			case "3v3":
-			case "4v4":
+			case "Team Tournament":
 			$q = "SELECT COUNT(*) as NbrTeams"
-			." FROM ".TBL_TTEAMS
-			." WHERE (".TBL_TTEAMS.".Event = '$event_id')";
+			." FROM ".TBL_TEAMS
+			." WHERE (".TBL_TEAMS.".Event = '$event_id')";
 			$result = $sql->db_Query($q);
 			$row = mysql_fetch_array($result);
 			$numTeams = $row['NbrTeams'];
@@ -372,7 +341,7 @@ else
 		}
 
 		/* Number of players */
-		switch($event->getField('MatchType'))
+		switch($event->getField('Type'))
 		{
 			default:
 			$text .= '<div class="spacer">';
@@ -384,11 +353,9 @@ else
 		}
 
 		/* Add Team/Player */
-		switch($event->getField('MatchType'))
+		switch($event->getField('Type'))
 		{
-			case "2v2":
-			case "3v3":
-			case "4v4":
+			case "Team Tournament":
 			// Form to add a team's division to the event
 			$q = "SELECT ".TBL_DIVISIONS.".*, "
 			.TBL_CLANS.".*"
@@ -429,8 +396,7 @@ else
 			</form>
 			';
 			break;
-			case "":
-			case "1v1":
+			case "One Player Tournament":
 			// TODO: No good...
 			// Form to add a player to the event
 			$q = "SELECT ".TBL_GAMERS.".*, "
@@ -458,19 +424,19 @@ else
 			{
 				$uid  = mysql_result($result,$i, TBL_USERS.".user_id");
 				$uname  = mysql_result($result,$i, TBL_GAMERS.".Name");
-				
+
 				$q_Players = "SELECT COUNT(*) as NbrPlayers"
-				." FROM ".TBL_TPLAYERS.", "
+				." FROM ".TBL_PLAYERS.", "
 				.TBL_GAMERS
-				." WHERE (".TBL_TPLAYERS.".Event = '$event_id')"
-				." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 				." AND (".TBL_GAMERS.".User = '$uid')";
 				$result_Players = $sql->db_Query($q_Players);
 				$row = mysql_fetch_array($result_Players);
 				$nbrPlayers = $row['NbrPlayers'];
 				if ($nbrPlayers==0)
 				{
-				$text .= '<option value="'.$uid.'">'.$uname.'</option>';
+					$text .= '<option value="'.$uid.'">'.$uname.'</option>';
 				}
 			}
 			$text .= '
@@ -497,21 +463,19 @@ else
 		$text .= '<td>'.EB_EVENTM_L50.'</td></tr>';
 		$text .= '</table>';
 
-		switch($event->getField('MatchType'))
+		switch($event->getField('Type'))
 		{
-			case "2v2":
-			case "3v3":
-			case "4v4":
+			case "Team Tournament":
 			// Show list of teams here
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
-			.TBL_TTEAMS.".*, "
+			.TBL_TEAMS.".*, "
 			.TBL_DIVISIONS.".* "
 			." FROM ".TBL_CLANS.", "
-			.TBL_TTEAMS.", "
+			.TBL_TEAMS.", "
 			.TBL_DIVISIONS
 			." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-			." AND (".TBL_TTEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-			." AND (".TBL_TTEAMS.".Event = '$event_id')";
+			." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+			." AND (".TBL_TEAMS.".Event = '$event_id')";
 			$result = $sql->db_Query($q_Teams);
 			$num_rows = mysql_numrows($result);
 			if(!$result || ($num_rows < 0)){
@@ -556,18 +520,19 @@ else
 			default:
 		}
 
-		switch($event->getField('MatchType'))
+		switch($event->getField('Type'))
 		{
 			default:
+			// TODO: Teams...
 			$orderby_array = $array["$orderby"];
-			$q_Players = "SELECT ".TBL_TPLAYERS.".*, "
+			$q_Players = "SELECT ".TBL_PLAYERS.".*, "
 			.TBL_GAMERS.".*, "
 			.TBL_USERS.".*"
-			." FROM ".TBL_TPLAYERS.", "
+			." FROM ".TBL_PLAYERS.", "
 			.TBL_GAMERS.", "
 			.TBL_USERS
-			." WHERE (".TBL_TPLAYERS.".Event = '$event_id')"
-			." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 			." ORDER BY $orderby_array[1] $sort"
 			." $pages->limit";
@@ -607,16 +572,16 @@ else
 				$text .= '</th></tr>';
 				for($i=0; $i<$num_rows; $i++)
 				{
-					$pid  = mysql_result($result,$i, TBL_TPLAYERS.".TPlayerID");
+					$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 					$puid = mysql_result($result,$i, TBL_USERS.".user_id");
 					$pname  = mysql_result($result,$i, TBL_USERS.".user_name");
 					$puniquegameid  = mysql_result($result,$i, TBL_GAMERS.".UniqueGameID");
-					$pjoined  = mysql_result($result,$i, TBL_TPLAYERS.".Joined");
+					$pjoined  = mysql_result($result,$i, TBL_PLAYERS.".Joined");
 					$pjoined_local = $pjoined + TIMEOFFSET;
 					$date  = date("d M Y",$pjoined_local);
-					$pbanned = mysql_result($result,$i, TBL_TPLAYERS.".Banned");
-					$pgames = mysql_result($result,$i, TBL_TPLAYERS.".GamesPlayed");
-					$pteam = mysql_result($result,$i, TBL_TPLAYERS.".Team");
+					$pbanned = mysql_result($result,$i, TBL_PLAYERS.".Banned");
+					$pgames = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
+					$pteam = mysql_result($result,$i, TBL_PLAYERS.".Team");
 					list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
 					$text .= '<tr>';

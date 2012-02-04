@@ -14,8 +14,8 @@ class Event extends DatabaseTable
 	function setDefaultFields()
 	{
 		$this->setField('Game', 1);
-		$this->setField('Type', 'Single Elimination');
-		$this->setField('MatchType', '1v1');
+		$this->setField('Type', 'One Player Tournament');
+		$this->setField('MatchType', '');
 		$this->setField('AllowForfeit', '0');
 		$this->setField('AllowScore', '0');
 		$this->setField('match_report_userclass', eb_UC_EVENT_MODERATOR);
@@ -59,18 +59,18 @@ class Event extends DatabaseTable
 		}
 
 		// Is the user already signed up for the team?
-		$q = "SELECT ".TBL_TPLAYERS.".*"
-		." FROM ".TBL_TPLAYERS.", "
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS.", "
 		.TBL_GAMERS
-		." WHERE (".TBL_TPLAYERS.".Event = '".$this->fields['EventID']."')"
-		."   AND (".TBL_TPLAYERS.".Team = '$team')"
-		."   AND (".TBL_TPLAYERS.".Gamer = '$gamerID')";
+		." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')"
+		."   AND (".TBL_PLAYERS.".Team = '$team')"
+		."   AND (".TBL_PLAYERS.".Gamer = '$gamerID')";
 		$result = $sql->db_Query($q);
 		$num_rows = mysql_numrows($result);
 		echo "num_rows: $num_rows<br>";
 		if ($num_rows==0)
 		{
-			$q = " INSERT INTO ".TBL_TPLAYERS."(Event,Gamer,Team,Joined)
+			$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,Joined)
 			VALUES (".$this->fields['EventID'].",$gamerID,$team,$time)";
 			$sql->db_Query($q);
 			echo "player created, query: $q<br>";
@@ -106,15 +106,15 @@ class Event extends DatabaseTable
 		$add_players = TRUE;
 
 		// Is the division signed up
-		$q = "SELECT ".TBL_TTEAMS.".*"
-		." FROM ".TBL_TTEAMS
-		." WHERE (".TBL_TTEAMS.".Event = '".$this->fields['EventID']."')"
-		." AND (".TBL_TTEAMS.".Division = '$div_id')";
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
+		." WHERE (".TBL_TEAMS.".Event = '".$this->fields['EventID']."')"
+		." AND (".TBL_TEAMS.".Division = '$div_id')";
 		$result = $sql->db_Query($q);
 		$numTeams = mysql_numrows($result);
 		if($numTeams == 0)
 		{
-			$q = "INSERT INTO ".TBL_TTEAMS."(Event,Division,Joined)
+			$q = "INSERT INTO ".TBL_TEAMS."(Event,Division,Joined)
 			VALUES (".$this->fields['EventID'].",$div_id,$time)";
 			$sql->db_Query($q);
 			$team_id =  mysql_insert_id();
@@ -312,7 +312,7 @@ class Event extends DatabaseTable
 		<tr>
 		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L18.'</td>
 		<td class="eb_td"><select class="tbox" name="eventtype">';
-		$text .= '<option value="Single Elimination" '.($this->getField('Type') == "Single Elimination" ? 'selected="selected"' : '') .'>'.EB_EVENTM_L19.'</option>';
+		$text .= '<option value="One Player Tournament" '.($this->getField('Type') == "One Player Tournament" ? 'selected="selected"' : '') .'>'.EB_EVENTM_L19.'</option>';
 		$text .= '</select>
 		</td>
 		</tr>
@@ -321,7 +321,7 @@ class Event extends DatabaseTable
 		//<!-- Match Type -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L126.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L132.'</td>
 		<td class="eb_td">
 		<div>
 		';
@@ -342,7 +342,7 @@ class Event extends DatabaseTable
 		//<!-- Max Number of Players -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L132.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L126.'</td>
 		<td class="eb_td">
 		<div>
 		';
@@ -383,12 +383,11 @@ class Event extends DatabaseTable
 		</td>
 		</tr>
 		';
-		*/
 
 		//<!-- Allow Score -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L20.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L26.'</td>
 		<td class="eb_td">
 		<div>
 		';
@@ -464,8 +463,8 @@ class Event extends DatabaseTable
 		//<!-- Start Date -->
 		if($this->getField('StartDateTime')!=0)
 		{
-			$StartDateTime_local = $this->getField('StartDateTime') + TIMEOFFSET;
-			$date_start = date("m/d/Y h:i A", $StartDateTime_local);
+			$startdatetime_local = $this->getField('StartDateTime') + TIMEOFFSET;
+			$date_start = date("m/d/Y h:i A", $startdatetime_local);
 		}
 		else
 		{
@@ -487,12 +486,6 @@ class Event extends DatabaseTable
 		</tr>
 		';
 
-		/*
-		$text .= '
-		<p>Test date/time field: <input id="test" /></p>
-		';
-		*/
-
 		//<!-- Rounds -->
 		switch ($this->getField('Type'))
 		{
@@ -512,23 +505,23 @@ class Event extends DatabaseTable
 		if (!isset($rounds)) $rounds = array();
 		$text .= '<table class="table_left"><tbody>';
 		$text .= '<tr>';
-		$text .= '<th>'.EB_EVENTM_L25.'</th>';
-		$text .= '<th>'.EB_EVENTM_L26.'</th>';
-		$text .= '<th>'.EB_EVENTM_L27.'</th>';
+		$text .= '<th>'.EB_EVENTM_L144.'</th>';
+		$text .= '<th>'.EB_EVENTM_L145.'</th>';
+		$text .= '<th>'.EB_EVENTM_L146.'</th>';
 		$text .= '</tr>';
 		for ($round = 1; $round < $nbrRounds; $round++) {
 			if (!isset($rounds[$round])) {
 				$rounds[$round] = array();
 			}
 			if (!isset($rounds[$round]['Title'])) {
-				$rounds[$round]['Title'] = EB_EVENTM_L25.' '.$round;
+				$rounds[$round]['Title'] = EB_EVENTM_L144.' '.$round;
 			}
 			if (!isset($rounds[$round]['BestOf'])) {
 				$rounds[$round]['BestOf'] = 1;
 			}
 
 			$text .= '<tr>';
-			$text .= '<td>'.EB_EVENTM_L25.' '.$round.'</td>';
+			$text .= '<td>'.EB_EVENTM_L144.' '.$round.'</td>';
 			$text .= '<td><input class="tbox" type="text" size="40" name="round_title_'.$round.'" value="'.$rounds[$round]['Title'].'"/></td>';
 			$text .= '<td><select class="tbox" name="round_bestof_'.$round.'">';
 			$text .= '<option value="1" '.($rounds[$round]['BestOf'] == "1" ? 'selected="selected"' : '') .'>1</option>';
@@ -550,7 +543,7 @@ class Event extends DatabaseTable
 
 			$text .= '
 			<tr>
-			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L28.'</td>
+			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L147.'</td>
 			<td class="eb_td">';
 			$text .= '<table class="table_left">';
 			foreach($mapPool as $key=>$map)
@@ -567,14 +560,14 @@ class Event extends DatabaseTable
 					$text .= '<td>'.$mapName.'</td>';
 					$text .= '<td>';
 					$text .= '<div>';
-					$text .= ebImageTextButton('eventdeletemap', 'delete.png', EB_EVENTM_L31, 'negative jq-button', '', '', 'value="'.$key.'"');
+					$text .= ebImageTextButton('eventdeletemap', 'delete.png', EB_EVENTM_L150, 'negative jq-button', '', '', 'value="'.$key.'"');
 					$text .= '</div>';
 					$text .= '</td>';
 					$text .= '</tr>';
 				} else {
 					$text .= '<tr>';
 					$text .= '<td><div>';
-					$text .= EB_EVENTM_L29;
+					$text .= EB_EVENTM_L148;
 					$text .= '</div></td>';
 					$text .= '</tr>';
 				}
@@ -618,7 +611,7 @@ class Event extends DatabaseTable
 				$text .= '
 				<td>
 				<div>
-				'.ebImageTextButton('eventaddmap', 'add.png', EB_EVENTM_L30).'
+				'.ebImageTextButton('eventaddmap', 'add.png', EB_EVENTM_L149).'
 				</div>
 				</td>
 				</tr>
@@ -681,24 +674,26 @@ class Event extends DatabaseTable
 		global $tp;
 
 		$teams = array();
-		$type = $this->fields['MatchType'];
+		$type = $this->fields['Type'];
+		$format = $this->fields['Format'];
 		switch($type)
 		{
 			default:
+			//TODO: Team...
 			$q_Players = "SELECT ".TBL_GAMERS.".*, "
-			.TBL_TPLAYERS.".*"
+			.TBL_PLAYERS.".*"
 			." FROM ".TBL_GAMERS.", "
-			.TBL_TPLAYERS.", "
+			.TBL_PLAYERS.", "
 			.TBL_USERS
-			." WHERE (".TBL_TPLAYERS.".Event = '".$this->fields['EventID']."')"
-			." AND (".TBL_TPLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')"
+			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-			." ORDER BY ".TBL_TPLAYERS.".Joined";
+			." ORDER BY ".TBL_PLAYERS.".Joined";
 			$result = $sql->db_Query($q_Players);
 			$nbrPlayers = mysql_numrows($result);
 			for ($player = 0; $player < $nbrPlayers; $player++)
 			{
-				$playerID = mysql_result($result, $player, TBL_TPLAYERS.".TPlayerID");
+				$playerID = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
 				$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
 				$gamer = new Gamer($gamerID);
 				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
@@ -712,7 +707,7 @@ class Event extends DatabaseTable
 
 		$nbrTeams=count($teams);
 
-		switch ($type)
+		switch ($format)
 		{
 			default:
 			$file = 'include/brackets/se-'.$nbrPlayers.'.txt';
@@ -817,10 +812,8 @@ class Event extends DatabaseTable
  						 	
  							switch($type)
 							{
-								default:
-									// 1v1
-									// TODO: 2v2...
-									echo "hello";
+									case "One Player Tournament":
+									//TODO: Team...
 									$q =
 									"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
 									VALUES ($match_id,$teamTopID,0,1,1)
@@ -872,7 +865,7 @@ function eventTypeToString($type)
 {
 	switch($type)
 	{
-		case "Single Elimination":
+		case "One Player Tournament":
 		return EB_EVENTS_L22;
 		break;
 		default:
@@ -880,11 +873,11 @@ function eventTypeToString($type)
 	}
 }
 
-function deleteTPlayer($player_id)
+function deletePlayer($player_id)
 {
 	global $sql;
-	$q = "DELETE FROM ".TBL_TPLAYERS
-	." WHERE (".TBL_TPLAYERS.".TPlayerID = '$player_id')";
+	$q = "DELETE FROM ".TBL_PLAYERS
+	." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')";
 	$result = $sql->db_Query($q);
 }
 

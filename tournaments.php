@@ -106,7 +106,7 @@ function displayCurrentEvents(){
 	}
 
 	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_EVENTS.".Game = '$gameid')";
-	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_EVENTS.".MatchTypes LIKE '%$matchtype%')";
+	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_GAMES.".MatchTypes LIKE '%$matchtype%')";
 
 	// Drop down list to select Games to display
 	$q_Games = "SELECT DISTINCT ".TBL_GAMES.".*"
@@ -174,6 +174,7 @@ function displayCurrentEvents(){
 	$q = "SELECT count(*) "
 	." FROM ".TBL_EVENTS
 	." WHERE (".TBL_EVENTS.".Status != 'finished')"
+	."   AND (".TBL_EVENTS.".Status != 'draft')"
 	.$game_string
 	.$matchtype_string;
 	$result = $sql->db_Query($q);
@@ -249,8 +250,10 @@ function displayCurrentEvents(){
 		<th colspan="2" class="eb_th2">'.EB_EVENTS_L14.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L15.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L16.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L17.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L18.'</th>
-		<th class="eb_th2">'.EB_EVENTS_L33.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L19.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L34.'</th>
 		</tr>';
 		for($i=0; $i < $numEvents; $i++)
 		{
@@ -267,11 +270,19 @@ function displayCurrentEvents(){
 			{
 				$date_start = "-";
 			}
+			if($event->getField('EndDateTime')!=0)
+			{
+				$enddatetime_local = $event->getField('EndDateTime') + TIMEOFFSET;
+				$date_end = date("d M Y", $enddatetime_local);
+			}
+			else
+			{
+				$date_end = "-";
+			}
 
-			// TODO: get the number of players correct
 			/* Nbr players */
 			$q_2 = "SELECT COUNT(*) as NbrPlayers"
-			." FROM ".TBL_TPLAYERS
+			." FROM ".TBL_PLAYERS
 			." WHERE (Event = '$event_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
@@ -279,20 +290,36 @@ function displayCurrentEvents(){
 
 			/* Nbr Teams */
 			$q_2 = "SELECT COUNT(*) as NbrTeams"
-			." FROM ".TBL_TTEAMS
-			." WHERE (".TBL_TTEAMS.".Event = '$event_id')";
+			." FROM ".TBL_TEAMS
+			." WHERE (".TBL_TEAMS.".Event = '$event_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrTeams = $row['NbrTeams'];
 
-			switch($event->getField('MatchType'))
+			/* Nbr matches */
+			$q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+			." FROM ".TBL_MATCHS.", "
+			.TBL_SCORES
+			." WHERE (Event = '$event_id')"
+			." AND (".TBL_MATCHS.".Status = 'active')"
+			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
+			$result_2 = $sql->db_Query($q_2);
+			$row = mysql_fetch_array($result_2);
+			$nbrmatches = $row['NbrMatches'];
+
+			switch($event->getField('Type'))
 			{
-				case "1v1":
-				$nbrTeamPlayers = $nbrplayers.'/'.$event->getField('MaxNumberPlayers');
+				case "One Player Ladder":
+				case "One Player Tournament":
+				$nbrTeamPlayers = $nbrplayers;
+				break;
+				case "Team Ladder":
+				$nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
+				break;
+				case "Clan Ladder":
+				$nbrTeamPlayers = $nbrTeams;
 				break;
 				default:
-				$nbrTeamPlayers = $nbrTeams.'/'.$event->getField('MaxNumberPlayers');
-				break;
 			}
 
 			$text .= '<tr>
@@ -301,7 +328,9 @@ function displayCurrentEvents(){
 			<td class="eb_td">'.$gName.'</td>
 			<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>
 			<td class="eb_td">'.$date_start.'</td>
+			<td class="eb_td">'.$date_end.'</td>
 			<td class="eb_td">'.$nbrTeamPlayers.'</td>
+			<td class="eb_td">'.$nbrmatches.'</td>
 			<td class="eb_td">'.$event->getField('Status').'</td>
 			</tr>';
 			// TODO: status2string
@@ -335,6 +364,7 @@ function displayRecentEvents(){
 	." FROM ".TBL_GAMES.", "
 	. TBL_EVENTS
 	." WHERE (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+	.$matchtype_string
 	." ORDER BY Name";
 	$result_Games = $sql->db_Query($q_Games);
 	$numGames = mysql_numrows($result_Games);
@@ -419,7 +449,10 @@ function displayRecentEvents(){
 		<th colspan="2" class="eb_th2">'.EB_EVENTS_L14.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L15.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L16.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L17.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L18.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L19.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L34.'</th>
 		</tr>';
 		for($i=0; $i < $numEvents; $i++)
 		{
@@ -437,11 +470,19 @@ function displayRecentEvents(){
 			{
 				$date_start = "-";
 			}
+			if($event->getField('EndDateTime')!=0)
+			{
+				$enddatetime_local = $event->getField('EndDateTime') + TIMEOFFSET;
+				$date_end = date("d M Y", $enddatetime_local);
+			}
+			else
+			{
+				$date_end = "-";
+			}
 
-			// TODO: get the number of players correct
 			/* Nbr players */
 			$q_2 = "SELECT COUNT(*) as NbrPlayers"
-			." FROM ".TBL_TPLAYERS
+			." FROM ".TBL_PLAYERS
 			." WHERE (Event = '$event_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
@@ -449,35 +490,49 @@ function displayRecentEvents(){
 
 			/* Nbr Teams */
 			$q_2 = "SELECT COUNT(*) as NbrTeams"
-			." FROM ".TBL_TTEAMS
-			." WHERE (".TBL_TTEAMS.".Event = '$event_id')";
+			." FROM ".TBL_TEAMS
+			." WHERE (".TBL_TEAMS.".Event = '$event_id')";
 			$result_2 = $sql->db_Query($q_2);
 			$row = mysql_fetch_array($result_2);
 			$nbrTeams = $row['NbrTeams'];
 
+			/* Nbr matches */
+			$q_2 = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+			." FROM ".TBL_MATCHS.", "
+			.TBL_SCORES
+			." WHERE (Event = '$event_id')"
+			." AND (".TBL_MATCHS.".Status = 'active')"
+			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
+			$result_2 = $sql->db_Query($q_2);
+			$row = mysql_fetch_array($result_2);
+			$nbrmatches = $row['NbrMatches'];
+
 			switch($event->getField('Type'))
 			{
-				case "1v1":
-				$nbrTeamPlayers = $nbrplayers.'/'.$event->getField('MaxNumberPlayers');
+				case "One Player Ladder":
+				case "One Player Tournament":
+				$nbrTeamPlayers = $nbrplayers;
+				break;
+				case "Team Ladder":
+				$nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
+				break;
+				case "Clan Ladder":
+				$nbrTeamPlayers = $nbrTeams;
 				break;
 				default:
-				$nbrTeamPlayers = $nbrTeams.'/'.$event->getField('MaxNumberPlayers');
-				break;
 			}
 
-			if(
-			($event->getField('StartDateTime')==0)
-			||($event->getField('StartDateTime')<$time)
-			)
-			{
-				$text .= '<tr>
-				<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a></td>
-				<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
-				<td class="eb_td">'.$gName.'</td>
-				<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>
-				<td class="eb_td">'.$date_start.'</td>
-				<td class="eb_td">'.$nbrTeamPlayers.'</td>
-				</tr>';
+			$text .= '<tr>
+			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a></td>
+			<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
+			<td class="eb_td">'.$gName.'</td>
+			<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>
+			<td class="eb_td">'.$date_start.'</td>
+			<td class="eb_td">'.$date_end.'</td>
+			<td class="eb_td">'.$nbrTeamPlayers.'</td>
+			<td class="eb_td">'.$nbrmatches.'</td>
+			<td class="eb_td">'.$event->getField('Status').'</td>
+			</tr>';
 			}
 		}
 		$text .= '</tbody></table><br />';
@@ -487,6 +542,7 @@ function displayRecentEvents(){
 	$text .= '[<a href="'.e_PLUGIN.'ebattles/eventspast.php">'.EB_EVENTS_L21.'</a>]';
 	$text .= '</p>';
 }
+
 ?>
 
 

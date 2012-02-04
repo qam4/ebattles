@@ -1301,6 +1301,7 @@ class Match extends DatabaseTable
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
+					case "One Player Tournament":
 					// Get the match reporter's match team
 					$reporter_matchteam = 0;
 					$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
@@ -1387,6 +1388,7 @@ class Match extends DatabaseTable
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
+					case "One Player Tournament":
 					$q_UserPlayers = "SELECT DISTINCT ".TBL_SCORES.".*"
 					." FROM ".TBL_MATCHS.", "
 					.TBL_SCORES.", "
@@ -1467,6 +1469,7 @@ class Match extends DatabaseTable
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
+					case "One Player Tournament":
 					$q = "SELECT ".TBL_MATCHS.".*, "
 					.TBL_SCORES.".*, "
 					.TBL_PLAYERS.".*, "
@@ -1525,6 +1528,7 @@ class Match extends DatabaseTable
 					{
 						case "One Player Ladder":
 						case "Team Ladder":
+						case "One Player Tournament":
 						$puid  = mysql_result($result,$index , TBL_USERS.".user_id");
 						$gamer_id = mysql_result($result,$index, TBL_PLAYERS.".Gamer");
 						$gamer = new SC2Gamer($gamer_id);
@@ -1640,6 +1644,7 @@ class Match extends DatabaseTable
 					{
 						case "One Player Ladder":
 						case "Team Ladder":
+						case "One Player Tournament":
 						$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a>';
 						break;
 						case "Clan Ladder":
