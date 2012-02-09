@@ -161,6 +161,9 @@ table.brackets td div.loser {
 	color: #b1b1b1;
 	background: #CFDBE8;
 }
+table.brackets td div.victor {
+	background: #CFE8D7;
+}
 table.brackets td div.loser div.player {
     font-weight: normal;
 }
