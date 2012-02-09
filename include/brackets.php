@@ -197,8 +197,8 @@ function brackets($format, $nbrPlayers = 16, $teams, $results = array(), $rounds
 						$content[$round][$matchup][$match] = 'not played';
 					}
 
-					if ($results[$round][$matchup]['winner'] == 'top') {
-						$brackets[$row][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][$match], 'winner');
+					if ($content[$round][$matchup][$match] != 'not played') {
+						$brackets[$row][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][$match], 'victor');
 					} else {
 						$brackets[$row][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][$match]);
 					}
@@ -259,6 +259,11 @@ function init_results(&$results)
 
 function html_bracket_team_cell($teams, $team, $container_class='') {
 	$text = '<td><div class="container '.$container_class.'">';
+	if ($container_class=='victor')
+	{
+		$victor_image = 'images/awards/trophy_gold.png';
+		$victor_str = '<img src="'.$victor_image.'" style="vertical-align:middle"/>';
+	}
 	switch ($team) {
 		case 'not played':
 			$text .= '&nbsp;';
@@ -272,11 +277,17 @@ function html_bracket_team_cell($teams, $team, $container_class='') {
 			//$text .= '<img src="'.$team_image.'" style="vertical-align:middle"/>';
 			$text .= $team_name;
 			$text .= '</div>';
-			if ($container_class == 'winner') {
+			switch($container_class)
+			{
+				case 'winner':
 				$text .= '<div class="wins">W</div>';
-			}
-			if ($container_class == 'loser') {
+				break;
+				case 'loser':
 				$text .= '<div class="wins">L</div>';
+				break;
+				case 'victor':
+				$text .= '<div class="wins">'.$victor_str.'</div>';
+				break;
 			}
 			break;
 	}

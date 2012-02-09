@@ -92,7 +92,7 @@ class Event extends DatabaseTable
 			}
 		}
 	}
-	
+
 	function resetTeams()
 	{
 		global $sql;
@@ -1338,11 +1338,11 @@ class Event extends DatabaseTable
 		$content= array();
 
 		$rowspan = 1;
-		for ($round = 1; $round <= $nbrRounds; $round++){
+		for ($round = 1; $round < $nbrRounds; $round++){
 			$nbrMatchups = count($matchups[$round]);
-			if ($round == 1) {
-				/* Round 1 */
-				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+				if ($round == 1) {
+					/* Round 1 */
 					$teamTop    = substr($matchups[$round][$matchup][0],1);
 					$teamBottom = substr($matchups[$round][$matchup][1],1);
 					if (!$results[$round][$matchup]['winner']) $results[$round][$matchup]['winner'] = '';
@@ -1359,18 +1359,9 @@ class Event extends DatabaseTable
 					} else {
 						$results[$round][$matchup]['winner'] = 'bye';
 					}
-
-					if(($content[$round][$matchup][0]!='0')&&($content[$round][$matchup][1]!='0')){
-						if ($results[$round][$matchup]['winner'] == '') {
-							// Matchup not finished, no winner yet
-							// TODO: Round 1
-						}
-					}
 				}
-			}
-			else if ($round < $nbrRounds)
-			{
-				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+				else if ($round < $nbrRounds)
+				{
 					if (!$results[$round][$matchup]['winner']) $results[$round][$matchup]['winner'] = '';
 					for($match = 0; $match < 2; $match++){
 						$matchupString = $matchups[$round][$matchup][$match];
@@ -1393,189 +1384,186 @@ class Event extends DatabaseTable
 							}
 						}
 					}
-					if (($content[$round][$matchup][0]!='0')
-					&&($content[$round][$matchup][1]!='0')
-					&&($content[$round][$matchup][0]!='not played')
-					&&($content[$round][$matchup][1]!='not played')
-					&&($results[$round][$matchup]['winner'] == '')) {
-						// Matchup not finished yet
-						$matchs = count($results[$round][$matchup]['matchs']);
+					if (($content[$round][$matchup][0]=='0')||($content[$round][$matchup][1]=='0')) {
+						$results[$round][$matchup]['winner'] = 'bye';
+					}
+				}
 
-						$current_match = $results[$round][$matchup]['matchs'][$matchs-1];
-						$current_match_id = $current_match['match_id'];
-						$match = new Match($current_match_id);
-						
-						if ($match->getField('Status') == 'active')
+				if (($content[$round][$matchup][0]!='0')
+				&&($content[$round][$matchup][1]!='0')
+				&&($content[$round][$matchup][0]!='not played')
+				&&($content[$round][$matchup][1]!='not played')
+				&&($results[$round][$matchup]['winner'] == '')) {
+					// Matchup not finished yet
+					$matchs = count($results[$round][$matchup]['matchs']);
+
+					$current_match = $results[$round][$matchup]['matchs'][$matchs-1];
+					$current_match_id = $current_match['match_id'];
+					$match = new Match($current_match_id);
+
+					if ($match->getField('Status') == 'active')
+					{
+						// The match has been reported
+						// Need to check who won.
+						// Get the scores for this match
+						switch($type)
 						{
-							// The match has been reported
-							// Need to check who won.
-							// Get the scores for this match
+							case "One Player Ladder":
+							case "Team Ladder":
+							case "One Player Tournament":
+							$q = "SELECT ".TBL_MATCHS.".*, "
+							.TBL_SCORES.".*, "
+							.TBL_PLAYERS.".*, "
+							.TBL_USERS.".*"
+							." FROM ".TBL_MATCHS.", "
+							.TBL_SCORES.", "
+							.TBL_PLAYERS.", "
+							.TBL_GAMERS.", "
+							.TBL_USERS
+							." WHERE (".TBL_MATCHS.".MatchID = '$current_match_id')"
+							." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+							." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+							." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+							." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+							." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+							break;
+							case "Clan Ladder":
+							case "Team Tournament":
+							$q = "SELECT ".TBL_MATCHS.".*, "
+							.TBL_SCORES.".*, "
+							.TBL_CLANS.".*, "
+							.TBL_TEAMS.".*, "
+							.TBL_DIVISIONS.".*"
+							." FROM ".TBL_MATCHS.", "
+							.TBL_SCORES.", "
+							.TBL_CLANS.", "
+							.TBL_TEAMS.", "
+							.TBL_DIVISIONS
+							." WHERE (".TBL_MATCHS.".MatchID = '$current_match_id')"
+							." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+							." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+							." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+							." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+							." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+							break;
+							default:
+						}
+
+						$result = $sql->db_Query($q);
+						$numScores = mysql_numrows($result);
+
+						if ($numScores>0)
+						{
+							$i = 0;
 							switch($type)
 							{
 								case "One Player Ladder":
 								case "Team Ladder":
 								case "One Player Tournament":
-								$q = "SELECT ".TBL_MATCHS.".*, "
-								.TBL_SCORES.".*, "
-								.TBL_PLAYERS.".*, "
-								.TBL_USERS.".*"
-								." FROM ".TBL_MATCHS.", "
-								.TBL_SCORES.", "
-								.TBL_PLAYERS.", "
-								.TBL_GAMERS.", "
-								.TBL_USERS
-								." WHERE (".TBL_MATCHS.".MatchID = '$current_match_id')"
-								." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-								." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-								." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-								." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-								." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+								$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+								$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
+								$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+								$gamer = new SC2Gamer($gamer_id);
+								$pname = $gamer->getField('Name');
+								$pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
+								$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
+								list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 								break;
 								case "Clan Ladder":
 								case "Team Tournament":
-								$q = "SELECT ".TBL_MATCHS.".*, "
-								.TBL_SCORES.".*, "
-								.TBL_CLANS.".*, "
-								.TBL_TEAMS.".*, "
-								.TBL_DIVISIONS.".*"
-								." FROM ".TBL_MATCHS.", "
-								.TBL_SCORES.", "
-								.TBL_CLANS.", "
-								.TBL_TEAMS.", "
-								.TBL_DIVISIONS
-								." WHERE (".TBL_MATCHS.".MatchID = '$current_match_id')"
-								." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-								." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
-								." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-								." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-								." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+								$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+								$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
+								$pavatar = mysql_result($result,$i, TBL_CLANS.".Image");
+								$pteam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+								list($pclan, $pclantag, $pclanid) = getClanInfo($pteam); // Use this function to get other clan info like clan id?
 								break;
 								default:
 							}
-						
-							$result = $sql->db_Query($q);
-							$numScores = mysql_numrows($result);
-					
-							if ($numScores>0)
-							{
-								$i = 0;
-								switch($type)
-								{
-									case "One Player Ladder":
-									case "Team Ladder":
-									case "One Player Tournament":
-									$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-									$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
-									$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-									$gamer = new SC2Gamer($gamer_id);
-									$pname = $gamer->getField('Name');
-									$pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
-									$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-									list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
-									break;
-									case "Clan Ladder":
-									case "Team Tournament":
-									$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-									$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
-									$pavatar = mysql_result($result,$i, TBL_CLANS.".Image");
-									$pteam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-									list($pclan, $pclantag, $pclanid) = getClanInfo($pteam); // Use this function to get other clan info like clan id?
-									break;
-									default:
-								}
-								$pscoreid  = mysql_result($result,$i, TBL_SCORES.".ScoreID");
-								$prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
-								$pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
-				
-								$teamTop    = $content[$round][$matchup][0];
-								$teamBottom = $content[$round][$matchup][1];
+							$pscoreid  = mysql_result($result,$i, TBL_SCORES.".ScoreID");
+							$prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
+							$pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
 
-								$teamTopID = $teams[$teamTop-1]['PlayerID'];
-								$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
-								
-								if ($teamTopID == $pid)
-								{
-									$results[$round][$matchup]['topWins'] += 1;
-									if ($results[$round][$matchup]['topWins'] == ($rounds[$round]['BestOf'] + 1)/2)
-									{
-										$results[$round][$matchup]['winner'] = 'top';
-										echo "Match $matchs, top won<br>";
-									}
-								}
-								else
-								{
-									$results[$round][$matchup]['bottomWins'] += 1;
-									if ($results[$round][$matchup]['bottomWins'] == ($rounds[$round]['BestOf'] + 1)/2)
-									{
-										$results[$round][$matchup]['winner'] = 'bottom';
-										echo "Match $matchs, bottom won<br>";
-									}
-								}
-								$results[$round][$matchup]['matchs'][$matchs-1]['played'] = true;
-							}
-						}
-						$current_match = $results[$round][$matchup]['matchs'][$matchs-1];
-						
-						//var_dump($current_match);
-						if(((!isset($current_match)) || ($current_match['played'] == true))&&($results[$round][$matchup]['winner']==''))
-						{
-							// Need to schedule the next match
-							// Create Match ------------------------------------------
-							$reported_by = ADMINID;
-							$time_reported = $time;
-							$comments = '';
-							$time_scheduled = $time_reported;
-
-							$q =
-							"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
-							VALUES ($event_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled)";
-							$result = $sql->db_Query($q);
-
-							$last_id = mysql_insert_id();
-							$match_id = $last_id;
-
-							// Create Scores ------------------------------------------
 							$teamTop    = $content[$round][$matchup][0];
 							$teamBottom = $content[$round][$matchup][1];
 
 							$teamTopID = $teams[$teamTop-1]['PlayerID'];
 							$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
 
-							switch($type)
+							if ($teamTopID == $pid)
 							{
-								case "One Player Tournament":
-								// TODO: Team...
-								$q =
-								"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
-								VALUES ($match_id,$teamTopID,0,1,1)
-								";
-								$result = $sql->db_Query($q);
-
-								$q =
-								"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
-								VALUES ($match_id,$teamBottomID,0,2,2)
-								";
-								$result = $sql->db_Query($q);
+								$results[$round][$matchup]['topWins'] += 1;
+								if ($results[$round][$matchup]['topWins'] == ($rounds[$round]['BestOf'] + 1)/2)
+								{
+									$results[$round][$matchup]['winner'] = 'top';
+									echo "Match $matchs, top won<br>";
+								}
 							}
-
-							$match = array();
-							$match['played'] = false;
-							$match['match_id'] = $match_id;
-							$results[$round][$matchup]['matchs'][$matchs] = $match;
+							else
+							{
+								$results[$round][$matchup]['bottomWins'] += 1;
+								if ($results[$round][$matchup]['bottomWins'] == ($rounds[$round]['BestOf'] + 1)/2)
+								{
+									$results[$round][$matchup]['winner'] = 'bottom';
+									echo "Match $matchs, bottom won<br>";
+								}
+							}
+							$results[$round][$matchup]['matchs'][$matchs-1]['played'] = true;
 						}
-						echo "R$round M$matchup: Nbr of matchs=$matchs<br>";
-						//dbg:var_dump($results[$round][$matchup]);
 					}
-					if (($content[$round][$matchup][0]=='0')||($content[$round][$matchup][1]=='0')) {
-						$results[$round][$matchup]['winner'] = 'bye';
+					$current_match = $results[$round][$matchup]['matchs'][$matchs-1];
+
+					//var_dump($current_match);
+					if(((!isset($current_match)) || ($current_match['played'] == true))&&($results[$round][$matchup]['winner']==''))
+					{
+						// Need to schedule the next match
+						// Create Match ------------------------------------------
+						$reported_by = ADMINID;
+						$time_reported = $time;
+						$comments = '';
+						$time_scheduled = $time_reported;
+
+						$q =
+						"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
+						VALUES ($event_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled)";
+						$result = $sql->db_Query($q);
+
+						$last_id = mysql_insert_id();
+						$match_id = $last_id;
+
+						// Create Scores ------------------------------------------
+						$teamTop    = $content[$round][$matchup][0];
+						$teamBottom = $content[$round][$matchup][1];
+
+						$teamTopID = $teams[$teamTop-1]['PlayerID'];
+						$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
+
+						switch($type)
+						{
+							case "One Player Tournament":
+							// TODO: Team...
+							$q =
+							"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
+							VALUES ($match_id,$teamTopID,0,1,1)
+							";
+							$result = $sql->db_Query($q);
+
+							$q =
+							"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
+							VALUES ($match_id,$teamBottomID,0,2,2)
+							";
+							$result = $sql->db_Query($q);
+						}
+
+						$match = array();
+						$match['played'] = false;
+						$match['match_id'] = $match_id;
+						$results[$round][$matchup]['matchs'][$matchs] = $match;
 					}
+					echo "R$round M$matchup: Nbr of matchs=$matchs<br>";
+					//dbg:var_dump($results[$round][$matchup]);
 				}
-			}
-			else
-			{
-				/* Last round, no match */
-			}
-		}
+			} // for matchups
+		} // for rounds
 
 		$this->updateResults($results);
 		$this->updateDB($results);
