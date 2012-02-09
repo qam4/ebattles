@@ -251,6 +251,7 @@ if (isset($_FILES['userfile'])) {
 						{
 							case "One Player Ladder":
 							case "Team Ladder":
+							case "One Player Tournament":
 							$q =
 							"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Faction,Color,sColor,APM)
 							VALUES (
@@ -266,6 +267,7 @@ if (isset($_FILES['userfile'])) {
 							)";
 							break;
 							case "Clan Ladder":
+							case "Team Tournament":
 							break;
 							default:
 							$q = '';
@@ -283,9 +285,11 @@ if (isset($_FILES['userfile'])) {
 						{
 							case "One Player Ladder":
 							case "Team Ladder":
+							case "One Player Tournament":
 							$match->match_players_update();
 							break;
 							case "Clan Ladder":
+							case "Team Tournament":
 							$match->match_teams_update();
 							break;
 							default:

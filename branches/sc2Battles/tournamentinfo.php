@@ -4,6 +4,8 @@
 *
 */
 
+//fm: force eventischanged for now
+$eventIsChanged = 1;
 /* Update Stats */
 if ($eventIsChanged == 1)
 {
@@ -532,8 +534,7 @@ if(mysql_numrows($result) == 1)
 
 switch($event->getField('Type'))
 {
-	case "One Player Ladder":
-	case "Team Ladder":
+	case "One Player Tournament":
 	if (($nbrplayersNotBanned < 2)||($pbanned))
 	{
 		$can_report = 0;
@@ -543,7 +544,7 @@ switch($event->getField('Type'))
 		$can_challenge = 0;
 	}
 	break;
-	case "Clan Ladder":
+	case "Team Tournament":
 	if ($nbrteams < 2)
 	{
 		$can_report = 0;

@@ -308,7 +308,6 @@ else
 		{
 			case "Team Ladder":
 			case "Clan Ladder":
-			// FIXME
 			case "Team Tournament":
 			$q = "SELECT COUNT(*) as NbrTeams"
 			." FROM ".TBL_TEAMS
@@ -346,7 +345,6 @@ else
 		{
 			case "Team Ladder":
 			case "Clan Ladder":
-			// FIXME
 			case "Team Tournament":
 			// Form to add a team's division to the event
 			$q = "SELECT ".TBL_DIVISIONS.".*, "
@@ -460,7 +458,6 @@ else
 		{
 			case "Team Ladder":
 			case "Clan Ladder":
-			// FIXME
 			case "Team Tournament":
 			// Show list of teams here
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
@@ -520,7 +517,6 @@ else
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
-			// FIXME
 			case "One Player Tournament":
 			$orderby_array = $array["$orderby"];
 			$q_Players = "SELECT ".TBL_PLAYERS.".*, "
@@ -631,6 +627,7 @@ else
 		switch($event_type)
 		{
 			case Ladder:
+			case Tournament:
 			$text .= '
 			<tr>
 			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L70.'<div class="smalltext">'.EB_EVENTM_L71.'</div></td>

@@ -147,6 +147,7 @@ else
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
+		case "One Player Tournament":
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_PLAYERS.".*, "
@@ -164,6 +165,7 @@ else
 		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 		break;
 		case "Clan Ladder":
+		case "Team Tournament":
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_CLANS.".*, "
@@ -218,6 +220,7 @@ else
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
+		case "One Player Tournament":
 		$reporter_matchteam = 0;
 		$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 		." FROM ".TBL_MATCHS.", "
@@ -254,6 +257,7 @@ else
 		$numOpps = mysql_numrows($result_Opps);
 		break;
 		case "Clan Ladder":
+		case "Team Tournament":
 		$reporter_matchteam = 0;
 		$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 		." FROM ".TBL_MATCHS.", "
@@ -398,6 +402,7 @@ else
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
+			case "One Player Tournament":
 			$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 			$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
@@ -408,6 +413,7 @@ else
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 			break;
 			case "Clan Ladder":
+			case "Team Tournament":
 			$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 			$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
 			$pavatar = mysql_result($result,$i, TBL_CLANS.".Image");
@@ -452,6 +458,7 @@ else
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
+				case "One Player Tournament":
 				if($pavatar)
 				{
 					$image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
@@ -460,6 +467,7 @@ else
 				}
 				break;
 				case "Clan Ladder":
+				case "Team Tournament":
 				if($pavatar)
 				{
 					$image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).' style="vertical-align:middle"/>';
@@ -483,9 +491,11 @@ else
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
+			case "One Player Tournament":
 			$text .= '<td class="eb_td">'.$image.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
 			break;
 			case "Clan Ladder":
+			case "Team Tournament":
 			$text .= '<td class="eb_td">'.$image.' <a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$pclanid.'">'.$pclan.'</a></td>';
 			break;
 			default:
@@ -502,6 +512,7 @@ else
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
+			case "One Player Tournament":
 			if ($numScores>0)
 			{
 				// Find all opponents ratings
@@ -540,6 +551,7 @@ else
 			}
 			break;
 			case "Clan Ladder":
+			case "Team Tournament":
 			break;
 			default:
 		}

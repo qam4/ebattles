@@ -61,9 +61,11 @@ if(isset($_POST['qrsubmitloss']))
         {
             case "One Player Ladder":
             case "Team Ladder":
-            $match->match_players_update();
+ 			case "One Player Tournament":
+           $match->match_players_update();
             break;
             case "Clan Ladder":
+			case "Team Tournament":
             $match->match_teams_update();
             break;
             default:
@@ -90,10 +92,12 @@ if (isset($_POST['approvematch']))
     {
         case "One Player Ladder":
         case "Team Ladder":
+		case "One Player Tournament":
         $match->match_players_update();
         break;
         case "Clan Ladder":
         $match->match_teams_update();
+		case "Team Tournament":
         break;
         default:
     }

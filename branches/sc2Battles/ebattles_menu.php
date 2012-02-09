@@ -193,6 +193,7 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
+			case "One Player Tournament":
 			$reporter_matchteam = 0;
 			$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 			." FROM ".TBL_MATCHS.", "
@@ -229,6 +230,7 @@ if($pref['eb_links_showmatchstoapprove'] == 1)
 			$numOpps = mysql_numrows($result_Opps);
 			break;
 			case "Clan Ladder":
+			case "Team Tournament":
 			$reporter_matchteam = 0;
 			$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 			." FROM ".TBL_MATCHS.", "
