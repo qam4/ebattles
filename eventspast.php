@@ -291,6 +291,7 @@ function displayPastEvents(){
 				$nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
 				break;
 				case "Clan Ladder":
+				case "Team Tournament":
 				$nbrTeamPlayers = $nbrTeams;
 				break;
 				default:

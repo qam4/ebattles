@@ -88,6 +88,7 @@ class Challenge extends DatabaseTable
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
+				case "One Player Tournament":
 				// Challenger Info
 				$q = "SELECT ".TBL_PLAYERS.".*, "
 				.TBL_USERS.".*"
@@ -131,6 +132,7 @@ class Challenge extends DatabaseTable
 				$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
 				break;
 				case "Clan Ladder":
+				case "Team Tournament":
 				// Challenger Info
 				$q = "SELECT ".TBL_TEAMS.".*"
 				."   AND (".TBL_TEAMS.".TeamID = '$cChallengertID')";
@@ -304,6 +306,7 @@ class Challenge extends DatabaseTable
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
+				case "One Player Tournament":
 				// Challenger Info
 				$q = "SELECT ".TBL_PLAYERS.".*, "
 				.TBL_USERS.".*"
@@ -347,6 +350,7 @@ class Challenge extends DatabaseTable
 				$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
 				break;
 				case "Clan Ladder":
+				case "Team Tournament":
 				// Challenger Info
 				$q = "SELECT ".TBL_TEAMS.".*"
 				."   AND (".TBL_TEAMS.".TeamID = '$cChallengertID')";
@@ -492,6 +496,7 @@ class Challenge extends DatabaseTable
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
+				case "One Player Tournament":
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
@@ -509,6 +514,7 @@ class Challenge extends DatabaseTable
 
 				break;
 				case "Clan Ladder":
+				case "Team Tournament":
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "

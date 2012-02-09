@@ -153,6 +153,7 @@ else{
 		if ($_POST['eventformat'] != "")
 		{
 			$event->setField('Format', $_POST['eventformat']);
+			//TODO: if format changes, rounds should change too
 		}
 
 		/* Event MatchType */
@@ -304,7 +305,7 @@ else{
 		$event->setField('EndDateTime', $new_eventend);
 
 		/* Event Rounds */
-		switch ($event->getField('Type'))
+		switch ($event->getField('Format'))
 		{
 			default:
 			$file = 'include/brackets/se-'.$event->getField('MaxNumberPlayers').'.txt';
@@ -319,11 +320,11 @@ else{
 			if (!isset($rounds[$round])) {
 				$rounds[$round] = array();
 			}
-			if (!isset($rounds[$round]['Title'])) {
-				$rounds[$round]['Title'] = EB_EVENTM_L144.' '.$round;
+			if (!isset($_POST['round_title_'.$round])) {
+				$_POST['round_title_'.$round] = EB_EVENTM_L144.' '.$round;
 			}
-			if (!isset($rounds[$round]['BestOf'])) {
-				$rounds[$round]['BestOf'] = 1;
+			if (!isset($_POST['round_bestof_'.$round])) {
+				$_POST['round_bestof_'.$round] = 1;
 			}
 			$rounds[$round]['Title'] = $tp->toDB($_POST['round_title_'.$round]);
 			$rounds[$round]['BestOf'] = $tp->toDB($_POST['round_bestof_'.$round]);
@@ -448,6 +449,8 @@ else{
 		$event->resetPlayers();
 		$event->resetTeams();
 		$event->deleteMatches();
+		$event->resetResults();
+		$event->updateDB();
 
 		//echo "-- eventresetscores --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
@@ -459,6 +462,8 @@ else{
 		$event->deleteChallenges();
 		$event->deletePlayers();
 		$event->deleteTeams();
+		$event->resetResults();
+		$event->updateDB();
 
 		//echo "-- eventresetevent --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
