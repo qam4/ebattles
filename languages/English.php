@@ -521,6 +521,7 @@ define('EB_CLANM_L32', 'Email');
 define('EB_CLANM_L33', 'IM');
 define('EB_CLANM_L34', 'Description');
 define('EB_CLANM_L35', 'View Team');
+define('EB_CLANM_L36', 'Team Settings');
 
 define('EB_MATCH_L1', 'Match');
 define('EB_MATCH_L2', 'tied');
