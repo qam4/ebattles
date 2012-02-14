@@ -4,6 +4,7 @@
 *
 */
 require_once(e_PLUGIN.'ebattles/include/clan.php');
+require_once(e_PLUGIN.'ebattles/include/event.php');
 
 if(isset($_POST['joindivision']))
 {
@@ -40,23 +41,21 @@ if(isset($_POST['joindivision']))
 			for($j=0; $j<$num_rows_2; $j++)
 			{
 				$event_id  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
-				$eGame  = mysql_result($result_2,$j, TBL_EVENTS.".Game");
-				$eELO_default  = mysql_result($result_2,$j, TBL_EVENTS.".ELO_default");
-				$eTS_default_mu  = mysql_result($result_2,$j, TBL_EVENTS.".TS_default_mu");
-				$eTS_default_sigma  = mysql_result($result_2,$j, TBL_EVENTS.".TS_default_sigma");
+				$event = new Event($event_id);
+
 				$team_id = mysql_result($result_2,$j, TBL_TEAMS.".TeamID");
 
 				// Find gamer for that user
 				$q = "SELECT ".TBL_GAMERS.".*"
 				." FROM ".TBL_GAMERS
-				." WHERE (".TBL_GAMERS.".Game = '".$eGame."')"
+				." WHERE (".TBL_GAMERS.".Game = '".$event->getField('Game')."')"
 				."   AND (".TBL_GAMERS.".User = '".USERID."')";
 				$result = $sql->db_Query($q);
 				$num_rows = mysql_numrows($result);
 				if ($num_rows==0)
 				{
 					$q = " INSERT INTO ".TBL_GAMERS."(User,Game,UniqueGameID)
-					VALUES ($user,".$eGame.",'".USERNAME."')";
+					VALUES ($user,".$event->getField('Game').",'".USERNAME."')";
 					$sql->db_Query($q);
 					$last_id = mysql_insert_id();
 					$gamerID = $last_id;
@@ -78,10 +77,9 @@ if(isset($_POST['joindivision']))
 				if ($nbrplayers == 0)
 				{
 					$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma)
-					VALUES ($event_id,$gamerID,$team_id,$eELO_default,$eTS_default_mu,$eTS_default_sigma)";
+					VALUES ($event_id,$gamerID,$team_id,$event->getField('ELO_default'),$event->getField('TS_default_mu'),$event->getField('TS_default_sigma'))";
 					$sql->db_Query($q);
-					$q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-					$result = $sql->db_Query($q4);
+					$event->setFieldDB('IsChanged', 1);
 				}
 			}
 		}

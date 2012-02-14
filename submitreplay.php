@@ -296,8 +296,7 @@ if (isset($_FILES['userfile'])) {
 						}
 					}
 
-					$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-					$result = $sql->db_Query($q);
+					$event->setFieldDB('IsChanged', 1);
 					
 					// Save the replay
 					$target_path = "uploads/";

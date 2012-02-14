@@ -107,7 +107,7 @@ else
     ';
 }
 
-$ns->tablerender($event->getField('Name')." ($egame - ".eventTypeToString($event->getField('Type')).") - ".EB_MATCHQL_L1, $text);
+$ns->tablerender($event->getField('Name')." ($egame - ".$event->eventTypeToString().") - ".EB_MATCHQL_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

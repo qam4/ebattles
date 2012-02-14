@@ -125,58 +125,34 @@ else
 	
 	/* Update event "status" */
 	$checkinDuration = 0; // TODO: add this.
-	$time_comment = '';
 	
+	if($eventStatus=='signup')
+	{
+		if($time > ($event->getField('StartDateTime') - $checkinDuration))
+		{
+			$eventStatus = 'checkin';
+		}
+	}
+	if($eventStatus=='checkin')
+	{
+		if($time > $event->getField('StartDateTime'))
+		{
+			$eventStatus = 'active';
+			switch($event_type)
+			{
+				case "Tournament":
+				$event->scheduleNextMatches();
+				break;
+			}			
+			$event->setFieldDB('IsChanged', 1);
+		}
+	}
 	if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime') != 0))
 	{
-		$q = "UPDATE ".TBL_EVENTS." SET Status = 'finished' WHERE (EventID = '$event_id')";
-		$result = $sql->db_Query($q);
 		$eventStatus = 'finished';
 	}
-	
-	switch($eventStatus)
-	{
-		case 'draft':
-		/*
-		header("Location: ./events.php");
-		exit();
-		*/
-		break;
-		case 'signup':
-		if($time < ($event->getField('StartDateTime') - $checkinDuration))
-		{
-			$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $event->getField('StartDateTime'));
-		}
-		else
-		{
-			$q = "UPDATE ".TBL_EVENTS." SET Status = 'checkin' WHERE (EventID = '$event_id')";
-			$result = $sql->db_Query($q);
-		}
-		break;
-		case 'checkin':
-		if($time < $event->getField('StartDateTime'))
-		{
-			$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $event->getField('StartDateTime'));
-		}
-		else
-		{
-			$q = "UPDATE ".TBL_EVENTS." SET Status = 'active' WHERE (EventID = '$event_id')";
-			$result = $sql->db_Query($q);
-			$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-			$result = $sql->db_Query($q);
-			$eventIsChanged = 1;
-		}
-		break;
-		case 'active':
-		if ($event->getField('EndDateTime') != 0)
-		{
-			$time_comment = EB_EVENT_L3.'&nbsp;'.get_formatted_timediff($time, $event->getField('EndDateTime'));
-		}
-		break;
-		case 'finished':
-		$time_comment = EB_EVENT_L4;
-		break;
-	}
+
+	$event->setFieldDB('Status', $eventStatus);
 
 	/* Nbr players */
 	$q = "SELECT COUNT(*) as NbrPlayers"
@@ -212,7 +188,7 @@ else
 		break;
 	}
 
-	$ns->tablerender($event->getField('Name')." ($egame - ".eventTypeToString($event->getField('Type')).")", $text);
+	$ns->tablerender($event->getField('Name')." ($egame - ".$event->eventTypeToString().")", $text);
 	require_once(FOOTERF);
 	exit;
 }

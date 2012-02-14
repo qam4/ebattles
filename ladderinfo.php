@@ -8,12 +8,10 @@
 if ($eneedupdate == 1)
 {
 	$new_nextupdate = $time + 60*$pref['eb_update_delay'];
-	$q = "UPDATE ".TBL_EVENTS." SET NextUpdate_timestamp = $new_nextupdate WHERE (EventID = '$event_id')";
-	$result = $sql->db_Query($q);
+	$event->setFieldDB('NextUpdate_timestamp', $new_nextupdate);
 	$nextupdate_timestamp_local = $new_nextupdate;
 
-	$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 0 WHERE (EventID = '$event_id')";
-	$result = $sql->db_Query($q);
+	$event->setFieldDB('IsChanged', 0);
 	$eventIsChanged = 0;
 
 	switch($event->getField('Type'))
@@ -29,7 +27,6 @@ if ($eneedupdate == 1)
 		break;
 		default:
 	}
-
 }
 
 $can_signup = 0;
@@ -433,7 +430,7 @@ if ($can_signup==1)
 }
 else
 {
-	$text .= EB_EVENT_L74;
+	$text .= EB_EVENT_L75;
 }
 
 /* Info */
@@ -446,7 +443,7 @@ $text .= '</tr>';
 
 $text .= '<tr>';
 $text .= '<td class="eb_td eb_tdc1">'.EB_EVENT_L37.'</td>';
-$text .= '<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>';
+$text .= '<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').$event->eventTypeToString().'</td>';
 $text .= '</tr>';
 
 $text .= '<tr>';
@@ -482,6 +479,7 @@ if ($numMods>0)
 }
 $text .= '</td></tr>';
 
+$time_comment = $event->eventStatusToTimeComment();
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L42.'</td><td class="eb_td">'.$date_start.'</td></tr>';
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L43.'</td><td class="eb_td">'.$date_end.'</td></tr>';
 $text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$time_comment.'</td></tr>';
@@ -1170,6 +1168,10 @@ if ($numAwards>0)
 			case 'PlayerStreak25':
 			$award = EB_AWARD_L10;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
+			break;
+			case 'PlayerWonTournament':
+			$award = EB_AWARD_L12;
+			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
 			break;
 		}
 

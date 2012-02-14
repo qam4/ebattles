@@ -120,6 +120,10 @@ class DatabaseTable
 		$q = "UPDATE $this->tablename SET ".$field." = '".$this->fields[$field]."' WHERE ($this->primary_key = '$this->id')";
 		$result = $sql->db_Query($q);
 	}
+	function setFieldDB($field, $value) {
+		$this->setField($field, $value);
+		$this->updateFieldDB($field);
+	}
 	function insert()
 	{
 		global $sql;

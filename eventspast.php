@@ -301,7 +301,7 @@ function displayPastEvents(){
 			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.$event->getField('Name').'</a></td>
 			<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
 			<td class="eb_td">'.$gName.'</td>
-			<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>
+			<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').$event->eventTypeToString().'</td>
 			<td class="eb_td">'.$date_start.'</td>
 			<td class="eb_td">'.$date_end.'</td>
 			<td class="eb_td">'.$nbrTeamPlayers.'</td>

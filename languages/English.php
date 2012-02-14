@@ -764,6 +764,8 @@ define('EB_AWARD_L8', 'won 10 games in a row');
 define('EB_AWARD_L9', '10 in a row');
 define('EB_AWARD_L10', 'won 25 games in a row');
 define('EB_AWARD_L11', '25 in a row');
+define('EB_AWARD_L12', 'won the tournament');
+define('EB_AWARD_L13', 'tournament winner');
 
 define('EB_USER_L1', 'Player Information');
 define('EB_USER_L2', 'Profile');

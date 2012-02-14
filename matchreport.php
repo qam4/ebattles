@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
 * matchreport.php
 *
@@ -729,18 +729,23 @@ if (isset($_POST['submit']))
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
-					case "One Player Tournament":
 					$match->match_players_update();
 					break;
+					case "One Player Tournament":
+					$match->match_players_update();
+					$event->scheduleNextMatches();
+					break;
 					case "Clan Ladder":
+					$match->match_teams_update();
+					break;
 					case "Team Tournament":
 					$match->match_teams_update();
+					$event->scheduleNextMatches();
 					break;
 					default:
 				}
 
-				$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-				$result = $sql->db_Query($q);
+				$event->setFieldDB('IsChanged', 1);
 			}
 			header("Location: matchinfo.php?matchid=$match_id");
 		}
@@ -772,7 +777,7 @@ $text .= '
 </div>
 ';
 
-$ns->tablerender($event->getField('Name')." (".eventTypeToString($event->getField('Type')).") - ".EB_MATCHR_L32, $text);
+$ns->tablerender($event->getField('Name')." (".$event->eventTypeToString().") - ".EB_MATCHR_L32, $text);
 require_once(FOOTERF);
 exit;
 ?>

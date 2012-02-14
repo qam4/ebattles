@@ -109,7 +109,7 @@ else
 	$text .= '</div>';
 	$text .= '</div>';
 }
-$ns->tablerender("$event->getField('Name') ($gName - ".eventTypeToString($event->getField('Type')).")", $text);
+$ns->tablerender("$event->getField('Name') ($gName - ".$event->eventTypeToString().")", $text);
 require_once(FOOTERF);
 exit;
 ?>

@@ -146,7 +146,7 @@ if(isset($_POST['challenge_team_submit']))
 		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
 	}
 }
-$ns->tablerender($event->getField('Name')." (".eventTypeToString($event->getField('Type')).") - ".EB_CHALLENGE_L1, $text);
+$ns->tablerender($event->getField('Name')." (".$event->eventTypeToString().") - ".EB_CHALLENGE_L1, $text);
 require_once(FOOTERF);
 exit;
 

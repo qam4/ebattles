@@ -397,8 +397,7 @@ class Event extends DatabaseTable
 			VALUES (".$this->fields['EventID'].",$gamerID,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].",$time)";
 			$sql->db_Query($q);
 			echo "player created, query: $q<br>";
-			$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '".$this->fields['EventID']."')";
-			$sql->db_Query($q);
+			$this->setFieldDB('IsChanged', 1);
 
 			if ($notify)
 			{
@@ -463,8 +462,7 @@ class Event extends DatabaseTable
 						$user_id  = mysql_result($result_2,$j, TBL_USERS.".user_id");
 						$this->eventAddPlayer($user_id, $team_id, $notify);
 					}
-					$q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '".$this->fields['EventID']."')";
-					$result = $sql->db_Query($q4);
+					$this->setFieldDB('IsChanged', 1);
 				}
 			}
 		}
@@ -714,7 +712,7 @@ class Event extends DatabaseTable
 			switch($event_type)
 			{
 				case "Ladder":
-				$text .= '<input class="tbox" type="text" name="eventnumbermaxplayers" size="2" value="'.$this->getField('MaxNumberPlayers').'"/>';
+				$text .= '<input class="tbox" type="text" name="eventmaxnumberplayers" size="2" value="'.$this->getField('MaxNumberPlayers').'"/>';
 				break;
 				case "Tournament":
 				$text .= '<select class="tbox" name="eventmaxnumberplayers">';
@@ -1495,7 +1493,18 @@ class Event extends DatabaseTable
 								if ($results[$round][$matchup]['topWins'] == ($rounds[$round]['BestOf'] + 1)/2)
 								{
 									$results[$round][$matchup]['winner'] = 'top';
-									echo "Match $matchs, top won<br>";
+									//echo "Match $matchs, top won<br>";
+									if ($round == $nbrRounds-1)
+									{
+										// top has won the tournament
+										$this->setFieldDB('Status', 'finished');
+
+										// Award: player wins tournament
+										// TODO: Teams...
+										$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+										VALUES ($teamTopID,'PlayerWonTournament',$time)";
+										$result_Award = $sql->db_Query($q_Award);
+									}
 								}
 							}
 							else
@@ -1504,7 +1513,18 @@ class Event extends DatabaseTable
 								if ($results[$round][$matchup]['bottomWins'] == ($rounds[$round]['BestOf'] + 1)/2)
 								{
 									$results[$round][$matchup]['winner'] = 'bottom';
-									echo "Match $matchs, bottom won<br>";
+									//echo "Match $matchs, bottom won<br>";
+									if ($round == $nbrRounds-1)
+									{
+										// bottom has won the tournament
+										$this->setFieldDB('Status', 'finished');
+
+										// Award: player wins tournament
+										// TODO: Teams...
+										$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+										VALUES ($teamBottomID,'PlayerWonTournament',$time)";
+										$result_Award = $sql->db_Query($q_Award);
+									}
 								}
 							}
 							$results[$round][$matchup]['matchs'][$matchs-1]['played'] = true;
@@ -1559,14 +1579,14 @@ class Event extends DatabaseTable
 						$match['match_id'] = $match_id;
 						$results[$round][$matchup]['matchs'][$matchs] = $match;
 					}
-					echo "R$round M$matchup: Nbr of matchs=$matchs<br>";
 					//dbg:var_dump($results[$round][$matchup]);
 				}
+				//dbg:echo "R$round M$matchup: winner=".$results[$round][$matchup]['winner']."<br>";
 			} // for matchups
 		} // for rounds
 
 		$this->updateResults($results);
-		$this->updateDB($results);
+		$this->updateFieldDB('Results');
 
 		/*
 		var_dump($matchups);
@@ -1575,29 +1595,57 @@ class Event extends DatabaseTable
 		var_dump($teams);
 		*/
 	}
-}
 
-function eventTypeToString($type)
-{
-	switch($type)
+	function eventTypeToString()
 	{
-		case "One Player Ladder":
-		return EB_EVENTS_L22;
-		break;
-		case "Team Ladder":
-		return EB_EVENTS_L23;
-		break;
-		case "Clan Ladder":
-		return EB_EVENTS_L25;
-		break;
-		case "One Player Tournament":
-		return EB_EVENTS_L33;
-		break;
-		case "Team Tournament":
-		return EB_EVENTS_L35;
-		break;
-		default:
-		return $type;
+		switch($this->getField('Type'))
+		{
+			case "One Player Ladder":
+			return EB_EVENTS_L22;
+			break;
+			case "Team Ladder":
+			return EB_EVENTS_L23;
+			break;
+			case "Clan Ladder":
+			return EB_EVENTS_L25;
+			break;
+			case "One Player Tournament":
+			return EB_EVENTS_L33;
+			break;
+			case "Team Tournament":
+			return EB_EVENTS_L35;
+			break;
+			default:
+			return $type;
+		}
+	}
+
+	function eventStatusToTimeComment()
+	{
+		global $time;
+
+		$time_comment = '';
+		switch($this->getField('Status'))
+		{
+			case 'draft':
+			break;
+			case 'signup':
+			$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $this->getField('StartDateTime'));
+			break;
+			case 'checkin':
+			$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $this->getField('StartDateTime'));
+			break;
+			case 'active':
+			if ($this->getField('EndDateTime') != 0)
+			{
+				$time_comment = EB_EVENT_L3.'&nbsp;'.get_formatted_timediff($time, $this->getField('EndDateTime'));
+			}
+			break;
+			case 'finished':
+			$time_comment = EB_EVENT_L4;
+			break;
+		}
+		return $time_comment;
 	}
 }
 
