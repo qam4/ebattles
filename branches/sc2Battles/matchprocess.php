@@ -11,129 +11,135 @@ require_once(e_PLUGIN.'ebattles/include/event.php');
 
 if(isset($_POST['qrsubmitloss']))
 {
-    $event_id = $_POST['EventID'];
-    $reported_by = $_POST['reported_by'];
-    $pwinnerID = $_POST['Player'];
+	$event_id = $_POST['EventID'];
+	$reported_by = $_POST['reported_by'];
+	$pwinnerID = $_POST['Player'];
 
-    $event = new Event($event_id);
+	$event = new Event($event_id);
 
-    // Attention here, we use user_id, so there has to be 1 user for 1 player
-    $plooserUser = $reported_by;
-    $q = "SELECT *"
-    ." FROM ".TBL_PLAYERS
-    ." WHERE (Event = '$event_id')"
-    ."   AND (User = '$plooserUser')";
-    $result = $sql->db_Query($q);
-    $row = mysql_fetch_array($result);
-    $plooserID = $row['PlayerID'];
+	// Attention here, we use user_id, so there has to be 1 user for 1 player
+	$plooserUser = $reported_by;
+	$q = "SELECT *"
+	." FROM ".TBL_PLAYERS
+	." WHERE (Event = '$event_id')"
+	."   AND (User = '$plooserUser')";
+	$result = $sql->db_Query($q);
+	$row = mysql_fetch_array($result);
+	$plooserID = $row['PlayerID'];
 
-    // Create Match ------------------------------------------
-    $comments = '';
-    $q =
-    "INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status)
-    VALUES ($event_id,'$reported_by',$time, '$comments', 'pending')";
-    $result = $sql->db_Query($q);
+	// Create Match ------------------------------------------
+	$comments = '';
+	$q =
+	"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status)
+	VALUES ($event_id,'$reported_by',$time, '$comments', 'pending')";
+	$result = $sql->db_Query($q);
 
-    $last_id = mysql_insert_id();
-    $match_id = $last_id;
-    $match = new Match($match_id);
-    
-    // Create Scores ------------------------------------------
-    $q =
-    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Rank)
-    VALUES ($match_id,$pwinnerID,1,1)
-    ";
-    $result = $sql->db_Query($q);
+	$last_id = mysql_insert_id();
+	$match_id = $last_id;
+	$match = new Match($match_id);
 
-    $q =
-    "INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Rank)
-    VALUES ($match_id,$plooserID,2,2)
-    ";
-    $result = $sql->db_Query($q);
+	// Create Scores ------------------------------------------
+	$q =
+	"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Rank)
+	VALUES ($match_id,$pwinnerID,1,1)
+	";
+	$result = $sql->db_Query($q);
 
-    // Update scores stats
-    $match->match_scores_update();
+	$q =
+	"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Rank)
+	VALUES ($match_id,$plooserID,2,2)
+	";
+	$result = $sql->db_Query($q);
 
-    // Automatically Update Players stats only if Match Approval is Disabled
-    if ($event->getField('MatchesApproval') == eb_UC_NONE)
-    {
-        switch($event->getField('Type'))
-        {
-            case "One Player Ladder":
-            case "Team Ladder":
- 			case "One Player Tournament":
-           $match->match_players_update();
-            break;
-            case "Clan Ladder":
+	// Update scores stats
+	$match->match_scores_update();
+
+	// Automatically Update Players stats only if Match Approval is Disabled
+	if ($event->getField('MatchesApproval') == eb_UC_NONE)
+	{
+		switch($event->getField('Type'))
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			$match->match_players_update();
+			break;
+			case "One Player Tournament":
+			$match->match_players_update();
+			$event->scheduleNextMatches();
+			break;
+			case "Clan Ladder":
+			$match->match_teams_update();
+			break;
 			case "Team Tournament":
-            $match->match_teams_update();
-            break;
-            default:
-        }
-        $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-        $result = $sql->db_Query($q);
-    }
+			$match->match_teams_update();
+			$event->scheduleNextMatches();
+			break;
+			default:
+		}
+	}
+	$event->setFieldDB('IsChanged', 1);
 
-    $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-    $result = $sql->db_Query($q);
-
-    header("Location: matchinfo.php?matchid=$match_id");
-    exit;
+	header("Location: matchinfo.php?matchid=$match_id");
+	exit;
 }
 if (isset($_POST['approvematch']))
 {
-    $event_id = $_POST['EventID'];
-    $match_id = $_POST['matchid'];
+	$event_id = $_POST['EventID'];
+	$match_id = $_POST['matchid'];
 
-    $event = new Event($event_id);
-    $match = new Match($match_id);
+	$event = new Event($event_id);
+	$match = new Match($match_id);
 
-    switch($event->getField('Type'))
-    {
-        case "One Player Ladder":
-        case "Team Ladder":
+	switch($event->getField('Type'))
+	{
+		case "One Player Ladder":
+		case "Team Ladder":
+		$match->match_players_update();
+		break;
 		case "One Player Tournament":
-        $match->match_players_update();
-        break;
-        case "Clan Ladder":
-        $match->match_teams_update();
+		$match->match_players_update();
+		$event->scheduleNextMatches();
+		break;
+		case "Clan Ladder":
+		$match->match_teams_update();
+		break;
 		case "Team Tournament":
-        break;
-        default:
-    }
+		$match->match_teams_update();
+		$event->scheduleNextMatches();
+		break;
+		default:
+	}
+	$event->setFieldDB('IsChanged', 1);
 
-    $q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-    $result = $sql->db_Query($q);
-
-    header("Location: matchinfo.php?matchid=$match_id");
-    exit;
+	header("Location: matchinfo.php?matchid=$match_id");
+	exit;
 }
 if (isset($_POST['addmedia']))
 {
-    $event_id = $_POST['EventID'];
-    $match_id = $_POST['matchid'];
-    $match = new Match($match_id);
-    $media_type = $_POST['mediatype'];
-    $media_path = $tp->toDB($_POST['mediapath']);
-    $submitter = USERID;
+	$event_id = $_POST['EventID'];
+	$match_id = $_POST['matchid'];
+	$match = new Match($match_id);
+	$media_type = $_POST['mediatype'];
+	$media_path = $tp->toDB($_POST['mediapath']);
+	$submitter = USERID;
 
-    if (preg_match("/http:\/\//", $media_path))
-    {
-        $match->add_media($submitter, $media_path, $media_type);
-    }
+	if (preg_match("/http:\/\//", $media_path))
+	{
+		$match->add_media($submitter, $media_path, $media_type);
+	}
 
-    header("Location: matchinfo.php?matchid=$match_id");
-    exit;
+	header("Location: matchinfo.php?matchid=$match_id");
+	exit;
 }
 if (isset($_POST['del_media']) && $_POST['del_media']!="")
 {
-    $match_id = $_POST['matchid'];
-    $media = $_POST['del_media'];
+	$match_id = $_POST['matchid'];
+	$media = $_POST['del_media'];
 
-    delete_media($media);
+	delete_media($media);
 
-    header("Location: matchinfo.php?matchid=$match_id");
-    exit;
+	header("Location: matchinfo.php?matchid=$match_id");
+	exit;
 }
 
 // should not be here -> redirect

@@ -26,8 +26,7 @@ if(isset($_POST['quitevent'])){
 	if ($nbrscores == 0)
 	{
 		deletePlayer($pid);
-		$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-		$result = $sql->db_Query($q);
+		$event->setFieldDB('IsChanged', 1);
 	}
 	header("Location: eventinfo.php?EventID=$event_id");
 }

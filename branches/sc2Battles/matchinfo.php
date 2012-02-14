@@ -679,7 +679,7 @@ else
 	$text .= '<br />'.EB_MATCHD_L15.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?EventID='.$event_id.'">'.EB_MATCHD_L16.'</a>]<br />';
 	$text .= '</p>';
 
-	$ns->tablerender($event->getField('Name')." ($gName - ".eventTypeToString($event->getField('Type')).")", $text);
+	$ns->tablerender($event->getField('Name')." ($gName - ".$event->eventTypeToString().")", $text);
 
 	unset($text);
 

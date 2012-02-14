@@ -42,14 +42,12 @@ if ($can_manage == 0)
 	exit();
 }
 else{
-	$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-	$result = $sql->db_Query($q);
+	$event->setFieldDB('IsChanged', 1);
 
 	if(isset($_POST['eventpublish']))
 	{
 		/* Event Status */
-		$q2 = "UPDATE ".TBL_EVENTS." SET Status = 'signup' WHERE (EventID = '$event_id')";
-		$result2 = $sql->db_Query($q2);
+		$event->setFieldDB('Status', 'signup');
 
 		//echo "-- eventpublish --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
@@ -60,8 +58,7 @@ else{
 		$event_owner = $_POST['eventowner'];
 
 		/* Event Owner */
-		$q2 = "UPDATE ".TBL_EVENTS." SET Owner = '$event_owner' WHERE (EventID = '$event_id')";
-		$result2 = $sql->db_Query($q2);
+		$event->setFieldDB('Owner', $event_owner);
 
 		//echo "-- eventchangeowner --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
@@ -170,10 +167,10 @@ else{
 		}
 
 		/* Event Max Number of Players */
-		$new_eventnumbermaxplayers = htmlspecialchars($_POST['eventnumbermaxplayers']);
-		if (preg_match("/^\d+$/", $new_eventnumbermaxplayers))
+		$new_eventmaxnumberplayers = htmlspecialchars($_POST['eventmaxnumberplayers']);
+		if (preg_match("/^\d+$/", $new_eventmaxnumberplayers))
 		{
-			$event->setField('MaxNumberPlayers', $new_eventnumbermaxplayers);
+			$event->setField('MaxNumberPlayers', $new_eventmaxnumberplayers);
 		}
 
 		/* Event Ranking Type */
@@ -359,7 +356,7 @@ else{
 		$mapPool = explode(",", $event->getField('MapPool'));
 		unset($mapPool[$eventmap]);
 		$event->updateMapPool($mapPool);
-		$event->updateDB();
+		$event->updateFieldDB('MapPool');
 
 		//echo "-- eventdeletemap --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
@@ -374,7 +371,7 @@ else{
 		if (!in_array($eventmap, $mapPool)) {
 			array_push($mapPool, $eventmap);
 			$event->updateMapPool($mapPool);
-			$event->updateDB();
+			$event->updateFieldDB('MapPool');
 		}
 		//echo "-- eventaddmap --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
@@ -433,6 +430,7 @@ else{
 	{
 		$playerid = $_POST['del_player_games'];
 		deletePlayerMatches($playerid);
+		// TODO: only for ladders?
 		updateStats($event_id, $time, TRUE);
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
@@ -450,7 +448,7 @@ else{
 		$event->resetTeams();
 		$event->deleteMatches();
 		$event->resetResults();
-		$event->updateDB();
+		$event->updateFieldDB('Results');
 
 		//echo "-- eventresetscores --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
@@ -463,7 +461,7 @@ else{
 		$event->deletePlayers();
 		$event->deleteTeams();
 		$event->resetResults();
-		$event->updateDB();
+		$event->updateFieldDB('Results');
 
 		//echo "-- eventresetevent --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
@@ -494,8 +492,7 @@ else{
 			$new_eventGamesToRank = htmlspecialchars($_POST['sliderValue'.$cat_index]);
 			if (is_numeric($new_eventGamesToRank))
 			{
-				$q2 = "UPDATE ".TBL_EVENTS." SET nbr_games_to_rank = '$new_eventGamesToRank' WHERE (EventID = '$event_id')";
-				$result2 = $sql->db_Query($q2);
+				$event->setFieldDB('nbr_games_to_rank', $new_eventGamesToRank);
 			}
 			$cat_index++;
 		}
@@ -506,8 +503,7 @@ else{
 			$new_eventTeamGamesToRank = htmlspecialchars($_POST['sliderValue'.$cat_index]);
 			if (is_numeric($new_eventTeamGamesToRank))
 			{
-				$q2 = "UPDATE ".TBL_EVENTS." SET nbr_team_games_to_rank = '$new_eventTeamGamesToRank' WHERE (EventID = '$event_id')";
-				$result2 = $sql->db_Query($q2);
+				$event->setFieldDB('nbr_team_games_to_rank', $new_eventTeamGamesToRank);
 			}
 			$cat_index++;
 		}
@@ -541,14 +537,8 @@ else{
 		}
 
 		// Hide ratings column
-		if ($_POST['hideratings'] != "")
-		$q2 = "UPDATE ".TBL_EVENTS." SET hide_ratings_column = 1 WHERE (EventID = '$event_id')";
-		else
-		$q2 = "UPDATE ".TBL_EVENTS." SET hide_ratings_column = 0 WHERE (EventID = '$event_id')";
-		$result2 = $sql->db_Query($q2);
-
-		$q4 = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-		$result = $sql->db_Query($q4);
+		$event->setFieldDB('hide_ratings_column', ($_POST['hideratings'] != "") ? 1 : 0);
+		$event->setFieldDB('IsChanged', 1);
 
 		header("Location: eventmanage.php?EventID=$event_id");
 		exit();
@@ -556,23 +546,13 @@ else{
 	if(isset($_POST['eventchallengessave']))
 	{
 		/* Event Challenges enable/disable */
-		if ($_POST['eventchallengesenable'] != "")
-		{
-			$q2 = "UPDATE ".TBL_EVENTS." SET ChallengesEnable = 1 WHERE (EventID = '$event_id')";
-			$result2 = $sql->db_Query($q2);
-		}
-		else
-		{
-			$q2 = "UPDATE ".TBL_EVENTS." SET ChallengesEnable = 0 WHERE (EventID = '$event_id')";
-			$result2 = $sql->db_Query($q2);
-		}
+		$event->setFieldDB('ChallengesEnable', ($_POST['eventchallengesenable'] != "") ? 1 : 0);
 
 		/* Event Max Dates per Challenge */
 		$new_eventdatesperchallenge = htmlspecialchars($_POST['eventdatesperchallenge']);
 		if (preg_match("/^\d+$/", $new_eventdatesperchallenge))
 		{
-			$q2 = "UPDATE ".TBL_EVENTS." SET MaxDatesPerChallenge = '$new_eventdatesperchallenge' WHERE (EventID = '$event_id')";
-			$result2 = $sql->db_Query($q2);
+			$event->setFieldDB('MaxDatesPerChallenge', $new_eventdatesperchallenge);
 		}
 
 		header("Location: eventmanage.php?EventID=$event_id");

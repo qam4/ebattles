@@ -1011,8 +1011,6 @@ else
 			$results = unserialize($event->getField('Results'));
 			list($bracket_html) = brackets($event->getField('Format'), $event->getField('MaxNumberPlayers'), $teams, $results, $rounds);
 			$text .= $bracket_html;
-			//$event->updateResults($results);
-			//$event->updateDB($results);
 
 			$text .= '</div>';  // tab-page "Brackets"
 			break;
@@ -1021,7 +1019,7 @@ else
 	}
 }
 
-$ns->tablerender($event->getField('Name')." ($egame - ".eventTypeToString($event->getField('Type')).") - ".EB_EVENTM_L1, $text);
+$ns->tablerender($event->getField('Name')." ($egame - ".$event->eventTypeToString().") - ".EB_EVENTM_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

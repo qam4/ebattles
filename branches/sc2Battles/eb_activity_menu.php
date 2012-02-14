@@ -128,6 +128,11 @@ function displayRecentActivity($event_id){
 				$award = EB_AWARD_L10;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
 				break;
+				case 'PlayerWonTournament':
+				$award = EB_AWARD_L12;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
+				break;
+
 			}
 
 			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
@@ -212,6 +217,10 @@ function displayRecentActivity($event_id){
 				case 'TeamStreak25':
 				$award = EB_AWARD_L10;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
+				break;
+				case 'TeamWonTournament':
+				$award = EB_AWARD_L12;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
 				break;
 			}
 

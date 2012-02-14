@@ -4,19 +4,12 @@
 *
 */
 
-//fm: force eventischanged for now
-$eventIsChanged = 1;
-/* Update Stats */
+/* Update */
 if ($eventIsChanged == 1)
 {
-	$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 0 WHERE (EventID = '$event_id')";
-	$result = $sql->db_Query($q);
+	$event->setFieldDB('IsChanged', 0);
 	$eventIsChanged = 0;
-
-	// Schedule upcoming matches here
-	$event->scheduleNextMatches();
 }
-
 
 /*----------------------------------------------------------------------------------------
 Display Info
@@ -393,7 +386,7 @@ if(check_class(e_UC_MEMBER))
 	}
 	else
 	{
-		$text .= '<td>'.EB_EVENT_L74.'</td>';
+		$text .= '<td>'.EB_EVENT_L75.'</td>';
 		$text .= '<td></td>';
 	}
 	$text .= '</tr>';
@@ -414,7 +407,7 @@ $text .= '</tr>';
 
 $text .= '<tr>';
 $text .= '<td class="eb_td eb_tdc1">'.EB_EVENT_L37.'</td>';
-$text .= '<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').eventTypeToString($event->getField('Type')).'</td>';
+$text .= '<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').$event->eventTypeToString().'</td>';
 $text .= '</tr>';
 
 $text .= '<tr>';
@@ -450,6 +443,7 @@ if ($numMods>0)
 }
 $text .= '</td></tr>';
 
+$time_comment = $event->eventStatusToTimeComment();
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L42.'</td><td class="eb_td">'.$date_start.'</td></tr>';
 $text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$time_comment.'</td></tr>';
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L44.'</td><td class="eb_td">'.$tp->toHTML($event->getField('Rules'), true).'</td></tr>';
@@ -642,8 +636,6 @@ switch($type)
 $results = unserialize($event->getField('Results'));
 list($bracket_html) = brackets($event->getField('Format'), $event->getField('MaxNumberPlayers'), $teams, $results, $rounds);
 $text .= $bracket_html;
-//$event->updateResults($results);
-//$event->updateDB($results);
 
 $text .= '</div>';    // tabs-3 "Brackets"
 
