@@ -804,7 +804,7 @@ else
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-			$gamer = new SC2Gamer($gamer_id);
+			$gamer = new Gamer($gamer_id);
 			$aUserNickName = $gamer->getField('Name');
 			$aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
 			$aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");

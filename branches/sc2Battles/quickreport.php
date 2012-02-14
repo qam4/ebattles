@@ -68,7 +68,7 @@ else
         $puid  = mysql_result($result,$i, TBL_USERS.".user_id");
         $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
        	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-       	$gamer = new SC2Gamer($gamer_id);
+       	$gamer = new Gamer($gamer_id);
        	$pname = $gamer->getField('Name');
         $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
         list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);

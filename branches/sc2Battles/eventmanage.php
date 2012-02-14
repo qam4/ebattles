@@ -117,34 +117,23 @@ else
 		<tbody>
 		';
 
+		$text .= '<!-- Event Status -->';
 		$text .= '<tr>';
 		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L135.'<br />';
 		$text .= '</td>';
 		$text .= '<td class="eb_td">';
+		
+		$text .= '<table class="table_left">';
+		$text .= '<tr>';
+		$text .= '<td>'.$event->eventStatusToString().'</td>';
 
-		switch($eventStatus)
+		if($eventStatus == 'draft')
 		{
-			case 'draft':
-			$text .= '<table class="table_left">';
-			$text .= '<tr>';
-			$text .= '<td>'.EB_EVENTM_L136.'</td>';
 			$text .= '<td>'.ebImageTextButton('eventpublish', 'thumb_up.png', EB_EVENTM_L137).'</td>';
-			$text .= '</tr>';
-			$text .= '</table>';
-			break;
-			case 'signup':
-			$text .= EB_EVENTM_L138;
-			break;
-			case 'checkin':
-			$text .= EB_EVENTM_L139;
-			break;
-			case 'active':
-			$text .= EB_EVENTM_L140;
-			break;
-			case 'finished':
-			$text .= EB_EVENTM_L141;
-			break;
 		}
+
+		$text .= '</tr>';
+		$text .= '</table>';
 
 		$text .= '</td>';
 		$text .= '</tr>';

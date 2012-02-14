@@ -549,7 +549,7 @@ class Match extends DatabaseTable
 			$pid           = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 			$puid          = mysql_result($result,$i, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-			$gamer = new SC2Gamer($gamer_id);
+			$gamer = new Gamer($gamer_id);
 			$pName = $gamer->getField('Name');
 			$pteam         = mysql_result($result,$i, TBL_PLAYERS.".Team");
 			$pELO          = mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
@@ -985,7 +985,7 @@ class Match extends DatabaseTable
 			$pid           = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 			$puid          = mysql_result($result,$i, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-			$gamer = new SC2Gamer($gamer_id);
+			$gamer = new Gamer($gamer_id);
 			$pname = $gamer->getField('Name');
 			$pteam         = mysql_result($result,$i, TBL_PLAYERS.".Team");
 			$pELO          = mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
@@ -1441,7 +1441,6 @@ class Match extends DatabaseTable
 					default:
 				}
 
-				$can_approve = 0;
 				if (USERID==$event->getField('Owner'))
 				{
 					$userclass |= eb_UC_EVENT_OWNER;
@@ -1547,7 +1546,7 @@ class Match extends DatabaseTable
 						case "One Player Tournament":
 						$puid  = mysql_result($result,$index , TBL_USERS.".user_id");
 						$gamer_id = mysql_result($result,$index, TBL_PLAYERS.".Gamer");
-						$gamer = new SC2Gamer($gamer_id);
+						$gamer = new Gamer($gamer_id);
 						$pname = $gamer->getField('Name');
 						$pavatar = mysql_result($result,$index, TBL_USERS.".user_image");
 						$pteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");

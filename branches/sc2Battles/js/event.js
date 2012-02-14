@@ -39,18 +39,14 @@ jQuery(function() {
 		// rules/messages are for the validation
 		rules: {
 			joinEventPassword: "required",
-			charactername: "required",
-			code: {
-				required: true,
-				digits: true
-			}
+			gamername: "required",
+			gameruniquegameid: "required"
 		},
 		messages: {
 			joinEventPassword: "Please enter the event password.",
-			charactername: "Please enter your BBNET character name.",
-			code: {
-				required: "Please enter your BBNET code.",
-				digits: "Please enter a valid 3 digits BBNET code."
+			gamername: "Please enter your gamer name.",
+			gameruniquegameid: {
+				required: "Please enter your unique game id."
 			}
 		}
 	});

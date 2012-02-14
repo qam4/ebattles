@@ -1457,7 +1457,7 @@ class Event extends DatabaseTable
 								$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 								$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
 								$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-								$gamer = new SC2Gamer($gamer_id);
+								$gamer = new Gamer($gamer_id);
 								$pname = $gamer->getField('Name');
 								$pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
 								$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
@@ -1594,26 +1594,54 @@ class Event extends DatabaseTable
 
 	function eventTypeToString()
 	{
-		switch($this->getField('Type'))
+		$type = $this->getField('Type');
+		switch($type)
 		{
 			case "One Player Ladder":
-			return EB_EVENTS_L22;
+			$text = EB_EVENTS_L22;
 			break;
 			case "Team Ladder":
-			return EB_EVENTS_L23;
+			$text = EB_EVENTS_L23;
 			break;
 			case "Clan Ladder":
-			return EB_EVENTS_L25;
+			$text = EB_EVENTS_L25;
 			break;
 			case "One Player Tournament":
-			return EB_EVENTS_L33;
+			$text = EB_EVENTS_L33;
 			break;
 			case "Team Tournament":
-			return EB_EVENTS_L35;
+			$text = EB_EVENTS_L35;
 			break;
 			default:
-			return $type;
+			$text = $type;
 		}
+		return $text;
+	}
+
+	function eventStatusToString()
+	{
+		$status = $this->getField('Status');
+		switch($status)
+		{
+			case 'draft':
+			$text = EB_EVENTM_L136;
+			break;
+			case 'signup':
+			$text = EB_EVENTM_L138;
+			break;
+			case 'checkin':
+			$text = EB_EVENTM_L139;
+			break;
+			case 'active':
+			$text = EB_EVENTM_L140;
+			break;
+			case 'finished':
+			$text = EB_EVENTM_L141;
+			break;
+			default:
+			$text = $status;
+		}
+		return $text;
 	}
 
 	function eventStatusToTimeComment()

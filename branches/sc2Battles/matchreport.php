@@ -121,7 +121,7 @@ switch($event->getField('Type'))
 		$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
 		$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
 		$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-		$gamer = new SC2Gamer($gamer_id);
+		$gamer = new Gamer($gamer_id);
 		$pname = $gamer->getField('Name');
 		$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 		list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
@@ -259,7 +259,7 @@ if($match_id)
 			$pid  = mysql_result($result,$score, TBL_PLAYERS.".PlayerID");
 			$puid  = mysql_result($result,$score, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$score, TBL_PLAYERS.".Gamer");
-			$gamer = new SC2Gamer($gamer_id);
+			$gamer = new Gamer($gamer_id);
 			$pname = $gamer->getField('Name');
 			$pavatar = mysql_result($result,$score, TBL_USERS.".user_image");
 			$pteam  = mysql_result($result,$score, TBL_PLAYERS.".Team");

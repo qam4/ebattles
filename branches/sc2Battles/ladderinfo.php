@@ -124,7 +124,7 @@ if ($can_signup==1)
 						$text .= '<td>'.EB_EVENT_L7.'&nbsp;'.$div_name.'</td>';
 						if( $numTeams == 0)
 						{
-						if ($event->getField('password') != "")
+							if ($event->getField('password') != "")
 							{
 								$text .= '<td>'.EB_EVENT_L8.'</td>';
 								$text .= '<td>
@@ -269,7 +269,7 @@ if ($can_signup==1)
 									// Player signed up
 									$text .= '<td>'.EB_EVENT_L22.'</td>';
 
-								// Player can quit an event if he has not played yet
+									// Player can quit an event if he has not played yet
 									$q = "SELECT ".TBL_PLAYERS.".*"
 									." FROM ".TBL_PLAYERS.", "
 									.TBL_SCORES
@@ -309,15 +309,15 @@ if ($can_signup==1)
 				if ($num_rows!=0)
 				{
 					$gamerID = mysql_result($result,0 , TBL_GAMERS.".GamerID");
-					$gamer = new SC2Gamer($gamerID);
-					$gamerCharacterName = $gamer->getField('Name');
-					$gamerCharacterCode = $gamer->getGamerCode();
+					$gamer = new Gamer($gamerID);
+					$gamerName = $gamer->getField('Name');
+					$gamerUniqueGameID = $gamer->getField('UniqueGameID');
 				}
 				else
 				{
 					$gamerID = 0;
-					$gamerCharacterName = '';
-					$gamerCharacterCode = '';
+					$gamerName = '';
+					$gamerUniqueGameID = '';
 				}
 
 				// Is the user already signed up?
@@ -367,10 +367,12 @@ if ($can_signup==1)
 					<input type="password" name="joinEventPassword" id="joinEventPassword" class="'.$hide_password.' text" />
 					</p>
 					<p>
-					<label for="charactername">BNET Character Name/Code</label>
-					<input type="text" size="10" name="charactername" id="charactername" class="text" value="'.$gamerCharacterName.'"/>
-					#
-					<input type="text" size="3" name="code" id="code" class="text" value="'.$gamerCharacterCode.'"/>
+					<label for="gamername">Gamer Name</label>
+					<input type="text" size="10" name="gamername" id="gamername" class="text" value="'.$gamerName.'"/>
+					</p>
+					<p>
+					<label for="gameruniquegameid">Gamer Unique ID</label>
+					<input type="text" size="10" name="gameruniquegameid" id="gameruniquegameid" class="text" value="'.$gamerUniqueGameID.'"/>
 					</p>
 					</fieldset>
 					</div>
@@ -390,7 +392,7 @@ if ($can_signup==1)
 					}
 					else
 					{
-					// Player can quit an event if he has not played yet
+						// Player can quit an event if he has not played yet
 						$q = "SELECT ".TBL_PLAYERS.".*"
 						." FROM ".TBL_PLAYERS.", "
 						.TBL_SCORES
@@ -400,7 +402,7 @@ if ($can_signup==1)
 						$nbrscores = mysql_numrows($result);
 						if ($nbrscores == 0)
 						{
-						$text .= '<td style="text-align:right">
+							$text .= '<td style="text-align:right">
 							<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?EventID='.$event_id.'" method="post">
 							<div>
 							<input type="hidden" name="player" value="'.$user_pid.'"/>
@@ -479,6 +481,7 @@ if ($numMods>0)
 }
 $text .= '</td></tr>';
 
+$text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L82.'</td><td class="eb_td">'.$event->eventStatusToString().'</td></tr>';
 $time_comment = $event->eventStatusToTimeComment();
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L42.'</td><td class="eb_td">'.$date_start.'</td></tr>';
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L43.'</td><td class="eb_td">'.$date_end.'</td></tr>';
@@ -590,9 +593,10 @@ switch($event->getField('Type'))
 		$can_report = 0;
 		$can_schedule = 0;
 		$can_report_quickloss = 0;
-		$can_submit_replay = 0;
 		$can_challenge = 0;
 	}
+	//sc2:
+	$can_submit_replay = 0;
 	break;
 	case "Clan Ladder":
 	if ($nbrteams < 2)
@@ -600,9 +604,10 @@ switch($event->getField('Type'))
 		$can_report = 0;
 		$can_schedule = 0;
 		$can_report_quickloss = 0;
-		$can_submit_replay = 0;
 		$can_challenge = 0;
 	}
+	//sc2:
+	$can_submit_replay = 0;
 	break;
 	default:
 }
@@ -820,7 +825,7 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 			$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
 			$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-			$gamer = new SC2Gamer($gamer_id);
+			$gamer = new Gamer($gamer_id);
 			$pname = $gamer->getField('Name');
 			$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
@@ -915,7 +920,6 @@ $result = $sql->db_Query($q);
 $row = mysql_fetch_array($result);
 $nbrMatchesPending = $row['NbrMatches'];
 if ($nbrMatchesPending == 0) $can_approve = 0;
-
 
 /* Display Match Report buttons */
 if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||($can_schedule != 0))
@@ -1057,7 +1061,6 @@ $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 ." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
 $result = $sql->db_Query($q);
 $numMatches = mysql_numrows($result);
-
 if ($numMatches>0)
 {
 	$text .= '<p><b>';
@@ -1141,7 +1144,7 @@ if ($numAwards>0)
 		$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
 		$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
 		$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-		$gamer = new SC2Gamer($gamer_id);
+		$gamer = new Gamer($gamer_id);
 		$aUserNickName = $gamer->getField('Name');
 		$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 		$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");

@@ -332,7 +332,7 @@ function displayCurrentEvents(){
 			<td class="eb_td">'.$date_end.'</td>
 			<td class="eb_td">'.$nbrTeamPlayers.'</td>
 			<td class="eb_td">'.$nbrmatches.'</td>
-			<td class="eb_td">'.$event->getField('Status').'</td>
+			<td class="eb_td">'.$event->eventStatusToString().'</td>
 			</tr>';
 			// TODO: status2string
 		}
@@ -532,7 +532,7 @@ function displayRecentEvents(){
 			<td class="eb_td">'.$date_end.'</td>
 			<td class="eb_td">'.$nbrTeamPlayers.'</td>
 			<td class="eb_td">'.$nbrmatches.'</td>
-			<td class="eb_td">'.$event->getField('Status').'</td>
+			<td class="eb_td">'.$event->eventStatusToString().'</td>
 			</tr>';
 			// TODO: status2string
 		}
