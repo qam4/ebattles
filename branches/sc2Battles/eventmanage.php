@@ -26,7 +26,6 @@ $text .= '
 ';
 
 $event_id = $_GET['EventID'];
-$self = $_SERVER['PHP_SELF'];
 
 if (!$event_id)
 {
@@ -150,6 +149,7 @@ else
 		$text .= '</td>';
 		$text .= '</tr>';
 
+		$text .= '<!-- Event Owner -->';
 		$text .= '<tr>';
 		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L9.'<br />';
 		$text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$eowner.'">'.$eownername.'</a>';
@@ -189,6 +189,7 @@ else
 		$text .= '</td>';
 		$text .= '</tr>';
 
+		$text .= '<!-- Event Mods -->';
 		$q = "SELECT ".TBL_MODS.".*, "
 		.TBL_USERS.".*"
 		." FROM ".TBL_MODS.", "

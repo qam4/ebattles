@@ -696,8 +696,7 @@ class Event extends DatabaseTable
 			$text .= '</select>
 			</div>
 			</td>
-			</tr>
-			';
+			</tr>';
 		}
 
 		if ($create==false)
@@ -724,8 +723,7 @@ class Event extends DatabaseTable
 			$text .= '
 			</div>
 			</td>
-			</tr>
-			';
+			</tr>';
 
 			//<!-- Rating Type -->
 			switch($event_type)
@@ -820,8 +818,7 @@ class Event extends DatabaseTable
 		$text .= '
 		</div>
 		</td>
-		</tr>
-		';
+		</tr>';
 
 		//<!-- Match Approval -->
 		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
@@ -1212,12 +1209,11 @@ class Event extends DatabaseTable
 
 		//<!-- Save Button -->
 		$text .= '
-		<table><tr><td>
+		<table><tbody><tr><td>
 		<div>
 		'.ebImageTextButton('eventsettingssave', 'disk.png', EB_EVENTM_L37).'
 		</div>
-		</td></tr></table>
-
+		</td></tr></tbody></table>
 		</form>';
 
 		return $text;
