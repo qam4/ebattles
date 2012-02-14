@@ -406,7 +406,7 @@ else
 			$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 			$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-			$gamer = new SC2Gamer($gamer_id);
+			$gamer = new Gamer($gamer_id);
 			$pname = $gamer->getField('Name');
 			$pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
 			$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");

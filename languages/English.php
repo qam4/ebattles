@@ -218,8 +218,9 @@ define('EB_EVENT_L76', 'Brackets');
 define('EB_EVENT_L77', 'Players');
 define('EB_EVENT_L78', 'Race');
 define('EB_EVENT_L79', 'Name');
-define('EB_EVENT_L80', 'BNet Character');
+define('EB_EVENT_L80', 'Unique Game ID');
 define('EB_EVENT_L81', 'Submit Replay');
+define('EB_EVENT_L82', 'Status');
 
 define('EB_EVENTM_L1', 'Manage');
 define('EB_EVENTM_L2', 'Summary');
