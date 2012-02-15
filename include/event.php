@@ -215,7 +215,7 @@ class Event extends DatabaseTable
 	}
 
 	/**
-	* eventScoresUpdate - Re-calculate the scores and players of a event
+	* eventScoresUpdate - Re-calculate the scores and players of an event
 	*/
 	function eventScoresUpdate($current_match)
 	{
@@ -349,7 +349,7 @@ class Event extends DatabaseTable
 	}
 
 	/**
-	* eventAddPlayer - add a user to a event
+	* eventAddPlayer - add a user to an event
 	*/
 	function eventAddPlayer($user, $team = 0, $notify)
 	{
@@ -417,7 +417,7 @@ class Event extends DatabaseTable
 
 
 	/**
-	* eventAddDivision - add a division to a event
+	* eventAddDivision - add a division to an event
 	*/
 	function eventAddDivision($div_id, $notify)
 	{
@@ -666,10 +666,11 @@ class Event extends DatabaseTable
 				break;
 				case "Tournament":
 				//<!-- Format -->
+				$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
 				$text .= '
 				<tr>
 				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L152.'</td>
-				<td class="eb_td"><select class="tbox" name="eventformat">';
+				<td class="eb_td"><select class="tbox" name="eventformat" '.$disabled_str.'>';
 				$text .= '<option value="Single Elimination" '.($this->getField('Format') == "Single Elimination" ? 'selected="selected"' : '').'>'.EB_EVENTM_L153.'</option>';
 				$text .= '</select>
 				</td>
@@ -679,13 +680,14 @@ class Event extends DatabaseTable
 			}
 
 			//<!-- Match Type -->
+			$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
 			$text .= '
 			<tr>
 			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L132.'</td>
 			<td class="eb_td">
 			<div>
 			';
-			$text .= '<select class="tbox" name="eventmatchtype">';
+			$text .= '<select class="tbox" name="eventmatchtype" '.$disabled_str.'>';
 			$text .= '<option value="" '.($this->getField('MatchType') == "" ? 'selected="selected"' : '') .'>-</option>';
 			foreach($ematchtypes as $matchtype)
 			{
@@ -713,8 +715,9 @@ class Event extends DatabaseTable
 				case "Ladder":
 				$text .= '<input class="tbox" type="text" name="eventmaxnumberplayers" size="2" value="'.$this->getField('MaxNumberPlayers').'"/>';
 				break;
+				$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
 				case "Tournament":
-				$text .= '<select class="tbox" name="eventmaxnumberplayers">';
+				$text .= '<select class="tbox" name="eventmaxnumberplayers" '.$disabled_str.'>';
 				$text .= '<option value="4" '.($this->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 				$text .= '<option value="8" '.($this->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
 				$text .= '<option value="16" '.($this->getField('MaxNumberPlayers') == "16" ? 'selected="selected"' : '') .'>16</option>';

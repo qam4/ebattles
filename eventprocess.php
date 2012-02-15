@@ -339,7 +339,7 @@ else{
 			$event->updateDB();
 
 		} else {
-			// Need to create a event.
+			// Need to create an event.
 			$event->setField('Owner', USERID);
 			$event_id = $event->insert();
 			// TODO: only for ladders?
@@ -449,6 +449,7 @@ else{
 		$event->deleteMatches();
 		$event->resetResults();
 		$event->updateFieldDB('Results');
+		$event->setFieldDB('Status', 'signup');
 
 		//echo "-- eventresetscores --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
@@ -462,6 +463,7 @@ else{
 		$event->deleteTeams();
 		$event->resetResults();
 		$event->updateFieldDB('Results');
+		$event->setFieldDB('Status', 'signup');
 
 		//echo "-- eventresetevent --<br />";
 		header("Location: eventmanage.php?EventID=$event_id");
