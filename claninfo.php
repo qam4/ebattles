@@ -25,6 +25,10 @@ else
 	require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 	require_once(e_PLUGIN."ebattles/claninfo_process.php");
 
+	$text .= '
+	<script type="text/javascript" src="./js/clan.js"></script>
+	';
+
 	$q = "SELECT ".TBL_CLANS.".*"
 	." FROM ".TBL_CLANS
 	." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
@@ -119,9 +123,9 @@ function displayTeamSummary($clan_id){
 	<form action="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'" method="post">
 	'.ebImageTextButton('submit', 'page_white_edit.png', EB_CLAN_L8).'
 	</form>';
-	
+
 	$text .= '<b>'.$clan_name.' ('.$clan_tag.')</b><br />';
-	
+
 	$image = "";
 	if($clan_avatar)
 	{
@@ -130,7 +134,7 @@ function displayTeamSummary($clan_id){
 		$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>';
 	}
 	$text .= '<div>'.$image.'</div>';
-	
+
 	$text .= '<table class="eb_table table_left"><tbody>';
 
 	$text .= '<tr><td class="eb_td"><b>'.EB_CLAN_L7.'</b>:</td>';
@@ -177,6 +181,7 @@ function displayTeamDivisions($clan_id){
 	for($i=0; $i<$num_rows; $i++)
 	{
 		$clan_password   = mysql_result($result,$i, TBL_CLANS.".password");
+		$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
 		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
 		$div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
@@ -189,6 +194,27 @@ function displayTeamDivisions($clan_id){
 
 		if(check_class(e_UC_MEMBER))
 		{
+			// Find gamer for that user
+			$q_2 = "SELECT ".TBL_GAMERS.".*"
+			." FROM ".TBL_GAMERS
+			." WHERE (".TBL_GAMERS.".Game = '".$gid."')"
+			."   AND (".TBL_GAMERS.".User = ".USERID.")";
+			$result_2 = $sql->db_Query($q_2);
+			$num_Gamers = mysql_numrows($result_2);
+			if ($num_Gamers!=0)
+			{
+				$gamerID = mysql_result($result_2,0 , TBL_GAMERS.".GamerID");
+				$gamer = new Gamer($gamerID);
+				$gamerName = $gamer->getField('Name');
+				$gamerUniqueGameID = $gamer->getField('UniqueGameID');
+			}
+			else
+			{
+				$gamerID = 0;
+				$gamerName = '';
+				$gamerUniqueGameID = '';
+			}
+
 			$q_2 = "SELECT ".TBL_MEMBERS.".*"
 			." FROM ".TBL_MEMBERS
 			." WHERE (".TBL_MEMBERS.".Division = '$div_id')"
@@ -196,29 +222,15 @@ function displayTeamDivisions($clan_id){
 			$result_2 = $sql->db_Query($q_2);
 			if(!$result_2 || (mysql_numrows($result_2) < 1))
 			{
-				if ($clan_password != "")
-				{
-					$text .= '
-					<form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
-					<div>
-					'.EB_CLAN_L10.':
-					<input class="tbox" type="password" title="'.EB_CLAN_L11.'" name="joindivisionPassword"/>
-					<input type="hidden" name="division" value="'.$div_id.'"/>
-					</div>
-					'.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12).'
-					</form>';
-				}
-				else
-				{
-					$text .= '
-					<form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
-					<div>
-					<input type="hidden" name="joindivisionPassword" value=""/>
-					<input type="hidden" name="division" value="'.$div_id.'"/>
-					</div>
-					'.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12).'
-					</form>';
-				}
+				$hide_password = ($clan_password == "") ?  'hide ignore' : '';
+
+				$text .= '
+				</div>
+				'.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12).'
+				</form>';
+
+				$text .= gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $gamerUniqueGameID, $hide_password);
+
 			}
 			else
 			{

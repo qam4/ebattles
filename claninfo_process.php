@@ -19,8 +19,14 @@ if(isset($_POST['joindivision']))
 
 	$result = $sql->db_Query($q);
 	$clan_password  = mysql_result($result, 0, TBL_CLANS.".password");
+	$gid  = mysql_result($result, 0, TBL_DIVISIONS.".Game");
+	
 	if ($_POST['joindivisionPassword'] == $clan_password)
 	{
+		$Name = $tp->toDB($_POST["gamername"]);
+		$UniqueGameID = $tp->toDB($_POST["gameruniquegameid"]);
+		updateGamer(USERID, $gid, $Name, $UniqueGameID);
+
 		$q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
 		VALUES ($div_id,".USERID.",$time)";
 		$sql->db_Query($q);
