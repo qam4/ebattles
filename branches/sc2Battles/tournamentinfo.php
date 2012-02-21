@@ -607,7 +607,8 @@ switch($type)
 		$playerID = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
 		$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
 		$gamer = new Gamer($gamerID);
-		$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+		$teams[$player]['Name'] = $gamer->getField('Name');
+		$teams[$player]['UniqueGameID'] = $gamer->getField('UniqueGameID');
 		$teams[$player]['PlayerID'] = $playerID;
 	}
 }
@@ -805,16 +806,15 @@ $result = $sql->db_Query($q);
 $numPlayers = mysql_numrows($result);
 if ($numPlayers>0)
 {
+	/*Name	Unique ID*/
 	$text .= '<table style="width:90%"><tbody>';
 	$text .= '<tr>';
-	//sc2:	$text .= '<td><b>'.EB_EVENT_L78.'</b></td>';
-	$text .= '<td><b>'.EB_EVENT_L79.'</b></td>';
-	$text .= '<td><b>'.EB_EVENT_L80.'</b></td>';
+	//sc2:	$text .= '<th class="eb_th2">'.EB_EVENT_L78.'</td>';
+	$text .= '<th class="eb_th2">'.EB_EVENT_L79.'</td>';
+	$text .= '<th class="eb_th2">'.EB_EVENT_L80.'</td>';
 	$text .= '</tr>';
 	for ($player = 0; $player < $numPlayers; $player++)
 	{
-		/*Name	Unique ID*/
-
 		/* sc2:
 		$pFactionIcon = mysql_result($result, $player , TBL_FACTIONS.".Icon");
 		$pFactionName = mysql_result($result, $player , TBL_FACTIONS.".Name");
@@ -824,13 +824,14 @@ if ($numPlayers>0)
 		$pFactionImage = '';
 		}
 		*/
-		$pName = mysql_result($result, $player , TBL_USERS.".user_name");
+		$puid = mysql_result($result, $player , TBL_GAMERS.".User");
+		$pName = mysql_result($result, $player , TBL_GAMERS.".Name");
 		$pGamer = mysql_result($result, $player , TBL_GAMERS.".UniqueGameID");
 
 		$text .= '<tr>';
-		//sc2:		$text .= '<td>'.$pFactionImage.'</td>';
-		$text .= '<td>'.$pName.'</td>';
-		$text .= '<td>'.$pGamer.'</td>';
+		//sc2: $text .= '<td class="eb_td">'.$pFactionImage.'</td>';
+		$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pName.'</a></td>';
+		$text .= '<td class="eb_td">'.$pGamer.'</td>';
 		$text .= '</tr>';
 	}
 	$text .= '</tbody></table>';

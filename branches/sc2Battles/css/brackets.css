@@ -119,7 +119,7 @@ table.brackets th {
 	color: #3c3c3c;
 	border: none;
 	text-align: center;
-	font: bold 12px Arial, Tahoma, sans-serif;
+	font: bold 12px Tahoma, Arial, sans-serif;
 	padding: 0;
 }
 table.brackets td {
@@ -127,7 +127,8 @@ table.brackets td {
 	padding: 0;
 	/*height: 17px;*/
 	width: 152px;
-}
+	font: 10px Tahoma, Arial, sans-serif
+ }
 table.brackets td.grid {
 	padding: 0;
 	width: 3px !important;
@@ -148,29 +149,28 @@ table.brackets td div.container {
 table.brackets td div.player {
 	float: left;
 	margin: 0;
-	padding: 3px 3px 3px 3px;
+	/*padding: 3px 3px 3px 3px;*/
 	display: block;
 	color: #646464;
-    font: bold 10px Tahoma, Arial, sans-serif;
-	/*line-height: 8px;*/
+    font-weight: bold;
 }
 table.brackets td div.winner {
-	background: #CFE8D7;
+	/*background: #CFE8D7;*/
 }
 table.brackets td div.loser {
-	color: #b1b1b1;
-	background: #CFDBE8;
+	/*background: #CFDBE8;*/
 }
 table.brackets td div.victor {
-	background: #CFE8D7;
+	/*background: #CFE8D7;*/
 }
 table.brackets td div.loser div.player {
     font-weight: normal;
+    color: #B1B1B1;
 }
 table.brackets td div.loser div.player img {
-	-moz-opacity: 0.5;
-	opacity: .50;
-	filter: alpha(opacity=50);
+	-moz-opacity: 0.3;
+	opacity: .30;
+	filter: alpha(opacity=30);
 }
 table.brackets td div.player .game_name {
 	display: none;
@@ -184,14 +184,25 @@ table.brackets td img {
 }
 table.brackets td div.wins,
 table.brackets td div.wins_none {
-	float: right;
-	margin: 0;
-	padding: 3px 3px 0 0;
 	color: #ff6c00;
-	font: bold 10px Tahoma, Arial, sans-serif;
+	font-weight: bold;
 }
-table.brackets td div.wins_none { color: #b1b1b1 }
+table.brackets td.wins {
+	width: 10%;
+}
+
 table.brackets td div.loser div.wins { color: #b1b1b1 }
+table.brackets td.score {
+	color: #646464;
+	font-weight: bold;
+	width: 10%;
+}
+table.brackets div.score.win{
+	color: #00FF00;
+}
+table.brackets div.score.loss {
+	color: #FF0000;
+}
 table.brackets td.match-details {
 	background: url(./images/sprite_tournament_bracket-2.png) repeat-y 0 0;
 	text-align: right;

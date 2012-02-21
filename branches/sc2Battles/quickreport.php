@@ -45,7 +45,7 @@ else
     ."   AND (".TBL_PLAYERS.".Banned != 1)"
 	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
     ."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-    ." ORDER BY ".TBL_USERS.".user_name";
+    ." ORDER BY ".TBL_GAMERS.".Name";
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
 

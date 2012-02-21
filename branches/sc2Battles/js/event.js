@@ -39,15 +39,11 @@ jQuery(function() {
 		// rules/messages are for the validation
 		rules: {
 			joinEventPassword: "required",
-			gamername: "required",
-			gameruniquegameid: "required"
+			gamername: "required"
 		},
 		messages: {
 			joinEventPassword: "Please enter the event password.",
-			gamername: "Please enter your gamer name.",
-			gameruniquegameid: {
-				required: "Please enter your unique game id."
-			}
+			gamername: "Please enter your gamer name."
 		}
 	});
 

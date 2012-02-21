@@ -1311,11 +1311,12 @@ class Event extends DatabaseTable
 				$playerID = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
 				$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
 				$gamer = new Gamer($gamerID);
-				$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+				$teams[$player]['Name'] = $gamer->getField('Name');
+				$teams[$player]['UniqueGameID'] = $gamer->getField('UniqueGameID');
 				$teams[$player]['PlayerID'] = $playerID;
 			}
 		}
-		$nbrPlayers = $this->fields['MaxNumberPlayers'];
+		$maxNbrPlayers = $this->fields['MaxNumberPlayers'];
 		$results = unserialize($this->getField('Results'));
 		// TODO: check for error (return false)
 		$rounds = unserialize($this->getField('Rounds'));
@@ -1325,7 +1326,7 @@ class Event extends DatabaseTable
 		switch ($format)
 		{
 			default:
-			$file = 'include/brackets/se-'.$nbrPlayers.'.txt';
+			$file = 'include/brackets/se-'.$maxNbrPlayers.'.txt';
 			break;
 		}
 		$matchups = unserialize(implode('',file($file)));
@@ -1535,6 +1536,12 @@ class Event extends DatabaseTable
 					if(((!isset($current_match)) || ($current_match['played'] == true))&&($results[$round][$matchup]['winner']==''))
 					{
 						// Need to schedule the next match
+						if(!isset($current_match))
+						{
+							$results[$round][$matchup]['topWins'] = 0;
+							$results[$round][$matchup]['bottomWins'] = 0;					
+						}
+						
 						// Create Match ------------------------------------------
 						$reported_by = ADMINID;
 						$time_reported = $time;

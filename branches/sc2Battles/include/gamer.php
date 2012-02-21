@@ -21,7 +21,7 @@ function gamerEventSignupModalForm($event_id, $gamerID, $gamerName, $gamerUnique
 	<p>
 	<!-- fancy icon -->
 	<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
-	<strong>Alert:</strong> Errors detected!
+	<strong>'.EB_GAMER_L1.'</strong>'.EB_GAMER_L2.'
 	</p>
 	<!-- validation plugin will target this UL for error messages -->
 	<ul></ul>
@@ -34,17 +34,17 @@ function gamerEventSignupModalForm($event_id, $gamerID, $gamerName, $gamerUnique
 	<input type="hidden" name="joinevent" value=""/>
 	<input type="hidden" name="gamerID" value="'.$gamerID.'"/>
 	<fieldset>
-	<legend>Please provide your gamer info</legend>
+	<legend>'.EB_GAMER_L3.'</legend>
 	<p>
 	<label for="joinEventPassword" class="'.$hide_password.'">'.EB_EVENT_L27.'</label>
 	<input type="password" name="joinEventPassword" id="joinEventPassword" class="'.$hide_password.' text" />
 	</p>
 	<p>
-	<label for="gamername">Gamer Name</label>
+	<label for="gamername">'.EB_GAMER_L4.'</label>
 	<input type="text" size="10" name="gamername" id="gamername" class="text" value="'.$gamerName.'"/>
 	</p>
 	<p>
-	<label for="gameruniquegameid">Gamer Unique ID</label>
+	<label for="gameruniquegameid">'.EB_GAMER_L5.'</label>
 	<input type="text" size="10" name="gameruniquegameid" id="gameruniquegameid" class="text" value="'.$gamerUniqueGameID.'"/>
 	</p>
 	</fieldset>
@@ -66,7 +66,7 @@ function gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $
 	<p>
 	<!-- fancy icon -->
 	<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
-	<strong>Alert:</strong> Errors detected!
+	<strong>'.EB_GAMER_L1.'</strong>'.EB_GAMER_L2.'
 	</p>
 	<!-- validation plugin will target this UL for error messages -->
 	<ul></ul>
@@ -80,17 +80,17 @@ function gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $
 	<input type="hidden" name="joindivision" value=""/>
 	<input type="hidden" name="gamerID" value="'.$gamerID.'"/>
 	<fieldset>
-	<legend>Please provide your gamer info</legend>
+	<legend>'.EB_GAMER_L3.'</legend>
 	<p>
 	<label for="joindivisionPassword" class="'.$hide_password.'">'.EB_CLAN_L11.'</label>
 	<input type="password" name="joindivisionPassword" id="joindivisionPassword" class="'.$hide_password.' text" />
 	</p>
 	<p>
-	<label for="gamername">Gamer Name</label>
+	<label for="gamername">'.EB_GAMER_L4.'</label>
 	<input type="text" size="10" name="gamername" id="gamername" class="text" value="'.$gamerName.'"/>
 	</p>
 	<p>
-	<label for="gameruniquegameid">Gamer Unique ID</label>
+	<label for="gameruniquegameid">'.EB_GAMER_L5.'</label>
 	<input type="text" size="10" name="gameruniquegameid" id="gameruniquegameid" class="text" value="'.$gamerUniqueGameID.'"/>
 	</p>
 	</fieldset>
