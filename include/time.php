@@ -63,15 +63,12 @@ function get_formatted_timediff($then, $now = false)
         $str .= intval($sec).'&nbsp;';
         $str .= ($sec > 1) ? EB_TIME_L9 : EB_TIME_L10;
     }
-    if ( !$weeks && !$days && !$hours && !$mins && !$sec )
-    {
-        $str .= '0'.EB_TIME_L10;
-    }
-    else
-    {
-        $str .= '';
-    }
 */
+    if ( !$weeks && !$days && !$hours && !$mins && $sec )
+    {
+        $str .= intval($sec).'&nbsp;';
+        $str .= ($sec > 1) ? EB_TIME_L9 : EB_TIME_L10;
+    }
 
     return $str;
 }

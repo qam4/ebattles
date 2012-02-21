@@ -122,7 +122,7 @@ else
 		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L135.'<br />';
 		$text .= '</td>';
 		$text .= '<td class="eb_td">';
-		
+
 		$text .= '<table class="table_left">';
 		$text .= '<tr>';
 		$text .= '<td>'.$event->eventStatusToString().'</td>';
@@ -336,102 +336,108 @@ else
 			case "Team Ladder":
 			case "Clan Ladder":
 			case "Team Tournament":
-			// Form to add a team's division to the event
-			$q = "SELECT ".TBL_DIVISIONS.".*, "
-			.TBL_CLANS.".*"
-			." FROM ".TBL_DIVISIONS.", "
-			.TBL_CLANS
-			." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
-			."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
-			$result = $sql->db_Query($q);
-			/* Error occurred, return given name by default */
-			$numDivisions = mysql_numrows($result);
-
-			$text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?EventID='.$event_id.'" method="post">';
-			$text .= '
-			<table class="eb_table" style="width:95%">
-			<tbody>
-			<tr>
-			<td class="eb_td eb_tdc1 eb_w40">
-			<b>'.EB_EVENTM_L41.'</b>
-			</td>
-			<td class="eb_td">
-			<select class="tbox" name="division">
-			';
-			for($i=0; $i<$numDivisions; $i++)
+			if ($numTeams<$event->getField('MaxNumberPlayers'))
 			{
-				// TODO: remove teams already signed up
-				$did  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
-				$dname  = mysql_result($result,$i, TBL_CLANS.".Name");
-				$text .= '<option value="'.$did.'">'.$dname.'</option>';
+				// Form to add a team's division to the event
+				$q = "SELECT ".TBL_DIVISIONS.".*, "
+				.TBL_CLANS.".*"
+				." FROM ".TBL_DIVISIONS.", "
+				.TBL_CLANS
+				." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
+				."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
+				$result = $sql->db_Query($q);
+				/* Error occurred, return given name by default */
+				$numDivisions = mysql_numrows($result);
+
+				$text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?EventID='.$event_id.'" method="post">';
+				$text .= '
+				<table class="eb_table" style="width:95%">
+				<tbody>
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">
+				<b>'.EB_EVENTM_L41.'</b>
+				</td>
+				<td class="eb_td">
+				<select class="tbox" name="division">
+				';
+				for($i=0; $i<$numDivisions; $i++)
+				{
+					// TODO: remove teams already signed up
+					$did  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
+					$dname  = mysql_result($result,$i, TBL_CLANS.".Name");
+					$text .= '<option value="'.$did.'">'.$dname.'</option>';
+				}
+				$text .= '
+				</select>
+				'.ebImageTextButton('eventaddteam', 'user_add.png', EB_EVENTM_L42).'
+				<input class="tbox" type="checkbox" name="eventaddteamnotify"/>'.EB_EVENTM_L43.'
+				</td>
+				</tr>
+				</tbody>
+				</table>
+				</form>
+				';
 			}
-			$text .= '
-			</select>
-			'.ebImageTextButton('eventaddteam', 'user_add.png', EB_EVENTM_L42).'
-			<input class="tbox" type="checkbox" name="eventaddteamnotify"/>'.EB_EVENTM_L43.'
-			</td>
-			</tr>
-			</tbody>
-			</table>
-			</form>
-			';
 			break;
 			case "One Player Ladder":
 			case "One Player Tournament":
-			// Form to add a player to the event
-			$q = "SELECT ".TBL_GAMERS.".*, "
-			.TBL_USERS.".*"
-			." FROM ".TBL_GAMERS.", "
-			.TBL_USERS
-			." WHERE (".TBL_GAMERS.".Game = '$egameid')"
-			."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
-			$result = $sql->db_Query($q);
-			$numUsers = mysql_numrows($result);
-			$text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?EventID='.$event_id.'" method="post">';
-			$text .= '
-			<table class="eb_table" style="width:95%">
-			<tbody>
-			<tr>
-			<td class="eb_td eb_tdc1 eb_w40">
-			<b>'.EB_EVENTM_L44.'</b>
-			</td>
-			<td class="eb_td">
-			<table class="table_left">
-			<tr>
-			<td><div><select class="tbox" name="player">
-			';
-			for($i=0; $i<$numUsers; $i++)
+			if ($numPlayers<$event->getField('MaxNumberPlayers'))
 			{
-				$uid  = mysql_result($result,$i, TBL_USERS.".user_id");
-				$uname  = mysql_result($result,$i, TBL_GAMERS.".Name");
-
-				// fm: can we do this in 1 query?
-				$q_Players = "SELECT COUNT(*) as NbrPlayers"
-				." FROM ".TBL_PLAYERS.", "
-				.TBL_GAMERS
-				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				." AND (".TBL_GAMERS.".User = '$uid')";
-				$result_Players = $sql->db_Query($q_Players);
-				$row = mysql_fetch_array($result_Players);
-				$nbrPlayers = $row['NbrPlayers'];
-				if ($nbrPlayers==0)
+				// Form to add a player to the event
+				$q = "SELECT ".TBL_GAMERS.".*, "
+				.TBL_USERS.".*"
+				." FROM ".TBL_GAMERS.", "
+				.TBL_USERS
+				." WHERE (".TBL_GAMERS.".Game = '$egameid')"
+				."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
+				$result = $sql->db_Query($q);
+				$numUsers = mysql_numrows($result);
+				$text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?EventID='.$event_id.'" method="post">';
+				$text .= '
+				<table class="eb_table" style="width:95%">
+				<tbody>
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">
+				<b>'.EB_EVENTM_L44.'</b>
+				</td>
+				<td class="eb_td">
+				<table class="table_left">
+				<tr>
+				<td><div><select class="tbox" name="player">
+				';
+				for($i=0; $i<$numUsers; $i++)
 				{
-					$text .= '<option value="'.$uid.'">'.$uname.'</option>';
+					$uid  = mysql_result($result,$i, TBL_USERS.".user_id");
+					$uname  = mysql_result($result,$i, TBL_GAMERS.".Name");
+
+					// fm: can we do this in 1 query?
+					$q_Players = "SELECT COUNT(*) as NbrPlayers"
+					." FROM ".TBL_PLAYERS.", "
+					.TBL_GAMERS
+					." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					." AND (".TBL_GAMERS.".User = '$uid')";
+					$result_Players = $sql->db_Query($q_Players);
+					$row = mysql_fetch_array($result_Players);
+					$nbrPlayers = $row['NbrPlayers'];
+					if ($nbrPlayers==0)
+					{
+						$text .= '<option value="'.$uid.'">'.$uname.'</option>';
+					}
 				}
+				$text .= '
+				</select></div></td>
+				<td>'.ebImageTextButton('eventaddplayer', 'user_add.png', EB_EVENTM_L45).'</td>
+				<td><div><input class="tbox" type="checkbox" name="eventaddplayernotify"/>'.EB_EVENTM_L46.'</div></td>
+				</tr>
+				</table>
+				</td>
+				</tr>
+				</tbody>
+				</table>
+				</form>
+				';
 			}
-			$text .= '
-			</select></div></td>
-			<td>'.ebImageTextButton('eventaddplayer', 'user_add.png', EB_EVENTM_L45).'</td>
-			<td><div><input class="tbox" type="checkbox" name="eventaddplayernotify"/>'.EB_EVENTM_L46.'</div></td>
-			</tr>
-			</table>
-			</td>
-			</tr>
-			</tbody>
-			</table>
-			</form>
-			';
 			break;
 			default:
 		}
@@ -558,7 +564,7 @@ else
 				{
 					$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 					$puid = mysql_result($result,$i, TBL_USERS.".user_id");
-					$pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+					$pname  = mysql_result($result,$i, TBL_GAMERS.".Name");
 					$puniquegameid  = mysql_result($result,$i, TBL_GAMERS.".UniqueGameID");
 					$pjoined  = mysql_result($result,$i, TBL_PLAYERS.".Joined");
 					$pjoined_local = $pjoined + TIMEOFFSET;
@@ -993,7 +999,8 @@ else
 					$playerID = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
 					$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
 					$gamer = new Gamer($gamerID);
-					$teams[$player]['Name'] = $gamer->getField('UniqueGameID');
+					$teams[$player]['Name'] = $gamer->getField('Name');
+					$teams[$player]['UniqueGameID'] = $gamer->getField('UniqueGameID');
 					$teams[$player]['PlayerID'] = $playerID;
 				}
 			}

@@ -182,7 +182,7 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 	$pid    = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
 	$puid   = mysql_result($result,0 , TBL_USERS.".user_id");
 	$prank  = mysql_result($result,0 , TBL_PLAYERS.".Rank");
-	$pname  = mysql_result($result,0 , TBL_USERS.".user_name");
+	$pname  = mysql_result($result,0 , TBL_GAMERS.".Name");
 	$pteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
 	list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
@@ -209,7 +209,7 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 	$pid    = mysql_result($result, 0, TBL_PLAYERS.".PlayerID");
 	$puid   = mysql_result($result, 0, TBL_USERS.".user_id");
 	$prank  = mysql_result($result, 0, TBL_PLAYERS.".Rank");
-	$pname  = mysql_result($result, 0, TBL_USERS.".user_name");
+	$pname  = mysql_result($result, 0, TBL_GAMERS.".Name");
 	$pteam  = mysql_result($result, 0, TBL_PLAYERS.".Team");
 	list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 

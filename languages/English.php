@@ -807,6 +807,13 @@ define('EB_USER_L35', 'is admin of the following events');
 define('EB_USER_L36', 'moderates in the following events');
 define('EB_USER_L37', 'Game');
 
+define('EB_GAMER_L1', 'Alert:');
+define('EB_GAMER_L2', 'Errors detected!');
+define('EB_GAMER_L3', 'Please provide your gamer info');
+define('EB_GAMER_L4', 'Gamer Name');
+define('EB_GAMER_L5', 'Gamer Unique ID');
+ 
+
 define('EB_PGN_L1', 'Go To Page');
 define('EB_PGN_L2', 'Previous');
 define('EB_PGN_L3', 'Next');
