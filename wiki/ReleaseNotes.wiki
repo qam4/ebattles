@@ -1,13 +1,28 @@
 #summary eBattles Release Notes.
 #labels Featured
-= Release 0.8.13 =
+= Release 0.9.0 =
+== Features ==
+ * Added one player single elimination tournaments
+  * Players sign up
+  * Matchs are scheduled by the script
+  * Results are shown in brackets.
+== Changes ==
+ * Use jquery and jquery ui for better form validation, better UI (modal forms, tabs, date picker...)
+ * Better event and team creation forms
+ * Using classes to handle database tables (OOP)
+  * Objects are used to retrieve entries information from the database.
+  * Construct uses the primary key to get data from database.
+ * Added gamer table, so users can enter different name and game id for each game they play.
+ * Improved security when saving data to database.
+ * Added custom layout to ebattles theme
+
+= Release 0.8.14 =
 == Changes ==
  * Improved events filtering by games & match type
 == Bug Fixes ==
  * Fixed bug in forfeit win/loss count.
  * Fixed bug in event score re-calculation.
   * Timestamp for awards was not correct.
-
 
 = Release 0.8.13 =
 == Features ==
