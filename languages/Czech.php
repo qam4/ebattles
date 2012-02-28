@@ -123,7 +123,6 @@ define('EB_EVENTS_L22', 'Soutěž jednotlivců');
 define('EB_EVENTS_L23', 'Soutěž týmů/jednotlivců');
 define('EB_EVENTS_L24', 'Filtr');
 define('EB_EVENTS_L25', 'Soutěž týmů');
-define('EB_EVENTS_L32', 'Match Type');
 
 define('EB_EVENT_L1', 'Soutěž');
 define('EB_EVENT_L2', 'Soutěž začíná');

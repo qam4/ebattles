@@ -67,9 +67,9 @@ h2 {
 }
 
 body {
-	font-size: 11px;
+	font-size: 13px;
 	color: #333333;
-	font-family: 'lucida sans unicode','lucida grande',tahoma,verdana,arial,sans-serif;
+	font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
 	background-color: white;
 	margin:0px 0px;
 	padding:0px;
@@ -98,6 +98,7 @@ p {
 	margin-bottom: 0px
 }
 td {
+	font-size: 11px;
 	color: #333333;
 	padding: 0px;
 	text-align:left;
@@ -111,15 +112,18 @@ td {
 }
 .bodytable {
 	padding: 8px;
+	font-size: 11px;
 	color: #333333;
 }
 .bodytable2 {
 	border: #000 1px solid;
 	padding: 8px;
+	font-size: 11px;
 	color: #000;
 }
 .bodytable3 {
 	padding: 8px;
+	font-size: 11px;
 	color: #000;
 }
 .border {
@@ -256,6 +260,7 @@ td {
 	border-top: #151515 1px solid;
 }
 .mediumtext {
+	font-size: 11px;
 	color: #333333;
 }
 .newscomments{
@@ -266,7 +271,7 @@ td {
 }
 .nextprev {
 	border: 0px;
-	text-align: center;
+	text-align:center;
 	padding: 2px;
 	background-color: #f7f7f9;
 }
@@ -278,6 +283,7 @@ td {
 }
 .nforumcaption2 {
 	padding: 8px 0px 8px 4px;
+	font-size: 11px;
 	color: #333333;
 	font-weight: bold;
 	background-image: url(images/fcaption3.jpg);
@@ -286,6 +292,7 @@ td {
 	border: 1px solid #CCCCCC;
 	padding: 4px;
 	background-color: #333333;
+	font-size: 11px;
 	font-weight: bold;
 }
 .nforumdisclaimer {
@@ -327,6 +334,7 @@ td {
 	border: 1px solid #CCCCCC;
 	padding: 4px;
 	background-color: #7D7D7D;
+	font-size: 11px;
 }
 .nforumview2 {
 	border: 1px solid #CCCCCC;
@@ -378,22 +386,22 @@ td {
 	width: 0%;
 	vertical-align:top;
 	border-right: 1px dotted #ccc;
-	width: 100px;
 }
 
 .right_menu {
 	padding:0px;
-	width: 240px;
+	width: 10%;
 	vertical-align:top;
 	/*border-left: 1px solid #000;*/
 	}
-	/* Brainjar Nav Menu Classes {SITELINS_ALT} */
+
+/* Brainjar Nav Menu Classes {SITELINS_ALT} */
 /*
 If you do not use {SITELINS_ALT} and switch to the standard {SITELINKS} instead, 
 all of the below can be deleted.
 */
 /*----------------------------------------------------------------------------*/
-	
+
 div.menuBar, div.menuBar a.menuButton, div.menuButton, div.menuButton_over, div.menu, div.menu a.menuItem {
 	font-size:11px;
 	font-weight: bold;
@@ -404,7 +412,7 @@ div.menuBar, div.menuBar a.menuButton, div.menuButton, div.menuButton_over, div.
 div.menuBar {
 	background-color: #fff;
 	border-top: 1px solid #fff;
-	padding: 4px 0px;
+	padding: 1px 0px;
 	text-align: right;
 }
 

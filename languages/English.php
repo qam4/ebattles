@@ -27,7 +27,7 @@ define('EB_MENU_L5', 'Games');
 
 define('EB_ADMIN_L1', 'eBattles settings updated.');
 define('EB_ADMIN_L2', 'Moderator userclass');
-define('EB_ADMIN_L3', 'Events delayed updates');
+define('EB_ADMIN_L3', 'Delayed updates');
 define('EB_ADMIN_L4', 'If enabled, events stats will be recalculated only if the event has changed and the delay has expired');
 define('EB_ADMIN_L5', 'minutes');
 define('EB_ADMIN_L6', 'Enable delayed update');
@@ -125,15 +125,18 @@ define('EB_EVENTS_L24', 'Filter');
 define('EB_EVENTS_L25', 'Team Ladder');
 define('EB_EVENTS_L26', 'Hello ');
 define('EB_EVENTS_L27', ',
-	You are invited to participate in the ladder "');
+	You are invited to participate in the event "');
 define('EB_EVENTS_L29', '"
-	Please check your "My Profile/Events" page to see the ladder details.');
+	Please check your "My Profile/Events" page to see the event details.');
 define('EB_EVENTS_L30', '"
-	Please click the following link to view the ladder details: ');	
+	Please click the following link to view the event details: ');	
 define('EB_EVENTS_L31', '
 	Cordially,
-	The ladder admin ');
+	The event admin ');
 define('EB_EVENTS_L32', 'Match Type');
+define('EB_EVENTS_L33', 'One Player Tournament');
+define('EB_EVENTS_L34', 'Status');
+define('EB_EVENTS_L35', 'Team Tournament');
 
 define('EB_EVENT_L1', 'Events');
 define('EB_EVENT_L2', 'Event starts in');
@@ -170,11 +173,11 @@ define('EB_EVENT_L32', 'Quit this event');
 define('EB_EVENT_L33', 'Are you sure you want to quit this event?');
 define('EB_EVENT_L34', 'Please log in to participate to this event.');
 define('EB_EVENT_L35', 'Info');
-define('EB_EVENT_L36', 'Ladder');
+define('EB_EVENT_L36', 'Event');
 define('EB_EVENT_L37', 'Type');
 define('EB_EVENT_L38', 'Game');
-define('EB_EVENT_L39', 'Owner');
-define('EB_EVENT_L40', 'Click here to manage this event');
+define('EB_EVENT_L39', 'Admin');
+define('EB_EVENT_L40', 'Manage this event');
 define('EB_EVENT_L41', 'Moderator(s)');
 define('EB_EVENT_L42', 'Starts');
 define('EB_EVENT_L43', 'Ends');
@@ -208,18 +211,27 @@ define('EB_EVENT_L70', 'match(es) scheduled');
 define('EB_EVENT_L71', 'Challenge Team');
 define('EB_EVENT_L72', 'Match Schedule');
 define('EB_EVENT_L73', 'match(es) to approve');
-define('EB_EVENT_L74', 'Signup closed.');
+define('EB_EVENT_L74', 'Event started');
+define('EB_EVENT_L75', 'Signup closed.');
+define('EB_EVENT_L76', 'Brackets');
+define('EB_EVENT_L77', 'Players');
+define('EB_EVENT_L78', 'Race');
+define('EB_EVENT_L79', 'Name');
+define('EB_EVENT_L80', 'Unique Game ID');
+define('EB_EVENT_L81', 'Submit Replay');
+define('EB_EVENT_L82', 'Status');
+define('EB_EVENT_L83', 'Event finished');
 
 define('EB_EVENTM_L1', 'Manage');
-define('EB_EVENTM_L2', 'Event Summary');
-define('EB_EVENTM_L3', 'Event Settings');
-define('EB_EVENTM_L4', 'Event Rules');
-define('EB_EVENTM_L5', 'Event Players/Teams');
-define('EB_EVENTM_L6', 'Event Reset');
-define('EB_EVENTM_L7', 'Event Stats');
-define('EB_EVENTM_L8', 'Ladder');
-define('EB_EVENTM_L9', 'Owner');
-define('EB_EVENTM_L10', 'Change Owner');
+define('EB_EVENTM_L2', 'Summary');
+define('EB_EVENTM_L3', 'Settings');
+define('EB_EVENTM_L4', 'Rounds');
+define('EB_EVENTM_L5', 'Players/Teams');
+define('EB_EVENTM_L6', 'Reset');
+define('EB_EVENTM_L7', 'Stats');
+define('EB_EVENTM_L8', 'Event');
+define('EB_EVENTM_L9', 'Admin');
+define('EB_EVENTM_L10', 'Change Admin');
 define('EB_EVENTM_L11', 'Moderators');
 define('EB_EVENTM_L12', 'Remove Moderator');
 define('EB_EVENTM_L13', 'Are you sure you want to remove this moderator?');
@@ -228,8 +240,8 @@ define('EB_EVENTM_L15', 'Name');
 define('EB_EVENTM_L16', 'Join Event Password');
 define('EB_EVENTM_L17', 'Game');
 define('EB_EVENTM_L18', 'Type');
-define('EB_EVENTM_L19', 'Individual');
-define('EB_EVENTM_L20', 'Team/Individual');
+define('EB_EVENTM_L19', '');
+define('EB_EVENTM_L20', '');
 define('EB_EVENTM_L21', 'Match report userclass');
 define('EB_EVENTM_L22', 'Event Player');
 define('EB_EVENTM_L23', 'Event Moderator');
@@ -237,8 +249,8 @@ define('EB_EVENTM_L24', 'Event Admin');
 define('EB_EVENTM_L25', 'Allow Quick Loss');
 define('EB_EVENTM_L26', 'Allow Scoring');
 define('EB_EVENTM_L27', 'Allow Draws');
-define('EB_EVENTM_L28', 'Points');
-define('EB_EVENTM_L29', 'per win');
+define('EB_EVENTM_L28', 'Map Pool');
+define('EB_EVENTM_L29', 'Map Vote');
 define('EB_EVENTM_L30', 'per draw');
 define('EB_EVENTM_L31', 'per loss');
 define('EB_EVENTM_L32', 'Start Date');
@@ -246,7 +258,7 @@ define('EB_EVENTM_L33', 'Date selector');
 define('EB_EVENTM_L34', 'Reset');
 define('EB_EVENTM_L35', 'End Date');
 define('EB_EVENTM_L36', 'Description');
-define('EB_EVENTM_L37', 'Save Settings');
+define('EB_EVENTM_L37', 'Save');
 define('EB_EVENTM_L38', 'Rules');
 define('EB_EVENTM_L39', 'Save Rules');
 define('EB_EVENTM_L40', 'player(s)');
@@ -267,7 +279,7 @@ define('EB_EVENTM_L52', 'No Players');
 define('EB_EVENTM_L53', 'Not Ranked');
 define('EB_EVENTM_L54', 'Banned');
 define('EB_EVENTM_L55', 'Name');
-define('EB_EVENTM_L56', 'Rank');
+define('EB_EVENTM_L56', 'Joined');
 define('EB_EVENTM_L57', 'Games');
 define('EB_EVENTM_L58', 'Awards');
 define('EB_EVENTM_L59', 'Actions');
@@ -327,13 +339,13 @@ define('EB_EVENTM_L112', 'Match Reporter Opponent');
 define('EB_EVENTM_L113', 'Disable');
 define('EB_EVENTM_L114', 'team(s)');
 define('EB_EVENTM_L115', 'No Teams');
-define('EB_EVENTM_L116', 'Team');
+define('EB_EVENTM_L116', '');
 define('EB_EVENTM_L117', 'Ranking Type');
 define('EB_EVENTM_L118', 'Classic: Players are ranked based on their score in the first stats category, if 2 players are tied, they are ranked based on the second stats category, and so on<br />
 Combined Stats: Players are ranked based on a combination of their scores in each stats category');
 define('EB_EVENTM_L119', 'Classic');
 define('EB_EVENTM_L120', 'Combined Stats');
-define('EB_EVENTM_L121', 'Event Challenges');
+define('EB_EVENTM_L121', 'Challenges');
 define('EB_EVENTM_L122', 'Enable/Disable Challenges');
 define('EB_EVENTM_L123', 'Save Challenges settings');
 define('EB_EVENTM_L124', 'Max number of dates per Challenge request');
@@ -345,6 +357,27 @@ define('EB_EVENTM_L129', 'Affects win/loss count');
 define('EB_EVENTM_L130', 'Forfeit Win Points');
 define('EB_EVENTM_L131', 'Forfeit Loss Points');
 define('EB_EVENTM_L132', 'Match Type');
+define('EB_EVENTM_L133', 'View Event');
+define('EB_EVENTM_L134', 'Match replay report userclass');
+define('EB_EVENTM_L135', 'Status');
+define('EB_EVENTM_L136', 'Draft');
+define('EB_EVENTM_L137', 'Publish');
+define('EB_EVENTM_L138', 'Sign Up');
+define('EB_EVENTM_L139', 'Check In');
+define('EB_EVENTM_L140', 'Active');
+define('EB_EVENTM_L141', 'Finished');
+define('EB_EVENTM_L142', '');
+define('EB_EVENTM_L143', 'Brackets');
+define('EB_EVENTM_L144', 'Round');
+define('EB_EVENTM_L145', 'Title');
+define('EB_EVENTM_L146', 'Best Of');
+define('EB_EVENTM_L147', 'Map Pool');
+define('EB_EVENTM_L148', 'Map Vote');
+define('EB_EVENTM_L149', 'Add Map');
+define('EB_EVENTM_L150', 'Remove Map');
+define('EB_EVENTM_L151', 'Save Rounds');
+define('EB_EVENTM_L152', 'Format');
+define('EB_EVENTM_L153', 'Single Elimination');
 
 define('EB_EVENTP_L1', 'Past Events');
 define('EB_EVENTP_L2', 'Past Events');
@@ -355,6 +388,17 @@ define('EB_EVENTC_L1', 'Create Event');
 define('EB_EVENTC_L2', 'You are not authorized to create an event.');
 define('EB_EVENTC_L3', 'Event');
 define('EB_EVENTC_L4', 'Put a description for your event here');
+
+define('EB_SUBMITREPLAY_L1', 'Submit Replay');
+define('EB_SUBMITREPLAY_L2', 'There were errors in the information gathered from the replay you uploaded, they are listed below:');
+define('EB_SUBMITREPLAY_L3', 'The replay match type is not compatible with the event match type');
+define('EB_SUBMITREPLAY_L4', 'We could not get the winner from the replay');
+define('EB_SUBMITREPLAY_L5', 'One player is an AI');
+define('EB_SUBMITREPLAY_L6', 'The following player is not in the event: ');
+define('EB_SUBMITREPLAY_L7', 'Replay already submitted');
+define('EB_SUBMITREPLAY_L8', '');
+define('EB_SUBMITREPLAY_L9', '');
+define('EB_SUBMITREPLAY_L10', '');
 
 define('EB_STATS_L1', 'ELO');
 define('EB_STATS_L2', 'ELO');
@@ -412,8 +456,8 @@ define('EB_CLAN_L3', 'Divisions');
 define('EB_CLAN_L4', 'Events');
 define('EB_CLAN_L5', 'Back to');
 define('EB_CLAN_L6', 'Teams');
-define('EB_CLAN_L7', 'Owner');
-define('EB_CLAN_L8', 'Click here to manage this team');
+define('EB_CLAN_L7', 'Admin');
+define('EB_CLAN_L8', 'Manage this team');
 define('EB_CLAN_L9', 'Captain');
 define('EB_CLAN_L10', 'Enter the team password');
 define('EB_CLAN_L11', 'Enter the password');
@@ -449,8 +493,8 @@ define('EB_CLANM_L3', 'Team Divisions');
 define('EB_CLANM_L4', 'Team');
 define('EB_CLANM_L5', 'Delete Team');
 define('EB_CLANM_L6', 'Are you sure you want to delete this team?');
-define('EB_CLANM_L7', 'Owner');
-define('EB_CLANM_L8', 'Change Owner');
+define('EB_CLANM_L7', 'Admin');
+define('EB_CLANM_L8', 'Change Admin');
 define('EB_CLANM_L9', 'Name');
 define('EB_CLANM_L10', 'Tag (shortname)');
 define('EB_CLANM_L11', 'Password');
@@ -477,6 +521,8 @@ define('EB_CLANM_L31', 'Website');
 define('EB_CLANM_L32', 'Email');
 define('EB_CLANM_L33', 'IM');
 define('EB_CLANM_L34', 'Description');
+define('EB_CLANM_L35', 'View Team');
+define('EB_CLANM_L36', 'Team Settings');
 
 define('EB_MATCH_L1', 'Match');
 define('EB_MATCH_L2', 'tied');
@@ -593,11 +639,11 @@ define('EB_MATCHR_L54', ',
 
 	You have a new match scheduled');
 define('EB_MATCHR_L55', ' in the "');
-define('EB_MATCHR_L56', '" ladder.
+define('EB_MATCHR_L56', '" event.
 	Please check your "My Profile/Matches" page to see the match details.
 	
 	Cordially,
-	The ladder admin');
+	The event admin');
 define('EB_MATCHR_L57', 'Forfeit?');
 
 define('EB_MATCHQL_L1', 'Quick Loss Report');
@@ -691,11 +737,11 @@ define('EB_CHALLENGE_L25', ',
 
 	You have been challenged by ');
 define('EB_CHALLENGE_L26', ' in the "');
-define('EB_CHALLENGE_L27', '" ladder.
+define('EB_CHALLENGE_L27', '" event.
 	Please check your "My Profile/Matches" page to see the challenge details.
 	
 	Cordially,
-	The ladder admin');
+	The event admin');
 define('EB_CHALLENGE_L28', 'Challenger comments:');
 define('EB_CHALLENGE_L29', 'Challenge declined!');
 define('EB_CHALLENGE_L30', 'Hello ');
@@ -703,11 +749,11 @@ define('EB_CHALLENGE_L31', ',
 
 	Your challenge has been declined by ');
 define('EB_CHALLENGE_L32', ' in the "');
-define('EB_CHALLENGE_L33', '" ladder.
+define('EB_CHALLENGE_L33', '" event.
 	Please check your "My Profile/Matches" page to see the challenge details.
 	
 	Cordially,
-	The ladder admin');
+	The event admin');
 	
 define('EB_AWARD_L1', 'Award');
 define('EB_AWARD_L2', 'took 1st place');
@@ -720,11 +766,13 @@ define('EB_AWARD_L8', 'won 10 games in a row');
 define('EB_AWARD_L9', '10 in a row');
 define('EB_AWARD_L10', 'won 25 games in a row');
 define('EB_AWARD_L11', '25 in a row');
+define('EB_AWARD_L12', 'won the tournament');
+define('EB_AWARD_L13', 'tournament winner');
 
 define('EB_USER_L1', 'Player Information');
 define('EB_USER_L2', 'Profile');
 define('EB_USER_L3', 'Events');
-define('EB_USER_L4', 'Teams membership');
+define('EB_USER_L4', 'Teams');
 define('EB_USER_L5', 'Matches');
 define('EB_USER_L6', 'Awards');
 define('EB_USER_L7', 'User Profile');
@@ -735,25 +783,36 @@ define('EB_USER_L11', 'Rank');
 define('EB_USER_L12', 'W/L');
 define('EB_USER_L13', 'Player Rating');
 define('EB_USER_L14', 'Status');
-define('EB_USER_L15', 'Owner');
+define('EB_USER_L15', 'Admin');
 define('EB_USER_L16', 'Manage');
 define('EB_USER_L17', 'Member');
-define('EB_USER_L18', 'Owner');
-define('EB_USER_L19', 'is owner of the following events');
+define('EB_USER_L18', 'Admin');
+define('EB_USER_L19', 'is admin of the following events');
 define('EB_USER_L20', 'Moderator');
 define('EB_USER_L21', 'moderates in the following events');
 define('EB_USER_L22', 'Member');
 define('EB_USER_L23', 'is member of the following divisions');
 define('EB_USER_L24', 'Division');
 define('EB_USER_L25', 'Status');
-define('EB_USER_L26', 'Owner');
-define('EB_USER_L27', 'is owner of the following teams');
+define('EB_USER_L26', 'Admin');
+define('EB_USER_L27', 'is admin of the following teams');
 define('EB_USER_L28', 'Team');
 define('EB_USER_L29', 'Captain');
 define('EB_USER_L30', 'is captain of the following divisions');
 define('EB_USER_L31', 'Info');
 define('EB_USER_L32', 'Pending matches: ');
+define('EB_USER_L33', 'Events');
+define('EB_USER_L34', 'plays in the following events');
+define('EB_USER_L35', 'is admin of the following events');
+define('EB_USER_L36', 'moderates in the following events');
+define('EB_USER_L37', 'Game');
 
+define('EB_GAMER_L1', 'Alert:');
+define('EB_GAMER_L2', 'Errors detected!');
+define('EB_GAMER_L3', 'Please provide your gamer info');
+define('EB_GAMER_L4', 'Gamer Name');
+define('EB_GAMER_L5', 'Gamer Unique ID');
+ 
 define('EB_PGN_L1', 'Go To Page');
 define('EB_PGN_L2', 'Previous');
 define('EB_PGN_L3', 'Next');

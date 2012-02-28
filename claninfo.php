@@ -22,9 +22,12 @@ if (!$clan_id)
 }
 else
 {
+	require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 	require_once(e_PLUGIN."ebattles/claninfo_process.php");
 
-	$text ='<script type="text/javascript" src="./js/tabpane.js"></script>';
+	$text .= '
+	<script type="text/javascript" src="./js/clan.js"></script>
+	';
 
 	$q = "SELECT ".TBL_CLANS.".*"
 	." FROM ".TBL_CLANS
@@ -34,61 +37,46 @@ else
 
 	$clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
 
-	$text .= '
-	<div class="tab-pane" id="tab-pane-6">
-	';
+	$text .= '<div id="tabs">';
+	$text .= '<ul>';
+	$text .= '<li><a href="#tabs-1">'.EB_CLAN_L2.'</a></li>';
+	$text .= '<li><a href="#tabs-2">'.EB_CLAN_L3.'</a></li>';
+	$text .= '<li><a href="#tabs-3">'.EB_CLAN_L4.'</a></li>';
+	$text .= '<li><a href="#tabs-4">'.EB_CLAN_L31.'</a></li>';
+	$text .= '</ul>';
 	/**
 	* Display Latest Games
 	*/
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_CLAN_L2.'</div>
-	';
+	$text .= '<div id="tabs-1">';
 	displayTeamSummary($clan_id);
 	$text .= '</div>';
 
 	/**
 	* Display Divisions
 	*/
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_CLAN_L3.'</div>
-	';
+	$text .= '<div id="tabs-2">';
 	displayTeamDivisions($clan_id);
 	$text .= '</div>';
 
 	/**
 	* Display Events
 	*/
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_CLAN_L4.'</div>
-	';
+	$text .= '<div id="tabs-3">';
 	displayTeamEvents($clan_id);
 	$text .= '</div>';
 
 	/**
 	* Display Awards
 	*/
-	$text .= '
-	<div class="tab-page">
-	<div class="tab">'.EB_CLAN_L31.'</div>
-	';
+	$text .= '<div id="tabs-4">';
 	displayTeamAwards($clan_id);
 	$text .= '</div>';
 
+	$text .= '</div>';
 	$text .= '
-	</div>
-
 	<p>
 	<br />'.EB_CLAN_L5.' [<a href="'.e_PLUGIN.'ebattles/clans.php">'.EB_CLAN_L6.'</a>]<br />
 	</p>
-
-	<script type="text/javascript">
-	//<![CDATA[
-	setupAllTabs();
-	//]]>
-	</script>
 	';
 }
 $ns->tablerender("$clan_name", $text);
@@ -127,29 +115,45 @@ function displayTeamSummary($clan_id){
 	$clan_IM    = mysql_result($result,0, TBL_CLANS.".IM");
 	$clan_Description    = mysql_result($result,0, TBL_CLANS.".Description");
 
-	$image = "";
-	if($clan_avatar)
-	{
-		$image = '<img '.getAvatarResize(getImagePath($clan_avatar, 'team_avatars')).' style="vertical-align:middle"/>';
-	} else if ($pref['eb_avatar_default_team_image'] != ''){
-		$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
-	}
-	$text .= $image.'<br />';
-
-	$text .= '<b>'.$clan_name.' ('.$clan_tag.')</b><br />';
-
-	$text .= '<p><b>'.EB_CLAN_L7.'</b>: <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a><br />';
 	$can_manage = 0;
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 	if (USERID==$clan_owner) $can_manage = 1;
 	if ($can_manage == 1)
-	$text .= '<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_CLAN_L8.'</a><br />';
-	$text .= '</p><br />';
+	$text .= '
+	<form action="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'" method="post">
+	'.ebImageTextButton('submit', 'page_white_edit.png', EB_CLAN_L8).'
+	</form>';
 
-	$text .= '<p><b>'.EB_CLAN_L27.'</b>: <a href="http://'.$clan_website.'" rel="external">'.$clan_website.'</a></p><br />';
-	$text .= '<p><b>'.EB_CLAN_L28.'</b>: <a href="mailto:'.$clan_email.'">'.$clan_email.'</a></p><br />';
-	$text .= '<p><b>'.EB_CLAN_L29.'</b>: '.$clan_IM.'</p><br />';
-	$text .= '<p><b>'.EB_CLAN_L30.'</b>: '.$tp->toHTML($clan_Description, true).'</p><br />';
+	$text .= '<b>'.$clan_name.' ('.$clan_tag.')</b><br />';
+
+	$image = "";
+	if($clan_avatar)
+	{
+		$image = '<img '.getAvatarResize(getImagePath($clan_avatar, 'team_avatars')).'/>';
+	} else if ($pref['eb_avatar_default_team_image'] != ''){
+		$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>';
+	}
+	$text .= '<div>'.$image.'</div>';
+
+	$text .= '<table class="eb_table table_left"><tbody>';
+
+	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L7.':</td>';
+	$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a></td>';
+	$text .= '</tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L27.':</td>';
+	$text .= '<td class="eb_td"><a href="http://'.$clan_website.'" rel="external">'.$clan_website.'</a></td>';
+	$text .= '</tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L28.':</td>';
+	$text .= '<td class="eb_td"><a href="mailto:'.$clan_email.'">'.$clan_email.'</a></td>';
+	$text .= '</tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L29.':</td>';
+	$text .= '<td class="eb_td">'.$clan_IM.'</td>';
+	$text .= '</tr>';
+	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L30.':</td>';
+	$text .= '<td class="eb_td">'.$tp->toHTML($clan_Description, true).'</td>';
+	$text .= '</tr>';
+	$text .= '</tbody></table>';
+
 }
 
 /**
@@ -177,6 +181,7 @@ function displayTeamDivisions($clan_id){
 	for($i=0; $i<$num_rows; $i++)
 	{
 		$clan_password   = mysql_result($result,$i, TBL_CLANS.".password");
+		$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
 		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
 		$div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
@@ -189,6 +194,27 @@ function displayTeamDivisions($clan_id){
 
 		if(check_class(e_UC_MEMBER))
 		{
+			// Find gamer for that user
+			$q_2 = "SELECT ".TBL_GAMERS.".*"
+			." FROM ".TBL_GAMERS
+			." WHERE (".TBL_GAMERS.".Game = '".$gid."')"
+			."   AND (".TBL_GAMERS.".User = ".USERID.")";
+			$result_2 = $sql->db_Query($q_2);
+			$num_Gamers = mysql_numrows($result_2);
+			if ($num_Gamers!=0)
+			{
+				$gamerID = mysql_result($result_2,0 , TBL_GAMERS.".GamerID");
+				$gamer = new Gamer($gamerID);
+				$gamerName = $gamer->getField('Name');
+				$gamerUniqueGameID = $gamer->getField('UniqueGameID');
+			}
+			else
+			{
+				$gamerID = 0;
+				$gamerName = '';
+				$gamerUniqueGameID = '';
+			}
+
 			$q_2 = "SELECT ".TBL_MEMBERS.".*"
 			." FROM ".TBL_MEMBERS
 			." WHERE (".TBL_MEMBERS.".Division = '$div_id')"
@@ -196,29 +222,15 @@ function displayTeamDivisions($clan_id){
 			$result_2 = $sql->db_Query($q_2);
 			if(!$result_2 || (mysql_numrows($result_2) < 1))
 			{
-				if ($clan_password != "")
-				{
-					$text .= '
-					<form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
-					<div>
-					'.EB_CLAN_L10.':
-					<input class="tbox" type="password" title="'.EB_CLAN_L11.'" name="joindivisionPassword"/>
-					<input type="hidden" name="division" value="'.$div_id.'"/>
-					</div>
-					'.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12).'
-					</form>';
-				}
-				else
-				{
-					$text .= '
-					<form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
-					<div>
-					<input type="hidden" name="joindivisionPassword" value=""/>
-					<input type="hidden" name="division" value="'.$div_id.'"/>
-					</div>
-					'.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12).'
-					</form>';
-				}
+				$hide_password = ($clan_password == "") ?  'hide ignore' : '';
+
+				$text .= '
+				</div>
+				'.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12).'
+				</form>';
+
+				$text .= gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $gamerUniqueGameID, $hide_password);
+
 			}
 			else
 			{
@@ -245,7 +257,7 @@ function displayTeamDivisions($clan_id){
 					<div>
 					<input type="hidden" name="division" value="'.$div_id.'"/>
 					</div>
-					'.ebImageTextButton('quitdivision', 'user_delete.ico', EB_CLAN_L13, 'negative', EB_CLAN_L25).'
+					'.ebImageTextButton('quitdivision', 'user_delete.ico', EB_CLAN_L13, 'negative jq-button', EB_CLAN_L25).'
 					</form>';
 				}
 			}
@@ -279,10 +291,11 @@ function displayTeamDivisions($clan_id){
 
 			$text .= '<p>'.$numMembers.'&nbsp;'.EB_CLAN_L15.'</p>';
 
-			$text .= '<table class="fborder" style="width:95%"><tbody>';
-			$text .= '<tr><td class="forumheader"><b>'.EB_CLAN_L16.'</b></td>
-			<td class="forumheader"><b>'.EB_CLAN_L17.'</b></td>
-			<td class="forumheader"><b>'.EB_CLAN_L18.'</b></td>
+			$text .= '<table class="eb_table" style="width:95%"><tbody>';
+			$text .= '<tr>
+			<th class="eb_th2">'.EB_CLAN_L16.'</th>
+			<th class="eb_th2">'.EB_CLAN_L17.'</th>
+			<th class="eb_th2">'.EB_CLAN_L18.'</th>
 			</tr>';
 
 			// Captain
@@ -299,9 +312,9 @@ function displayTeamDivisions($clan_id){
 					$status =  EB_CLAN_L9;
 
 					$text .= '<tr>';
-					$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
-					<td class="forumheader3">'.$status.'</td>
-					<td class="forumheader3">'.$date.'</td></tr>';
+					$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
+					<td class="eb_td">'.$status.'</td>
+					<td class="eb_td">'.$date.'</td></tr>';
 				}
 			}
 
@@ -319,9 +332,9 @@ function displayTeamDivisions($clan_id){
 					$status =  EB_CLAN_L26;
 
 					$text .= '<tr>';
-					$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
-					<td class="forumheader3">'.$status.'</td>
-					<td class="forumheader3">'.$date.'</td></tr>';
+					$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
+					<td class="eb_td">'.$status.'</td>
+					<td class="eb_td">'.$date.'</td></tr>';
 				}
 			}
 			$text .= '</tbody></table>';
@@ -365,8 +378,7 @@ function displayTeamEvents($clan_id){
 		.TBL_EVENTS
 		." WHERE (".TBL_TEAMS.".Division = '$div_id')"
 		." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
-		." AND (   (".TBL_EVENTS.".End_timestamp = '')"
-		."        OR (".TBL_EVENTS.".End_timestamp > $time)) ";
+		." AND (".TBL_EVENTS.".Status != 'finished')";
 
 		$result_2 = $sql->db_Query($q_2);
 		if(!$result_2 || (mysql_numrows($result_2) < 1))
@@ -380,18 +392,20 @@ function displayTeamEvents($clan_id){
 
 			$text .= '<p>'.$numEvents.'&nbsp;'.EB_CLAN_L20.'</p>';
 
-			$text .= '<table class="fborder" style="width:95%"><tbody>';
-			$text .= '<tr><td class="forumheader"><b>'.EB_CLAN_L21.'</b></td>
-			<td class="forumheader"><b>'.EB_CLAN_L22.'</b></td></tr>';
+			$text .= '<table class="eb_table" style="width:95%"><tbody>';
+			$text .= '<tr>
+			<th class="eb_th2">'.EB_CLAN_L21.'</th>
+			<th class="eb_th2">'.EB_CLAN_L22.'</th>
+			</tr>';
 			for($j=0; $j < $numEvents; $j++)
 			{
-				$eid  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
-				$ename  = mysql_result($result_2,$j, TBL_EVENTS.".Name");
-				$erank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
+				$event_id  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
+				$eName  = mysql_result($result_2,$j, TBL_EVENTS.".Name");
+				$eRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
 				$text .= '<tr>';
-				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></b></td>
-				<td class="forumheader3">'.$erank.'</td></tr>';
+				$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$eName.'</a></b></td>
+				<td class="eb_td">'.$eRank.'</td></tr>';
 			}
 			$text .= "</tbody></table>\n";
 		}
@@ -402,8 +416,7 @@ function displayTeamEvents($clan_id){
 		.TBL_EVENTS
 		." WHERE (".TBL_TEAMS.".Division = '$div_id')"
 		." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
-		." AND (    (".TBL_EVENTS.".End_timestamp != '')"
-		."      AND (".TBL_EVENTS.".End_timestamp < $time)) ";
+		." AND ((".TBL_EVENTS.".Status = 'finished')";
 
 		$result_2 = $sql->db_Query($q_2);
 		if(!$result_2 || (mysql_numrows($result_2) < 1))
@@ -417,18 +430,20 @@ function displayTeamEvents($clan_id){
 
 			$text .= '<p>'.$numEvents.'&nbsp;'.EB_CLAN_L24.'</p>';
 
-			$text .= '<table class="fborder" style="width:95%"><tbody>';
-			$text .= '<tr><td class="forumheader"><b>'.EB_CLAN_L21.'</b></td>
-			<td class="forumheader"><b>'.EB_CLAN_L22.'</b></td></tr>';
+			$text .= '<table class="eb_table" style="width:95%"><tbody>';
+			$text .= '<tr>
+			<th class="eb_th2">'.EB_CLAN_L21.'</th>
+			<th class="eb_th2">'.EB_CLAN_L22.'</th>
+			</tr>';
 			for($j=0; $j<$numEvents; $j++)
 			{
-				$eid  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
-				$ename  = mysql_result($result_2,$j, TBL_EVENTS.".Name");
-				$erank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
+				$event_id  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
+				$eName  = mysql_result($result_2,$j, TBL_EVENTS.".Name");
+				$eRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
 
 				$text .= '<tr>';
-				$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a></b></td>
-				<td class="forumheader3">'.$erank.'</td></tr>';
+				$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$eName.'</a></b></td>
+				<td class="eb_td">'.$eRank.'</td></tr>';
 			}
 			$text .= '</tbody></table>';
 		}
@@ -467,10 +482,9 @@ function displayTeamAwards($clan_id){
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
 
-	$text .= '<br />';
 	if ($num_rows>0)
 	{
-		$text .= '<table class="table_left">';
+		$text .= '<table class="eb_table table_left">';
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
 		{
@@ -485,7 +499,7 @@ function displayTeamAwards($clan_id){
 			$date = date("d M Y, h:i A",$aTime_local);
 
 			$aClanTeam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-			list($tclan, $tclantag, $tclanid) = getClanName($aClanTeam);
+			list($tclan, $tclantag, $tclanid) = getClanInfo($aClanTeam);
 
 
 			switch ($aType) {
@@ -509,6 +523,11 @@ function displayTeamAwards($clan_id){
 				$award = EB_AWARD_L10;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
 				break;
+				case 'TeamWonTournament':
+				$award = EB_AWARD_L12;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
+				break;
+
 			}
 
 			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';

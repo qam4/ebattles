@@ -101,7 +101,9 @@ TBL_GAMES_PLATFORMS_SHORT,
 TBL_MAPS_SHORT,
 TBL_FACTIONS_SHORT,
 TBL_MEDIA_SHORT,
-TBL_CHALLENGES_SHORT
+TBL_CHALLENGES_SHORT,
+TBL_GAMERS_SHORT,
+TBL_OFFICIAL_EVENTS_SHORT
 );
 
 // List of sql requests to create tables -----------------------------------------------------------------------------
@@ -123,7 +125,7 @@ ReleaseDate varchar(63) NOT NULL default '',
 OfficialWebsite varchar(63) NOT NULL default '',
 ESRB varchar(63) NOT NULL default '',
 Banner varchar(63) NOT NULL default ''
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTS."
 (
 EventID int NOT NULL AUTO_INCREMENT,
@@ -134,9 +136,10 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Type varchar(63),
+Format varchar(63),
 MatchType varchar(63) DEFAULT '',
-Start_timestamp int(11) unsigned not null,
-End_timestamp int(11) unsigned not null,
+StartDateTime int(11) unsigned not null,
+EndDateTime int(11) unsigned not null,
 nbr_games_to_rank int DEFAULT '4',
 nbr_team_games_to_rank int DEFAULT '4',
 ELO_default int DEFAULT '".ELO_DEFAULT."',
@@ -163,22 +166,29 @@ PointsPerWin int default '".PointsPerWin_DEFAULT."',
 PointsPerDraw int default '".PointsPerDraw_DEFAULT."',
 PointsPerLoss int default '".PointsPerLoss_DEFAULT."',
 match_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."',
+match_replay_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."',
 quick_loss_report tinyint(1) DEFAULT '1',
 hide_ratings_column tinyint(1) DEFAULT '0',
 MatchesApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-RankingType varchar(20) DEFAULT 'CombinedStats',
+RankingType varchar(20) DEFAULT 'Classic',
 Visibility tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
-Status varchar(20) DEFAULT 'active',
+Status varchar(20) DEFAULT 'draft',
 PlayersApproval tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_NONE."',
 ChallengesEnable tinyint(1) DEFAULT '0',
 MaxDatesPerChallenge int DEFAULT '".eb_MAX_CHALLENGE_DATES."',
 MaxMapsPerMatch int DEFAULT '".eb_MAX_MAPS_PER_MATCH."',
-MaxPlayers int DEFAULT '0'
-) TYPE = MyISAM;",
+MaxNumberPlayers int DEFAULT '0',
+ForceFaction tinyint(1) default '0',
+Seeded tinyint(3) default '0',
+Seeds text,
+Results text,
+Rounds text,
+MapPool text
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
-EventModeratorID int NOT NULL AUTO_INCREMENT,
-PRIMARY KEY(EventModeratorID),
+ModeratorID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(ModeratorID),
 Event int NOT NULL,
 INDEX (Event),
 FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
@@ -186,7 +196,7 @@ User int(10) unsigned NOT NULL,
 INDEX (User),
 FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
 Level int DEFAULT '0'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_CLANS."
 (
 ClanID int NOT NULL AUTO_INCREMENT,
@@ -202,7 +212,7 @@ websiteURL varchar(100) NOT NULL default '',
 email varchar(100) NOT NULL default '',
 IM varchar(100) NOT NULL default '',
 Description text NOT NULL
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_DIVISIONS."
 (
 DivisionID int NOT NULL AUTO_INCREMENT,
@@ -216,7 +226,7 @@ FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Captain int(10) unsigned NOT NULL,
 INDEX (Captain),
 FOREIGN KEY (Captain) REFERENCES ".TBL_USERS." (user_id)
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MEMBERS."
 (
 MemberID int NOT NULL AUTO_INCREMENT,
@@ -228,7 +238,7 @@ User int(10) unsigned NOT NULL,
 INDEX (User),
 FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
 timestamp int(11) unsigned not null
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_TEAMS."
 (
 TeamID int NOT NULL AUTO_INCREMENT,
@@ -255,8 +265,10 @@ Streak_Worst int DEFAULT '0',
 Score int DEFAULT '0',
 ScoreAgainst int DEFAULT '0',
 Points int DEFAULT '0',
+Joined  int(11) unsigned not null,
+CheckedIn tinyint(1) DEFAULT '0',
 Banned tinyint(1) DEFAULT '0'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MATCHS."
 (
 MatchID int NOT NULL AUTO_INCREMENT,
@@ -271,8 +283,12 @@ TimeReported int(11) unsigned not null,
 Comments text NOT NULL,
 Status varchar(20) DEFAULT 'active',
 Maps varchar(255) NOT NULL default '0',
-TimeScheduled int(11) unsigned not null
-) TYPE = MyISAM;",
+TimeScheduled int(11) unsigned not null,
+GameLength int(11) unsigned not null,
+GameSpeed varchar(20),
+Realm varchar(20),
+TimePlayed int(11) unsigned not null
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_PLAYERS."
 (
 PlayerID int NOT NULL AUTO_INCREMENT,
@@ -280,9 +296,9 @@ PRIMARY KEY(PlayerID),
 Event int NOT NULL,
 INDEX (Event),
 FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
-User int(10) unsigned NOT NULL,
-INDEX (User),
-FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
+Gamer int(10) unsigned NOT NULL,
+INDEX (Gamer),
+FOREIGN KEY (Gamer) REFERENCES ".TBL_GAMERS." (GamerID),
 Team int NOT NULL,
 INDEX (Team),
 FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID),
@@ -302,8 +318,10 @@ Streak_Worst int DEFAULT '0',
 Score int DEFAULT '0',
 ScoreAgainst int DEFAULT '0',
 Points int DEFAULT '0',
+Joined  int(11) unsigned not null,
+CheckedIn tinyint(1) DEFAULT '0',
 Banned tinyint(1) DEFAULT '0'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_SCORES."
 (
 ScoreID int NOT NULL AUTO_INCREMENT,
@@ -329,8 +347,11 @@ Player_Loss int DEFAULT '0',
 Player_Draw int DEFAULT '0',
 Player_Points int DEFAULT '0',
 Player_Forfeit tinyint(1) DEFAULT '0',
-Faction int DEFAULT '0'
-) TYPE = MyISAM;",
+Faction int DEFAULT '0',
+Color varchar(20),
+sColor varchar(20),
+APM int DEFAULT '0'
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_STATSCATEGORIES."
 (
 StatsCategoryID int NOT NULL AUTO_INCREMENT,
@@ -340,9 +361,9 @@ INDEX (Event),
 FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
 CategoryName varchar(63),
 CategoryMinValue int DEFAULT '1',
-CategoryMaxValue int DEFAULT '100',
+CategoryMaxValue int DEFAULT '0',
 InfoOnly tinyint(1) DEFAULT '0'
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_AWARDS."
 (
 AwardID int NOT NULL AUTO_INCREMENT,
@@ -355,7 +376,7 @@ INDEX (Team),
 FOREIGN KEY (Player) REFERENCES ".TBL_TEAMS." (TeamID),
 Type varchar(63),
 timestamp int(11) unsigned not null
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_PLAYERS_RESULTS."
 (
 PlayerResultID int NOT NULL AUTO_INCREMENT,
@@ -367,7 +388,7 @@ Type varchar(63),
 Value float DEFAULT '0',
 Display varchar(63),
 timestamp int(11) unsigned not null
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_GAMES_GENRES."
 (
 GameGenreID int NOT NULL AUTO_INCREMENT,
@@ -376,7 +397,7 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Genre varchar(63)
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_GAMES_PLATFORMS."
 (
 GamePlatformID int NOT NULL AUTO_INCREMENT,
@@ -385,7 +406,7 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Platform varchar(63)
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MAPS."
 (
 MapID int NOT NULL AUTO_INCREMENT,
@@ -396,7 +417,7 @@ FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Name varchar(63) NOT NULL default '',
 Image varchar(63) NOT NULL default '',
 Description varchar(63) NOT NULL default ''
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_FACTIONS."
 (
 FactionID int NOT NULL AUTO_INCREMENT,
@@ -406,7 +427,7 @@ INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Name varchar(63) NOT NULL default '',
 Icon varchar(63) NOT NULL default ''
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MEDIA."
 (
 MediaID int NOT NULL AUTO_INCREMENT,
@@ -417,9 +438,9 @@ FOREIGN KEY (MatchID) REFERENCES ".TBL_MATCHS." (MatchID),
 Submitter int NOT NULL,
 INDEX (Submitter),
 FOREIGN KEY (Submitter) REFERENCES ".TBL_USERS." (user_id),
-Path varchar(63) NOT NULL default '',
+Path varchar(255) NOT NULL default '',
 Type varchar(20) NOT NULL default ''
-) TYPE = MyISAM;",
+) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_CHALLENGES."
 (
 ChallengeID int NOT NULL AUTO_INCREMENT,
@@ -446,14 +467,37 @@ TimeReported int(11) unsigned not null,
 Comments text NOT NULL,
 Status varchar(20) DEFAULT 'requested',
 MatchDates varchar(255) NOT NULL default ''
-) TYPE = MyISAM;"
+) ENGINE = MyISAM;",
+"CREATE TABLE ".TBL_GAMERS."
+(
+GamerID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(GamerID),
+User int(10) unsigned NOT NULL,
+INDEX (User),
+FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
+Game int NOT NULL,
+INDEX (Game),
+FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
+Name varchar(64) NOT NULL default '',
+UniqueGameID varchar(64) NOT NULL default ''
+) ENGINE = MyISAM;",
+"CREATE TABLE ".TBL_OFFICIAL_EVENTS."
+(
+OfficialEventID int NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(OfficialEventID),
+Event int NOT NULL,
+INDEX (Event),
+FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
+Game int NOT NULL,
+INDEX (Game),
+FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
+Type varchar(63),
+MatchType varchar(63) DEFAULT ''
+) ENGINE = MyISAM;"
 );
 
-// Insert "Unknown Game"
-$query =
-"INSERT INTO ".TBL_GAMES."(Name, Icon)
-VALUES ('".EB_GAME_L1."', 'unknown.gif')";
-array_push($eplug_tables, $query);
+// Insert "data"
+@require_once e_PLUGIN.'ebattles/db_admin/insert_data.php';
 
 // Create a link in main menu (yes=TRUE, no=FALSE) -------------------------------------------------------------
 $eplug_link = TRUE;
@@ -605,9 +649,9 @@ if (versionsCompare($eb_version_string, "0.8.11"))
 {
 	// To revision 0.8.11
 	array_push ($upgrade_alter_tables,
-        "ALTER TABLE ".TBL_AWARDS." ADD Team int NOT NULL",
-        "ALTER TABLE ".TBL_AWARDS." ADD INDEX (Team)",
-        "ALTER TABLE ".TBL_AWARDS." ADD FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID)"
+	"ALTER TABLE ".TBL_AWARDS." ADD Team int NOT NULL",
+	"ALTER TABLE ".TBL_AWARDS." ADD INDEX (Team)",
+	"ALTER TABLE ".TBL_AWARDS." ADD FOREIGN KEY (Team) REFERENCES ".TBL_TEAMS." (TeamID)"
 	);
 }
 
@@ -633,6 +677,58 @@ if (versionsCompare($eb_version_string, "0.8.13"))
 	);
 }
 
+if (versionsCompare($eb_version_string, "0.9.0"))
+{
+	// To revision 0.9.0
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_EVENTS." ADD Format varchar(63) DEFAULT ''",
+	"ALTER TABLE ".TBL_EVENTS." CHANGE Start_timestamp StartDateTime int(11) unsigned not null",
+	"ALTER TABLE ".TBL_EVENTS." CHANGE End_timestamp EndDateTime int(11) unsigned not null",
+	"ALTER TABLE ".TBL_EVENTS." ADD match_replay_report_userclass tinyint(3) unsigned NOT NULL DEFAULT '".eb_UC_EVENT_PLAYER."'",
+	"ALTER TABLE ".TBL_EVENTS." MODIFY RankingType varchar(20) DEFAULT 'Classic'",
+	"ALTER TABLE ".TBL_EVENTS." MODIFY Status varchar(20) DEFAULT 'draft'",
+	"ALTER TABLE ".TBL_EVENTS." CHANGE MaxPlayers MaxNumberPlayers int DEFAULT '0'",
+	"ALTER TABLE ".TBL_EVENTS." ADD ForceFaction tinyint(1) default '0'",
+	"ALTER TABLE ".TBL_EVENTS." ADD Seeded tinyint(3) default '0'",
+	"ALTER TABLE ".TBL_EVENTS." ADD Seeds text",
+	"ALTER TABLE ".TBL_EVENTS." ADD Results text",
+	"ALTER TABLE ".TBL_EVENTS." ADD Rounds text",
+	"ALTER TABLE ".TBL_EVENTS." ADD MapPool text",
+	"ALTER TABLE ".TBL_TEAMS." ADD Joined  int(11) unsigned not null",
+	"ALTER TABLE ".TBL_TEAMS." ADD CheckedIn tinyint(1) DEFAULT '0'",
+	"ALTER TABLE ".TBL_MATCHS." ADD GameLength int(11) unsigned not null",
+	"ALTER TABLE ".TBL_MATCHS." ADD GameSpeed varchar(20)",
+	"ALTER TABLE ".TBL_MATCHS." ADD Realm varchar(20)",
+	"ALTER TABLE ".TBL_MATCHS." ADD TimePlayed int(11) unsigned not null",
+	"ALTER TABLE ".TBL_PLAYERS." ADD Joined  int(11) unsigned not null",
+	"ALTER TABLE ".TBL_PLAYERS." ADD CheckedIn tinyint(1) DEFAULT '0'",
+	"ALTER TABLE ".TBL_PLAYERS." DROP COLUMN User",
+	"ALTER TABLE ".TBL_SCORES." ADD Color varchar(20)",
+	"ALTER TABLE ".TBL_SCORES." ADD sColor varchar(20)",
+	"ALTER TABLE ".TBL_SCORES." ADD APM int DEFAULT '0'",
+	"ALTER TABLE ".TBL_STATSCATEGORIES." MODIFY CategoryMaxValue int DEFAULT '0'",
+	"ALTER TABLE ".TBL_MEDIA." MODIFY Path varchar(255) NOT NULL default ''",
+	"CREATE TABLE ".TBL_OFFICIAL_EVENTS."
+	(
+	OfficialEventID int NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY(OfficialEventID),
+	Event int NOT NULL,
+	INDEX (Event),
+	FOREIGN KEY (Event) REFERENCES ".TBL_EVENTS." (EventID),
+	Game int NOT NULL,
+	INDEX (Game),
+	FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
+	Type varchar(63),
+	MatchType varchar(63) DEFAULT ''
+	) ENGINE = MyISAM;"
+
+
+	);
+}
+
+
+
+
 /*
 echo "<br>Prefs upgrade:";
 print_r($upgrade_add_prefs);
@@ -643,12 +739,72 @@ echo "<br>";
 
 $eplug_upgrade_done = $eplug_name.' successfully upgraded, now using version: '.$eplug_version;
 
-if(!function_exists("ebattles_uninstall"))
+if (!function_exists('ebattles_upgrade')) {
+	function ebattles_upgrade() {
+		global $sql;
+
+		if (versionsCompare($eb_version_string, "0.9.0"))
+		{
+			require_once(e_PLUGIN."ebattles/include/gamer.php");
+			
+			// To revision 0.9.0
+			$q = "UPDATE ".TBL_EVENTS." SET Type = 'Clan Ladder' WHERE (Type = 'ClanWar')";
+			$result = $sql->db_Query($q);
+
+			$q = "ALTER TABLE ".TBL_PLAYERS." ADD Gamer int(10) unsigned NOT NULL";
+			$result = $sql->db_Query($q);
+			$q = "ALTER TABLE ".TBL_PLAYERS." ADD INDEX (Gamer)";
+			$result = $sql->db_Query($q);
+			$q = "ALTER TABLE ".TBL_PLAYERS." ADD FOREIGN KEY (Gamer) REFERENCES ".TBL_GAMERS." (GamerID)";
+			$result = $sql->db_Query($q);
+
+			$q = "CREATE TABLE ".TBL_GAMERS."
+			(
+			GamerID int NOT NULL AUTO_INCREMENT,
+			PRIMARY KEY(GamerID),
+			User int(10) unsigned NOT NULL,
+			INDEX (User),
+			FOREIGN KEY (User) REFERENCES ".TBL_USERS." (user_id),
+			Game int NOT NULL,
+			INDEX (Game),
+			FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
+			Name varchar(64) NOT NULL default '',
+			UniqueGameID varchar(64) NOT NULL default ''
+			) ENGINE = MyISAM;";
+			$result = $sql->db_Query($q);
+
+			$q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
+			.TBL_EVENTS.".*, "
+			.TBL_USERS.".*"
+			." FROM ".TBL_PLAYERS.", "
+			.TBL_EVENTS.", "
+			.TBL_USERS
+			." WHERE (".TBL_PLAYERS.".Event =  ".TBL_EVENTS.".EventID)"
+			."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+			$result = $sql->db_Query($q);
+			$nbrplayers = mysql_numrows($result);
+			for($i = 0; $i < $nbrplayers; $i++)
+			{
+				$pid = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+				$puid = mysql_result($result, $i, TBL_PLAYERS.".User");
+				$puname = mysql_result($result, $i, TBL_USERS.".user_name");
+				$pgame = mysql_result($result, $i, TBL_EVENTS.".Game");
+				
+				$gamerID = updateGamer($puid, $pgame, $puname, "");
+
+				$q2 = "UPDATE ".TBL_PLAYERS." SET Gamer='$gamerID' WHERE (PlayerId = '$pid')";
+				$result2 = $sql->db_Query($q2);
+			}
+		}
+	}
+}
+
+if(!function_exists('ebattles_uninstall'))
 {
 	function ebattles_uninstall()
 	{
 		global $sql;
-		$sql->db_Delete("menus", "menu_name = 'eb_activity_menu'");
+		$sql->db_Delete("menus", "menu_name = 'ebattles_menu'");
 		$sql->db_Delete("menus", "menu_name = 'eb_activity_menu'");
 
 		//Remove comments and ratings during uninstall
@@ -656,6 +812,5 @@ if(!function_exists("ebattles_uninstall"))
 		purgeRatings("ebscores");
 	}
 }
-
 
 ?>

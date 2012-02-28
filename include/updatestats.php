@@ -7,6 +7,7 @@
 require_once(e_HANDLER."avatar_handler.php");
 require_once(e_HANDLER."rate_class.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
+require_once(e_PLUGIN."ebattles/include/gamer.php");
 
 function updateStats($event_id, $time, $serialize = TRUE)
 {
@@ -58,24 +59,20 @@ function updateStats($event_id, $time, $serialize = TRUE)
     $points_score = array();
 
     /* Event Info */
-    $q = "SELECT ".TBL_EVENTS.".*"
-    ." FROM ".TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
-    $result = $sql->db_Query($q);
-    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-    $emingames = mysql_result($result,0 , TBL_EVENTS.".nbr_games_to_rank");
-    $eminteamgames = mysql_result($result,0 , TBL_EVENTS.".nbr_team_games_to_rank");
-    $ehide_ratings_column = mysql_result($result,0 , TBL_EVENTS.".hide_ratings_column");
-    $eranking_type = mysql_result($result,0 , TBL_EVENTS.".RankingType");
-    if ($eranking_type == "Classic") $ehide_ratings_column = TRUE;
+   	$event = new Event($event_id);
+
+    $hide_ratings_column = $event->getField('hide_ratings_column');
+    if ($event->getField('RankingType') == "Classic") $hide_ratings_column = TRUE;
 
     // Update Players stats
     $q_Players = "SELECT ".TBL_PLAYERS.".*, "
     .TBL_USERS.".*"
     ." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
     .TBL_USERS
     ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-    ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+    ." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
     $result_Players = $sql->db_Query($q_Players);
     $numPlayers = mysql_numrows($result_Players);
 
@@ -84,8 +81,10 @@ function updateStats($event_id, $time, $serialize = TRUE)
     {
         // For each player
         $pid  = mysql_result($result_Players,$player, TBL_PLAYERS.".PlayerID");
-        $puid  = mysql_result($result_Players,$player, TBL_PLAYERS.".User");
-        $pname  = mysql_result($result_Players,$player, TBL_USERS.".user_name");
+        $puid  = mysql_result($result_Players,$player, TBL_USERS.".user_id");
+        $gamer_id = mysql_result($result_Players,$player, TBL_PLAYERS.".Gamer");
+        $gamer = new Gamer($gamer_id);
+        $pname = $gamer->getField('Name');
         $pavatar = mysql_result($result_Players,$player, TBL_USERS.".user_image");
         $pteam = mysql_result($result_Players,$player, TBL_PLAYERS.".Team");
         $pgames_played = mysql_result($result_Players,$player, TBL_PLAYERS.".GamesPlayed");
@@ -145,11 +144,13 @@ function updateStats($event_id, $time, $serialize = TRUE)
                 ." FROM ".TBL_MATCHS.", "
                 .TBL_SCORES.", "
                 .TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
                 .TBL_USERS
                 ." WHERE (".TBL_MATCHS.".MatchID = '$mID')"
                 ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
                 ." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-                ." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)";
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+                ." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
 
                 $result_Scores = $sql->db_Query($q_Scores);
                 $numScores = mysql_numrows($result_Scores);
@@ -230,7 +231,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $scorediff_score[] = ($pgames_played>0) ? ($pscore - $poppscore)/$pgames_played : 0;
         $points_score[] = $ppoints;
 
-        if (($pgames_played >= $emingames)&&($pbanned == 0))
+        if (($pgames_played >= $event->getField('nbr_games_to_rank'))&&($pbanned == 0))
         {
             $players_rated++;
         }
@@ -379,7 +380,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
             {
                 $stat_InfoOnly[$cat_index] = $cat_InfoOnly;
 
-                switch($eranking_type)
+                switch($event->getField('RankingType'))
                 {
                     case "CombinedStats":
                     if (($cat_InfoOnly == TRUE))
@@ -449,7 +450,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
     // user rating not shown
     // $stats[0][] = '<b>'.EB_STATS_L30.'</b>';
 
-    if ($ehide_ratings_column == FALSE)
+    if ($hide_ratings_column == FALSE)
     $stats[0][] = '<b title="'.EB_STATS_L31.' ['.number_format ($rating_max,2).' '.EB_STATS_L27.']">'.EB_STATS_L32.'</b>';
     //$stats[0][] = '<b title="'.EB_STATS_L31.'">'.EB_STATS_L32.'</b><br /><div class="smalltext">['.number_format ($rating_max,2).'&nbsp;'.EB_STATS_L27.']</div>';
 
@@ -458,7 +459,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $stats[0][] = $stat_cat_header[$category];
     }
 
-    switch($eranking_type)
+    switch($event->getField('RankingType'))
     {
         case "CombinedStats":
         $OverallScoreThreshold = 0;
@@ -466,7 +467,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
         for($player=0; $player < $numPlayers; $player++)
         {
             $OverallScore[$player] = 0;
-            if (($games_played[$player] >= $emingames)&&($banned[$player] == 0))
+            if (($games_played[$player] >= $event->getField('nbr_games_to_rank'))&&($banned[$player] == 0))
             {
                 for ($category=0; $category < $numDisplayedCategories; $category++)
                 {
@@ -493,7 +494,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
         $OverallScoreThreshold = $numPlayers;
         for($player=0; $player < $numPlayers; $player++)
         {
-            if (($games_played[$player] >= $emingames)&&($banned[$player] == 0))
+            if (($games_played[$player] >= $event->getField('nbr_games_to_rank'))&&($banned[$player] == 0))
             {
                 $OverallScore[$player] = array_search($player, $ranks, false) + $numPlayers + 1;
             }
@@ -638,7 +639,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
             }
         }
 
-        list($pclan, $pclantag, $pclanid) = getClanName($team[$index]);
+        list($pclan, $pclantag, $pclanid) = getClanInfo($team[$index]);
 
         if(strcmp(USERID,$puid) == 0)
         {
@@ -674,12 +675,12 @@ function updateStats($event_id, $time, $serialize = TRUE)
         // user rating not shown
         //$stats_row[] = $rating[$index];
 
-        if ($ehide_ratings_column == FALSE)
+        if ($hide_ratings_column == FALSE)
         $stats_row[] = number_format ($OverallScore[$index],2);
 
         for ($category=0; $category < $numDisplayedCategories; $category++)
         {
-            if (($stat_InfoOnly[$category] == TRUE)||($eranking_type == "Classic"))
+            if (($stat_InfoOnly[$category] == TRUE)||($event->getField('RankingType') == "Classic"))
             {
                 $stats_row[] = $stat_display[$category][$index];
             }
@@ -708,6 +709,8 @@ function updateStats($event_id, $time, $serialize = TRUE)
         if ($fp == FALSE) {
             // handle error
             $error .= EB_STATS_L38;
+			echo $error;
+			exit();
         }
 
         fputs($fp, $OUTPUT);

@@ -33,7 +33,7 @@ if (!$req_user)
 }
 else
 {
-	$text .= '<script type="text/javascript" src="./js/tabpane.js"></script>';
+	require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 	/* Logged in user viewing own account */
 	if(strcmp(USERID,$req_user) == 0){
@@ -49,15 +49,21 @@ else
 	$uid  = mysql_result($result2,0, TBL_USERS.".user_id");
 	$uname  = mysql_result($result2,0, TBL_USERS.".user_name");
 
-	$text .= '<div class="tab-pane" id="tab-pane-5">';
+	$text .= '<div id="tabs">';
+	$text .= '<ul>';
+	$text .= '<li><a href="#tabs-1">'.EB_USER_L2.'</a></li>';
+	$text .= '<li><a href="#tabs-2">'.EB_USER_L3.'</a></li>';
+	$text .= '<li><a href="#tabs-4">'.EB_USER_L4.'</a></li>';
+	$text .= '<li><a href="#tabs-5">'.EB_USER_L5.'</a></li>';
+	$text .= '<li><a href="#tabs-6">'.EB_USER_L6.'</a></li>';
+	$text .= '</ul>';
 
 	/*
 	---------------------
 	Player Profile
 	---------------------
 	*/
-	$text .= '<div class="tab-page">';    // tab-page"Profile"
-	$text .= '<div class="tab">'.EB_USER_L2.'</div>';
+	$text .= '<div id="tabs-1">';    // tab-page "Profile"
 
 	$text .= '<p>';
 	$text .= EB_USER_L7.': <a href="'.e_BASE.'user.php?id.'.$req_user.'">'.$uname.'</a>';
@@ -70,9 +76,7 @@ else
 	Events
 	---------------------
 	*/
-	$text .= '<div class="tab-page">';    // tab-page "Events"
-	$text .= '<div class="tab">'.EB_USER_L3.'</div>
-	';
+	$text .= '<div id="tabs-2">';    // tab-page "Events"
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_events_create_class'])))
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/eventcreate.php" method="post">';
@@ -88,9 +92,11 @@ else
 	$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L9.'</div>';
 	$q = " SELECT *"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_EVENTS.", "
 	.TBL_GAMES
-	." WHERE (".TBL_PLAYERS.".User = '$req_user')"
+	." WHERE (".TBL_GAMERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 	."   AND (".TBL_PLAYERS.".Event = ".TBL_EVENTS.".EventID)"
 	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
 
@@ -100,42 +106,45 @@ else
 	if ($num_rows>0)
 	{
 		/* Display table contents */
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L10;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L37;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L11;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L12;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L13;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$ename  = mysql_result($result,$i, TBL_EVENTS.".Name");
-			$egame  = mysql_result($result,$i, TBL_GAMES.".Name");
-			$egameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
-			$eid = mysql_result($result,$i, TBL_EVENTS.".EventID");
-			$eowner = mysql_result($result,$i, TBL_EVENTS.".Owner");
-			$pid =  mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-			$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-			$pwinloss  = mysql_result($result,$i, TBL_PLAYERS.".Win")."/".mysql_result($result,$i, TBL_PLAYERS.".Draw")."/".mysql_result($result,$i, TBL_PLAYERS.".Loss");
+			$event_id = mysql_result($result,$i, TBL_EVENTS.".EventID");
+			$lName  = mysql_result($result,$i, TBL_EVENTS.".Name");
+			$lOwner = mysql_result($result,$i, TBL_EVENTS.".Owner");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
+			$player_id =  mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+			$pRank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
+			$pWinLoss  = mysql_result($result,$i, TBL_PLAYERS.".Win")."/".mysql_result($result,$i, TBL_PLAYERS.".Draw")."/".mysql_result($result,$i, TBL_PLAYERS.".Loss");
 
 			$q_Scores = "SELECT ".TBL_SCORES.".*, "
 			.TBL_PLAYERS.".*"
 			." FROM ".TBL_SCORES.", "
 			.TBL_PLAYERS
 			." WHERE (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-			." AND (".TBL_PLAYERS.".PlayerID = '$pid')";
+			." AND (".TBL_PLAYERS.".PlayerID = '$player_id')";
 
 			$result_Scores = $sql->db_Query($q_Scores);
 			$numScores = mysql_numrows($result_Scores);
@@ -158,26 +167,28 @@ else
 			$rating = displayRating($prating, $prating_votes);
 
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a><br />';
-			$text .= '<img '.getGameIconResize($egameicon).'/> '.$egame;
+			$text .= '<td class="eb_td">';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$lName.'</a>';
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
-			$text .= $prank;
+			$text .= '<td class="eb_td">';
+			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
-			$text .= $pwinloss;
+			$text .= '<td class="eb_td">';
+			$text .= $pRank;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
+			$text .= $pWinLoss;
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
 			$text .= $rating;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
-			if($eowner == $req_user)
+			$text .= '<td class="eb_td">';
+			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
-				if ($eowner == USERID)
+				if ($lOwner == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$eid.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else
@@ -206,47 +217,52 @@ else
 	if ($num_events>0)
 	{
 		/* Display table contents */
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L10;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L37;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L31;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 
 		for($i=0; $i<$num_events; $i++)
 		{
-			$ename  = mysql_result($result,$i, TBL_EVENTS.".Name");
-			$egame  = mysql_result($result,$i, TBL_GAMES.".Name");
-			$egameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
-			$eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
-			$eowner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
+			$event_id  = mysql_result($result,$i, TBL_EVENTS.".EventID");
+			$lName  = mysql_result($result,$i, TBL_EVENTS.".Name");
+			$lOwner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
 
 			$q_pending = "SELECT COUNT(*) as nbrMatchesPending"
 			." FROM ".TBL_MATCHS
-			." WHERE (".TBL_MATCHS.".Event = '$eid')"
+			." WHERE (".TBL_MATCHS.".Event = '$event_id')"
 			."   AND (".TBL_MATCHS.".Status = 'pending')";
 			$result_pending = $sql->db_Query($q_pending);
 			$row = mysql_fetch_array($result_pending);
 			$nbrMatchesPending = $row['nbrMatchesPending'];
 
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a><br />';
-			$text .= '<img '.getGameIconResize($egameicon).'/> '.$egame;
+			$text .= '<td class="eb_td">';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$lName.'</a>';
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
-			if($eowner == $req_user)
+			$text .= '<td class="eb_td">';
+			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
+			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
-				if ($eowner == USERID)
+				if ($lOwner == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$eid.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else
@@ -254,7 +270,7 @@ else
 				$text .= EB_USER_L17;
 			}
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
 			$text .= '</td>';
 			$text .= '</tr>';
@@ -279,47 +295,52 @@ else
 	if ($num_rows>0)
 	{
 		/* Display table contents */
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L10;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L37;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L31;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$ename  = mysql_result($result,$i, TBL_EVENTS.".Name");
-			$egame  = mysql_result($result,$i, TBL_GAMES.".Name");
-			$egameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
-			$eid  = mysql_result($result,$i, TBL_EVENTS.".EventID");
-			$eowner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
+			$event_id  = mysql_result($result,$i, TBL_EVENTS.".EventID");
+			$lName  = mysql_result($result,$i, TBL_EVENTS.".Name");
+			$lOwner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
 
 			$q_pending = "SELECT COUNT(*) as nbrMatchesPending"
 			." FROM ".TBL_MATCHS
-			." WHERE (".TBL_MATCHS.".Event = '$eid')"
+			." WHERE (".TBL_MATCHS.".Event = '$event_id')"
 			."   AND (".TBL_MATCHS.".Status = 'pending')";
 			$result_pending = $sql->db_Query($q_pending);
 			$row = mysql_fetch_array($result_pending);
 			$nbrMatchesPending = $row['nbrMatchesPending'];
 
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$eid.'">'.$ename.'</a><br />';
-			$text .= '<img '.getGameIconResize($egameicon).'/> '.$egame;
+			$text .= '<td class="eb_td">';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$lName.'</a>';
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
-			if($eowner == $req_user)
+			$text .= '<td class="eb_td">';
+			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
+			if($lOwner == $req_user)
 			{
 				$text .= EB_USER_L15;
-				if ($eowner == USERID)
+				if ($lOwner == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$eid.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else
@@ -327,7 +348,7 @@ else
 				$text .= EB_USER_L17;
 			}
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
 			$text .= '</td>';
 			$text .= '</tr>';
@@ -338,12 +359,10 @@ else
 
 	/*
 	---------------------
-	Divisions
+	Teams
 	---------------------
 	*/
-	$text .= '<div class="tab-page">';   // tab-page "Divisions"
-	$text .= '<div class="tab">'.EB_USER_L4.'</div>
-	';
+	$text .= '<div id="tabs-4">';   // tab-page "Teams"
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_teams_create_class'])))
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/clancreate.php" method="post">';
@@ -379,14 +398,14 @@ else
 
 	if ($num_rows>0)
 	{
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L24;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L25;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
@@ -397,11 +416,11 @@ else
 			$cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 			$cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
 			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			if($cowner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -436,14 +455,14 @@ else
 
 	if ($num_rows>0)
 	{
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L28;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
@@ -452,10 +471,10 @@ else
 			$cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 			$cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			if($cowner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -493,14 +512,14 @@ else
 
 	if ($num_rows>0)
 	{
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3">';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L24;
-		$text .= '</td>';
-		$text .= '<td class="forumheader3">';
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
-		$text .= '</td>';
+		$text .= '</th>';
 		$text .= '</tr>';
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
@@ -511,11 +530,11 @@ else
 			$dgame  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$dgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
 			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			if($cowner == $req_user)
 			{
 				$text .= EB_USER_L15;
@@ -541,21 +560,22 @@ else
 	Matches
 	---------------------
 	*/
-	$text .= '<div class="tab-page">';   // tab-page "Matches"
-	$text .= '<div class="tab">'.EB_USER_L5.'</div>';
+	$text .= '<div id="tabs-5">';   // tab-page "Matches"
 
 	/* Display Active Matches */
 	/* set pagination variables */
 	$q = "SELECT count(*) "
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND (".TBL_MATCHS.".Status = 'active')"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')";
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')";
 	$result = $sql->db_Query($q);
 	$totalItems = mysql_result($result, 0);
 	$pages->items_total = $totalItems;
@@ -565,24 +585,26 @@ else
 	$text .= '<p><b>';
 	$text .= $totalItems.'&nbsp;'.EB_EVENT_L59;
 	$text .= '</b></p>';
+	$text .= '<br />';
 
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_MATCHS.".Status = 'active')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
 	." $pages->limit";
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
 	if ($num_rows>0)
 	{
-		$text .= '<br />';
 		// Paginate
 		$text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
 		$text .= '<span style="float:right">';
@@ -597,8 +619,9 @@ else
 		$text .= '<table class="table_left">';
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-			$text .= displayMatchInfo($mID);
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo();
 		}
 		$text .= '</table>';
 	}
@@ -608,13 +631,15 @@ else
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_MATCHS.".Status = 'pending')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
@@ -630,8 +655,9 @@ else
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numMatches; $i++)
 		{
-			$mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-			$text .= displayMatchInfo($mID);
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo();
 		}
 		$text .= '</table>';
 	}
@@ -642,13 +668,15 @@ else
 	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
 	." FROM ".TBL_MATCHS.", "
 	.TBL_SCORES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_MATCHS.".Status = 'scheduled')"
 	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 	." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 	." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
 	." AND   (".TBL_PLAYERS.".Team != 0)))"
-	." AND (".TBL_PLAYERS.".User = '$req_user')"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
@@ -664,8 +692,9 @@ else
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numMatches; $i++)
 		{
-			$mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-			$text .= displayMatchInfo($mID, eb_MATCH_SCHEDULED);
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo(eb_MATCH_SCHEDULED);
 		}
 		$text .= '</table>';
 	}
@@ -691,8 +720,9 @@ else
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numChallenges; $i++)
 		{
-			$cID  = mysql_result($result,$i, TBL_CHALLENGES.".ChallengeID");
-			$text .= displayChallengeInfo($cID);
+			$challenge_id  = mysql_result($result,$i, TBL_CHALLENGES.".ChallengeID");
+			$challenge = new Challenge($challenge_id);
+			$text .= $challenge->displayChallengeInfo();
 		}
 		$text .= '</table>';
 	}
@@ -702,12 +732,14 @@ else
 
 	$q = "SELECT DISTINCT ".TBL_CHALLENGES.".*"
 	." FROM ".TBL_CHALLENGES.", "
-	.TBL_PLAYERS
+	.TBL_PLAYERS.", "
+	.TBL_GAMERS
 	." WHERE (".TBL_CHALLENGES.".Status = 'requested')"
 	."   AND ((".TBL_PLAYERS.".PlayerID = ".TBL_CHALLENGES.".ChallengedPlayer)"
 	."    OR  ((".TBL_PLAYERS.".Team = ".TBL_CHALLENGES.".ChallengedTeam)"
 	."   AND   (".TBL_PLAYERS.".Team != 0)))"
-	."   AND (".TBL_PLAYERS.".User = '$req_user')"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_GAMERS.".User = '$req_user')"
 	." ORDER BY ".TBL_CHALLENGES.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numChallenges = mysql_numrows($result);
@@ -723,8 +755,9 @@ else
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numChallenges; $i++)
 		{
-			$cID  = mysql_result($result,$i, TBL_CHALLENGES.".ChallengeID");
-			$text .= displayChallengeInfo($cID);
+			$challenge_id  = mysql_result($result,$i, TBL_CHALLENGES.".ChallengeID");
+			$challenge = new Challenge($challenge_id);
+			$text .= $challenge->displayChallengeInfo();
 		}
 		$text .= '</table>';
 	}
@@ -736,8 +769,7 @@ else
 	Awards
 	---------------------
 	*/
-	$text .= '<div class="tab-page">';   // tab-page "Awards"
-	$text .= '<div class="tab">'.EB_USER_L6.'</div>';
+	$text .= '<div id="tabs-6">';   // tab-page "Awards"
 
 	/* Stats/Results */
 	$q = "SELECT ".TBL_AWARDS.".*, "
@@ -747,12 +779,14 @@ else
 	.TBL_USERS.".*"
 	." FROM ".TBL_AWARDS.", "
 	.TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_EVENTS.", "
 	.TBL_GAMES.", "
 	.TBL_USERS
 	." WHERE (".TBL_USERS.".user_id = $req_user)"
 	." AND (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
-	." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)"
 	." AND (".TBL_PLAYERS.".Event = ".TBL_EVENTS.".EventID)"
 	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 	." ORDER BY ".TBL_AWARDS.".timestamp DESC";
@@ -769,7 +803,9 @@ else
 		{
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
-			$aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
+			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+			$gamer = new Gamer($gamer_id);
+			$aUserNickName = $gamer->getField('Name');
 			$aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
 			$aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
 			$aEventgame = mysql_result($result,$i , TBL_GAMES.".Name");
@@ -800,6 +836,10 @@ else
 				$award = EB_AWARD_L10;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
 				break;
+				case 'PlayerWonTournament':
+				$award = EB_AWARD_L12;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
+				break;
 			}
 
 			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
@@ -829,15 +869,7 @@ else
 	$text .= '<br />';
 	$text .= '</div>';   // tab-page "Awards"
 
-	$text .= '
-	</div>
-
-	<script type="text/javascript">
-	//<![CDATA[
-	setupAllTabs();
-	//]]>
-	</script>
-	';
+	$text .= '</div>';
 }
 $ns->tablerender(EB_USER_L1, $text);
 require_once(FOOTERF);

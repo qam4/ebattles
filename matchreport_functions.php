@@ -7,15 +7,8 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	global $time;
 
 	/* Event Info */
-	$q = "SELECT ".TBL_EVENTS.".*"
-	." FROM ".TBL_EVENTS
-	." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
-	$result = $sql->db_Query($q);
-	$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-	$eGame = mysql_result($result,0 , TBL_EVENTS.".Game");
-	$eMaxMapsPerMatch = mysql_result($result,0 , TBL_EVENTS.".MaxMapsPerMatch");
-
-
+	$event = new Event($event_id);
+	
 	if (e_WYSIWYG)
 	{
 		$insertjs = "rows='15'";
@@ -41,10 +34,10 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 		$matchreport_str = EB_MATCHR_L46;
 
 		$text .= '<div>';
-		$text .= EB_MATCHR_L45." $match_id<br>";
+		$text .= EB_MATCHR_L45." $match_id<br />";
 		$text .= '<img src="'.e_PLUGIN.'ebattles/images/exclamation.png"/>';
 		$text .= EB_MATCHR_L47;
-		$text .= '</div><br>';
+		$text .= '</div><br />';
 	}
 	if(isset($_POST['matchschedule']))
 	{
@@ -74,7 +67,7 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 		$comment = '';
 	}
 
-	for ($matchMap = 0; $matchMap<min($numMaps, $eMaxMapsPerMatch); $matchMap++)
+	for ($matchMap = 0; $matchMap<min($numMaps, $event->getField('MaxMapsPerMatch')); $matchMap++)
 	{
 		if (!isset($_POST['map'.$matchMap])) $_POST['map'.$matchMap] = 0;
 	}
@@ -199,7 +192,7 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	// List of all Factions
 	$q_Factions = "SELECT ".TBL_FACTIONS.".*"
 	." FROM ".TBL_FACTIONS
-	." WHERE (".TBL_FACTIONS.".Game = '$eGame')";
+	." WHERE (".TBL_FACTIONS.".Game = '".$event->getField('Game')."')";
 	$result_Factions = $sql->db_Query($q_Factions);
 	$numFactions = mysql_numrows($result_Factions);
 
@@ -320,7 +313,7 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 		// List of all Maps
 		$q_Maps = "SELECT ".TBL_MAPS.".*"
 		." FROM ".TBL_MAPS
-		." WHERE (".TBL_MAPS.".Game = '$eGame')";
+		." WHERE (".TBL_MAPS.".Game = '".$event->getField('Game')."')";
 		$result_Maps = $sql->db_Query($q_Maps);
 		$numMaps = mysql_numrows($result_Maps);
 
@@ -329,7 +322,7 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 			$text .= EB_MATCHR_L42;
 			$text .= '<table id="matchresult_selectMap"><tbody>';
 
-			for ($matchMap = 0; $matchMap<min($numMaps, $eMaxMapsPerMatch); $matchMap++)
+			for ($matchMap = 0; $matchMap<min($numMaps, $event->getField('MaxMapsPerMatch')); $matchMap++)
 			{
 				$text .= '<tr>';
 
@@ -380,31 +373,13 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 		<table>
 		<tr>
 		<td>
-		<div><input class="tbox" type="text" name="date_scheduled" id="f_date"  value="'.$date_scheduled.'" readonly="readonly" /></div>
-		</td>
-		<td>
-		<img src="./js/calendar/img.gif" alt="date selector" id="f_trigger" style="cursor: pointer; border: 1px solid red;" title="'.EB_MATCHR_L50.'"
-		';
-		$text .= "onmouseover=\"this.style.background='red';\" onmouseout=\"this.style.background=''\" />";
-		$text .= '
+		<div><input class="tbox timepicker" type="text" name="date_scheduled" id="f_date"  value="'.$date_scheduled.'" readonly="readonly" /></div>
 		</td>
 		<td>
 		<div><input class="button" type="button" value="'.EB_MATCHR_L51.'" onclick="clearDate(this.form);"/></div>
 		</td>
 		</tr>
 		</table>
-		';
-		$text .= '
-		<script type="text/javascript">
-		Calendar.setup({
-		inputField     :    "f_date",      // id of the input field
-		ifFormat       :    "%m/%d/%Y %I:%M %p",       // format of the input field
-		showsTime      :    true,            // will display a time selector
-		button         :    "f_trigger",   // trigger for the calendar (button ID)
-		singleClick    :    true,           // single-click mode
-		step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-		});
-		</script>
 		</td>
 		</tr>
 		</table>

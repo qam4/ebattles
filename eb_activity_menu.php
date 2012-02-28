@@ -56,10 +56,10 @@ function displayRecentActivity($event_id){
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-			$mTime  = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
-			$events[$nbr_events][0] = $mTime;
-			$events[$nbr_events][1] = displayMatchInfo($mID);
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$events[$nbr_events][0] = $match->getField('TimeReported');
+			$events[$nbr_events][1] = $match->displayMatchInfo();
 			$nbr_events ++;
 		}
 	}
@@ -72,12 +72,14 @@ function displayRecentActivity($event_id){
 	.TBL_GAMES.".*"
 	." FROM ".TBL_AWARDS.", "
 	.TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS.", "
 	.TBL_EVENTS.", "
 	.TBL_GAMES
-    ." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
-	." AND     (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)"
-    ." AND (".TBL_PLAYERS.".Event = ".TBL_EVENTS.".EventID)"
+	." WHERE (".TBL_AWARDS.".Player = ".TBL_PLAYERS.".PlayerID)"
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)"
+	." AND (".TBL_PLAYERS.".Event = ".TBL_EVENTS.".EventID)"
 	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 	.$eventid_award
 	." ORDER BY ".TBL_AWARDS.".timestamp DESC"
@@ -85,7 +87,7 @@ function displayRecentActivity($event_id){
 
 	$result = $sql->db_Query($q);
 	$numAwards = mysql_numrows($result);
-	
+
 	if ($numAwards>0)
 	{
 		/* Display table contents */
@@ -93,15 +95,17 @@ function displayRecentActivity($event_id){
 		{
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
 			$aUser  = mysql_result($result,$i, TBL_USERS.".user_id");
-			$aUserNickName  = mysql_result($result,$i, TBL_USERS.".user_name");
-			$aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
-			$aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
+			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+			$gamer = new Gamer($gamer_id);
+			$aUserNickName = $gamer->getField('Name');
 			$aEventgame = mysql_result($result,$i , TBL_GAMES.".Name");
 			$aEventgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
 			$aTime_local = $aTime + TIMEOFFSET;
 			$date = date("d M Y, h:i A",$aTime_local);
+			$aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
+			$aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
 
 			switch ($aType) {
 				case 'PlayerTookFirstPlace':
@@ -124,6 +128,11 @@ function displayRecentActivity($event_id){
 				$award = EB_AWARD_L10;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
 				break;
+				case 'PlayerWonTournament':
+				$award = EB_AWARD_L12;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
+				break;
+
 			}
 
 			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
@@ -160,8 +169,8 @@ function displayRecentActivity($event_id){
 	.TBL_TEAMS.", "
 	.TBL_EVENTS.", "
 	.TBL_GAMES
-    ." WHERE (".TBL_AWARDS.".Team = ".TBL_TEAMS.".TeamID)"
-    ." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
+	." WHERE (".TBL_AWARDS.".Team = ".TBL_TEAMS.".TeamID)"
+	." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
 	." AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 	.$eventid_award
 	." ORDER BY ".TBL_AWARDS.".timestamp DESC"
@@ -169,24 +178,24 @@ function displayRecentActivity($event_id){
 
 	$result = $sql->db_Query($q);
 	$numAwards = mysql_numrows($result);
-	
+
 	if ($numAwards>0)
 	{
 		/* Display table contents */
 		for($i=0; $i < $numAwards; $i++)
 		{
 			$aID  = mysql_result($result,$i, TBL_AWARDS.".AwardID");
-			$aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
-			$aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
 			$aEventgame = mysql_result($result,$i , TBL_GAMES.".Name");
 			$aEventgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$aType  = mysql_result($result,$i, TBL_AWARDS.".Type");
 			$aTime  = mysql_result($result,$i, TBL_AWARDS.".timestamp");
 			$aTime_local = $aTime + TIMEOFFSET;
 			$date = date("d M Y, h:i A",$aTime_local);
+			$aEventID  = mysql_result($result,$i, TBL_EVENTS.".EventID");
+			$aEventName  = mysql_result($result,$i, TBL_EVENTS.".Name");
 
 			$aClanTeam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-			list($tclan, $tclantag, $tclanid) = getClanName($aClanTeam);
+			list($tclan, $tclantag, $tclanid) = getClanInfo($aClanTeam);
 
 			switch ($aType) {
 				case 'TeamTookFirstPlace':
@@ -208,6 +217,10 @@ function displayRecentActivity($event_id){
 				case 'TeamStreak25':
 				$award = EB_AWARD_L10;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
+				break;
+				case 'TeamWonTournament':
+				$award = EB_AWARD_L12;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
 				break;
 			}
 
@@ -236,7 +249,7 @@ function displayRecentActivity($event_id){
 			$nbr_events ++;
 		}
 	}
-	
+
 	$text .= '<table style="margin-left: 0px; margin-right: auto;">';
 	multi2dSortAsc($events, 0, SORT_DESC);
 	for ($index = 0; $index<min($nbr_events, $rowsPerPage); $index++)
