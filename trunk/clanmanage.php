@@ -2,35 +2,21 @@
 /**
 *clanmanage.php
 *
-* This page is for users to edit their account information
-* such as their password, email address, etc. Their
-* usernames can not be edited. When changing their
-* password, they must first confirm their current password.
 *
 */
+
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 
+require_once(HEADERF);
+
 /*******************************************************************
 ********************************************************************/
-// Specify if we use WYSIWYG for text areas
-global $e_wysiwyg;
-$e_wysiwyg	= "clandescription";  // set $e_wysiwyg before including HEADERF
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
+$text .= '
+<script type="text/javascript" src="./js/clan.js"></script>
+';
 
-require_once(HEADERF);
-$text = '';
-
-if (e_WYSIWYG)
-{
-	$insertjs = "rows='15'";
-}
-else
-{
-	require_once(e_HANDLER."ren_help.php");
-	$insertjs = "rows='5' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
-}
-
-/* Clan Name */
 $clan_id = $_GET['clanid'];
 
 if (!$clan_id)
@@ -40,16 +26,6 @@ if (!$clan_id)
 }
 else
 {
-	$text .= "
-	<script type='text/javascript' src='./js/tabpane.js'></script>
-	<script type='text/javascript'>
-	<!--//
-	function changeteamtext(v)
-	{
-	document.getElementById('clanavatar').value=v;
-	}    //-->
-	</script>
-	";
 
 	$q = "SELECT ".TBL_CLANS.".*, "
 	.TBL_USERS.".*"
@@ -59,20 +35,10 @@ else
 	." AND (".TBL_USERS.".user_id = ".TBL_CLANS.".Owner)";
 
 	$result = $sql->db_Query($q);
-	$num_rows = mysql_numrows($result);
-
-	$clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
 	$clan_owner  = mysql_result($result,0, TBL_USERS.".user_id");
 	$clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
-	$clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
-	$clan_password    = mysql_result($result,0, TBL_CLANS.".password");
-	$clan_avatar    = mysql_result($result,0, TBL_CLANS.".Image");
-	$clan_website    = mysql_result($result,0, TBL_CLANS.".websiteURL");
-	$clan_email    = mysql_result($result,0, TBL_CLANS.".email");
-	$clan_IM    = mysql_result($result,0, TBL_CLANS.".IM");
-	$clan_Description    = mysql_result($result,0, TBL_CLANS.".Description");
 
-	if ($clan_avatar == '' && $pref['eb_avatar_default_team_image'] != '') $clan_avatar = $pref['eb_avatar_default_team_image'];
+	$clan = new Clan($clan_id);
 
 	$can_manage = 0;
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
@@ -84,20 +50,25 @@ else
 	}
 	else
 	{
-		$text .= '
-		<div class="tab-pane" id="tab-pane-4">
+		$text .= '<div id="tabs">';
+		$text .= '<ul>';
+		$text .= '<li><a href="#tabs-1">'.EB_CLANM_L2.'</a></li>';
+		$text .= '<li><a href="#tabs-2">'.EB_CLANM_L36.'</a></li>';
+		$text .= '<li><a href="#tabs-3">'.EB_CLANM_L3.'</a></li>';
+		$text .= '</ul>';
 
-		<div class="tab-page">
-		<div class="tab">'.EB_CLANM_L2.'</div>
-		';
+		//***************************************************************************************
+		// tab-page "Team Summary"
+		$text .= '<div id="tabs-1">';
 
-		$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
-		$text .= '<table class="fborder" style="width:95%">';
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tbody>';
-		$text .= '<!-- Clan -->';
-		$text .= '<tr>';
-		$text .= '<td class="forumheader3"><b>'.EB_CLANM_L4.'</b></td>';
-		$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan_name.'</a> ('.$clan_tag.')</b>';
+		$text .= '<tr><td>';
+		$text .= '
+		<form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
+		'.ebImageTextButton('submit', 'magnify.png', EB_CLANM_L35).'
+		</form>';
+		$text .= '</td></tr>';
 
 		// Delete team
 		$q_ClanScores = "SELECT ".TBL_DIVISIONS.".*, "
@@ -116,26 +87,31 @@ else
 		$numClanScores = mysql_numrows($result_ClanScores);
 		if ($numClanScores == 0)
 		{
-			$text .= '<br />';
-			$text .= ebImageTextButton('clandelete', 'delete.png', EB_CLANM_L5, 'negative', EB_CLANM_L6);
+			$text .= '<tr><td>';
+			$text .= ebImageTextButton('clandelete', 'delete.png', EB_CLANM_L5, 'negative jq-button', EB_CLANM_L6);
+			$text .= '</td></tr>';
 		}
-		$text .= '</td></tr>';
+		$text .= '</tbody>';
+		$text .= '</table>';
+
+		$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
+		$text .= '<table class="eb_table" style="width:95%">';
+		$text .= '<tbody>';
 
 		$text .= '<!-- Clan Owner -->';
 		$text .= '<tr>';
-		$text .= '<td class="forumheader3"><b>'.EB_CLANM_L7.'</b><br />';
+		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_CLANM_L7.'<br />';
 		$text .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a>';
 		$text .= '</td>';
 
 		$q_2 = "SELECT ".TBL_USERS.".*"
 		." FROM ".TBL_USERS;
-
 		$result_2 = $sql->db_Query($q_2);
 		$row = mysql_fetch_array($result_2);
 		$num_rows_2 = mysql_numrows($result_2);
 
-		$text .= '<td class="forumheader3">';
-		$text .= '<table>';
+		$text .= '<td class="eb_td">';
+		$text .= '<table class="table_left">';
 		$text .= '<tr>';
 		$text .= '<td><select class="tbox" name="clanowner">';
 		for($j=0; $j<$num_rows_2; $j++)
@@ -162,131 +138,28 @@ else
 		$text .= '</td>';
 		$text .= '</tr>';
 
-		$text .= '<!-- Clan Name -->';
-		$text .= '<tr>';
-		$text .= '
-		<td class="forumheader3"><b>'.EB_CLANM_L9.'</b></td>
-		<td class="forumheader3">
-		<input class="tbox" type="text" size="40" name="clanname" value="'.$clan_name.'"/>
-		</td>
-		</tr>
-
-		<!-- Clan Avatar -->
-		<tr>
-		<td class="forumheader3"><b>'.EB_CLANM_L29.'</b><div class="smalltext">'.EB_CLANM_L30.'</div></td>
-		<td class="forumheader3">';
-		if ($clan_avatar != '')
-		{
-			$text .= '<img '.getAvatarResize(getImagePath($clan_avatar, 'team_avatars')).' style="vertical-align:middle"/>&nbsp;';
-		}
-		$text .= '<input class="tbox" type="text" id="clanavatar" name="clanavatar" size="20" value="'.$clan_avatar.'"/>';
-
-		$text .= '<div><br />';
-		$avatarlist = array();
-		$avatarlist[0] = "";
-		$handle = opendir(e_PLUGIN."ebattles/images/team_avatars/");
-		while ($file = readdir($handle))
-		{
-			if ($file != "." && $file != ".." && $file != "index.html" && $file != ".svn" && $file != "Thumbs.db")
-			{
-				$avatarlist[] = $file;
-			}
-		}
-		closedir($handle);
-
-		for($c = 1; $c <= (count($avatarlist)-1); $c++)
-		{
-			$text .= '<a href="javascript:changeteamtext(\''.$avatarlist[$c].'\')"><img src="'.e_PLUGIN.'ebattles/images/team_avatars/'.$avatarlist[$c].'" alt="'.$avatarlist[$c].'" style="border:0"/></a> ';
-		}
-		$text .= '
-		</div>
-		</td>
-		</tr>';
-
-		$text .= '
-		<!-- Clan Tag -->
-		<tr>
-		<td class="forumheader3"><b>'.EB_CLANM_L10.'</b></td>
-		<td class="forumheader3">
-		<input class="tbox" type="text" size="40" name="clantag" value="'.$clan_tag.'"/>
-		</td>
-		</tr>
-		';
-
-		$text .= '
-		<!-- Clan Password -->
-		<tr>
-		<td class="forumheader3"><b>'.EB_CLANM_L11.'</b></td>
-		<td class="forumheader3">
-		<input class="tbox" type="text" size="40" name="clanpassword" value="'.$clan_password.'"/>
-		</td>
-		</tr>
-		';
-
-		$text .= '
-		<!-- Clan Website -->
-		<tr>
-		<td class="forumheader3"><b>'.EB_CLANM_L31.'</b></td>
-		<td class="forumheader3">
-		<input class="tbox" type="text" size="40" name="clanwebsite" value="'.$clan_website.'"/>
-		</td>
-		</tr>
-		';
-
-		$text .= '
-		<!-- Clan Email -->
-		<tr>
-		<td class="forumheader3"><b>'.EB_CLANM_L32.'</b></td>
-		<td class="forumheader3">
-		<input class="tbox" type="text" size="40" name="clanemail" value="'.$clan_email.'"/>
-		</td>
-		</tr>
-		';
-
-		$text .= '
-		<!-- Clan IM -->
-		<tr>
-		<td class="forumheader3"><b>'.EB_CLANM_L33.'</b></td>
-		<td class="forumheader3">
-		<input class="tbox" type="text" size="40" name="clanIM" value="'.$clan_IM.'"/>
-		</td>
-		</tr>
-		';
-
-		$text .= '
-		<!-- Clan Description -->
-		<tr>
-		<td class="forumheader3"><b>'.EB_CLANM_L34.'</b></td>
-		<td class="forumheader3">
-		<textarea class="tbox" type="text" size="40" id="clandescription" name="clandescription" cols="70" '.$insertjs.'>'.$clan_Description.'</textarea>
-		';
-		if (!e_WYSIWYG)
-		{
-			$text .= '<br />'.display_help("helpb",1);
-		}
-		$text .= '
-		</td>
-		</tr>
-		';
-
 		$text .= '
 		</tbody>
 		</table>
-		<!-- Save Button -->
-		<table><tbody><tr><td>
-		'.ebImageTextButton('clansettingssave', 'disk.png', EB_CLANM_L12).'
-		</td></tr></tbody></table>
 		</form>
-
 		</div>
-		';
+		';  // tab-page "Team Summary"
+
+		//***************************************************************************************
+		// tab-page "Team Settings"
+		$text .= '<div id="tabs-2">';
+
+		$text .= $clan->displayClanSettingsForm();
 
 		$text .= '
-		<div class="tab-page">
-		<div class="tab">'.EB_CLANM_L3.'</div>
-		';
+		</div>
+		';  // tab-page "Team Settings"
 
-		$text .= '<table class="fborder" style="width:95%">';
+		//***************************************************************************************
+		// tab-page "Team Divisions"
+		$text .= '<div id="tabs-3">';
+
+		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tbody>';
 
 		$q = "SELECT DISTINCT ".TBL_GAMES.".*"
@@ -298,10 +171,10 @@ else
 		if ($numGames > 0)
 		{
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			$text .= EB_CLANM_L13;
 			$text .= '</td>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
 			$text .= '<div>';
 			$text .= '<select class="tbox" name="divgame">';
@@ -343,7 +216,7 @@ else
 			$div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 
 			$text .= '<tr>';
-			$text .= '<td class="forumheader3">';
+			$text .= '<td class="eb_td">';
 			$text .= '<b><img '.getGameIconResize($gicon).'/> '.$gname.'</b><br />';
 			$text .= EB_CLANM_L15.': <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$div_captain.'">'.$div_captain_name.'</a>';
 
@@ -367,7 +240,7 @@ else
 				$text .= '<br /><form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
 				$text .= '<div>';
 				$text .= '<input type="hidden" name="clandiv" value="'.$div_id.'"/>';
-				$text .= ebImageTextButton('clandeletediv', 'delete.png', EB_CLANM_L16, 'negative', EB_CLANM_L17);
+				$text .= ebImageTextButton('clandeletediv', 'delete.png', EB_CLANM_L16, 'negative jq-button', EB_CLANM_L17);
 				$text .= '</div></form>';
 			}
 
@@ -392,14 +265,14 @@ else
 			$result_2 = $sql->db_Query($q_2);
 			if(!$result_2 || (mysql_numrows($result_2) < 1))
 			{
-				$text .= '<td class="forumheader3">'.EB_CLANM_L18.'</td></tr>';
+				$text .= '<td class="eb_td">'.EB_CLANM_L18.'</td></tr>';
 			}
 			else
 			{
 				$row = mysql_fetch_array($result_2);
 				$num_rows_2 = mysql_numrows($result_2);
 
-				$text .= '<td class="forumheader3">';
+				$text .= '<td class="eb_td">';
 				$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
 				$text .= '<table>';
 				$text .= '<tr>';
@@ -431,15 +304,15 @@ else
 				$text .= '</tr>';
 
 				$text .= '<tr>';
-				$text .= '<td class="forumheader3">'.$num_rows_2.'&nbsp;'.EB_CLANM_L20.'</td>';
-				$text .= '<td class="forumheader3">';
+				$text .= '<td class="eb_td">'.$num_rows_2.'&nbsp;'.EB_CLANM_L20.'</td>';
+				$text .= '<td class="eb_td">';
 				$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
-				$text .= '<table class="fborder" style="width:95%"><tbody>';
+				$text .= '<table class="eb_table" style="width:95%"><tbody>';
 				$text .= '<tr>
-				<td class="forumheader"><b>'.EB_CLANM_L21.'</b></td>
-				<td class="forumheader"><b>'.EB_CLANM_L22.'</b></td>
-				<td class="forumheader"><b>'.EB_CLANM_L23.'</b></td>
-				<td class="forumheader"><b>'.EB_CLANM_L24.'</b></td>
+				<th class="eb_th2">'.EB_CLANM_L21.'</th>
+				<th class="eb_th2">'.EB_CLANM_L22.'</th>
+				<th class="eb_th2">'.EB_CLANM_L23.'</th>
+				<th class="eb_th2">'.EB_CLANM_L24.'</th>
 				</tr>';
 				for($j=0; $j<$num_rows_2; $j++)
 				{
@@ -451,12 +324,12 @@ else
 					$date  = date("d M Y",$mjoined_local);
 
 					$text .= '<tr>';
-					$text .= '<td class="forumheader3"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$muid.'">'.$mname.'</a></b></td>
-					<td class="forumheader3">'.EB_CLANM_L25.'</td>
-					<td class="forumheader3">'.$date.'</td>';
+					$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$muid.'">'.$mname.'</a></b></td>
+					<td class="eb_td">'.EB_CLANM_L25.'</td>
+					<td class="eb_td">'.$date.'</td>';
 
 					// Checkbox to select which member to kick
-					$text .= '<td class="forumheader3"><input type="checkbox" name="del[]" value="'.$mid.'" /></td>';
+					$text .= '<td class="eb_td"><input type="checkbox" name="del[]" value="'.$mid.'" /></td>';
 					$text .= '</tr>';
 				}
 				$text .= '<tr>';
@@ -473,24 +346,14 @@ else
 		$text .= '</tbody>';
 		$text .= '</table>';
 
-		$text .= '</div>';
+		$text .= '</div>';  // tab-page "Team Divisions"
 		$text .= '</div>';
 		$text .= '<p>';
 		$text .= '<br />'.EB_CLANM_L27.' [<a href="'.e_PLUGIN.'ebattles/clans.php">'.EB_CLANM_L28.'</a>]<br />';
 		$text .= '</p>';
 	}
 
-	$text .= '
-	<script type="text/javascript">
-	//<![CDATA[
-
-	setupAllTabs();
-
-	//]]>
-	</script>
-	';
-
-	$ns->tablerender("$clan_name - ".EB_CLANM_L1, $text);
+	$ns->tablerender($clan->getField('Name')." - ".EB_CLANM_L1, $text);
 }
 require_once(FOOTERF);
 exit;

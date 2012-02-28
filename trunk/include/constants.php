@@ -35,6 +35,8 @@ define("TBL_MAPS_SHORT",            TBL_PREFIX."Maps");
 define("TBL_FACTIONS_SHORT",        TBL_PREFIX."Factions");
 define("TBL_MEDIA_SHORT",           TBL_PREFIX."Media");
 define("TBL_CHALLENGES_SHORT",      TBL_PREFIX."Challenges");
+define("TBL_GAMERS_SHORT",          TBL_PREFIX."Gamers");
+define("TBL_OFFICIAL_EVENTS_SHORT", TBL_PREFIX."OfficialEvents");
 
 define("TBL_USERS",           MPREFIX."user");
 define("TBL_EVENTS",          MPREFIX.TBL_EVENTS_SHORT);
@@ -56,6 +58,8 @@ define("TBL_MAPS",            MPREFIX.TBL_MAPS_SHORT);
 define("TBL_FACTIONS",        MPREFIX.TBL_FACTIONS_SHORT);
 define("TBL_MEDIA",           MPREFIX.TBL_MEDIA_SHORT);
 define("TBL_CHALLENGES",      MPREFIX.TBL_CHALLENGES_SHORT);
+define("TBL_GAMERS",          MPREFIX.TBL_GAMERS_SHORT);
+define("TBL_OFFICIAL_EVENTS", MPREFIX.TBL_OFFICIAL_EVENTS_SHORT);
 
 /**
  * Email Constants - these specify what goes in

@@ -13,104 +13,103 @@ require_once(e_PLUGIN."ebattles/include/match.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 $pages = new Paginator;
-
-$text ='
-<script type="text/javascript" src="./js/tabpane.js"></script>
-';
 
 /* Event Name */
 $event_id = $_GET['eventid'];
 
 if (!$event_id)
 {
-    header("Location: ./events.php");
-    exit();
+	header("Location: ./events.php");
+	exit();
 }
 else
 {
-    $q = "SELECT ".TBL_EVENTS.".*, "
-    .TBL_GAMES.".*"
-    ." FROM ".TBL_EVENTS.", "
-    .TBL_GAMES
-    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')"
-    ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
+	$q = "SELECT ".TBL_EVENTS.".*, "
+	.TBL_GAMES.".*"
+	." FROM ".TBL_EVENTS.", "
+	.TBL_GAMES
+	." WHERE (".TBL_EVENTS.".EventID = '$event_id')"
+	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)";
 
-    $result = $sql->db_Query($q);
-    $mEventID  = mysql_result($result,0, TBL_EVENTS.".EventID");
-    $mEventName  = mysql_result($result,0, TBL_EVENTS.".Name");
-    $mEventgame = mysql_result($result,0 , TBL_GAMES.".Name");
-    $mEventgameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
-    $mEventType  = mysql_result($result,0 , TBL_EVENTS.".Type");
-    $mEventAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
+	$result = $sql->db_Query($q);
+	$event = new Event($event_id);
 
-    $text .= '<div class="tab-pane" id="tab-pane-11">';
-    $text .= '<div class="tab-page">';
-    $text .= '<div class="tab">'.EB_MATCHS_L1.'</div>';
-    $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
-    ." FROM ".TBL_MATCHS.", "
-    .TBL_SCORES
-    ." WHERE (Event = '$event_id')"
-    ." AND (".TBL_MATCHS.".Status = 'active')"
-    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
-    $result = $sql->db_Query($q);
-    $row = mysql_fetch_array($result);
-    $nbrmatches = $row['NbrMatches'];
-    $text .= '<p>';
-    $text .= $nbrmatches.' '.EB_MATCHS_L2;
-    $text .= '</p>';
-    $text .= '<br />';
+	$gName = mysql_result($result,0 , TBL_GAMES.".Name");
+	$gIcon = mysql_result($result,0 , TBL_GAMES.".Icon");
 
-    /* set pagination variables */
-    $totalItems = $nbrmatches;
-    $pages->items_total = $totalItems;
-    $pages->mid_range = eb_PAGINATION_MIDRANGE;
-    $pages->paginate();
+	$text .= '<div id="tabs">';
+	$text .= '<ul>';
+	$text .= '<li><a href="#tabs-1">'.EB_MATCHS_L1.'</a></li>';
+	$text .= '</ul>';
+	
+	$text .= '<div id="tabs-1">';
+	$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES
+	." WHERE (Event = '$event_id')"
+	." AND (".TBL_MATCHS.".Status = 'active')"
+	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
+	$result = $sql->db_Query($q);
+	$row = mysql_fetch_array($result);
+	$nbrmatches = $row['NbrMatches'];
+	$text .= '<p>';
+	$text .= $nbrmatches.' '.EB_MATCHS_L2;
+	$text .= '</p>';
+	$text .= '<br />';
 
-    // Paginate
-    $text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
-    $text .= '<span style="float:right">';
-    // Go To Page
-    $text .= $pages->display_jump_menu();
-    $text .= '&nbsp;&nbsp;&nbsp;';
-    // Items per page
-    $text .= $pages->display_items_per_page();
-    $text .= '</span><br /><br />';
+	/* set pagination variables */
+	$totalItems = $nbrmatches;
+	$pages->items_total = $totalItems;
+	$pages->mid_range = eb_PAGINATION_MIDRANGE;
+	$pages->paginate();
 
-    /* Stats/Results */
-    $q = "SELECT DISTINCT ".TBL_MATCHS.".*"
-    ." FROM ".TBL_MATCHS.", "
-    .TBL_SCORES
-    ." WHERE (".TBL_MATCHS.".Event = '$event_id')"
-    ." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-    ." AND (".TBL_MATCHS.".Status = 'active')"
-    ." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
-    ." $pages->limit";
+	// Paginate
+	$text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
+	$text .= '<span style="float:right">';
+	// Go To Page
+	$text .= $pages->display_jump_menu();
+	$text .= '&nbsp;&nbsp;&nbsp;';
+	// Items per page
+	$text .= $pages->display_items_per_page();
+	$text .= '</span><br /><br />';
 
-    $result = $sql->db_Query($q);
-    $num_rows = mysql_numrows($result);
-    if ($num_rows>0)
-    {
-        /* Display table contents */
-        $text .= '<table class="table_left">';
-        for($i=0; $i<$num_rows; $i++)
-        {
-            $mID  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-            $text .= displayMatchInfo($mID, eb_MATCH_NOEVENTINFO);
-        }
-        $text .= '</table>';
-    }
-    $text .= '<br />';
+	/* Stats/Results */
+	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES
+	." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+	." AND (".TBL_MATCHS.".Status = 'active')"
+	." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
+	." $pages->limit";
 
-    $text .= '<p>';
-    $text .= EB_MATCHS_L3.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHS_L4.'</a>]<br />';
-    $text .= '</p>';
+	$result = $sql->db_Query($q);
+	$num_rows = mysql_numrows($result);
+	if ($num_rows>0)
+	{
+		/* Display table contents */
+		$text .= '<table class="table_left">';
+		for($i=0; $i<$num_rows; $i++)
+		{
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo(eb_MATCH_NOEVENTINFO);
+		}
+		$text .= '</table>';
+	}
+	$text .= '<br />';
 
-    $text .= '</div>';
-    $text .= '</div>';
+	$text .= '<p>';
+	$text .= EB_MATCHS_L3.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHS_L4.'</a>]<br />';
+	$text .= '</p>';
+
+	$text .= '</div>';
+	$text .= '</div>';
 }
-$ns->tablerender("$mEventName ($mEventgame - ".eventType($mEventType).")", $text);
+$ns->tablerender("$event->getField('Name') ($gName - ".$event->eventTypeToString().")", $text);
 require_once(FOOTERF);
 exit;
 ?>

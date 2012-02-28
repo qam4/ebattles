@@ -20,8 +20,7 @@ require_once(e_PLUGIN."ebattles/include/clan.php");
 global $e_wysiwyg;
 $e_wysiwyg = "match_comment";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
-
-$text = '';
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 $text .= '
 <script type="text/javascript">
@@ -61,14 +60,24 @@ if (rank_txt == new_rank_txt) {select.selectedIndex=old_rank-1}
 $text .= '
 </script>
 ';
-$text = '
-<!-- main calendar program -->
-<script type="text/javascript" src="./js/calendar/calendar.js"></script>
-<!-- language for the calendar -->
-<script type="text/javascript" src="./js/calendar/lang/calendar-en.js"></script>
-<!-- the following script defines the Calendar.setup helper function, which makes
-adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript" src="./js/calendar/calendar-setup.js"></script>
+$text .= "
+<script type='text/javascript'>
+<!--//
+// Forms
+$(function() {
+$('.timepicker').datetimepicker({
+ampm: true,
+timeFormat: 'hh:mm TT',
+stepHour: 1,
+stepMinute: 10,
+minDate: 0
+});
+});
+//-->
+</script>
+";
+
+$text .= '
 <script type="text/javascript">
 <!--//
 function clearDate(frm)
@@ -82,40 +91,24 @@ document.getElementById("f_date").value = ""
 $event_id = $_GET['eventid'];
 $match_id = $_GET['matchid'];
 
-$q = "SELECT ".TBL_EVENTS.".*"
-." FROM ".TBL_EVENTS
-." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
-$result = $sql->db_Query($q);
+$event = new Event($event_id);
 
-$ename = mysql_result($result,0 , TBL_EVENTS.".Name");
-$etype = mysql_result($result,0 , TBL_EVENTS.".Type");
-$eELO_K = mysql_result($result,0 , TBL_EVENTS.".ELO_K");
-$eELO_M = mysql_result($result,0 , TBL_EVENTS.".ELO_M");
-$eTS_beta = mysql_result($result,0 , TBL_EVENTS.".TS_beta");
-$eTS_epsilon = mysql_result($result,0 , TBL_EVENTS.".TS_epsilon");
-$ePointsPerWin = mysql_result($result,0 , TBL_EVENTS.".PointsPerWin");
-$ePointsPerDraw = mysql_result($result,0 , TBL_EVENTS.".PointsPerDraw");
-$ePointsPerLoss = mysql_result($result,0 , TBL_EVENTS.".PointsPerLoss");
-$eAllowDraw = mysql_result($result,0 , TBL_EVENTS.".AllowDraw");
-$eAllowForfeit = mysql_result($result,0 , TBL_EVENTS.".AllowForfeit");
-$eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
-$eAllowScore = mysql_result($result,0 , TBL_EVENTS.".AllowScore");
-$eMatchesApproval = mysql_result($result,0 , TBL_EVENTS.".MatchesApproval");
-$eGame = mysql_result($result,0 , TBL_EVENTS.".Game");
-$eMaxMapsPerMatch = mysql_result($result,0 , TBL_EVENTS.".MaxMapsPerMatch");
-
-switch($etype)
+switch($event->getField('Type'))
 {
 	case "One Player Ladder":
 	case "Team Ladder":
+	case "One Player Tournament":
 	$q = "SELECT ".TBL_PLAYERS.".*, "
-	.TBL_USERS.".*"
+	.TBL_USERS.".*, "
+	.TBL_GAMERS.".*"
 	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
 	.TBL_USERS
 	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 	." AND (".TBL_PLAYERS.".Banned != 1)"
-	." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-	." ORDER BY ".TBL_USERS.".user_name";
+	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+	." ORDER BY ".TBL_GAMERS.".UniqueGameID";
 
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
@@ -127,9 +120,11 @@ switch($etype)
 		$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 		$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
 		$prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-		$pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+		$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+		$gamer = new Gamer($gamer_id);
+		$pname = $gamer->getField('Name');
 		$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-		list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+		list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 		if ($prank==0)
 		$prank_txt = EB_EVENT_L54;
 		else
@@ -140,7 +135,8 @@ switch($etype)
 		$players_name[$i+1] = $pclantag.$pname." ($prank_txt)";
 	}
 	break;
-	case "ClanWar":
+	case "Clan Ladder":
+	case "Team Tournament":
 	$q = "SELECT ".TBL_CLANS.".*, "
 	.TBL_TEAMS.".*, "
 	.TBL_DIVISIONS.".* "
@@ -182,11 +178,14 @@ $text .= '
 
 if($match_id)
 {
+	$match = new Match($match_id);
+
 	// If match_id is not null, fill up the form information from the database
-	switch($etype)
+	switch($event->getField('Type'))
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
+		case "One Player Tournament":
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_PLAYERS.".*, "
@@ -194,14 +193,17 @@ if($match_id)
 		." FROM ".TBL_MATCHS.", "
 		.TBL_SCORES.", "
 		.TBL_PLAYERS.", "
+		.TBL_GAMERS.", "
 		.TBL_USERS
 		." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 		." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-		." AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
+		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+		." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 		break;
-		case "ClanWar":
+		case "Clan Ladder":
+		case "Team Tournament":
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_CLANS.".*, "
@@ -249,23 +251,27 @@ if($match_id)
 	$nbr_teams = 0;
 	for($score=0;$score < $numScores;$score++)
 	{
-		switch($etype)
+		switch($event->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
+			case "One Player Tournament":
 			$pid  = mysql_result($result,$score, TBL_PLAYERS.".PlayerID");
 			$puid  = mysql_result($result,$score, TBL_USERS.".user_id");
-			$pname  = mysql_result($result,$score, TBL_USERS.".user_name");
+			$gamer_id = mysql_result($result,$score, TBL_PLAYERS.".Gamer");
+			$gamer = new Gamer($gamer_id);
+			$pname = $gamer->getField('Name');
 			$pavatar = mysql_result($result,$score, TBL_USERS.".user_image");
 			$pteam  = mysql_result($result,$score, TBL_PLAYERS.".Team");
-			list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 			break;
-			case "ClanWar":
+			case "Clan Ladder":
+			case "Team Tournament":
 			$pid  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
 			$pname  = mysql_result($result,$score, TBL_CLANS.".Name");
 			$pavatar = mysql_result($result,$score, TBL_CLANS.".Image");
 			$pteam  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
-			list($pclan, $pclantag, $pclanid) = getClanName($pteam); // Use this function to get other clan info like clan id?
+			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam); // Use this function to get other clan info like clan id?
 			break;
 			default:
 		}
@@ -333,11 +339,11 @@ if (isset($_POST['submit']))
 	// List of all Maps
 	$q_Maps = "SELECT ".TBL_MAPS.".*"
 	." FROM ".TBL_MAPS
-	." WHERE (".TBL_MAPS.".Game = '$eGame')";
+	." WHERE (".TBL_MAPS.".Game = '".$event->getField('Game')."')";
 	$result_Maps = $sql->db_Query($q_Maps);
 	$numMaps = mysql_numrows($result_Maps);
 	$map = '';
-	for ($matchMap = 0; $matchMap<min($numMaps, $eMaxMapsPerMatch); $matchMap++)
+	for ($matchMap = 0; $matchMap<min($numMaps, $event->getField('MaxMapsPerMatch')); $matchMap++)
 	{
 		if (!isset($_POST['map'.$matchMap])) $_POST['map'.$matchMap] = '0';
 		if ($matchMap > 0) $map .= ',';
@@ -361,17 +367,20 @@ if (isset($_POST['submit']))
 		// Faction
 		if (!isset($_POST['faction'.$i])) $_POST['faction'.$i] = 0;
 
-		switch($etype)
+		switch($event->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
+			case "One Player Tournament":
 			$q =
 			"SELECT ".TBL_USERS.".*, "
 			.TBL_PLAYERS.".*"
 			." FROM ".TBL_USERS.", "
-			.TBL_PLAYERS
+			.TBL_PLAYERS.", "
+			.TBL_GAMERS
 			." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
-			."   AND (".TBL_PLAYERS.".User     = ".TBL_USERS.".user_id)";
+			."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			."   AND (".TBL_GAMERS.".User     = ".TBL_USERS.".user_id)";
 			$result = $sql->db_Query($q);
 			$row = mysql_fetch_array($result);
 			$puid = $row['user_id'];
@@ -389,9 +398,11 @@ if (isset($_POST['submit']))
 				"SELECT ".TBL_USERS.".*, "
 				.TBL_PLAYERS.".*"
 				." FROM ".TBL_USERS.", "
-				.TBL_PLAYERS
+				.TBL_PLAYERS.", "
+				.TBL_GAMERS
 				." WHERE (".TBL_PLAYERS.".PlayerID = '$pjid')"
-				."   AND (".TBL_PLAYERS.".User   = ".TBL_USERS.".user_id)";
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				."   AND (".TBL_GAMERS.".User   = ".TBL_USERS.".user_id)";
 				$result = $sql->db_Query($q);
 				$row = mysql_fetch_array($result);
 				$pjuid = $row['user_id'];
@@ -404,7 +415,8 @@ if (isset($_POST['submit']))
 				$error_str .= '<li>'.EB_MATCHR_L6.$i.'&nbsp;'.EB_MATCHR_L7.$j.' '.EB_MATCHR_L8.'</li>';
 			}
 			break;
-			case "ClanWar":
+			case "Clan Ladder":
+			case "Team Tournament":
 			// Check if user is the team captain
 			$q = "SELECT ".TBL_DIVISIONS.".*, "
 			.TBL_TEAMS.".*"
@@ -465,15 +477,17 @@ if (isset($_POST['submit']))
 
 	if(!isset($_POST['matchschedule']))
 	{
-		switch($etype)
+		switch($event->getField('Type'))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
+			case "One Player Tournament":
 			// Check if the reporter played in the match
 			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
 			$error_str .= '<li>'.EB_MATCHR_L9.'</li>';
 			break;
-			case "ClanWar":
+			case "Clan Ladder":
+			case "Team Tournament":
 			// Check if the reporter's team played in the match
 			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
 			$error_str .= '<li>'.EB_MATCHR_L37.'</li>';
@@ -519,7 +533,7 @@ if (isset($_POST['submit']))
 
 	if (!empty($error_str)) {
 		// show form again
-		user_form($players_id, $players_name, $event_id, $match_id, $eAllowDraw, $eAllowForfeit, $eAllowScore,$userclass);
+		user_form($players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass);
 		// errors have occured, halt execution and show form again.
 		$text .= '<p style="color:red">'.EB_MATCHR_L14;
 		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
@@ -529,8 +543,8 @@ if (isset($_POST['submit']))
 		$text .= "OK<br />";
 		if($match_id)
 		{
-			// Match Edit, Need to delete the match scores and re-create a new ones.
-			deleteMatchScores($event_id, $match_id);
+			// Match Edit, Need to delete the match scores and re-create new ones.
+			$match->deleteMatchScores($event_id);
 		}
 
 		$nbr_players = $_POST['nbr_players'];
@@ -583,6 +597,7 @@ if (isset($_POST['submit']))
 			$result = $sql->db_Query($q);
 			$last_id = mysql_insert_id();
 			$match_id = $last_id;
+			$match = new Match($match_id);
 		}
 
 		// Create Scores ------------------------------------------
@@ -605,18 +620,20 @@ if (isset($_POST['submit']))
 				$pforfeit = 0;
 			}
 
-			switch($etype)
+			switch($event->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
+				case "One Player Tournament":
 				$q =
 				"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
 				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
 				";
 				break;
-				case "ClanWar":
+				case "Clan Ladder":
+				case "Team Tournament":
 				$q =
-				"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit,Faction)
+				"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
 				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
 				";
 				break;
@@ -633,36 +650,42 @@ if (isset($_POST['submit']))
 			$fromid = 0;
 			$subject = SITENAME." ".EB_MATCHR_L52;
 
-			switch($etype)
+			switch($event->getField('Type'))
 			{
 				case "One Player Ladder":
 				case "Team Ladder":
+				case "One Player Tournament":
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
 				.TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
 				.TBL_USERS
 				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 				." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-				." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 				$result_Players = $sql->db_Query($q_Players);
 				$numPlayers = mysql_numrows($result_Players);
 				echo "numPlayers: $numPlayers<br>";
 
 				break;
-				case "ClanWar":
+				case "Clan Ladder":
+				case "Team Tournament":
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
 				.TBL_TEAMS.", "
 				.TBL_PLAYERS.", "
+				.TBL_GAMERS.", "
 				.TBL_USERS
 				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
 				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 				." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
 				." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-				." AND (".TBL_PLAYERS.".User = ".TBL_USERS.".user_id)";
+				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 				$result_Players = $sql->db_Query($q_Players);
 				$numPlayers = mysql_numrows($result_Players);
 				echo "numPlayers: $numPlayers<br>";
@@ -677,7 +700,7 @@ if (isset($_POST['submit']))
 				{
 					$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
 					$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
-					$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$ename.EB_MATCHR_L56;
+					$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$event->getField('Name').EB_MATCHR_L56;
 					$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
 					$sendtoemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
 					if (check_class($pref['eb_pm_notifications_class']))
@@ -697,25 +720,32 @@ if (isset($_POST['submit']))
 		}
 		else
 		{
-			match_scores_update($match_id);
+			$match->match_scores_update();
 
 			// Automatically Update Players stats only if Match Approval is Disabled
-			if ($eMatchesApproval == eb_UC_NONE)
+			if ($event->getField('MatchesApproval') == eb_UC_NONE)
 			{
-				switch($etype)
+				switch($event->getField('Type'))
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
-					match_players_update($match_id);
+					$match->match_players_update();
 					break;
-					case "ClanWar":
-					match_teams_update($match_id);
+					case "One Player Tournament":
+					$match->match_players_update();
+					$event->scheduleNextMatches();
+					break;
+					case "Clan Ladder":
+					$match->match_teams_update();
+					break;
+					case "Team Tournament":
+					$match->match_teams_update();
+					$event->scheduleNextMatches();
 					break;
 					default:
 				}
 
-				$q = "UPDATE ".TBL_EVENTS." SET IsChanged = 1 WHERE (EventID = '$event_id')";
-				$result = $sql->db_Query($q);
+				$event->setFieldDB('IsChanged', 1);
 			}
 			header("Location: matchinfo.php?matchid=$match_id");
 		}
@@ -739,7 +769,7 @@ if (isset($_POST['submit']))
 	{
 		$userclass = $_POST['userclass'];
 		// the form has not been submitted, let's show it
-		user_form($players_id, $players_name, $event_id, $match_id, $eAllowDraw, $eAllowForfeit, $eAllowScore,$userclass);
+		user_form($players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass);
 	}
 }
 
@@ -747,7 +777,7 @@ $text .= '
 </div>
 ';
 
-$ns->tablerender("$ename (".eventType($etype).") - ".EB_MATCHR_L32, $text);
+$ns->tablerender($event->getField('Name')." (".$event->eventTypeToString().") - ".EB_MATCHR_L32, $text);
 require_once(FOOTERF);
 exit;
 ?>

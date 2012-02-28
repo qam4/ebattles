@@ -63,11 +63,11 @@ $HEADER = "
 
 	<table cellpadding='0' cellspacing='0' border='0' style='width:100%; margin-top:5px'>
 		<tr>
-			<td class='left_menu'>
+			<td style='width:10%; vertical-align:top;'>
 				{MENU=1}
 			</td>
 
-			<td style='vertical-align:top;'>
+			<td style='width:70%; vertical-align:top;'>
 ";
 
 $FOOTER = "
@@ -92,6 +92,60 @@ $FOOTER = "
 </table>
 ";
 
+$CUSTOMHEADER['eBattles Layout'] = "
+	<table cellpadding='0' cellspacing='3' class='topborder' style='width:100%'>
+		<tr>
+            <td style='width:50%; text-align:left'>
+		    {SITELINKS_ALT=no_icons+noclick}
+            </td>
+            <td style='width:25%; text-align:right'>
+            {CUSTOM=clock}
+            </td>
+            <td style='width:20%; text-align:right'>
+            {CUSTOM=search+default}
+            </td>
+		</tr>
+		<tr>
+			<td class='logo' colspan='3' style='text-align:center; vertical-align:middle; height:68px'>
+			<img src='".THEME."images/logo.png' alt='eBattles' />
+			</td>
+		</tr>
+		<tr>
+		    <td style='text-align:center; vertical-align:top' colspan='3'>
+		    </td>
+		</tr>
+	</table>
+
+	<table cellpadding='0' cellspacing='0' border='0' style='width:100%; margin-top:5px'>
+		<tr>
+			<td style='width:10%; vertical-align:top;'>
+				{MENU=1}
+			</td>
+
+			<td style='width:95%; vertical-align:top;'>
+";
+
+$CUSTOMFOOTER['eBattles Layout'] = "
+{MENU=3}
+</td>
+<td class='rightr5'><img src='".THEME."images/blank.gif' width='1' alt='' class='ffimgfix' />
+</td>
+</tr>
+</table>
+
+<table style='width:100%' cellspacing='0' cellpadding='0'>
+<tr>
+<td class='r4c1'><img src='".THEME."images/blank.gif' width='1' height='38' alt='' class='ffimgfix' /></td>
+<td class='r4c2' style='width:100%;white-space:nowrap'>
+{SITEDISCLAIMER}
+</td>
+<td class='r4c3'><img src='".THEME."images/blank.gif' width='1' height='38' alt='' class='ffimgfix' /></td>
+</tr>
+</table>
+";
+
+$CUSTOMPAGES['eBattles Layout'] = "ladders.php ladderinfo.php tournaments.php tournamentinfo.php";
+
 // [theme foot]
 function theme_foot() {
 echo '
@@ -111,11 +165,11 @@ $NEWSSTYLE = "
 	<div style='cursor:pointer' onclick=\"expandit('exp_news_{NEWSID}')\">
     <table cellpadding='0' cellspacing='0' border='0'>
 	    <tr>
-	        <td class='mt1'><img src='".THEME."images/blank.gif' width='7' height='20' alt='' class='ffimgfix' /></td>
+	        <td class='mt1'><img src='".THEME."images/blank.gif' width='7' height='35' alt='' class='ffimgfix' /></td>
 			<td class='mtm' style='width:100%;white-space:nowrap'>
 			{NEWSICON}&nbsp;{STICKY_ICON}{NEWSTITLE}
 			</td>
-		<td class='mt2'><img src='".THEME."images/blank.gif' width='19' height='20' alt='' class='ffimgfix' /></td>
+		<td class='mt2'><img src='".THEME."images/blank.gif' width='19' height='35' alt='' class='ffimgfix' /></td>
 	    </tr>
 	</table>
 	</div>
@@ -185,9 +239,9 @@ function tablestyle($caption, $text)
 	<div style='cursor:pointer' onclick=\"expandit('exp_menu_$expand_menu_counter')\">	
 	<table cellpadding='0' cellspacing='0'>
 	    <tr>
-	        <td class='mt1'><img src='".THEME."images/blank.gif' width='7' height='20' alt='' class='ffimgfix' /></td>
+	        <td class='mt1'><img src='".THEME."images/blank.gif' width='7' height='35' alt='' class='ffimgfix' /></td>
 			<td class='mtm' style='width:100%;white-space:nowrap'>".$caption."</td>
-			<td class='mt2'><img src='".THEME."images/blank.gif' width='19' height='20' alt='' class='ffimgfix' /></td>
+			<td class='mt2'><img src='".THEME."images/blank.gif' width='19' height='35' alt='' class='ffimgfix' /></td>
 	    </tr>
 	</table>
 	</div>

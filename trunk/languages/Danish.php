@@ -7,12 +7,12 @@
 */
 	
 define('EB_L1', 'eBattles');
-define('EB_L2', 'eBattles lets you organize your own free Gaming Ladders!
+define('EB_L2', 'eBattles lets you organize your own free Gaming Events!
 
 eBattles features:
-Fully automated Ladder Ranking System.
+Fully automated Event Ranking System.
 Suitable for all types of multiplayer games especially action, card, board and strategy games.
-Teams or Individual Ladders.
+Teams or Individual Events.
 Teams with Divisions for each game.
 Teams/Players ranked using complex ranking algorithm for more accurate ranking. (ELO, Trueskill...)');
 define('EB_L3', 'Configure eBattles');
@@ -119,10 +119,10 @@ define('EB_EVENTS_L18', 'Hold/ Spillere');
 define('EB_EVENTS_L19', 'Spil');
 define('EB_EVENTS_L20', 'Opret ny Turnering');
 define('EB_EVENTS_L21', 'Vis Alle Tidligere Turneringer');
-define('EB_EVENTS_L22', 'Individual Ladder');
-define('EB_EVENTS_L23', 'Hold/Individual Ladder');
+define('EB_EVENTS_L22', 'Individual Event');
+define('EB_EVENTS_L23', 'Hold/Individual Event');
 define('EB_EVENTS_L24', 'Filter');
-define('EB_EVENTS_L25', 'Hold Ladder');
+define('EB_EVENTS_L25', 'Hold Event');
 define('EB_EVENTS_L26', 'Hej ');
 define('EB_EVENTS_L27', ',
 	Du er inviteret til at deltage i turneringen "');
@@ -170,7 +170,7 @@ define('EB_EVENT_L32', 'Frameld Turnering');
 define('EB_EVENT_L33', 'Er du sikker på du ønsker, at stoppe din deltagelse i denne turnering?');
 define('EB_EVENT_L34', 'Du skal logge ind for, at deltage i denne turnering.');
 define('EB_EVENT_L35', 'Info');
-define('EB_EVENT_L36', 'Ladder');
+define('EB_EVENT_L36', 'Event');
 define('EB_EVENT_L37', 'Type');
 define('EB_EVENT_L38', 'Spil');
 define('EB_EVENT_L39', 'Ejer');
@@ -217,7 +217,7 @@ define('EB_EVENTM_L4', 'Turnerings Regler');
 define('EB_EVENTM_L5', 'Turnerings Spillere/ Hold');
 define('EB_EVENTM_L6', 'Nulstil Turnering');
 define('EB_EVENTM_L7', 'Turnerings Stats');
-define('EB_EVENTM_L8', 'Ladder');
+define('EB_EVENTM_L8', 'Event');
 define('EB_EVENTM_L9', 'Ejer');
 define('EB_EVENTM_L10', 'Skift Ejer');
 define('EB_EVENTM_L11', 'Administratorer');

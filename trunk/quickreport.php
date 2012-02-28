@@ -25,28 +25,27 @@ else
 {
     $text .= EB_MATCHQL_L5;
 
-    $q = "SELECT ".TBL_EVENTS.".*"
-    ." FROM ".TBL_EVENTS
-    ." WHERE (".TBL_EVENTS.".eventid = '$event_id')";
-    $result = $sql->db_Query($q);
-    $ename = mysql_result($result,0 , TBL_EVENTS.".Name");
-    $etype = mysql_result($result,0 , TBL_EVENTS.".Type");
+   	$event = new Event($event_id);
 
     $q = "SELECT ".TBL_PLAYERS.".*"
-    ." FROM ".TBL_PLAYERS
+    ." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS
     ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-    ."   AND (".TBL_PLAYERS.".User = '".USERID."')";
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+    ."   AND (".TBL_GAMERS.".User = '".USERID."')";
     $result = $sql->db_Query($q);
     $uteam = mysql_result($result,0 , TBL_PLAYERS.".Team");
     
     $q = "SELECT ".TBL_PLAYERS.".*, "
     .TBL_USERS.".*"
     ." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
     .TBL_USERS
     ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
     ."   AND (".TBL_PLAYERS.".Banned != 1)"
-    ."   AND (".TBL_USERS.".user_id = ".TBL_PLAYERS.".User)"
-    ." ORDER BY ".TBL_USERS.".user_name";
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+    ."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+    ." ORDER BY ".TBL_GAMERS.".Name";
     $result = $sql->db_Query($q);
     $num_rows = mysql_numrows($result);
 
@@ -68,9 +67,11 @@ else
         $pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
         $puid  = mysql_result($result,$i, TBL_USERS.".user_id");
         $prank  = mysql_result($result,$i, TBL_PLAYERS.".Rank");
-        $pname  = mysql_result($result,$i, TBL_USERS.".user_name");
+       	$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
+       	$gamer = new Gamer($gamer_id);
+       	$pname = $gamer->getField('Name');
         $pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-        list($pclan, $pclantag, $pclanid) = getClanName($pteam);
+        list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
         if(($puid != USERID)&&(($uteam == 0)||($uteam != $pteam)))
         {
@@ -92,7 +93,7 @@ else
 
     $reported_by = USERID;
     $text .= '<div>';
-    $text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+    $text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
     $text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 
     $text .= '
@@ -106,7 +107,7 @@ else
     ';
 }
 
-$ns->tablerender("$ename ($egame - ".eventType($etype).") - ".EB_MATCHQL_L1, $text);
+$ns->tablerender($event->getField('Name')." ($egame - ".$event->eventTypeToString().") - ".EB_MATCHQL_L1, $text);
 require_once(FOOTERF);
 exit;
 ?>

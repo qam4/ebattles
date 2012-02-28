@@ -5,8 +5,15 @@
 */
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(HEADERF);
-$text = '';
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
+
+$text .= '
+<script type="text/javascript" src="./js/clan.js"></script>
+';
+
+$clan = new Clan();
 
 if ((!isset($_POST['createteam']))||(!check_class($pref['eb_teams_create_class'])))
 {
@@ -14,18 +21,9 @@ if ((!isset($_POST['createteam']))||(!check_class($pref['eb_teams_create_class']
 }
 else
 {
-    $userid = $_POST['userid'];
-    $username = $_POST['username'];
-
-    $q = "INSERT INTO ".TBL_CLANS."(Name,Tag,Owner)"
-    ." VALUES ('Team', '$username', '$userid')";
-    $result = $sql->db_Query($q);
-    $last_id = mysql_insert_id();
-
-    $q = "UPDATE ".TBL_CLANS." SET Name = '".EB_CLAN_L1." $last_id - $username' WHERE (ClanID = '$last_id')";
-    $result = $sql->db_Query($q);
-    header("Location: clanmanage.php?clanid=".$last_id);
+	$text .= $clan->displayClanSettingsForm(true);
 }
+
 $ns->tablerender(EB_CLANC_L1, $text);
 require_once(FOOTERF);
 exit;

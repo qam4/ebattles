@@ -20,31 +20,133 @@ $time = time();
 
 switch ($pref['eb_tab_theme'])
 {
-    case 'ebattles':
-    $tab_theme = 'css/tab.ebattles.css';
-    break;
-    case 'dark':
-    $tab_theme = 'css/tab.dark.css';
-    break;
-    case 'winclassic':
-    $tab_theme = 'css/tab.winclassic.css';
-    break;
-    case 'webfx':
-    $tab_theme = 'css/tab.webfx.css';
-    break;
-    case 'luna':
-    $tab_theme = 'css/luna/tab.css';
-    break;
     default:
-    $tab_theme = 'css/tab.css';
+    $tab_theme = 'css/custom-theme/jquery-ui-1.8.16.custom.css';
 }
 
 $eplug_css = array(
-"js/calendar/calendar-blue.css",
 "css/paginate.css",
 "css/ebattles.css",
+"css/brackets.css",
 $tab_theme
 );
+
+///-------------- Functions ----------------------
+class DatabaseTable
+{
+	protected $tablename;
+	protected $primary_key;
+	protected $id;
+	protected $fields = array();
+
+	function __construct($primaryID=0) {
+		global $sql;
+		
+		$this->id = $primaryID;
+		
+		if($primaryID==0) {
+			if ($fields = $sql->db_FieldList(substr($this->tablename, strlen(MPREFIX)))) {
+				foreach ($fields as $name => $v)
+				{
+					$this->fields[$v] = null;
+				}
+			}
+			$this->setDefaultFields();
+		} else {
+			$q = "SELECT *"
+			." FROM $this->tablename"
+			." WHERE ($this->primary_key = '$primaryID')";
+			$result = $sql->db_Query($q);
+		
+			if ($row = mysql_fetch_assoc($result)) {
+		         $this->fields = $row;
+		    } // while
+		}
+	}
+
+	function setDefaultFields() {
+	}
+	
+	function getId(){
+		return $this->id;
+	}
+
+	function getField($field) {
+		global $tp;
+
+		return $tp->toHTML($this->fields[$field]);
+	}
+	
+	function setField($field, $value) {
+		global $tp;
+		
+		$this->fields[$field] = $tp->toDB($value);
+	}
+	function updateDB()
+	{
+		global $sql;
+
+		$q = "UPDATE ".$this->tablename." SET ";
+		$i = 0;
+		foreach($this->fields as $key=>$value)
+		{
+			if ($i>0) $q .= ',';
+			if ($key != $this->primary_key) {
+				$q .= " ".$key." = '".$value."'";
+				$i++;
+			}
+		}
+		$q .= " WHERE (".$this->primary_key." = '$this->id')";
+		$result = $sql->db_Query($q);
+	}
+	function updateFieldDB($field) {
+		global $sql;
+		
+		$q = "UPDATE $this->tablename SET ".$field." = '".$this->fields[$field]."' WHERE ($this->primary_key = '$this->id')";
+		$result = $sql->db_Query($q);
+	}
+	function setFieldDB($field, $value) {
+		$this->setField($field, $value);
+		$this->updateFieldDB($field);
+	}
+	function insert()
+	{
+		global $sql;
+
+		$q = "INSERT INTO ".$this->tablename."(";
+		$i = 0;
+		foreach($this->fields as $key=>$value)
+		{
+			if ($i>0) $q .= ',';
+			if ($key != $this->primary_key) {
+				$q .= " ".$key;
+				$i++;
+			}
+		}
+		$q .= ") VALUES (";
+		$i = 0;
+		foreach($this->fields as $key=>$value)
+		{
+			if ($i>0) $q .= ',';
+			if ($key != $this->primary_key) {
+				$q .= "'".$value."'";
+				$i++;
+			}
+		}
+		$q .= ")";
+		$result = $sql->db_Query($q);
+		if(!$result) {
+			echo '[dB insert] Error!';
+			var_dump($q);
+			exit;
+			return 0;
+		}
+		$last_id = mysql_insert_id();
+		$this->id = $last_id;
+		$this->setField($this->primary_key, $last_id);
+		return $last_id;
+	}
+}
 
 function multi2dSortAsc(&$arr, $key, $sort)
 {
@@ -576,14 +678,14 @@ function versionsCompare($version1, $version2)
     }
 }
 
-function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title='')
+function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title='', $other='')
 {
 	$image_str   = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'" style="vertical-align:middle"/>' : '';
 	$confirm_str = ($confirm!='') ? 'onclick="return confirm(\''.$confirm.'\');"' : '';
-	$class_str   = ($class!='') ? 'class="'.$class.'"' : '';
+	$class_str   = ($class!='') ? 'class="'.$class.'"' : 'class="jq-button"';
 	$title_str   = ($title!='') ? 'title="'.$title.'"' : '';
 	$text_str    = ($text != '') ? '&nbsp;'.$text : '';
-	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" '.$title_str.' '.$confirm_str.'>'.$image_str.$text_str.'</button></div>
+	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" id="'.$name.'" '.$title_str.' '.$confirm_str.' '.$other.'>'.$image_str.$text_str.'</button></div>
             <div style="clear:both"></div>';
 }
 
