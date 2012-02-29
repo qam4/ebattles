@@ -165,6 +165,7 @@ function displayPastEvents(){
 	." FROM ".TBL_EVENTS.", "
 	.TBL_GAMES
 	." WHERE (".TBL_EVENTS.".Status = 'finished')"
+	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 	.$game_string
 	.$matchtype_string
 	." ORDER BY $orderby_array[1] $sort, EventID DESC"
