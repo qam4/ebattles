@@ -191,6 +191,7 @@ function displayCurrentEvents(){
 	.TBL_GAMES
 	." WHERE (".TBL_EVENTS.".Status != 'finished')"
 	."   AND (".TBL_EVENTS.".Status != 'draft')"
+	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 	.$game_string
 	.$matchtype_string
 	." ORDER BY $orderby_array[1] $sort, EventID DESC"
@@ -426,6 +427,7 @@ function displayRecentEvents(){
 	." FROM ".TBL_EVENTS.", "
 	.TBL_GAMES
 	." WHERE (".TBL_EVENTS.".Status = 'finished')"
+	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 	.$game_string
 	.$matchtype_string
 	." LIMIT 0, $rowsPerPage";
