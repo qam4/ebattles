@@ -111,7 +111,7 @@ else{
 
 		/* Event Game */
 		$new_eventgame = $_POST['eventgame'];
-		if ($$_POST['eventgame'] != 0)
+		if ($_POST['eventgame'] != 0)
 		{
 			$event->setField('Game', $_POST['eventgame']);
 			$event->setField('MatchType', $_POST['eventmatchtype']);
