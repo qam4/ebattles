@@ -83,12 +83,9 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
 	for($team=0; $team < $numTeams; $team++)
 	{
-		$tid = mysql_result($result_Teams,$team, TBL_TEAMS.".TeamID");
-		$tname = mysql_result($result_Teams,$team, TBL_CLANS.".Name");
 		$tclan = mysql_result($result_Teams,$team, TBL_CLANS.".ClanID");
-		$tclantag = mysql_result($result_Teams,$team, TBL_CLANS.".Tag");
-		$tavatar = mysql_result($result_Teams,$team, TBL_CLANS.".Image");
-
+		$clan = new Clan($tclan);
+		$tid = mysql_result($result_Teams,$team, TBL_TEAMS.".TeamID");
 		$tgames_played = mysql_result($result_Teams,$team, TBL_TEAMS.".GamesPlayed");
 		$tELO = mysql_result($result_Teams,$team, TBL_TEAMS.".ELORanking");
 		$tTS_mu = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_mu");
@@ -299,10 +296,10 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
 		// For display
 		$id[]  = $tid;
-		$name[]  = $tname;
+		$name[]  = $clan->getField('Name');
 		$clan[]  = $tclan;
-		$clantag[]  = $tclantag;
-		$avatar[] = $tavatar;
+		$clantag[]  = $clan->getField('Tag');
+		$avatar[] = $clan->getField('Image');
 		$nbr_players[]  = $tnumPlayers;
 		$games_played[] = $tgames_played;
 		$ELO[] = $tELO;

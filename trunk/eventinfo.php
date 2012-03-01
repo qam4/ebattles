@@ -80,7 +80,7 @@ else
 		$event_type = 'Ladder';
 		break;
 		case "One Player Tournament":
-		case "Team Tournament":
+		case "Clan Tournament":
 		$event_type = 'Tournament';
 		default:
 	}

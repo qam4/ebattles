@@ -132,7 +132,7 @@ class Challenge extends DatabaseTable
 				$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
 				break;
 				case "Clan Ladder":
-				case "Team Tournament":
+				case "Clan Tournament":
 				// Challenger Info
 				$q = "SELECT ".TBL_TEAMS.".*"
 				."   AND (".TBL_TEAMS.".TeamID = '$cChallengertID')";
@@ -350,7 +350,7 @@ class Challenge extends DatabaseTable
 				$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
 				break;
 				case "Clan Ladder":
-				case "Team Tournament":
+				case "Clan Tournament":
 				// Challenger Info
 				$q = "SELECT ".TBL_TEAMS.".*"
 				."   AND (".TBL_TEAMS.".TeamID = '$cChallengertID')";
@@ -514,7 +514,7 @@ class Challenge extends DatabaseTable
 
 				break;
 				case "Clan Ladder":
-				case "Team Tournament":
+				case "Clan Tournament":
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "

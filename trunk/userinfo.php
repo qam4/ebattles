@@ -410,23 +410,22 @@ else
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$cname  = mysql_result($result,$i, TBL_CLANS.".Name");
 			$dgame  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$dgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
-			$cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
-			$cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
+			$clan_id  = mysql_result($result,$i, TBL_CLANS.".ClanID");
+			$clan = new Clan($clan_id);
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a><br />';
 			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			if($cowner == $req_user)
+			if($clan->getField('Owner') == $req_user)
 			{
 				$text .= EB_USER_L15;
-				if ($cowner == USERID)
+				if ($clan->getField('Owner') == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else
@@ -467,20 +466,19 @@ else
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$cname  = mysql_result($result,$i, TBL_CLANS.".Name");
-			$cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
-			$cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
+			$clan_id  = mysql_result($result,$i, TBL_CLANS.".ClanID");
+			$clan = new Clan($clan_id);
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a><br />';
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			if($cowner == $req_user)
+			if($clan->getField('Owner') == $req_user)
 			{
 				$text .= EB_USER_L15;
-				if ($cowner == USERID)
+				if ($clan->getField('Owner') == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else
@@ -524,23 +522,23 @@ else
 		/* Display table contents */
 		for($i=0; $i<$num_rows; $i++)
 		{
-			$cname  = mysql_result($result,$i, TBL_CLANS.".Name");
-			$cid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
+			$clan_id  = mysql_result($result,$i, TBL_CLANS.".ClanID");
+			$clan = new Clan($clan_id);
 			$dcaptain  = mysql_result($result,$i, TBL_DIVISIONS.".Captain");
 			$dgame  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$dgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$cid.'">'.$cname.'</a><br />';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a><br />';
 			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			if($cowner == $req_user)
+			if($clan->getField('Owner') == $req_user)
 			{
 				$text .= EB_USER_L15;
-				if ($cowner == USERID)
+				if ($clan->getField('Owner') == USERID)
 				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$cid.'">'.EB_USER_L16.'</a>)';
+					$text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_USER_L16.'</a>)';
 				}
 			}
 			else

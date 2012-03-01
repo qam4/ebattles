@@ -70,7 +70,7 @@ if(isset($_POST['qrsubmitloss']))
 			case "Clan Ladder":
 			$match->match_teams_update();
 			break;
-			case "Team Tournament":
+			case "Clan Tournament":
 			$match->match_teams_update();
 			$event->scheduleNextMatches();
 			break;
@@ -103,7 +103,7 @@ if (isset($_POST['approvematch']))
 		case "Clan Ladder":
 		$match->match_teams_update();
 		break;
-		case "Team Tournament":
+		case "Clan Tournament":
 		$match->match_teams_update();
 		$event->scheduleNextMatches();
 		break;

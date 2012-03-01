@@ -17,9 +17,11 @@ switch($event->getField('Type'))
 {
 	case "One Player Tournament":
 	if(($eMaxNumberPlayers == 0)||($nbrplayers < $eMaxNumberPlayers)) $can_signup = 1;
+	$tab_title = EB_EVENT_L77;
 	break;
-	case "Team Tournament":
+	case "Clan Tournament":
 	if(($eMaxNumberPlayers == 0)||($nbrteams < $eMaxNumberPlayers))	$can_signup = 1;
+	$tab_title = EB_EVENT_L84;
 	break;
 	default:
 }
@@ -29,7 +31,7 @@ $text .= '<ul>';
 $text .= '<li><a href="#tabs-1">'.EB_EVENT_L35.'</a></li>';
 $text .= '<li><a href="#tabs-3">'.EB_EVENT_L76.'</a></li>';
 $text .= '<li><a href="#tabs-4">'.EB_EVENT_L58.'</a></li>';
-$text .= '<li><a href="#tabs-5">'.EB_EVENT_L77.'</a></li>';
+$text .= '<li><a href="#tabs-5">'.$tab_title.'</a></li>';
 $text .= '</ul>';
 
 /*----------------------------------------------------------------------------------------
@@ -59,7 +61,7 @@ if ($can_signup==1)
 		if($event->getField('Status') == 'signup')
 		{
 			// If event signups
-			if ($event->getField('Type') == "Team Tournament")
+			if ($event->getField('Type') == "Clan Tournament")
 			{
 				// Find if user is captain of a division playing that game
 				// if yes, propose to join this event
@@ -140,7 +142,7 @@ if ($can_signup==1)
 
 			switch($event->getField('Type'))
 			{
-				case "Team Tournament":
+				case "Clan Tournament":
 				// Is the user a member of a division for that game?
 				$q_2 = "SELECT ".TBL_CLANS.".*, "
 				.TBL_MEMBERS.".*, "
@@ -523,7 +525,7 @@ switch($event->getField('Type'))
 	//sc2:
 	$can_submit_replay = 0;
 	break;
-	case "Team Tournament":
+	case "Clan Tournament":
 	if ($nbrteams < 2)
 	{
 	}
@@ -592,33 +594,7 @@ if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
 	$text .= EB_EVENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
 }
 
-$teams = array();
-$type = $event->getField('Type');
-switch($type)
-{
-	default:
-	// TODO: Team...
-	$q_Players = "SELECT ".TBL_GAMERS.".*, "
-	.TBL_PLAYERS.".*"
-	." FROM ".TBL_GAMERS.", "
-	.TBL_PLAYERS.", "
-	.TBL_USERS
-	." WHERE (".TBL_PLAYERS.".Event = '".$event->getField('EventID')."')"
-	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-	." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-	." ORDER BY ".TBL_PLAYERS.".Joined";
-	$result = $sql->db_Query($q_Players);
-	$nbrPlayers = mysql_numrows($result);
-	for ($player = 0; $player < $nbrPlayers; $player++)
-	{
-		$playerID = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
-		$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
-		$gamer = new Gamer($gamerID);
-		$teams[$player]['Name'] = $gamer->getField('Name');
-		$teams[$player]['UniqueGameID'] = $gamer->getField('UniqueGameID');
-		$teams[$player]['PlayerID'] = $playerID;
-	}
-}
+$teams = $event->getTeams();
 
 $results = unserialize($event->getField('Results'));
 list($bracket_html) = brackets($event->getField('Format'), $event->getField('MaxNumberPlayers'), $teams, $results, $rounds);
@@ -800,49 +776,102 @@ if ($numMatches>0)
 $text .= '</div>';    // tabs-4 "Matches"
 
 $text .= '<div id="tabs-5">';
-$q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
-.TBL_GAMERS.".*, "
-.TBL_USERS.".*"
-." FROM ".TBL_PLAYERS.", "
-.TBL_GAMERS.", "
-.TBL_USERS
-." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
-$result = $sql->db_Query($q);
-$numPlayers = mysql_numrows($result);
-if ($numPlayers>0)
+switch($event->getField('Type'))
 {
-	/*Name	Unique ID*/
-	$text .= '<table style="width:90%"><tbody>';
-	$text .= '<tr>';
-	//sc2:	$text .= '<th class="eb_th2">'.EB_EVENT_L78.'</th>';
-	$text .= '<th class="eb_th2">'.EB_EVENT_L79.'</th>';
-	$text .= '<th class="eb_th2">'.EB_EVENT_L80.'</th>';
-	$text .= '</tr>';
-	for ($player = 0; $player < $numPlayers; $player++)
+	case "One Player Tournament":
+	// Show list of players
+	$q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
+	.TBL_GAMERS.".*, "
+	.TBL_USERS.".*"
+	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS.", "
+	.TBL_USERS
+	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)";
+	$result = $sql->db_Query($q);
+	$numPlayers = mysql_numrows($result);
+	if ($numPlayers>0)
 	{
-		/* sc2:
-		$pFactionIcon = mysql_result($result, $player , TBL_FACTIONS.".Icon");
-		$pFactionName = mysql_result($result, $player , TBL_FACTIONS.".Name");
-		if($pFactionName){
-		$pFactionImage = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'" style="vertical-align:middle"/>';
-		} else {
-		$pFactionImage = '';
-		}
-		*/
-		$puid = mysql_result($result, $player , TBL_GAMERS.".User");
-		$pName = mysql_result($result, $player , TBL_GAMERS.".Name");
-		$pGamer = mysql_result($result, $player , TBL_GAMERS.".UniqueGameID");
-
+		/*Name	Unique ID*/
+		$text .= '<table style="width:90%"><tbody>';
 		$text .= '<tr>';
-		//sc2: $text .= '<td class="eb_td">'.$pFactionImage.'</td>';
-		$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pName.'</a></td>';
-		$text .= '<td class="eb_td">'.$pGamer.'</td>';
+		//sc2:	$text .= '<th class="eb_th2">'.EB_EVENT_L78.'</th>';
+		$text .= '<th class="eb_th2">'.EB_EVENT_L79.'</th>';
+		$text .= '<th class="eb_th2">'.EB_EVENT_L80.'</th>';
 		$text .= '</tr>';
+		for ($player = 0; $player < $numPlayers; $player++)
+		{
+			/* sc2:
+			$pFactionIcon = mysql_result($result, $player , TBL_FACTIONS.".Icon");
+			$pFactionName = mysql_result($result, $player , TBL_FACTIONS.".Name");
+			if($pFactionName){
+			$pFactionImage = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'" style="vertical-align:middle"/>';
+			} else {
+			$pFactionImage = '';
+			}
+			*/
+			$puid = mysql_result($result, $player , TBL_GAMERS.".User");
+			$pName = mysql_result($result, $player , TBL_GAMERS.".Name");
+			$pGamer = mysql_result($result, $player , TBL_GAMERS.".UniqueGameID");
+
+			$text .= '<tr>';
+			//sc2: $text .= '<td class="eb_td">'.$pFactionImage.'</td>';
+			$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pName.'</a></td>';
+			$text .= '<td class="eb_td">'.$pGamer.'</td>';
+			$text .= '</tr>';
+		}
+		$text .= '</tbody></table>';
 	}
-	$text .= '</tbody></table>';
+	break;
+	case "Clan Tournament":
+	// Show list of teams
+	$q_Teams = "SELECT ".TBL_CLANS.".*, "
+	.TBL_TEAMS.".*, "
+	.TBL_DIVISIONS.".* "
+	." FROM ".TBL_CLANS.", "
+	.TBL_TEAMS.", "
+	.TBL_DIVISIONS
+	." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+	." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+	." AND (".TBL_TEAMS.".Event = '$event_id')";
+	$result = $sql->db_Query($q_Teams);
+	$numTeams = mysql_numrows($result);
+	if($numTeams>0)
+	{
+		$text .= '<table class="eb_table" style="width:95%"><tbody>';
+		$text .= '<tr>
+		<th class="eb_th2">'.EB_CLANS_L5.'</th>
+		<th class="eb_th2">'.EB_CLANS_L6.'</th>
+		</tr>';
+		for($i=0; $i < $numTeams; $i++){
+			// TODO: use Clan
+			$clan_id  = mysql_result($result,$i, TBL_CLANS.".ClanID");
+			$clan = new Clan($clan_id);
+
+			$image = "";
+			if ($pref['eb_avatar_enable_teamslist'] == 1)
+			{
+				if($clan->getField('Image'))
+				{
+					$image = '<img '.getAvatarResize(getImagePath($clan->getField('Image'), 'team_avatars')).' style="vertical-align:middle"/>';
+				} else if ($pref['eb_avatar_default_team_image'] != ''){
+					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
+				}
+			}
+
+			$text .= '<tr>
+			<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a></td>
+			<td class="eb_td">'.$clan->getField('Tag').'</td>
+			</tr>';
+		}
+		$text .= '</tbody></table>';
+	}
+	break;
+	default:
 }
+
+
 $text .= '<br />';
 
 $text .= '</div>';    // tabs-5 "Players"

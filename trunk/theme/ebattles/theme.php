@@ -7,7 +7,7 @@ require_once(file_exists($lan_file) ? $lan_file : e_THEME."ebattles/languages/En
 // Set theme info
 $themename = "eBattles";
 $themeversion = "1.0";
-$themeauthor = "ebattles.freehostia.com";
+$themeauthor = "www.ebattles.net";
 $themedate = "05/01/09";
 $themeinfo = "Theme eBattles";
 $xhtmlcompliant = TRUE;	// If set to TRUE will display an XHTML compliant logo in theme manager
@@ -144,7 +144,7 @@ $CUSTOMFOOTER['eBattles Layout'] = "
 </table>
 ";
 
-$CUSTOMPAGES['eBattles Layout'] = "ladders.php ladderinfo.php tournaments.php tournamentinfo.php";
+$CUSTOMPAGES['eBattles Layout'] = "claninfo.php clanmanage.php clans.php eventcreate.php eventinfo.php eventmanage.php eventmatchs.php events.php eventspast.php ";
 
 // [theme foot]
 function theme_foot() {

@@ -282,11 +282,11 @@ function getClanInfo($teamID)
 	$num_rows = mysql_numrows($result);
 	if ($num_rows == 1)
 	{
-		$clanid  = mysql_result($result,0, TBL_CLANS.".ClanID");
+		$clan_id  = mysql_result($result,0, TBL_CLANS.".ClanID");
 		$clanname  = mysql_result($result,0, TBL_CLANS.".Name");
 		$clantag  = mysql_result($result,0, TBL_CLANS.".Tag") ."&nbsp;";
 	}
-	return array($clanname, $clantag, $clanid);
+	return array($clanname, $clantag, $clan_id);
 }
 
 ?>

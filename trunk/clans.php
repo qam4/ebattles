@@ -6,6 +6,7 @@
 
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
+require_once(e_PLUGIN."ebattles/include/clan.php");
 
 require_once(e_PLUGIN."ebattles/include/paginator.class.php");
 /*******************************************************************
@@ -107,26 +108,23 @@ function displayClans(){
 		<th class="eb_th2">'.EB_CLANS_L6.'</th>
 		</tr>';
 		for($i=0; $i<$num_rows; $i++){
-			$clanid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
-			$cname  = mysql_result($result,$i, TBL_CLANS.".Name");
-			$ctag  = mysql_result($result,$i, TBL_CLANS.".Tag");
-			$cavatar  = mysql_result($result,$i, TBL_CLANS.".Image");
-			$cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
+			$clan_id  = mysql_result($result,$i, TBL_CLANS.".ClanID");
+			$clan = new Clan($clan_id);
 
 			$image = "";
 			if ($pref['eb_avatar_enable_teamslist'] == 1)
 			{
-				if($cavatar)
+				if($clan->getField('Image'))
 				{
-					$image = '<img '.getAvatarResize(getImagePath($cavatar, 'team_avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($clan->getField('Image'), 'team_avatars')).' style="vertical-align:middle"/>';
 				} else if ($pref['eb_avatar_default_team_image'] != ''){
 					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
 				}
 			}
 
 			$text .= '<tr>
-			<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
-			<td class="eb_td">'.$ctag.'</td></tr>';
+			<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a></td>
+			<td class="eb_td">'.$clan->getField('Tag').'</td></tr>';
 		}
 		$text .= '</tbody></table><br />';
 	}

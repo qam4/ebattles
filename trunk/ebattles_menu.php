@@ -230,7 +230,7 @@ function displayUserInfo($req_user){
 				$numOpps = mysql_numrows($result_Opps);
 				break;
 				case "Clan Ladder":
-				case "Team Tournament":
+				case "Clan Tournament":
 				$reporter_matchteam = 0;
 				$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 				." FROM ".TBL_MATCHS.", "

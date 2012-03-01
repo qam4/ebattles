@@ -123,7 +123,7 @@ class Match extends DatabaseTable
 						$output .= "Team $j TS: mu = $teamB_TS_mu, sigma= $teamB_TS_sigma<br />";
 						break;
 						case "Clan Ladder":
-						case "Team Tournament":
+						case "Clan Tournament":
 						$q = "SELECT ".TBL_MATCHS.".*, "
 						.TBL_SCORES.".*, "
 						.TBL_TEAMS.".*"
@@ -312,7 +312,7 @@ class Match extends DatabaseTable
 							."   AND (Player = '$pid')";
 							break;
 							case "Clan Ladder":
-							case "Team Tournament":
+							case "Clan Tournament":
 							$pid = mysql_result($resultA,$k, TBL_TEAMS.".TeamID");
 							$q = "UPDATE ".TBL_SCORES
 							." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
@@ -366,7 +366,7 @@ class Match extends DatabaseTable
 							."   AND (Player = '$pid')";
 							break;
 							case "Clan Ladder":
-							case "Team Tournament":
+							case "Clan Tournament":
 							$tid = mysql_result($resultB,$k, TBL_TEAMS.".TeamID");
 							$q = "UPDATE ".TBL_SCORES
 							." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
@@ -402,7 +402,7 @@ class Match extends DatabaseTable
 				."   AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
 				break;
 				case "Clan Ladder":
-				case "Team Tournament":
+				case "Clan Tournament":
 				$q =
 				"SELECT ".TBL_SCORES.".*, "
 				.TBL_TEAMS.".*"
@@ -426,7 +426,7 @@ class Match extends DatabaseTable
 					$pid= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 					break;
 					case "Clan Ladder":
-					case "Team Tournament":
+					case "Clan Tournament":
 					$pid= mysql_result($result,$i, TBL_TEAMS.".TeamID");
 					break;
 					default:
@@ -462,7 +462,7 @@ class Match extends DatabaseTable
 					." AND (Player = '$pid')";
 					break;
 					case "Clan Ladder":
-					case "Team Tournament":
+					case "Clan Tournament":
 					$q_1 = "UPDATE ".TBL_SCORES
 					." SET Player_ScoreAgainst = $pOppScore"
 					." WHERE (MatchID = '".$this->fields['MatchID']."')"
@@ -783,9 +783,9 @@ class Match extends DatabaseTable
 		{
 			$time_reported = mysql_result($result,$i, TBL_MATCHS.".TimeReported");
 
-			$tid           = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 			$tclanid       = mysql_result($result,$i, TBL_CLANS.".ClanID");
-			$tName         = mysql_result($result,$i, TBL_CLANS.".Name");
+			$clan = new Clan($tclanid);
+			$tid           = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 			$tELO          = mysql_result($result,$i, TBL_TEAMS.".ELORanking");
 			$tTS_mu        = mysql_result($result,$i, TBL_TEAMS.".TS_mu");
 			$tTS_sigma     = mysql_result($result,$i, TBL_TEAMS.".TS_sigma");
@@ -822,7 +822,7 @@ class Match extends DatabaseTable
 			$tOppScore    += $tdeltaOppScore;
 			$tPoints      += $tdeltaPoints;
 
-			$output .= "Team: $tName - $tid, new ELO: $tELO<br />";
+			$output .= "Team: $clan->getField('Name') - $tid, new ELO: $tELO<br />";
 			$output .= "Games played: $tGamesPlayed<br>";
 			$output .= "Match id: ".$this->fields['MatchID']."<br>";
 
@@ -906,7 +906,7 @@ class Match extends DatabaseTable
 			$this->deletePlayersMatchScores();
 			break;
 			case "Clan Ladder":
-			case "Team Tournament":
+			case "Clan Tournament":
 			$this->deleteTeamsMatchScores();
 			break;
 			default:
@@ -1351,7 +1351,7 @@ class Match extends DatabaseTable
 					$numOpps = mysql_numrows($result_Opps);
 					break;
 					case "Clan Ladder":
-					case "Team Tournament":
+					case "Clan Tournament":
 					// Get the match reporter's match team
 					$reporter_matchteam = 0;
 					$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
@@ -1418,7 +1418,7 @@ class Match extends DatabaseTable
 
 					break;
 					case "Clan Ladder":
-					case "Team Tournament":
+					case "Clan Tournament":
 					$q_UserPlayers = "SELECT DISTINCT ".TBL_SCORES.".*"
 					." FROM ".TBL_MATCHS.", "
 					.TBL_SCORES.", "
@@ -1500,7 +1500,7 @@ class Match extends DatabaseTable
 					.$orderby_str;
 					break;
 					case "Clan Ladder":
-					case "Team Tournament":
+					case "Clan Tournament":
 					$q = "SELECT ".TBL_MATCHS.".*, "
 					.TBL_SCORES.".*, "
 					.TBL_CLANS.".*, "
@@ -1551,7 +1551,7 @@ class Match extends DatabaseTable
 						$pteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");
 						break;
 						case "Clan Ladder":
-						case "Team Tournament":
+						case "Clan Tournament":
 						$pname  = mysql_result($result,$index, TBL_CLANS.".Name");
 						$pavatar = mysql_result($result,$index, TBL_CLANS.".Image");
 						$pteam  = mysql_result($result,$index, TBL_TEAMS.".TeamID");
@@ -1599,7 +1599,7 @@ class Match extends DatabaseTable
 					}
 					break;
 					case "Clan Ladder":
-					case "Team Tournament":
+					case "Clan Tournament":
 					if($pavatar)
 					{
 					$image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).' style="vertical-align:middle"/>';
@@ -1665,7 +1665,7 @@ class Match extends DatabaseTable
 						$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a>';
 						break;
 						case "Clan Ladder":
-						case "Team Tournament":
+						case "Clan Tournament":
 						$string .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$pclanid.'">'.$pclan.'</a>';
 						break;
 						default:

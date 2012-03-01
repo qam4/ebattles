@@ -64,7 +64,7 @@ else
 		$event_type = 'Ladder';
 		break;
 		case "One Player Tournament":
-		case "Team Tournament":
+		case "Clan Tournament":
 		$event_type = 'Tournament';
 		default:
 	}
@@ -298,7 +298,7 @@ else
 		{
 			case "Team Ladder":
 			case "Clan Ladder":
-			case "Team Tournament":
+			case "Clan Tournament":
 			$q = "SELECT COUNT(*) as NbrTeams"
 			." FROM ".TBL_TEAMS
 			." WHERE (".TBL_TEAMS.".Event = '$event_id')";
@@ -335,7 +335,7 @@ else
 		{
 			case "Team Ladder":
 			case "Clan Ladder":
-			case "Team Tournament":
+			case "Clan Tournament":
 			if ($numTeams<$event->getField('MaxNumberPlayers'))
 			{
 				// Form to add a team's division to the event
@@ -354,23 +354,35 @@ else
 				<table class="eb_table" style="width:95%">
 				<tbody>
 				<tr>
-				<td class="eb_td eb_tdc1 eb_w40">
-				<b>'.EB_EVENTM_L41.'</b>
-				</td>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L41.'</td>
 				<td class="eb_td">
-				<select class="tbox" name="division">
+				<table class="table_left">
+				<tr>
+				<td><div><select class="tbox" name="division">
 				';
 				for($i=0; $i<$numDivisions; $i++)
 				{
-					// TODO: remove teams already signed up
 					$did  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 					$dname  = mysql_result($result,$i, TBL_CLANS.".Name");
-					$text .= '<option value="'.$did.'">'.$dname.'</option>';
+					
+					$q_Teams = "SELECT COUNT(*) as nbrTeams"
+					." FROM ".TBL_TEAMS
+					." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+					." AND (".TBL_TEAMS.".Division = '$did')";
+					$result_Teams = $sql->db_Query($q_Teams);
+					$row = mysql_fetch_array($result_Teams);
+					$nbrTeams = $row['nbrTeams'];
+					if ($nbrTeams==0)
+					{
+						$text .= '<option value="'.$did.'">'.$dname.'</option>';
+					}
 				}
 				$text .= '
-				</select>
-				'.ebImageTextButton('eventaddteam', 'user_add.png', EB_EVENTM_L42).'
-				<input class="tbox" type="checkbox" name="eventaddteamnotify"/>'.EB_EVENTM_L43.'
+				</select></div></td>
+				<td>'.ebImageTextButton('eventaddteam', 'user_add.png', EB_EVENTM_L42).'</td>
+				<td><div><input class="tbox" type="checkbox" name="eventaddteamnotify"/>'.EB_EVENTM_L43.'</div></td>
+				</tr>
+				</table>
 				</td>
 				</tr>
 				</tbody>
@@ -397,9 +409,7 @@ else
 				<table class="eb_table" style="width:95%">
 				<tbody>
 				<tr>
-				<td class="eb_td eb_tdc1 eb_w40">
-				<b>'.EB_EVENTM_L44.'</b>
-				</td>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L44.'</td>
 				<td class="eb_td">
 				<table class="table_left">
 				<tr>
@@ -454,7 +464,7 @@ else
 		{
 			case "Team Ladder":
 			case "Clan Ladder":
-			case "Team Tournament":
+			case "Clan Tournament":
 			// Show list of teams here
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
 			.TBL_TEAMS.".*, "
@@ -481,26 +491,23 @@ else
 				<th class="eb_th2">'.EB_CLANS_L6.'</th>
 				</tr>';
 				for($i=0; $i < $num_rows; $i++){
-					$clanid  = mysql_result($result,$i, TBL_CLANS.".ClanID");
-					$cname  = mysql_result($result,$i, TBL_CLANS.".Name");
-					$ctag  = mysql_result($result,$i, TBL_CLANS.".Tag");
-					$cavatar  = mysql_result($result,$i, TBL_CLANS.".Image");
-					$cowner  = mysql_result($result,$i, TBL_CLANS.".Owner");
+					$clan_id  = mysql_result($result,$i, TBL_CLANS.".ClanID");
+					$clan = new Clan($clan_id);
 
 					$image = "";
 					if ($pref['eb_avatar_enable_teamslist'] == 1)
 					{
-						if($cavatar)
+						if($clan->getField('Image'))
 						{
-							$image = '<img '.getAvatarResize(getImagePath($cavatar, 'team_avatars')).' style="vertical-align:middle"/>';
+							$image = '<img '.getAvatarResize(getImagePath($clan->getField('Image'), 'team_avatars')).' style="vertical-align:middle"/>';
 						} else if ($pref['eb_avatar_default_team_image'] != ''){
 							$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
 						}
 					}
 
 					$text .= '<tr>
-					<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid.'">'.$cname.'</a></td>
-					<td class="eb_td">'.$ctag.'</td>
+					<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a></td>
+					<td class="eb_td">'.$clan->getField('Tag').'</td>
 					</tr>';
 				}
 				$text .= '</tbody></table>';
@@ -977,33 +984,7 @@ else
 			// tab-page "Brackets"
 			$text .= '<div id="tabs-6">';
 
-			$teams = array();
-			$type = $event->getField('Type');
-			switch($type)
-			{
-				default:
-				// TODO: Team...
-				$q_Players = "SELECT ".TBL_GAMERS.".*, "
-				.TBL_PLAYERS.".*"
-				." FROM ".TBL_GAMERS.", "
-				.TBL_PLAYERS.", "
-				.TBL_USERS
-				." WHERE (".TBL_PLAYERS.".Event = '".$event->getField('EventID')."')"
-				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-				." ORDER BY ".TBL_PLAYERS.".Joined";
-				$result = $sql->db_Query($q_Players);
-				$nbrPlayers = mysql_numrows($result);
-				for ($player = 0; $player < $nbrPlayers; $player++)
-				{
-					$playerID = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
-					$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
-					$gamer = new Gamer($gamerID);
-					$teams[$player]['Name'] = $gamer->getField('Name');
-					$teams[$player]['UniqueGameID'] = $gamer->getField('UniqueGameID');
-					$teams[$player]['PlayerID'] = $playerID;
-				}
-			}
+			$teams = $event->getTeams();
 
 			$results = unserialize($event->getField('Results'));
 			list($bracket_html) = brackets($event->getField('Format'), $event->getField('MaxNumberPlayers'), $teams, $results, $rounds);
