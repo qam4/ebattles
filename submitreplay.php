@@ -267,7 +267,7 @@ if (isset($_FILES['userfile'])) {
 							)";
 							break;
 							case "Clan Ladder":
-							case "Team Tournament":
+							case "Clan Tournament":
 							break;
 							default:
 							$q = '';
@@ -289,7 +289,7 @@ if (isset($_FILES['userfile'])) {
 							$match->match_players_update();
 							break;
 							case "Clan Ladder":
-							case "Team Tournament":
+							case "Clan Tournament":
 							$match->match_teams_update();
 							break;
 							default:

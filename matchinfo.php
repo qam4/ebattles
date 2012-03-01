@@ -165,7 +165,7 @@ else
 		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 		break;
 		case "Clan Ladder":
-		case "Team Tournament":
+		case "Clan Tournament":
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_CLANS.".*, "
@@ -257,7 +257,7 @@ else
 		$numOpps = mysql_numrows($result_Opps);
 		break;
 		case "Clan Ladder":
-		case "Team Tournament":
+		case "Clan Tournament":
 		$reporter_matchteam = 0;
 		$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 		." FROM ".TBL_MATCHS.", "
@@ -413,7 +413,7 @@ else
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 			break;
 			case "Clan Ladder":
-			case "Team Tournament":
+			case "Clan Tournament":
 			$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 			$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
 			$pavatar = mysql_result($result,$i, TBL_CLANS.".Image");
@@ -467,7 +467,7 @@ else
 				}
 				break;
 				case "Clan Ladder":
-				case "Team Tournament":
+				case "Clan Tournament":
 				if($pavatar)
 				{
 					$image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).' style="vertical-align:middle"/>';
@@ -495,7 +495,7 @@ else
 			$text .= '<td class="eb_td">'.$image.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
 			break;
 			case "Clan Ladder":
-			case "Team Tournament":
+			case "Clan Tournament":
 			$text .= '<td class="eb_td">'.$image.' <a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$pclanid.'">'.$pclan.'</a></td>';
 			break;
 			default:
@@ -551,7 +551,7 @@ else
 			}
 			break;
 			case "Clan Ladder":
-			case "Team Tournament":
+			case "Clan Tournament":
 			break;
 			default:
 		}

@@ -318,7 +318,7 @@ function displayCurrentEvents(){
 				$nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
 				break;
 				case "Clan Ladder":
-				case "Team Tournament":
+				case "Clan Tournament":
 				$nbrTeamPlayers = $nbrTeams;
 				break;
 				default:
@@ -518,7 +518,7 @@ function displayRecentEvents(){
 				$nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
 				break;
 				case "Clan Ladder":
-				case "Team Tournament":
+				case "Clan Tournament":
 				$nbrTeamPlayers = $nbrTeams;
 				break;
 				default:

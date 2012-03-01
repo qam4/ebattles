@@ -136,7 +136,7 @@ switch($event->getField('Type'))
 	}
 	break;
 	case "Clan Ladder":
-	case "Team Tournament":
+	case "Clan Tournament":
 	$q = "SELECT ".TBL_CLANS.".*, "
 	.TBL_TEAMS.".*, "
 	.TBL_DIVISIONS.".* "
@@ -203,7 +203,7 @@ if($match_id)
 		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 		break;
 		case "Clan Ladder":
-		case "Team Tournament":
+		case "Clan Tournament":
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_CLANS.".*, "
@@ -266,7 +266,7 @@ if($match_id)
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 			break;
 			case "Clan Ladder":
-			case "Team Tournament":
+			case "Clan Tournament":
 			$pid  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
 			$pname  = mysql_result($result,$score, TBL_CLANS.".Name");
 			$pavatar = mysql_result($result,$score, TBL_CLANS.".Image");
@@ -416,7 +416,7 @@ if (isset($_POST['submit']))
 			}
 			break;
 			case "Clan Ladder":
-			case "Team Tournament":
+			case "Clan Tournament":
 			// Check if user is the team captain
 			$q = "SELECT ".TBL_DIVISIONS.".*, "
 			.TBL_TEAMS.".*"
@@ -487,7 +487,7 @@ if (isset($_POST['submit']))
 			$error_str .= '<li>'.EB_MATCHR_L9.'</li>';
 			break;
 			case "Clan Ladder":
-			case "Team Tournament":
+			case "Clan Tournament":
 			// Check if the reporter's team played in the match
 			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
 			$error_str .= '<li>'.EB_MATCHR_L37.'</li>';
@@ -631,7 +631,7 @@ if (isset($_POST['submit']))
 				";
 				break;
 				case "Clan Ladder":
-				case "Team Tournament":
+				case "Clan Tournament":
 				$q =
 				"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
 				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
@@ -672,7 +672,7 @@ if (isset($_POST['submit']))
 
 				break;
 				case "Clan Ladder":
-				case "Team Tournament":
+				case "Clan Tournament":
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
@@ -738,7 +738,7 @@ if (isset($_POST['submit']))
 					case "Clan Ladder":
 					$match->match_teams_update();
 					break;
-					case "Team Tournament":
+					case "Clan Tournament":
 					$match->match_teams_update();
 					$event->scheduleNextMatches();
 					break;

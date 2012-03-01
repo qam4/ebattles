@@ -249,7 +249,7 @@ class Event extends DatabaseTable
 				updateTeamStats($this->fields['EventID'], $time, TRUE);
 				break;
 				case "One Player Tournament":
-				case "Team Tournament":
+				case "Clan Tournament":
 				break;
 				default:
 			}
@@ -278,7 +278,7 @@ class Event extends DatabaseTable
 					updateTeamStats($this->fields['EventID'], $this->fields['getStartDateTime'], FALSE);
 					break;
 					case "One Player Tournament":
-					case "Team Tournament":
+					case "Clan Tournament":
 					break;
 					default:
 				}
@@ -323,7 +323,7 @@ class Event extends DatabaseTable
 						updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
 						break;
 						case "One Player Tournament":
-						case "Team Tournament":
+						case "Clan Tournament":
 						break;
 						default:
 					}
@@ -372,9 +372,9 @@ class Event extends DatabaseTable
 		$num_rows = mysql_numrows($result);
 		if ($num_rows==0)
 		{
-			// TODO: need to create gamer before coming here (i.e. when player joins a division.)
-			echo "Error: no gamer";
-			return;
+			// Need to create gamer before coming here (i.e. when player joins a division.)
+			// If the gamer does not exist, create one.
+			$gamerID = updateGamer($user, $this->fields['Game'], $username, "");
 		}
 		else
 		{
@@ -521,7 +521,7 @@ class Event extends DatabaseTable
 			$event_type = 'Ladder';
 			break;
 			case "One Player Tournament":
-			case "Team Tournament":
+			case "Clan Tournament":
 			$event_type = 'Tournament';
 			default:
 		}
@@ -558,7 +558,7 @@ class Event extends DatabaseTable
 		//-->
 		</script>
 		';
-			
+
 		$text .= "
 		<script type='text/javascript'>
 		<!--//
@@ -648,11 +648,11 @@ class Event extends DatabaseTable
 		<tr>
 		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L18.'</td>
 		<td class="eb_td"><select class="tbox" name="eventtype" '.$disabled_str.'>';
-		$text .= '<option value="Individual Ladder" '.($this->getField('Type') == "One Player Ladder" ? 'selected="selected"' : '').'>'.EB_EVENTS_L22.'</option>';
+		$text .= '<option value="One Player Ladder" '.($this->getField('Type') == "One Player Ladder" ? 'selected="selected"' : '').'>'.EB_EVENTS_L22.'</option>';
 		$text .= '<option value="Team Ladder" '.($this->getField('Type') == "Team Ladder" ? 'selected="selected"' : '').'>'.EB_EVENTS_L23.'</option>';
 		$text .= '<option value="Clan Ladder" '.($this->getField('Type') == "Clan Ladder" ? 'selected="selected"' : '').'>'.EB_EVENTS_L25.'</option>';
 		$text .= '<option value="One Player Tournament" '.($this->getField('Type') == "One Player Tournament" ? 'selected="selected"' : '').'>'.EB_EVENTS_L33.'</option>';
-		//fm:$text .= '<option value="Team Tournament" '.($this->getField('Type') == "Team Tournament" ? 'selected="selected"' : '').'>'.EB_EVENTS_L35.'</option>';
+		$text .= '<option value="Clan Tournament" '.($this->getField('Type') == "Clan Tournament" ? 'selected="selected"' : '').'>'.EB_EVENTS_L35.'</option>';
 		$text .= '</select>
 		</td>
 		</tr>
@@ -1287,35 +1287,12 @@ class Event extends DatabaseTable
 		//dbg
 		global $tp;
 
-		$teams = array();
 		$type = $this->fields['Type'];
 		$format = $this->fields['Format'];
 		$event_id = $this->fields['EventID'];
-		switch($type)
-		{
-			default:
-			// TODO: Team...
-			$q_Players = "SELECT ".TBL_GAMERS.".*, "
-			.TBL_PLAYERS.".*"
-			." FROM ".TBL_GAMERS.", "
-			.TBL_PLAYERS.", "
-			.TBL_USERS
-			." WHERE (".TBL_PLAYERS.".Event = '".$event_id."')"
-			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-			." ORDER BY ".TBL_PLAYERS.".Joined";
-			$result = $sql->db_Query($q_Players);
-			$nbrPlayers = mysql_numrows($result);
-			for ($player = 0; $player < $nbrPlayers; $player++)
-			{
-				$playerID = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
-				$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
-				$gamer = new Gamer($gamerID);
-				$teams[$player]['Name'] = $gamer->getField('Name');
-				$teams[$player]['UniqueGameID'] = $gamer->getField('UniqueGameID');
-				$teams[$player]['PlayerID'] = $playerID;
-			}
-		}
+
+		$teams = $this->getTeams();
+
 		$maxNbrPlayers = $this->fields['MaxNumberPlayers'];
 		$results = unserialize($this->getField('Results'));
 		// TODO: check for error (return false)
@@ -1406,8 +1383,6 @@ class Event extends DatabaseTable
 						// Get the scores for this match
 						switch($type)
 						{
-							case "One Player Ladder":
-							case "Team Ladder":
 							case "One Player Tournament":
 							$q = "SELECT ".TBL_MATCHS.".*, "
 							.TBL_SCORES.".*, "
@@ -1425,8 +1400,7 @@ class Event extends DatabaseTable
 							." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 							." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 							break;
-							case "Clan Ladder":
-							case "Team Tournament":
+							case "Clan Tournament":
 							$q = "SELECT ".TBL_MATCHS.".*, "
 							.TBL_SCORES.".*, "
 							.TBL_CLANS.".*, "
@@ -1455,25 +1429,11 @@ class Event extends DatabaseTable
 							$i = 0;
 							switch($type)
 							{
-								case "One Player Ladder":
-								case "Team Ladder":
 								case "One Player Tournament":
 								$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-								$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
-								$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
-								$gamer = new Gamer($gamer_id);
-								$pname = $gamer->getField('Name');
-								$pavatar = mysql_result($result,$i, TBL_USERS.".user_image");
-								$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
-								list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 								break;
-								case "Clan Ladder":
-								case "Team Tournament":
+								case "Clan Tournament":
 								$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-								$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
-								$pavatar = mysql_result($result,$i, TBL_CLANS.".Image");
-								$pteam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-								list($pclan, $pclantag, $pclanid) = getClanInfo($pteam); // Use this function to get other clan info like clan id?
 								break;
 								default:
 							}
@@ -1500,9 +1460,18 @@ class Event extends DatabaseTable
 										$this->setFieldDB('Status', 'finished');
 
 										// Award: player wins tournament
-										// TODO: Teams...
-										$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-										VALUES ($teamTopID,'PlayerWonTournament',$time)";
+										switch($type)
+										{
+											case "One Player Tournament":
+											$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+											VALUES ($teamTopID,'PlayerWonTournament',$time)";
+											break;
+											case "Clan Tournament":
+											$q_Award = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+											VALUES ($teamTopID,'TeamWonTournament',$time)";
+											break;
+											default:
+										}
 										$result_Award = $sql->db_Query($q_Award);
 									}
 								}
@@ -1520,9 +1489,18 @@ class Event extends DatabaseTable
 										$this->setFieldDB('Status', 'finished');
 
 										// Award: player wins tournament
-										// TODO: Teams...
-										$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-										VALUES ($teamBottomID,'PlayerWonTournament',$time)";
+										switch($type)
+										{
+											case "One Player Tournament":
+											$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+											VALUES ($teamBottomID,'PlayerWonTournament',$time)";
+											break;
+											case "Clan Tournament":
+											$q_Award = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+											VALUES ($teamBottomID,'TeamWonTournament',$time)";
+											break;
+											default:
+										}
 										$result_Award = $sql->db_Query($q_Award);
 									}
 								}
@@ -1539,11 +1517,11 @@ class Event extends DatabaseTable
 						if(!isset($current_match))
 						{
 							$results[$round][$matchup]['topWins'] = 0;
-							$results[$round][$matchup]['bottomWins'] = 0;					
+							$results[$round][$matchup]['bottomWins'] = 0;
 						}
-						
+
 						// Create Match ------------------------------------------
-						$reported_by = ADMINID;
+						$reported_by = $this->getField('Owner');
 						$time_reported = $time;
 						$comments = '';
 						$time_scheduled = $time_reported;
@@ -1560,25 +1538,32 @@ class Event extends DatabaseTable
 						$teamTop    = $content[$round][$matchup][0];
 						$teamBottom = $content[$round][$matchup][1];
 
-						$teamTopID = $teams[$teamTop-1]['PlayerID'];
-						$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
-
 						switch($type)
 						{
 							case "One Player Tournament":
-							// TODO: Team...
-							$q =
-							"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
-							VALUES ($match_id,$teamTopID,0,1,1)
-							";
-							$result = $sql->db_Query($q);
-
-							$q =
-							"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
-							VALUES ($match_id,$teamBottomID,0,2,2)
-							";
-							$result = $sql->db_Query($q);
+							$playerTopID = $teams[$teamTop-1]['PlayerID'];
+							$playerBottomID = $teams[$teamBottom-1]['PlayerID'];
+							$teamTopID = 0;
+							$teamBottomID = 0;
+							break;
+							case "Clan Tournament":
+							$playerTopID = 0;
+							$playerBottomID = 0;
+							$teamTopID = $teams[$teamTop-1]['PlayerID'];
+							$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
+							break;
 						}
+						$q =
+						"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
+						VALUES ($match_id,$playerTopID,$teamTopID,1,1)
+						";
+						$result = $sql->db_Query($q);
+
+						$q =
+						"INSERT INTO ".TBL_SCORES."(MatchID,Player,Team,Player_MatchTeam,Player_Rank)
+						VALUES ($match_id,$playerBottomID,$teamBottomID,2,2)
+						";
+						$result = $sql->db_Query($q);
 
 						$match = array();
 						$match['played'] = false;
@@ -1619,7 +1604,7 @@ class Event extends DatabaseTable
 			case "One Player Tournament":
 			$text = EB_EVENTS_L33;
 			break;
-			case "Team Tournament":
+			case "Clan Tournament":
 			$text = EB_EVENTS_L35;
 			break;
 			default:
@@ -1680,6 +1665,72 @@ class Event extends DatabaseTable
 			break;
 		}
 		return $time_comment;
+	}
+
+	function getTeams()
+	{
+		global $sql;
+
+		$teams = array();
+		$type = $this->getField('Type');
+		switch($type)
+		{
+			case 'One Player Tournament':
+			$q_Players = "SELECT ".TBL_GAMERS.".*, "
+			.TBL_PLAYERS.".*"
+			." FROM ".TBL_GAMERS.", "
+			.TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_PLAYERS.".Event = '".$this->getField('EventID')."')"
+			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+			." ORDER BY ".TBL_PLAYERS.".Joined";
+			$result = $sql->db_Query($q_Players);
+			$nbrPlayers = mysql_numrows($result);
+			for ($player = 0; $player < $nbrPlayers; $player++)
+			{
+				$playerID = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
+				$gamerID = mysql_result($result, $player, TBL_GAMERS.".GamerID");
+				$gamer = new Gamer($gamerID);
+
+				$pname = $gamer->getField('Name');
+				$pugid = $gamer->getField('UniqueGameID');
+				$pavatar = mysql_result($result,$player, TBL_USERS.".user_image");
+				$pteam  = mysql_result($result,$player , TBL_PLAYERS.".Team");
+				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
+
+				$teams[$player]['PlayerID'] = $playerID;
+				$teams[$player]['Name'] = $pname;
+				$teams[$player]['UniqueGameID'] = $pugid;
+				$teams[$player]['Avatar'] = $pavatar;
+			}
+			break;
+			case 'Clan Tournament':
+			$q_Teams = "SELECT ".TBL_CLANS.".*, "
+			.TBL_TEAMS.".*, "
+			.TBL_DIVISIONS.".* "
+			." FROM ".TBL_CLANS.", "
+			.TBL_TEAMS.", "
+			.TBL_DIVISIONS
+			." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+			." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+			." AND (".TBL_TEAMS.".Event = '".$this->getField('EventID')."')";
+			$result = $sql->db_Query($q_Teams);
+			$nbrTeams = mysql_numrows($result);
+			for ($team = 0; $team < $nbrTeams; $team++)
+			{
+				$pteam  = mysql_result($result,$team, TBL_TEAMS.".TeamID");
+				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
+
+				$teams[$team]['PlayerID'] = $pteam;
+				$teams[$team]['Name'] = $pclan;
+				$teams[$team]['UniqueGameID'] = '';
+				$teams[$team]['Avatar'] = $pavatar;
+			}
+			break;
+		}
+		//var_dump($teams);
+		return $teams;
 	}
 }
 

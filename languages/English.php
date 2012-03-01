@@ -61,7 +61,7 @@ define('EB_ADMIN_L33', 'Teams Standings');
 define('EB_ADMIN_L34', 'Default Team Avatar');
 define('EB_ADMIN_L35', 'Select a remote icon using an external link or one of the icons in ebattles/images/team_avatars/');
 define('EB_ADMIN_L36', 'Teams List');
-define('EB_ADMIN_L37', 'Powered by <a href=&quot;http://ebattles.freehostia.com/&quot; rel=&quot;external&quot;>eBattles</a>');
+define('EB_ADMIN_L37', 'Powered by <a href=&quot;http://www.ebattles.net/&quot; rel=&quot;external&quot;>eBattles</a>');
 define('EB_ADMIN_L38', 'Plugin Disclaimer');
 define('EB_ADMIN_L39', 'Games');
 define('EB_ADMIN_L40', 'Maps Images max size');
@@ -81,10 +81,10 @@ define('EB_ADMIN_L53', 'Show number of challenges unconfirmed');
 
 define('EB_ADMINHELP_L1', 'eBattles Help');
 define('EB_ADMINHELP_L2', 'Version');
-define('EB_ADMINHELP_L3', 'Homepage: <a href="http://ebattles.freehostia.com" title="ebattles.freehostia.com">eBattles</a>');
-define('EB_ADMINHELP_L4', 'Forum: <a href="http://ebattles.freehostia.com/e107_plugins/forum/forum.php" title="eBattles Forum">eBattles Forum</a>');
+define('EB_ADMINHELP_L3', 'Homepage: <a href="http://www.ebattles.net" title="www.ebattles.net">eBattles</a>');
+define('EB_ADMINHELP_L4', 'Forum: <a href="http://www.ebattles.net/e107_plugins/forum/forum.php" title="eBattles Forum">eBattles Forum</a>');
 define('EB_ADMINHELP_L5', 'Wiki: <a href="http://code.google.com/p/ebattles/wiki/TableOfContents?tm=6" title="eBattles Wiki">eBattles Wiki</a>');
-define('EB_ADMINHELP_L6', 'Support: <a href="http://ebattles.freehostia.com/e107_plugins/forum/forum.php" title="eBattles Support">eBattles Support</a>');
+define('EB_ADMINHELP_L6', 'Support: <a href="http://www.ebattles.net/e107_plugins/forum/forum.php" title="eBattles Support">eBattles Support</a>');
 define('EB_ADMINHELP_L7', 'SVN repository: <a href="http://code.google.com/p/ebattles/source/checkout" title="eBattles Source code">eBattles Source code</a>');
 define('EB_ADMINHELP_L8', '');
 define('EB_ADMINHELP_L9', '');
@@ -134,7 +134,7 @@ define('EB_EVENTS_L31', '
 	Cordially,
 	The event admin ');
 define('EB_EVENTS_L32', 'Match Type');
-define('EB_EVENTS_L33', 'One Player Tournament');
+define('EB_EVENTS_L33', 'Individual Tournament');
 define('EB_EVENTS_L34', 'Status');
 define('EB_EVENTS_L35', 'Team Tournament');
 
@@ -221,6 +221,7 @@ define('EB_EVENT_L80', 'Unique Game ID');
 define('EB_EVENT_L81', 'Submit Replay');
 define('EB_EVENT_L82', 'Status');
 define('EB_EVENT_L83', 'Event finished');
+define('EB_EVENT_L84', 'Teams');
 
 define('EB_EVENTM_L1', 'Manage');
 define('EB_EVENTM_L2', 'Summary');

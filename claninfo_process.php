@@ -90,8 +90,6 @@ if(isset($_POST['joindivision']))
 			}
 		}
 	}
-	// TODO: $clan_id not defined
-	header("Location: claninfo.php?clanid=$clan_id");
 }
 if(isset($_POST['quitdivision']))
 {
@@ -119,7 +117,5 @@ if(isset($_POST['quitdivision']))
 		$division->deleteMemberPlayers();
 		$division->deleteMember();
 	}
-	// TODO: $clan_id not defined
-	header("Location: claninfo.php?clanid=$clan_id");
 }
 ?>

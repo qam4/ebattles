@@ -131,17 +131,20 @@ else{
 
 			switch($new_eventtype)
 			{
-				case 'Individual':
+				case 'One Player Ladder':
 				$event->setField('Type', 'One Player Ladder');
 				break;
-				case 'Team':
+				case 'Team Ladder':
 				$event->setField('Type', 'Team Ladder');
 				break;
-				case 'Clan':
+				case 'Clan Ladder':
 				$event->setField('Type', 'Clan Ladder');
+				break;
 				case 'One Player Tournament':
 				$event->setField('Type', 'One Player Tournament');
 				break;
+				case 'Clan Tournament':
+				$event->setField('Type', 'Clan Tournament');
 				default:
 			}
 		}
@@ -391,7 +394,7 @@ else{
 	{
 		$division = $_POST['division'];
 		$notify = (isset($_POST['eventaddteamnotify'])? TRUE: FALSE);
-		$event->eventAddDivision($event_id, $division, $notify);
+		$event->eventAddDivision($division, $notify);
 
 		//echo "-- eventaddteam --<br />";
 		header("Location: eventmanage.php?eventid=$event_id");
