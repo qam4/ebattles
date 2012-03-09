@@ -112,7 +112,7 @@ else
 		$text .= EB_USER_L10;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
-		$text .= EB_USER_L37;
+		$text .= EB_USER_L33;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L11;
@@ -223,7 +223,7 @@ else
 		$text .= EB_USER_L10;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
-		$text .= EB_USER_L37;
+		$text .= EB_USER_L33;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;
@@ -301,7 +301,7 @@ else
 		$text .= EB_USER_L10;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
-		$text .= EB_USER_L37;
+		$text .= EB_USER_L33;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
 		$text .= EB_USER_L14;

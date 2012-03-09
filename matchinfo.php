@@ -93,6 +93,20 @@ else
 	$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
 	$event = new Event($event_id);
 
+	$type = $event->getField('Type');
+	switch($type)
+	{
+		case "One Player Ladder":
+		case "Team Ladder":
+		case "Clan Ladder":
+		$event_type = 'Ladder';
+		break;
+		case "One Player Tournament":
+		case "Clan Tournament":
+		$event_type = 'Tournament';
+		default:
+	}
+		
 	$gName = mysql_result($result,0 , TBL_GAMES.".Name");
 	$mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
 	$reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
@@ -350,6 +364,12 @@ else
 	if($userclass < $event->getField('MatchesApproval')) $can_approve = 0;
 	if($event->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
 	if ($mStatus == 'active') $can_approve = 0;
+
+	if($event_type == 'Tournament')
+	{
+		$can_edit = 0;
+		$can_delete = 0;
+	}
 
 	if ($mStatus == 'pending')
 	$text .= '<div>'.EB_MATCHD_L18.'</div>';
