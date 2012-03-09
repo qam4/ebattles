@@ -123,6 +123,20 @@ define('EB_EVENTS_L22', 'Soutěž jednotlivců');
 define('EB_EVENTS_L23', 'Soutěž týmů/jednotlivců');
 define('EB_EVENTS_L24', 'Filtr');
 define('EB_EVENTS_L25', 'Soutěž týmů');
+define('EB_EVENTS_L26', 'Hello ');
+define('EB_EVENTS_L27', ',
+	You are invited to participate in the event "');
+define('EB_EVENTS_L29', '"
+	Please check your "My Profile/Events" page to see the event details.');
+define('EB_EVENTS_L30', '"
+	Please click the following link to view the event details: ');	
+define('EB_EVENTS_L31', '
+	Cordially,
+	The event admin ');
+define('EB_EVENTS_L32', 'Match Type');
+define('EB_EVENTS_L33', 'Individual Tournament');
+define('EB_EVENTS_L34', 'Status');
+define('EB_EVENTS_L35', 'Team Tournament');
 
 define('EB_EVENT_L1', 'Soutěž');
 define('EB_EVENT_L2', 'Soutěž začíná');
@@ -197,7 +211,17 @@ define('EB_EVENT_L70', 'naplánované zápasy');
 define('EB_EVENT_L71', 'Vyzvat tým');
 define('EB_EVENT_L72', 'Rozvrh zápasů');
 define('EB_EVENT_L73', 'zápas(y) o schválení');
-define('EB_EVENT_L74', 'Registrace uzavřen.');
+define('EB_EVENT_L74', 'Event started');
+define('EB_EVENT_L75', 'Registrace uzavřen.');
+define('EB_EVENT_L76', 'Brackets');
+define('EB_EVENT_L77', 'Players');
+define('EB_EVENT_L78', 'Race');
+define('EB_EVENT_L79', 'Name');
+define('EB_EVENT_L80', 'Unique Game ID');
+define('EB_EVENT_L81', 'Submit Replay');
+define('EB_EVENT_L82', 'Status');
+define('EB_EVENT_L83', 'Event finished');
+define('EB_EVENT_L84', 'Teams');
 
 define('EB_EVENTM_L1', 'Upravit');
 define('EB_EVENTM_L2', 'Přehled');
@@ -217,8 +241,8 @@ define('EB_EVENTM_L15', 'Název');
 define('EB_EVENTM_L16', 'Heslo pro vstup do soutěže');
 define('EB_EVENTM_L17', 'Hra');
 define('EB_EVENTM_L18', 'Typ');
-define('EB_EVENTM_L19', ' Jednotlivec &nbsp &nbsp ');
-define('EB_EVENTM_L20', ' Tým / jednotlivec &nbsp &nbsp ');
+define('EB_EVENTM_L19', '');
+define('EB_EVENTM_L20', '');
 define('EB_EVENTM_L21', 'Skupina s právy zapsat zápas');
 define('EB_EVENTM_L22', 'Hráč zápasu');
 define('EB_EVENTM_L23', 'Moderátor soutěže');
@@ -256,7 +280,7 @@ define('EB_EVENTM_L52', 'Žádní hráči');
 define('EB_EVENTM_L53', 'Nehodnocen');
 define('EB_EVENTM_L54', 'Zabanovaní');
 define('EB_EVENTM_L55', 'Jméno');
-define('EB_EVENTM_L56', 'Hodnocení');
+define('EB_EVENTM_L56', 'Připojil se');
 define('EB_EVENTM_L57', 'Hry');
 define('EB_EVENTM_L58', 'Ocenění');
 define('EB_EVENTM_L59', 'Akce');
@@ -316,7 +340,7 @@ define('EB_EVENTM_L112', 'Soupeř');
 define('EB_EVENTM_L113', 'Vypnout');
 define('EB_EVENTM_L114', 'týmy');
 define('EB_EVENTM_L115', 'Žádné týmy');
-define('EB_EVENTM_L116', ' Tým');
+define('EB_EVENTM_L116', '');
 define('EB_EVENTM_L117', 'Typ hodnocení');
 define('EB_EVENTM_L118', 'Klasický: Hráči jsou hodnoceni dle jejich skóre v první kategorii statistik, když jsou dva hráči vyrovnaní, jsou hodnoceni dle druhé kategorie statistik, atd.<br />
 Kombinované statistiky: Hráči jsou hodnoceni kombinací jejich skóre v každé kategorii statistik.');
@@ -334,6 +358,27 @@ define('EB_EVENTM_L129', 'Affects win/loss count');
 define('EB_EVENTM_L130', 'Forfeit Win Points');
 define('EB_EVENTM_L131', 'Forfeit Loss Points');
 define('EB_EVENTM_L132', 'Match Type');
+define('EB_EVENTM_L133', 'View Event');
+define('EB_EVENTM_L134', 'Match replay report userclass');
+define('EB_EVENTM_L135', 'Status');
+define('EB_EVENTM_L136', 'Draft');
+define('EB_EVENTM_L137', 'Publish');
+define('EB_EVENTM_L138', 'Sign Up');
+define('EB_EVENTM_L139', 'Check In');
+define('EB_EVENTM_L140', 'Active');
+define('EB_EVENTM_L141', 'Finished');
+define('EB_EVENTM_L142', '');
+define('EB_EVENTM_L143', 'Brackets');
+define('EB_EVENTM_L144', 'Round');
+define('EB_EVENTM_L145', 'Title');
+define('EB_EVENTM_L146', 'Best Of');
+define('EB_EVENTM_L147', 'Map Pool');
+define('EB_EVENTM_L148', 'Map Vote');
+define('EB_EVENTM_L149', 'Add Map');
+define('EB_EVENTM_L150', 'Remove Map');
+define('EB_EVENTM_L151', '');
+define('EB_EVENTM_L152', 'Format');
+define('EB_EVENTM_L153', 'Single Elimination');
 
 define('EB_EVENTP_L1', 'Minulé soutěže');
 define('EB_EVENTP_L2', 'Minulé soutěže');
@@ -344,6 +389,17 @@ define('EB_EVENTC_L1', 'Vytvořit soutěž');
 define('EB_EVENTC_L2', 'Nejsi oprávněn vytvořit soutěž.');
 define('EB_EVENTC_L3', 'Soutěž');
 define('EB_EVENTC_L4', 'Zde napiš popis soutěže');
+
+define('EB_SUBMITREPLAY_L1', 'Submit Replay');
+define('EB_SUBMITREPLAY_L2', 'There were errors in the information gathered from the replay you uploaded, they are listed below:');
+define('EB_SUBMITREPLAY_L3', 'The replay match type is not compatible with the event match type');
+define('EB_SUBMITREPLAY_L4', 'We could not get the winner from the replay');
+define('EB_SUBMITREPLAY_L5', 'One player is an AI');
+define('EB_SUBMITREPLAY_L6', 'The following player is not in the event: ');
+define('EB_SUBMITREPLAY_L7', 'Replay already submitted');
+define('EB_SUBMITREPLAY_L8', '');
+define('EB_SUBMITREPLAY_L9', '');
+define('EB_SUBMITREPLAY_L10', '');
 
 define('EB_STATS_L1', 'ELO');
 define('EB_STATS_L2', 'ELO');
@@ -466,6 +522,8 @@ define('EB_CLANM_L31', 'Web');
 define('EB_CLANM_L32', 'Email');
 define('EB_CLANM_L33', 'IM');
 define('EB_CLANM_L34', 'Popis');
+define('EB_CLANM_L35', 'View Team');
+define('EB_CLANM_L36', 'Team Settings');
 
 define('EB_MATCH_L1', 'Zápas');
 define('EB_MATCH_L2', 'tied');
@@ -585,6 +643,7 @@ define('EB_MATCHR_L55', ' tě vyzval v "');
 define('EB_MATCHR_L56', '" turnaji.
 	Zkontroluj si prosím stránku "Můj profil" v sekci Soutěží, kde najdeš podrobnosti k výzvě.
   ');
+define('EB_MATCHR_L57', 'Forfeit?');
 
 define('EB_MATCHQL_L1', 'Zapsat kontumaci');
 define('EB_MATCHQL_L2', 'Nejste oprávněn zapsat zápas.');
@@ -592,7 +651,6 @@ define('EB_MATCHQL_L3', 'Zpět na');
 define('EB_MATCHQL_L4', 'Soutěž');
 define('EB_MATCHQL_L5', 'Vyberte hráče');
 define('EB_MATCHQL_L6', 'Potvrdit prohru');
-define('EB_MATCHR_L57', 'Forfeit?');
 
 define('EB_GAME_L1', 'Neznámá hra');
 define('EB_GAME_L2', 'Upravit hru');
@@ -703,6 +761,8 @@ define('EB_AWARD_L8', 'vyhrál 10 zápasů v řadě');
 define('EB_AWARD_L9', '10 v řadě');
 define('EB_AWARD_L10', 'vyhrál 25 zápasů v řadě');
 define('EB_AWARD_L11', '25 v řadě');
+define('EB_AWARD_L12', 'won the tournament');
+define('EB_AWARD_L13', 'tournament winner');
 
 define('EB_USER_L1', 'Informace o hráči');
 define('EB_USER_L2', 'Profil');
@@ -736,6 +796,13 @@ define('EB_USER_L29', 'Kapitán');
 define('EB_USER_L30', 'je kapitánem následujících divizí');
 define('EB_USER_L31', 'Info');
 define('EB_USER_L32', 'Utkání čeká: ');
+define('EB_USER_L33', 'Game');
+
+define('EB_GAMER_L1', 'Alert:');
+define('EB_GAMER_L2', 'Errors detected!');
+define('EB_GAMER_L3', 'Please provide your gamer info');
+define('EB_GAMER_L4', 'Gamer Name');
+define('EB_GAMER_L5', 'Gamer Unique ID');
 
 define('EB_PGN_L1', 'Jdi na stranu');
 define('EB_PGN_L2', 'Předchozí');
