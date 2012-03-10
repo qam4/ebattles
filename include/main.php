@@ -670,7 +670,7 @@ function versionsCompare($version1, $version2)
         {
             if ($version1[2] < $version2[2])
             return -1;
-            else if ($version2[2] > $version2[2])
+            else if ($version1[2] > $version2[2])
             return 1;
             else
             return 0;
