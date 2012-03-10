@@ -517,7 +517,7 @@ $majVersion = $eb_version[0];
 $minVersion = $eb_version[1];
 $revision = $eb_version[2];
 
-if (versionsCompare($eb_version_string, "0.8"))
+if (versionsCompare($eb_version_string, "0.8") < 0)
 {
 	// To revision 0.8
 	array_push ($upgrade_alter_tables,
@@ -571,7 +571,7 @@ if (versionsCompare($eb_version_string, "0.8"))
 	));
 }
 
-if (versionsCompare($eb_version_string, "0.8.4"))
+if (versionsCompare($eb_version_string, "0.8.4") < 0)
 {
 	// To revision 0.8.4
 	array_push ($upgrade_alter_tables,
@@ -607,7 +607,7 @@ if (versionsCompare($eb_version_string, "0.8.4"))
 	);
 }
 
-if (versionsCompare($eb_version_string, "0.8.5"))
+if (versionsCompare($eb_version_string, "0.8.5") < 0)
 {
 	// To revision 0.8.5
 	array_push ($upgrade_alter_tables,
@@ -621,7 +621,7 @@ if (versionsCompare($eb_version_string, "0.8.5"))
 	);
 }
 
-if (versionsCompare($eb_version_string, "0.8.9"))
+if (versionsCompare($eb_version_string, "0.8.9") < 0)
 {
 	// To revision 0.8.9
 	array_push_associative ($upgrade_add_prefs, array(
@@ -630,7 +630,7 @@ if (versionsCompare($eb_version_string, "0.8.9"))
 	));
 }
 
-if (versionsCompare($eb_version_string, "0.8.10"))
+if (versionsCompare($eb_version_string, "0.8.10") < 0)
 {
 	// To revision 0.8.10
 	array_push_associative ($upgrade_add_prefs, array(
@@ -645,7 +645,7 @@ if (versionsCompare($eb_version_string, "0.8.10"))
 	));
 }
 
-if (versionsCompare($eb_version_string, "0.8.11"))
+if (versionsCompare($eb_version_string, "0.8.11") < 0)
 {
 	// To revision 0.8.11
 	array_push ($upgrade_alter_tables,
@@ -655,7 +655,7 @@ if (versionsCompare($eb_version_string, "0.8.11"))
 	);
 }
 
-if (versionsCompare($eb_version_string, "0.8.12"))
+if (versionsCompare($eb_version_string, "0.8.12") < 0)
 {
 	// To revision 0.8.12
 	array_push ($upgrade_alter_tables,
@@ -663,7 +663,7 @@ if (versionsCompare($eb_version_string, "0.8.12"))
 	);
 }
 
-if (versionsCompare($eb_version_string, "0.8.13"))
+if (versionsCompare($eb_version_string, "0.8.13") < 0)
 {
 	// To revision 0.8.13
 	array_push ($upgrade_alter_tables,
@@ -677,7 +677,7 @@ if (versionsCompare($eb_version_string, "0.8.13"))
 	);
 }
 
-if (versionsCompare($eb_version_string, "0.9.0"))
+if (versionsCompare($eb_version_string, "0.9.0") < 0)
 {
 	// To revision 0.9.0
 	array_push ($upgrade_alter_tables,
@@ -743,7 +743,7 @@ if (!function_exists('ebattles_upgrade')) {
 	function ebattles_upgrade() {
 		global $sql;
 
-		if (versionsCompare($eb_version_string, "0.9.0"))
+		if (versionsCompare($eb_version_string, "0.9.0") < 0)
 		{
 			require_once(e_PLUGIN."ebattles/include/gamer.php");
 			
