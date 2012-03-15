@@ -90,6 +90,7 @@ Suggestions:
   - Tigra Slider Control - http://www.softcomplex.com/products/tigra_slider_control/
   - Games icons - xfireplus.com
   - Photoshop/Design - http://www.empiredezign.com, http://www.tutorialstream.com
+  - Ajax spinner - ajaxload.info
 
 SQL database
 - Queries:

@@ -32,6 +32,11 @@ width: 40%;
 .ui-button { outline: 0; margin:0; padding: 0; text-decoration:none;  !important; cursor:pointer; position: relative; text-align: center; }
 .ui-dialog .ui-state-highlight, .ui-dialog .ui-state-error { padding: .3em;  }
 */
+#players_list_sortable tbody:hover{cursor:move}
+#players_list_sortable tr{}
+#teams_list_sortable tbody:hover{cursor:move}
+#teams_list_sortable tr{}
+#ajaxSpinnerContainer {height:11px;display:none;}
 
 fieldset { padding:0; border:0; }
 /*

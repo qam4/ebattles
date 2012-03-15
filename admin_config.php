@@ -524,8 +524,8 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	}
 	$text .= '<tr>';
 	$text .= '<td class="forumheader3"></td>';
-	$text .= '<td class="forumheader3"><input class="tbox" type="text" id="mapname" name="mapname" size="20" value="" maxlength="32"/></td>';
-	$text .= '<td class="forumheader3"><input class="tbox" type="text" id="mapimage" name="mapimage" size="40" value="" maxlength="64" title="'.EB_GAME_L27.'"/></td>';
+	$text .= '<td class="forumheader3"><input class="tbox" type="text" id="mapname" name="mapname" size="20" value="" maxlength="64"/></td>';
+	$text .= '<td class="forumheader3"><input class="tbox" type="text" id="mapimage" name="mapimage" size="40" value="" maxlength="255" title="'.EB_GAME_L27.'"/></td>';
 	$text .= '<td class="forumheader3"><input class="tbox" type="text" name="mapdescription" size="40" value="" maxlength="63"/></td>';
 	$text .= '<td class="forumheader3"><input class="button" type="submit" name="addmap" value="'.EB_GAME_L28.'"/></td>';
 	$text .= '</tr>';

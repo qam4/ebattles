@@ -378,6 +378,10 @@ define('EB_EVENTM_L150', 'Remove Map');
 define('EB_EVENTM_L151', '');
 define('EB_EVENTM_L152', 'Format');
 define('EB_EVENTM_L153', 'Single Elimination');
+define('EB_EVENTM_L154', 'Seed');
+define('EB_EVENTM_L155', 'Randomize Seeds');
+define('EB_EVENTM_L156', 'Drag-and-drop to reorder seeds manually');
+define('EB_EVENTM_L157', 'Saving...');
 
 define('EB_EVENTP_L1', 'Eventos anteriores');
 define('EB_EVENTP_L2', 'Eventos anteriores');
