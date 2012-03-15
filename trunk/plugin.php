@@ -114,7 +114,7 @@ GameID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(GameID),
 Name varchar(63),
 ShortName varchar(63),
-Icon varchar(63),
+Icon varchar(255),
 Style varchar(63) NOT NULL default '',
 Genre varchar(63) NOT NULL default '',
 MatchTypes varchar(255) NOT NULL default '',
@@ -207,7 +207,7 @@ Owner int(10) unsigned NOT NULL,
 INDEX (Owner),
 FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id),
 password varchar(32),
-Image varchar(100) NOT NULL default '',
+Image varchar(255) NOT NULL default '',
 websiteURL varchar(100) NOT NULL default '',
 email varchar(100) NOT NULL default '',
 IM varchar(100) NOT NULL default '',
@@ -267,7 +267,8 @@ ScoreAgainst int DEFAULT '0',
 Points int DEFAULT '0',
 Joined  int(11) unsigned not null,
 CheckedIn tinyint(1) DEFAULT '0',
-Banned tinyint(1) DEFAULT '0'
+Banned tinyint(1) DEFAULT '0',
+Seed int NOT NULL 
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MATCHS."
 (
@@ -320,7 +321,8 @@ ScoreAgainst int DEFAULT '0',
 Points int DEFAULT '0',
 Joined  int(11) unsigned not null,
 CheckedIn tinyint(1) DEFAULT '0',
-Banned tinyint(1) DEFAULT '0'
+Banned tinyint(1) DEFAULT '0',
+Seed int NOT NULL 
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_SCORES."
 (
@@ -415,7 +417,7 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Name varchar(63) NOT NULL default '',
-Image varchar(63) NOT NULL default '',
+Image varchar(255) NOT NULL default '',
 Description varchar(63) NOT NULL default ''
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_FACTIONS."
@@ -426,7 +428,7 @@ Game int NOT NULL,
 INDEX (Game),
 FOREIGN KEY (Game) REFERENCES ".TBL_GAMES." (GameID),
 Name varchar(63) NOT NULL default '',
-Icon varchar(63) NOT NULL default ''
+Icon varchar(255) NOT NULL default ''
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MEDIA."
 (
@@ -726,8 +728,18 @@ if (versionsCompare($eb_version_string, "0.9.0") < 0)
 	);
 }
 
-
-
+if (versionsCompare($eb_version_string, "0.9.2") < 0)
+{
+	// To revision 0.9.2
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_PLAYERS." ADD Seed int NOT NULL",
+	"ALTER TABLE ".TBL_TEAMS." ADD Seed int NOT NULL",
+	"ALTER TABLE ".TBL_GAMES." MODIFY Icon varchar(255) NOT NULL default ''",
+	"ALTER TABLE ".TBL_CLANS." MODIFY Image varchar(255) NOT NULL default ''",
+	"ALTER TABLE ".TBL_MAPS." MODIFY Image varchar(255) NOT NULL default ''",
+	"ALTER TABLE ".TBL_FACTIONS." MODIFY Icon varchar(255) NOT NULL default ''"
+	);
+}
 
 /*
 echo "<br>Prefs upgrade:";

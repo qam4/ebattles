@@ -62,11 +62,17 @@ else
 		case "Team Ladder":
 		case "Clan Ladder":
 		$event_type = 'Ladder';
+		$seeding_enabled = false;
 		break;
 		case "One Player Tournament":
 		case "Clan Tournament":
 		$event_type = 'Tournament';
+		$seeding_enabled = true;
 		default:
+	}
+	if($event->getField('Status')=='active')
+	{
+		$seeding_enabled = false;
 	}
 
 	$can_manage = 0;
@@ -94,7 +100,8 @@ else
 			case 'Tournament':
 			$text .= '<li><a href="#tabs-6">'.EB_EVENTM_L143.'</a></li>';
 			break;
-		}		$text .= '</ul>';
+		}
+		$text .= '</ul>';
 
 		//***************************************************************************************
 		// tab-page "Event Summary"
@@ -453,7 +460,7 @@ else
 		}
 
 		$text .= '<br />';
-		$text .= '<table>';
+		$text .= '<table class="table_left">';
 		$text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L47.':</td>';
 		$text .= '<td>'.EB_EVENTM_L48.'</td></tr>';
 		$text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L49.':</td>';
@@ -466,6 +473,16 @@ else
 			case "Clan Ladder":
 			case "Clan Tournament":
 			// Show list of teams here
+			switch($event_type)
+			{
+				case 'Ladder':
+				$order_by_str = " ORDER BY ".TBL_CLANS.".Name";
+				break;
+				case 'Tournament':
+				$order_by_str = " ORDER BY ".TBL_TEAMS.".Seed";
+				break;
+			}
+
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
 			.TBL_TEAMS.".*, "
 			.TBL_DIVISIONS.".* "
@@ -474,7 +491,8 @@ else
 			.TBL_DIVISIONS
 			." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
 			." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-			." AND (".TBL_TEAMS.".Event = '$event_id')";
+			." AND (".TBL_TEAMS.".Event = '$event_id')"
+			.$order_by_str;
 			$result = $sql->db_Query($q_Teams);
 			$num_rows = mysql_numrows($result);
 			if(!$result || ($num_rows < 0)){
@@ -485,14 +503,43 @@ else
 			}
 			else
 			{
-				$text .= '<table class="eb_table" style="width:95%"><tbody>';
-				$text .= '<tr>
-				<th class="eb_th2">'.EB_CLANS_L5.'</th>
-				<th class="eb_th2">'.EB_CLANS_L6.'</th>
-				</tr>';
+				if($seeding_enabled == true)
+				{
+					$text .= '<table class="table_left">';
+					$text .= '<tr>';
+					$text .= '<td>'.EB_EVENTM_L156.'</td>';
+					$text .= '<td><form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+					$text .= ebImageTextButton('eventteamsshuffle', '', EB_EVENTM_L155);
+					$text .= '</form></td>';
+					$text .='<td>
+					<div id="ajaxSpinnerContainer">
+					<img src="'.e_PLUGIN.'ebattles/images/ajax-loader.gif" title="working...">
+					'.EB_EVENTM_L157.'
+					</div>
+					</td>';
+					$text .= '</tr>';
+					$text .= '</table>';
+				}
+								
+				$teams_list_id = ($seeding_enabled == true) ? 'teams_list_sortable' : 'teams_list';
+
+				$text .= '<table id="'.$teams_list_id.'" class="eb_table" style="width:95%"><thead>';
+				$text .= '<tr>';
+				if($event_type == 'Tournament')
+				{
+					// Column "Seed"
+					$text .= '<th class="eb_th2">'.EB_EVENTM_L154.'</th>';
+				}
+				$text .= '<th class="eb_th2">'.EB_CLANS_L5.'</th>';
+				$text .= '<th class="eb_th2">'.EB_CLANS_L6.'</th>';
+				$text .= '</tr></thead>';
+				$text .= '<tbody>';
 				for($i=0; $i < $num_rows; $i++){
 					$clan_id  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 					$clan = new Clan($clan_id);
+					$tid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+					$tseed  = mysql_result($result,$i, TBL_TEAMS.".Seed");
+					if($tseed == 0) $tseed = $i+1;
 
 					$image = "";
 					if ($pref['eb_avatar_enable_teamslist'] == 1)
@@ -505,10 +552,15 @@ else
 						}
 					}
 
-					$text .= '<tr>
-					<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a></td>
-					<td class="eb_td">'.$clan->getField('Tag').'</td>
-					</tr>';
+					$text .= '<tr id="team_'.$tid.'">';
+					if($event_type == 'Tournament')
+					{
+						// Column "Seed"
+						$text .= '<td class="eb_td">'.$tseed.'</td>';
+					}
+					$text .= '<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a></td>';
+					$text .= '<td class="eb_td">'.$clan->getField('Tag').'</td>';
+					$text .= '</tr>';
 				}
 				$text .= '</tbody></table>';
 			}
@@ -518,10 +570,22 @@ else
 
 		switch($event->getField('Type'))
 		{
+			// TODO: paginate/sort only for ladders? Does it conflict with seeding?
 			case "One Player Ladder":
 			case "Team Ladder":
 			case "One Player Tournament":
+			// Show list of players here
 			$orderby_array = $array["$orderby"];
+			switch($event_type)
+			{
+				case 'Ladder':
+				$order_by_str = " ORDER BY $orderby_array[1] $sort";
+				break;
+				case 'Tournament':
+				$order_by_str = " ORDER BY ".TBL_PLAYERS.".Seed";
+				break;
+			}
+
 			$q_Players = "SELECT ".TBL_PLAYERS.".*, "
 			.TBL_GAMERS.".*, "
 			.TBL_USERS.".*"
@@ -531,7 +595,7 @@ else
 			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-			." ORDER BY $orderby_array[1] $sort"
+			.$order_by_str
 			." $pages->limit";
 			$result = $sql->db_Query($q_Players);
 			$num_rows = mysql_numrows($result);
@@ -553,9 +617,36 @@ else
 				$text .= $pages->display_items_per_page();
 				$text .= '</span><br /><br />';
 				/* Display table contents */
+				if($seeding_enabled == true)
+				{
+					$text .= '<table class="table_left">';
+					$text .= '<tr>';
+					$text .= '<td>'.EB_EVENTM_L156.'</td>';
+					$text .= '<td><form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+					$text .= ebImageTextButton('eventplayersshuffle', '', EB_EVENTM_L155);
+					$text .= '</form></td>';
+					$text .='<td>
+					<div id="ajaxSpinnerContainer">
+					<img src="'.e_PLUGIN.'ebattles/images/ajax-loader.gif" title="working...">
+					'.EB_EVENTM_L157.'
+					</div>
+					</td>';
+					$text .= '</tr>';
+					$text .= '</table>';
+				}
+				
+				$players_list_id = ($seeding_enabled == true) ? 'players_list_sortable' : 'players_list';
+				
 				$text .= '<form id="playersform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-				$text .= '<table class="eb_table" style="width:95%"><tbody>';
+				$text .= '<table id="'.$players_list_id.'" class="eb_table" style="width:95%"><thead>';
 				$text .= '<tr>';
+
+				if($event_type == 'Tournament')
+				{
+					// Column "Seed"
+					$text .= '<th class="eb_th2">'.EB_EVENTM_L154.'</th>';
+				}
+
 				foreach($array as $opt=>$opt_array)
 				{
 					$text .= '<th class="eb_th2"><a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></th>';
@@ -566,7 +657,8 @@ else
 				$text .= '<input type="hidden" id="kick_player" name="kick_player" value=""/>';
 				$text .= '<input type="hidden" id="del_player_games" name="del_player_games" value=""/>';
 				$text .= '<input type="hidden" id="del_player_awards" name="del_player_awards" value=""/>';
-				$text .= '</th></tr>';
+				$text .= '</th></tr></thead>';
+				$text .= '<tbody>';
 				for($i=0; $i<$num_rows; $i++)
 				{
 					$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
@@ -575,13 +667,21 @@ else
 					$puniquegameid  = mysql_result($result,$i, TBL_GAMERS.".UniqueGameID");
 					$pjoined  = mysql_result($result,$i, TBL_PLAYERS.".Joined");
 					$pjoined_local = $pjoined + TIMEOFFSET;
+					$pseed  = mysql_result($result,$i, TBL_PLAYERS.".Seed");
+					if($pseed == 0) $pseed = $i+1;
 					$date  = date("d M Y",$pjoined_local);
 					$pbanned = mysql_result($result,$i, TBL_PLAYERS.".Banned");
 					$pgames = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
 					$pteam = mysql_result($result,$i, TBL_PLAYERS.".Team");
 					list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
-					$text .= '<tr>';
+					$text .= '<tr id="player_'.$pid.'">';
+					if($event_type == 'Tournament')
+					{
+						// Column "Seed"
+						$text .= '<td class="eb_td">'.$pseed.'</td>';
+					}
+
 					$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
 					$text .= '<td class="eb_td">'.(($pbanned) ? EB_EVENTM_L54 : $date).'</td>';
 					$text .= '<td class="eb_td">';

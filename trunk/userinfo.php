@@ -131,8 +131,7 @@ else
 		for($i=0; $i<$num_rows; $i++)
 		{
 			$event_id = mysql_result($result,$i, TBL_EVENTS.".EventID");
-			$lName  = mysql_result($result,$i, TBL_EVENTS.".Name");
-			$lOwner = mysql_result($result,$i, TBL_EVENTS.".Owner");
+			$event = new Event($event_id);
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$player_id =  mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
@@ -168,7 +167,7 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$lName.'</a>';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>';
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
@@ -183,19 +182,7 @@ else
 			$text .= $rating;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			if($lOwner == $req_user)
-			{
-				$text .= EB_USER_L15;
-				if ($lOwner == USERID)
-				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'">'.EB_USER_L16.'</a>)';
-				}
-			}
-			else
-			{
-				$text .= EB_USER_L17;
-			}
-
+			$text .= $event->eventStatusToString();
 			$text .= '</td>';
 			$text .= '</tr>';
 		}
@@ -236,8 +223,7 @@ else
 		for($i=0; $i<$num_events; $i++)
 		{
 			$event_id  = mysql_result($result,$i, TBL_EVENTS.".EventID");
-			$lName  = mysql_result($result,$i, TBL_EVENTS.".Name");
-			$lOwner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
+			$event = new Event($event_id);
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
 
@@ -251,26 +237,19 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$lName.'</a>';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>';
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			if($lOwner == $req_user)
-			{
-				$text .= EB_USER_L15;
-				if ($lOwner == USERID)
-				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'">'.EB_USER_L16.'</a>)';
-				}
-			}
-			else
-			{
-				$text .= EB_USER_L17;
-			}
+			$text .= $event->eventStatusToString();
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
+			if ($event->getField('Owner') == USERID)
+			{
+				$text .= ' <a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'">'.EB_USER_L16.'</a>';
+			}
 			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
 			$text .= '</td>';
 			$text .= '</tr>';
@@ -314,8 +293,7 @@ else
 		for($i=0; $i<$num_rows; $i++)
 		{
 			$event_id  = mysql_result($result,$i, TBL_EVENTS.".EventID");
-			$lName  = mysql_result($result,$i, TBL_EVENTS.".Name");
-			$lOwner  = mysql_result($result,$i, TBL_EVENTS.".Owner");
+			$event = new Event($event_id);
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
 
@@ -329,24 +307,13 @@ else
 
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$lName.'</a>';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>';
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			if($lOwner == $req_user)
-			{
-				$text .= EB_USER_L15;
-				if ($lOwner == USERID)
-				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'">'.EB_USER_L16.'</a>)';
-				}
-			}
-			else
-			{
-				$text .= EB_USER_L17;
-			}
+			$text .= $event->eventStatusToString();
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
 			$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;<b>'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</b></div>' : '';
@@ -404,7 +371,7 @@ else
 		$text .= EB_USER_L24;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
-		$text .= EB_USER_L25;
+		$text .= EB_USER_L33;
 		$text .= '</th>';
 		$text .= '</tr>';
 		/* Display table contents */
@@ -416,22 +383,10 @@ else
 			$clan = new Clan($clan_id);
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a><br />';
-			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
+			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a>';
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			if($clan->getField('Owner') == $req_user)
-			{
-				$text .= EB_USER_L15;
-				if ($clan->getField('Owner') == USERID)
-				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_USER_L16.'</a>)';
-				}
-			}
-			else
-			{
-				$text .= EB_USER_L17;
-			}
+			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
 			$text .= '</td>';
 			$text .= '</tr>';
 
@@ -460,7 +415,7 @@ else
 		$text .= EB_USER_L28;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
-		$text .= EB_USER_L14;
+		$text .= EB_USER_L31;
 		$text .= '</th>';
 		$text .= '</tr>';
 		/* Display table contents */
@@ -470,20 +425,12 @@ else
 			$clan = new Clan($clan_id);
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a><br />';
+			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a>';
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			if($clan->getField('Owner') == $req_user)
+			if ($clan->getField('Owner') == USERID)
 			{
-				$text .= EB_USER_L15;
-				if ($clan->getField('Owner') == USERID)
-				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_USER_L16.'</a>)';
-				}
-			}
-			else
-			{
-				$text .= EB_USER_L17;
+				$text .= ' <a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_USER_L16.'</a>';
 			}
 			$text .= '</td>';
 			$text .= '</tr>';
@@ -516,7 +463,7 @@ else
 		$text .= EB_USER_L24;
 		$text .= '</th>';
 		$text .= '<th class="eb_th1">';
-		$text .= EB_USER_L14;
+		$text .= EB_USER_L33;
 		$text .= '</th>';
 		$text .= '</tr>';
 		/* Display table contents */
@@ -529,22 +476,10 @@ else
 			$dgameicon = mysql_result($result,$i , TBL_GAMES.".Icon");
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
-			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a><br />';
-			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
+			$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a>';
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
-			if($clan->getField('Owner') == $req_user)
-			{
-				$text .= EB_USER_L15;
-				if ($clan->getField('Owner') == USERID)
-				{
-					$text .= ' (<a href="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'">'.EB_USER_L16.'</a>)';
-				}
-			}
-			else
-			{
-				$text .= EB_USER_L17;
-			}
+			$text .= '<img '.getGameIconResize($dgameicon).'/> '.$dgame;
 			$text .= '</td>';
 			$text .= '</tr>';
 

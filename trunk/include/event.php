@@ -715,8 +715,8 @@ class Event extends DatabaseTable
 				case "Ladder":
 				$text .= '<input class="tbox" type="text" name="eventmaxnumberplayers" size="2" value="'.$this->getField('MaxNumberPlayers').'"/>';
 				break;
-				$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
 				case "Tournament":
+				$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
 				$text .= '<select class="tbox" name="eventmaxnumberplayers" '.$disabled_str.'>';
 				$text .= '<option value="4" '.($this->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 				$text .= '<option value="8" '.($this->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
@@ -1684,7 +1684,7 @@ class Event extends DatabaseTable
 			." WHERE (".TBL_PLAYERS.".Event = '".$this->getField('EventID')."')"
 			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-			." ORDER BY ".TBL_PLAYERS.".Joined";
+			." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
 			$result = $sql->db_Query($q_Players);
 			$nbrPlayers = mysql_numrows($result);
 			for ($player = 0; $player < $nbrPlayers; $player++)
@@ -1714,7 +1714,8 @@ class Event extends DatabaseTable
 			.TBL_DIVISIONS
 			." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
 			." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-			." AND (".TBL_TEAMS.".Event = '".$this->getField('EventID')."')";
+			." AND (".TBL_TEAMS.".Event = '".$this->getField('EventID')."')"
+			." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
 			$result = $sql->db_Query($q_Teams);
 			$nbrTeams = mysql_numrows($result);
 			for ($team = 0; $team < $nbrTeams; $team++)
@@ -1731,6 +1732,70 @@ class Event extends DatabaseTable
 		}
 		//var_dump($teams);
 		return $teams;
+	}
+
+	function shuffleSeeds()
+	{
+		global $sql;
+
+		$type = $this->getField('Type');
+		switch($type)
+		{
+			case 'One Player Tournament':
+			$q_Players = "SELECT ".TBL_GAMERS.".*, "
+			.TBL_PLAYERS.".*"
+			." FROM ".TBL_GAMERS.", "
+			.TBL_PLAYERS.", "
+			.TBL_USERS
+			." WHERE (".TBL_PLAYERS.".Event = '".$this->getField('EventID')."')"
+			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+			." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
+			$result = $sql->db_Query($q_Players);
+			$nbrPlayers = mysql_numrows($result);
+
+			$array_sort = array();
+			for ($player = 0; $player < $nbrPlayers; $player++)
+			{
+				$array_sort[$player] = $player + 1;
+			}
+			shuffle($array_sort);
+			for ($player = 0; $player < $nbrPlayers; $player++)
+			{
+				$pid  = mysql_result($result,$player, TBL_PLAYERS.".PlayerID");
+				$q_2 = "UPDATE ".TBL_PLAYERS." SET Seed = '".$array_sort[$player]."' WHERE (PlayerID = '".$pid."')";
+				$result_2 = $sql->db_Query($q_2);
+			}
+
+			break;
+			case 'Clan Tournament':
+			$q_Teams = "SELECT ".TBL_CLANS.".*, "
+			.TBL_TEAMS.".*, "
+			.TBL_DIVISIONS.".* "
+			." FROM ".TBL_CLANS.", "
+			.TBL_TEAMS.", "
+			.TBL_DIVISIONS
+			." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+			." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+			." AND (".TBL_TEAMS.".Event = '".$this->getField('EventID')."')"
+			." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
+			$result = $sql->db_Query($q_Teams);
+			$nbrTeams = mysql_numrows($result);
+
+			$array_sort = array();
+			for ($team = 0; $team < $nbrTeams; $team++)
+			{
+				$array_sort[$team] = $team + 1;
+			}
+			shuffle($array_sort);
+			for ($team = 0; $team < $nbrTeams; $team++)
+			{
+				$tid  = mysql_result($result,$team, TBL_TEAMS.".TeamID");
+				$q_2 = "UPDATE ".TBL_TEAMS." SET Seed = '".$array_sort[$team]."' WHERE (TeamID = '".$tid."')";
+				$result_2 = $sql->db_Query($q_2);
+			}
+			break;
+		}
 	}
 }
 

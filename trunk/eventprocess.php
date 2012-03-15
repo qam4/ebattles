@@ -445,6 +445,24 @@ else{
 		header("Location: eventmanage.php?eventid=$event_id");
 		exit();
 	}
+	
+	if(isset($_POST['eventplayersshuffle']))
+	{
+		$event->shuffleSeeds();
+
+		//echo "-- eventplayersshuffle --<br />";
+		header("Location: eventmanage.php?eventid=$event_id");
+		exit();
+	}
+	if(isset($_POST['eventteamsshuffle']))
+	{
+		$event->shuffleSeeds();
+
+		//echo "-- eventteamsshuffle --<br />";
+		header("Location: eventmanage.php?eventid=$event_id");
+		exit();
+	}	
+	
 	if(isset($_POST['eventresetscores']))
 	{
 		$event->resetPlayers();
