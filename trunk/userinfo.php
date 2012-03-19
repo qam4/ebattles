@@ -69,6 +69,55 @@ else
 	$text .= EB_USER_L7.': <a href="'.e_BASE.'user.php?id.'.$req_user.'">'.$uname.'</a>';
 	$text .= '</p>';
 
+	/* Display list of games for which the user has a profile */
+	$text .= '<br /><div class="spacer"><b>'.EB_USER_L34.'</b></div>';
+	$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L35.'</div>';
+	$q = " SELECT *"
+	." FROM ".TBL_GAMERS.", "
+	.TBL_GAMES
+	." WHERE (".TBL_GAMERS.".User = '$req_user')"
+	."   AND (".TBL_GAMERS.".Game = ".TBL_GAMES.".GameID)";
+
+	$result = $sql->db_Query($q);
+	$num_gamers = mysql_numrows($result);
+
+	if ($num_gamers>0)
+	{
+		/* Display table contents */
+		$text .= '<table class="eb_table" style="width:95%">';
+		$text .= '<tr>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L36;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L37;
+		$text .= '</th>';
+		$text .= '<th class="eb_th1">';
+		$text .= EB_USER_L38;
+		$text .= '</th>';
+		$text .= '</tr>';
+
+		for($i=0; $i<$num_gamers; $i++)
+		{
+			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
+			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
+			$pName = mysql_result($result, $i , TBL_GAMERS.".Name");
+			$pGamer = mysql_result($result, $i , TBL_GAMERS.".UniqueGameID");
+			$text .= '<tr>';
+			$text .= '<td class="eb_td">';
+			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
+			$text .= $pName;
+			$text .= '</td>';
+			$text .= '<td class="eb_td">';
+			$text .= $pGamer;
+			$text .= '</td>';
+			$text .= '</tr>';
+		}
+		$text .= '</table>';
+	}	
+
 	$text .= '</div>';    // tab-page "Profile"
 
 	/*

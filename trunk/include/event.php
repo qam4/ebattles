@@ -1284,6 +1284,7 @@ class Event extends DatabaseTable
 	function scheduleNextMatches() {
 		global $sql;
 		global $time;
+		global $pref;
 		//dbg
 		global $tp;
 
@@ -1569,6 +1570,75 @@ class Event extends DatabaseTable
 						$match['played'] = false;
 						$match['match_id'] = $match_id;
 						$results[$round][$matchup]['matchs'][$matchs] = $match;
+
+						// Send notification to all the players.
+						$fromid = 0;
+						$subject = SITENAME." ".EB_MATCHR_L52;
+
+						switch($type)
+						{
+							case "One Player Ladder":
+							case "Team Ladder":
+							case "One Player Tournament":
+							$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
+							." FROM ".TBL_MATCHS.", "
+							.TBL_SCORES.", "
+							.TBL_PLAYERS.", "
+							.TBL_GAMERS.", "
+							.TBL_USERS
+							." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+							." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+							." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+							." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+							." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
+							$result_Players = $sql->db_Query($q_Players);
+							$numPlayers = mysql_numrows($result_Players);
+
+							break;
+							case "Clan Ladder":
+							case "Clan Tournament":
+							$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
+							." FROM ".TBL_MATCHS.", "
+							.TBL_SCORES.", "
+							.TBL_TEAMS.", "
+							.TBL_PLAYERS.", "
+							.TBL_GAMERS.", "
+							.TBL_USERS
+							." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+							." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+							." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+							." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+							." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+							." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
+							$result_Players = $sql->db_Query($q_Players);
+							$numPlayers = mysql_numrows($result_Players);
+
+							break;
+							default:
+						}
+
+						if($numPlayers > 0)
+						{
+							for($j=0; $j < $numPlayers; $j++)
+							{
+								$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
+								$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
+								$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$this->getField('Name').EB_MATCHR_L56;
+								$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
+								$sendtoemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
+								if (check_class($pref['eb_pm_notifications_class']))
+								{
+									// Send PM
+									sendNotification($sendto, $subject, $message, $fromid);
+								}
+								if (check_class($pref['eb_email_notifications_class']))
+								{
+									// Send email
+									require_once(e_HANDLER."mail.php");
+									sendemail($sendtoemail, $subject, $message);
+								}
+							}
+						}
 					}
 					//dbg:var_dump($results[$round][$matchup]);
 				}
