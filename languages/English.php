@@ -807,12 +807,17 @@ define('EB_USER_L30', 'is captain of the following divisions');
 define('EB_USER_L31', 'Info');
 define('EB_USER_L32', 'Pending matches: ');
 define('EB_USER_L33', 'Game');
+define('EB_USER_L34', 'Games');
+define('EB_USER_L35', 'has a profile for the following games');
+define('EB_USER_L36', 'Game');
+define('EB_USER_L37', 'Name');
+define('EB_USER_L38', 'Unique Game ID');
 
 define('EB_GAMER_L1', 'Alert:');
 define('EB_GAMER_L2', 'Errors detected!');
 define('EB_GAMER_L3', 'Please provide your gamer info');
-define('EB_GAMER_L4', 'Gamer Name');
-define('EB_GAMER_L5', 'Gamer Unique ID');
+define('EB_GAMER_L4', 'Name');
+define('EB_GAMER_L5', 'Unique Game ID');
  
 define('EB_PGN_L1', 'Go To Page');
 define('EB_PGN_L2', 'Previous');

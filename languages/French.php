@@ -377,9 +377,9 @@ define('EB_EVENTM_L150', 'Retirer une Map');
 define('EB_EVENTM_L151', '');
 define('EB_EVENTM_L152', 'Format');
 define('EB_EVENTM_L153', 'Ã‰limination directe simple');
-define('EB_EVENTM_L154', 'Tête de série');
-define('EB_EVENTM_L155', 'Réorganiser au hasard');
-define('EB_EVENTM_L156', 'Drag-and-drop pour réorganiser manuellement');
+define('EB_EVENTM_L154', 'Tï¿½te de sï¿½rie');
+define('EB_EVENTM_L155', 'Rï¿½organiser au hasard');
+define('EB_EVENTM_L156', 'Drag-and-drop pour rï¿½organiser manuellement');
 define('EB_EVENTM_L157', 'Sauvegarde...');
 
 define('EB_EVENTP_L1', 'Tournois passÃ©s');
@@ -805,12 +805,17 @@ define('EB_USER_L30', 'est capitaine des divisions suivantes');
 define('EB_USER_L31', 'Info');
 define('EB_USER_L32', 'Matchs en attente de confirmation: ');
 define('EB_USER_L33', 'Jeu');
+define('EB_USER_L34', 'Jeux');
+define('EB_USER_L35', 'a un profil pour les jeux suivants');
+define('EB_USER_L36', 'Jeu');
+define('EB_USER_L37', 'Nom');
+define('EB_USER_L38', 'ID de Jeu Unique');
 
 define('EB_GAMER_L1', 'Alerte:');
 define('EB_GAMER_L2', 'Erreurs dÃ©tectÃ©e!');
 define('EB_GAMER_L3', 'Veuillez remplir votre info de joueur');
 define('EB_GAMER_L4', 'Nom de Joueur');
-define('EB_GAMER_L5', 'ID Unique de Jeu');
+define('EB_GAMER_L5', 'ID de Jeu Unique');
 
 define('EB_PGN_L1', 'Aller Ã  la page');
 define('EB_PGN_L2', 'PrÃ©cÃ©dente');

@@ -807,12 +807,17 @@ define('EB_USER_L30', 'er kaptajn af følgende division(er)');
 define('EB_USER_L31', 'Info');
 define('EB_USER_L32', 'Kampe der venter: ');
 define('EB_USER_L33', 'Game');
+define('EB_USER_L34', 'Games');
+define('EB_USER_L35', 'has a profile for the following games');
+define('EB_USER_L36', 'Game');
+define('EB_USER_L37', 'Name');
+define('EB_USER_L38', 'Game Unique ID');
 
 define('EB_GAMER_L1', 'Alert:');
 define('EB_GAMER_L2', 'Errors detected!');
 define('EB_GAMER_L3', 'Please provide your gamer info');
-define('EB_GAMER_L4', 'Gamer Name');
-define('EB_GAMER_L5', 'Gamer Unique ID');
+define('EB_GAMER_L4', 'Name');
+define('EB_GAMER_L5', 'Unique Game ID');
 
 define('EB_PGN_L1', 'Gå Til Side');
 define('EB_PGN_L2', 'Forgående');

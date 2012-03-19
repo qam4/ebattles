@@ -49,14 +49,15 @@ function brackets($format, $nbrPlayers = 16, $teams, $results = array(), $rounds
 	// Initialize grid
 	for ($row = 1; $row <= 2*$nbrPlayers; $row ++){
 		for ($column = 1; $column <= $nbrRounds; $column++){
-			$brackets[$row][2*$column-1] = '<td></td>';
+			$brackets[$row][2*$column-1] = '<td class="grid empty"></td>';
 			$brackets[$row][2*$column] = '<td class="grid border-none"></td>';
 		}
 	}
-
+	
 	$rowspan = 1;
 	for ($round = 1; $round <= $nbrRounds; $round++){
 		$nbrMatchups = count($matchups[$round]);
+		$rounds[$round]['nbrMatchups'] = 0;
 		if ($round == 1) {
 			/* Round 1 */
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
@@ -102,6 +103,7 @@ function brackets($format, $nbrPlayers = 16, $teams, $results = array(), $rounds
 						$brackets[$matchup*4-1][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins);
 					}
 					$brackets[$matchup*4-2][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.'M'.$round.','.$matchup.'"></td>';
+					$rounds[$round]['nbrMatchups']++;
 				}
 
 				$matchupsRows[$round][$matchup][0] = $matchup*4-3;
@@ -178,6 +180,7 @@ function brackets($format, $nbrPlayers = 16, $teams, $results = array(), $rounds
 						$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins);
 					}
 					$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.'M'.$round.','.$matchup.'"></td>';
+					$rounds[$round]['nbrMatchups']++;
 				}
 				if (($content[$round][$matchup][0]=='0')||($content[$round][$matchup][1]=='0')) {
 					$results[$round][$matchup]['winner'] = 'bye';
@@ -254,7 +257,14 @@ function brackets($format, $nbrPlayers = 16, $teams, $results = array(), $rounds
 	
 	$bracket_html .= '<thead><tr>';
 	for ($i = 1; $i < $nbrRounds; $i++) {
-		$bracket_html .= '<th colspan="2">'.$rounds[$i]['Title'].'</th>';
+		if ($rounds[$i]['nbrMatchups'] != 0)
+		{
+			$bracket_html .= '<th colspan="2" title="'.EB_EVENTM_L146.' '.$rounds[$i]['BestOf'].'">'.$rounds[$i]['Title'].'</th>';
+		}
+		else
+		{
+			$bracket_html .= '<th colspan="2"></th>';
+		}
 	}
 	$bracket_html .= '</tr></thead>';
 	
