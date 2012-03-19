@@ -1,5 +1,21 @@
 #summary eBattles Release Notes.
 #labels Featured
+= Release 0.9.2 =
+== Features ==
+ * Added support for tournaments seeding
+  * Drag-and-drop players/teams to reorder seeds manually
+  * Automatic random re-seeding
+ * Gamer profile
+  * Players can now edit their gamers information (name, unique game ID) in the profile page.
+
+== Changes ==
+ * Increased length of fields used to store external links
+ * Some improvements in userinfo page
+ * Tournaments: Send notifications to players (PM/email) when match is scheduled.
+ * Tournament brackets: show "best of" for each round.
+  * Each rounds "Best of" is shown if you hover over the rounds header in the bracket
+ * Brackets do not show rounds without matchups
+
 = Release 0.9.1 =
 == Features ==
  * Added teams single elimination tournaments
