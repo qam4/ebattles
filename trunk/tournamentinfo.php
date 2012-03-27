@@ -594,10 +594,7 @@ if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
 	$text .= EB_EVENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
 }
 
-$teams = $event->getTeams();
-
-$results = unserialize($event->getField('Results'));
-list($bracket_html) = brackets($event->getField('Format'), $event->getField('MaxNumberPlayers'), $teams, $results, $rounds);
+list($bracket_html) = $event->brackets();
 $text .= $bracket_html;
 
 $text .= '</div>';    // tabs-3 "Brackets"

@@ -150,9 +150,11 @@ else{
 		}
 
 		/* Event Format */
-		if ($_POST['eventformat'] != "")
+		if(($_POST['eventformat'] != "")&&($_POST['eventformat'] != $event->getField('Format')))
 		{
+			
 			$event->setField('Format', $_POST['eventformat']);
+			$_POST['eventmaxnumberplayers'] = 8;
 			//TODO: if format changes, rounds should change too
 		}
 
@@ -305,13 +307,7 @@ else{
 		$event->setField('EndDateTime', $new_eventend);
 
 		/* Event Rounds */
-		switch ($event->getField('Format'))
-		{
-			default:
-			$file = 'include/brackets/se-'.$event->getField('MaxNumberPlayers').'.txt';
-			break;
-		}
-		$matchups = unserialize(implode('',file($file)));
+		$matchups = $event->getMatchups();
 		$nbrRounds = count($matchups);
 
 		$rounds = unserialize($event->getField('Rounds'));

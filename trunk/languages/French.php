@@ -220,6 +220,8 @@ define('EB_EVENT_L81', 'Soumettre un Replay');
 define('EB_EVENT_L82', 'Status');
 define('EB_EVENT_L83', 'Tournoi terminé');
 define('EB_EVENT_L84', 'Équipes');
+define('EB_EVENT_L85', 'Perdant de');
+define('EB_EVENT_L86', '(si nécessaire)');
 
 define('EB_EVENTM_L1', 'Gérer');
 define('EB_EVENTM_L2', 'Sommaire');
@@ -381,6 +383,7 @@ define('EB_EVENTM_L154', 'T�te de s�rie');
 define('EB_EVENTM_L155', 'R�organiser au hasard');
 define('EB_EVENTM_L156', 'Drag-and-drop pour r�organiser manuellement');
 define('EB_EVENTM_L157', 'Sauvegarde...');
+define('EB_EVENTM_L158', 'Élimination directe double');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');

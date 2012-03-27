@@ -1084,10 +1084,7 @@ else
 			// tab-page "Brackets"
 			$text .= '<div id="tabs-6">';
 
-			$teams = $event->getTeams();
-
-			$results = unserialize($event->getField('Results'));
-			list($bracket_html) = brackets($event->getField('Format'), $event->getField('MaxNumberPlayers'), $teams, $results, $rounds);
+			list($bracket_html) = $event->brackets();
 			$text .= $bracket_html;
 
 			$text .= '</div>';  // tab-page "Brackets"

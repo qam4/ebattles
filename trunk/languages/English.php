@@ -222,6 +222,8 @@ define('EB_EVENT_L81', 'Submit Replay');
 define('EB_EVENT_L82', 'Status');
 define('EB_EVENT_L83', 'Event finished');
 define('EB_EVENT_L84', 'Teams');
+define('EB_EVENT_L85', 'Loser of');
+define('EB_EVENT_L86', '(if necessary)');
 
 define('EB_EVENTM_L1', 'Manage');
 define('EB_EVENTM_L2', 'Summary');
@@ -383,6 +385,7 @@ define('EB_EVENTM_L154', 'Seed');
 define('EB_EVENTM_L155', 'Randomize Seeds');
 define('EB_EVENTM_L156', 'Drag-and-drop to reorder seeds manually');
 define('EB_EVENTM_L157', 'Saving...');
+define('EB_EVENTM_L158', 'Double Elimination');
 
 define('EB_EVENTP_L1', 'Past Events');
 define('EB_EVENTP_L2', 'Past Events');

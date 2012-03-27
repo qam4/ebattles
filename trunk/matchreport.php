@@ -733,14 +733,14 @@ if (isset($_POST['submit']))
 					break;
 					case "One Player Tournament":
 					$match->match_players_update();
-					$event->scheduleNextMatches();
+					$event->brackets(true);
 					break;
 					case "Clan Ladder":
 					$match->match_teams_update();
 					break;
 					case "Clan Tournament":
 					$match->match_teams_update();
-					$event->scheduleNextMatches();
+					$event->brackets(true);
 					break;
 					default:
 				}
