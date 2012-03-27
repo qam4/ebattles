@@ -65,14 +65,14 @@ if(isset($_POST['qrsubmitloss']))
 			break;
 			case "One Player Tournament":
 			$match->match_players_update();
-			$event->scheduleNextMatches();
+			$event->brackets(true);
 			break;
 			case "Clan Ladder":
 			$match->match_teams_update();
 			break;
 			case "Clan Tournament":
 			$match->match_teams_update();
-			$event->scheduleNextMatches();
+			$event->brackets(true);
 			break;
 			default:
 		}
@@ -98,14 +98,14 @@ if (isset($_POST['approvematch']))
 		break;
 		case "One Player Tournament":
 		$match->match_players_update();
-		$event->scheduleNextMatches();
+		$event->brackets(true);
 		break;
 		case "Clan Ladder":
 		$match->match_teams_update();
 		break;
 		case "Clan Tournament":
 		$match->match_teams_update();
-		$event->scheduleNextMatches();
+		$event->brackets(true);
 		break;
 		default:
 	}

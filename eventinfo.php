@@ -141,7 +141,7 @@ else
 			switch($event_type)
 			{
 				case "Tournament":
-				$event->scheduleNextMatches();
+				$event->brackets(true);
 				break;
 			}			
 			$event->setFieldDB('IsChanged', 1);
