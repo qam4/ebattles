@@ -810,6 +810,9 @@ define('EB_USER_L35', 'a un profil pour les jeux suivants');
 define('EB_USER_L36', 'Jeu');
 define('EB_USER_L37', 'Nom');
 define('EB_USER_L38', 'ID de Jeu Unique');
+define('EB_USER_L39', 'Editer');
+define('EB_USER_L40', 'Pour ajouter des jeux à votre profil, inscrivez vous à un tournoi ou à une division d’équipe');
+define('EB_USER_L41', 'n’a pas de profil de jeu');
 
 define('EB_GAMER_L1', 'Alerte:');
 define('EB_GAMER_L2', 'Erreurs détectée!');
