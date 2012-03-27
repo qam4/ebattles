@@ -812,6 +812,9 @@ define('EB_USER_L35', 'has a profile for the following games');
 define('EB_USER_L36', 'Game');
 define('EB_USER_L37', 'Name');
 define('EB_USER_L38', 'Game Unique ID');
+define('EB_USER_L39', 'Edit');
+define('EB_USER_L40', 'To add games to your profile, join an event or a team division');
+define('EB_USER_L41', 'has no gaming profiles');
 
 define('EB_GAMER_L1', 'Alert:');
 define('EB_GAMER_L2', 'Errors detected!');

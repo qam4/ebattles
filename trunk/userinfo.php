@@ -22,6 +22,17 @@ $pages = new Paginator;
 $rater = new rater();
 
 $text .= '';
+$text .= "
+<script type='text/javascript'>
+<!--//
+function edit_gamer(v)
+{
+document.getElementById('edit_gamer').value=v;
+document.getElementById('gamersform').submit();
+}
+//-->
+</script>
+";
 
 /* User */
 $req_user = $_GET['user'];
@@ -71,7 +82,6 @@ else
 
 	/* Display list of games for which the user has a profile */
 	$text .= '<br /><div class="spacer"><b>'.EB_USER_L34.'</b></div>';
-	$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L35.'</div>';
 	$q = " SELECT *"
 	." FROM ".TBL_GAMERS.", "
 	.TBL_GAMES
@@ -83,7 +93,10 @@ else
 
 	if ($num_gamers>0)
 	{
+		$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L35.'</div>';
 		/* Display table contents */
+		$text .= '<form id="gamersform" action="'.e_PLUGIN.'ebattles/userprocess.php?userid='.$req_user.'" method="post">';
+		$text .= '<input type="hidden" id="edit_gamer" name="edit_gamer" value=""/>';
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
 		$text .= '<th class="eb_th1">';
@@ -101,30 +114,51 @@ else
 		{
 			$gName  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gIcon = mysql_result($result,$i , TBL_GAMES.".Icon");
+			$pID = mysql_result($result, $i , TBL_GAMERS.".GamerID");
 			$pName = mysql_result($result, $i , TBL_GAMERS.".Name");
 			$pGamer = mysql_result($result, $i , TBL_GAMERS.".UniqueGameID");
 			$text .= '<tr>';
 			$text .= '<td class="eb_td">';
 			$text .= '<img '.getGameIconResize($gIcon).'/> '.$gName;
 			$text .= '</td>';
+			if(strcmp(USERID,$req_user) == 0){
+				$text .= '<td class="eb_td">';
+				$text .= '<input class="tbox" type="text" name="gamername'.$pID.'" size="20" value="'.$pName.'" maxlength="64"/>';
+				$text .= '</td>';
+				$text .= '<td class="eb_td">';
+				$text .= '<input class="tbox" type="text" name="gameruniqueid'.$pID.'" size="40" value="'.$pGamer.'" maxlength="64"/>';
+				$text .= '</td>';
+				$text .= '<td class="eb_td">';
+				$text .= '<a href="javascript:edit_gamer(\''.$pID.'\');" title="'.EB_USER_L39.'"><img src="'.e_PLUGIN.'ebattles/images/pencil.png" alt="'.EB_USER_L39.'"/></a>';
+				$text .= '</td>';
+			}
+			/* Visitor not viewing own account */
+			else{
 			$text .= '<td class="eb_td">';
 			$text .= $pName;
 			$text .= '</td>';
 			$text .= '<td class="eb_td">';
 			$text .= $pGamer;
 			$text .= '</td>';
+			}
 			$text .= '</tr>';
 		}
 		$text .= '</table>';
+		$text .= '</form>';
+	}
+	else
+	{
+		if(strcmp(USERID,$req_user) == 0){
+			$text .= '<div>'.EB_USER_L40.'</div>';
+		}
+		/* Visitor not viewing own account */
+		else{
+			$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L41.'</div>';
+		}
 	}	
 
 	$text .= '</div>';    // tab-page "Profile"
 
-	/*
-	---------------------
-	Events
-	---------------------
-	*/
 	$text .= '<div id="tabs-2">';    // tab-page "Events"
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_events_create_class'])))
 	{
