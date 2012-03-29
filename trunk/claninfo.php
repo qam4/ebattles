@@ -73,11 +73,6 @@ else
 	$text .= '</div>';
 
 	$text .= '</div>';
-	$text .= '
-	<p>
-	<br />'.EB_CLAN_L5.' [<a href="'.e_PLUGIN.'ebattles/clans.php">'.EB_CLAN_L6.'</a>]<br />
-	</p>
-	';
 }
 $ns->tablerender("$clan_name", $text);
 require_once(FOOTERF);

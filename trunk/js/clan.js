@@ -40,7 +40,7 @@ jQuery(function() {
 			gamername: "required"
 		},
 		messages: {
-			joindivisionPassword: "Please enter the event password.",
+			joindivisionPassword: "Please enter the division password.",
 			gamername: "Please enter your gamer name."
 		}
 	});

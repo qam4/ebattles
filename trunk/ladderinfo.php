@@ -129,11 +129,11 @@ if ($can_signup==1)
 						{
 							if ($event->getField('password') != "")
 							{
-								$text .= '<td>'.EB_EVENT_L8.'</td>';
+								$text .= '<td>'.EB_EVENT_L8.'<span class="required">*</span></td>';
 								$text .= '<td>
 								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
 								<div>
-								<input class="tbox" type="password" title="'.EB_EVENT_L9.'" name="joinEventPassword"/>
+								<input class="tbox required" type="password" title="'.EB_EVENT_L9.'" name="joinEventPassword"/>
 								<input type="hidden" name="division" value="'.$div_id.'"/>
 								'.ebImageTextButton('teamjoinevent', 'user_add.png', EB_EVENT_L10).'
 								</div>
@@ -457,8 +457,8 @@ $time_comment = $event->eventStatusToTimeComment();
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L42.'</td><td class="eb_td">'.$date_start.'</td></tr>';
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L43.'</td><td class="eb_td">'.$date_end.'</td></tr>';
 $text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$time_comment.'</td></tr>';
+$text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENTM_L36.'</td><td class="eb_td">'.$tp->toHTML($event->getField('Description'), true).'</td></tr>';
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L44.'</td><td class="eb_td">'.$tp->toHTML($event->getField('Rules'), true).'</td></tr>';
-$text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$tp->toHTML($event->getField('Description'), true).'</td></tr>';
 $text .= '</tbody></table>';
 $text .= '</div>';    // tabs-1 "Info"
 

@@ -313,8 +313,12 @@ function displayPastEvents(){
 		$text .= '</tbody></table><br />';
 
 		$text .= '<p>';
-		$text .= EB_EVENTP_L3.' [<a href="'.e_PLUGIN.'ebattles/events.php">'.EB_EVENTP_L4.'</a>]';
+		$text .= '
+		<form action="'.e_PLUGIN.'ebattles/events.php" method="post">
+		'.ebImageTextButton('submit', 'action_back.gif', EB_EVENTP_L3.' '.EB_EVENTP_L4).'
+		</form>';
 		$text .= '</p>';
+
 	}
 }
 
