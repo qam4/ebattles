@@ -35,13 +35,13 @@ function gamerEventSignupModalForm($event_id, $gamerID, $gamerName, $gamerUnique
 	<input type="hidden" name="gamerID" value="'.$gamerID.'"/>
 	<fieldset>
 	<legend>'.EB_GAMER_L3.'</legend>
-	<p>
-	<label for="joinEventPassword" class="'.$hide_password.'">'.EB_EVENT_L27.'</label>
-	<input type="password" name="joinEventPassword" id="joinEventPassword" class="'.$hide_password.' text" />
+	<p class="'.$hide_password.'">
+	<label for="joinEventPassword">'.EB_EVENT_L27.'</label><span class="required">*</span>
+	<input type="password" name="joinEventPassword" id="joinEventPassword" class="text '.$hide_password.'" />
 	</p>
 	<p>
-	<label for="gamername">'.EB_GAMER_L4.'</label>
-	<input type="text" size="10" name="gamername" id="gamername" class="text" value="'.$gamerName.'"/>
+	<label for="gamername">'.EB_GAMER_L4.'</label><span class="required">*</span>
+	<input type="text" size="10" name="gamername" id="gamername" class="text required" value="'.$gamerName.'"/>
 	</p>
 	<p>
 	<label for="gameruniquegameid">'.EB_GAMER_L5.'</label>
@@ -81,13 +81,13 @@ function gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $
 	<input type="hidden" name="gamerID" value="'.$gamerID.'"/>
 	<fieldset>
 	<legend>'.EB_GAMER_L3.'</legend>
-	<p>
-	<label for="joindivisionPassword" class="'.$hide_password.'">'.EB_CLAN_L11.'</label>
-	<input type="password" name="joindivisionPassword" id="joindivisionPassword" class="'.$hide_password.' text" />
+	<p class="'.$hide_password.'">
+	<label for="joindivisionPassword">'.EB_CLAN_L11.'</label><span class="required">*</span>
+	<input type="password" name="joindivisionPassword" id="joindivisionPassword" class="text required '.$hide_password.'" />
 	</p>
 	<p>
-	<label for="gamername">'.EB_GAMER_L4.'</label>
-	<input type="text" size="10" name="gamername" id="gamername" class="text" value="'.$gamerName.'"/>
+	<label for="gamername">'.EB_GAMER_L4.'</label><span class="required">*</span>
+	<input type="text" size="10" name="gamername" id="gamername" class="text required" value="'.$gamerName.'"/>
 	</p>
 	<p>
 	<label for="gameruniquegameid">'.EB_GAMER_L5.'</label>

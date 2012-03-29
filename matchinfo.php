@@ -628,22 +628,24 @@ else
 			$mSubmitterName = mysql_result($result_Media,$media , TBL_USERS.".user_name");
 
 			$text .= '<tr>';
-			$text .= '<td>';
 			$shadow='';
 			switch($mType)
 			{
 				case "Video":
+				$shadow = 'rel="shadowbox"';
+				$text .= '<td><img src="'.e_PLUGIN.'ebattles/images/film.png"/></td>';
+				break;
 				case "Screenshot":
 				$shadow = 'rel="shadowbox"';
-				$text .= '<a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a>';
+				$text .= '<td><img src="'.e_PLUGIN.'ebattles/images/camera.png"/></td>';
 				break;
 				case "Replay":
 				//$text .= '<form><input type="button" value="'.$array_types["$mType"].'" onclick="window.open(\''.$mPath.'\', \'download\'); return false;"/></form> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a>';
-				$text .= '<a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a>';
+				$text .= '<td><img src="'.e_PLUGIN.'ebattles/images/arrow_rotate_clockwise.png"/></td>';
 				break;
 			}
+			$text .= '<td><a href="'.$mPath.'" '.$shadow.'>'.$array_types["$mType"].'</a> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a></td>';
 
-			$text .= '</td>';
 			$text .= '<td>';
 			if (($mSubmitterID == USERID)||($can_delete_media == 1))
 			{
@@ -690,14 +692,17 @@ else
 		$text .= '</p>';
 	}
 
+	$text .= '<p>';
+	$text .= '
+	<form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
+	'.ebImageTextButton('submit', 'action_back.gif', EB_MATCHD_L15.' '.EB_MATCHD_L16).'
+	</form>';
+	$text .= '</p>';
+
 	$text .= '</div>'; // spacer
 
 	$text .= '</div>'; // tabs-1
 	$text .= '</div>'; // tabs
-
-	$text .= '<p>';
-	$text .= '<br />'.EB_MATCHD_L15.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHD_L16.'</a>]<br />';
-	$text .= '</p>';
 
 	$ns->tablerender($event->getField('Name')." ($gName - ".$event->eventTypeToString().")", $text);
 

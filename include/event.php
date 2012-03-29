@@ -600,9 +600,9 @@ class Event extends DatabaseTable
 		//<!-- Event Name -->
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L15.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L15.'<span class="required">*</span></td>
 		<td class="eb_td">
-		<div><input class="tbox" type="text" size="40" name="eventname" value="'.$this->getField('Name').'"/></div>
+		<div><input class="tbox required" type="text" size="40" name="eventname" value="'.$this->getField('Name').'"/></div>
 		</td>
 		</tr>
 		';
@@ -1009,7 +1009,7 @@ class Event extends DatabaseTable
 
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L32.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L32.'<span class="required">*</span></td>
 		<td class="eb_td">
 		<table class="table_left">
 		<tr>
@@ -1017,7 +1017,7 @@ class Event extends DatabaseTable
 		<div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearStartDate(this.form);"/></div>
 		</td>
 		<td>
-		<div><input class="tbox timepicker" type="text" name="startdate" id="f_date_start" value="'.$date_start.'" readonly="readonly" /></div>
+		<div><input class="tbox timepicker required" type="text" name="startdate" id="f_date_start" value="'.$date_start.'" readonly="readonly" /></div>
 		</td>
 		</tr>
 		</table>

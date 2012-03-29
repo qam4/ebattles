@@ -1529,8 +1529,8 @@ class Match extends DatabaseTable
 
 				if (($type & eb_MATCH_NOEVENTINFO) == 0)
 				{
-					$string .= '<td style="vertical-align:top"><a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$this->fields['MatchID'].'" title="'.$mEventgame.'">';
-					$string .= '<img '.getActivityGameIconResize($mEventgameicon).'/>';
+					$string .= '<td style="vertical-align:top">';
+					$string .= '<img '.getActivityGameIconResize($mEventgameicon).' title="'.$mEventgame.'"/>';
 					$string .= '</a></td>';
 				}
 

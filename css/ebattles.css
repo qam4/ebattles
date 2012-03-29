@@ -65,6 +65,10 @@ border:1px solid red;
 
 .hide {display: none !important;}
 
+span.required{
+	color:red;
+}
+
 #modal-form-signup label {
 width: 100px;	
 display: inline-block;

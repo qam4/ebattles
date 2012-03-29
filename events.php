@@ -537,6 +537,13 @@ function displayRecentEvents(){
 			</tr>';
 		}
 		$text .= '</tbody></table><br />';
+
+		$text .= '
+		<form action="'.e_PLUGIN.'ebattles/eventspast.php" method="post">
+		'.ebImageTextButton('submit', 'action_back.gif', EB_EVENTS_L21).'
+		</form>';
+		$text .= '</p>';
+
 	}
 }
 

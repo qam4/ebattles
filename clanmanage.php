@@ -349,9 +349,6 @@ else
 
 		$text .= '</div>';  // tab-page "Team Divisions"
 		$text .= '</div>';
-		$text .= '<p>';
-		$text .= '<br />'.EB_CLANM_L27.' [<a href="'.e_PLUGIN.'ebattles/clans.php">'.EB_CLANM_L28.'</a>]<br />';
-		$text .= '</p>';
 	}
 
 	$ns->tablerender($clan->getField('Name')." - ".EB_CLANM_L1, $text);

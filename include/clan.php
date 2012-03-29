@@ -60,9 +60,9 @@ class Clan extends DatabaseTable
 		//<!-- Clan Name -->'
 		$text .= '<tr>';
 		$text .= '
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_CLANM_L9.'</td>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_CLANM_L9.'<span class="required">*</span></td>
 		<td class="eb_td">
-		<input class="tbox" type="text" size="40" name="clanname" value="'.$this->getField('Name').'"/>
+		<input class="tbox required" type="text" size="40" name="clanname" value="'.$this->getField('Name').'"/>
 		</td>
 		</tr>';
 
