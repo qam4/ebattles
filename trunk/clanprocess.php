@@ -56,11 +56,11 @@ else {
 				$division->deleteDivMembers();
 				$division->deleteDiv();
 			}
-
 			$clan->deleteClan();
 		}
 		//echo "-- clandelete --<br />";
 		header("Location: clans.php");
+		exit();
 	}
 	if(isset($_POST['clandeletediv']))
 	{
@@ -89,8 +89,9 @@ else {
 			$division->deleteDivMembers();
 			$division->deleteDiv();
 		}
-		echo "-- clandeletediv --<br />";
+		//echo "-- clandeletediv --<br />";
 		header("Location: clanmanage.php?clanid=$clan_id");
+		exit();
 	}
 	if(isset($_POST['clanadddiv']))
 	{
@@ -117,6 +118,7 @@ else {
 		}
 		//echo "-- clanadddiv --<br />";
 		header("Location: clanmanage.php?clanid=$clan_id");
+		exit();
 	}
 
 	if(isset($_POST['clansettingssave']))

@@ -99,13 +99,13 @@ else
 		$text .= '<input type="hidden" id="edit_gamer" name="edit_gamer" value=""/>';
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L36;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L37;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L38;
 		$text .= '</th>';
 		$text .= '</tr>';
@@ -191,22 +191,22 @@ else
 		/* Display table contents */
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L10;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L33;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L11;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L12;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L13;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L14;
 		$text .= '</th>';
 		$text .= '</tr>';
@@ -289,16 +289,16 @@ else
 		/* Display table contents */
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L10;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L33;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L14;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L31;
 		$text .= '</th>';
 		$text .= '</tr>';
@@ -359,16 +359,16 @@ else
 		/* Display table contents */
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L10;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L33;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L14;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L31;
 		$text .= '</th>';
 		$text .= '</tr>';
@@ -450,10 +450,10 @@ else
 	{
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L24;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L33;
 		$text .= '</th>';
 		$text .= '</tr>';
@@ -494,10 +494,10 @@ else
 	{
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L28;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L31;
 		$text .= '</th>';
 		$text .= '</tr>';
@@ -542,10 +542,10 @@ else
 	{
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L24;
 		$text .= '</th>';
-		$text .= '<th class="eb_th1">';
+		$text .= '<th class="eb_th2">';
 		$text .= EB_USER_L33;
 		$text .= '</th>';
 		$text .= '</tr>';

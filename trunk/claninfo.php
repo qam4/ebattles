@@ -34,7 +34,7 @@ else
 	." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
-
+	
 	$clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
 
 	$text .= '<div id="tabs">';

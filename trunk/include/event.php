@@ -682,7 +682,8 @@ class Event extends DatabaseTable
 			}
 
 			//<!-- Match Type -->
-			$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
+			//$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
+			$disabled_str = '';
 			$text .= '
 			<tr>
 			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L132.'</td>

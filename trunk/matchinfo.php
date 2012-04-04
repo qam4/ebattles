@@ -127,6 +127,12 @@ else
 		$cat_maxpoints = mysql_result($result_Categories,$category, TBL_STATSCATEGORIES.".CategoryMaxValue");
 		if ($cat_maxpoints>0) $categoriesToShow["$cat_name"] = TRUE;
 	}
+	
+	if($event_type == 'Tournament')
+	{
+		$categoriesToShow["ELO"] = FALSE;
+		$categoriesToShow["Skill"] = FALSE;
+	}
 
 	//dbg: print_r($categoriesToShow);
 
@@ -413,7 +419,17 @@ else
 	$text .= ($categoriesToShow["Points"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_L10.'</th>' : '';
 	$text .= ($categoriesToShow["ELO"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_L11.'</th>' : '';
 	$text .= ($categoriesToShow["Skill"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_L12.'</th>' : '';
-	$text .= '<th class="eb_th2">'.EB_MATCHD_L13.'</th>';
+	switch($event->getField('Type'))
+	{
+		case "One Player Ladder":
+		case "Team Ladder":
+		case "One Player Tournament":
+		$text .= '<th class="eb_th2">'.EB_MATCHD_L13.'</th>';
+		break;
+		default:
+		$text .= '<th class="eb_th2"></th>';
+		break;
+	}
 	$text .= '</tr>';
 
 	for($i=0; $i < $numScores; $i++)

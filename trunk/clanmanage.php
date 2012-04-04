@@ -27,7 +27,6 @@ if (!$clan_id)
 }
 else
 {
-
 	$q = "SELECT ".TBL_CLANS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_CLANS.", "
@@ -40,7 +39,7 @@ else
 	$clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
 
 	$clan = new Clan($clan_id);
-
+	
 	$can_manage = 0;
 	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 	if (USERID==$clan_owner) $can_manage = 1;
@@ -71,6 +70,7 @@ else
 		</form>';
 		$text .= '</td></tr>';
 
+		$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
 		// Delete team
 		$q_ClanScores = "SELECT ".TBL_DIVISIONS.".*, "
 		.TBL_TEAMS.".*, "
@@ -95,7 +95,6 @@ else
 		$text .= '</tbody>';
 		$text .= '</table>';
 
-		$text .= '<form action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$clan_id.'" method="post">';
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tbody>';
 

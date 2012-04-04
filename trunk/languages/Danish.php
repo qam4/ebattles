@@ -653,6 +653,18 @@ define('EB_MATCHR_L56', '".
 	Venlig hilsen,
 	Turnering admin');
 define('EB_MATCHR_L57', 'Miste?');
+define('EB_MATCHR_L58', 'Name');
+define('EB_MATCHR_L59', 'Select the match result:');
+define('EB_MATCHR_L60', 'Team 1 won');
+define('EB_MATCHR_L61', 'Team 2 won');
+define('EB_MATCHR_L62', 'Draw');
+define('EB_MATCHR_L63', 'Team 1 forfeit');
+define('EB_MATCHR_L64', 'Team 2 forfeit');
+define('EB_MATCHR_L65', 'Player 1 won');
+define('EB_MATCHR_L66', 'Player 2 won');
+define('EB_MATCHR_L67', 'Draw');
+define('EB_MATCHR_L68', 'Player 1 forfeit');
+define('EB_MATCHR_L69', 'Player 2 forfeit');
 
 define('EB_MATCHQL_L1', 'Skrivebords resultat');
 define('EB_MATCHQL_L2', 'Du har IKKE tilladelse til, at rappotere fra en kamp.');
