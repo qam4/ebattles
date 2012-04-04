@@ -176,6 +176,42 @@ $text .= '
 <div class="spacer">
 ';
 
+// Set rank/draw based on result
+if(isset($_POST['result']))
+{
+	switch($_POST['result'])
+	{
+		case "1":
+		// T1 won
+		if (!isset($_POST['rank1'])) $_POST['rank1'] = 'Team #1';
+		if (!isset($_POST['rank2'])) $_POST['rank2'] = 'Team #2';
+		break;
+		case "2":
+		// T2 won
+		if (!isset($_POST['rank1'])) $_POST['rank1'] = 'Team #2';
+		if (!isset($_POST['rank2'])) $_POST['rank2'] = 'Team #1';
+		break;
+		case "3":
+		// draw
+		if (!isset($_POST['rank1'])) $_POST['rank1'] = 'Team #1';
+		if (!isset($_POST['rank2'])) $_POST['rank2'] = 'Team #2';
+		if (!isset($_POST['draw2'])) $_POST['draw2'] = 1;
+		break;
+		case "4":
+		// T1 forfeit
+		if (!isset($_POST['rank1'])) $_POST['rank1'] = 'Team #2';
+		if (!isset($_POST['rank2'])) $_POST['rank2'] = 'Team #1';
+		if (!isset($_POST['forfeit2'])) $_POST['forfeit2'] = 1;
+		break;
+		case "5":
+		// T2 forfeit
+		if (!isset($_POST['rank1'])) $_POST['rank1'] = 'Team #1';
+		if (!isset($_POST['rank2'])) $_POST['rank2'] = 'Team #2';
+		if (!isset($_POST['forfeit2'])) $_POST['forfeit2'] = 1;
+		break;
+		}
+}
+
 if($match_id)
 {
 	$match = new Match($match_id);
@@ -285,6 +321,7 @@ if($match_id)
 		$pOppScore  = mysql_result($result,$score, TBL_SCORES.".Player_ScoreAgainst");
 		$ppoints  = mysql_result($result,$score, TBL_SCORES.".Player_Points");
 		$pfaction  = mysql_result($result,$score, TBL_SCORES.".Faction");
+		$pforfeit  = mysql_result($result,$score, TBL_SCORES.".Player_Forfeit");
 
 		if ($pMatchTeam > $nbr_teams) $nbr_teams = $pMatchTeam;
 
@@ -293,6 +330,8 @@ if($match_id)
 		if (!isset($_POST['player'.$i]))  $_POST['player'.$i] = $pid;
 		if (!isset($_POST['score'.$i]))   $_POST['score'.$i] = $pscore;
 		if (!isset($_POST['faction'.$i])) $_POST['faction'.$i] = $pfaction;
+		
+		//echo "$pname $i: ".$_POST['team'.$i]."<br>";
 
 		if ($pMatchTeam != $matchteam)
 		{
@@ -305,6 +344,10 @@ if($match_id)
 			{
 				$rank++;
 			}
+			if($pforfeit == 1)
+			{
+				if (!isset($_POST['forfeit'.$index])) $_POST['forfeit'.$index] = 1;
+			}
 			$matchteam = $pMatchTeam;
 			$index++;
 		}
@@ -312,8 +355,46 @@ if($match_id)
 	if (!isset($_POST['nbr_teams'])) $_POST['nbr_teams'] = $nbr_teams;
 }
 
-// assuming we saved the above function in "functions.php", let's make sure it's available
-require_once(e_PLUGIN.'ebattles/matchreport_functions.php');
+
+$type = $event->getField('Type');
+switch($type)
+{
+	case "One Player Ladder":
+	case "Team Ladder":
+	case "Clan Ladder":
+	$event_type = 'Ladder';
+	break;
+	case "One Player Tournament":
+	case "Clan Tournament":
+	$event_type = 'Tournament';
+	default:
+}
+$matchtype = $event->getField('MatchType');
+if(preg_match("/^\d+v\d$/", $matchtype)||
+   ($event_type == 'Tournament'))
+{
+	$matchreport_type = 'versus';
+	$nbr_teams = 2;
+	if (!isset($_POST['nbr_teams'])) $_POST['nbr_teams'] = $nbr_teams;
+	
+	$nbr_players = 2;
+	if(preg_match("/^\d+v\d$/", $matchtype))
+	{
+		$array = explode('v', $matchtype);
+		
+		if($array[0] == $array[1])
+		{
+			$nbr_players = 2*$array[0];
+		}
+	}
+	if (!isset($_POST['nbr_players'])) $_POST['nbr_players'] = $nbr_players;
+	require_once(e_PLUGIN.'ebattles/matchreport_versus_form.php');
+}
+else
+{
+	$matchreport_type = 'ranked';
+	require_once(e_PLUGIN.'ebattles/matchreport_functions.php');
+}
 
 // has the form been submitted?
 if (isset($_POST['submit']))
@@ -606,19 +687,19 @@ if (isset($_POST['submit']))
 			$pid = $_POST['player'.$i];
 			$pteam = str_replace("Team #","",$_POST['team'.$i]);
 
+			$pforfeit = 0;
 			for($j=1;$j<=$nbr_teams;$j++)
 			{
-				if( $_POST['rank'.$j] == "Team #".$pteam)
-				$prank = $actual_rank[$j];
+				if( $_POST['rank'.$j] == "Team #".$pteam) {
+					$prank = $actual_rank[$j];
+					if ($_POST['forfeit'.$j] != "") {
+						$pforfeit = 1;
+					}
+				}
 			}
 
 			$pscore = $_POST['score'.$i];
 			$pfaction = $_POST['faction'.$i];
-			if ($_POST['forfeit'.$i] != "") {
-				$pforfeit = 1;
-			} else {
-				$pforfeit = 0;
-			}
 
 			switch($event->getField('Type'))
 			{

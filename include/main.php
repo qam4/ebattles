@@ -282,7 +282,7 @@ function imageResize($image, $target, $force_resize=FALSE) {
     }
     else
     {
-        return 'width="'.$target.'"';
+        return 'style="max-height:'.$target.'px; max-width:'.$target.'px; vertical-align:middle;"';
     }
 }
 
@@ -295,7 +295,7 @@ function getImageResize($icon, $max_size, $enable_max_resize=TRUE, $force_resize
     }
     else
     {
-        return 'src="'.$icon.'"';
+        return 'src="'.$icon.'" style="vertical-align:middle;"';
     }
 }
 
@@ -703,4 +703,17 @@ function array_push_associative(&$arr) {
 	}
 }
 
+function check_db_query($result)
+{
+	$num_rows = mysql_numrows($result);
+	if(!$result || ($num_rows < 0))
+	{
+		/* Error occurred, return given name by default */
+		$text .= EB_EVENTS_L11.'<br/>';
+	} else if($numClans == 0)
+	{
+		$text .= EB_EVENTS_L12.'<br/>';
+	}
+	return $text;
+}
 ?>

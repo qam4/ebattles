@@ -138,7 +138,7 @@ function displayRecentActivity($event_id){
 			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
 			$award_string .= '<td><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$aUser.'">'.$aUserNickName.'</a>';
 			$award_string .= ' '.$award;
-			$award_string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a> ('.$aEventgame.')';
+			$award_string .= ' '.EB_MATCH_L12.' <img '.getActivityGameIconResize($aEventgameicon).' title="'.$aEventgame.'"/>&nbsp<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a>';
 
 			$award_string .= ' <div class="smalltext">';
 			if (($time-$aTime) < INT_MINUTE )
@@ -227,7 +227,7 @@ function displayRecentActivity($event_id){
 			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';
 			$award_string .= '<td><a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$tclanid.'">'.$tclan.'</a>';
 			$award_string .= ' '.$award;
-			$award_string .= ' '.EB_MATCH_L12.' <a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a> ('.$aEventgame.')';
+			$award_string .= ' '.EB_MATCH_L12.' <img '.getActivityGameIconResize($aEventgameicon).' title="'.$aEventgame.'"/>&nbsp<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$aEventID.'">'.$aEventName.'</a>';
 
 			$award_string .= ' <div class="smalltext">';
 			if (($time-$aTime) < INT_MINUTE )

@@ -651,6 +651,18 @@ define('EB_MATCHR_L56', '".
 	Cordialement,
 	L’admin du tournoi');
 define('EB_MATCHR_L57', 'Forfait?');
+define('EB_MATCHR_L58', 'Nom');
+define('EB_MATCHR_L59', 'Sélectionnez le résultat du match:');
+define('EB_MATCHR_L60', 'Équipe 1 a gagné');
+define('EB_MATCHR_L61', 'Équipe 2 a gagné');
+define('EB_MATCHR_L62', 'Match nul');
+define('EB_MATCHR_L63', 'Équipe 1 forfaite');
+define('EB_MATCHR_L64', 'Équipe 2 forfaite');
+define('EB_MATCHR_L65', 'Joueur 1 a gagné');
+define('EB_MATCHR_L66', 'Joueur 2 a gagné');
+define('EB_MATCHR_L67', 'Match nul');
+define('EB_MATCHR_L68', 'Joueur 1 forfait');
+define('EB_MATCHR_L69', 'Joueur 2 forfait');
 
 define('EB_MATCHQL_L1', 'Rapport rapide de défaite');
 define('EB_MATCHQL_L2', 'Vous n’êtes pas authorisé a soumettre un match.');

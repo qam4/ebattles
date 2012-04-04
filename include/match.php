@@ -1531,7 +1531,7 @@ class Match extends DatabaseTable
 				{
 					$string .= '<td style="vertical-align:top">';
 					$string .= '<img '.getActivityGameIconResize($mEventgameicon).' title="'.$mEventgame.'"/>';
-					$string .= '</a></td>';
+					$string .= '</td>';
 				}
 
 				$string .= '<td>';
@@ -1578,7 +1578,7 @@ class Match extends DatabaseTable
 							$fIcon = mysql_result($result_Factions,0 , TBL_FACTIONS.".Icon");
 							$fName = mysql_result($result_Factions,0 , TBL_FACTIONS.".Name");
 
-							$pfactionIcon = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'" style="vertical-align:middle"/>';
+							$pfactionIcon = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'"/>';
 						}
 					}
 
@@ -1593,18 +1593,18 @@ class Match extends DatabaseTable
 					case "One Player Tournament":
 					if($pavatar)
 					{
-					$image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(avatar($pavatar)).'/>';
 					} else if ($pref['eb_avatar_default_image'] != ''){
-					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).'/>';
 					}
 					break;
 					case "Clan Ladder":
 					case "Clan Tournament":
 					if($pavatar)
 					{
-					$image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).'/>';
 					} else if ($pref['eb_avatar_default_image'] != ''){
-					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>';
 					}
 					break;
 					default:
@@ -1686,13 +1686,13 @@ class Match extends DatabaseTable
 				}
 				if ($can_approve == 1)
 				{
-					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$this->fields['MatchID'].'"><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/></a>';
+					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$this->fields['MatchID'].'"><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'"/></a>';
 				}
 				else
 				{
 					if((($type & eb_MATCH_SCHEDULED) == 0)||($can_schedule == 1))
 					{
-						$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$this->fields['MatchID'].'"><img src="'.e_PLUGIN.'ebattles/images/magnify.png" alt="'.EB_MATCH_L5.'" title="'.EB_MATCH_L5.'" style="vertical-align:text-top;"/></a>';
+						$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$this->fields['MatchID'].'"><img src="'.e_PLUGIN.'ebattles/images/magnify.png" alt="'.EB_MATCH_L5.'" title="'.EB_MATCH_L5.'"/></a>';
 					}
 				}
 
