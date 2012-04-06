@@ -28,6 +28,7 @@ $eplug_css = array(
 "css/paginate.css",
 "css/ebattles.css",
 "css/brackets.css",
+"js/shadowbox/shadowbox.css",
 $tab_theme
 );
 
@@ -72,11 +73,15 @@ class DatabaseTable
 	}
 
 	function getField($field) {
-		global $tp;
-
-		return $tp->toHTML($this->fields[$field]);
+		return $this->fields[$field];
 	}
 	
+	function getFieldHTML($field) {
+		global $tp;
+		
+		return $tp->toHTML($this->fields[$field]);
+	}
+
 	function setField($field, $value) {
 		global $tp;
 		

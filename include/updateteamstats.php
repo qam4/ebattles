@@ -19,7 +19,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 	$id = array();
 	$uid = array();
 	$team = array();
-	$clan = array();
+	$clanid = array();
 	$clantag = array();
 	$name = array();
 	$avatar = array();
@@ -297,7 +297,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		// For display
 		$id[]  = $tid;
 		$name[]  = $clan->getField('Name');
-		$clan[]  = $tclan;
+		$clanid[]  = $tclan;
 		$clantag[]  = $clan->getField('Tag');
 		$avatar[] = $clan->getField('Image');
 		$nbr_players[]  = $tnumPlayers;
@@ -788,7 +788,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 			}
 		}
 
-		$stats_row[] = $image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan[$index].'"><b>'.$name[$index].'</b></a>';
+		$stats_row[] = $image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid[$index].'"><b>'.$name[$index].'</b></a>';
 		//  ('.$clantag[$index].')
 
 		switch($event->getField('Type'))

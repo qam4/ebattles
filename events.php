@@ -135,7 +135,7 @@ function displayCurrentEvents(){
 
 	$text .= '<form id="submitform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
 	$text .= '<div>';
-	$text .= '<table>';
+	$text .= '<table class="table_left">';
 	$text .= '<tr>';
 	// Games drop down
 	$text .= '<td>'.EB_EVENTS_L9.'<br />';
@@ -167,15 +167,16 @@ function displayCurrentEvents(){
 	$text .= '</td>';
 	$text .= '</tr>';
 	$text .= '</table>';
-	$text .= '<br />';
 
 	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_EVENTS.".Game = '$gameid')";
 	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_EVENTS.".MatchType = '$matchtype')";
 
+	$show_draft_events_str = (check_class($pref['eb_mod_class'])) ? '' : "AND (".TBL_EVENTS.".Status != 'draft')";
+	
 	$q = "SELECT count(*) "
 	." FROM ".TBL_EVENTS
 	." WHERE (".TBL_EVENTS.".Status != 'finished')"
-	."   AND (".TBL_EVENTS.".Status != 'draft')"
+	.$show_draft_events_str
 	.$game_string
 	.$matchtype_string;
 	$result = $sql->db_Query($q);
@@ -190,7 +191,7 @@ function displayCurrentEvents(){
 	." FROM ".TBL_EVENTS.", "
 	.TBL_GAMES
 	." WHERE (".TBL_EVENTS.".Status != 'finished')"
-	."   AND (".TBL_EVENTS.".Status != 'draft')"
+	.$show_draft_events_str
 	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 	.$game_string
 	.$matchtype_string
@@ -384,7 +385,7 @@ function displayRecentEvents(){
 		$gmatchtypes  .= ','.mysql_result($result_mt,$i, TBL_GAMES.".MatchTypes");
 	}
 	$text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
-	$text .= '<table>';
+	$text .= '<table class="table_left">';
 	$text .= '<tr>';
 	// Games drop down
 	$text .= '<td>'.EB_EVENTS_L9.'<br />';
@@ -417,7 +418,6 @@ function displayRecentEvents(){
 	$text .= '</tr>';
 	$text .= '</table>';
 	$text .= '</form>';
-	$text .= '<br />';
 
 	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_EVENTS.".Game = '$gameid')";
 	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_EVENTS.".MatchType = '$matchtype')";

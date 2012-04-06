@@ -88,6 +88,7 @@ else{
 		$num_rows_2 = mysql_numrows($result2);
 		if ($num_rows_2==0)
 		{
+			$eventmod = $tp->toDB($eventmod);
 			$q2 = "INSERT INTO ".TBL_EVENTMODS."(Event,User,Level)"
 			." VALUES ('$event_id','$eventmod',1)";
 			$result2 = $sql->db_Query($q2);
@@ -310,7 +311,7 @@ else{
 		$matchups = $event->getMatchups();
 		$nbrRounds = count($matchups);
 
-		$rounds = unserialize($event->getField('Rounds'));
+		$rounds = unserialize($event->getFieldHTML('Rounds'));
 		if (!isset($rounds)) $rounds = array();
 		for ($round = 1; $round < $nbrRounds; $round++) {
 			if (!isset($rounds[$round])) {
@@ -326,7 +327,7 @@ else{
 			$rounds[$round]['BestOf'] = $tp->toDB($_POST['round_bestof_'.$round]);
 		}
 		$event->updateRounds($rounds);
-
+		
 		/* Event Description */
 		$event->setField('Description', $_POST['eventdescription']);
 
@@ -336,7 +337,6 @@ else{
 		if ($event_id) {
 			// Need to update the event in database
 			$event->updateDB();
-
 		} else {
 			// Need to create an event.
 			$event->setField('Owner', USERID);

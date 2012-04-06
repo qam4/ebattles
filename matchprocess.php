@@ -120,7 +120,7 @@ if (isset($_POST['addmedia']))
 	$match_id = $_POST['matchid'];
 	$match = new Match($match_id);
 	$media_type = $_POST['mediatype'];
-	$media_path = $tp->toDB($_POST['mediapath']);
+	$media_path = $_POST['mediapath'];
 	$submitter = USERID;
 
 	if (preg_match("/http:\/\//", $media_path))

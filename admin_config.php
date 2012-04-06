@@ -19,6 +19,11 @@ if (!getperms("P")) {
 }
 
 if (isset($_POST['updatesettings'])) {
+	unset($_POST['updatesettings']);
+	foreach($_POST as $key => $value)
+	{
+	    $_POST[$key] = $tp->toDB($value);
+	}
 	$pref['eb_events_update_delay'] = $_POST['eb_events_update_delay'];
 	$pref['eb_events_update_delay_enable'] = $_POST['eb_events_update_delay_enable'];
 	$pref['eb_events_create_class'] = $_POST['eb_events_create_class'];
@@ -45,6 +50,11 @@ if (isset($_POST['updatesettings'])) {
 	$message = EB_ADMIN_L1;
 }
 if (isset($_POST['updatelinks'])) {
+	unset($_POST['updatelinks']);
+	foreach($_POST as $key => $value)
+	{
+	    $_POST[$key] = $tp->toDB($value);
+	}
 	$pref['eb_links_menuheading'] = $_POST['eb_links_menuheading'];
 	$pref['eb_links_showcreateevent'] = $_POST['eb_links_showcreateevent'];
 	$pref['eb_links_showcreateevent'] = $_POST['eb_links_showcreateevent'];
@@ -60,6 +70,11 @@ if (isset($_POST['updatelinks'])) {
 	$message = EB_ADMIN_L1;
 }
 if (isset($_POST['update_activity'])) {
+	unset($_POST['update_activity']);
+	foreach($_POST as $key => $value)
+	{
+	    $_POST[$key] = $tp->toDB($value);
+	}
 	$pref['eb_activity_menuheading'] = $_POST['eb_activity_menuheading'];
 	$pref['eb_activity_number_of_items'] = $_POST['eb_activity_number_of_items'];
 	$pref['eb_activity_max_image_size_check'] = $_POST['eb_activity_max_image_size_check'];
@@ -73,7 +88,8 @@ if (e_QUERY)
 }
 if (isset($_POST['eb_events_insert_data']))
 {
-	@require_once e_PLUGIN."ebattles/db_admin/insert_data.php";
+	@require_once(e_PLUGIN."ebattles/db_admin/insert_data.php");
+	insert_eb_debug_data();
 	$message .= EB_ADMIN_L11;
 }
 
@@ -818,7 +834,6 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
 	</tr>
 	";
 
-/*
 	$text .= "<tr>
 	<td class='forumheader3' style='width:40%'>".EB_ADMIN_L7.": </td>
 	<td class='forumheader3' style='width:60%'>
@@ -826,7 +841,6 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
 	</td>
 	</tr>
 	";
-*/
 
 	$text .= "<tr>
 	<td class='forumheader3' style='width:40%'>".EB_ADMIN_L38.":</td>

@@ -53,7 +53,7 @@ else
 
 	$event = new Event($event_id);
 	$eventStatus = $event->getField('Status');
-	$rounds = unserialize($event->getField('Rounds'));
+	$rounds = unserialize($event->getFieldHTML('Rounds'));
 
 	$type = $event->getField('Type');
 	switch($type)

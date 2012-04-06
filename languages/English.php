@@ -115,7 +115,7 @@ define('EB_EVENTS_L14', 'Game');
 define('EB_EVENTS_L15', 'Type');
 define('EB_EVENTS_L16', 'Start');
 define('EB_EVENTS_L17', 'End');
-define('EB_EVENTS_L18', 'Teams/Players');
+define('EB_EVENTS_L18', 'Players');
 define('EB_EVENTS_L19', 'Games');
 define('EB_EVENTS_L20', 'Create new event');
 define('EB_EVENTS_L21', 'Show all past events');
@@ -344,7 +344,7 @@ define('EB_EVENTM_L114', 'team(s)');
 define('EB_EVENTM_L115', 'No Teams');
 define('EB_EVENTM_L116', '');
 define('EB_EVENTM_L117', 'Ranking Type');
-define('EB_EVENTM_L118', 'Classic: Players are ranked based on their score in the first stats category, if 2 players are tied, they are ranked based on the second stats category, and so on<br />
+define('EB_EVENTM_L118', 'Classic: Players are ranked based on their score in the first stats category, if 2 players are tied, they are ranked based on the second stats category, and so on
 Combined Stats: Players are ranked based on a combination of their scores in each stats category');
 define('EB_EVENTM_L119', 'Classic');
 define('EB_EVENTM_L120', 'Combined Stats');

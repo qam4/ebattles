@@ -95,7 +95,7 @@ else {
 	}
 	if(isset($_POST['clanadddiv']))
 	{
-		$clan_owner = $_POST['clanowner'];
+		$clan_owner = $tp->toDB($_POST['clanowner']);
 		$div_game = $_POST['divgame'];
 
 		$q = "SELECT ".TBL_DIVISIONS.".*"
@@ -179,7 +179,7 @@ else {
 	if(isset($_POST['clanchangedivcaptain']))
 	{
 		$clan_div = $_POST['clandiv'];
-		$div_captain = $_POST['divcaptain'];
+		$div_captain = $tp->toDB($_POST['divcaptain']);
 
 		/* Division Captain */
 		$q2 = "UPDATE ".TBL_DIVISIONS." SET Captain = '$div_captain' WHERE (DivisionID = '$clan_div')";

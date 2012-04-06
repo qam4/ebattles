@@ -61,7 +61,7 @@ else
 
 	$event = new Event($event_id);
 
-	$rounds = unserialize($event->getField('Rounds'));
+	$rounds = unserialize($event->getFieldHTML('Rounds'));
 	$egame = mysql_result($result,0 , TBL_GAMES.".Name");
 	$egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
 	$egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");

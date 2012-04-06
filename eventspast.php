@@ -111,7 +111,7 @@ function displayPastEvents(){
 
 	$text .= '<form id="submitform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
 	$text .= '<div>';
-	$text .= '<table>';
+	$text .= '<table class="table_left">';
 	$text .= '<tr>';
 	// Games drop down
 	$text .= '<td>'.EB_EVENTS_L9.'<br />';
@@ -143,7 +143,6 @@ function displayPastEvents(){
 	$text .= '</td>';
 	$text .= '</tr>';
 	$text .= '</table>';
-	$text .= '<br />';
 
 	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_EVENTS.".Game = '$gameid')";
 	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_EVENTS.".MatchType = '$matchtype')";

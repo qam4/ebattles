@@ -28,16 +28,11 @@ document.getElementById('mediaform').submit();
 </script>
 ";
 $text .= "
-<script type='text/javascript' src='./js/shadowbox/adapter/shadowbox-jquery.js'></script>
 <script type='text/javascript' src='./js/shadowbox/shadowbox.js'></script>
 <script type='text/javascript'>
-Shadowbox.loadSkin('classic', './js/shadowbox/skin'); // use the classic skin
-Shadowbox.loadLanguage('en', './js/shadowbox/lang'); // use the English language
-Shadowbox.loadPlayer(['img', 'flv', 'wmt', 'swf', 'html', 'iframe'], './js/shadowbox/player'); // use img and qt players
-
 window.onload = Shadowbox.init;
-
 </script>";
+
 global $sql;
 
 $match_id = $_GET['matchid'];
@@ -694,7 +689,7 @@ else
 			$text .= '>'.$value.'</option>';
 		}
 		$text .= '</select></td>';
-		$text .= '<td><input class="tbox" type="text" name="mediapath" size="40" value="" maxlength="64" title="'.EB_MATCHD_L22.'"/></td>';
+		$text .= '<td><input class="tbox" type="text" name="mediapath" size="40" value="" maxlength="256" title="'.EB_MATCHD_L22.'"/></td>';
 		$text .= '<td>'.ebImageTextButton('addmedia', 'film_add.png', EB_MATCHD_L23).'</td>';
 		$text .= '</tr></table>';
 		$text .= '</form>';

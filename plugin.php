@@ -32,7 +32,7 @@ $eb_version = explode('.', $eb_version_string, 3);
 $eplug_folder = "ebattles";
 
 // Name of menu item for plugin ----------------------------------------------------------------------------------
-$eplug_menu_name = 'ebattles_menu';
+$eplug_menu_name = TRUE;
 
 // Name of the admin configuration file --------------------------------------------------------------------------
 $eplug_conffile = "admin_config.php";
@@ -499,12 +499,16 @@ MatchType varchar(63) DEFAULT ''
 );
 
 // Insert "data"
-@require_once e_PLUGIN.'ebattles/db_admin/insert_data.php';
+// Insert "Unknown Game"
+$query =
+"INSERT INTO ".TBL_GAMES."(Name, Icon)
+VALUES ('".EB_GAME_L1."', 'unknown.gif')";
+array_push($eplug_tables, $query);
 
 // Create a link in main menu (yes=TRUE, no=FALSE) -------------------------------------------------------------
 $eplug_link = TRUE;
 $eplug_link_name = EB_L5;
-$eplug_link_url = e_PLUGIN."ebattles/events.php";
+$eplug_link_url = e_PLUGIN."ebattles/userinfo.php?user={USERID}";
 
 
 // Text to display after plugin successfully installed ------------------------------------------------------------------
