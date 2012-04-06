@@ -10,10 +10,10 @@ if (isset($_POST['edit_gamer']) && $_POST['edit_gamer']!="")
 {
     $user_id = $_GET['userid'];
     $gamer_id = $_POST['edit_gamer'];
-    $gamer_name = $tp->toDB($_POST['gamername'.$gamer_id]);
-    $gamer_uniqueid = $tp->toDB($_POST['gameruniqueid'.$gamer_id]);
+    $gamer_name = $_POST['gamername'.$gamer_id];
+    $gamer_uniqueid = $_POST['gameruniqueid'.$gamer_id];
 
-    if (($gamer_name != "")||($gamer_name != ""))
+    if ($gamer_name != "")
     {
         update_gamer($gamer_id, $gamer_name, $gamer_uniqueid);
     }
@@ -31,6 +31,10 @@ Functions
 function update_gamer($gamer_id, $gamer_name, $gamer_uniqueid)
 {
     global $sql;
+    global $tp;
+    
+    $gamer_name = $tp->toDB($gamer_name);
+    $gamer_uniqueid = $tp->toDB($gamer_uniqueid);
 
     $q = "UPDATE ".TBL_GAMERS
     ." SET Name = '$gamer_name', UniqueGameID = '$gamer_uniqueid'"

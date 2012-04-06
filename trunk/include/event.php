@@ -752,7 +752,7 @@ class Event extends DatabaseTable
 				case "Ladder":
 				$text .= '
 				<tr>
-				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L117.'<div class="smalltext">'.EB_EVENTM_L118.'</div></td>
+				<td class="eb_td eb_tdc1 eb_w40" title="'.EB_EVENTM_L118.'">'.EB_EVENTM_L117.'</td>
 				<td class="eb_td">
 				<div id="radio2">
 				';
@@ -780,6 +780,7 @@ class Event extends DatabaseTable
 		';
 
 		//<!-- Match replay report userclass -->
+		/*
 		$text .= '
 		<tr>
 		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L134.'</td>
@@ -791,6 +792,7 @@ class Event extends DatabaseTable
 		</td>
 		</tr>
 		';
+		*/
 
 		if ($create==false)
 		{
@@ -818,6 +820,7 @@ class Event extends DatabaseTable
 				</td>
 				</tr>
 				';
+				break;
 			}
 		}
 		//<!-- Allow Score -->
@@ -855,7 +858,7 @@ class Event extends DatabaseTable
 
 		$text .= '
 		<tr>
-		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L108.'<div class="smalltext">'.EB_EVENTM_L109.'</div></td>
+		<td class="eb_td eb_tdc1 eb_w40" title="'.EB_EVENTM_L109.'">'.EB_EVENTM_L108.'</td>
 		<td class="eb_td">
 		<div>';
 		$text .= '<select class="tbox" name="eventmatchapprovaluserclass">';
@@ -923,6 +926,7 @@ class Event extends DatabaseTable
 				</td>
 				</tr>
 				';
+				break;
 			}
 		}
 		if ($create==false)
@@ -981,6 +985,7 @@ class Event extends DatabaseTable
 				</td>
 				</tr>
 				';
+				break;
 			}
 			//<!-- Maps -->
 			$text .= '
@@ -1068,7 +1073,7 @@ class Event extends DatabaseTable
 				<td class="eb_td eb_tdc1 eb_w40">'.($nbrRounds - 1).' '.EB_EVENTM_L4.'</td>
 				<td class="eb_td">';
 
-				$rounds = unserialize($this->getField('Rounds'));
+				$rounds = unserialize($this->getFieldHTML('Rounds'));
 				if (!isset($rounds)) $rounds = array();
 				$text .= '<table class="table_left"><tbody>';
 				$text .= '<tr>';
@@ -1187,6 +1192,7 @@ class Event extends DatabaseTable
 					}
 					$text .= '</td></tr>';
 				}
+				break;
 			}
 		}
 		//<!-- Description -->
@@ -1299,16 +1305,19 @@ class Event extends DatabaseTable
 	- format: 'Single elimination', ...
 	- maxNbrPlayers: max number of players
 	- teams[player]
-	. 'Name'
-	. 'PlayerID'
+	 . Name
+	 . PlayerID
 	- results[round][matchup]
-	. 'winner'
-	. ''
-	. 'top'/'bottom'
-	. 'bye' true/false
+	 . winner: not played/top/bottom
+	 . bye: true/false
+	 . topWins
+	 . bottomWins
+	 . matchs[match]
+	   . played
+	   . match_id
 	- rounds[round]
-	. 'Title'
-	. 'BestOf'
+	 . Title
+	 . BestOf
 
 	variables:
 	- $matchup[round][matchup][0(top)-1(bottom)] unserialized from file
@@ -1333,9 +1342,9 @@ class Event extends DatabaseTable
 		$format = $this->fields['Format'];
 		$event_id = $this->fields['EventID'];
 		$teams = $this->getTeams();
-		$results = unserialize($this->getField('Results'));
+		$results = unserialize($this->getFieldHTML('Results'));
 		// TODO: check for error (return false)
-		$rounds = unserialize($this->getField('Rounds'));
+		$rounds = unserialize($this->getFieldHTML('Rounds'));
 
 		$nbrTeams=count($teams);
 
@@ -2103,7 +2112,6 @@ class Event extends DatabaseTable
 				$q_2 = "UPDATE ".TBL_PLAYERS." SET Seed = '".$array_sort[$player]."' WHERE (PlayerID = '".$pid."')";
 				$result_2 = $sql->db_Query($q_2);
 			}
-
 			break;
 			case 'Clan Tournament':
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "

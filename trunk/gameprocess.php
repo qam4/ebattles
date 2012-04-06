@@ -37,26 +37,26 @@ if(isset($_POST['gamesettingssave']))
     $game_id = $_GET['gameid'];
 
     /* Game Name */
-    $new_gamename = htmlspecialchars($_POST['gameName']);
+    $new_gamename = $tp->toDB($_POST['gameName']);
     if ($new_gamename != '')
     {
         $q = "UPDATE ".TBL_GAMES." SET Name = '$new_gamename' WHERE (GameID = '$game_id')";
         $result = $sql->db_Query($q);
     }
     /* Game Icon */
-    $new_gameicon = htmlspecialchars($_POST['gameIcon']);
+    $new_gameicon = $tp->toDB($_POST['gameIcon']);
     if ($new_gameicon != '')
     {
         $q = "UPDATE ".TBL_GAMES." SET Icon = '$new_gameicon' WHERE (GameID = '$game_id')";
         $result = $sql->db_Query($q);
     }
     /* Game Short Name */
-    $new_gameshortname = htmlspecialchars($_POST['gameShortName']);
+    $new_gameshortname = $tp->toDB($_POST['gameShortName']);
     $q = "UPDATE ".TBL_GAMES." SET ShortName = '$new_gameshortname' WHERE (GameID = '$game_id')";
     $result = $sql->db_Query($q);
 
     /* Game Match Types */
-    $new_gamematchtypes = htmlspecialchars($_POST['gameMatchTypes']);
+    $new_gamematchtypes = $tp->toDB($_POST['gameMatchTypes']);
     $q = "UPDATE ".TBL_GAMES." SET MatchTypes = '$new_gamematchtypes' WHERE (GameID = '$game_id')";
     $result = $sql->db_Query($q);
 
@@ -152,8 +152,8 @@ if(isset($_POST['add_games']))
 if (isset($_POST['addfaction']))
 {
     $game_id = $_GET['gameid'];
-    $faction_name = $tp->toDB($_POST['factionname']);
-    $faction_icon = $tp->toDB($_POST['factionicon']);
+    $faction_name = $_POST['factionname'];
+    $faction_icon = $_POST['factionicon'];
 
     if (($faction_icon != "")&&($faction_name != ""))
     {
@@ -169,8 +169,8 @@ if (isset($_POST['edit_faction']) && $_POST['edit_faction']!="")
 {
     $game_id = $_GET['gameid'];
     $faction = $_POST['edit_faction'];
-    $faction_name = $tp->toDB($_POST['factionname'.$faction]);
-    $faction_icon = $tp->toDB($_POST['factionicon'.$faction]);
+    $faction_name = $_POST['factionname'.$faction];
+    $faction_icon = $_POST['factionicon'.$faction];
 
     if (($faction_icon != "")&&($faction_name != ""))
     {
@@ -195,9 +195,9 @@ if (isset($_POST['del_faction']) && $_POST['del_faction']!="")
 if (isset($_POST['addmap']))
 {
     $game_id = $_GET['gameid'];
-    $map_name = $tp->toDB($_POST['mapname']);
-    $map_image = $tp->toDB($_POST['mapimage']);
-    $map_description = $tp->toDB($_POST['mapdescription']);
+    $map_name = $_POST['mapname'];
+    $map_image = $_POST['mapimage'];
+    $map_description = $_POST['mapdescription'];
 
     if (($map_image != "")&&($map_name != ""))
     {
@@ -214,9 +214,9 @@ if (isset($_POST['edit_map']) && $_POST['edit_map']!="")
 {
     $game_id = $_GET['gameid'];
     $map = $_POST['edit_map'];
-    $map_name = $tp->toDB($_POST['mapname'.$map]);
-    $map_image = $tp->toDB($_POST['mapimage'.$map]);
-    $map_description = $tp->toDB($_POST['mapdescription'.$map]);
+    $map_name = $_POST['mapname'.$map];
+    $map_image = $_POST['mapimage'.$map];
+    $map_description = $_POST['mapdescription'.$map];
 
     if (($map_image != "")&&($map_name != ""))
     {
@@ -374,6 +374,8 @@ function updateAllGames()
 function insertGames()
 {
     global $sql;
+    global $tp;
+    
     // Insert Games in database
     if($file_handle = fopen(e_PLUGIN."ebattles/images/games_icons/Games List.csv", "r"))
     {
@@ -381,9 +383,9 @@ function insertGames()
         while (!feof($file_handle) ) {
             $line_of_text = fgetcsv($file_handle, 1024);
 
-            $shortname = addslashes($line_of_text[0]);
-            $longname  = addslashes($line_of_text[1]);
-            $icon  = addslashes($line_of_text[2]);
+            $shortname = $tp->toDB($line_of_text[0]);
+            $longname  = $tp->toDB($line_of_text[1]);
+            $icon  = $tp->toDB($line_of_text[2]);
 
             // Check if the game is already in database
             $query = "SELECT ".TBL_GAMES.".*"
@@ -410,6 +412,10 @@ function insertGames()
 function add_faction($game_id, $faction_icon, $faction_name)
 {
     global $sql;
+    global $tp;
+    
+    $faction_icon = $tp->toDB($faction_icon);
+    $faction_name = $tp->toDB($faction_name);
 
     $q = "INSERT INTO ".TBL_FACTIONS."(Game,Icon,Name)
     VALUES ('$game_id','$faction_icon','$faction_name')";
@@ -419,6 +425,10 @@ function add_faction($game_id, $faction_icon, $faction_name)
 function update_faction($faction, $faction_icon, $faction_name)
 {
     global $sql;
+    global $tp;
+    
+    $faction_icon = $tp->toDB($faction_icon);
+    $faction_name = $tp->toDB($faction_name);
 
     $q = "UPDATE ".TBL_FACTIONS
     ." SET Icon = '$faction_icon', Name = '$faction_name'"
@@ -436,6 +446,11 @@ function delete_faction($faction)
 function add_map($game_id, $map_image, $map_name, $map_description)
 {
     global $sql;
+    global $tp;
+    
+    $map_image = $tp->toDB($map_image);
+    $map_name = $tp->toDB($map_name);
+    $map_description = $tp->toDB($map_description);
 
     $q = "INSERT INTO ".TBL_MAPS."(Game,Image,Name,Description)
     VALUES ('$game_id','$map_image','$map_name','$map_description')";
@@ -445,6 +460,11 @@ function add_map($game_id, $map_image, $map_name, $map_description)
 function update_map($map, $map_image, $map_name, $map_description)
 {
     global $sql;
+    global $tp;
+    
+    $map_image = $tp->toDB($map_image);
+    $map_name = $tp->toDB($map_name);
+    $map_description = $tp->toDB($map_description);
 
     $q = "UPDATE ".TBL_MAPS
     ." SET Image = '$map_image', Name = '$map_name', Description = '$map_description'"

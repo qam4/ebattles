@@ -34,8 +34,8 @@ if(isset($_POST['joinevent'])){
 	
 	if ($_POST['joinEventPassword'] == $event->getField('password'))
 	{
-		$Name = $tp->toDB($_POST["gamername"]);
-		$UniqueGameID = $tp->toDB($_POST["gameruniquegameid"]);
+		$Name = $_POST["gamername"];
+		$UniqueGameID = $_POST["gameruniquegameid"];
 		updateGamer(USERID, $event->getField('Game'), $Name, $UniqueGameID);
 		$event->eventAddPlayer(USERID, 0, FALSE);
 	}

@@ -1752,6 +1752,10 @@ class Match extends DatabaseTable
 	function add_media($submitter, $media_path, $media_type)
 	{
 		global $sql;
+		global $tp;
+		$submitter = $tp->toDB($submitter);
+		$media_path = $tp->toDB($media_path);
+		$media_type = $tp->toDB($media_type);
 
 		$q = "INSERT INTO ".TBL_MEDIA."(MatchID,Submitter,Path,Type)
 		VALUES ('".$this->fields['MatchID']."','$submitter','$media_path','$media_type')";

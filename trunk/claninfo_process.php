@@ -23,8 +23,8 @@ if(isset($_POST['joindivision']))
 	
 	if ($_POST['joindivisionPassword'] == $clan_password)
 	{
-		$Name = $tp->toDB($_POST["gamername"]);
-		$UniqueGameID = $tp->toDB($_POST["gameruniquegameid"]);
+		$Name = $_POST["gamername"];
+		$UniqueGameID = $_POST["gameruniquegameid"];
 		updateGamer(USERID, $gid, $Name, $UniqueGameID);
 
 		$q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
@@ -83,7 +83,7 @@ if(isset($_POST['joindivision']))
 				if ($nbrplayers == 0)
 				{
 					$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma)
-					VALUES ($event_id,$gamerID,$team_id,$event->getField('ELO_default'),$event->getField('TS_default_mu'),$event->getField('TS_default_sigma'))";
+					VALUES ($event_id,$gamerID,$team_id,".$event->getField('ELO_default').",".$event->getField('TS_default_mu').",".$event->getField('TS_default_sigma').")";
 					$sql->db_Query($q);
 					$event->setFieldDB('IsChanged', 1);
 				}

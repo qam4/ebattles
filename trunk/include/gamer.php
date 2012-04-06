@@ -104,6 +104,9 @@ function gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $
 function updateGamer($user, $game, $Name, $UniqueGameID){
 	global $tp;
 	global $sql;
+	
+	$Name = $tp->toDB($Name);
+	$UniqueGameID = $tp->toDB($UniqueGameID);
 
 	$q = "SELECT ".TBL_GAMERS.".*"
 	." FROM ".TBL_GAMERS
@@ -121,7 +124,10 @@ function updateGamer($user, $game, $Name, $UniqueGameID){
 	else
 	{
 		$gamerID =  mysql_result($result, 0, TBL_GAMERS.".GamerID");
-		$q = "UPDATE ".TBL_GAMERS." SET UniqueGameID = '".$UniqueGameID."' WHERE (GamerID = '".$gamerID."')";
+		$q = "UPDATE ".TBL_GAMERS
+		." SET UniqueGameID = '".$UniqueGameID."',"
+		."     Name = '".$Name."'"
+		." WHERE (GamerID = '".$gamerID."')";
 		$sql->db_Query($q);
 		$q = "UPDATE ".TBL_GAMERS." SET Name = '".$Name."' WHERE (GamerID = '".$gamerID."')";
 		$sql->db_Query($q);

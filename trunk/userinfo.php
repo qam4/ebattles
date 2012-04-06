@@ -39,12 +39,15 @@ $req_user = $_GET['user'];
 
 if (!$req_user)
 {
-	header("Location: ./events.php"); // should be users.php which does not exist yet
+	header("Location: ./events.php"); //FIXME: should be users.php which does not exist yet
 	exit();
 }
 else
 {
 	require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
+
+	$events_link    = e_PLUGIN.'ebattles/events.php';
+	$teams_link     = e_PLUGIN.'ebattles/clans.php';
 
 	/* Logged in user viewing own account */
 	if(strcmp(USERID,$req_user) == 0){
@@ -64,9 +67,9 @@ else
 	$text .= '<ul>';
 	$text .= '<li><a href="#tabs-1">'.EB_USER_L2.'</a></li>';
 	$text .= '<li><a href="#tabs-2">'.EB_USER_L3.'</a></li>';
-	$text .= '<li><a href="#tabs-4">'.EB_USER_L4.'</a></li>';
-	$text .= '<li><a href="#tabs-5">'.EB_USER_L5.'</a></li>';
-	$text .= '<li><a href="#tabs-6">'.EB_USER_L6.'</a></li>';
+	$text .= '<li><a href="#tabs-3">'.EB_USER_L4.'</a></li>';
+	$text .= '<li><a href="#tabs-4">'.EB_USER_L5.'</a></li>';
+	$text .= '<li><a href="#tabs-5">'.EB_USER_L6.'</a></li>';
 	$text .= '</ul>';
 
 	/*
@@ -160,6 +163,10 @@ else
 	$text .= '</div>';    // tab-page "Profile"
 
 	$text .= '<div id="tabs-2">';    // tab-page "Events"
+	
+	$text .= '<table class="table_left">';
+	$text .= '<tr>';
+	$text .= '<td>';
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_events_create_class'])))
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/eventcreate.php" method="post">';
@@ -168,8 +175,17 @@ else
 		$text .= '<input type="hidden" name="username" value="'.$uname.'"/>';
 		$text .= ebImageTextButton('createevent', 'add.png', EB_EVENTS_L20);
 		$text .= '</div>';
-		$text .= '</form><br />';
+		$text .= '</form>';
 	}
+	$text .= '</td>';
+	$text .= '<td>';
+	$text .= '<a href="'.$events_link.'">';
+	$text .= EB_MENU_L2;
+	$text .= '</a>';
+	$text .= '</td>';
+	$text .= '</tr>';	
+	$text .= '</table>';
+	
 	/* Display list of events where the user is a player */
 	$text .= '<div class="spacer"><b>'.EB_USER_L8.'</b></div>';
 	$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L9.'</div>';
@@ -412,7 +428,11 @@ else
 	Teams
 	---------------------
 	*/
-	$text .= '<div id="tabs-4">';   // tab-page "Teams"
+	$text .= '<div id="tabs-3">';   // tab-page "Teams"
+
+	$text .= '<table class="table_left">';
+	$text .= '<tr>';
+	$text .= '<td>';
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_teams_create_class'])))
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/clancreate.php" method="post">';
@@ -421,8 +441,16 @@ else
 		$text .= '<input type="hidden" name="username" value="'.$uname.'"/>';
 		$text .= '</div>';
 		$text .= ebImageTextButton('createteam', 'add.png', EB_CLANS_L7);
-		$text .= '</form><br />';
+		$text .= '</form>';
 	}
+	$text .= '</td>';
+	$text .= '<td>';
+	$text .= '<a href="'.$teams_link.'">';
+	$text .= EB_MENU_L3;
+	$text .= '</a>';
+	$text .= '</td>';
+	$text .= '</tr>';	
+	$text .= '</table>';	
 
 	/* Display list of divisions where the user is a member */
 	$text .= '<div class="spacer"><b>'.EB_USER_L22.'</b></div>';
@@ -576,7 +604,7 @@ else
 	Matches
 	---------------------
 	*/
-	$text .= '<div id="tabs-5">';   // tab-page "Matches"
+	$text .= '<div id="tabs-4">';   // tab-page "Matches"
 
 	/* Display Active Matches */
 	/* set pagination variables */
@@ -785,7 +813,7 @@ else
 	Awards
 	---------------------
 	*/
-	$text .= '<div id="tabs-6">';   // tab-page "Awards"
+	$text .= '<div id="tabs-5">';   // tab-page "Awards"
 
 	/* Stats/Results */
 	$q = "SELECT ".TBL_AWARDS.".*, "
