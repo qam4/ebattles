@@ -610,9 +610,10 @@ function sendNotification($sendto, $subject, $message, $fromid=0) {
         }
     }
 
+    //fm: Remove this comment to use PMs preferences (email notification userclass...)
+    //$pm_prefs = $sysprefs->getArray("pm_prefs");
     /*
     // Check user is allowed to send PMs
-    $pm_prefs = $sysprefs->getArray("pm_prefs");
     if (!check_class($pm_prefs['pm_class'])) {
         return NOT_AUTHORIZED;
     }
@@ -641,6 +642,7 @@ function sendNotification($sendto, $subject, $message, $fromid=0) {
     "to_info"         => array(
     "user_id"      => $touser["user_id"],
     "user_name"    => $touser["user_name"],
+    "user_class"   => $touser["user_class"],
     "user_email"   => $touser["user_email"]
     )
     );
@@ -721,4 +723,29 @@ function check_db_query($result)
 	}
 	return $text;
 }
+
+function get_users_inclass($class)
+{
+	global $sql, $tp;
+	if($class == e_UC_MEMBER)
+	{
+		$qry = "SELECT user_id, user_name, user_email, user_class FROM #user WHERE 1";
+	}
+	elseif($class == e_UC_ADMIN)
+	{
+		$qry = "SELECT user_id, user_name, user_email, user_class FROM #user WHERE user_admin = 1";
+	}
+	elseif($class)
+	{
+		$regex = "(^|,)(".$tp -> toDB($class).")(,|$)";
+		$qry = "SELECT user_id, user_name, user_email, user_class FROM #user WHERE user_class REGEXP '{$regex}'";
+	}
+	if($sql->db_Select_gen($qry))
+	{
+		$ret = $sql->db_getList();
+		return $ret;
+	}
+	return FALSE;
+}
+
 ?>

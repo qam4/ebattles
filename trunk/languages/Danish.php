@@ -386,6 +386,9 @@ define('EB_EVENTM_L155', 'Randomize Seeds');
 define('EB_EVENTM_L156', 'Drag-and-drop to reorder seeds manually');
 define('EB_EVENTM_L157', 'Saving...');
 define('EB_EVENTM_L158', 'Double Elimination');
+define('EB_EVENTM_L159', 'Add users of a userclass');
+define('EB_EVENTM_L160', 'Add Userclass');
+define('EB_EVENTM_L161', 'Max number of players limit reached.');
 
 define('EB_EVENTP_L1', 'Tidligere Turneringer');
 define('EB_EVENTP_L2', 'Tidligere Turneringer');
@@ -459,7 +462,7 @@ define('EB_CLANS_L7', 'Opret nyt hold');
 define('EB_CLANS_L8', 'Du har IKKE tilladelse til, at oprette en hold.');
 
 define('EB_CLAN_L1', 'Hold');
-define('EB_CLAN_L2', 'Hold Summary');
+define('EB_CLAN_L2', 'Summary');
 define('EB_CLAN_L3', 'Divisioner');
 define('EB_CLAN_L4', 'Turneringer');
 define('EB_CLAN_L5', 'Tilbage');
@@ -496,8 +499,8 @@ define('EB_CLANC_L3', 'Du kan IKKE være admini for mere end ét hold.');
 define('EB_CLANC_L4', 'Du kan IKKE oprette et hold hvis du hvis du spiller for et andet hold.');
 
 define('EB_CLANM_L1', 'Administre');
-define('EB_CLANM_L2', 'Hold Info');
-define('EB_CLANM_L3', 'Hold Division');
+define('EB_CLANM_L2', 'Info');
+define('EB_CLANM_L3', 'Division');
 define('EB_CLANM_L4', 'Hold');
 define('EB_CLANM_L5', 'Slet Hold');
 define('EB_CLANM_L6', 'Er du sikker på, at du vil slette dette hold?');
@@ -530,7 +533,7 @@ define('EB_CLANM_L32', 'Email');
 define('EB_CLANM_L33', 'IM');
 define('EB_CLANM_L34', 'Beskrivelse');
 define('EB_CLANM_L35', 'View Team');
-define('EB_CLANM_L36', 'Team Settings');
+define('EB_CLANM_L36', 'Settings');
 
 define('EB_MATCH_L1', 'Kamp');
 define('EB_MATCH_L2', 'Uafgjort');

@@ -445,15 +445,40 @@ else
 				$text .= '
 				</select></div></td>
 				<td>'.ebImageTextButton('eventaddplayer', 'user_add.png', EB_EVENTM_L45).'</td>
-				<td><div><input class="tbox" type="checkbox" name="eventaddplayernotify"/>'.EB_EVENTM_L46.'</div></td>
 				</tr>
 				</table>
+				</td>
+				</tr>';
+				if ($event->getField('Type') == "One Player Ladder")
+				{
+					$text .= '
+					<tr>
+					<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L159.'</td>
+					<td class="eb_td">
+					<table class="table_left">
+					<tr>
+					<td>'.r_userclass("eventadduserclass", $eventadduserclass, 'off', "member, classes").'</td>
+					<td>'.ebImageTextButton('eventadduserclass_submit', 'user_add.png', EB_EVENTM_L160).'</td>
+					</tr>
+					</table>
+					</td>
+					</tr>';
+				}
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40"></td>
+				<td class="eb_td">
+				<div><input class="tbox" type="checkbox" name="eventaddplayernotify"/>'.EB_EVENTM_L46.'</div>
 				</td>
 				</tr>
 				</tbody>
 				</table>
 				</form>
 				';
+			}
+			else
+			{
+				$text .= EB_EVENTM_L161.'<br />';
 			}
 			break;
 			default:

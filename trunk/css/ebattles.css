@@ -9,6 +9,7 @@ td.eb_td {
 text-align: left;
 }
 td.eb_tdc1 {
+vertical-align:text-top;
 font-weight: bold;
 }
 td.eb_td1 {

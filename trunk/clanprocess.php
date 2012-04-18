@@ -6,6 +6,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN.'ebattles/include/clan.php');
+require_once(e_PLUGIN.'ebattles/include/gamer.php');
 
 /*******************************************************************
 ********************************************************************/
@@ -112,6 +113,14 @@ else {
 
 			$last_id = mysql_insert_id();
 			// Automatically add the clan owner to that divison
+			$q = "SELECT ".TBL_USERS.".*"
+			." FROM ".TBL_USERS
+			." WHERE (".TBL_USERS.".user_id = '$clan_owner')";
+			$result = $sql->db_Query($q);
+			$Name  = mysql_result($result,0, TBL_USERS.".user_name");
+			$UniqueGameID = "";
+			updateGamer($clan_owner, $div_game, $Name, $UniqueGameID);
+			
 			$q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
 			VALUES ($last_id,'$clan_owner',$time)";
 			$sql->db_Query($q);

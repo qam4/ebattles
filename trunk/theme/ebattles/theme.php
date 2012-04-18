@@ -40,6 +40,11 @@ pluginspage='http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Vers
 $HEADER = "
 	<table cellpadding='0' cellspacing='3' class='topborder' style='width:100%'>
 		<tr>
+			<td class='logo' colspan='3' style='text-align:center; vertical-align:middle; height:68px'>
+			<img src='".THEME."images/logo.png' alt='eBattles' />
+			</td>
+		</tr>
+		<tr>
             <td style='width:50%; text-align:left'>
 		    {SITELINKS_ALT=no_icons+noclick}
             </td>
@@ -49,11 +54,6 @@ $HEADER = "
             <td style='width:20%; text-align:right'>
             {CUSTOM=search+default}
             </td>
-		</tr>
-		<tr>
-			<td class='logo' colspan='3' style='text-align:center; vertical-align:middle; height:68px'>
-			<img src='".THEME."images/logo.png' alt='eBattles' />
-			</td>
 		</tr>
 		<tr>
 		    <td style='text-align:center; vertical-align:top' colspan='3'>
@@ -95,6 +95,11 @@ $FOOTER = "
 $CUSTOMHEADER['eBattles Layout'] = "
 	<table cellpadding='0' cellspacing='3' class='topborder' style='width:100%'>
 		<tr>
+			<td class='logo' colspan='3' style='text-align:center; vertical-align:middle; height:68px'>
+			<img src='".THEME."images/logo.png' alt='eBattles' />
+			</td>
+		</tr>
+		<tr>
             <td style='width:50%; text-align:left'>
 		    {SITELINKS_ALT=no_icons+noclick}
             </td>
@@ -104,11 +109,6 @@ $CUSTOMHEADER['eBattles Layout'] = "
             <td style='width:20%; text-align:right'>
             {CUSTOM=search+default}
             </td>
-		</tr>
-		<tr>
-			<td class='logo' colspan='3' style='text-align:center; vertical-align:middle; height:68px'>
-			<img src='".THEME."images/logo.png' alt='eBattles' />
-			</td>
 		</tr>
 		<tr>
 		    <td style='text-align:center; vertical-align:top' colspan='3'>
