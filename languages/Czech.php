@@ -386,6 +386,9 @@ define('EB_EVENTM_L155', 'Randomize Seeds');
 define('EB_EVENTM_L156', 'Drag-and-drop to reorder seeds manually');
 define('EB_EVENTM_L157', 'Saving...');
 define('EB_EVENTM_L158', 'Double Elimination');
+define('EB_EVENTM_L159', 'Add users of a userclass');
+define('EB_EVENTM_L160', 'Add Userclass');
+define('EB_EVENTM_L161', 'Max number of players limit reached.');
 
 define('EB_EVENTP_L1', 'Minulé soutěže');
 define('EB_EVENTP_L2', 'Minulé soutěže');

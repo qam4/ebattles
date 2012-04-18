@@ -505,12 +505,12 @@ class Event extends DatabaseTable
 		$e_wysiwyg	= "eventdescription,eventrules";  // set $e_wysiwyg before including HEADERF
 		if (e_WYSIWYG)
 		{
-			$insertjs = "rows='25'";
+			$insertjs = "rows='15'";
 		}
 		else
 		{
 			require_once(e_HANDLER."ren_help.php");
-			$insertjs = "rows='15' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
+			$insertjs = "rows='5' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
 		}
 
 		$type = $this->fields['Type'];

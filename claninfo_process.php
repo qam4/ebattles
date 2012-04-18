@@ -25,7 +25,7 @@ if(isset($_POST['joindivision']))
 	{
 		$Name = $_POST["gamername"];
 		$UniqueGameID = $_POST["gameruniquegameid"];
-		updateGamer(USERID, $gid, $Name, $UniqueGameID);
+		$gamerID = updateGamer(USERID, $gid, $Name, $UniqueGameID);
 
 		$q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
 		VALUES ($div_id,".USERID.",$time)";
@@ -51,26 +51,6 @@ if(isset($_POST['joindivision']))
 
 				$team_id = mysql_result($result_2,$j, TBL_TEAMS.".TeamID");
 
-				// Find gamer for that user
-				$q = "SELECT ".TBL_GAMERS.".*"
-				." FROM ".TBL_GAMERS
-				." WHERE (".TBL_GAMERS.".Game = '".$event->getField('Game')."')"
-				."   AND (".TBL_GAMERS.".User = '".USERID."')";
-				$result = $sql->db_Query($q);
-				$num_rows = mysql_numrows($result);
-				if ($num_rows==0)
-				{
-					$q = " INSERT INTO ".TBL_GAMERS."(User,Game,UniqueGameID)
-					VALUES ($user,".$event->getField('Game').",'".USERNAME."')";
-					$sql->db_Query($q);
-					$last_id = mysql_insert_id();
-					$gamerID = $last_id;
-				}
-				else
-				{
-					$gamerID = mysql_result($result, 0, TBL_GAMERS.".GamerID");
-				}
-
 				// Verify there is no other player for that user/event/team
 				$q = "SELECT COUNT(*) as NbrPlayers"
 				." FROM ".TBL_PLAYERS
@@ -83,7 +63,7 @@ if(isset($_POST['joindivision']))
 				if ($nbrplayers == 0)
 				{
 					$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma)
-					VALUES ($event_id,$gamerID,$team_id,".$event->getField('ELO_default').",".$event->getField('TS_default_mu').",".$event->getField('TS_default_sigma').")";
+					VALUES ($event_id, $gamerID, $team_id, ".$event->getField('ELO_default').", ".$event->getField('TS_default_mu').", ".$event->getField('TS_default_sigma').")";
 					$sql->db_Query($q);
 					$event->setFieldDB('IsChanged', 1);
 				}

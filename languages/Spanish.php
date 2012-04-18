@@ -385,6 +385,9 @@ define('EB_EVENTM_L155', 'Randomize Seeds');
 define('EB_EVENTM_L156', 'Drag-and-drop to reorder seeds manually');
 define('EB_EVENTM_L157', 'Saving...');
 define('EB_EVENTM_L158', 'Double Elimination');
+define('EB_EVENTM_L159', 'Add users of a userclass');
+define('EB_EVENTM_L160', 'Add Userclass');
+define('EB_EVENTM_L161', 'Max number of players limit reached.');
 
 define('EB_EVENTP_L1', 'Eventos anteriores');
 define('EB_EVENTP_L2', 'Eventos anteriores');
@@ -458,7 +461,7 @@ define('EB_CLANS_L7', 'Crear un nuevo equipo');
 define('EB_CLANS_L8', 'Usted no esta autorizado a crear un equipo.');
 
 define('EB_CLAN_L1', 'Equipos');
-define('EB_CLAN_L2', 'Resume Equipo');
+define('EB_CLAN_L2', 'Resume');
 define('EB_CLAN_L3', 'Divisiones');
 define('EB_CLAN_L4', 'Eventos');
 define('EB_CLAN_L5', 'Volver');
@@ -494,8 +497,8 @@ define('EB_CLANC_L2', 'Usted no esta autorizado a crear un equipo.');
 define('EB_CLANC_L3', 'Usted no puede ser el administrador de m�s de un equipo.');
 
 define('EB_CLANM_L1', 'Gestionar');
-define('EB_CLANM_L2', 'Resume del Equipo');
-define('EB_CLANM_L3', 'Division de Equipos');
+define('EB_CLANM_L2', 'Resume');
+define('EB_CLANM_L3', 'Divisions');
 define('EB_CLANM_L4', 'Equipos');
 define('EB_CLANM_L5', 'Eliminar Equipo');
 define('EB_CLANM_L6', '&iquest;Estas seguro de que deseas eliminar este equipo?');
@@ -528,7 +531,7 @@ define('EB_CLANM_L32', 'Email');
 define('EB_CLANM_L33', 'IM');
 define('EB_CLANM_L34', 'Descripci�n');
 define('EB_CLANM_L35', 'View Team');
-define('EB_CLANM_L36', 'Team Settings');
+define('EB_CLANM_L36', 'Settings');
 
 define('EB_MATCH_L1', 'Partido');
 define('EB_MATCH_L2', 'empatado');

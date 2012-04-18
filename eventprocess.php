@@ -6,6 +6,8 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN.'ebattles/include/event.php');
+// Include userclass file
+require_once(e_HANDLER."userclass_class.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -383,6 +385,23 @@ else{
 		$event->eventAddPlayer($player, 0, $notify);
 
 		//echo "-- eventaddplayer --<br />";
+		header("Location: eventmanage.php?eventid=$event_id");
+		exit();
+	}
+	if(isset($_POST['eventadduserclass_submit']))
+	{
+		$userclass = $_POST['eventadduserclass'];
+		$notify = (isset($_POST['eventaddplayernotify'])? TRUE: FALSE);
+		
+		$tolist = get_users_inclass($userclass);
+		//var_dump($tolist);
+		set_time_limit(10);
+		foreach($tolist as $u)
+		{
+			$event->eventAddPlayer($u['user_id'], 0, $notify);
+		}
+
+		//echo "-- eventadduserclass --<br />";
 		header("Location: eventmanage.php?eventid=$event_id");
 		exit();
 	}

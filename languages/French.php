@@ -379,11 +379,14 @@ define('EB_EVENTM_L150', 'Retirer une Map');
 define('EB_EVENTM_L151', '');
 define('EB_EVENTM_L152', 'Format');
 define('EB_EVENTM_L153', 'Élimination directe simple');
-define('EB_EVENTM_L154', 'T�te de s�rie');
-define('EB_EVENTM_L155', 'R�organiser au hasard');
-define('EB_EVENTM_L156', 'Drag-and-drop pour r�organiser manuellement');
+define('EB_EVENTM_L154', 'Tête de série');
+define('EB_EVENTM_L155', 'Réorganiser au hasard');
+define('EB_EVENTM_L156', 'Drag-and-drop pour réorganiser manuellement');
 define('EB_EVENTM_L157', 'Sauvegarde...');
 define('EB_EVENTM_L158', 'Élimination directe double');
+define('EB_EVENTM_L159', 'Ajouter un Groupe d’utilisateurs');
+define('EB_EVENTM_L160', 'Ajouter');
+define('EB_EVENTM_L161', 'Nombre maximum de joueurs atteint.');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');

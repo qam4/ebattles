@@ -386,6 +386,9 @@ define('EB_EVENTM_L155', 'Randomize Seeds');
 define('EB_EVENTM_L156', 'Drag-and-drop to reorder seeds manually');
 define('EB_EVENTM_L157', 'Saving...');
 define('EB_EVENTM_L158', 'Double Elimination');
+define('EB_EVENTM_L159', 'Add users of a userclass');
+define('EB_EVENTM_L160', 'Add Userclass');
+define('EB_EVENTM_L161', 'Max number of players limit reached.');
 
 define('EB_EVENTP_L1', 'Past Events');
 define('EB_EVENTP_L2', 'Past Events');
@@ -459,7 +462,7 @@ define('EB_CLANS_L7', 'Create new team');
 define('EB_CLANS_L8', 'You are not authorized to create a team.');
 
 define('EB_CLAN_L1', 'Team');
-define('EB_CLAN_L2', 'Team Summary');
+define('EB_CLAN_L2', 'Summary');
 define('EB_CLAN_L3', 'Divisions');
 define('EB_CLAN_L4', 'Events');
 define('EB_CLAN_L5', 'Back to');
@@ -496,8 +499,8 @@ define('EB_CLANC_L3', 'You can not be the admin of more than one team.');
 define('EB_CLANC_L4', 'You can not create a team if you are already member of another team.');
 
 define('EB_CLANM_L1', 'Manage');
-define('EB_CLANM_L2', 'Team Summary');
-define('EB_CLANM_L3', 'Team Divisions');
+define('EB_CLANM_L2', 'Summary');
+define('EB_CLANM_L3', 'Divisions');
 define('EB_CLANM_L4', 'Team');
 define('EB_CLANM_L5', 'Delete Team');
 define('EB_CLANM_L6', 'Are you sure you want to delete this team?');
@@ -530,7 +533,7 @@ define('EB_CLANM_L32', 'Email');
 define('EB_CLANM_L33', 'IM');
 define('EB_CLANM_L34', 'Description');
 define('EB_CLANM_L35', 'View Team');
-define('EB_CLANM_L36', 'Team Settings');
+define('EB_CLANM_L36', 'Settings');
 
 define('EB_MATCH_L1', 'Match');
 define('EB_MATCH_L2', 'tied');
