@@ -226,7 +226,7 @@ define('EB_EVENT_L86', '(si nécessaire)');
 define('EB_EVENTM_L1', 'Gérer');
 define('EB_EVENTM_L2', 'Sommaire');
 define('EB_EVENTM_L3', 'Paramètres');
-define('EB_EVENTM_L4', 'Règles');
+define('EB_EVENTM_L4', 'Tours');
 define('EB_EVENTM_L5', 'Joueurs/Équipes');
 define('EB_EVENTM_L6', 'Réinitialiser');
 define('EB_EVENTM_L7', 'Statistiques');
@@ -579,6 +579,7 @@ define('EB_MATCHD_L25', 'Effacer');
 define('EB_MATCHD_L26', 'Êtes-vous sûr de vouloir effacer ce media?');
 define('EB_MATCHD_L27', 'Editer ce match');
 define('EB_MATCHD_L28', 'Forfait');
+define('EB_MATCHD_L29', 'Si vous effacez ce match, tous les matchs heritant de celui-ci seront effacés. Êtes-vous sûr de vouloir effacer ce match?');
 
 define('EB_MATCHDEL_L1', 'Match');
 define('EB_MATCHDEL_L2', 'Vous n’êtes pas autorisé à effacer ce match.');
@@ -855,4 +856,5 @@ define('EB_TIME_L7', 'minutes');
 define('EB_TIME_L8', 'minute');
 define('EB_TIME_L9', 'secondes');
 define('EB_TIME_L10', 'seconde');
-?>
+
+define('EB_ACTIVITY_L1', 'Pas d'activité');?>

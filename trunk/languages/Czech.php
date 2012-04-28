@@ -581,6 +581,7 @@ define('EB_MATCHD_L25', 'Smazat');
 define('EB_MATCHD_L26', 'Opravdu chcete smazat toto médium?');
 define('EB_MATCHD_L27', 'Editovat tento zápas');
 define('EB_MATCHD_L28', 'Forfeit');
+define('EB_MATCHD_L29', 'If you delete this match, every match inheriting from this match will be deleted. Are you sure you want to delete this match?');
 
 define('EB_MATCHDEL_L1', 'Smazání zápasu');
 define('EB_MATCHDEL_L2', 'Nemáte oprávnění pro smazání zápasu.');
@@ -851,4 +852,6 @@ define('EB_TIME_L7', 'minuty');
 define('EB_TIME_L8', 'minuta');
 define('EB_TIME_L9', 'sekund');
 define('EB_TIME_L10', 'sekunda');
+
+define('EB_ACTIVITY_L1', 'No activity');
 ?>

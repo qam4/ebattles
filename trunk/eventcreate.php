@@ -6,6 +6,9 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/event.php");
+// Specify if we use WYSIWYG for text areas
+global $e_wysiwyg;
+$e_wysiwyg	= "eventdescription,eventrules";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 

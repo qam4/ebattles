@@ -581,6 +581,7 @@ define('EB_MATCHD_L25', 'Delete');
 define('EB_MATCHD_L26', 'Are you sure you want to delete this media?');
 define('EB_MATCHD_L27', 'Edit this match');
 define('EB_MATCHD_L28', 'Forfeit');
+define('EB_MATCHD_L29', 'If you delete this match, every match inheriting from this match will be deleted. Are you sure you want to delete this match?');
 
 define('EB_MATCHDEL_L1', 'Match Delete');
 define('EB_MATCHDEL_L2', 'You are not authorized to delete this match.');
@@ -857,4 +858,6 @@ define('EB_TIME_L7', 'minutes');
 define('EB_TIME_L8', 'minute');
 define('EB_TIME_L9', 'seconds');
 define('EB_TIME_L10', 'second');
+
+define('EB_ACTIVITY_L1', 'No activity');
 ?>

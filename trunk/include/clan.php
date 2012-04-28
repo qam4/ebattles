@@ -27,9 +27,6 @@ class Clan extends DatabaseTable
 	{
 		global $sql;
 
-		// Specify if we use WYSIWYG for text areas
-		global $e_wysiwyg;
-		$e_wysiwyg	= "clandescription";  // set $e_wysiwyg before including HEADERF
 		if (e_WYSIWYG)
 		{
 			$insertjs = "rows='15'";

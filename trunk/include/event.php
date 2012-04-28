@@ -240,14 +240,14 @@ class Event extends DatabaseTable
 			switch($this->fields['Type'])
 			{
 				case "One Player Ladder":
-				updateStats($this->fields['EventID'], $time, TRUE);
+				updateStats($this->fields['EventID'], $time, true);
 				break;
 				case "Team Ladder":
-				updateStats($this->fields['EventID'], $time, TRUE);
-				updateTeamStats($this->fields['EventID'], $time, TRUE);
+				updateStats($this->fields['EventID'], $time, true);
+				updateTeamStats($this->fields['EventID'], $time, true);
 				break;
 				case "Clan Ladder":
-				updateTeamStats($this->fields['EventID'], $time, TRUE);
+				updateTeamStats($this->fields['EventID'], $time, true);
 				break;
 				case "One Player Tournament":
 				case "Clan Tournament":
@@ -269,14 +269,14 @@ class Event extends DatabaseTable
 				switch($this->fields['Type'])
 				{
 					case "One Player Ladder":
-					updateStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
+					updateStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 					break;
 					case "Team Ladder":
-					updateStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
-					updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
+					updateStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
+					updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 					break;
 					case "Clan Ladder":
-					updateTeamStats($this->fields['EventID'], $this->fields['getStartDateTime'], FALSE);
+					updateTeamStats($this->fields['EventID'], $this->fields['getStartDateTime'], false);
 					break;
 					case "One Player Tournament":
 					case "Clan Tournament":
@@ -312,16 +312,16 @@ class Event extends DatabaseTable
 					{
 						case "One Player Ladder":
 						$match->match_players_update();
-						updateStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
+						updateStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 						break;
 						case "Team Ladder":
 						$match->match_players_update();
-						updateStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
-						updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
+						updateStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
+						updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 						break;
 						case "Clan Ladder":
 						$match->match_teams_update();
-						updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], FALSE);
+						updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 						break;
 						case "One Player Tournament":
 						case "Clan Tournament":
@@ -425,8 +425,8 @@ class Event extends DatabaseTable
 		global $sql;
 		global $time;
 
-		//$add_players = ( $this->fields['Type'] == "Clan Ladder" ? FALSE : TRUE);
-		$add_players = TRUE;
+		//$add_players = ( $this->fields['Type'] == "Clan Ladder" ? false : true);
+		$add_players = true;
 
 		// Is the division signed up
 		$q = "SELECT ".TBL_TEAMS.".*"
@@ -442,7 +442,7 @@ class Event extends DatabaseTable
 			$sql->db_Query($q);
 			$team_id =  mysql_insert_id();
 
-			if ($add_players == TRUE)
+			if ($add_players == true)
 			{
 				// All members of this division will automatically be signed up to this event
 				$q_2 = "SELECT ".TBL_DIVISIONS.".*, "
@@ -500,9 +500,7 @@ class Event extends DatabaseTable
 	function displayEventSettingsForm($create=false)
 	{
 		global $sql;
-		// Specify if we use WYSIWYG for text areas
-		global $e_wysiwyg;
-		$e_wysiwyg	= "eventdescription,eventrules";  // set $e_wysiwyg before including HEADERF
+		
 		if (e_WYSIWYG)
 		{
 			$insertjs = "rows='15'";
@@ -807,7 +805,7 @@ class Event extends DatabaseTable
 				<div>
 				';
 				$text .= '<input class="tbox" type="checkbox" name="eventallowquickloss"';
-				if ($this->getField('quick_loss_report') == TRUE)
+				if ($this->getField('quick_loss_report') == true)
 				{
 					$text .= ' checked="checked"/>';
 				}
@@ -831,7 +829,7 @@ class Event extends DatabaseTable
 		<div>
 		';
 		$text .= '<input class="tbox" type="checkbox" name="eventallowscore"';
-		if ($this->getField('AllowScore') == TRUE)
+		if ($this->getField('AllowScore') == true)
 		{
 			$text .= ' checked="checked"/>';
 		}
@@ -886,7 +884,7 @@ class Event extends DatabaseTable
 				<td class="eb_td">
 				<div>';
 				$text .= '<input class="tbox" type="checkbox" name="eventallowdraw"';
-				if ($this->getField('AllowDraw') == TRUE)
+				if ($this->getField('AllowDraw') == true)
 				{
 					$text .= ' checked="checked"/>';
 				}
@@ -938,7 +936,7 @@ class Event extends DatabaseTable
 			<td class="eb_td">
 			<div>';
 			$text .= '<input class="tbox" type="checkbox" name="eventallowforfeit"';
-			if ($this->getField('AllowForfeit') == TRUE)
+			if ($this->getField('AllowForfeit') == true)
 			{
 				$text .= ' checked="checked"/>';
 			}
@@ -953,7 +951,7 @@ class Event extends DatabaseTable
 				$text .= '</div>';
 				$text .= '<div>';
 				$text .= '<input class="tbox" type="checkbox" name="eventForfeitWinLossUpdate"';
-				if ($this->getField('ForfeitWinLossUpdate') == TRUE)
+				if ($this->getField('ForfeitWinLossUpdate') == true)
 				{
 					$text .= ' checked="checked"/>';
 				}
@@ -1165,15 +1163,15 @@ class Event extends DatabaseTable
 							$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
 							$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
 
-							$isMapInMapPool = FALSE;
+							$isMapInMapPool = false;
 							foreach($mapPool as $poolmap)
 							{
 								if ($mID==$poolmap) {
-									$isMapInMapPool = TRUE;
+									$isMapInMapPool = true;
 								}
 							}
 
-							if($isMapInMapPool == FALSE) {
+							if($isMapInMapPool == false) {
 								$text .= '<option value="'.$mID.'"';
 								$text .= '>'.$mName.'</option>';
 							}
@@ -1332,7 +1330,7 @@ class Event extends DatabaseTable
 	. 'E': empty
 	. 'N': not needed
 	*/
-	function brackets($scheduleNextMatches = false) {
+	function brackets($scheduleNextMatches = false, $delete_match_id = 0) {
 		global $sql;
 		global $time;
 		global $pref;
@@ -1343,6 +1341,7 @@ class Event extends DatabaseTable
 		$event_id = $this->fields['EventID'];
 		$teams = $this->getTeams();
 		$results = unserialize($this->getFieldHTML('Results'));
+		
 		// TODO: check for error (return false)
 		$rounds = unserialize($this->getFieldHTML('Rounds'));
 
@@ -1362,7 +1361,7 @@ class Event extends DatabaseTable
 				$brackets[$row][2*$column] = '<td class="grid border-none"></td>';
 			}
 		}
-
+		
 		$rowspan = 1;
 		for ($round = 1; $round <= $nbrRounds; $round++){
 			$nbrMatchups = count($matchups[$round]);
@@ -1373,6 +1372,9 @@ class Event extends DatabaseTable
 				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
 					if (!isset($results[$round][$matchup]['winner'])) $results[$round][$matchup]['winner'] = 'not played';
 					if (!isset($results[$round][$matchup]['bye'])) $results[$round][$matchup]['bye'] = false;
+					if (!isset($matchups[$round][$matchup]['deleted'])) $matchups[$round][$matchup]['deleted'] = false;
+					
+					$matchup_deleted = false;
 					for($match = 0; $match < 2; $match++){
 						$matchupString = $matchups[$round][$matchup][$match];
 						$content[$round][$matchup][$match] = ($matchupString == '') ? 'E' : $matchupString;
@@ -1398,6 +1400,7 @@ class Event extends DatabaseTable
 								// Get result of matchup
 								$winner = $results[$matchupRound][$matchupMatchup]['winner'];
 								$bye = $results[$matchupRound][$matchupMatchup]['bye'];
+								$deleted = $matchups[$matchupRound][$matchupMatchup]['deleted'];
 
 								$rowTop    = $matchupsRows[$matchupRound][$matchupMatchup][0];
 								$rowBottom = $matchupsRows[$matchupRound][$matchupMatchup][1];
@@ -1414,6 +1417,10 @@ class Event extends DatabaseTable
 										$brackets[$i][2*$round-3] = '';
 									}
 									$brackets[$row][2*$round-2] = '<td class="grid border-middle"></td>';
+								}
+								
+								if($deleted == true){
+									$matchup_deleted = true;
 								}
 
 								$matchupsRows[$round][$matchup][$match] = $row;
@@ -1432,8 +1439,13 @@ class Event extends DatabaseTable
 								// Get result of matchup
 								$winner = $results[$matchupRound][$matchupMatchup]['winner'];
 								$bye = $results[$matchupRound][$matchupMatchup]['bye'];
+								$deleted = $matchups[$matchupRound][$matchupMatchup]['deleted'];
 
 								$row = findRow($round, $matchup, $match);
+
+								if($deleted == true){
+									$matchup_deleted = true;
+								}
 
 								$matchupsRows[$round][$matchup][$match] = $row;
 								if ($winner == 'top') {
@@ -1441,7 +1453,7 @@ class Event extends DatabaseTable
 									if ($loser[0] == 'T')
 									{
 										$team = substr($loser,1);
-										//echo "L2: $team,".$teams[$team-1]['loss'].'<br>';
+										//echo "M$round,$matchup: L2: $team,".$teams[$team-1]['loss'].'<br>';
 										if ($teams[$team-1]['loss'] > 1)
 										{
 											$content[$round][$matchup][$match] = 'N';
@@ -1461,7 +1473,7 @@ class Event extends DatabaseTable
 									if ($loser[0] == 'T')
 									{
 										$team = substr($loser,1);
-										//echo "L2: $team,".$teams[$team-1]['loss'].'<br>';
+										//echo "M$round,$matchup: L2: $team,".$teams[$team-1]['loss'].'<br>';
 										if ($teams[$team-1]['loss'] > 1)
 										{
 											$content[$round][$matchup][$match] = 'N';
@@ -1493,132 +1505,157 @@ class Event extends DatabaseTable
 							break;
 						}
 					}
-
-					$topWins = $results[$round][$matchup]['topWins'];
-					$bottomWins = $results[$round][$matchup]['bottomWins'];
-					if($topWins > $bottomWins)
+					
+					/* Nbr of matches in the matchup */
+					$nbr_matchs = count($results[$round][$matchup]['matchs']);
+					
+					/* Match deletion*/
+					if($nbr_matchs > 0)
 					{
-						$topWins .= '+';
-						$bottomWins .= '-';
-					}
-					if($topWins < $bottomWins)
-					{
-						$topWins .= '-';
-						$bottomWins .= '+';
-					}
-
-					if (($content[$round][$matchup][0]!='E')&&($content[$round][$matchup][1]!='E')) {
-						if ($results[$round][$matchup]['winner'] == 'top') {
-							$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], $topWins, 'winner');
-							$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins, 'loser');
-							$loser = $content[$round][$matchup][1];
-							if ($loser[0] == 'T')
+						$match_deleted = false;
+						for($match=0;$match < $nbr_matchs; $match++)
+						{
+							if(($results[$round][$matchup]['matchs'][$match]['match_id'] == $delete_match_id)
+							||($match_deleted == true)
+							||($matchup_deleted == true))
 							{
-								$team = substr($loser,1);
-								$teams[$team-1]['loss'] += 1;
-								//echo "L1: $team,".$teams[$team-1]['loss'].'<br>';
+								/*
+								var_dump($results[$round][$matchup]);
+								var_dump($delete_match_id);
+								var_dump($match_deleted);
+								var_dump($matchup_deleted);
+								*/
+								
+								$current_match_id = $results[$round][$matchup]['matchs'][$match]['match_id'];
+								//echo "match ".$current_match_id." deleted (M$round,$matchup,$match)<br>";
+								
+								$current_match = new Match($current_match_id);
+								$current_match->deleteMatchScores($event_id);
+								
+								$results[$round][$matchup]['winner'] = 'not played';
+								unset($results[$round][$matchup]['matchs'][$match]);
+								
+								$match_deleted = true;
 							}
-						} else if ($results[$round][$matchup]['winner'] == 'bottom') {
-							$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], $topWins, 'loser');
-							$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins, 'winner');
-							$loser = $content[$round][$matchup][0];
-							if ($loser[0] == 'T')
-							{
-								$team = substr($loser,1);
-								$teams[$team-1]['loss'] += 1;
-								//echo "L1: $team,".$teams[$team-1]['loss'].'<br>';
-							}
-						} else {
-							$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], $topWins);
-							$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins);
 						}
-						$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.'Matchup '.$round.','.$matchup.'"></td>';
-						$rounds[$round]['nbrMatchups']++;
 					}
-
+					
+					if ($match_deleted==true)
+					{
+						$matchups[$round][$matchup]['deleted'] = true;
+						$nbr_matchs = count($results[$round][$matchup]['matchs']);
+					}
+					
+					/* Update results */
 					if(($scheduleNextMatches == true)
 					&&($content[$round][$matchup][0][0]=='T')
 					&&($content[$round][$matchup][1][0]=='T')
 					&&($results[$round][$matchup]['winner'] == 'not played')) {
 						// Matchup not finished yet
-						$matchs = count($results[$round][$matchup]['matchs']);
-
-						$current_match = $results[$round][$matchup]['matchs'][$matchs-1];
-						$current_match_id = $current_match['match_id'];
-						$match = new Match($current_match_id);
-
-						if ($match->getField('Status') == 'active')
+						/* Calculate:
+						 $results[$round][$matchup]['topWins']
+						 $results[$round][$matchup]['bottomWins']
+						 $results[$round][$matchup]['matchs'][$match]['winner']
+						 $results[$round][$matchup]['winner']
+						*/
+						
+						$results[$round][$matchup]['topWins'] = 0;
+						$results[$round][$matchup]['bottomWins'] = 0;
+						if ($nbr_matchs > 0) 
 						{
-							// The match has been reported
-							// Need to check who won.
-							// Get the scores for this match
-							switch($type)
+							for($match = 0; $match < $nbr_matchs; $match++)
 							{
-								case "One Player Tournament":
-								$q = "SELECT ".TBL_MATCHS.".*, "
-								.TBL_SCORES.".*, "
-								.TBL_PLAYERS.".*, "
-								.TBL_USERS.".*"
-								." FROM ".TBL_MATCHS.", "
-								.TBL_SCORES.", "
-								.TBL_PLAYERS.", "
-								.TBL_GAMERS.", "
-								.TBL_USERS
-								." WHERE (".TBL_MATCHS.".MatchID = '$current_match_id')"
-								." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-								." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-								." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-								." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-								." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
-								break;
-								case "Clan Tournament":
-								$q = "SELECT ".TBL_MATCHS.".*, "
-								.TBL_SCORES.".*, "
-								.TBL_CLANS.".*, "
-								.TBL_TEAMS.".*, "
-								.TBL_DIVISIONS.".*"
-								." FROM ".TBL_MATCHS.", "
-								.TBL_SCORES.", "
-								.TBL_CLANS.", "
-								.TBL_TEAMS.", "
-								.TBL_DIVISIONS
-								." WHERE (".TBL_MATCHS.".MatchID = '$current_match_id')"
-								." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-								." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
-								." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-								." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-								." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
-								break;
-								default:
-							}
-
-							$result = $sql->db_Query($q);
-							$numScores = mysql_numrows($result);
-
-							if ($numScores>0)
-							{
-								$i = 0;
-								switch($type)
+								$current_match_id =  $results[$round][$matchup]['matchs'][$match]['match_id'];
+								$current_match_winner =  $results[$round][$matchup]['matchs'][$match]['winner'];
+								
+								if ($current_match_winner == 'not played')
 								{
-									case "One Player Tournament":
-									$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-									break;
-									case "Clan Tournament":
-									$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-									break;
-									default:
+									$current_match = new Match($current_match_id);
+									if ($current_match->getField('Status') == 'active')
+									{
+										// The match has been reported
+										// Need to check who won.
+										// Get the scores for this match
+										switch($type)
+										{
+											case "One Player Tournament":
+											$q = "SELECT ".TBL_MATCHS.".*, "
+											.TBL_SCORES.".*, "
+											.TBL_PLAYERS.".*, "
+											.TBL_USERS.".*"
+											." FROM ".TBL_MATCHS.", "
+											.TBL_SCORES.", "
+											.TBL_PLAYERS.", "
+											.TBL_GAMERS.", "
+											.TBL_USERS
+											." WHERE (".TBL_MATCHS.".MatchID = '$current_match_id')"
+											." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+											." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+											." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+											." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+											." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+											break;
+											case "Clan Tournament":
+											$q = "SELECT ".TBL_MATCHS.".*, "
+											.TBL_SCORES.".*, "
+											.TBL_CLANS.".*, "
+											.TBL_TEAMS.".*, "
+											.TBL_DIVISIONS.".*"
+											." FROM ".TBL_MATCHS.", "
+											.TBL_SCORES.", "
+											.TBL_CLANS.", "
+											.TBL_TEAMS.", "
+											.TBL_DIVISIONS
+											." WHERE (".TBL_MATCHS.".MatchID = '$current_match_id')"
+											." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+											." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+											." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+											." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+											." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
+											break;
+											default:
+										}
+			
+										$result = $sql->db_Query($q);
+										$numScores = mysql_numrows($result);
+			
+										if ($numScores>0)
+										{
+											$i = 0;
+											switch($type)
+											{
+												case "One Player Tournament":
+												$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+												break;
+												case "Clan Tournament":
+												$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+												break;
+												default:
+											}
+											$pscoreid  = mysql_result($result,$i, TBL_SCORES.".ScoreID");
+											$prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
+											$pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
+			
+											$teamTop    = substr($content[$round][$matchup][0],1);
+											$teamBottom = substr($content[$round][$matchup][1],1);
+			
+											$teamTopID = $teams[$teamTop-1]['PlayerID'];
+											$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
+			
+											if ($teamTopID == $pid)
+											{
+												$current_match_winner = 'top';
+											}
+											else
+											{
+												$current_match_winner = 'bottom';
+											}
+											$results[$round][$matchup]['matchs'][$match]['winner'] = $current_match_winner;
+										}
+									}										
 								}
-								$pscoreid  = mysql_result($result,$i, TBL_SCORES.".ScoreID");
-								$prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
-								$pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
-
-								$teamTop    = substr($content[$round][$matchup][0],1);
-								$teamBottom = substr($content[$round][$matchup][1],1);
-
-								$teamTopID = $teams[$teamTop-1]['PlayerID'];
-								$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
-
-								if ($teamTopID == $pid)
+											
+								if($current_match_winner == 'top')
 								{
 									$results[$round][$matchup]['topWins'] += 1;
 									if ($results[$round][$matchup]['topWins'] == ($rounds[$round]['BestOf'] + 1)/2)
@@ -1647,7 +1684,7 @@ class Event extends DatabaseTable
 										}
 									}
 								}
-								else
+								if($current_match_winner == 'bottom')
 								{
 									$results[$round][$matchup]['bottomWins'] += 1;
 									if ($results[$round][$matchup]['bottomWins'] == ($rounds[$round]['BestOf'] + 1)/2)
@@ -1676,21 +1713,69 @@ class Event extends DatabaseTable
 										}
 									}
 								}
-								$results[$round][$matchup]['matchs'][$matchs-1]['played'] = true;
 							}
 						}
-						$current_match = $results[$round][$matchup]['matchs'][$matchs-1];
+					}
 
-						//var_dump($current_match);
-						if(((!isset($current_match)) || ($current_match['played'] == true))&&($results[$round][$matchup]['winner']=='not played'))
-						{
-							// Need to schedule the next match
-							if(!isset($current_match))
+					$topWins = $results[$round][$matchup]['topWins'];
+					$bottomWins = $results[$round][$matchup]['bottomWins'];
+					if($topWins > $bottomWins)
+					{
+						$topWins .= '+';
+						$bottomWins .= '-';
+					}
+					if($topWins < $bottomWins)
+					{
+						$topWins .= '-';
+						$bottomWins .= '+';
+					}
+
+					if (($content[$round][$matchup][0]!='E')&&($content[$round][$matchup][1]!='E')) {
+						if ($results[$round][$matchup]['winner'] == 'top') {
+							$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], $topWins, 'winner');
+							$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins, 'loser');
+							$loser = $content[$round][$matchup][1];
+							if ($loser[0] == 'T')
 							{
-								$results[$round][$matchup]['topWins'] = 0;
-								$results[$round][$matchup]['bottomWins'] = 0;
+								$team = substr($loser,1);
+								$teams[$team-1]['loss'] += 1;
+								//echo "M$round,$matchup: L1: $team,".$teams[$team-1]['loss'].'<br>';
 							}
+						} else if ($results[$round][$matchup]['winner'] == 'bottom') {
+							$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], $topWins, 'loser');
+							$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins, 'winner');
+							$loser = $content[$round][$matchup][0];
+							if ($loser[0] == 'T')
+							{
+								$team = substr($loser,1);
+								$teams[$team-1]['loss'] += 1;
+								//echo "M$round,$matchup: L1: $team,".$teams[$team-1]['loss'].'<br>';
+							}
+						} else {
+							$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], $topWins);
+							$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins);
+						}
+						$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.'Matchup '.$round.','.$matchup.'"></td>';
+						$rounds[$round]['nbrMatchups']++;
+					}
 
+
+					if(($scheduleNextMatches == true)
+					&&($content[$round][$matchup][0][0]=='T')
+					&&($content[$round][$matchup][1][0]=='T')
+					&&($results[$round][$matchup]['winner'] == 'not played')) {
+						$current_match = $results[$round][$matchup]['matchs'][$nbr_matchs-1];
+						//var_dump($current_match);
+
+						if((!isset($current_match)) || ($current_match['winner'] != 'not played'))
+						{
+							/*
+							echo 'M'.$round.','.$matchup.':<br>';
+							var_dump($results[$round][$matchup]);
+							var_dump($content[$round][$matchup]);
+							*/
+
+							// Need to schedule the next match
 							// Create Match ------------------------------------------
 							$reported_by = $this->getField('Owner');
 							$time_reported = $time;
@@ -1736,10 +1821,10 @@ class Event extends DatabaseTable
 							";
 							$result = $sql->db_Query($q);
 
-							$match = array();
-							$match['played'] = false;
-							$match['match_id'] = $match_id;
-							$results[$round][$matchup]['matchs'][$matchs] = $match;
+							$match_array = array();
+							$match_array['winner'] = 'not played';
+							$match_array['match_id'] = $match_id;
+							$results[$round][$matchup]['matchs'][$nbr_matchs] = $match_array;
 
 							// Send notification to all the players.
 							$fromid = 0;
@@ -1811,9 +1896,11 @@ class Event extends DatabaseTable
 							}
 						}
 					}
-
+					
 					/*
 					echo 'M'.$round.','.$matchup.':<br>';
+					var_dump($results[$round][$matchup]);
+					var_dump($content[$round][$matchup]);
 					echo '- matchup: top='.$matchups[$round][$matchup][0].', bottom='.$matchups[$round][$matchup][1].'<br>';
 					echo '- content: top='.$content[$round][$matchup][0].', bottom='.$content[$round][$matchup][1].'<br>';
 					echo '- winner='.$results[$round][$matchup]['winner'].', bye='.$results[$round][$matchup]['bye'].'<br>';
@@ -1928,7 +2015,7 @@ class Event extends DatabaseTable
 			$this->updateResults($results);
 			$this->updateFieldDB('Results');
 		}
-
+		
 		return array($bracket_html);
 
 	}

@@ -11,6 +11,7 @@
 require_once("../../class2.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/match.php");
+require_once(e_PLUGIN."ebattles/include/event.php");
 
 /*******************************************************************
 ********************************************************************/
@@ -36,10 +37,33 @@ else
     }
     else
     {
+		$event = new Event($event_id);
+		$type = $event->getField('Type');
+		switch($type)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			case "Clan Ladder":
+			$event_type = 'Ladder';
+			break;
+			case "One Player Tournament":
+			case "Clan Tournament":
+			$event_type = 'Tournament';
+			default:
+		}
+
         $match_id = $_POST['matchid'];
         $match = new Match($match_id);
-		$match->deleteMatchScores($event_id);
-        $text .= '<br />'.EB_MATCHDEL_L3.'<br />';
+        
+		if($event_type == 'Tournament')
+		{
+			$event->brackets(true, $match_id);
+		}
+        else
+        {
+			$match->deleteMatchScores($event_id);
+        }
+       	$text .= '<br />'.EB_MATCHDEL_L3.'<br />';
     }
     $text .= '<br />'.EB_MATCHDEL_L4.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHDEL_L5.'</a>]<br />';
 }
