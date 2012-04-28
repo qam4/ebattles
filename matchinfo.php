@@ -369,7 +369,6 @@ else
 	if($event_type == 'Tournament')
 	{
 		$can_edit = 0;
-		$can_delete = 0;
 	}
 
 	if ($mStatus == 'pending')
@@ -377,12 +376,14 @@ else
 
 	if($can_delete != 0)
 	{
+		$delete_text = ($event_type == 'Tournament') ? EB_MATCHD_L29 : EB_MATCHD_L5;
+		
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?eventid='.$event_id.'" method="post">';
 		$text .= '<div>';
 		$text .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
 		$text .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
 		$text .= '</div>';
-		$text .= ebImageTextButton('deletematch', 'cross.png', EB_MATCHD_L4, 'negative jq-button', EB_MATCHD_L5);
+		$text .= ebImageTextButton('deletematch', 'cross.png', EB_MATCHD_L4, 'negative jq-button', $delete_text);
 		$text .= '</form>';
 	}
 	if($can_approve != 0)

@@ -257,7 +257,7 @@ function displayRecentActivity($event_id){
 		$text .= $events[$index][1];
 	}
 	if($index==0)
-	$text .= "<tr><td>No activity</td></tr>";
+	$text .= '<tr><td>'.EB_ACTIVITY_L1.'</td></tr>';
 
 	$text .= '</table>';
 

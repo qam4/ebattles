@@ -13,6 +13,9 @@ require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/brackets.php");
 require_once(e_PLUGIN."ebattles/include/gamer.php");
 
+// Specify if we use WYSIWYG for text areas
+global $e_wysiwyg;
+$e_wysiwyg	= "eventdescription,eventrules";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
 // Include userclass file
 require_once(e_HANDLER."userclass_class.php");

@@ -581,6 +581,7 @@ define('EB_MATCHD_L25', 'Slet');
 define('EB_MATCHD_L26', 'Er du sikker på du vil slette denne medier?');
 define('EB_MATCHD_L27', 'Rediger denne kamp');
 define('EB_MATCHD_L28', 'Miste');
+define('EB_MATCHD_L29', 'If you delete this match, every match inheriting from this match will be deleted. Are you sure you want to delete this match?');
 
 define('EB_MATCHDEL_L1', 'Kampen er slettet');
 define('EB_MATCHDEL_L2', 'Du har IKKE rettigheder til, at slette denne kamp.');
@@ -857,4 +858,6 @@ define('EB_TIME_L7', 'Minutter');
 define('EB_TIME_L8', 'Minut');
 define('EB_TIME_L9', 'Sekunder');
 define('EB_TIME_L10', 'Sekund');
+
+define('EB_ACTIVITY_L1', 'No activity');
 ?>
