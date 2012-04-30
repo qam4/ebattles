@@ -346,6 +346,14 @@ else
 			case "Team Ladder":
 			case "Clan Ladder":
 			case "Clan Tournament":
+			if($event_type == 'Tournament')
+			{
+				if($event->getField('Status')=='active')
+				{
+					$text .= EB_EVENTM_L163.'<br />';
+					break;
+				}
+			}
 			if ($numTeams<$event->getField('MaxNumberPlayers'))
 			{
 				// Form to add a team's division to the event
@@ -403,6 +411,14 @@ else
 			break;
 			case "One Player Ladder":
 			case "One Player Tournament":
+			if($event_type == 'Tournament')
+			{
+				if($event->getField('Status')=='active')
+				{
+					$text .= EB_EVENTM_L162.'<br />';
+					break;
+				}
+			}
 			if ($numPlayers<$event->getField('MaxNumberPlayers'))
 			{
 				// Form to add a player to the event
