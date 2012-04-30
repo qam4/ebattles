@@ -857,4 +857,5 @@ define('EB_TIME_L8', 'minute');
 define('EB_TIME_L9', 'secondes');
 define('EB_TIME_L10', 'seconde');
 
-define('EB_ACTIVITY_L1', 'Pas d'activité');?>
+define('EB_ACTIVITY_L1', 'Pas d’activité');
+?>
