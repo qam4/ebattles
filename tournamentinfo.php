@@ -661,8 +661,6 @@ if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||
 $text .= '<br />';
 
 /* Display Active Matches */
-$rowsPerPage = $pref['eb_default_items_per_page'];
-
 $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
 ." FROM ".TBL_MATCHS.", "
 .TBL_SCORES
@@ -676,38 +674,49 @@ $numMatches = $row['NbrMatches'];
 
 $text .= '<p><b>';
 $text .= $numMatches.'&nbsp;'.EB_EVENT_L59;
-if ($numMatches>$rowsPerPage)
-{
-	$text .= ' [<a href="'.e_PLUGIN.'ebattles/eventmatchs.php?eventid='.$event_id.'">'.EB_EVENT_L60.'</a>]';
-}
 $text .= '</b></p>';
 $text .= '<br />';
 
-$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
-." FROM ".TBL_MATCHS.", "
-.TBL_SCORES.", "
-.TBL_USERS
-." WHERE (".TBL_MATCHS.".Event = '$event_id')"
-." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-." AND (".TBL_MATCHS.".Status = 'active')"
-." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
-." LIMIT 0, $rowsPerPage";
-$result = $sql->db_Query($q);
-$numMatches = mysql_numrows($result);
-
-if ($numMatches>0)
-{
-	/* Display table contents */
-	$text .= '<table class="table_left">';
-	for($i=0; $i < $numMatches; $i++)
-	{
-		$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-		$match = new Match($match_id);
-		$text .= $match->displayMatchInfo(eb_MATCH_NOEVENTINFO);
+$matchups = $event->getMatchups();
+$results = unserialize($event->getFieldHTML('Results'));
+$rounds = unserialize($event->getFieldHTML('Rounds'));
+$nbrRounds = count($matchups);
+for ($round = $nbrRounds; $round > 0; $round--){
+	$nbrMatchups = count($matchups[$round]);
+	$found_match = 0;
+	for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+		$nbrMatchs = count($results[$round][$matchup]['matchs']);
+		for ($match = 0; $match < $nbrMatchs; $match++) {
+			$current_match = $results[$round][$matchup]['matchs'][$match];
+			$match_id  = $current_match['match_id'];
+			$matchObj = new Match($match_id);
+			if($matchObj->getField('Status') == 'active')
+			{
+				$found_match = 1;
+			}
+		}
 	}
-	$text .= '</table>';
+	
+	if ($found_match == 1)
+	{
+		$text .= '<b>'.$rounds[$round]['Title'].'</b>';
+		$text .= '<table class="table_left">';
+		for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+			//$text .= 'Matchup '.$matchup.'<br>';
+			$nbrMatchs = count($results[$round][$matchup]['matchs']);
+			for ($match = $nbrMatchs - 1; $match >= 0; $match--) {
+				$current_match = $results[$round][$matchup]['matchs'][$match];
+				$match_id  = $current_match['match_id'];
+				$matchObj = new Match($match_id);
+				if($matchObj->getField('Status') == 'active')
+				{
+					$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO);
+				}
+			}
+		}
+		$text .= '</table>';
+	}
 }
-
 $text .= '<br />';
 
 /* Display Pending Matches */
@@ -759,15 +768,42 @@ if ($numMatches>0)
 	$text .= '</b></p>';
 	$text .= '<br />';
 
-	/* Display table contents */
-	$text .= '<table class="table_left">';
-	for($i=0; $i < $numMatches; $i++)
-	{
-		$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-		$match = new Match($match_id);
-		$text .= $match->displayMatchInfo(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
-	}
-	$text .= '</table>';
+	for ($round = 0; $round < $nbrRounds; $round++){
+		$nbrMatchups = count($matchups[$round]);
+		$found_match = 0;
+		for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+			$nbrMatchs = count($results[$round][$matchup]['matchs']);
+			for ($match = 0; $match < $nbrMatchs; $match++) {
+				$current_match = $results[$round][$matchup]['matchs'][$match];
+				$match_id  = $current_match['match_id'];
+				$matchObj = new Match($match_id);
+				if($matchObj->getField('Status') == 'scheduled')
+				{
+					$found_match = 1;
+				}
+			}
+		}
+		
+		if ($found_match == 1)
+		{
+			$text .= '<b>'.$rounds[$round]['Title'].'</b>';
+			$text .= '<table class="table_left">';
+			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+				//$text .= 'Matchup '.$matchup.'<br>';
+				$nbrMatchs = count($results[$round][$matchup]['matchs']);
+				for ($match = 0; $match < $nbrMatchs; $match++) {
+					$current_match = $results[$round][$matchup]['matchs'][$match];
+					$match_id  = $current_match['match_id'];
+					$matchObj = new Match($match_id);
+					if($matchObj->getField('Status') == 'scheduled')
+					{
+						$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
+					}
+				}
+			}
+			$text .= '</table>';
+		}
+	}	
 }
 
 $text .= '</div>';    // tabs-4 "Matches"
