@@ -14,6 +14,7 @@ require_once(HEADERF);
 
 /* Clan Name */
 $clan_id = $_GET['clanid'];
+$div_id = $_GET['divid'];
 
 if (!$clan_id)
 {
@@ -34,7 +35,7 @@ else
 	." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
-	
+
 	$clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
 
 	$text .= '<div id="tabs">';
@@ -55,14 +56,14 @@ else
 	* Display Divisions
 	*/
 	$text .= '<div id="tabs-2">';
-	displayTeamDivisions($clan_id);
+	displayTeamDivisions($clan_id, $div_id);
 	$text .= '</div>';
 
 	/**
 	* Display Events
 	*/
 	$text .= '<div id="tabs-3">';
-	displayTeamEvents($clan_id);
+	displayTeamEvents($clan_id, $div_id);
 	$text .= '</div>';
 
 	/**
@@ -154,7 +155,7 @@ function displayTeamSummary($clan_id){
 /**
 * displayTeamDivisions - Displays ...
 */
-function displayTeamDivisions($clan_id){
+function displayTeamDivisions($clan_id, $div_id){
 	global $sql;
 	global $text;
 
@@ -173,175 +174,192 @@ function displayTeamDivisions($clan_id){
 
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
+	$text .= '<div class="spacer">';
 	for($i=0; $i<$num_rows; $i++)
 	{
-		$clan_password   = mysql_result($result,$i, TBL_CLANS.".password");
+		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
+		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
+		$gdiv_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
+		if($div_id=="") $div_id = $gdiv_id;
+
+		$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'&amp;divid='.$gdiv_id.'"><img '.getGameIconResize($gicon).' title="'.$gname.'"/></a>';
+		$text .= '&nbsp;';
+	}
+	$text .= '<br /></div>';
+
+	for($i=0; $i<$num_rows; $i++)
+	{
 		$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
 		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
-		$div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
+		$gdiv_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 		$div_captain  = mysql_result($result,$i, TBL_USERS.".user_id");
 		$div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
+		$clan_password   = mysql_result($result,$i, TBL_CLANS.".password");
+		$clan_id   = mysql_result($result,$i, TBL_CLANS.".ClanID");
 
-		$text .= '<div class="spacer">';
-		$text .= '<b><img '.getGameIconResize($gicon).'/> '.$gname.'</b><br />';
-		$text .= '<p>'.EB_CLAN_L9.': <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$div_captain.'">'.$div_captain_name.'</a></p>';
-
-		if(check_class(e_UC_MEMBER))
+		if($gdiv_id == $div_id)
 		{
-			// Find gamer for that user
-			$q_2 = "SELECT ".TBL_GAMERS.".*"
-			." FROM ".TBL_GAMERS
-			." WHERE (".TBL_GAMERS.".Game = '".$gid."')"
-			."   AND (".TBL_GAMERS.".User = ".USERID.")";
-			$result_2 = $sql->db_Query($q_2);
-			$num_Gamers = mysql_numrows($result_2);
-			if ($num_Gamers!=0)
-			{
-				$gamerID = mysql_result($result_2,0 , TBL_GAMERS.".GamerID");
-				$gamer = new Gamer($gamerID);
-				$gamerName = $gamer->getField('Name');
-				$gamerUniqueGameID = $gamer->getField('UniqueGameID');
-			}
-			else
-			{
-				$gamerID = 0;
-				$gamerName = '';
-				$gamerUniqueGameID = '';
-			}
+			$text .= '<div class="spacer">';
+			$text .= '<b>'.$gname.'</b><br />';
+			$text .= '<p>'.EB_CLAN_L9.': <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$div_captain.'">'.$div_captain_name.'</a></p>';
 
-			$q_2 = "SELECT ".TBL_MEMBERS.".*"
-			." FROM ".TBL_MEMBERS
-			." WHERE (".TBL_MEMBERS.".Division = '$div_id')"
-			." AND (".TBL_MEMBERS.".User = ".USERID.")";
-			$result_2 = $sql->db_Query($q_2);
-			if(!$result_2 || (mysql_numrows($result_2) < 1))
+			if(check_class(e_UC_MEMBER))
 			{
-				$hide_password = ($clan_password == "") ?  'hide ignore' : '';
-
-				$text .= '
-				</div>
-				'.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12).'
-				</form>';
-
-				$text .= gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $gamerUniqueGameID, $hide_password);
-
-			}
-			else
-			{
-				// Check that the member has made no games with this division
-				$q_MemberScores = "SELECT ".TBL_MEMBERS.".*, "
-				.TBL_TEAMS.".*, "
-				.TBL_PLAYERS.".*, "
-				.TBL_SCORES.".*"
-				." FROM ".TBL_MEMBERS.", "
-				.TBL_TEAMS.", "
-				.TBL_PLAYERS.", "
-				.TBL_SCORES
-				." WHERE (".TBL_MEMBERS.".User = ".USERID.")"
-				." AND (".TBL_MEMBERS.".Division = '$div_id')"
-				." AND (".TBL_TEAMS.".Division = '$div_id')"
-				." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-				." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
-				$result_MemberScores = $sql->db_Query($q_MemberScores);
-				$numMemberScores = mysql_numrows($result_MemberScores);
-				if ($numMemberScores == 0)
+				// Find gamer for that user
+				$q_2 = "SELECT ".TBL_GAMERS.".*"
+				." FROM ".TBL_GAMERS
+				." WHERE (".TBL_GAMERS.".Game = '".$gid."')"
+				."   AND (".TBL_GAMERS.".User = ".USERID.")";
+				$result_2 = $sql->db_Query($q_2);
+				$num_Gamers = mysql_numrows($result_2);
+				if ($num_Gamers!=0)
 				{
+					$gamerID = mysql_result($result_2,0 , TBL_GAMERS.".GamerID");
+					$gamer = new Gamer($gamerID);
+					$gamerName = $gamer->getField('Name');
+					$gamerUniqueGameID = $gamer->getField('UniqueGameID');
+				}
+				else
+				{
+					$gamerID = 0;
+					$gamerName = '';
+					$gamerUniqueGameID = '';
+				}
+
+				$q_2 = "SELECT ".TBL_MEMBERS.".*"
+				." FROM ".TBL_MEMBERS
+				." WHERE (".TBL_MEMBERS.".Division = '$div_id')"
+				." AND (".TBL_MEMBERS.".User = ".USERID.")";
+				$result_2 = $sql->db_Query($q_2);
+				if(!$result_2 || (mysql_numrows($result_2) < 1))
+				{
+					$hide_password = ($clan_password == "") ?  'hide ignore' : '';
+
 					$text .= '
-					<form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
 					<div>
 					<input type="hidden" name="division" value="'.$div_id.'"/>
 					</div>
-					'.ebImageTextButton('quitdivision', 'user_delete.ico', EB_CLAN_L13, 'negative jq-button', EB_CLAN_L25).'
-					</form>';
+					'.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12);
+
+					$text .= gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $gamerUniqueGameID, $hide_password);
 				}
-			}
-		}
-
-		$q_2 = "SELECT ".TBL_CLANS.".*, "
-		.TBL_DIVISIONS.".*, "
-		.TBL_MEMBERS.".*, "
-		.TBL_USERS.".*, "
-		.TBL_GAMES.".*"
-		." FROM ".TBL_CLANS.", "
-		.TBL_DIVISIONS.", "
-		.TBL_USERS.", "
-		.TBL_MEMBERS.", "
-		.TBL_GAMES
-		." WHERE (".TBL_CLANS.".ClanID = '$clan_id')"
-		." AND (".TBL_DIVISIONS.".Clan = ".TBL_CLANS.".ClanID)"
-		." AND (".TBL_DIVISIONS.".DivisionID = '$div_id')"
-		." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-		." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)"
-		." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
-		$result_2 = $sql->db_Query($q_2);
-		if(!$result_2 || (mysql_numrows($result_2) < 1))
-		{
-			$text .= '<p>'.EB_CLAN_L14.'</p>';
-		}
-		else
-		{
-			$row = mysql_fetch_array($result_2);
-			$numMembers = mysql_numrows($result_2);
-
-			$text .= '<p>'.$numMembers.'&nbsp;'.EB_CLAN_L15.'</p>';
-
-			$text .= '<table class="eb_table" style="width:95%"><tbody>';
-			$text .= '<tr>
-			<th class="eb_th2">'.EB_CLAN_L16.'</th>
-			<th class="eb_th2">'.EB_CLAN_L17.'</th>
-			<th class="eb_th2">'.EB_CLAN_L18.'</th>
-			</tr>';
-
-			// Captain
-			for($j=0; $j < $numMembers; $j++)
-			{
-				$mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
-				$mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
-				$mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
-				$mjoined_local = $mjoined + TIMEOFFSET;
-				$date = date("d M Y",$mjoined_local);
-
-				if ($mid == $div_captain)
+				else
 				{
-					$status =  EB_CLAN_L9;
-
-					$text .= '<tr>';
-					$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
-					<td class="eb_td">'.$status.'</td>
-					<td class="eb_td">'.$date.'</td></tr>';
+					// Check that the member has made no games with this division
+					$q_MemberScores = "SELECT ".TBL_MEMBERS.".*, "
+					.TBL_TEAMS.".*, "
+					.TBL_PLAYERS.".*, "
+					.TBL_SCORES.".*"
+					." FROM ".TBL_MEMBERS.", "
+					.TBL_TEAMS.", "
+					.TBL_PLAYERS.", "
+					.TBL_SCORES
+					." WHERE (".TBL_MEMBERS.".User = ".USERID.")"
+					." AND (".TBL_MEMBERS.".Division = '$div_id')"
+					." AND (".TBL_TEAMS.".Division = '$div_id')"
+					." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+					." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+					$result_MemberScores = $sql->db_Query($q_MemberScores);
+					$numMemberScores = mysql_numrows($result_MemberScores);
+					if ($numMemberScores == 0)
+					{
+						$text .= '
+						<form action="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'" method="post">
+						<div>
+						<input type="hidden" name="division" value="'.$div_id.'"/>
+						</div>
+						'.ebImageTextButton('quitdivision', 'user_delete.ico', EB_CLAN_L13, 'negative jq-button', EB_CLAN_L25).'
+						</form>';
+					}
 				}
 			}
 
-			// Other members
-			for($j=0; $j < $numMembers; $j++)
+			$q_2 = "SELECT ".TBL_CLANS.".*, "
+			.TBL_DIVISIONS.".*, "
+			.TBL_MEMBERS.".*, "
+			.TBL_USERS.".*, "
+			.TBL_GAMES.".*"
+			." FROM ".TBL_CLANS.", "
+			.TBL_DIVISIONS.", "
+			.TBL_USERS.", "
+			.TBL_MEMBERS.", "
+			.TBL_GAMES
+			." WHERE (".TBL_CLANS.".ClanID = '$clan_id')"
+			." AND (".TBL_DIVISIONS.".Clan = ".TBL_CLANS.".ClanID)"
+			." AND (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+			." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+			." AND (".TBL_USERS.".user_id = ".TBL_MEMBERS.".User)"
+			." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
+			$result_2 = $sql->db_Query($q_2);
+			if(!$result_2 || (mysql_numrows($result_2) < 1))
 			{
-				$mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
-				$mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
-				$mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
-				$mjoined_local = $mjoined + TIMEOFFSET;
-				$date = date("d M Y",$mjoined_local);
-
-				if ($mid != $div_captain)
-				{
-					$status =  EB_CLAN_L26;
-
-					$text .= '<tr>';
-					$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
-					<td class="eb_td">'.$status.'</td>
-					<td class="eb_td">'.$date.'</td></tr>';
-				}
+				$text .= '<p>'.EB_CLAN_L14.'</p>';
 			}
-			$text .= '</tbody></table>';
+			else
+			{
+				$row = mysql_fetch_array($result_2);
+				$numMembers = mysql_numrows($result_2);
+
+				$text .= '<p>'.$numMembers.'&nbsp;'.EB_CLAN_L15.'</p>';
+
+				$text .= '<table class="eb_table" style="width:95%"><tbody>';
+				$text .= '<tr>
+				<th class="eb_th2">'.EB_CLAN_L16.'</th>
+				<th class="eb_th2">'.EB_CLAN_L17.'</th>
+				<th class="eb_th2">'.EB_CLAN_L18.'</th>
+				</tr>';
+
+				// Captain
+				for($j=0; $j < $numMembers; $j++)
+				{
+					$mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+					$mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
+					$mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
+					$mjoined_local = $mjoined + TIMEOFFSET;
+					$date = date("d M Y",$mjoined_local);
+
+					if ($mid == $div_captain)
+					{
+						$status =  EB_CLAN_L9;
+
+						$text .= '<tr>';
+						$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
+						<td class="eb_td">'.$status.'</td>
+						<td class="eb_td">'.$date.'</td></tr>';
+					}
+				}
+
+				// Other members
+				for($j=0; $j < $numMembers; $j++)
+				{
+					$mid  = mysql_result($result_2,$j, TBL_USERS.".user_id");
+					$mname  = mysql_result($result_2,$j, TBL_USERS.".user_name");
+					$mjoined  = mysql_result($result_2,$j, TBL_MEMBERS.".timestamp");
+					$mjoined_local = $mjoined + TIMEOFFSET;
+					$date = date("d M Y",$mjoined_local);
+
+					if ($mid != $div_captain)
+					{
+						$status =  EB_CLAN_L26;
+
+						$text .= '<tr>';
+						$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mid.'">'.$mname.'</a></b></td>
+						<td class="eb_td">'.$status.'</td>
+						<td class="eb_td">'.$date.'</td></tr>';
+					}
+				}
+				$text .= '</tbody></table>';
+			}
+			$text .= '<br /></div>';
 		}
-		$text .= '<br /></div>';
 	}
 }
 
 /**
 * displayTeamEvents - Displays ...
 */
-function displayTeamEvents($clan_id){
+function displayTeamEvents($clan_id, $div_id){
 	global $sql;
 	global $text;
 	global $time;
@@ -358,91 +376,108 @@ function displayTeamEvents($clan_id){
 
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
+
+	$text .= '<div class="spacer">';
 	for($i=0; $i<$num_rows; $i++)
 	{
 		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
-		$div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
+		$gdiv_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
+		if($div_id=="") $div_id = $gdiv_id;
 
-		$text .= '<div class="spacer">';
-		$text .= '<b><img '.getGameIconResize($gicon).'/> '.$gname.'</b><br />';
+		$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'&amp;divid='.$gdiv_id.'"><img '.getGameIconResize($gicon).' title="'.$gname.'"/></a>';
+		$text .= '&nbsp;';
+	}
+	$text .= '<br /></div>';
 
-		$q_2 = "SELECT ".TBL_TEAMS.".*, "
-		.TBL_EVENTS.".*"
-		." FROM ".TBL_TEAMS.", "
-		.TBL_EVENTS
-		." WHERE (".TBL_TEAMS.".Division = '$div_id')"
-		." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
-		." AND (".TBL_EVENTS.".Status != 'finished')";
+	for($i=0; $i<$num_rows; $i++)
+	{
+		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
+		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
+		$gdiv_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 
-		$result_2 = $sql->db_Query($q_2);
-		if(!$result_2 || (mysql_numrows($result_2) < 1))
+		if($gdiv_id == $div_id)
 		{
-			$text .= '<p>'.EB_CLAN_L19.'</p>';
-		}
-		else
-		{
-			$row = mysql_fetch_array($result_2);
-			$numEvents = mysql_numrows($result_2);
+			$text .= '<div class="spacer">';
+			$text .= '<b>'.$gname.'</b><br />';
 
-			$text .= '<p>'.$numEvents.'&nbsp;'.EB_CLAN_L20.'</p>';
+			$q_2 = "SELECT ".TBL_TEAMS.".*, "
+			.TBL_EVENTS.".*"
+			." FROM ".TBL_TEAMS.", "
+			.TBL_EVENTS
+			." WHERE (".TBL_TEAMS.".Division = '$div_id')"
+			." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
+			." AND (".TBL_EVENTS.".Status != 'finished')";
 
-			$text .= '<table class="eb_table" style="width:95%"><tbody>';
-			$text .= '<tr>
-			<th class="eb_th2">'.EB_CLAN_L21.'</th>
-			<th class="eb_th2">'.EB_CLAN_L22.'</th>
-			</tr>';
-			for($j=0; $j < $numEvents; $j++)
+			$result_2 = $sql->db_Query($q_2);
+			if(!$result_2 || (mysql_numrows($result_2) < 1))
 			{
-				$event_id  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
-				$eName  = mysql_result($result_2,$j, TBL_EVENTS.".Name");
-				$eRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
-
-				$text .= '<tr>';
-				$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$eName.'</a></b></td>
-				<td class="eb_td">'.$eRank.'</td></tr>';
+				$text .= '<p>'.EB_CLAN_L19.'</p>';
 			}
-			$text .= "</tbody></table>\n";
-		}
-
-		$q_2 = "SELECT ".TBL_TEAMS.".*, "
-		.TBL_EVENTS.".*"
-		." FROM ".TBL_TEAMS.", "
-		.TBL_EVENTS
-		." WHERE (".TBL_TEAMS.".Division = '$div_id')"
-		." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
-		." AND (".TBL_EVENTS.".Status = 'finished')";
-		
-		$result_2 = $sql->db_Query($q_2);
-		if(!$result_2 || (mysql_numrows($result_2) < 1))
-		{
-			$text .= '<p>'.EB_CLAN_L23.'</p>';
-		}
-		else
-		{
-			$row = mysql_fetch_array($result_2);
-			$numEvents = mysql_numrows($result_2);
-
-			$text .= '<p>'.$numEvents.'&nbsp;'.EB_CLAN_L24.'</p>';
-
-			$text .= '<table class="eb_table" style="width:95%"><tbody>';
-			$text .= '<tr>
-			<th class="eb_th2">'.EB_CLAN_L21.'</th>
-			<th class="eb_th2">'.EB_CLAN_L22.'</th>
-			</tr>';
-			for($j=0; $j<$numEvents; $j++)
+			else
 			{
-				$event_id  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
-				$eName  = mysql_result($result_2,$j, TBL_EVENTS.".Name");
-				$eRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
+				$row = mysql_fetch_array($result_2);
+				$numEvents = mysql_numrows($result_2);
 
-				$text .= '<tr>';
-				$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$eName.'</a></b></td>
-				<td class="eb_td">'.$eRank.'</td></tr>';
+				$text .= '<p>'.$numEvents.'&nbsp;'.EB_CLAN_L20.'</p>';
+
+				$text .= '<table class="eb_table" style="width:95%"><tbody>';
+				$text .= '<tr>
+				<th class="eb_th2">'.EB_CLAN_L21.'</th>
+				<th class="eb_th2">'.EB_CLAN_L22.'</th>
+				</tr>';
+				for($j=0; $j < $numEvents; $j++)
+				{
+					$event_id  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
+					$eName  = mysql_result($result_2,$j, TBL_EVENTS.".Name");
+					$eRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
+
+					$text .= '<tr>';
+					$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$eName.'</a></b></td>
+					<td class="eb_td">'.$eRank.'</td></tr>';
+				}
+				$text .= "</tbody></table>\n";
 			}
-			$text .= '</tbody></table>';
+
+			$q_2 = "SELECT ".TBL_TEAMS.".*, "
+			.TBL_EVENTS.".*"
+			." FROM ".TBL_TEAMS.", "
+			.TBL_EVENTS
+			." WHERE (".TBL_TEAMS.".Division = '$div_id')"
+			." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
+			." AND (".TBL_EVENTS.".Status = 'finished')";
+
+			$result_2 = $sql->db_Query($q_2);
+			if(!$result_2 || (mysql_numrows($result_2) < 1))
+			{
+				$text .= '<p>'.EB_CLAN_L23.'</p>';
+			}
+			else
+			{
+				$row = mysql_fetch_array($result_2);
+				$numEvents = mysql_numrows($result_2);
+
+				$text .= '<p>'.$numEvents.'&nbsp;'.EB_CLAN_L24.'</p>';
+
+				$text .= '<table class="eb_table" style="width:95%"><tbody>';
+				$text .= '<tr>
+				<th class="eb_th2">'.EB_CLAN_L21.'</th>
+				<th class="eb_th2">'.EB_CLAN_L22.'</th>
+				</tr>';
+				for($j=0; $j<$numEvents; $j++)
+				{
+					$event_id  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
+					$eName  = mysql_result($result_2,$j, TBL_EVENTS.".Name");
+					$eRank  = mysql_result($result_2,$j, TBL_TEAMS.".Rank");
+
+					$text .= '<tr>';
+					$text .= '<td class="eb_td"><b><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$eName.'</a></b></td>
+					<td class="eb_td">'.$eRank.'</td></tr>';
+				}
+				$text .= '</tbody></table>';
+			}
+			$text .= '</div><br />';
 		}
-		$text .= '</div><br />';
 	}
 }
 

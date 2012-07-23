@@ -150,7 +150,7 @@ else
 				$mDescrition = ($mDescrition!='') ? ' - '.$mDescrition : '';
 
 				$mapImage .= EB_MATCHR_L44.':<br />';
-				$mapImage .= ($mImage!='') ? '<a href="'.getImagePath($mImage, 'games_maps').'" rel="shadowbox"><img '.getMapImageResize($mImage).' title="'.$mName.'" style="vertical-align:middle"/>' : '';
+				$mapImage .= ($mImage!='') ? '<a href="'.getImagePath($mImage, 'games_maps').'" rel="shadowbox"><img '.getMapImageResize($mImage).' title="'.$mName.'"/>' : '';
 				$mapImage .= '</a> '.$mName.$mDescrition.'<br /><br />';
 			}
 		}
@@ -479,7 +479,7 @@ else
 				$fIcon = mysql_result($result_Factions,0 , TBL_FACTIONS.".Icon");
 				$fName = mysql_result($result_Factions,0 , TBL_FACTIONS.".Name");
 
-				$pfactionIcon = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'" style="vertical-align:middle"/>';
+				$pfactionIcon = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'"/>';
 			}
 		}
 
@@ -493,18 +493,18 @@ else
 				case "One Player Tournament":
 				if($pavatar)
 				{
-					$image = '<img '.getAvatarResize(avatar($pavatar)).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(avatar($pavatar)).'/>';
 				} else if ($pref['eb_avatar_default_image'] != ''){
-					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).'/>';
 				}
 				break;
 				case "Clan Ladder":
 				case "Clan Tournament":
 				if($pavatar)
 				{
-					$image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).'/>';
 				} else if ($pref['eb_avatar_default_image'] != ''){
-					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>';
 				}
 				break;
 				default:
@@ -704,12 +704,12 @@ else
 		$text .= '</p>';
 	}
 
-	$text .= '<p>';
+	$text .= '<div>';
 	$text .= '
 	<form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
 	'.ebImageTextButton('submit', 'action_back.gif', EB_MATCHD_L15.' '.EB_MATCHD_L16).'
 	</form>';
-	$text .= '</p>';
+	$text .= '</div>';
 
 	$text .= '</div>'; // spacer
 

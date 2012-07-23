@@ -9,6 +9,7 @@ require_once(e_PLUGIN.'ebattles/include/event.php');
 if(isset($_POST['joindivision']))
 {
 	$div_id = $_POST['division'];
+	$division = new Division($div_id);
 
 	$q = "SELECT ".TBL_CLANS.".*, "
 	.TBL_DIVISIONS.".*"
@@ -26,49 +27,8 @@ if(isset($_POST['joindivision']))
 		$Name = $_POST["gamername"];
 		$UniqueGameID = $_POST["gameruniquegameid"];
 		$gamerID = updateGamer(USERID, $gid, $Name, $UniqueGameID);
-
-		$q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
-		VALUES ($div_id,".USERID.",$time)";
-		$sql->db_Query($q);
-
-		// User will automatically be signed up to all current events this division participates in
-		$q_2 = "SELECT ".TBL_TEAMS.".*, "
-		.TBL_EVENTS.".*"
-		." FROM ".TBL_TEAMS.", "
-		.TBL_EVENTS
-		." WHERE (".TBL_TEAMS.".Division = '$div_id')"
-		." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
-		." AND (".TBL_EVENTS.".Status != 'finished')";
-
-		$result_2 = $sql->db_Query($q_2);
-		$num_rows_2 = mysql_numrows($result_2);
-		if($num_rows_2>0)
-		{
-			for($j=0; $j<$num_rows_2; $j++)
-			{
-				$event_id  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
-				$event = new Event($event_id);
-
-				$team_id = mysql_result($result_2,$j, TBL_TEAMS.".TeamID");
-
-				// Verify there is no other player for that user/event/team
-				$q = "SELECT COUNT(*) as NbrPlayers"
-				." FROM ".TBL_PLAYERS
-				." WHERE (Event = '$event_id')"
-				." AND (Team = '$team_id')"
-				." AND (User = ".USERID.")";
-				$result = $sql->db_Query($q);
-				$row = mysql_fetch_array($result);
-				$nbrplayers = $row['NbrPlayers'];
-				if ($nbrplayers == 0)
-				{
-					$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma)
-					VALUES ($event_id, $gamerID, $team_id, ".$event->getField('ELO_default').", ".$event->getField('TS_default_mu').", ".$event->getField('TS_default_sigma').")";
-					$sql->db_Query($q);
-					$event->setFieldDB('IsChanged', 1);
-				}
-			}
-		}
+		
+		$division->addMember(USERID, FALSE);
 	}
 }
 if(isset($_POST['quitdivision']))

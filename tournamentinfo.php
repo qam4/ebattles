@@ -839,7 +839,7 @@ switch($event->getField('Type'))
 			$pFactionIcon = mysql_result($result, $player , TBL_FACTIONS.".Icon");
 			$pFactionName = mysql_result($result, $player , TBL_FACTIONS.".Name");
 			if($pFactionName){
-			$pFactionImage = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'" style="vertical-align:middle"/>';
+			$pFactionImage = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'"/>';
 			} else {
 			$pFactionImage = '';
 			}
@@ -887,9 +887,9 @@ switch($event->getField('Type'))
 			{
 				if($clan->getField('Image'))
 				{
-					$image = '<img '.getAvatarResize(getImagePath($clan->getField('Image'), 'team_avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($clan->getField('Image'), 'team_avatars')).'/>';
 				} else if ($pref['eb_avatar_default_team_image'] != ''){
-					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>';
 				}
 			}
 

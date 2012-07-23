@@ -532,6 +532,18 @@ define('EB_CLANM_L33', 'IM');
 define('EB_CLANM_L34', 'Description');
 define('EB_CLANM_L35', 'Voir l’Équipe');
 define('EB_CLANM_L36', 'Paramètres de l’Équipe');
+define('EB_CLANM_L37', 'Inviter un jouer');
+define('EB_CLANM_L38', 'Inviter le joueur (Envoie un PM)');
+define('EB_CLANM_L39', 'Hello ');
+define('EB_CLANM_L40', ',
+	Vous êtes invité à joindre l’équipe"');
+define('EB_CLANM_L41', '"
+	Veuillez vérifier votre page "Mon Profil/Équipes" pour plus d’infos.');
+define('EB_CLANM_L42', '"
+	Veuillez suivre le lien suivant pour avoir plus d’infos sur l’équipe: ');	
+define('EB_CLANM_L43', '
+	Cordialement,
+	L’admin de l’équipe ');
 
 define('EB_MATCH_L1', 'Match');
 define('EB_MATCH_L2', 'a mis en échec');

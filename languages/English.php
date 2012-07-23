@@ -536,6 +536,18 @@ define('EB_CLANM_L33', 'IM');
 define('EB_CLANM_L34', 'Description');
 define('EB_CLANM_L35', 'View Team');
 define('EB_CLANM_L36', 'Settings');
+define('EB_CLANM_L37', 'Invite a User');
+define('EB_CLANM_L38', 'Invite User (Sends PM)');
+define('EB_CLANM_L39', 'Hello ');
+define('EB_CLANM_L40', ',
+	You are invited to join the team "');
+define('EB_CLANM_L41', '"
+	Please check your "My Profile/Teams" page to see the team details.');
+define('EB_CLANM_L42', '"
+	Please click the following link to view the team details: ');	
+define('EB_CLANM_L43', '
+	Cordially,
+	The team admin ');
 
 define('EB_MATCH_L1', 'Match');
 define('EB_MATCH_L2', 'tied');

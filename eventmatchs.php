@@ -102,12 +102,12 @@ else
 	}
 	$text .= '<br />';
 
-	$text .= '<p>';
+	$text .= '<div>';
 	$text .= '
 	<form action="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'" method="post">
 	'.ebImageTextButton('submit', 'action_back.gif', EB_MATCHS_L3.' '.EB_MATCHS_L4).'
 	</form>';
-	$text .= '</p>';
+	$text .= '</div>';
 
 	$text .= '</div>';
 	$text .= '</div>';

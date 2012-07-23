@@ -99,7 +99,7 @@ else
 		$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L35.'</div>';
 		/* Display table contents */
 		$text .= '<form id="gamersform" action="'.e_PLUGIN.'ebattles/userprocess.php?userid='.$req_user.'" method="post">';
-		$text .= '<input type="hidden" id="edit_gamer" name="edit_gamer" value=""/>';
+		$text .= '<div><input type="hidden" id="edit_gamer" name="edit_gamer" value=""/></div>';
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
 		$text .= '<th class="eb_th2">';

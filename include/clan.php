@@ -69,7 +69,7 @@ class Clan extends DatabaseTable
 		<td class="eb_td">';
 		if ($this->getField('Image') != '')
 		{
-			$text .= '<img '.getAvatarResize(getImagePath($this->getField('Image'), 'team_avatars')).' style="vertical-align:middle"/>&nbsp;';
+			$text .= '<img '.getAvatarResize(getImagePath($this->getField('Image'), 'team_avatars')).'/>&nbsp;';
 		}
 		$text .= '<input class="tbox" type="text" id="clanavatar" name="clanavatar" size="20" value="'.$this->getField('Image').'"/>';
 
@@ -258,6 +258,100 @@ class Division extends DatabaseTable
 		$q = "DELETE FROM ".TBL_DIVISIONS
 		." WHERE (".TBL_DIVISIONS.".DivisionID = '".$this->fields['DivisionID']."')";
 		$result = $sql->db_Query($q);
+	}
+	function addMember($user, $notify)
+	{
+		global $sql;
+		global $time;
+		
+		$div_id = $this->fields['DivisionID'];
+		
+		$q = "SELECT ".TBL_USERS.".*"
+			." FROM ".TBL_USERS
+			." WHERE (".TBL_USERS.".user_id = '$user')";
+			$result = $sql->db_Query($q);
+			$Name  = mysql_result($result,0, TBL_USERS.".user_name");
+			$UniqueGameID = "";
+			updateGamer($user, $this->fields['Game'], $Name, $UniqueGameID);
+		
+		$q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
+		VALUES ($div_id,$user,$time)";
+		$sql->db_Query($q);
+
+		// User will automatically be signed up to all current events this division participates in
+		$q_2 = "SELECT ".TBL_TEAMS.".*, "
+		.TBL_EVENTS.".*"
+		." FROM ".TBL_TEAMS.", "
+		.TBL_EVENTS
+		." WHERE (".TBL_TEAMS.".Division = '$div_id')"
+		." AND (".TBL_TEAMS.".Event = ".TBL_EVENTS.".EventID)"
+		." AND (".TBL_EVENTS.".Status != 'finished')";
+
+		$result_2 = $sql->db_Query($q_2);
+		$num_rows_2 = mysql_numrows($result_2);
+		if($num_rows_2>0)
+		{
+			for($j=0; $j<$num_rows_2; $j++)
+			{
+				$event_id  = mysql_result($result_2,$j, TBL_EVENTS.".EventID");
+				$event = new Event($event_id);
+
+				$team_id = mysql_result($result_2,$j, TBL_TEAMS.".TeamID");
+
+				// Verify there is no other player for that user/event/team
+				$q = "SELECT COUNT(*) as NbrPlayers"
+				." FROM ".TBL_PLAYERS
+				." WHERE (Event = '$event_id')"
+				." AND (Team = '$team_id')"
+				." AND (User = ".USERID.")";
+				$result = $sql->db_Query($q);
+				$row = mysql_fetch_array($result);
+				$nbrplayers = $row['NbrPlayers'];
+				if ($nbrplayers == 0)
+				{
+					$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma)
+					VALUES ($event_id, $gamerID, $team_id, ".$event->getField('ELO_default').", ".$event->getField('TS_default_mu').", ".$event->getField('TS_default_sigma').")";
+					$sql->db_Query($q);
+					$event->setFieldDB('IsChanged', 1);
+				}
+			}
+		}
+		
+		if ($notify)
+		{
+			list($cname, $ctag, $cid) = $this->getClanInfo();
+			$sendto = $user;
+			$subject = SITENAME." ".$cname;
+			$message = EB_CLANM_L39.$username.EB_CLANM_L40.$cname.EB_CLANM_L41.EB_CLANM_L43;
+			sendNotification($sendto, $subject, $message, $fromid=0);
+
+			// Send email
+			$message = EB_CLANM_L39.$username.EB_CLANM_L39.$cname.EB_CLANM_L42.SITEURLBASE.e_PLUGIN_ABS."ebattles/claninfo.php?clanid=".$cid.EB_CLANM_L43;
+			require_once(e_HANDLER."mail.php");
+			sendemail($useremail, $subject, $message);
+		}
+	}
+	
+	function getClanInfo()
+	{
+		global $sql;
+		$clan = '';
+		$clantag = '';
+		$q = "SELECT ".TBL_CLANS.".*, "
+		.TBL_DIVISIONS.".*"
+		." FROM ".TBL_CLANS.", "
+		.TBL_DIVISIONS
+		." WHERE (".TBL_DIVISIONS.".DivisionID = '".$this->fields['DivisionID']."')"
+		."   AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)";
+		$result = $sql->db_Query($q);
+		$num_rows = mysql_numrows($result);
+		if ($num_rows == 1)
+		{
+			$clan_id  = mysql_result($result,0, TBL_CLANS.".ClanID");
+			$clanname  = mysql_result($result,0, TBL_CLANS.".Name");
+			$clantag  = mysql_result($result,0, TBL_CLANS.".Tag") ."&nbsp;";
+		}
+		return array($clanname, $clantag, $clan_id);
 	}
 }
 
