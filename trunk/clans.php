@@ -116,9 +116,9 @@ function displayClans(){
 			{
 				if($clan->getField('Image'))
 				{
-					$image = '<img '.getAvatarResize(getImagePath($clan->getField('Image'), 'team_avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($clan->getField('Image'), 'team_avatars')).'/>';
 				} else if ($pref['eb_avatar_default_team_image'] != ''){
-					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>';
+					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>';
 				}
 			}
 

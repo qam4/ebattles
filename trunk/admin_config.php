@@ -758,7 +758,7 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
 	";
 	if ($pref['eb_avatar_default_image'] != '')
 	{
-		$text .= '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).' style="vertical-align:middle"/>&nbsp;';
+		$text .= '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).'/>&nbsp;';
 	}
 	$text .= "<input class='tbox' type='text' id='eb_avatar_default_image' name='eb_avatar_default_image' size='20' value='".$pref['eb_avatar_default_image']."'/>";
 
@@ -793,7 +793,7 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
 	";
 	if ($pref['eb_avatar_default_team_image'] != '')
 	{
-		$text .= '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).' style="vertical-align:middle"/>&nbsp;';
+		$text .= '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>&nbsp;';
 	}
 	$text .= "<input class='tbox' type='text' id='eb_avatar_default_team_image' name='eb_avatar_default_team_image' size='20' value='".$pref['eb_avatar_default_team_image']."'/>";
 

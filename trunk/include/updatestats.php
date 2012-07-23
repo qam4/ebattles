@@ -664,9 +664,9 @@ function updateStats($event_id, $time, $serialize = TRUE)
         {
             if($avatar[$index])
             {
-                $image = '<img '.getAvatarResize(avatar($avatar[$index])).' style="vertical-align:middle"/>';
+                $image = '<img '.getAvatarResize(avatar($avatar[$index])).'/>';
             } else if ($pref['eb_avatar_default_image'] != ''){
-                $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).' style="vertical-align:middle"/>';
+                $image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).'/>';
             }
         }
 

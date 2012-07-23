@@ -403,13 +403,13 @@ class Event extends DatabaseTable
 			if ($notify)
 			{
 				$sendto = $user;
-				$subject = SITENAME.$this->fields['Name'];
-				$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$this->fields['Name'].EB_EVENTS_L29.EB_EVENTS_L31.USERNAME;
+				$subject = SITENAME." ".$this->fields['Name'];
+				$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$this->fields['Name'].EB_EVENTS_L29.EB_EVENTS_L31;
 				sendNotification($sendto, $subject, $message, $fromid=0);
 
 				// Send email
 				//$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$this->fields['Name'].EB_EVENTS_L30."<a href='".SITEURLBASE.e_PLUGIN_ABS."ebattles/eventinfo.php?eventid=$this->fields['EventID']'>$this->fields['Name']</a>.".EB_EVENTS_L31.USERNAME.EB_EVENTS_L32;
-				$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$this->fields['Name'].EB_EVENTS_L30.SITEURLBASE.e_PLUGIN_ABS."ebattles/eventinfo.php?eventid=$this->fields['EventID']".EB_EVENTS_L31.USERNAME;
+				$message = EB_EVENTS_L26.$username.EB_EVENTS_L27.$this->fields['Name'].EB_EVENTS_L30.SITEURLBASE.e_PLUGIN_ABS."ebattles/eventinfo.php?eventid=".$this->fields['EventID'].EB_EVENTS_L31;
 				require_once(e_HANDLER."mail.php");
 				sendemail($useremail, $subject, $message);
 			}
@@ -615,6 +615,11 @@ class Event extends DatabaseTable
 		</tr>
 		';
 		//<!-- Event Game -->
+		$q = "SELECT ".TBL_GAMES.".*"
+		." FROM ".TBL_GAMES
+		." WHERE (GameID = '".$this->getField('Game')."')";
+		$result = $sql->db_Query($q);
+		$gIcon  = mysql_result($result,$i, TBL_GAMES.".Icon");
 
 		$q = "SELECT ".TBL_GAMES.".*"
 		." FROM ".TBL_GAMES
@@ -624,7 +629,9 @@ class Event extends DatabaseTable
 		$numGames = mysql_numrows($result);
 		$text .= '<tr>';
 		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L17.'</td>';
-		$text .= '<td class="eb_td"><select class="tbox" name="eventgame">';
+		$text .= '<td class="eb_td">';
+		$text .= '<img '.getGameIconResize($gIcon).'/>&nbsp;';
+		$text .= '<select class="tbox" name="eventgame">';
 		for($i=0; $i<$numGames; $i++){
 			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
@@ -756,12 +763,13 @@ class Event extends DatabaseTable
 				';
 				$text .= '<input class="tbox" type="radio" id="radio21" size="40" name="eventrankingtype" '.($this->getField('RankingType') == "Classic" ? 'checked="checked"' : '').' value="Classic" /><label for="radio21">'.EB_EVENTM_L119.'</label>';
 				$text .= '<input class="tbox" type="radio" id="radio22" size="40" name="eventrankingtype" '.($this->getField('RankingType') == "CombinedStats" ? 'checked="checked"' : '').' value="CombinedStats" /><label for="radio22">'.EB_EVENTM_L120.'</label>';
+				$text .= '
+				</div>
+				</td>
+				</tr>
+				';
+				break;
 			}
-			$text .= '
-			</div>
-			</td>
-			</tr>
-			';
 		}
 
 		//<!-- Match report userclass -->
@@ -945,10 +953,10 @@ class Event extends DatabaseTable
 				$text .= '/>';
 			}
 			$text .= EB_EVENTM_L128;
+			$text .= '</div>';
 			switch($event_type)
 			{
 				case "Ladder":
-				$text .= '</div>';
 				$text .= '<div>';
 				$text .= '<input class="tbox" type="checkbox" name="eventForfeitWinLossUpdate"';
 				if ($this->getField('ForfeitWinLossUpdate') == true)
@@ -979,12 +987,13 @@ class Event extends DatabaseTable
 				</table>
 				</div>
 				';
-				$text .= '
-				</td>
-				</tr>
-				';
 				break;
 			}
+			$text .= '
+			</td>
+			</tr>
+			';
+
 			//<!-- Maps -->
 			$text .= '
 			<tr>
