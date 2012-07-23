@@ -666,8 +666,8 @@ if (isset($_POST['submit']))
 			if(isset($_POST['matchschedule']))
 			{
 				$q =
-				"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled)
-				VALUES ($event_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled)";
+				"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled, Maps)
+				VALUES ($event_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled, '$map')";
 			}
 			else
 			{

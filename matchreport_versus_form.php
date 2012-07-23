@@ -263,48 +263,48 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 
 	$text .= '<br />';
 
-	if(!isset($_POST['matchschedule']))
+	// Map Selection
+	//----------------------------------
+	// List of all Maps
+	$q_Maps = "SELECT ".TBL_MAPS.".*"
+	." FROM ".TBL_MAPS
+	." WHERE (".TBL_MAPS.".Game = '".$event->getField('Game')."')";
+	$result_Maps = $sql->db_Query($q_Maps);
+	$numMaps = mysql_numrows($result_Maps);
+
+	if ($numMaps > 0)
 	{
-		// Map Selection
-		//----------------------------------
-		// List of all Maps
-		$q_Maps = "SELECT ".TBL_MAPS.".*"
-		." FROM ".TBL_MAPS
-		." WHERE (".TBL_MAPS.".Game = '".$event->getField('Game')."')";
-		$result_Maps = $sql->db_Query($q_Maps);
-		$numMaps = mysql_numrows($result_Maps);
+		$text .= EB_MATCHR_L42;
+		$text .= '<table id="matchresult_selectMap" class="table_left"><tbody>';
 
-		if ($numMaps > 0)
+		for ($matchMap = 0; $matchMap<min($numMaps, $event->getField('MaxMapsPerMatch')); $matchMap++)
 		{
-			$text .= EB_MATCHR_L42;
-			$text .= '<table id="matchresult_selectMap" class="table_left"><tbody>';
+			$text .= '<tr>';
 
-			for ($matchMap = 0; $matchMap<min($numMaps, $event->getField('MaxMapsPerMatch')); $matchMap++)
+			$text .= '<td><select class="tbox" name="map'.$matchMap.'">';
+			$text .= '<option value="0"';
+			$text .= '>'.EB_MATCHR_L43.'</option>';
+			for($map=0;$map < $numMaps;$map++)
 			{
-				$text .= '<tr>';
+				$mID = mysql_result($result_Maps,$map , TBL_MAPS.".MapID");
+				$mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
+				$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
+				$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
 
-				$text .= '<td><select class="tbox" name="map'.$matchMap.'">';
-				$text .= '<option value="0"';
-				$text .= '>'.EB_MATCHR_L43.'</option>';
-				for($map=0;$map < $numMaps;$map++)
-				{
-					$mID = mysql_result($result_Maps,$map , TBL_MAPS.".MapID");
-					$mImage = mysql_result($result_Maps,$map , TBL_MAPS.".Image");
-					$mName = mysql_result($result_Maps,$map , TBL_MAPS.".Name");
-					$mDescrition = mysql_result($result_Maps,$map , TBL_MAPS.".Description");
-
-					$text .= '<option value="'.$mID.'"';
-					if (strtolower($_POST['map'.$matchMap]) == $mID) $text .= ' selected="selected"';
-					$text .= '>'.$mName.'</option>';
-				}
-				$text .= '</select></td>';
-				$text .= '</tr>';
+				$text .= '<option value="'.$mID.'"';
+				if (strtolower($_POST['map'.$matchMap]) == $mID) $text .= ' selected="selected"';
+				$text .= '>'.$mName.'</option>';
 			}
-
-			$text .= '</tbody></table>';
-			$text .= '<br />';
+			$text .= '</select></td>';
+			$text .= '</tr>';
 		}
 
+		$text .= '</tbody></table>';
+		$text .= '<br />';
+	}
+
+	if(!isset($_POST['matchschedule']))
+	{
 		// Comments
 		//----------------------------------
 		$text .= '<br />';
