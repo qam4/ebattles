@@ -483,6 +483,30 @@ class Match extends DatabaseTable
 	{
 		global $sql;
 
+		// Get event info
+		$q = "SELECT ".TBL_EVENTS.".*, "
+		.TBL_MATCHS.".*"
+		." FROM ".TBL_EVENTS.", "
+		.TBL_MATCHS
+		." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
+		."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)";
+		$result = $sql->db_Query($q);
+		$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
+		$event = new Event($event_id);
+		$type = $event->getField('Type');
+		switch($type)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			case "Clan Ladder":
+			$event_type = 'Ladder';
+			break;
+			case "One Player Tournament":
+			case "Clan Tournament":
+			$event_type = 'Tournament';
+			default:
+		}
+
 		// Update Teams with scores
 		$tdeltaELO         = array();
 		$tdeltaTS_mu       = array();
@@ -623,26 +647,29 @@ class Match extends DatabaseTable
 			if ($pStreak > $pStreak_Best) $pStreak_Best = $pStreak;
 			if ($pStreak < $pStreak_Worst) $pStreak_Worst = $pStreak;
 
-			if ($pStreak == 5)
+			if($event_type == 'Ladder')
 			{
-				// Award: player wins 5 games in a row
-				$q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-				VALUES ($pid,'PlayerStreak5',$time_reported)";
-				$result4 = $sql->db_Query($q4);
-			}
-			if ($pStreak == 10)
-			{
-				// Award: player wins 10 games in a row
-				$q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-				VALUES ($pid,'PlayerStreak10',$time_reported)";
-				$result4 = $sql->db_Query($q4);
-			}
-			if ($pStreak == 25)
-			{
-				// Award: player wins 25 games in a row
-				$q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-				VALUES ($pid,'PlayerStreak25',$time_reported)";
-				$result4 = $sql->db_Query($q4);
+				if ($pStreak == 5)
+				{
+					// Award: player wins 5 games in a row
+					$q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+					VALUES ($pid,'PlayerStreak5',$time_reported)";
+					$result4 = $sql->db_Query($q4);
+				}
+				if ($pStreak == 10)
+				{
+					// Award: player wins 10 games in a row
+					$q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+					VALUES ($pid,'PlayerStreak10',$time_reported)";
+					$result4 = $sql->db_Query($q4);
+				}
+				if ($pStreak == 25)
+				{
+					// Award: player wins 25 games in a row
+					$q4 = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+					VALUES ($pid,'PlayerStreak25',$time_reported)";
+					$result4 = $sql->db_Query($q4);
+				}
 			}
 
 			// Update database.
@@ -759,6 +786,19 @@ class Match extends DatabaseTable
 		$result = $sql->db_Query($q);
 		$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
 		$event = new Event($event_id);
+		$type = $event->getField('Type');
+		switch($type)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			case "Clan Ladder":
+			$event_type = 'Ladder';
+			break;
+			case "One Player Tournament":
+			case "Clan Tournament":
+			$event_type = 'Tournament';
+			default:
+		}
 
 		// Update Teams with scores
 		$q = "SELECT ".TBL_MATCHS.".*, "
@@ -841,26 +881,29 @@ class Match extends DatabaseTable
 			if ($tStreak > $tStreak_Best) $tStreak_Best = $tStreak;
 			if ($tStreak < $tStreak_Worst) $tStreak_Worst = $tStreak;
 
-			if ($tStreak == 5)
+			if($event_type == 'Ladder')
 			{
-				// Award: team wins 5 games in a row
-				$q4 = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
-				VALUES ($tid,'TeamStreak5',$time_reported)";
-				$result4 = $sql->db_Query($q4);
-			}
-			if ($tStreak == 10)
-			{
-				// Award: team wins 10 games in a row
-				$q4 = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
-				VALUES ($tid,'TeamStreak10',$time_reported)";
-				$result4 = $sql->db_Query($q4);
-			}
-			if ($tStreak == 25)
-			{
-				// Award: player wins 25 games in a row
-				$q4 = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
-				VALUES ($tid,'TeamStreak25',$time_reported)";
-				$result4 = $sql->db_Query($q4);
+				if ($tStreak == 5)
+				{
+					// Award: team wins 5 games in a row
+					$q4 = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+					VALUES ($tid,'TeamStreak5',$time_reported)";
+					$result4 = $sql->db_Query($q4);
+				}
+				if ($tStreak == 10)
+				{
+					// Award: team wins 10 games in a row
+					$q4 = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+					VALUES ($tid,'TeamStreak10',$time_reported)";
+					$result4 = $sql->db_Query($q4);
+				}
+				if ($tStreak == 25)
+				{
+					// Award: player wins 25 games in a row
+					$q4 = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+					VALUES ($tid,'TeamStreak25',$time_reported)";
+					$result4 = $sql->db_Query($q4);
+				}
 			}
 
 			// Update database.

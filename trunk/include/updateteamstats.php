@@ -61,12 +61,25 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 	$points_score = array();
 
 	/* Event Info */
-   	$event = new Event($event_id);
+	$event = new Event($event_id);
+	$type = $event->getField('Type');
+	switch($type)
+	{
+		case "One Player Ladder":
+		case "Team Ladder":
+		case "Clan Ladder":
+		$event_type = 'Ladder';
+		break;
+		case "One Player Tournament":
+		case "Clan Tournament":
+		$event_type = 'Tournament';
+		default:
+	}
 
-    $hide_ratings_column = $event->getField('hide_ratings_column');
-    if ($event->getField('RankingType') == "Classic") $hide_ratings_column = TRUE;
-    
-    //Update Teams stats
+	$hide_ratings_column = $event->getField('hide_ratings_column');
+	if ($event->getField('RankingType') == "Classic") $hide_ratings_column = TRUE;
+
+	//Update Teams stats
 	$q_Teams = "SELECT ".TBL_TEAMS.".*, "
 	.TBL_DIVISIONS.".*, "
 	.TBL_CLANS.".*"
@@ -673,14 +686,14 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$result_update = $sql->db_Query($q_update);
 			}
 
-			if (($new_rankdelta != 0)&&($rank==1))
+			if (($new_rankdelta != 0)&&($rank==1)&&($event_type == 'Ladder'))
 			{
 				// Award: player took 1st place
 				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
 				VALUES ($tid,'TeamTookFirstPlace',$time)";
 				$result_Awards = $sql->db_Query($q_Awards);
 			}
-			if (($new_rankdelta != 0)&&(($prank>10)||($prank==0))&&($rank<=10))
+			if (($new_rankdelta != 0)&&(($prank>10)||($prank==0))&&($rank<=10)&&($event_type == 'Ladder'))
 			{
 				// Award: player enters top 10
 				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
