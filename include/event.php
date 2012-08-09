@@ -511,6 +511,22 @@ class Event extends DatabaseTable
 			$insertjs = "rows='5' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
 		}
 
+		/* Nbr players */
+		$q = "SELECT COUNT(*) as NbrPlayers"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')";
+		$result = $sql->db_Query($q);
+		$row = mysql_fetch_array($result);
+		$nbrplayers = $row['NbrPlayers'];
+		
+		/* Nbr Teams */
+		$q = "SELECT COUNT(*) as NbrTeams"
+		." FROM ".TBL_TEAMS
+		." WHERE (Event = '".$this->fields['EventID']."')";
+		$result = $sql->db_Query($q);
+		$row = mysql_fetch_array($result);
+		$nbrteams = $row['NbrTeams'];
+	
 		$type = $this->fields['Type'];
 		switch($type)
 		{
@@ -615,6 +631,8 @@ class Event extends DatabaseTable
 		</tr>
 		';
 		//<!-- Event Game -->
+		$disabled_str = ($nbrplayers+$nbrteams==0) ? '' : 'disabled="disabled"';
+
 		$q = "SELECT ".TBL_GAMES.".*"
 		." FROM ".TBL_GAMES
 		." WHERE (GameID = '".$this->getField('Game')."')";
@@ -631,7 +649,7 @@ class Event extends DatabaseTable
 		$text .= '<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L17.'</td>';
 		$text .= '<td class="eb_td">';
 		$text .= '<img '.getGameIconResize($gIcon).'/>&nbsp;';
-		$text .= '<select class="tbox" name="eventgame">';
+		$text .= '<select class="tbox" name="eventgame" '.$disabled_str.'>';
 		for($i=0; $i<$numGames; $i++){
 			$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 			$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
