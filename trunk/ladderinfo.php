@@ -892,6 +892,9 @@ $row = mysql_fetch_array($result);
 $nbrMatchesPending = $row['NbrMatches'];
 if ($nbrMatchesPending == 0) $can_approve = 0;
 
+// TODO: put back nbrMatches pending in tab header?
+//	$text .= ($can_approve == 1) ? ' <span style="color:red">('.$nbrMatchesPending.')</span>' : '';
+
 /* Display Match Report buttons */
 if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||($can_schedule != 0))
 {
@@ -1146,6 +1149,18 @@ if ($numAwards>0)
 			case 'PlayerWonTournament':
 			$award = EB_AWARD_L12;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
+			break;
+			case 'PlayerRankFirst':
+			$award = EB_AWARD_L14;
+			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_1.png").' alt="'.EB_AWARD_L15.'" title="'.EB_AWARD_L15.'"/> ';
+			break;
+			case 'PlayerRankSecond':
+			$award = EB_AWARD_L16;
+			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_1.png").' alt="'.EB_AWARD_L17.'" title="'.EB_AWARD_L17.'"/> ';
+			break;
+			case 'PlayerRankThird':
+			$award = EB_AWARD_L18;
+			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_1.png").' alt="'.EB_AWARD_L19.'" title="'.EB_AWARD_L19.'"/> ';
 			break;
 		}
 

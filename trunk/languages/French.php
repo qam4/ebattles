@@ -802,6 +802,12 @@ define('EB_AWARD_L10', 'a gagné 25 matchs d’affilé');
 define('EB_AWARD_L11', '25 d’affilé');
 define('EB_AWARD_L12', 'a gagné le tournoi');
 define('EB_AWARD_L13', 'vainqueur du tournoi');
+define('EB_AWARD_L14', 'a gagné le tournoi');
+define('EB_AWARD_L15', 'vainqueur du tournoi');
+define('EB_AWARD_L16', 's’est placé 2nd');
+define('EB_AWARD_L17', 'second');
+define('EB_AWARD_L18', 's’est placé 3ième');
+define('EB_AWARD_L19', 'troisième');
 
 define('EB_USER_L1', 'Profil du Joueur');
 define('EB_USER_L2', 'Profil');

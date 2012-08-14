@@ -884,6 +884,18 @@ else
 				$award = EB_AWARD_L12;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
 				break;
+				case 'PlayerRankFirst':
+				$award = EB_AWARD_L14;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_1.png").' alt="'.EB_AWARD_L15.'" title="'.EB_AWARD_L15.'"/> ';
+				break;
+				case 'PlayerRankSecond':
+				$award = EB_AWARD_L16;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_1.png").' alt="'.EB_AWARD_L17.'" title="'.EB_AWARD_L17.'"/> ';
+				break;
+				case 'PlayerRankThird':
+				$award = EB_AWARD_L18;
+				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_1.png").' alt="'.EB_AWARD_L19.'" title="'.EB_AWARD_L19.'"/> ';
+				break;
 			}
 
 			$award_string = '<tr><td style="vertical-align:top">'.$icon.'</td>';

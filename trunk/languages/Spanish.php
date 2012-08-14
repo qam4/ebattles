@@ -802,6 +802,12 @@ define('EB_AWARD_L10', 'gano 25 partidos en fila');
 define('EB_AWARD_L11', '25 en fila');
 define('EB_AWARD_L12', 'won the tournament');
 define('EB_AWARD_L13', 'tournament winner');
+define('EB_AWARD_L14', 'won the ladder');
+define('EB_AWARD_L15', 'ladder winner');
+define('EB_AWARD_L16', 'placed 2nd');
+define('EB_AWARD_L17', 'second');
+define('EB_AWARD_L18', 'placed 3rd');
+define('EB_AWARD_L19', 'third');
 
 define('EB_USER_L1', 'Informacion del los Jugadores');
 define('EB_USER_L2', 'Perfil');
