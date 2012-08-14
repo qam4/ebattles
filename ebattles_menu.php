@@ -291,7 +291,9 @@ function displayUserInfo($req_user){
 
 		if ($numMatches > 0)
 		{
-			$text .= '<span style="color:red">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L73;
+//			$text .= '<span class="badge">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L73;
+			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L73;
+			
 			$text .= '<br />';
 		}
 	}
@@ -344,7 +346,8 @@ function displayUserInfo($req_user){
 
 		if ($numMatches > 0)
 		{
-			$text .= '<span style="color:red">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L70;
+//			$text .= '<span class="badge">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L70;
+			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L70;
 			$text .= '<br />';
 		}
 	}
@@ -385,7 +388,8 @@ function displayUserInfo($req_user){
 
 		if ($numChallenges > 0)
 		{
-			$text .= '<span style="color:red">'.$numChallenges.'</span>&nbsp;'.EB_EVENT_L67;
+//			$text .= '<span class="badge">'.$numChallenges.'</span>&nbsp;'.EB_EVENT_L67;
+			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numChallenges.'</span>&nbsp;'.EB_EVENT_L67;
 		}
 	}
 	$text .= '</td></tr>';

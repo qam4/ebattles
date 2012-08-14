@@ -147,9 +147,100 @@ else
 			$event->setFieldDB('IsChanged', 1);
 		}
 	}
-	if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime') != 0))
+	if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime') != 0) && ($eventStatus!='finished'))
 	{
 		$eventStatus = 'finished';
+		if (($type == "One Player Ladder") || ($type == "Team Ladder") )
+		{
+			$q = "SELECT ".TBL_PLAYERS.".*"
+			." FROM ".TBL_PLAYERS
+			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+			. "AND (".TBL_PLAYERS.".Rank = '1')";
+			$result = $sql->db_Query($q);
+			$numPlayers = mysql_numrows($result);
+			//echo "numPlayers: $numPlayers<br>";			
+			if($numPlayers == 1)
+			{	
+				$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
+				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+				VALUES ($pid,'PlayerRankFirst',$time+2)";
+				$result_Awards = $sql->db_Query($q_Awards);
+			}
+			
+			$q = "SELECT ".TBL_PLAYERS.".*"
+			." FROM ".TBL_PLAYERS
+			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+			. "AND (".TBL_PLAYERS.".Rank = '2')";
+			$result = $sql->db_Query($q);
+			$numPlayers = mysql_numrows($result);
+			if($numPlayers == 1)
+			{				
+				$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
+				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+				VALUES ($pid,'PlayerRankSecond',$time+1)";
+				$result_Awards = $sql->db_Query($q_Awards);
+			}
+
+			$q = "SELECT ".TBL_PLAYERS.".*"
+			." FROM ".TBL_PLAYERS
+			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+			. "AND (".TBL_PLAYERS.".Rank = '3')";
+			$result = $sql->db_Query($q);
+			$numPlayers = mysql_numrows($result);
+			if($numPlayers == 1)
+			{				
+				$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
+				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+				VALUES ($pid,'PlayerRankThird',$time)";
+				$result_Awards = $sql->db_Query($q_Awards);
+			}
+		}			
+		if (($type == "Clan Ladder") || ($type == "Team Ladder") )
+		{
+			$q = "SELECT ".TBL_TEAMS.".*"
+			." FROM ".TBL_TEAMS
+			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+			. "AND (".TBL_TEAMS.".Rank = '1')";
+			$result = $sql->db_Query($q);
+			$numTeams = mysql_numrows($result);
+			if($numTeams == 1)
+			{				
+				$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
+				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+				VALUES ($pid,'TeamRankFirst',$time+2)";
+				$result_Awards = $sql->db_Query($q_Awards);
+			}
+			
+			$q = "SELECT ".TBL_TEAMS.".*"
+			." FROM ".TBL_TEAMS
+			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+			. "AND (".TBL_TEAMS.".Rank = '2')";
+			$result = $sql->db_Query($q);
+			$numTeams = mysql_numrows($result);
+			if($numTeams == 1)
+			{				
+				$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
+				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+				VALUES ($pid,'TeamRankSecond',$time+1)";
+				$result_Awards = $sql->db_Query($q_Awards);
+			}
+
+			$q = "SELECT ".TBL_TEAMS.".*"
+			." FROM ".TBL_TEAMS
+			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+			. "AND (".TBL_TEAMS.".Rank = '3')";
+			$result = $sql->db_Query($q);
+			$numTeams = mysql_numrows($result);
+			if($numTeams == 1)
+			{				
+				$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
+				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+				VALUES ($pid,'TeamRankThird',$time)";
+				$result_Awards = $sql->db_Query($q_Awards);
+			}
+		}	
+		
+		
 	}
 
 	$event->setFieldDB('Status', $eventStatus);
