@@ -66,7 +66,7 @@ if (check_class(e_UC_MEMBER))
 	$text .= '</tr>';
 
 	/* Get User Information */
-	$text .= displayUserInfo(USERID);
+	$text .= displayUserInfo(USERID, $profile_link);
 }
 
 $text .= '</table>';
@@ -79,7 +79,7 @@ Functions
 /**
 * displayUserInfo - Displays user information
 */
-function displayUserInfo($req_user){
+function displayUserInfo($req_user, $profile_link){
 	global $pref;
 	global $sql;
 
@@ -292,8 +292,10 @@ function displayUserInfo($req_user){
 		if ($numMatches > 0)
 		{
 //			$text .= '<span class="badge">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L73;
-			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L73;
-			
+			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numMatches.'</span>';
+			$text .= '<a href="'.$profile_link.'#tabs-4">';
+			$text .= '&nbsp;'.EB_EVENT_L73;
+			$text .= '</a>';
 			$text .= '<br />';
 		}
 	}
@@ -347,7 +349,10 @@ function displayUserInfo($req_user){
 		if ($numMatches > 0)
 		{
 //			$text .= '<span class="badge">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L70;
-			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L70;
+			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numMatches.'</span>';
+			$text .= '<a href="'.$profile_link.'#tabs-4">';
+			$text .= '&nbsp;'.EB_EVENT_L70;
+			$text .= '</a>';
 			$text .= '<br />';
 		}
 	}
@@ -389,8 +394,11 @@ function displayUserInfo($req_user){
 		if ($numChallenges > 0)
 		{
 //			$text .= '<span class="badge">'.$numChallenges.'</span>&nbsp;'.EB_EVENT_L67;
-			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numChallenges.'</span>&nbsp;'.EB_EVENT_L67;
-		}
+			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numChallenges.'</span>';
+			$text .= '<a href="'.$profile_link.'#tabs-4">';
+			$text .= '&nbsp;'.EB_EVENT_L67;
+			$text .= '</a>';
+	}
 	}
 	$text .= '</td></tr>';
 

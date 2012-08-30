@@ -687,14 +687,13 @@ else
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
-
-	$text .= '<p><b>';
-	$text .= $numMatches.'&nbsp;'.EB_EVENT_L64;
-	$text .= '</b></p>';
-	$text .= '<br />';
-
 	if ($numMatches>0)
 	{
+		$text .= '<p><b>';
+		$text .= $numMatches.'&nbsp;'.EB_EVENT_L64;
+		$text .= '</b></p>';
+		$text .= '<br />';
+
 		/* Display table contents */
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numMatches; $i++)
@@ -724,14 +723,13 @@ else
 	." ORDER BY ".TBL_MATCHS.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numMatches = mysql_numrows($result);
-
-	$text .= '<p><b>';
-	$text .= $numMatches.'&nbsp;'.EB_EVENT_L70;
-	$text .= '</b></p>';
-	$text .= '<br />';
-
 	if ($numMatches>0)
 	{
+		$text .= '<p><b>';
+		$text .= '<span class="badge">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L70;
+		$text .= '</b></p>';
+		$text .= '<br />';
+
 		/* Display table contents */
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numMatches; $i++)
@@ -752,14 +750,13 @@ else
 	." ORDER BY ".TBL_CHALLENGES.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numChallenges = mysql_numrows($result);
-
-	$text .= '<p><b>';
-	$text .= $numChallenges.'&nbsp;'.EB_EVENT_L66;
-	$text .= '</b></p>';
-	$text .= '<br />';
-
 	if ($numChallenges>0)
 	{
+		$text .= '<p><b>';
+		$text .= '<span class="badge">'.$numChallenges.'</span>&nbsp;'.EB_EVENT_L66;
+		$text .= '</b></p>';
+		$text .= '<br />';
+
 		/* Display table contents */
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numChallenges; $i++)
@@ -787,14 +784,13 @@ else
 	." ORDER BY ".TBL_CHALLENGES.".TimeReported DESC";
 	$result = $sql->db_Query($q);
 	$numChallenges = mysql_numrows($result);
-
-	$text .= '<p><b>';
-	$text .= $numChallenges.'&nbsp;'.EB_EVENT_L67;
-	$text .= '</b></p>';
-	$text .= '<br />';
-
 	if ($numChallenges>0)
 	{
+		$text .= '<p><b>';
+		$text .= $numChallenges.'&nbsp;'.EB_EVENT_L67;
+		$text .= '</b></p>';
+		$text .= '<br />';
+
 		/* Display table contents */
 		$text .= '<table class="table_left">';
 		for($i=0; $i < $numChallenges; $i++)
