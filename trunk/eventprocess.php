@@ -34,6 +34,8 @@ $event = new Event($event_id);
 //var_dump($event);
 //exit;
 
+$update_matchupsfile = 0;
+
 $can_manage = 0;
 if (check_class($pref['eb_mod_class'])) $can_manage = 1;
 if (USERID==$event->getField('Owner')) $can_manage = 1;
@@ -158,6 +160,7 @@ else{
 			
 			$event->setField('Format', $_POST['eventformat']);
 			$_POST['eventmaxnumberplayers'] = 8;
+			$update_matchupsfile = 1;
 			//TODO: if format changes, rounds should change too
 		}
 
@@ -179,6 +182,7 @@ else{
 		if (preg_match("/^\d+$/", $new_eventmaxnumberplayers))
 		{
 			$event->setField('MaxNumberPlayers', $new_eventmaxnumberplayers);
+			$update_matchupsfile = 1;
 		}
 
 		/* Event Ranking Type */
@@ -308,6 +312,34 @@ else{
 			$new_eventend = 0;
 		}
 		$event->setField('EndDateTime', $new_eventend);
+		
+		if($update_matchupsfile!=0)
+		{
+			$path = 'include/brackets/';
+			$maxNbrPlayers = $event->getField('MaxNumberPlayers');
+			$format = $event->getField('Format');
+			
+			switch ($format)
+			{
+				case 'Double Elimination':
+				switch ($maxNbrPlayers)
+				{
+					case 4:
+					$file = $path.'de-4.txt';
+					break;
+					case 8:
+					default:
+					$file = $path.'de-8-1.txt';
+					break;
+				}
+				break;
+				case 'Single Elimination':
+				default:
+				$file = $path.'se-'.$maxNbrPlayers.'.txt';
+				break;
+			}
+			$event->setField('MatchupsFile', $file);
+		}
 
 		/* Event Rounds */
 		$matchups = $event->getMatchups();

@@ -37,7 +37,7 @@ document.getElementById('gamersform').submit();
 /* User */
 $req_user = $_GET['user'];
 
-if (!$req_user)
+if(!is_numeric($req_user))
 {
 	header("Location: ./events.php"); //FIXME: should be users.php which does not exist yet
 	exit();

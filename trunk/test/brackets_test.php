@@ -11,8 +11,8 @@ echo '</head>';
 echo '<body>';
 
 // Test bracket
-$depth=5;	// depths (number of rounds + 1)
-$type = 'de-4';
+$depth=7;	// depths (number of rounds + 1)
+$type = 'de-8-1';
 $serialize = TRUE;
 $display_bracket_array = TRUE;
 
@@ -31,7 +31,8 @@ $teams = array(
 3 => array('Name' => 'Player4'),
 4 => array('Name' => 'Player5'),
 5 => array('Name' => 'Player6'),
-6 => array('Name' => 'Player7')
+6 => array('Name' => 'Player7'),
+7 => array('Name' => 'Player8')
 );
 
 

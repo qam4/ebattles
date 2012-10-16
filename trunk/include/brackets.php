@@ -601,6 +601,88 @@ function generate_brackets($depth, $type, $serialize=true, $display_bracket_arra
 			)
 			);
 			break;
+			case 'de-8-1':
+			$matchups = array(
+			1=> array(
+			1 => array('', ''),
+			2 => array('', ''),
+			3 => array('', ''),
+			4 => array('', ''),
+			5 => array('', ''),
+			6 => array('', ''),
+			7 => array('', ''),
+			8 => array('', ''),
+			9 => array('', ''),
+			10 => array('', ''),
+			11 => array('', ''),
+			12 => array('', ''),
+			13 => array('', ''),
+			14 => array('L2,1', 'L2,2'),
+			15 => array('', ''),
+			16 => array('L2,3', 'L2,4'),
+			17 => array('', ''),
+			18 => array('', ''),
+			19 => array('', ''),
+			20 => array('', ''),
+			21 => array('', ''),
+			22 => array('', ''),
+			23 => array('', ''),
+			24 => array('', ''),
+			25 => array('', ''),
+			26 => array('', ''),
+			27 => array('', ''),
+			28 => array('', ''),
+			29 => array('', ''),
+			30 => array('', ''),
+			31 => array('', ''),
+			32 => array('', '')
+			),
+			2=> array(
+			1 => array('T1', 'T8'),
+			2 => array('T4', 'T5'),
+			3 => array('T2', 'T7'),
+			4 => array('T3', 'T6'),
+			5 => array('', ''),
+			6 => array('', ''),
+			7 => array('L3,2', 'W1,14'),
+			8 => array('L3,1', 'W1,16'),
+			9 => array('', ''),
+			10 => array('', ''),
+			11 => array('', ''),
+			12 => array('', ''),
+			13 => array('', ''),
+			14 => array('', ''),
+			15 => array('', ''),
+			16 => array('', '')
+			),
+			3=> array(
+			1 => array('W2,1', 'W2,2'),
+			2 => array('W2,3', 'W2,4'),
+			3 => array('', ''),
+			4 => array('W2,7', 'W2,8'),
+			5 => array('', ''),
+			6 => array('', ''),
+			7 => array('', ''),
+			8 => array('', '')
+			),
+			4=> array(
+			1 => array('W3,1', 'W3,2'),
+			2 => array('L4,1', 'W3,4'),
+			3 => array('', ''),
+			4 => array('', '')
+			),
+			5=> array(
+			1 => array('W4,1', 'W4,2'),
+			2 => array('', '')
+			),
+			6=> array(
+			1 => array('W5,1','P5,1')
+			),
+			7=> array(
+			1 => array('W6,1')
+			)
+			);
+			break;
 		}
 		$OUTPUT = serialize($matchups);
 		$fp = fopen($file,"w"); // open file with Write permission
