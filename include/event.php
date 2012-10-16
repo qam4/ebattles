@@ -53,6 +53,7 @@ class Event extends DatabaseTable
 		$this->setField('MaxDatesPerChallenge', eb_MAX_CHALLENGE_DATES);
 		$this->setField('MaxMapsPerMatch', eb_MAX_MAPS_PER_MATCH);
 		$this->setField('MaxNumberPlayers', '16');
+		$this->setField('MatchupsFile', '');
 	}
 
 	function resetPlayers()
@@ -2259,16 +2260,20 @@ class Event extends DatabaseTable
 	
 	function getMatchups()
 	{
-		$maxNbrPlayers = $this->fields['MaxNumberPlayers'];
-		switch ($this->getField('Format'))
+		$file = $this->getField('MatchupsFile');
+		if($file=='')
 		{
-			case 'Double Elimination':
-			$file = 'include/brackets/de-'.$maxNbrPlayers.'.txt';
-			break;
-			case 'Single Elimination':
-			default:
-			$file = 'include/brackets/se-'.$maxNbrPlayers.'.txt';
-			break;
+			$maxNbrPlayers = $this->getField('MaxNumberPlayers');
+			switch ($this->getField('Format'))
+			{
+				case 'Double Elimination':
+				$file = 'include/brackets/de-'.$maxNbrPlayers.'.txt';
+				break;
+				case 'Single Elimination':
+				default:
+				$file = 'include/brackets/se-'.$maxNbrPlayers.'.txt';
+				break;
+			}
 		}
 		$matchups = unserialize(implode('',file($file)));
 		return $matchups;

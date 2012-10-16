@@ -183,7 +183,8 @@ Seeded tinyint(3) default '0',
 Seeds text,
 Results text,
 Rounds text,
-MapPool text
+MapPool text,
+MatchupsFile text
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
@@ -744,6 +745,15 @@ if (versionsCompare($eb_version_string, "0.9.2") < 0)
 	"ALTER TABLE ".TBL_FACTIONS." MODIFY Icon varchar(255) NOT NULL default ''"
 	);
 }
+
+if (versionsCompare($eb_version_string, "0.9.4") < 0)
+{
+	// To revision 0.9.4
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_EVENTS." ADD MatchupsFile text"
+	);
+}
+
 
 /*
 echo "<br>Prefs upgrade:";
