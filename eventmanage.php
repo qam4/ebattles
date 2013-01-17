@@ -65,17 +65,33 @@ else
 		case "Team Ladder":
 		case "Clan Ladder":
 		$event_type = 'Ladder';
-		$seeding_enabled = false;
 		break;
 		case "One Player Tournament":
 		case "Clan Tournament":
 		$event_type = 'Tournament';
-		$seeding_enabled = true;
 		default:
 	}
+	if($event_type=='Tournament') $event->setField('FixturesEnable', 1);
+	if($event->getField('FixturesEnable') == TRUE)
+	{
+		$players_seeding_enabled = true;
+		$teams_seeding_enabled = true;
+	}
+	else
+	{
+		$players_seeding_enabled = false;
+		$teams_seeding_enabled = false;
+	}
+
+	if($event->getField('Type')=='Team Ladder')
+	{
+		$teams_seeding_enabled = false;
+	}
+	
 	if($event->getField('Status')=='active')
 	{
-		$seeding_enabled = false;
+		$players_seeding_enabled = false;
+		$teams_seeding_enabled = false;
 	}
 
 	$can_manage = 0;
@@ -92,6 +108,7 @@ else
 		$text .= '<ul>';
 		$text .= '<li><a href="#tabs-1">'.EB_EVENTM_L2.'</a></li>';
 		$text .= '<li><a href="#tabs-2">'.EB_EVENTM_L3.'</a></li>';
+		$text .= '<li><a href="#tabs-3">'.EB_EVENTM_L164.'</a></li>';
 		$text .= '<li><a href="#tabs-4">'.EB_EVENTM_L5.'</a></li>';
 		$text .= '<li><a href="#tabs-5">'.EB_EVENTM_L6.'</a></li>';
 		switch($event_type)
@@ -268,6 +285,194 @@ else
 		';  // tab-page "Event Settings"
 
 		//***************************************************************************************
+		// tab-page "Event Fixtures"
+		$text .= '<div id="tabs-3">';
+		$text .= '<form action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
+		$text .= '
+		<table class="eb_table" style="width:95%">
+		<tbody>
+		';
+		//<!-- Enable/Disable Fixtures -->
+		$disabled_str = '';
+		if(($event_type=='Tournament') ||
+		($event->getField('Status')=='active'))
+		{
+			$disabled_str = 'disabled="disabled"';
+		}
+		$text .= '
+		<tr>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L165.'</td>
+		<td class="eb_td">
+		<div>
+		';
+		$text .= '<input class="tbox" type="checkbox" name="eventfixturesenable" '.$disabled_str.' ';
+		if($event->getField('FixturesEnable') == TRUE)
+		{
+			$text .= ' checked="checked"/>';
+		}
+		else
+		{
+			$text .= '/>';
+		}
+		$text .= '
+		</div>
+		</td>
+		</tr>
+		';
+
+		//<!-- Max Number of Players -->
+		$text .= '
+		<tr>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L126.'</td>
+		<td class="eb_td">
+		<div>
+		';
+		
+		if($event->getField('FixturesEnable') == TRUE)
+		{
+			$disabled_str = ($event->getField('Status')!='active') ? '' : 'disabled="disabled"';
+			$text .= '<select class="tbox" name="eventmaxnumberplayers" '.$disabled_str.'>';
+			switch ($event->getField('Format'))
+			{
+				case 'Double Elimination':
+				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
+				$text .= '<option value="8" '.($event->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
+				break;
+				case 'Single Elimination':
+				$text .= '<option value="2" '.($event->getField('MaxNumberPlayers') == "2" ? 'selected="selected"' : '') .'>2</option>';
+				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
+				$text .= '<option value="8" '.($event->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
+				$text .= '<option value="16" '.($event->getField('MaxNumberPlayers') == "16" ? 'selected="selected"' : '') .'>16</option>';
+				$text .= '<option value="32" '.($event->getField('MaxNumberPlayers') == "32" ? 'selected="selected"' : '') .'>32</option>';
+				$text .= '<option value="64" '.($event->getField('MaxNumberPlayers') == "64" ? 'selected="selected"' : '') .'>64</option>';
+				$text .= '<option value="128" '.($event->getField('MaxNumberPlayers') == "128" ? 'selected="selected"' : '') .'>128</option>';
+				case 'Round-robin':
+				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
+				$text .= '<option value="8" '.($event->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
+				break;
+				case 'Double Round-robin':
+				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
+				$text .= '<option value="8" '.($event->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
+				break;
+				default:
+				break;
+			}
+
+			$text .= '</select>';
+		}
+		else
+		{
+			$text .= '<input class="tbox" type="text" name="eventmaxnumberplayers" size="2" value="'.$event->getField('MaxNumberPlayers').'"/>';
+		}
+	
+		$text .= '
+		</div>
+		</td>
+		</tr>';
+
+		if($event->getField('FixturesEnable') == TRUE)
+		{
+			switch($event_type)
+			{
+				//<!-- Format -->
+				case "Ladder":
+				$disabled_str = '';
+				if(($event->getField('Status')=='active')||
+				($event->getField('FixturesEnable')==FALSE))
+				{
+					$disabled_str = 'disabled="disabled"';
+				}
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L152.'</td>
+				<td class="eb_td"><select class="tbox" name="eventformat" '.$disabled_str.'>';
+				$text .= '<option value="Round-robin" '.($event->getField('Format') == "Round-robin" ? 'selected="selected"' : '').'>'.EB_EVENTM_L167.'</option>';
+				$text .= '<option value="Double Round-robin" '.($event->getField('Format') == "Double Round-robin" ? 'selected="selected"' : '').'>'.EB_EVENTM_L168.'</option>';
+				$text .= '</select>
+				</td>
+				</tr>
+				';
+				break;
+				case "Tournament":
+				$disabled_str = ($event->getField('Status')!='active') ? '' : 'disabled="disabled"';
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L152.'</td>
+				<td class="eb_td"><select class="tbox" name="eventformat" '.$disabled_str.'>';
+				$text .= '<option value="Single Elimination" '.($event->getField('Format') == "Single Elimination" ? 'selected="selected"' : '').'>'.EB_EVENTM_L153.'</option>';
+				$text .= '<option value="Double Elimination" '.($event->getField('Format') == "Double Elimination" ? 'selected="selected"' : '').'>'.EB_EVENTM_L158.'</option>';
+				$text .= '</select>
+				</td>
+				</tr>
+				';
+				break;
+			}
+
+			//<!-- Rounds -->
+			$matchups = $event->getMatchups();
+			$nbrRounds = count($matchups);
+
+			if($nbrRounds>0)
+			{
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.($nbrRounds - 1).' '.EB_EVENTM_L4.'</td>
+				<td class="eb_td">';
+
+				$rounds = unserialize($event->getFieldHTML('Rounds'));
+				if (!isset($rounds)) $rounds = array();
+				$text .= '<table class="table_left"><tbody>';
+				$text .= '<tr>';
+				$text .= '<th>'.EB_EVENTM_L144.'</th>';
+				$text .= '<th>'.EB_EVENTM_L145.'</th>';
+				$text .= '<th>'.EB_EVENTM_L146.'</th>';
+				$text .= '</tr>';
+				for ($round = 1; $round < $nbrRounds; $round++) {
+					if (!isset($rounds[$round])) {
+						$rounds[$round] = array();
+					}
+					if (!isset($rounds[$round]['Title'])) {
+						$rounds[$round]['Title'] = EB_EVENTM_L144.' '.$round;
+					}
+					if (!isset($rounds[$round]['BestOf'])) {
+						$rounds[$round]['BestOf'] = 1;
+					}
+
+					$text .= '<tr>';
+					$text .= '<td>'.EB_EVENTM_L144.' '.$round.'</td>';
+					$text .= '<td><input class="tbox" type="text" size="40" name="round_title_'.$round.'" value="'.$rounds[$round]['Title'].'"/></td>';
+					$text .= '<td><select class="tbox" name="round_bestof_'.$round.'">';
+					$text .= '<option value="1" '.($rounds[$round]['BestOf'] == "1" ? 'selected="selected"' : '') .'>1</option>';
+					$text .= '<option value="3" '.($rounds[$round]['BestOf'] == "3" ? 'selected="selected"' : '') .'>3</option>';
+					$text .= '<option value="5" '.($rounds[$round]['BestOf'] == "5" ? 'selected="selected"' : '') .'>5</option>';
+					$text .= '<option value="7" '.($rounds[$round]['BestOf'] == "7" ? 'selected="selected"' : '') .'>7</option>';
+					$text .= '</select></td>';
+					$text .= '</tr>';
+				}
+				$text .= '</tbody></table>';
+				$text .= '</td></tr>';
+				//var_dump($rounds);
+			}
+		}
+		// ------------------------------
+		$text .= '
+		</tbody>
+		</table>
+		';
+
+		//<!-- Save Button -->
+		$text .= '
+		<table><tr><td>
+		<div>
+		'.ebImageTextButton('eventfixturessave', 'disk.png', EB_EVENTM_L166).'
+		</div>
+		</td></tr></table>
+
+		</form>
+		</div>
+		';  // tab-page "Event Fixtures"
+
+		//***************************************************************************************
 		// tab-page "Event Players/Teams"
 		$text .= '<div id="tabs-4">';
 
@@ -340,6 +545,7 @@ else
 			default:
 		}
 
+		$eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
 		/* Add Team/Player */
 		switch($event->getField('Type'))
 		{
@@ -354,7 +560,7 @@ else
 					break;
 				}
 			}
-			if ($numTeams<$event->getField('MaxNumberPlayers'))
+			if(($eMaxNumberPlayers == 0) || ($numTeams < $eMaxNumberPlayers))
 			{
 				// Form to add a team's division to the event
 				$q = "SELECT ".TBL_DIVISIONS.".*, "
@@ -382,7 +588,7 @@ else
 				{
 					$did  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 					$dname  = mysql_result($result,$i, TBL_CLANS.".Name");
-					
+
 					$q_Teams = "SELECT COUNT(*) as nbrTeams"
 					." FROM ".TBL_TEAMS
 					." WHERE (".TBL_TEAMS.".Event = '$event_id')"
@@ -419,7 +625,7 @@ else
 					break;
 				}
 			}
-			if ($numPlayers<$event->getField('MaxNumberPlayers'))
+			if(($eMaxNumberPlayers == 0) || ($numPlayers < $eMaxNumberPlayers))
 			{
 				// Form to add a player to the event
 				$q = "SELECT ".TBL_GAMERS.".*, "
@@ -517,14 +723,13 @@ else
 			case "Clan Ladder":
 			case "Clan Tournament":
 			// Show list of teams here
-			switch($event_type)
+			if($teams_seeding_enabled == true)
 			{
-				case 'Ladder':
-				$order_by_str = " ORDER BY ".TBL_CLANS.".Name";
-				break;
-				case 'Tournament':
 				$order_by_str = " ORDER BY ".TBL_TEAMS.".Seed";
-				break;
+			}
+			else
+			{
+				$order_by_str = " ORDER BY ".TBL_CLANS.".Name";
 			}
 
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
@@ -547,7 +752,7 @@ else
 			}
 			else
 			{
-				if($seeding_enabled == true)
+				if($teams_seeding_enabled == true)
 				{
 					$text .= '<table class="table_left">';
 					$text .= '<tr>';
@@ -564,12 +769,12 @@ else
 					$text .= '</tr>';
 					$text .= '</table>';
 				}
-								
-				$teams_list_id = ($seeding_enabled == true) ? 'teams_list_sortable' : 'teams_list';
+
+				$teams_list_id = ($teams_seeding_enabled == true) ? 'teams_list_sortable' : 'teams_list';
 
 				$text .= '<table id="'.$teams_list_id.'" class="eb_table" style="width:95%"><thead>';
 				$text .= '<tr>';
-				if($event_type == 'Tournament')
+				if($teams_seeding_enabled == true)
 				{
 					// Column "Seed"
 					$text .= '<th class="eb_th2">'.EB_EVENTM_L154.'</th>';
@@ -597,7 +802,7 @@ else
 					}
 
 					$text .= '<tr id="team_'.$tid.'">';
-					if($event_type == 'Tournament')
+					if($teams_seeding_enabled == true)
 					{
 						// Column "Seed"
 						$text .= '<td class="eb_td">'.$tseed.'</td>';
@@ -620,14 +825,13 @@ else
 			case "One Player Tournament":
 			// Show list of players here
 			$orderby_array = $array["$orderby"];
-			switch($event_type)
+			if($players_seeding_enabled == true)
 			{
-				case 'Ladder':
-				$order_by_str = " ORDER BY $orderby_array[1] $sort";
-				break;
-				case 'Tournament':
 				$order_by_str = " ORDER BY ".TBL_PLAYERS.".Seed";
-				break;
+			}
+			else
+			{
+				$order_by_str = " ORDER BY $orderby_array[1] $sort";
 			}
 
 			$q_Players = "SELECT ".TBL_PLAYERS.".*, "
@@ -661,7 +865,7 @@ else
 				$text .= $pages->display_items_per_page();
 				$text .= '</span><br /><br />';
 				/* Display table contents */
-				if($seeding_enabled == true)
+				if($players_seeding_enabled == true)
 				{
 					$text .= '<table class="table_left">';
 					$text .= '<tr>';
@@ -678,14 +882,14 @@ else
 					$text .= '</tr>';
 					$text .= '</table>';
 				}
-				
-				$players_list_id = ($seeding_enabled == true) ? 'players_list_sortable' : 'players_list';
-				
+
+				$players_list_id = ($players_seeding_enabled == true) ? 'players_list_sortable' : 'players_list';
+
 				$text .= '<form id="playersform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
 				$text .= '<table id="'.$players_list_id.'" class="eb_table" style="width:95%"><thead>';
 				$text .= '<tr>';
 
-				if($event_type == 'Tournament')
+				if($players_seeding_enabled == true)
 				{
 					// Column "Seed"
 					$text .= '<th class="eb_th2">'.EB_EVENTM_L154.'</th>';
@@ -720,7 +924,7 @@ else
 					list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
 					$text .= '<tr id="player_'.$pid.'">';
-					if($event_type == 'Tournament')
+					if($players_seeding_enabled == true)
 					{
 						// Column "Seed"
 						$text .= '<td class="eb_td">'.$pseed.'</td>';

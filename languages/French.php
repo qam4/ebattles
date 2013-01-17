@@ -387,6 +387,13 @@ define('EB_EVENTM_L158', 'Élimination directe double');
 define('EB_EVENTM_L159', 'Ajouter un Groupe d’utilisateurs');
 define('EB_EVENTM_L160', 'Ajouter');
 define('EB_EVENTM_L161', 'Nombre maximum de joueurs atteint.');
+define('EB_EVENTM_L162', 'Le tournoi a commencé, vous ne pouvez pas ajouter d’autres joueurs.');
+define('EB_EVENTM_L163', 'Le tournoi a commencé, vous ne pouvez pas ajouter d’autres équipes.');
+define('EB_EVENTM_L164', 'Appariements');
+define('EB_EVENTM_L165', 'Activer/Désactiver les Appariements');
+define('EB_EVENTM_L166', 'Sauver les Paramètres des Appariements');
+define('EB_EVENTM_L167', 'Tournoi toutes rondes');
+define('EB_EVENTM_L168', 'Tournoi toutes rondes double');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');

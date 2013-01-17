@@ -61,21 +61,20 @@ if(isset($_POST['qrsubmitloss']))
 		{
 			case "One Player Ladder":
 			case "Team Ladder":
-			$match->match_players_update();
-			break;
 			case "One Player Tournament":
 			$match->match_players_update();
-			$event->brackets(true);
 			break;
 			case "Clan Ladder":
-			$match->match_teams_update();
-			break;
 			case "Clan Tournament":
 			$match->match_teams_update();
-			$event->brackets(true);
 			break;
 			default:
 		}
+		if($event->getField('FixturesEnable') == TRUE)
+		{
+			$event->brackets(true);
+		}
+
 	}
 	$event->setFieldDB('IsChanged', 1);
 
@@ -94,22 +93,20 @@ if (isset($_POST['approvematch']))
 	{
 		case "One Player Ladder":
 		case "Team Ladder":
-		$match->match_players_update();
-		break;
 		case "One Player Tournament":
 		$match->match_players_update();
-		$event->brackets(true);
 		break;
 		case "Clan Ladder":
-		$match->match_teams_update();
-		break;
 		case "Clan Tournament":
 		$match->match_teams_update();
-		$event->brackets(true);
 		break;
 		default:
 	}
-	$event->setFieldDB('IsChanged', 1);
+	if($event->getField('FixturesEnable') == TRUE)
+	{
+		$event->brackets(true);
+	}
+		$event->setFieldDB('IsChanged', 1);
 
 	header("Location: matchinfo.php?matchid=$match_id");
 	exit;

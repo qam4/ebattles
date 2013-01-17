@@ -98,19 +98,17 @@ function findRow($round, $matchup, $match)
 }
 /* Helper function to generate brackets
 */
-function generate_brackets($depth, $type, $serialize=true, $display_bracket_array=true)
+function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 {
-	/*
-	$depth=5;	// depths (number of rounds + 1)
-	$type = 'de-4';
-	$serialize = TRUE;
-	$display_bracket_array = FALSE;
-	*/
 
-	$nbrPlayers = pow(2,$depth);
-	if($display_bracket_array)
+	$generate_single_elimination = false;
+	if($generate_single_elimination)
 	{
-		echo "1=>array(<br>";
+		$rounds = 3; 
+		$depth = $rounds+1;
+		$nrb_players = pow(2, $rounds);
+		
+		echo "1 => array(<br>";
 		for($m=1;$m <= pow(2,$depth)/2;$m++)
 		{
 			echo "$m => array('T".seed($depth,$m*2-1)."', 'T".seed($depth,$m*2)."'),<br>";
@@ -118,7 +116,7 @@ function generate_brackets($depth, $type, $serialize=true, $display_bracket_arra
 		echo "),<br>";
 		for($l=0;$l < $depth-1;$l++)
 		{
-			echo ($l+2)."=>array(<br>";
+			echo ($l+2)." => array(<br>";
 			$n=1;
 			for($m=1;$m <= pow(2,$depth-$l-1)/2;$m++)
 			{
@@ -127,11 +125,10 @@ function generate_brackets($depth, $type, $serialize=true, $display_bracket_arra
 			}
 			echo "),<br>";
 		}
-		echo ($depth+1)."=>array(<br>";
+		echo ($depth+1)." => array(<br>";
 		echo "1 => array('W".($depth).",1'),<br>";
 		echo ")<br>";
 	};
-
 
 	$file = $type.'.txt';
 	if ($serialize){
@@ -683,13 +680,206 @@ function generate_brackets($depth, $type, $serialize=true, $display_bracket_arra
 			)
 			);
 			break;
+			case 'rr-4':
+			// http://home.comcast.net/~wporter211/realsite/chess_etc/rrpair.htm
+			$matchups = array(
+			1=> array(
+			1 => array('T1', 'T4'),
+			2 => array('T3', 'T2')
+			),
+			2=> array(
+			1 => array('T4', 'T3'),
+			2 => array('T2', 'T1')
+			),
+			3=> array(
+			1 => array('T2', 'T4'),
+			2 => array('T1', 'T3')
+			),
+			4=> array()
+			);
+			break;
+			case 'drr-4':
+			// http://home.comcast.net/~wporter211/realsite/chess_etc/rrpair.htm
+			$matchups = array(
+			1=> array(
+			1 => array('T1', 'T4'),
+			2 => array('T3', 'T2')
+			),
+			2=> array(
+			1 => array('T4', 'T3'),
+			2 => array('T2', 'T1')
+			),
+			3=> array(
+			1 => array('T2', 'T4'),
+			2 => array('T1', 'T3')
+			),
+			4=> array(
+			1 => array('T4', 'T1'),
+			2 => array('T2', 'T3')
+			),
+			5=> array(
+			1 => array('T3', 'T4'),
+			2 => array('T1', 'T2')
+			),
+			6=> array(
+			1 => array('T4', 'T2'),
+			2 => array('T3', 'T1')
+			),
+			7=> array()
+			);
+			break;
+			case 'rr-8':
+			// http://home.comcast.net/~wporter211/realsite/chess_etc/rrpair.htm
+			$matchups = array(
+			1=> array(
+			1 => array('T1', 'T8'),
+			2 => array('T7', 'T2'),
+			3 => array('T6', 'T3'),
+			4 => array('T5', 'T4')
+			),
+			2=> array(
+			1 => array('T8', 'T5'),
+			2 => array('T4', 'T6'),
+			3 => array('T3', 'T7'),
+			4 => array('T2', 'T1')
+			),
+			3=> array(
+			1 => array('T2', 'T8'),
+			2 => array('T1', 'T3'),
+			3 => array('T7', 'T4'),
+			4 => array('T6', 'T5')
+			),
+			4=> array(
+			1 => array('T8', 'T6'),
+			2 => array('T5', 'T7'),
+			3 => array('T4', 'T1'),
+			4 => array('T3', 'T2')
+			),
+			5=> array(
+			1 => array('T3', 'T8'),
+			2 => array('T2', 'T4'),
+			3 => array('T1', 'T5'),
+			4 => array('T7', 'T6')
+			),
+			6=> array(
+			1 => array('T8', 'T7'),
+			2 => array('T6', 'T1'),
+			3 => array('T5', 'T2'),
+			4 => array('T4', 'T3')
+			),
+			7=> array(
+			1 => array('T4', 'T8'),
+			2 => array('T3', 'T5'),
+			3 => array('T2', 'T6'),
+			4 => array('T1', 'T7')
+			),
+			8=> array()
+			);
+			break;
+			case 'drr-8':
+			// http://home.comcast.net/~wporter211/realsite/chess_etc/rrpair.htm
+			$matchups = array(
+			1=> array(
+			1 => array('T1', 'T8'),
+			2 => array('T7', 'T2'),
+			3 => array('T6', 'T3'),
+			4 => array('T5', 'T4')
+			),
+			2=> array(
+			1 => array('T8', 'T5'),
+			2 => array('T4', 'T6'),
+			3 => array('T3', 'T7'),
+			4 => array('T2', 'T1')
+			),
+			3=> array(
+			1 => array('T2', 'T8'),
+			2 => array('T1', 'T3'),
+			3 => array('T7', 'T4'),
+			4 => array('T6', 'T5')
+			),
+			4=> array(
+			1 => array('T8', 'T6'),
+			2 => array('T5', 'T7'),
+			3 => array('T4', 'T1'),
+			4 => array('T3', 'T2')
+			),
+			5=> array(
+			1 => array('T3', 'T8'),
+			2 => array('T2', 'T4'),
+			3 => array('T1', 'T5'),
+			4 => array('T7', 'T6')
+			),
+			6=> array(
+			1 => array('T8', 'T7'),
+			2 => array('T6', 'T1'),
+			3 => array('T5', 'T2'),
+			4 => array('T4', 'T3')
+			),
+			7=> array(
+			1 => array('T4', 'T8'),
+			2 => array('T3', 'T5'),
+			3 => array('T2', 'T6'),
+			4 => array('T1', 'T7')
+			),
+			8=> array(
+			1 => array('T1', 'T8'),
+			2 => array('T7', 'T2'),
+			3 => array('T6', 'T3'),
+			4 => array('T5', 'T4')
+			),
+			9=> array(
+			1 => array('T5', 'T8'),
+			2 => array('T6', 'T4'),
+			3 => array('T7', 'T3'),
+			4 => array('T1', 'T2')
+			),                
+			10=> array(       
+			1 => array('T8', 'T2'),
+			2 => array('T3', 'T1'),
+			3 => array('T4', 'T7'),
+			4 => array('T5', 'T6')
+			),                
+			11=> array(       
+			1 => array('T6', 'T8'),
+			2 => array('T7', 'T5'),
+			3 => array('T1', 'T4'),
+			4 => array('T2', 'T3')
+			),                
+			12=> array(       
+			1 => array('T8', 'T3'),
+			2 => array('T4', 'T2'),
+			3 => array('T5', 'T1'),
+			4 => array('T6', 'T7')
+			),                
+			13=> array(       
+			1 => array('T7', 'T8'),
+			2 => array('T1', 'T6'),
+			3 => array('T2', 'T5'),
+			4 => array('T3', 'T4')
+			),                
+			14=> array(       
+			1 => array('T8', 'T4'),
+			2 => array('T5', 'T3'),
+			3 => array('T6', 'T2'),
+			4 => array('T7', 'T1')
+			),
+			15=> array()
+			);
+			break;
+			}
+		
+		if($display_bracket_array)
+		{
+			var_dump($matchups);
 		}
+		
+		echo "Serializing bracket to $file...<br>";
 		$OUTPUT = serialize($matchups);
 		$fp = fopen($file,"w"); // open file with Write permission
 
 		if ($fp == FALSE) {
 			// handle error
-			$error .= "Error!";
+			$error .= "Error!<br>";
 			echo $error;
 			exit();
 		}

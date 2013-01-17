@@ -112,7 +112,10 @@ switch($event->getField('Type'))
 
 	$result = $sql->db_Query($q);
 	$num_rows = mysql_numrows($result);
-
+	if (!$result) {
+		die('Invalid query: ' . mysql_error());
+	}
+	
 	$players_id[0] = EB_MATCHR_L1;
 	$players_uid[0] = EB_MATCHR_L1;
 	$players_name[0] = EB_MATCHR_L1;
@@ -810,22 +813,19 @@ if (isset($_POST['submit']))
 				{
 					case "One Player Ladder":
 					case "Team Ladder":
-					$match->match_players_update();
-					break;
 					case "One Player Tournament":
 					$match->match_players_update();
-					$event->brackets(true);
 					break;
 					case "Clan Ladder":
-					$match->match_teams_update();
-					break;
 					case "Clan Tournament":
 					$match->match_teams_update();
-					$event->brackets(true);
 					break;
 					default:
 				}
-
+				if($event->getField('FixturesEnable') == TRUE)
+				{
+					$event->brackets(true);
+				}
 				$event->setFieldDB('IsChanged', 1);
 			}
 			header("Location: matchinfo.php?matchid=$match_id");

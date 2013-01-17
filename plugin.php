@@ -184,7 +184,8 @@ Seeds text,
 Results text,
 Rounds text,
 MapPool text,
-MatchupsFile text
+MatchupsFile text,
+FixturesEnable tinyint(1) DEFAULT '0'
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
@@ -754,6 +755,13 @@ if (versionsCompare($eb_version_string, "0.9.4") < 0)
 	);
 }
 
+if (versionsCompare($eb_version_string, "0.9.5") < 0)
+{
+	// To revision 0.9.5
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_EVENTS." ADD FixturesEnable tinyint(1) DEFAULT '0'"
+	);
+}
 
 /*
 echo "<br>Prefs upgrade:";

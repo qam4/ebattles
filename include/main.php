@@ -194,7 +194,7 @@ function getRanking($arr, $keys)
             $sort .= '$sort_col['.$i.'], SORT_ASC, SORT_NUMERIC';
             $i++;
         }
-        $sort .= ', &$out';
+        $sort .= ', $out';
 
         $sort='array_multisort('.$sort.');';
         eval($sort);

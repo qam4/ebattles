@@ -16,16 +16,16 @@ if ($eneedupdate == 1)
 
 	switch($event->getField('Type'))
 	{
-		case "One Player Ladder":
+	case "One Player Ladder":
 		updateStats($event_id, $time, TRUE);
 		break;
-		case "Team Ladder":
+	case "Team Ladder":
 		updateStats($event_id, $time, TRUE);
 		updateTeamStats($event_id, $time, TRUE);
-		case "Clan Ladder":
+	case "Clan Ladder":
 		updateTeamStats($event_id, $time, TRUE);
 		break;
-		default:
+	default:
 	}
 }
 
@@ -33,16 +33,18 @@ $can_signup = 0;
 $eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
 switch($event->getField('Type'))
 {
-	case "One Player Ladder":
+case "One Player Ladder":
+case "One Player Tournament":
 	if(($eMaxNumberPlayers == 0)||($nbrplayers < $eMaxNumberPlayers))	$can_signup = 1;
 	break;
-	case "Team Ladder":
+case "Team Ladder":
 	if(($eMaxNumberPlayers == 0)||($nbrplayers < $eMaxNumberPlayers))	$can_signup = 1;
 	break;
-	case "Clan Ladder":
+case "Clan Ladder":
+case "Clan Tournament":
 	if(($eMaxNumberPlayers == 0)||($nbrteams < $eMaxNumberPlayers))	$can_signup = 1;
 	break;
-	default:
+default:
 }
 
 $text .= '<div id="tabs">';
@@ -168,8 +170,9 @@ if ($can_signup==1)
 
 			switch($event->getField('Type'))
 			{
-				case "Team Ladder":
-				case "Clan Ladder":
+			case "Team Ladder":
+			case "Clan Ladder":
+			case "Clan Tournament":
 				// Is the user a member of a division for that game?
 				$q_2 = "SELECT ".TBL_CLANS.".*, "
 				.TBL_MEMBERS.".*, "
@@ -303,7 +306,8 @@ if ($can_signup==1)
 					}
 				}
 				break;
-				case "One Player Ladder":
+			case "One Player Tournament":
+			case "One Player Ladder":
 				// Find gamer for that user
 				$q = "SELECT ".TBL_GAMERS.".*"
 				." FROM ".TBL_GAMERS
@@ -386,12 +390,12 @@ if ($can_signup==1)
 					}
 				}
 				break;
-				default:
+			default:
 			}
 		}
 		else
 		{
-			$text .= EB_EVENT_L83;
+			$text .= '<tr><td>'.EB_EVENT_L83.'</td></tr>';
 		}
 	}
 	else
@@ -557,8 +561,9 @@ if(mysql_numrows($result) == 1)
 
 switch($event->getField('Type'))
 {
-	case "One Player Ladder":
-	case "Team Ladder":
+case "One Player Ladder":
+case "Team Ladder":
+case "One Player Tournament":
 	if (($nbrplayersNotBanned < 2)||($pbanned))
 	{
 		$can_report = 0;
@@ -569,7 +574,8 @@ switch($event->getField('Type'))
 	//sc2:
 	$can_submit_replay = 0;
 	break;
-	case "Clan Ladder":
+case "Clan Ladder":
+case "Clan Tournament":
 	if ($nbrteams < 2)
 	{
 		$can_report = 0;
@@ -580,7 +586,15 @@ switch($event->getField('Type'))
 	//sc2:
 	$can_submit_replay = 0;
 	break;
-	default:
+default:
+}
+
+if($event->getField('FixturesEnable') == TRUE)
+{
+	$can_report = 0;
+	$can_schedule = 0;
+	$can_report_quickloss = 0;
+	$can_challenge = 0;
 }
 
 // check if only 1 player with this userid
@@ -966,31 +980,77 @@ if ($numMatches>$rowsPerPage)
 $text .= '</b></p>';
 $text .= '<br />';
 
-$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
-." FROM ".TBL_MATCHS.", "
-.TBL_SCORES.", "
-.TBL_USERS
-." WHERE (".TBL_MATCHS.".Event = '$event_id')"
-." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-." AND (".TBL_MATCHS.".Status = 'active')"
-." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
-." LIMIT 0, $rowsPerPage";
-$result = $sql->db_Query($q);
-$numMatches = mysql_numrows($result);
-
-if ($numMatches>0)
+if($event->getField('FixturesEnable') == FALSE)
 {
-	/* Display table contents */
-	$text .= '<table class="table_left">';
-	for($i=0; $i < $numMatches; $i++)
-	{
-		$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-		$match = new Match($match_id);
-		$text .= $match->displayMatchInfo(eb_MATCH_NOEVENTINFO);
-	}
-	$text .= '</table>';
-}
+	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES.", "
+	.TBL_USERS
+	." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+	." AND (".TBL_MATCHS.".Status = 'active')"
+	." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
+	." LIMIT 0, $rowsPerPage";
+	$result = $sql->db_Query($q);
+	$numMatches = mysql_numrows($result);
 
+	if ($numMatches>0)
+	{
+		/* Display table contents */
+		$text .= '<table class="table_left">';
+		for($i=0; $i < $numMatches; $i++)
+		{
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo(eb_MATCH_NOEVENTINFO);
+		}
+		$text .= '</table>';
+	}
+}
+else
+{
+	$matchups = $event->getMatchups();
+	$results = unserialize($event->getFieldHTML('Results'));
+	$rounds = unserialize($event->getFieldHTML('Rounds'));
+	$nbrRounds = count($matchups);
+	for ($round = $nbrRounds; $round > 0; $round--){
+		$nbrMatchups = count($matchups[$round]);
+		$found_match = 0;
+		for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+			$nbrMatchs = count($results[$round][$matchup]['matchs']);
+			for ($match = 0; $match < $nbrMatchs; $match++) {
+				$current_match = $results[$round][$matchup]['matchs'][$match];
+				$match_id  = $current_match['match_id'];
+				$matchObj = new Match($match_id);
+				if($matchObj->getField('Status') == 'active')
+				{
+					$found_match = 1;
+				}
+			}
+		}
+		
+		if ($found_match == 1)
+		{
+			$text .= '<b>'.$rounds[$round]['Title'].'</b>';
+			$text .= ' ('.EB_EVENTM_L146.' '.$rounds[$round]['BestOf'].')';
+			$text .= '<table class="table_left">';
+			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+				//$text .= 'Matchup '.$matchup.'<br>';
+				$nbrMatchs = count($results[$round][$matchup]['matchs']);
+				for ($match = $nbrMatchs - 1; $match >= 0; $match--) {
+					$current_match = $results[$round][$matchup]['matchs'][$match];
+					$match_id  = $current_match['match_id'];
+					$matchObj = new Match($match_id);
+					if($matchObj->getField('Status') == 'active')
+					{
+						$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO);
+					}
+				}
+			}
+			$text .= '</table>';
+		}
+	}
+}
 $text .= '<br />';
 
 /* Display Pending Matches */
@@ -1042,16 +1102,61 @@ if ($numMatches>0)
 	$text .= '</b></p>';
 	$text .= '<br />';
 
-	/* Display table contents */
-	$text .= '<table class="table_left">';
-	for($i=0; $i < $numMatches; $i++)
+	if($event->getField('FixturesEnable') == FALSE)
 	{
-		$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
-		$match = new Match($match_id);
-		$text .= $match->displayMatchInfo(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
+		/* Display table contents */
+		$text .= '<table class="table_left">';
+		for($i=0; $i < $numMatches; $i++)
+		{
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
+		}
+		$text .= '</table>';
 	}
-	$text .= '</table>';
+	else
+	{
+		for ($round = 0; $round < $nbrRounds; $round++){
+			$nbrMatchups = count($matchups[$round]);
+			$found_match = 0;
+			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+				$nbrMatchs = count($results[$round][$matchup]['matchs']);
+				for ($match = 0; $match < $nbrMatchs; $match++) {
+					$current_match = $results[$round][$matchup]['matchs'][$match];
+					$match_id  = $current_match['match_id'];
+					$matchObj = new Match($match_id);
+					if($matchObj->getField('Status') == 'scheduled')
+					{
+						$found_match = 1;
+					}
+				}
+			}
+			
+			if ($found_match == 1)
+			{
+				$text .= '<b>'.$rounds[$round]['Title'].'</b>';
+				$text .= ' ('.EB_EVENTM_L146.' '.$rounds[$round]['BestOf'].')';
+				$text .= '<table class="table_left">';
+				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+					//$text .= 'Matchup '.$matchup.'<br>';
+					$nbrMatchs = count($results[$round][$matchup]['matchs']);
+					for ($match = 0; $match < $nbrMatchs; $match++) {
+						$current_match = $results[$round][$matchup]['matchs'][$match];
+						$match_id  = $current_match['match_id'];
+						$matchObj = new Match($match_id);
+						if($matchObj->getField('Status') == 'scheduled')
+						{
+							$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
+						}
+					}
+				}
+				$text .= '</table>';
+			}
+		}	
+	}
 }
+
+
 
 /* Display Unconfirmed Challenges */
 $text .= '<br />';
@@ -1126,39 +1231,39 @@ if ($numAwards>0)
 		$date = date("d M Y, h:i A",$aTime_local);
 
 		switch ($aType) {
-			case 'PlayerTookFirstPlace':
+		case 'PlayerTookFirstPlace':
 			$award = EB_AWARD_L2;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/> ';
 			break;
-			case 'PlayerInTopTen':
+		case 'PlayerInTopTen':
 			$award = EB_AWARD_L4;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/> ';
 			break;
-			case 'PlayerStreak5':
+		case 'PlayerStreak5':
 			$award = EB_AWARD_L6;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/> ';
 			break;
-			case 'PlayerStreak10':
+		case 'PlayerStreak10':
 			$award = EB_AWARD_L8;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/> ';
 			break;
-			case 'PlayerStreak25':
+		case 'PlayerStreak25':
 			$award = EB_AWARD_L10;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
 			break;
-			case 'PlayerWonTournament':
+		case 'PlayerWonTournament':
 			$award = EB_AWARD_L12;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
 			break;
-			case 'PlayerRankFirst':
+		case 'PlayerRankFirst':
 			$award = EB_AWARD_L14;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_1.png").' alt="'.EB_AWARD_L15.'" title="'.EB_AWARD_L15.'"/> ';
 			break;
-			case 'PlayerRankSecond':
+		case 'PlayerRankSecond':
 			$award = EB_AWARD_L16;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_1.png").' alt="'.EB_AWARD_L17.'" title="'.EB_AWARD_L17.'"/> ';
 			break;
-			case 'PlayerRankThird':
+		case 'PlayerRankThird':
 			$award = EB_AWARD_L18;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_1.png").' alt="'.EB_AWARD_L19.'" title="'.EB_AWARD_L19.'"/> ';
 			break;
@@ -1216,23 +1321,23 @@ if ($numAwards>0)
 		list($tclan, $tclantag, $tclanid) = getClanInfo($aClanTeam);
 
 		switch ($aType) {
-			case 'TeamTookFirstPlace':
+		case 'TeamTookFirstPlace':
 			$award = EB_AWARD_L2;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/> ';
 			break;
-			case 'TeamInTopTen':
+		case 'TeamInTopTen':
 			$award = EB_AWARD_L4;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/> ';
 			break;
-			case 'TeamStreak5':
+		case 'TeamStreak5':
 			$award = EB_AWARD_L6;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/> ';
 			break;
-			case 'TeamStreak10':
+		case 'TeamStreak10':
 			$award = EB_AWARD_L8;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/> ';
 			break;
-			case 'TeamStreak25':
+		case 'TeamStreak25':
 			$award = EB_AWARD_L10;
 			$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
 			break;

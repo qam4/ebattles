@@ -89,6 +89,7 @@ vertical-align: top;
 .buttons a, .buttons button{
 	font:inherit;
     font-size:100%;
+	white-space: nowrap;
 }
 
 /* POSITIVE */
