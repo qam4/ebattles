@@ -15,15 +15,17 @@ $can_signup = 0;
 $eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
 switch($event->getField('Type'))
 {
-	case "One Player Tournament":
+case "One Player Ladder":
+case "One Player Tournament":
 	if(($eMaxNumberPlayers == 0)||($nbrplayers < $eMaxNumberPlayers)) $can_signup = 1;
 	$tab_title = EB_EVENT_L77;
 	break;
-	case "Clan Tournament":
+case "Clan Ladder":
+case "Clan Tournament":
 	if(($eMaxNumberPlayers == 0)||($nbrteams < $eMaxNumberPlayers))	$can_signup = 1;
 	$tab_title = EB_EVENT_L84;
 	break;
-	default:
+default:
 }
 
 $text .= '<div id="tabs">';
@@ -142,7 +144,9 @@ if ($can_signup==1)
 
 			switch($event->getField('Type'))
 			{
-				case "Clan Tournament":
+			case "Team Ladder":
+			case "Clan Ladder":
+			case "Clan Tournament":
 				// Is the user a member of a division for that game?
 				$q_2 = "SELECT ".TBL_CLANS.".*, "
 				.TBL_MEMBERS.".*, "
@@ -278,7 +282,8 @@ if ($can_signup==1)
 					}
 				}
 				break;
-				case "One Player Tournament":
+			case "One Player Tournament":
+			case "One Player Ladder":
 				// Find gamer for that user
 				$q = "SELECT ".TBL_GAMERS.".*"
 				." FROM ".TBL_GAMERS
@@ -362,7 +367,7 @@ if ($can_signup==1)
 					}
 				}
 				break;
-				default:
+			default:
 			}
 		}
 		else
@@ -512,31 +517,12 @@ if(mysql_numrows($result) == 1)
 	}
 }
 
-switch($event->getField('Type'))
+if($event->getField('FixturesEnable') == TRUE)
 {
-	case "One Player Tournament":
-	if (($nbrplayersNotBanned < 2)||($pbanned))
-	{
-	}
 	$can_report = 0;
-	$can_report_quickloss = 0;
 	$can_schedule = 0;
-	$can_challenge = 0;
-	//sc2:
-	$can_submit_replay = 0;
-	break;
-	case "Clan Tournament":
-	if ($nbrteams < 2)
-	{
-	}
-	$can_report = 0;
 	$can_report_quickloss = 0;
-	$can_schedule = 0;
 	$can_challenge = 0;
-	//sc2:
-	$can_submit_replay = 0;
-	break;
-	default:
 }
 
 // check if only 1 player with this userid
@@ -677,44 +663,75 @@ $text .= $numMatches.'&nbsp;'.EB_EVENT_L59;
 $text .= '</b></p>';
 $text .= '<br />';
 
-$matchups = $event->getMatchups();
-$results = unserialize($event->getFieldHTML('Results'));
-$rounds = unserialize($event->getFieldHTML('Rounds'));
-$nbrRounds = count($matchups);
-for ($round = $nbrRounds; $round > 0; $round--){
-	$nbrMatchups = count($matchups[$round]);
-	$found_match = 0;
-	for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
-		$nbrMatchs = count($results[$round][$matchup]['matchs']);
-		for ($match = 0; $match < $nbrMatchs; $match++) {
-			$current_match = $results[$round][$matchup]['matchs'][$match];
-			$match_id  = $current_match['match_id'];
-			$matchObj = new Match($match_id);
-			if($matchObj->getField('Status') == 'active')
-			{
-				$found_match = 1;
-			}
-		}
-	}
-	
-	if ($found_match == 1)
+if($event->getField('FixturesEnable') == FALSE)
+{
+	$q = "SELECT DISTINCT ".TBL_MATCHS.".*"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES.", "
+	.TBL_USERS
+	." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+	." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+	." AND (".TBL_MATCHS.".Status = 'active')"
+	." ORDER BY ".TBL_MATCHS.".TimeReported DESC"
+	." LIMIT 0, $rowsPerPage";
+	$result = $sql->db_Query($q);
+	$numMatches = mysql_numrows($result);
+
+	if ($numMatches>0)
 	{
-		$text .= '<b>'.$rounds[$round]['Title'].'</b>';
+		/* Display table contents */
 		$text .= '<table class="table_left">';
+		for($i=0; $i < $numMatches; $i++)
+		{
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo(eb_MATCH_NOEVENTINFO);
+		}
+		$text .= '</table>';
+	}
+}
+else
+{
+	$matchups = $event->getMatchups();
+	$results = unserialize($event->getFieldHTML('Results'));
+	$rounds = unserialize($event->getFieldHTML('Rounds'));
+	$nbrRounds = count($matchups);
+	for ($round = $nbrRounds; $round > 0; $round--){
+		$nbrMatchups = count($matchups[$round]);
+		$found_match = 0;
 		for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
-			//$text .= 'Matchup '.$matchup.'<br>';
 			$nbrMatchs = count($results[$round][$matchup]['matchs']);
-			for ($match = $nbrMatchs - 1; $match >= 0; $match--) {
+			for ($match = 0; $match < $nbrMatchs; $match++) {
 				$current_match = $results[$round][$matchup]['matchs'][$match];
 				$match_id  = $current_match['match_id'];
 				$matchObj = new Match($match_id);
 				if($matchObj->getField('Status') == 'active')
 				{
-					$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO);
+					$found_match = 1;
 				}
 			}
 		}
-		$text .= '</table>';
+		
+		if ($found_match == 1)
+		{
+			$text .= '<b>'.$rounds[$round]['Title'].'</b>';
+			$text .= ' ('.EB_EVENTM_L146.' '.$rounds[$round]['BestOf'].')';
+			$text .= '<table class="table_left">';
+			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+				//$text .= 'Matchup '.$matchup.'<br>';
+				$nbrMatchs = count($results[$round][$matchup]['matchs']);
+				for ($match = $nbrMatchs - 1; $match >= 0; $match--) {
+					$current_match = $results[$round][$matchup]['matchs'][$match];
+					$match_id  = $current_match['match_id'];
+					$matchObj = new Match($match_id);
+					if($matchObj->getField('Status') == 'active')
+					{
+						$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO);
+					}
+				}
+			}
+			$text .= '</table>';
+		}
 	}
 }
 $text .= '<br />';
@@ -768,28 +785,24 @@ if ($numMatches>0)
 	$text .= '</b></p>';
 	$text .= '<br />';
 
-	for ($round = 0; $round < $nbrRounds; $round++){
-		$nbrMatchups = count($matchups[$round]);
-		$found_match = 0;
-		for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
-			$nbrMatchs = count($results[$round][$matchup]['matchs']);
-			for ($match = 0; $match < $nbrMatchs; $match++) {
-				$current_match = $results[$round][$matchup]['matchs'][$match];
-				$match_id  = $current_match['match_id'];
-				$matchObj = new Match($match_id);
-				if($matchObj->getField('Status') == 'scheduled')
-				{
-					$found_match = 1;
-				}
-			}
-		}
-		
-		if ($found_match == 1)
+	if($event->getField('FixturesEnable') == FALSE)
+	{
+		/* Display table contents */
+		$text .= '<table class="table_left">';
+		for($i=0; $i < $numMatches; $i++)
 		{
-			$text .= '<b>'.$rounds[$round]['Title'].'</b>';
-			$text .= '<table class="table_left">';
+			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$text .= $match->displayMatchInfo(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
+		}
+		$text .= '</table>';
+	}
+	else
+	{
+		for ($round = 0; $round < $nbrRounds; $round++){
+			$nbrMatchups = count($matchups[$round]);
+			$found_match = 0;
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
-				//$text .= 'Matchup '.$matchup.'<br>';
 				$nbrMatchs = count($results[$round][$matchup]['matchs']);
 				for ($match = 0; $match < $nbrMatchs; $match++) {
 					$current_match = $results[$round][$matchup]['matchs'][$match];
@@ -797,21 +810,40 @@ if ($numMatches>0)
 					$matchObj = new Match($match_id);
 					if($matchObj->getField('Status') == 'scheduled')
 					{
-						$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
+						$found_match = 1;
 					}
 				}
 			}
-			$text .= '</table>';
-		}
-	}	
+			
+			if ($found_match == 1)
+			{
+				$text .= '<b>'.$rounds[$round]['Title'].'</b>';
+				$text .= ' ('.EB_EVENTM_L146.' '.$rounds[$round]['BestOf'].')';
+				$text .= '<table class="table_left">';
+				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+					//$text .= 'Matchup '.$matchup.'<br>';
+					$nbrMatchs = count($results[$round][$matchup]['matchs']);
+					for ($match = 0; $match < $nbrMatchs; $match++) {
+						$current_match = $results[$round][$matchup]['matchs'][$match];
+						$match_id  = $current_match['match_id'];
+						$matchObj = new Match($match_id);
+						if($matchObj->getField('Status') == 'scheduled')
+						{
+							$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
+						}
+					}
+				}
+				$text .= '</table>';
+			}
+		}	
+	}
 }
-
 $text .= '</div>';    // tabs-4 "Matches"
 
 $text .= '<div id="tabs-5">';
 switch($event->getField('Type'))
 {
-	case "One Player Tournament":
+case "One Player Tournament":
 	// Show list of players
 	$q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
 	.TBL_GAMERS.".*, "
@@ -857,7 +889,7 @@ switch($event->getField('Type'))
 		$text .= '</tbody></table>';
 	}
 	break;
-	case "Clan Tournament":
+case "Clan Tournament":
 	// Show list of teams
 	$q_Teams = "SELECT ".TBL_CLANS.".*, "
 	.TBL_TEAMS.".*, "
@@ -901,7 +933,7 @@ switch($event->getField('Type'))
 		$text .= '</tbody></table>';
 	}
 	break;
-	default:
+default:
 }
 
 

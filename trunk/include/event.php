@@ -685,26 +685,6 @@ class Event extends DatabaseTable
 
 		if ($create==false)
 		{
-			switch($event_type)
-			{
-				case "Ladder":
-				break;
-				case "Tournament":
-				//<!-- Format -->
-				$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
-				$text .= '
-				<tr>
-				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L152.'</td>
-				<td class="eb_td"><select class="tbox" name="eventformat" '.$disabled_str.'>';
-				$text .= '<option value="Single Elimination" '.($this->getField('Format') == "Single Elimination" ? 'selected="selected"' : '').'>'.EB_EVENTM_L153.'</option>';
-				$text .= '<option value="Double Elimination" '.($this->getField('Format') == "Double Elimination" ? 'selected="selected"' : '').'>'.EB_EVENTM_L158.'</option>';
-				$text .= '</select>
-				</td>
-				</tr>
-				';
-				break;
-			}
-
 			//<!-- Match Type -->
 			//$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
 			$disabled_str = '';
@@ -730,46 +710,6 @@ class Event extends DatabaseTable
 
 		if ($create==false)
 		{
-			//<!-- Max Number of Players -->
-			$text .= '
-			<tr>
-			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L126.'</td>
-			<td class="eb_td">
-			<div>
-			';
-			switch($event_type)
-			{
-				case "Ladder":
-				$text .= '<input class="tbox" type="text" name="eventmaxnumberplayers" size="2" value="'.$this->getField('MaxNumberPlayers').'"/>';
-				break;
-				case "Tournament":
-				$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
-				$text .= '<select class="tbox" name="eventmaxnumberplayers" '.$disabled_str.'>';
-				switch ($this->getField('Format'))
-				{
-					case 'Double Elimination':
-					$text .= '<option value="4" '.($this->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
-					$text .= '<option value="8" '.($this->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
-					break;
-					case 'Single Elimination':
-					$text .= '<option value="2" '.($this->getField('MaxNumberPlayers') == "2" ? 'selected="selected"' : '') .'>2</option>';
-					$text .= '<option value="4" '.($this->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
-					$text .= '<option value="8" '.($this->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
-					$text .= '<option value="16" '.($this->getField('MaxNumberPlayers') == "16" ? 'selected="selected"' : '') .'>16</option>';
-					$text .= '<option value="32" '.($this->getField('MaxNumberPlayers') == "32" ? 'selected="selected"' : '') .'>32</option>';
-					$text .= '<option value="64" '.($this->getField('MaxNumberPlayers') == "64" ? 'selected="selected"' : '') .'>64</option>';
-					$text .= '<option value="128" '.($this->getField('MaxNumberPlayers') == "128" ? 'selected="selected"' : '') .'>128</option>';
-					default:
-					break;
-				}
-	
-				$text .= '</select>';
-			}
-			$text .= '
-			</div>
-			</td>
-			</tr>';
-
 			//<!-- Rating Type -->
 			switch($event_type)
 			{
@@ -1087,52 +1027,9 @@ class Event extends DatabaseTable
 
 		if ($create==false)
 		{
-			//<!-- Rounds -->
 			switch($event_type)
 			{
 				case "Tournament":
-				$matchups = $this->getMatchups();
-				$nbrRounds = count($matchups);
-
-				$text .= '
-				<tr>
-				<td class="eb_td eb_tdc1 eb_w40">'.($nbrRounds - 1).' '.EB_EVENTM_L4.'</td>
-				<td class="eb_td">';
-
-				$rounds = unserialize($this->getFieldHTML('Rounds'));
-				if (!isset($rounds)) $rounds = array();
-				$text .= '<table class="table_left"><tbody>';
-				$text .= '<tr>';
-				$text .= '<th>'.EB_EVENTM_L144.'</th>';
-				$text .= '<th>'.EB_EVENTM_L145.'</th>';
-				$text .= '<th>'.EB_EVENTM_L146.'</th>';
-				$text .= '</tr>';
-				for ($round = 1; $round < $nbrRounds; $round++) {
-					if (!isset($rounds[$round])) {
-						$rounds[$round] = array();
-					}
-					if (!isset($rounds[$round]['Title'])) {
-						$rounds[$round]['Title'] = EB_EVENTM_L144.' '.$round;
-					}
-					if (!isset($rounds[$round]['BestOf'])) {
-						$rounds[$round]['BestOf'] = 1;
-					}
-
-					$text .= '<tr>';
-					$text .= '<td>'.EB_EVENTM_L144.' '.$round.'</td>';
-					$text .= '<td><input class="tbox" type="text" size="40" name="round_title_'.$round.'" value="'.$rounds[$round]['Title'].'"/></td>';
-					$text .= '<td><select class="tbox" name="round_bestof_'.$round.'">';
-					$text .= '<option value="1" '.($rounds[$round]['BestOf'] == "1" ? 'selected="selected"' : '') .'>1</option>';
-					$text .= '<option value="3" '.($rounds[$round]['BestOf'] == "3" ? 'selected="selected"' : '') .'>3</option>';
-					$text .= '<option value="5" '.($rounds[$round]['BestOf'] == "5" ? 'selected="selected"' : '') .'>5</option>';
-					$text .= '<option value="7" '.($rounds[$round]['BestOf'] == "7" ? 'selected="selected"' : '') .'>7</option>';
-					$text .= '</select></td>';
-					$text .= '</tr>';
-				}
-				$text .= '</tbody></table>';
-				$text .= '</td></tr>';
-				//var_dump($rounds);
-
 				//<!-- Map Pool -->
 				if ($this->getID() != 0)
 				{
@@ -1606,6 +1503,8 @@ class Event extends DatabaseTable
 										// Get the scores for this match
 										switch($type)
 										{
+											case "One Player Ladder":
+											case "Team Ladder":
 											case "One Player Tournament":
 											$q = "SELECT ".TBL_MATCHS.".*, "
 											.TBL_SCORES.".*, "
@@ -1623,6 +1522,7 @@ class Event extends DatabaseTable
 											." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 											." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 											break;
+											case "Clan Ladder":
 											case "Clan Tournament":
 											$q = "SELECT ".TBL_MATCHS.".*, "
 											.TBL_SCORES.".*, "
@@ -1824,12 +1724,15 @@ class Event extends DatabaseTable
 
 							switch($type)
 							{
+								case "One Player Ladder":
+								case "Team Ladder":
 								case "One Player Tournament":
 								$playerTopID = $teams[$teamTop-1]['PlayerID'];
 								$playerBottomID = $teams[$teamBottom-1]['PlayerID'];
 								$teamTopID = 0;
 								$teamBottomID = 0;
 								break;
+								case "Clan Ladder":
 								case "Clan Tournament":
 								$playerTopID = 0;
 								$playerBottomID = 0;
@@ -1876,7 +1779,6 @@ class Event extends DatabaseTable
 								." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 								$result_Players = $sql->db_Query($q_Players);
 								$numPlayers = mysql_numrows($result_Players);
-
 								break;
 								case "Clan Ladder":
 								case "Clan Tournament":
@@ -1895,7 +1797,6 @@ class Event extends DatabaseTable
 								." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 								$result_Players = $sql->db_Query($q_Players);
 								$numPlayers = mysql_numrows($result_Players);
-
 								break;
 								default:
 							}
@@ -2136,6 +2037,8 @@ class Event extends DatabaseTable
 		$type = $this->getField('Type');
 		switch($type)
 		{
+			case 'One Player Ladder':
+			case 'Team Ladder':
 			case 'One Player Tournament':
 			$q_Players = "SELECT ".TBL_GAMERS.".*, "
 			.TBL_PLAYERS.".*"
@@ -2166,6 +2069,7 @@ class Event extends DatabaseTable
 				$teams[$player]['Avatar'] = $pavatar;
 			}
 			break;
+			case 'Clan Ladder':
 			case 'Clan Tournament':
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
 			.TBL_TEAMS.".*, "
@@ -2202,6 +2106,8 @@ class Event extends DatabaseTable
 		$type = $this->getField('Type');
 		switch($type)
 		{
+			case 'One Player Ladder':
+			case 'Team Ladder':
 			case 'One Player Tournament':
 			$q_Players = "SELECT ".TBL_GAMERS.".*, "
 			.TBL_PLAYERS.".*"
@@ -2228,6 +2134,7 @@ class Event extends DatabaseTable
 				$result_2 = $sql->db_Query($q_2);
 			}
 			break;
+			case 'Clan Ladder':
 			case 'Clan Tournament':
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
 			.TBL_TEAMS.".*, "
@@ -2272,6 +2179,12 @@ class Event extends DatabaseTable
 				case 'Single Elimination':
 				default:
 				$file = 'include/brackets/se-'.$maxNbrPlayers.'.txt';
+				break;
+				case 'Round-robin':
+				$file = 'include/brackets/rr-'.$maxNbrPlayers.'.txt';
+				break;
+				case 'Double Round-robin':
+				$file = 'include/brackets/drr-'.$maxNbrPlayers.'.txt';
 				break;
 			}
 		}

@@ -11,8 +11,7 @@ echo '</head>';
 echo '<body>';
 
 // Test bracket
-$depth=7;	// depths (number of rounds + 1)
-$type = 'de-8-1';
+$type = 'drr-8';
 $serialize = TRUE;
 $display_bracket_array = TRUE;
 
@@ -28,13 +27,16 @@ $teams = array(
 0 => array('Name' => 'Player1'),
 1 => array('Name' => 'Player2'),
 2 => array('Name' => 'Player3'),
-3 => array('Name' => 'Player4'),
+3 => array('Name' => 'Player4')
+);
+
+/*
+,
 4 => array('Name' => 'Player5'),
 5 => array('Name' => 'Player6'),
 6 => array('Name' => 'Player7'),
 7 => array('Name' => 'Player8')
-);
-
+*/
 
 $nbrTeams=count($teams);
 for ($i = 0; $i<$nbrTeams; $i++)
@@ -74,7 +76,7 @@ $results = array(
 ));
 */
 
-$matchups = generate_brackets($depth, $type, $serialize, $display_bracket_array);
+$matchups = generate_brackets($type, $serialize, $display_bracket_array);
 $nbrRounds = count($matchups);
 $nbrRows = 4*count($matchups[1]);
 

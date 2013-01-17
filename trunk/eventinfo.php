@@ -84,6 +84,7 @@ else
 		$event_type = 'Tournament';
 		default:
 	}
+	if($event_type=='Tournament') $event->setField('FixturesEnable', 1);
 
 	if ($pref['eb_events_update_delay_enable'] == 1)
 	{
@@ -138,11 +139,9 @@ else
 		if($time > $event->getField('StartDateTime'))
 		{
 			$eventStatus = 'active';
-			switch($event_type)
+			if($event->getField('FixturesEnable') == TRUE)
 			{
-				case "Tournament":
 				$event->brackets(true);
-				break;
 			}			
 			$event->setFieldDB('IsChanged', 1);
 		}

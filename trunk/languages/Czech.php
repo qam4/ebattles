@@ -389,6 +389,13 @@ define('EB_EVENTM_L158', 'Double Elimination');
 define('EB_EVENTM_L159', 'Add users of a userclass');
 define('EB_EVENTM_L160', 'Add Userclass');
 define('EB_EVENTM_L161', 'Max number of players limit reached.');
+define('EB_EVENTM_L162', 'Tournament already started, you cannot add any more players.');
+define('EB_EVENTM_L163', 'Tournament already started, you cannot add any more teams.');
+define('EB_EVENTM_L164', 'Fixtures');
+define('EB_EVENTM_L165', 'Enable/Disable Fixtures');
+define('EB_EVENTM_L166', 'Save Fixtures settings');
+define('EB_EVENTM_L167', 'Round-robin');
+define('EB_EVENTM_L168', 'Double Round-robin');
 
 define('EB_EVENTP_L1', 'Minulé soutěže');
 define('EB_EVENTP_L2', 'Minulé soutěže');

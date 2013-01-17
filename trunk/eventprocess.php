@@ -147,21 +147,15 @@ else{
 				break;
 				case 'One Player Tournament':
 				$event->setField('Type', 'One Player Tournament');
+				$event->setField('Format', 'Single Elimination');
+				$event->setField('MaxNumberPlayers', 16);
 				break;
 				case 'Clan Tournament':
 				$event->setField('Type', 'Clan Tournament');
+				$event->setField('Format', 'Single Elimination');
+				$event->setField('MaxNumberPlayers', 16);
 				default:
 			}
-		}
-
-		/* Event Format */
-		if(($_POST['eventformat'] != "")&&($_POST['eventformat'] != $event->getField('Format')))
-		{
-			
-			$event->setField('Format', $_POST['eventformat']);
-			$_POST['eventmaxnumberplayers'] = 8;
-			$update_matchupsfile = 1;
-			//TODO: if format changes, rounds should change too
 		}
 
 		/* Event MatchType */
@@ -175,14 +169,6 @@ else{
 		if ($num_rows_2==0)
 		{
 			$event->setField('MatchType', $_POST['eventmatchtype']);
-		}
-
-		/* Event Max Number of Players */
-		$new_eventmaxnumberplayers = htmlspecialchars($_POST['eventmaxnumberplayers']);
-		if (preg_match("/^\d+$/", $new_eventmaxnumberplayers))
-		{
-			$event->setField('MaxNumberPlayers', $new_eventmaxnumberplayers);
-			$update_matchupsfile = 1;
 		}
 
 		/* Event Ranking Type */
@@ -312,55 +298,6 @@ else{
 			$new_eventend = 0;
 		}
 		$event->setField('EndDateTime', $new_eventend);
-		
-		if($update_matchupsfile!=0)
-		{
-			$path = 'include/brackets/';
-			$maxNbrPlayers = $event->getField('MaxNumberPlayers');
-			$format = $event->getField('Format');
-			
-			switch ($format)
-			{
-				case 'Double Elimination':
-				switch ($maxNbrPlayers)
-				{
-					case 4:
-					$file = $path.'de-4.txt';
-					break;
-					case 8:
-					default:
-					$file = $path.'de-8-1.txt';
-					break;
-				}
-				break;
-				case 'Single Elimination':
-				default:
-				$file = $path.'se-'.$maxNbrPlayers.'.txt';
-				break;
-			}
-			$event->setField('MatchupsFile', $file);
-		}
-
-		/* Event Rounds */
-		$matchups = $event->getMatchups();
-		$nbrRounds = count($matchups);
-
-		$rounds = unserialize($event->getFieldHTML('Rounds'));
-		if (!isset($rounds)) $rounds = array();
-		for ($round = 1; $round < $nbrRounds; $round++) {
-			if (!isset($rounds[$round])) {
-				$rounds[$round] = array();
-			}
-			if (!isset($_POST['round_title_'.$round])) {
-				$_POST['round_title_'.$round] = EB_EVENTM_L144.' '.$round;
-			}
-			if (!isset($_POST['round_bestof_'.$round])) {
-				$_POST['round_bestof_'.$round] = 1;
-			}
-			$rounds[$round]['Title'] = $tp->toDB($_POST['round_title_'.$round]);
-			$rounds[$round]['BestOf'] = $tp->toDB($_POST['round_bestof_'.$round]);
-		}
-		$event->updateRounds($rounds);
 		
 		/* Event Description */
 		$event->setField('Description', $_POST['eventdescription']);
@@ -551,6 +488,110 @@ else{
 		$current_match = $_POST['match'];
 		$event->eventScoresUpdate($current_match);
 	}
+	
+	if(isset($_POST['eventfixturessave']))
+	{
+		
+		var_dump($_POST);
+		/* Event Fixtures enable/disable */
+		if($_POST['eventfixturesenable'] != "")
+		{
+			if($event->getField('FixturesEnable')!=1)
+			{
+				$event->setField('FixturesEnable', 1);
+				$event->setField('Format', 'Round-robin');
+				$_POST['eventmaxnumberplayers'] = 8;
+			}
+		}
+		else
+		{
+			$event->setField('FixturesEnable', 0);
+		}
+		
+		/* Event Format */
+		if(($_POST['eventformat'] != "")&&($_POST['eventformat'] != $event->getField('Format')))
+		{
+			$event->setField('Format', $_POST['eventformat']);
+			$_POST['eventmaxnumberplayers'] = 8;
+			$update_matchupsfile = 1;
+			//TODO: if format changes, rounds should change too
+		}
+
+		/* Event Max Number of Players */
+		$new_eventmaxnumberplayers = htmlspecialchars($_POST['eventmaxnumberplayers']);
+		if (preg_match("/^\d+$/", $new_eventmaxnumberplayers))
+		{
+			$event->setField('MaxNumberPlayers', $new_eventmaxnumberplayers);
+			$update_matchupsfile = 1;
+		}		
+
+		if($update_matchupsfile!=0)
+		{
+			$path = 'include/brackets/';
+			$maxNbrPlayers = $event->getField('MaxNumberPlayers');
+			$format = $event->getField('Format');
+			
+			switch ($format)
+			{
+				case 'Double Elimination':
+				switch ($maxNbrPlayers)
+				{
+					case 4:
+					$file = $path.'de-4.txt';
+					break;
+					case 8:
+					default:
+					$file = $path.'de-8-1.txt';
+					break;
+				}
+				break;
+				case 'Single Elimination':
+				default:
+				$file = $path.'se-'.$maxNbrPlayers.'.txt';
+				break;
+				case 'Round-robin':
+				$file = $path.'rr-'.$maxNbrPlayers.'.txt';
+				break;
+				case 'Double Round-robin':
+				$file = $path.'drr-'.$maxNbrPlayers.'.txt';
+				break;
+				default:
+				$file = $path.'se-'.$maxNbrPlayers.'.txt';
+				break;
+			}
+			$event->setField('MatchupsFile', $file);
+		}
+
+		/* Event Rounds */
+		$matchups = $event->getMatchups();
+		$nbrRounds = count($matchups);
+
+		$rounds = unserialize($event->getFieldHTML('Rounds'));
+		
+		if (!isset($rounds)) $rounds = array();
+		for ($round = 1; $round < $nbrRounds; $round++) {
+			if (!isset($rounds[$round])) {
+				$rounds[$round] = array();
+			}
+			if (!isset($_POST['round_title_'.$round])) {
+				$_POST['round_title_'.$round] = EB_EVENTM_L144.' '.$round;
+			}
+			if (!isset($_POST['round_bestof_'.$round])) {
+				$_POST['round_bestof_'.$round] = 1;
+			}
+			$rounds[$round]['Title'] = $tp->toDB($_POST['round_title_'.$round]);
+			$rounds[$round]['BestOf'] = $tp->toDB($_POST['round_bestof_'.$round]);
+		}
+
+		$event->updateRounds($rounds);		
+
+		// Need to update the event in database
+		$event->updateDB();
+
+		header("Location: eventmanage.php?eventid=$event_id");
+		exit();
+	}	
+	
 	if(isset($_POST['eventstatssave']))
 	{
 		//echo "-- eventstatssave --<br />";
