@@ -224,6 +224,13 @@ define('EB_EVENT_L83', 'Event finished');
 define('EB_EVENT_L84', 'Teams');
 define('EB_EVENT_L85', 'Loser of');
 define('EB_EVENT_L86', '(if necessary)');
+define('EB_EVENT_L87', 'Check-in starts in');
+define('EB_EVENT_L88', 'Check-in!');
+define('EB_EVENT_L89', 'Click here to check-in to this event.');
+define('EB_EVENT_L90', 'You have checked-in.');
+define('EB_EVENT_L91', 'Check-in that team!');
+define('EB_EVENT_L92', 'Click here to check-in your team to this event.');
+define('EB_EVENT_L93', 'Your team has checked-in.');
 
 define('EB_EVENTM_L1', 'Upravit');
 define('EB_EVENTM_L2', 'Přehled');
@@ -396,6 +403,9 @@ define('EB_EVENTM_L165', 'Enable/Disable Fixtures');
 define('EB_EVENTM_L166', 'Save Fixtures settings');
 define('EB_EVENTM_L167', 'Round-robin');
 define('EB_EVENTM_L168', 'Double Round-robin');
+define('EB_EVENTM_L169', 'Check-in duration (in minutes)');
+define('EB_EVENTM_L170', 'Checked in');
+define('EB_EVENTM_L171', 'Check player in');
 
 define('EB_EVENTP_L1', 'Minulé soutěže');
 define('EB_EVENTP_L2', 'Minulé soutěže');

@@ -199,13 +199,10 @@ class Division extends DatabaseTable
 		." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)";
 		$result_MemberPlayers = $sql->db_Query($q_MemberPlayers);
 		$numMemberPlayers = mysql_numrows($result_MemberPlayers);
-		if ($numMemberPlayers != 0)
+		for($j=0; $j<$numMemberPlayers; $j++)
 		{
-			for($j=0; $j<$numMemberPlayers; $j++)
-			{
-				$pID  = mysql_result($result_MemberPlayers,$j, TBL_PLAYERS.".PlayerID");
-				deletePlayer($pID);
-			}
+			$pID  = mysql_result($result_MemberPlayers,$j, TBL_PLAYERS.".PlayerID");
+			deletePlayer($pID);
 		}
 	}
 	function deleteMember()
@@ -229,13 +226,10 @@ class Division extends DatabaseTable
 		." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)";
 		$result_DivPlayers = $sql->db_Query($q_DivPlayers);
 		$numDivPlayers = mysql_numrows($result_DivPlayers);
-		if ($numDivPlayers!=0)
+		for($j=0; $j<$numDivPlayers; $j++)
 		{
-			for($j=0; $j<$numDivPlayers; $j++)
-			{
-				$pID  = mysql_result($result_DivPlayers,$j, TBL_PLAYERS.".PlayerID");
-				deletePlayer($pID);
-			}
+			$pID  = mysql_result($result_DivPlayers,$j, TBL_PLAYERS.".PlayerID");
+			deletePlayer($pID);
 		}
 	}
 	function deleteDivTeams()

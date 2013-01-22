@@ -30,6 +30,16 @@ if(isset($_POST['quitevent'])){
 	}
 	header("Location: eventinfo.php?eventid=$event_id");
 }
+if(isset($_POST['checkinevent'])){
+	$pid = $_POST['player'];
+	checkinPlayer($pid);
+	header("Location: eventinfo.php?eventid=$event_id");
+}
+if(isset($_POST['teamcheckinevent'])){
+	$team_id = $_POST['team'];
+	checkinTeam($team_id);
+	header("Location: eventinfo.php?eventid=$event_id");
+}
 if(isset($_POST['joinevent'])){
 	
 	if ($_POST['joinEventPassword'] == $event->getField('password'))

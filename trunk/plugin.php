@@ -185,7 +185,8 @@ Results text,
 Rounds text,
 MapPool text,
 MatchupsFile text,
-FixturesEnable tinyint(1) DEFAULT '0'
+FixturesEnable tinyint(1) DEFAULT '0',
+CheckinDuration int default '0'
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
@@ -270,7 +271,7 @@ Points int DEFAULT '0',
 Joined  int(11) unsigned not null,
 CheckedIn tinyint(1) DEFAULT '0',
 Banned tinyint(1) DEFAULT '0',
-Seed int NOT NULL 
+Seed int NOT NULL
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_MATCHS."
 (
@@ -324,7 +325,7 @@ Points int DEFAULT '0',
 Joined  int(11) unsigned not null,
 CheckedIn tinyint(1) DEFAULT '0',
 Banned tinyint(1) DEFAULT '0',
-Seed int NOT NULL 
+Seed int NOT NULL
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_SCORES."
 (
@@ -759,7 +760,8 @@ if (versionsCompare($eb_version_string, "0.9.5") < 0)
 {
 	// To revision 0.9.5
 	array_push ($upgrade_alter_tables,
-	"ALTER TABLE ".TBL_EVENTS." ADD FixturesEnable tinyint(1) DEFAULT '0'"
+	"ALTER TABLE ".TBL_EVENTS." ADD FixturesEnable tinyint(1) DEFAULT '0'",
+	"ALTER TABLE ".TBL_EVENTS." ADD CheckinDuration int default '0'"
 	);
 }
 
