@@ -54,6 +54,8 @@ class Event extends DatabaseTable
 		$this->setField('MaxMapsPerMatch', eb_MAX_MAPS_PER_MATCH);
 		$this->setField('MaxNumberPlayers', '16');
 		$this->setField('MatchupsFile', '');
+		$this->setField('FixturesEnable', '0');
+		$this->setField('CheckinDuration', '0');
 	}
 
 	function resetPlayers()
@@ -417,7 +419,6 @@ class Event extends DatabaseTable
 		}
 	}
 
-
 	/**
 	* eventAddDivision - add a division to an event
 	*/
@@ -469,7 +470,7 @@ class Event extends DatabaseTable
 			}
 		}
 	}
-
+	
 	function updateResults($results) {
 		$new_results = serialize($results);
 		$this->setField('Results', $new_results);
@@ -601,6 +602,11 @@ class Event extends DatabaseTable
 		function del_player_awards(v)
 		{
 		document.getElementById('del_player_awards').value=v;
+		document.getElementById('playersform').submit();
+		}
+		function checkin_player(v)
+		{
+		document.getElementById('checkin_player').value=v;
 		document.getElementById('playersform').submit();
 		}
 		//-->
@@ -961,12 +967,12 @@ class Event extends DatabaseTable
 			<div>
 			';
 			$text .= '<input class="tbox" type="text" name="eventmaxmapspermatch" size="2" value="'.$this->getField('MaxMapsPerMatch').'"/>';
+			$text .= '
+			</div>
+			</td>
+			</tr>
+			';
 		}
-		$text .= '
-		</div>
-		</td>
-		</tr>
-		';
 
 		//<!-- Start Date -->
 		if($this->getField('StartDateTime')!=0)
@@ -1021,6 +1027,20 @@ class Event extends DatabaseTable
 		</td>
 		</tr>
 		</table>
+		</td>
+		</tr>
+		';
+
+		//<!-- Checkin Duration -->
+		$text .= '
+		<tr>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L169.'</td>
+		<td class="eb_td">
+		<div>
+		';
+		$text .= '<input class="tbox" type="text" name="checkin_duration" size="5" value="'.$this->getField('CheckinDuration').'"/>';
+		$text .= '
+		</div>
 		</td>
 		</tr>
 		';
@@ -2011,7 +2031,14 @@ class Event extends DatabaseTable
 			case 'draft':
 			break;
 			case 'signup':
-			$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $this->getField('StartDateTime'));
+			if($this->getField('CheckinDuration') == 0)
+			{
+				$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $this->getField('StartDateTime'));
+			}
+			else
+			{
+				$time_comment = EB_EVENT_L87.'&nbsp;'.get_formatted_timediff($time, $this->getField('StartDateTime') - INT_MINUTE*$this->getField('CheckinDuration'));
+			}
 			break;
 			case 'checkin':
 			$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $this->getField('StartDateTime'));
@@ -2230,9 +2257,45 @@ function deletePlayer($player_id)
 function deletePlayerAwards($player_id)
 {
 	global $sql;
-	$q3 = "DELETE FROM ".TBL_AWARDS
+	$q = "DELETE FROM ".TBL_AWARDS
 	." WHERE (".TBL_AWARDS.".Player = '$player_id')";
-	$result3 = $sql->db_Query($q3);
+	$result = $sql->db_Query($q);
+}
+
+function checkinPlayer($player_id)
+{
+	global $sql;
+	$q = "UPDATE ".TBL_PLAYERS." SET CheckedIn = '1' WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')";
+	$result = $sql->db_Query($q);
+}
+
+function deleteTeam($team_id)
+{
+	global $sql;
+	$q = "DELETE FROM ".TBL_TEAMS
+	." WHERE (".TBL_TEAMS.".TeamID = '$team_id')";
+	$result = $sql->db_Query($q);
+}
+
+function checkinTeam($team_id)
+{
+	global $sql;
+	global $time;
+	
+	$q = "UPDATE ".TBL_TEAMS." SET CheckedIn = '1' WHERE (".TBL_TEAMS.".TeamID = '$team_id')";
+	$result = $sql->db_Query($q);
+	
+	// Checkin all the players of that team
+	$q = "SELECT ".TBL_PLAYERS.".*"
+	." FROM ".TBL_PLAYERS
+	." WHERE (".TBL_PLAYERS.".Team = '$team_id')";
+	$result = $sql->db_Query($q);
+	$numPlayers = mysql_numrows($result);
+	for($i=0; $i<$numPlayers; $i++)
+	{		
+		$player_id = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+		checkinPlayer($player_id);
+	}
 }
 
 ?>

@@ -30,6 +30,7 @@ if ($eneedupdate == 1)
 }
 
 $can_signup = 0;
+$cannot_signup_str = EB_EVENT_L75;
 $eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
 switch($event->getField('Type'))
 {
@@ -45,6 +46,22 @@ case "Clan Tournament":
 	if(($eMaxNumberPlayers == 0)||($nbrteams < $eMaxNumberPlayers))	$can_signup = 1;
 	break;
 default:
+}
+
+if(($event->getField('FixturesEnable') == FALSE) && ($event->getField('Status') == 'finished'))
+{
+	$can_signup = 0;
+	$cannot_signup_str = EB_EVENT_L83;
+}
+if(($event->getField('FixturesEnable') == TRUE) && ($event->getField('Status') != 'signup'))
+{
+	$can_signup = 0;
+	$cannot_signup_str = EB_EVENT_L75;
+}
+if(!check_class(e_UC_MEMBER))
+{
+	$can_signup = 0;
+	$cannot_signup_str = EB_EVENT_L34;
 }
 
 $text .= '<div id="tabs">';
@@ -77,62 +94,64 @@ if ($can_manage == 1)
 	</div></form>';
 }
 
-
 /* Signup, Join/Quit Event */
-if ($can_signup==1)
+$text .= '<table style="width:95%"><tbody>';
+$userIsDivisionCaptain = FALSE;
+switch($event->getField('Type'))
 {
-	$text .= '<table style="width:95%"><tbody>';
-	$userIsDivisionCaptain = FALSE;
-	if(check_class(e_UC_MEMBER))
+case "Team Ladder":
+case "Clan Ladder":
+case "Clan Tournament":
+	// Team event
+	//------------
+	// Team joins team event
+	//-----------------------
+	// Find if user is captain of a division playing that game
+	// if yes, propose to have his team join this event
+	$q = "SELECT ".TBL_DIVISIONS.".*, "
+	.TBL_CLANS.".*, "
+	.TBL_GAMES.".*, "
+	.TBL_USERS.".*"
+	." FROM ".TBL_DIVISIONS.", "
+	.TBL_CLANS.", "
+	.TBL_GAMES.", "
+	.TBL_USERS
+	." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
+	." AND (".TBL_GAMES.".GameID = '$egameid')"
+	." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+	." AND (".TBL_USERS.".user_id = ".USERID.")"
+	." AND (".TBL_DIVISIONS.".Captain = ".USERID.")";
+
+	$result = $sql->db_Query($q);
+	$numDivs = mysql_numrows($result);
+	if($numDivs > 0)
 	{
-		// If logged in
-		if($event->getField('Status') != 'finished')
+		// User is captain
+		$userIsDivisionCaptain = TRUE;
+		for($i=0;$i < $numDivs;$i++)
 		{
-			// If event is not finished
-			if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "Clan Ladder"))
+			$div_name  = mysql_result($result,$i, TBL_CLANS.".Name");
+			$div_id    = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
+
+			// Is the division signed up
+			$q_2 = "SELECT ".TBL_TEAMS.".*"
+			." FROM ".TBL_TEAMS
+			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+			." AND (".TBL_TEAMS.".Division = '$div_id')";
+			$result_2 = $sql->db_Query($q_2);
+			$numTeams = mysql_numrows($result_2);
+
+			$text .= '<tr>';
+			$text .= '<td>'.EB_EVENT_L7.'&nbsp;'.$div_name.'</td>';
+			if( $numTeams == 0)
 			{
-				// Find if user is captain of a division playing that game
-				// if yes, propose to join this event
-				$q = "SELECT ".TBL_DIVISIONS.".*, "
-				.TBL_CLANS.".*, "
-				.TBL_GAMES.".*, "
-				.TBL_USERS.".*"
-				." FROM ".TBL_DIVISIONS.", "
-				.TBL_CLANS.", "
-				.TBL_GAMES.", "
-				.TBL_USERS
-				." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
-				." AND (".TBL_GAMES.".GameID = '$egameid')"
-				." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-				." AND (".TBL_USERS.".user_id = ".USERID.")"
-				." AND (".TBL_DIVISIONS.".Captain = ".USERID.")";
-
-				$result = $sql->db_Query($q);
-				$numDivs = mysql_numrows($result);
-				if($numDivs > 0)
+				// Division is not signed up.
+				if ($can_signup==1)
 				{
-					$userIsDivisionCaptain = TRUE;
-					for($i=0;$i < $numDivs;$i++)
+					if ($event->getField('password') != "")
 					{
-						$div_name  = mysql_result($result,$i, TBL_CLANS.".Name");
-						$div_id    = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
-
-						// Is the division signed up
-						$q_2 = "SELECT ".TBL_TEAMS.".*"
-						." FROM ".TBL_TEAMS
-						." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-						." AND (".TBL_TEAMS.".Division = '$div_id')";
-						$result_2 = $sql->db_Query($q_2);
-						$numTeams = mysql_numrows($result_2);
-
-						$text .= '<tr>';
-						$text .= '<td>'.EB_EVENT_L7.'&nbsp;'.$div_name.'</td>';
-						if( $numTeams == 0)
-						{
-							if ($event->getField('password') != "")
-							{
-								$text .= '<td>'.EB_EVENT_L8.'<span class="required">*</span></td>';
-								$text .= '<td>
+						$text .= '<td>'.EB_EVENT_L8.'<span class="required">*</span></td>';
+						$text .= '<td>
 								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
 								<div>
 								<input class="tbox required" type="password" title="'.EB_EVENT_L9.'" name="joinEventPassword"/>
@@ -140,13 +159,13 @@ if ($can_signup==1)
 								'.ebImageTextButton('teamjoinevent', 'user_add.png', EB_EVENT_L10).'
 								</div>
 								';
-								$text .= '</form>';
-								$text .= '</td>';
-							}
-							else
-							{
-								$text .= '<td>'.EB_EVENT_L11.'</td>';
-								$text .= '<td>
+						$text .= '</form>';
+						$text .= '</td>';
+					}
+					else
+					{
+						$text .= '<td>'.EB_EVENT_L11.'</td>';
+						$text .= '<td>
 								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
 								<div>
 								<input type="hidden" name="joinEventPassword" value=""/>
@@ -154,105 +173,138 @@ if ($can_signup==1)
 								'.ebImageTextButton('teamjoinevent', 'user_add.png', EB_EVENT_L12).'
 								</div>
 								';
-								$text .= '</form>';
-								$text .= '</td>';
-							}
-						}
-						else
-						{
-							// Team signed up.
-							$text .= '<td>'.EB_EVENT_L13.'</td>';
-						}
-						$text .= '</tr>';
+						$text .= '</form>';
+						$text .= '</td>';
 					}
-				}
-			}
-
-			switch($event->getField('Type'))
-			{
-			case "Team Ladder":
-			case "Clan Ladder":
-			case "Clan Tournament":
-				// Is the user a member of a division for that game?
-				$q_2 = "SELECT ".TBL_CLANS.".*, "
-				.TBL_MEMBERS.".*, "
-				.TBL_DIVISIONS.".*, "
-				.TBL_GAMES.".*, "
-				.TBL_USERS.".*"
-				." FROM ".TBL_CLANS.", "
-				.TBL_MEMBERS.", "
-				.TBL_DIVISIONS.", "
-				.TBL_GAMES.", "
-				.TBL_USERS
-				." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
-				." AND (".TBL_GAMES.".GameID = '$egameid')"
-				." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-				." AND (".TBL_USERS.".user_id = ".USERID.")"
-				." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-				." AND (".TBL_MEMBERS.".User = ".USERID.")";
-
-				$result_2 = $sql->db_Query($q_2);
-				$numMembers = mysql_numrows($result_2);
-				if(!$result_2 || ( $numMembers == 0))
-				{
-					$text .= '<tr><td>'.EB_EVENT_L14.'</td>';
-					$text .= '<td></td></tr>';
 				}
 				else
 				{
-					for($i=0;$i < $numMembers;$i++)
+					$text .= $cannot_signup_str;
+				}
+			}
+			else
+			{
+				// Division is signed up.
+				$team_id  = mysql_result($result_2, 0 , TBL_TEAMS.".TeamID");
+				$team_checkedin  = mysql_result($result_2,0 , TBL_TEAMS.".CheckedIn");
+				
+				$text .= '<td>'.EB_EVENT_L13.'</td>';
+				
+				if($event->getField('Status') == 'checkin')
+				{
+					if($team_checkedin != 1)
 					{
-						$clan_name  = mysql_result($result_2,$i , TBL_CLANS.".Name");
-						$div_id  = mysql_result($result_2,$i , TBL_DIVISIONS.".DivisionID");
-						$q_3 = "SELECT ".TBL_DIVISIONS.".*, "
-						.TBL_USERS.".*"
-						." FROM ".TBL_DIVISIONS.", "
-						.TBL_USERS
-						." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
-						." AND (".TBL_USERS.".user_id = ".TBL_DIVISIONS.".Captain)";
-						$result_3 = $sql->db_Query($q_3);
-						if($result_3)
-						{
-							$captain_name  = mysql_result($result_3,0, TBL_USERS.".user_name");
-							$captain_id  = mysql_result($result_3,0, TBL_USERS.".user_id");
-						}
+						$text .= '<td style="text-align:right">
+								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
+								<div>
+								<input type="hidden" name="joinEventPassword" value=""/>
+								<input type="hidden" name="team" value="'.$team_id.'"/>
+								'.ebImageTextButton('teamcheckinevent', 'user_go.ico', EB_EVENT_L91, 'jq-button', '', EB_EVENT_L92).'
+								</div>
+								</form></td>
+								';
+					}
+					else
+					{
+						$text .= '<td>'.EB_EVENT_L93.'</td>';
+					}
+				}
+				
+			}
+			$text .= '</tr>';
+		}
+	}
 
-						$q_3 = "SELECT ".TBL_CLANS.".*, "
-						.TBL_TEAMS.".*, "
-						.TBL_DIVISIONS.".* "
-						." FROM ".TBL_CLANS.", "
-						.TBL_TEAMS.", "
-						.TBL_DIVISIONS
-						." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
-						." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-						." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-						." AND (".TBL_TEAMS.".Event = '$event_id')";
-						$result_3 = $sql->db_Query($q_3);
-						if(!$result_3 || (mysql_numrows($result_3) == 0))
-						{
-							if ($captain_id != USERID)
-							{
-								$text .= '<tr><td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L16.'</td>';
-								$text .= '<td>'.EB_EVENT_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
-							}
-						}
-						else
-						{
-							$team_id  = mysql_result($result_3,0 , TBL_TEAMS.".TeamID");
-							$text .= '<tr><td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L18.'</td>';
+	// Player joins team event
+	//-------------------------
+	// Is the user a member of a division for that game?
+	$q = "SELECT ".TBL_CLANS.".*, "
+	.TBL_MEMBERS.".*, "
+	.TBL_DIVISIONS.".*, "
+	.TBL_GAMES.".*, "
+	.TBL_USERS.".*"
+	." FROM ".TBL_CLANS.", "
+	.TBL_MEMBERS.", "
+	.TBL_DIVISIONS.", "
+	.TBL_GAMES.", "
+	.TBL_USERS
+	." WHERE (".TBL_DIVISIONS.".Game = '$egameid')"
+	." AND (".TBL_GAMES.".GameID = '$egameid')"
+	." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+	." AND (".TBL_USERS.".user_id = ".USERID.")"
+	." AND (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+	." AND (".TBL_MEMBERS.".User = ".USERID.")";
 
-							// Is the user already signed up with that team?
-							$q = "SELECT ".TBL_PLAYERS.".*"
-							." FROM ".TBL_PLAYERS.", "
-							.TBL_GAMERS
-							." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-							."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-							."   AND (".TBL_GAMERS.".User = ".USERID.")"
-							."   AND (".TBL_PLAYERS.".Team = '$team_id')";
-							$result = $sql->db_Query($q);
-							if(!$result || (mysql_numrows($result) == 0))
-							{
-								$text .= '<td>
+	$result = $sql->db_Query($q);
+	$numMembers = mysql_numrows($result);
+	if(!$result || ( $numMembers == 0))
+	{
+		// User is not a member of any team for this game
+		$text .= '<tr><td>'.EB_EVENT_L14.'</td>';
+		$text .= '<td></td></tr>';
+	}
+	else
+	{
+		for($i=0;$i < $numMembers;$i++)
+		{
+			$clan_name  = mysql_result($result,$i , TBL_CLANS.".Name");
+			$div_id  = mysql_result($result,$i , TBL_DIVISIONS.".DivisionID");
+			$q_2 = "SELECT ".TBL_DIVISIONS.".*, "
+			.TBL_USERS.".*"
+			." FROM ".TBL_DIVISIONS.", "
+			.TBL_USERS
+			." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+			." AND (".TBL_USERS.".user_id = ".TBL_DIVISIONS.".Captain)";
+			$result_2 = $sql->db_Query($q_2);
+			if($result_2)
+			{
+				$captain_name  = mysql_result($result_2,0, TBL_USERS.".user_name");
+				$captain_id  = mysql_result($result_2,0, TBL_USERS.".user_id");
+			}
+
+			$q_2 = "SELECT ".TBL_CLANS.".*, "
+			.TBL_TEAMS.".*, "
+			.TBL_DIVISIONS.".* "
+			." FROM ".TBL_CLANS.", "
+			.TBL_TEAMS.", "
+			.TBL_DIVISIONS
+			." WHERE (".TBL_DIVISIONS.".DivisionID = '$div_id')"
+			." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+			." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+			." AND (".TBL_TEAMS.".Event = '$event_id')";
+			$result_2 = $sql->db_Query($q_2);
+			if(!$result_2 || (mysql_numrows($result_2) == 0))
+			{
+				// Division is not signed up
+				if ($captain_id != USERID)
+				{
+					// User is not the captain
+					$text .= '<tr><td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L16.'</td>';
+					$text .= '<td>'.EB_EVENT_L17.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$captain_id.'">'.$captain_name.'</a>.</td></tr>';
+				}
+			}
+			else
+			{
+				// Division is signed up
+				$team_id  = mysql_result($result_2,0 , TBL_TEAMS.".TeamID");
+
+				$text .= '<tr><td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L18.'</td>';
+
+				// Is the user already signed up with that team?
+				$q_2 = "SELECT ".TBL_PLAYERS.".*"
+				." FROM ".TBL_PLAYERS.", "
+				.TBL_GAMERS
+				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+				."   AND (".TBL_GAMERS.".User = ".USERID.")"
+				."   AND (".TBL_PLAYERS.".Team = '$team_id')";
+				$result_2 = $sql->db_Query($q_2);
+				if(!$result_2 || (mysql_numrows($result_2) == 0))
+				{
+					// User is not signed up
+					if ($can_signup==1)
+					{
+						$text .= '<td>
 								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
 								<div>
 								<input type="hidden" name="team" value="'.$team_id.'"/>
@@ -260,155 +312,200 @@ if ($can_signup==1)
 								</div>
 								</form></td>
 								';
+					}
+					else
+					{
+						$text .= $cannot_signup_str;
+					}
+				}
+				else
+				{
+					// User is signed up
+					$player_id  = mysql_result($result_2,0 , TBL_PLAYERS.".PlayerID");
+					$player_banned  = mysql_result($result_2,0 , TBL_PLAYERS.".Banned");
+					$player_checkedin  = mysql_result($result_2,0 , TBL_PLAYERS.".CheckedIn");
+
+					if ($player_banned)
+					{
+						// User is banned
+						$text .= '<td>'.EB_EVENT_L20.'<br />
+									'.EB_EVENT_L21.'</td>';
+					}
+					else
+					{
+						// User signed up & not banned
+						$text .= '<td>'.EB_EVENT_L22.'</td>';
+
+						if($event->getField('Status') == 'checkin')
+						{
+							if($player_checkedin != 1)
+							{
+								$text .= '<td style="text-align:right">
+											<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
+											<div>
+										<input type="hidden" name="player" value="'.$player_id.'"/>
+											'.ebImageTextButton('checkinevent', 'user_go.ico', EB_EVENT_L88, 'jq-button', '', EB_EVENT_L89).'
+											</div>
+											</form></td>
+											';
 							}
 							else
 							{
-								$user_pid  = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
-								$user_banned  = mysql_result($result,0 , TBL_PLAYERS.".Banned");
-
-								if ($user_banned)
-								{
-									$text .= '<td>'.EB_EVENT_L20.'<br />
-									'.EB_EVENT_L21.'</td>';
-								}
-								else
-								{
-									// Player signed up
-									$text .= '<td>'.EB_EVENT_L22.'</td>';
-
-									// Player can quit an event if he has not played yet
-									$q = "SELECT ".TBL_PLAYERS.".*"
-									." FROM ".TBL_PLAYERS.", "
-									.TBL_SCORES
-									." WHERE (".TBL_PLAYERS.".PlayerID = '$user_pid')"
-									." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
-									$result = $sql->db_Query($q);
-									$nbrscores = mysql_numrows($result);
-									if (($nbrscores == 0)&&($user_banned!=1)&&($event->getField('Type')!="Clan Ladder"))
-									{
-										$text .= '<td>
+								$text .= '<td>'.EB_EVENT_L90.'</td>';
+							}
+						}
+			
+						// Player can quit an event if he has not played yet
+						$q_2 = "SELECT ".TBL_PLAYERS.".*"
+						." FROM ".TBL_PLAYERS.", "
+						.TBL_SCORES
+						." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')"
+						." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+						$result_2 = $sql->db_Query($q_2);
+						$nbrscores = mysql_numrows($result_2);
+						if (($nbrscores == 0)&&($player_banned!=1)&&($event->getField('Type')!="Clan Ladder"))
+						{
+							$text .= '<td>
 										<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
 										<div>
-										<input type="hidden" name="player" value="'.$user_pid.'"/>
+									<input type="hidden" name="player" value="'.$player_id.'"/>
 										'.ebImageTextButton('quitevent', 'user_delete.ico', EB_EVENT_L23, 'negative jq-button', EB_EVENT_L24).'
 										</div>
 										</form></td>
 										';
-									}
-									else
-									{
-										$text .= '<td></td>';
-									}
-								}
-							}
-							$text .= '</tr>';
+						}
+						else
+						{
+							$text .= '<td></td>';
 						}
 					}
 				}
-				break;
-			case "One Player Tournament":
-			case "One Player Ladder":
-				// Find gamer for that user
-				$q = "SELECT ".TBL_GAMERS.".*"
-				." FROM ".TBL_GAMERS
-				." WHERE (".TBL_GAMERS.".Game = '".$event->getField('Game')."')"
-				."   AND (".TBL_GAMERS.".User = ".USERID.")";
-				$result = $sql->db_Query($q);
-				$num_rows = mysql_numrows($result);
-				if ($num_rows!=0)
-				{
-					$gamerID = mysql_result($result,0 , TBL_GAMERS.".GamerID");
-					$gamer = new Gamer($gamerID);
-					$gamerName = $gamer->getField('Name');
-					$gamerUniqueGameID = $gamer->getField('UniqueGameID');
-				}
-				else
-				{
-					$gamerID = 0;
-					$gamerName = '';
-					$gamerUniqueGameID = '';
-				}
+				$text .= '</tr>';
+			}
+		}
+	}
+	break;
+case "One Player Tournament":
+case "One Player Ladder":
+	// One player event
+	//------------
+	// Find gamer for that user
+	$q = "SELECT ".TBL_GAMERS.".*"
+	." FROM ".TBL_GAMERS
+	." WHERE (".TBL_GAMERS.".Game = '".$event->getField('Game')."')"
+	."   AND (".TBL_GAMERS.".User = ".USERID.")";
+	$result = $sql->db_Query($q);
+	$num_rows = mysql_numrows($result);
+	if ($num_rows!=0)
+	{
+		$gamerID = mysql_result($result,0 , TBL_GAMERS.".GamerID");
+		$gamer = new Gamer($gamerID);
+		$gamerName = $gamer->getField('Name');
+		$gamerUniqueGameID = $gamer->getField('UniqueGameID');
+	}
+	else
+	{
+		$gamerID = 0;
+		$gamerName = '';
+		$gamerUniqueGameID = '';
+	}
 
-				// Is the user already signed up?
-				$q = "SELECT ".TBL_PLAYERS.".*"
-				." FROM ".TBL_PLAYERS.", "
-				.TBL_GAMERS
-				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				."   AND (".TBL_GAMERS.".User = ".USERID.")";
-				$result = $sql->db_Query($q);
-				if(!$result || (mysql_numrows($result) < 1))
-				{
-					$hide_password = ($event->getField('password') == "") ?  'hide ignore' : '';
+	// Is the user already signed up?
+	$q = "SELECT ".TBL_PLAYERS.".*"
+	." FROM ".TBL_PLAYERS.", "
+	.TBL_GAMERS
+	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+	."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+	."   AND (".TBL_GAMERS.".User = ".USERID.")";
+	$result = $sql->db_Query($q);
+	if(!$result || (mysql_numrows($result) < 1))
+	{
+		// User is not signed up
+		if ($can_signup==1)
+		{
+			$hide_password = ($event->getField('password') == "") ?  'hide ignore' : '';
 
-					$text .= '<tr><td style="text-align:right">
+			$text .= '<tr><td style="text-align:right">
 					<div>
 					'.ebImageTextButton('joinevent', 'user_add.png', EB_EVENT_L19, '', '', EB_EVENT_L28).'
 					</div>
 					';
 
-					$text .= gamerEventSignupModalForm($event_id, $gamerID, $gamerName, $gamerUniqueGameID, $hide_password);
-					$text .= '</td></tr>';
-				}
-				else
-				{
-					$user_pid  = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
-					$user_banned  = mysql_result($result,0 , TBL_PLAYERS.".Banned");
-
-					if ($user_banned)
-					{
-						$text .= '<tr><td>'.EB_EVENT_L29.'<br />
-						'.EB_EVENT_L30.'</td><td></td></tr>';
-					}
-					else
-					{
-						$text .= '<tr><td>'.EB_EVENT_L31.'</td>';
-
-						// Player can quit an event if he has not played yet
-						$q = "SELECT ".TBL_PLAYERS.".*"
-						." FROM ".TBL_PLAYERS.", "
-						.TBL_SCORES
-						." WHERE (".TBL_PLAYERS.".PlayerID = '$user_pid')"
-						." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
-						$result = $sql->db_Query($q);
-						$nbrscores = mysql_numrows($result);
-						if ($nbrscores == 0)
-						{
-							$text .= '<td style="text-align:right">
-							<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
-							<div>
-							<input type="hidden" name="player" value="'.$user_pid.'"/>
-							'.ebImageTextButton('quitevent', 'user_delete.ico', EB_EVENT_L32, 'negative jq-button', EB_EVENT_L33).'
-							</div>
-							</form></td></tr>
-							';
-						}
-						else
-						{
-							$text .= '<td></td></tr>';
-						}
-					}
-				}
-				break;
-			default:
-			}
+			$text .= gamerEventSignupModalForm($event_id, $gamerID, $gamerName, $gamerUniqueGameID, $hide_password);
+			$text .= '</td></tr>';
 		}
 		else
 		{
-			$text .= '<tr><td>'.EB_EVENT_L83.'</td></tr>';
+			$text .= $cannot_signup_str;
 		}
 	}
 	else
 	{
-		$text .= '<tr><td>'.EB_EVENT_L34.'</td>';
-		$text .= '<td></td></tr>';
+		// User is signed up
+		$player_id  = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
+		$player_banned  = mysql_result($result,0 , TBL_PLAYERS.".Banned");
+		$player_checkedin  = mysql_result($result,0 , TBL_PLAYERS.".CheckedIn");
+
+		if ($player_banned)
+		{
+			// User is banned
+			$text .= '<tr><td>'.EB_EVENT_L29.'<br />
+						'.EB_EVENT_L30.'</td><td></td></tr>';
+		}
+		else
+		{
+			// User is signed up & not banned
+			$text .= '<tr><td>'.EB_EVENT_L31.'</td>';
+
+			if($event->getField('Status') == 'checkin')
+			{
+				if($player_checkedin != 1)
+				{
+					$text .= '<td style="text-align:right">
+								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
+								<div>
+							<input type="hidden" name="player" value="'.$player_id.'"/>
+								'.ebImageTextButton('checkinevent', 'user_go.ico', EB_EVENT_L88, 'jq-button', '', EB_EVENT_L89).'
+								</div>
+								</form></td>
+								';
+				}
+				else
+				{
+					$text .= '<td>'.EB_EVENT_L90.'</td>';
+				}
+			}
+			
+			// Player can quit an event if he has not played yet
+			$q = "SELECT ".TBL_PLAYERS.".*"
+			." FROM ".TBL_PLAYERS.", "
+			.TBL_SCORES
+			." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')"
+			." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+			$result = $sql->db_Query($q);
+			$nbrscores = mysql_numrows($result);
+			if ($nbrscores == 0)
+			{
+				$text .= '<td style="text-align:right">
+							<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
+							<div>
+						<input type="hidden" name="player" value="'.$player_id.'"/>
+							'.ebImageTextButton('quitevent', 'user_delete.ico', EB_EVENT_L32, 'negative jq-button', EB_EVENT_L33).'
+							</div>
+							</form></td></tr>
+							';
+			}
+			else
+			{
+				$text .= '<td></td></tr>';
+			}
+		}
 	}
-	$text .= '</tbody></table>';
+	break;
+default:
 }
-else
-{
-	$text .= EB_EVENT_L75;
-}
+$text .= '</tbody></table>';
+
 
 /* Info */
 $text .= '<table class="eb_table" style="width:95%"><tbody>';

@@ -222,6 +222,13 @@ define('EB_EVENT_L83', 'Tournoi terminé');
 define('EB_EVENT_L84', 'Équipes');
 define('EB_EVENT_L85', 'Perdant de');
 define('EB_EVENT_L86', '(si nécessaire)');
+define('EB_EVENT_L87', 'L’enregistrement débute dans');
+define('EB_EVENT_L88', 'Enregistrement!');
+define('EB_EVENT_L89', 'Cliquez ici pour vous enregistrer à ce tournoi.');
+define('EB_EVENT_L90', 'Vous êtes enregisté.');
+define('EB_EVENT_L91', 'Enregistrer cette équipe!');
+define('EB_EVENT_L92', 'Cliquez ici pour faire enregistrer votre équipe à ce tournoi.');
+define('EB_EVENT_L93', 'Votre équipe est enregistée.');
 
 define('EB_EVENTM_L1', 'Gérer');
 define('EB_EVENTM_L2', 'Sommaire');
@@ -394,6 +401,9 @@ define('EB_EVENTM_L165', 'Activer/Désactiver les Appariements');
 define('EB_EVENTM_L166', 'Sauver les Paramètres des Appariements');
 define('EB_EVENTM_L167', 'Tournoi toutes rondes');
 define('EB_EVENTM_L168', 'Tournoi toutes rondes double');
+define('EB_EVENTM_L169', 'Durée de l’enregistrement (en minutes)');
+define('EB_EVENTM_L170', 'Enregistrement');
+define('EB_EVENTM_L171', 'Enregistrer ce joueur');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');

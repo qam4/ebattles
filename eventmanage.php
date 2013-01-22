@@ -480,7 +480,7 @@ else
 
 		$array = array(
 		'name'   => array(EB_EVENTM_L55, TBL_USERS.'.user_name'),
-		'joined'   => array(EB_EVENTM_L56, TBL_PLAYERS.'.Joined')
+		'joined' => array(EB_EVENTM_L56, TBL_PLAYERS.'.Joined')
 		);
 
 		if (!isset($_GET['orderby'])) $_GET['orderby'] = 'joined';
@@ -781,6 +781,11 @@ else
 				}
 				$text .= '<th class="eb_th2">'.EB_CLANS_L5.'</th>';
 				$text .= '<th class="eb_th2">'.EB_CLANS_L6.'</th>';
+				if($event->getField('CheckinDuration') > 0)
+				{
+					// Column "Checked in
+					$text .= '<th class="eb_th2">'.EB_EVENTM_L170;
+				}
 				$text .= '</tr></thead>';
 				$text .= '<tbody>';
 				for($i=0; $i < $num_rows; $i++){
@@ -789,6 +794,7 @@ else
 					$tid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 					$tseed  = mysql_result($result,$i, TBL_TEAMS.".Seed");
 					if($tseed == 0) $tseed = $i+1;
+					$tcheckedin = mysql_result($result,$i, TBL_TEAMS.".CheckedIn");
 
 					$image = "";
 					if ($pref['eb_avatar_enable_teamslist'] == 1)
@@ -809,6 +815,12 @@ else
 					}
 					$text .= '<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a></td>';
 					$text .= '<td class="eb_td">'.$clan->getField('Tag').'</td>';
+					if($event->getField('CheckinDuration') > 0)
+					{
+						// Column "Checked in"
+						$img = ($tcheckedin) ? '<img src="'.e_PLUGIN.'ebattles/images/tick.png" alt="'.EB_EVENTM_L64.'"/>' : '';
+						$text .= '<td class="eb_td">'.$img.'</td>';
+					}
 					$text .= '</tr>';
 				}
 				$text .= '</tbody></table>';
@@ -899,12 +911,20 @@ else
 				{
 					$text .= '<th class="eb_th2"><a href="'.e_PLUGIN.'ebattles/eventmanage.php?eventid='.$event_id.'&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></th>';
 				}
+
+				if($event->getField('CheckinDuration') > 0)
+				{
+					// Column "Checked in
+					$text .= '<th class="eb_th2">'.EB_EVENTM_L170;
+				}
+				
 				$text .= '<th class="eb_th2">'.EB_EVENTM_L59;
 				$text .= '<input type="hidden" id="ban_player" name="ban_player" value=""/>';
 				$text .= '<input type="hidden" id="unban_player" name="unban_player" value=""/>';
 				$text .= '<input type="hidden" id="kick_player" name="kick_player" value=""/>';
 				$text .= '<input type="hidden" id="del_player_games" name="del_player_games" value=""/>';
 				$text .= '<input type="hidden" id="del_player_awards" name="del_player_awards" value=""/>';
+				$text .= '<input type="hidden" id="checkin_player" name="checkin_player" value=""/>';
 				$text .= '</th></tr></thead>';
 				$text .= '<tbody>';
 				for($i=0; $i<$num_rows; $i++)
@@ -921,6 +941,7 @@ else
 					$pbanned = mysql_result($result,$i, TBL_PLAYERS.".Banned");
 					$pgames = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
 					$pteam = mysql_result($result,$i, TBL_PLAYERS.".Team");
+					$pcheckedin = mysql_result($result,$i, TBL_PLAYERS.".CheckedIn");
 					list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 
 					$text .= '<tr id="player_'.$pid.'">';
@@ -932,6 +953,14 @@ else
 
 					$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
 					$text .= '<td class="eb_td">'.(($pbanned) ? EB_EVENTM_L54 : $date).'</td>';
+
+					if($event->getField('CheckinDuration') > 0)
+					{
+						// Column "Checked in"
+						$img = ($pcheckedin) ? '<img src="'.e_PLUGIN.'ebattles/images/tick.png" alt="'.EB_EVENTM_L64.'"/>' : '';
+						$text .= '<td class="eb_td">'.$img.'</td>';
+					}
+
 					$text .= '<td class="eb_td">';
 					if ($pbanned)
 					{
@@ -953,6 +982,15 @@ else
 					{
 						$text .= ' <a href="javascript:del_player_awards(\''.$pid.'\');" title="'.EB_EVENTM_L68.'" onclick="return confirm(\''.EB_EVENTM_L69.'\')"><img src="'.e_PLUGIN.'ebattles/images/award_star_delete.ico" alt="'.EB_EVENTM_L68.'"/></a>';
 					}
+					if($event->getField('CheckinDuration') > 0)
+					{
+						if ($pcheckedin != 1)
+						{
+						$text .= ' <a href="javascript:checkin_player(\''.$pid.'\');" title="'.EB_EVENTM_L171.'""><img src="'.e_PLUGIN.'ebattles/images/tick.png" alt="'.EB_EVENTM_L171.'"/></a>';
+						}
+					}
+
+
 					$text .= '</td>';
 					$text .= '</tr>';
 				}

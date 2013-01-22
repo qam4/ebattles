@@ -125,7 +125,7 @@ else
 	}
 	
 	/* Update event "status" */
-	$checkinDuration = 0; // TODO: add this.
+	$checkinDuration = INT_MINUTE*$event->getField('CheckinDuration');
 	
 	if($eventStatus=='signup')
 	{
@@ -138,6 +138,35 @@ else
 	{
 		if($time > $event->getField('StartDateTime'))
 		{
+			if($event->getField('CheckinDuration') > 0)
+			{
+				// Delete teams who have not checked in
+				$q = "SELECT ".TBL_TEAMS.".*"
+				." FROM ".TBL_TEAMS
+				." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+				." AND (".TBL_TEAMS.".CheckedIn = '0')";
+				$result = $sql->db_Query($q);
+				$nbrTeams = mysql_numrows($result);
+				for($i=0; $i<$nbrTeams; $i++)
+				{
+					$tID = mysql_result($result, $i, TBL_TEAMS.".TeamID");
+					deleteTeam($tID);
+				}
+
+				// Delete players who have not checked in
+				$q = "SELECT ".TBL_PLAYERS.".*"
+				." FROM ".TBL_PLAYERS
+				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+				." AND (".TBL_PLAYERS.".CheckedIn = '0')";
+				$result = $sql->db_Query($q);
+				$nbrPlayers = mysql_numrows($result);
+				for($i=0; $i<$nbrPlayers; $i++)
+				{
+					$pID = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+					deletePlayer($pID);
+				}
+			}
+
 			$eventStatus = 'active';
 			if($event->getField('FixturesEnable') == TRUE)
 			{

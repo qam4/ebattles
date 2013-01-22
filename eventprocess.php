@@ -299,6 +299,13 @@ else{
 		}
 		$event->setField('EndDateTime', $new_eventend);
 		
+		/* Event Checkin Duration */
+		$new_checkin_duration = $_POST['checkin_duration'];
+		if (preg_match("/^\d+$/", $new_checkin_duration))
+		{
+			$event->setField('CheckinDuration', $new_checkin_duration);
+		}
+		
 		/* Event Description */
 		$event->setField('Description', $_POST['eventdescription']);
 
@@ -429,7 +436,13 @@ else{
 		header("Location: eventmanage.php?eventid=$event_id");
 		exit();
 	}
-	
+	if(isset($_POST['checkin_player']) && $_POST['checkin_player']!="")
+	{
+		$playerid = $_POST['checkin_player'];
+		checkinPlayer($playerid);
+		header("Location: eventmanage.php?eventid=$event_id");
+		exit();
+	}
 	if(isset($_POST['eventplayersshuffle']))
 	{
 		$event->shuffleSeeds();
