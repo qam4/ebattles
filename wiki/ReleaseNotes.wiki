@@ -1,5 +1,85 @@
 #summary eBattles Release Notes.
 #labels Featured
+
+= Revision 0.9.5 =
+== Added ==
+ * Support for Leagues (round-robin tournaments) (fixes #40)
+  * New "Fixtures" tab in event manager
+   * If fixtures is enabled, the plugin will automatically schedule matches when the tournament starts.
+  * Round-robin and double round robin for 4 or 8 players.
+ * Added a "checkin" phase to events, before the event starts.
+  * Event admin can choose the checkin duration. If set to 0, the feature is disabled.
+  * During checkin phase, players or teams who are signed up will have to check in at the event's main page.
+  * At the end of the checkin phase, players/teams who have not checked in are deleted.
+  * For team events, only the team captain can check the team in, and all the team members are checked in automatically.
+  * Event admin has a list of players/teams who have already checked in, and can check players in himself.
+== Changed ==
+ * UI: no-wrap on buttons white-spaces
+== Fixed ==
+ * Fixed issue when using array_multisort()
+ * Teams: Error deleting team. (fixes #72)
+
+= Revision 0.9.4 =
+== Added ==
+ * Add the map selection to the Match schedule (fixes #65)
+ * Team invite system (fixes #64)
+ * Add placement awards when a ladder finishes. (fixes #68)
+ * Improved notifications in ebattles menu to make it easier to see when you have a match pending.
+
+== Changed ==
+ * Improved Team divisions page.
+  * Show only one game at a time, select the game by clicking on the game icon.
+ * Disable the ladder awards for tournaments (fixes #67)
+ * Should not be able to change the event's game if players/teams have joined the event. (fixes #63)
+ * eBattles menu: make a link to profile matches tab for the pending matches, scheduled matches and challenges (fixes #69)
+ * Tournaments: use standard template for double-elimination 8 players. (fixes #70)
+  * Only new tournaments will be affected.
+== Fixed ==
+ * Fix issue with plugin menu link, when tag {USERID} is not set. 
+
+= Revision 0.9.3 =
+== Added ==
+ * Added support for "double elimination" tournaments
+  *Support 4 or 8 players
+ * Added single elimination bracket files for 2, 32, 64 and 128 players
+ * Added test script test/brackets_test.php to generate bracket files.
+ * Add red star on required form fields.
+ * Match report improvements
+  * For tournaments and events with match type for 2 teams (1v1, 2v2, ...)
+  * The match report system is simplified
+ * Enter match result (team 1 won, team 2 won, draw, team 1 forfeit, team 2 forfeit)
+ * Enter players for both teams
+ * Added links to Events and Teams in user's profile
+ * Individual Ladder: Support to add all users in a userclass to an individual ladder
+ * Tournaments: added support to delete matches.
+  * Do not support editing tournament matches.
+
+== Changed ==
+ * Improved plugin security for database accesses
+ * Improve match media list
+ * Change "Back to" hyperlinks into buttons.
+ * Change in matchs list, game icon should not be a link to the match.
+ * Changed plugin link url, so it points to user's profile.
+ * shadowbox-js (3.0.3) (refs #46)
+ * Admins can see draft events in the events page
+ * Need to create a gamer profile for the team division creator
+ * Work on PM/emails notifications.
+ * Updated eBattles theme, to have logo at top of page.
+ * Tournaments: divide list of matches into one section per round.
+ * Event Info: should display "Rules" after "Description".
+
+== Fixed ==
+ * Gamer profile
+  * Players can now edit their gamers information (name, unique game ID) in the profile page.
+ * "Show all past events" link is missing from events page.
+ * Teams: Can't delete teams.
+ * Fixed bug in match report forfeit handling, when there were more than 1 player per team.
+ * Disclaimer hyperlink to eBattles.net gets corrupted on some sites
+ *  Fixed bug in Team ladders stats updates causing:
+  * Fatal error: Cannot use object of type Clan as array in updateteamstats.php on line 300
+ * Some textareas did not have tinyMCE text editor anymore.
+ * Prevent adding players to started tournament from the event admin page.
+
 = Release 0.9.2 =
 == Features ==
  * Added support for tournaments seeding
