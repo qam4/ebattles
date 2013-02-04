@@ -71,7 +71,7 @@ else
 		$event_type = 'Tournament';
 		default:
 	}
-	if($event_type=='Tournament') $event->setField('FixturesEnable', 1);
+	if($event_type=='Tournament') $event->setField('FixturesEnable', TRUE);
 	if($event->getField('FixturesEnable') == TRUE)
 	{
 		$players_seeding_enabled = true;

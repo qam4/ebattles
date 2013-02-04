@@ -84,7 +84,7 @@ else
 		$event_type = 'Tournament';
 		default:
 	}
-	if($event_type=='Tournament') $event->setField('FixturesEnable', 1);
+	if($event_type=='Tournament') $event->setField('FixturesEnable', TRUE);
 
 	if ($pref['eb_events_update_delay_enable'] == 1)
 	{

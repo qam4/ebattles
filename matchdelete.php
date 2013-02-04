@@ -51,11 +51,12 @@ else
 			$event_type = 'Tournament';
 			default:
 		}
+		if($event_type=='Tournament') $event->setField('FixturesEnable', TRUE);
 
         $match_id = $_POST['matchid'];
         $match = new Match($match_id);
         
-		if($event_type == 'Tournament')
+		if($event->getField('FixturesEnable') == TRUE)
 		{
 			$event->brackets(true, $match_id);
 		}

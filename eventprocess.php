@@ -509,16 +509,16 @@ else{
 		/* Event Fixtures enable/disable */
 		if($_POST['eventfixturesenable'] != "")
 		{
-			if($event->getField('FixturesEnable')!=1)
+			if($event->getField('FixturesEnable')!=TRUE)
 			{
-				$event->setField('FixturesEnable', 1);
+				$event->setField('FixturesEnable', TRUE);
 				$event->setField('Format', 'Round-robin');
 				$_POST['eventmaxnumberplayers'] = 8;
 			}
 		}
 		else
 		{
-			$event->setField('FixturesEnable', 0);
+			$event->setField('FixturesEnable', FALSE);
 		}
 		
 		/* Event Format */
