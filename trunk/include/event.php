@@ -1282,6 +1282,19 @@ class Event extends DatabaseTable
 		global $tp;
 
 		$type = $this->fields['Type'];
+		switch($type)
+		{
+			case "One Player Ladder":
+			case "Team Ladder":
+			case "Clan Ladder":
+			$event_type = 'Ladder';
+			break;
+			case "One Player Tournament":
+			case "Clan Tournament":
+			$event_type = 'Tournament';
+			default:
+		}
+		
 		$format = $this->fields['Format'];
 		$event_id = $this->fields['EventID'];
 		$teams = $this->getTeams();
@@ -1572,9 +1585,12 @@ class Event extends DatabaseTable
 											$i = 0;
 											switch($type)
 											{
+												case "One Player Ladder":
+												case "Team Ladder":
 												case "One Player Tournament":
 												$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 												break;
+												case "Clan Ladder":
 												case "Clan Tournament":
 												$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 												break;
@@ -1610,7 +1626,7 @@ class Event extends DatabaseTable
 									{
 										$results[$round][$matchup]['winner'] = 'top';
 										//echo "Match $matchs, top won<br>";
-										if ($round == $nbrRounds-1)
+										if(($round == $nbrRounds-1)&&($event_type == 'Tournament'))
 										{
 											// top has won the tournament
 											$this->setFieldDB('Status', 'finished');
@@ -1639,7 +1655,7 @@ class Event extends DatabaseTable
 									{
 										$results[$round][$matchup]['winner'] = 'bottom';
 										//echo "Match $matchs, bottom won<br>";
-										if ($round == $nbrRounds-1)
+										if(($round == $nbrRounds-1)&&($event_type == 'Tournament'))
 										{
 											// bottom has won the tournament
 											$this->setFieldDB('Status', 'finished');
