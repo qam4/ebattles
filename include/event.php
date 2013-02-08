@@ -15,6 +15,13 @@ class Event extends DatabaseTable
 	/***************************************************************************************
 	Functions
 	***************************************************************************************/
+	function __construct($primaryID=0) {
+		parent::__construct($primaryID);
+		
+		// Force "Enable fixtures" for tournaments
+		if($this->getCompetitionType()=='Tournament') $this->setField('FixturesEnable', TRUE);
+	}
+	
 	function setDefaultFields()
 	{
 		$this->setField('Game', 1);
@@ -242,20 +249,20 @@ class Event extends DatabaseTable
 		{
 			switch($this->fields['Type'])
 			{
-				case "One Player Ladder":
+			case "One Player Ladder":
 				updateStats($this->fields['EventID'], $time, true);
 				break;
-				case "Team Ladder":
+			case "Team Ladder":
 				updateStats($this->fields['EventID'], $time, true);
 				updateTeamStats($this->fields['EventID'], $time, true);
 				break;
-				case "Clan Ladder":
+			case "Clan Ladder":
 				updateTeamStats($this->fields['EventID'], $time, true);
 				break;
-				case "One Player Tournament":
-				case "Clan Tournament":
+			case "One Player Tournament":
+			case "Clan Tournament":
 				break;
-				default:
+			default:
 			}
 			echo "Done.";
 			echo '<META HTTP-EQUIV="Refresh" Content="0; URL=eventmanage.php?eventid='.$this->fields['EventID'].'">';
@@ -271,20 +278,20 @@ class Event extends DatabaseTable
 
 				switch($this->fields['Type'])
 				{
-					case "One Player Ladder":
+				case "One Player Ladder":
 					updateStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 					break;
-					case "Team Ladder":
+				case "Team Ladder":
 					updateStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 					updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 					break;
-					case "Clan Ladder":
+				case "Clan Ladder":
 					updateTeamStats($this->fields['EventID'], $this->fields['getStartDateTime'], false);
 					break;
-					case "One Player Tournament":
-					case "Clan Tournament":
+				case "One Player Tournament":
+				case "Clan Tournament":
 					break;
-					default:
+				default:
 				}
 			}
 			else
@@ -313,23 +320,23 @@ class Event extends DatabaseTable
 
 					switch($this->fields['Type'])
 					{
-						case "One Player Ladder":
+					case "One Player Ladder":
 						$match->match_players_update();
 						updateStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 						break;
-						case "Team Ladder":
+					case "Team Ladder":
 						$match->match_players_update();
 						updateStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 						updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 						break;
-						case "Clan Ladder":
+					case "Clan Ladder":
 						$match->match_teams_update();
 						updateTeamStats($this->fields['EventID'], $this->fields['StartDateTime'], false);
 						break;
-						case "One Player Tournament":
-						case "Clan Tournament":
+					case "One Player Tournament":
+					case "Clan Tournament":
 						break;
-						default:
+					default:
 					}
 
 					//echo 'match '.$j.': '.$match_id.'<br>';
@@ -528,20 +535,8 @@ class Event extends DatabaseTable
 		$result = $sql->db_Query($q);
 		$row = mysql_fetch_array($result);
 		$nbrteams = $row['NbrTeams'];
-	
-		$type = $this->fields['Type'];
-		switch($type)
-		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "Clan Ladder":
-			$event_type = 'Ladder';
-			break;
-			case "One Player Tournament":
-			case "Clan Tournament":
-			$event_type = 'Tournament';
-			default:
-		}
+		
+		$competition_type = $this->getCompetitionType();
 
 		$text .= "
 		<script type='text/javascript'>
@@ -717,9 +712,9 @@ class Event extends DatabaseTable
 		if ($create==false)
 		{
 			//<!-- Rating Type -->
-			switch($event_type)
+			switch($competition_type)
 			{
-				case "Ladder":
+			case "Ladder":
 				$text .= '
 				<tr>
 				<td class="eb_td eb_tdc1 eb_w40" title="'.EB_EVENTM_L118.'">'.EB_EVENTM_L117.'</td>
@@ -768,9 +763,9 @@ class Event extends DatabaseTable
 		if ($create==false)
 		{
 			//<!-- Allow Quick Loss Report -->
-			switch($event_type)
+			switch($competition_type)
 			{
-				case "Ladder":
+			case "Ladder":
 				$text .= '
 				<tr>
 				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L25.'</td>
@@ -848,9 +843,9 @@ class Event extends DatabaseTable
 		if ($create==false)
 		{
 			//<!-- Allow Draws -->
-			switch($event_type)
+			switch($competition_type)
 			{
-				case "Ladder":
+			case "Ladder":
 				$text .= '
 				<tr>
 				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L27.'</td>
@@ -919,9 +914,9 @@ class Event extends DatabaseTable
 			}
 			$text .= EB_EVENTM_L128;
 			$text .= '</div>';
-			switch($event_type)
+			switch($competition_type)
 			{
-				case "Ladder":
+			case "Ladder":
 				$text .= '<div>';
 				$text .= '<input class="tbox" type="checkbox" name="eventForfeitWinLossUpdate"';
 				if ($this->getField('ForfeitWinLossUpdate') == true)
@@ -1047,9 +1042,9 @@ class Event extends DatabaseTable
 
 		if ($create==false)
 		{
-			switch($event_type)
+			switch($competition_type)
 			{
-				case "Tournament":
+			case "Tournament":
 				//<!-- Map Pool -->
 				if ($this->getID() != 0)
 				{
@@ -1248,19 +1243,19 @@ class Event extends DatabaseTable
 	- format: 'Single elimination', ...
 	- maxNbrPlayers: max number of players
 	- teams[player]
-	 . Name
-	 . PlayerID
+	. Name
+	. PlayerID
 	- results[round][matchup]
-	 . winner: not played/top/bottom
-	 . bye: true/false
-	 . topWins
-	 . bottomWins
-	 . matchs[match]
-	   . played
-	   . match_id
+	. winner: not played/top/bottom
+	. bye: true/false
+	. topWins
+	. bottomWins
+	. matchs[match]
+	. played
+	. match_id
 	- rounds[round]
-	 . Title
-	 . BestOf
+	. Title
+	. BestOf
 
 	variables:
 	- $matchup[round][matchup][0(top)-1(bottom)] unserialized from file
@@ -1282,18 +1277,7 @@ class Event extends DatabaseTable
 		global $tp;
 
 		$type = $this->fields['Type'];
-		switch($type)
-		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "Clan Ladder":
-			$event_type = 'Ladder';
-			break;
-			case "One Player Tournament":
-			case "Clan Tournament":
-			$event_type = 'Tournament';
-			default:
-		}
+		$competition_type = $this->getCompetitionType();
 		
 		$format = $this->fields['Format'];
 		$event_id = $this->fields['EventID'];
@@ -1454,11 +1438,11 @@ class Event extends DatabaseTable
 
 						switch ($content[$round][$matchup][$match])
 						{
-							case 'E':
+						case 'E':
 							$results[$round][$matchup]['winner'] = ($match==0) ? 'bottom' : 'top';
 							$results[$round][$matchup]['bye'] = true;
 							break;
-							case 'N':
+						case 'N':
 							$results[$round][$matchup]['winner'] = ($match==0) ? 'bottom' : 'top';
 							break;
 						}
@@ -1474,8 +1458,8 @@ class Event extends DatabaseTable
 						for($match=0;$match < $nbr_matchs; $match++)
 						{
 							if(($results[$round][$matchup]['matchs'][$match]['match_id'] == $delete_match_id)
-							||($match_deleted == true)
-							||($matchup_deleted == true))
+									||($match_deleted == true)
+									||($matchup_deleted == true))
 							{
 								/*
 								var_dump($results[$round][$matchup]);
@@ -1506,17 +1490,17 @@ class Event extends DatabaseTable
 					
 					/* Update results */
 					if(($scheduleNextMatches == true)
-					&&($content[$round][$matchup][0][0]=='T')
-					&&($content[$round][$matchup][1][0]=='T')
-					&&($results[$round][$matchup]['winner'] == 'not played')) {
+							&&($content[$round][$matchup][0][0]=='T')
+							&&($content[$round][$matchup][1][0]=='T')
+							&&($results[$round][$matchup]['winner'] == 'not played')) {
 						// Matchup not finished yet
 						/* Calculate:
-						 $results[$round][$matchup]['topWins']
-						 $results[$round][$matchup]['bottomWins']
-						 $results[$round][$matchup]['matchs'][$match]['winner']
-						 $results[$round][$matchup]['winner']
+						$results[$round][$matchup]['topWins']
+						$results[$round][$matchup]['bottomWins']
+						$results[$round][$matchup]['matchs'][$match]['winner']
+						$results[$round][$matchup]['winner']
 						*/
-						
+
 						$results[$round][$matchup]['topWins'] = 0;
 						$results[$round][$matchup]['bottomWins'] = 0;
 						if ($nbr_matchs > 0) 
@@ -1534,11 +1518,9 @@ class Event extends DatabaseTable
 										// The match has been reported
 										// Need to check who won.
 										// Get the scores for this match
-										switch($type)
+										switch($this->getMatchPlayersType())
 										{
-											case "One Player Ladder":
-											case "Team Ladder":
-											case "One Player Tournament":
+										case 'Players':
 											$q = "SELECT ".TBL_MATCHS.".*, "
 											.TBL_SCORES.".*, "
 											.TBL_PLAYERS.".*, "
@@ -1555,8 +1537,7 @@ class Event extends DatabaseTable
 											." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 											." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 											break;
-											case "Clan Ladder":
-											case "Clan Tournament":
+										case 'Teams':
 											$q = "SELECT ".TBL_MATCHS.".*, "
 											.TBL_SCORES.".*, "
 											.TBL_CLANS.".*, "
@@ -1574,38 +1555,35 @@ class Event extends DatabaseTable
 											." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
 											." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 											break;
-											default:
+										default:
 										}
-			
+										
 										$result = $sql->db_Query($q);
 										$numScores = mysql_numrows($result);
-			
+										
 										if ($numScores>0)
 										{
 											$i = 0;
-											switch($type)
+											switch($this->getMatchPlayersType())
 											{
-												case "One Player Ladder":
-												case "Team Ladder":
-												case "One Player Tournament":
+											case 'Players':
 												$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 												break;
-												case "Clan Ladder":
-												case "Clan Tournament":
+											case 'Teams':
 												$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 												break;
-												default:
+											default:
 											}
 											$pscoreid  = mysql_result($result,$i, TBL_SCORES.".ScoreID");
 											$prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
 											$pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
-			
+											
 											$teamTop    = substr($content[$round][$matchup][0],1);
 											$teamBottom = substr($content[$round][$matchup][1],1);
-			
+											
 											$teamTopID = $teams[$teamTop-1]['PlayerID'];
 											$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
-			
+											
 											if ($teamTopID == $pid)
 											{
 												$current_match_winner = 'top';
@@ -1618,7 +1596,7 @@ class Event extends DatabaseTable
 										}
 									}										
 								}
-											
+								
 								if($current_match_winner == 'top')
 								{
 									$results[$round][$matchup]['topWins'] += 1;
@@ -1626,7 +1604,7 @@ class Event extends DatabaseTable
 									{
 										$results[$round][$matchup]['winner'] = 'top';
 										//echo "Match $matchs, top won<br>";
-										if(($round == $nbrRounds-1)&&($event_type == 'Tournament'))
+										if(($round == $nbrRounds-1)&&($competition_type == 'Tournament'))
 										{
 											// top has won the tournament
 											$this->setFieldDB('Status', 'finished');
@@ -1634,15 +1612,15 @@ class Event extends DatabaseTable
 											// Award: player wins tournament
 											switch($type)
 											{
-												case "One Player Tournament":
+											case "One Player Tournament":
 												$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
 												VALUES ($teamTopID,'PlayerWonTournament',$time)";
 												break;
-												case "Clan Tournament":
+											case "Clan Tournament":
 												$q_Award = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
 												VALUES ($teamTopID,'TeamWonTournament',$time)";
 												break;
-												default:
+											default:
 											}
 											$result_Award = $sql->db_Query($q_Award);
 										}
@@ -1655,7 +1633,7 @@ class Event extends DatabaseTable
 									{
 										$results[$round][$matchup]['winner'] = 'bottom';
 										//echo "Match $matchs, bottom won<br>";
-										if(($round == $nbrRounds-1)&&($event_type == 'Tournament'))
+										if(($round == $nbrRounds-1)&&($competition_type == 'Tournament'))
 										{
 											// bottom has won the tournament
 											$this->setFieldDB('Status', 'finished');
@@ -1663,15 +1641,15 @@ class Event extends DatabaseTable
 											// Award: player wins tournament
 											switch($type)
 											{
-												case "One Player Tournament":
+											case "One Player Tournament":
 												$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
 												VALUES ($teamBottomID,'PlayerWonTournament',$time)";
 												break;
-												case "Clan Tournament":
+											case "Clan Tournament":
 												$q_Award = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
 												VALUES ($teamBottomID,'TeamWonTournament',$time)";
 												break;
-												default:
+											default:
 											}
 											$result_Award = $sql->db_Query($q_Award);
 										}
@@ -1725,9 +1703,9 @@ class Event extends DatabaseTable
 
 
 					if(($scheduleNextMatches == true)
-					&&($content[$round][$matchup][0][0]=='T')
-					&&($content[$round][$matchup][1][0]=='T')
-					&&($results[$round][$matchup]['winner'] == 'not played')) {
+							&&($content[$round][$matchup][0][0]=='T')
+							&&($content[$round][$matchup][1][0]=='T')
+							&&($results[$round][$matchup]['winner'] == 'not played')) {
 						$current_match = $results[$round][$matchup]['matchs'][$nbr_matchs-1];
 						//var_dump($current_match);
 
@@ -1758,18 +1736,15 @@ class Event extends DatabaseTable
 							$teamTop    = substr($content[$round][$matchup][0],1);
 							$teamBottom = substr($content[$round][$matchup][1],1);
 
-							switch($type)
+							switch($this->getMatchPlayersType())
 							{
-								case "One Player Ladder":
-								case "Team Ladder":
-								case "One Player Tournament":
+							case 'Players':
 								$playerTopID = $teams[$teamTop-1]['PlayerID'];
 								$playerBottomID = $teams[$teamBottom-1]['PlayerID'];
 								$teamTopID = 0;
 								$teamBottomID = 0;
 								break;
-								case "Clan Ladder":
-								case "Clan Tournament":
+							case 'Teams':
 								$playerTopID = 0;
 								$playerBottomID = 0;
 								$teamTopID = $teams[$teamTop-1]['PlayerID'];
@@ -1797,11 +1772,9 @@ class Event extends DatabaseTable
 							$fromid = 0;
 							$subject = SITENAME." ".EB_MATCHR_L52;
 
-							switch($type)
+							switch($this->getMatchPlayersType())
 							{
-								case "One Player Ladder":
-								case "Team Ladder":
-								case "One Player Tournament":
+							case 'Players':
 								$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 								." FROM ".TBL_MATCHS.", "
 								.TBL_SCORES.", "
@@ -1816,8 +1789,7 @@ class Event extends DatabaseTable
 								$result_Players = $sql->db_Query($q_Players);
 								$numPlayers = mysql_numrows($result_Players);
 								break;
-								case "Clan Ladder":
-								case "Clan Tournament":
+							case 'Teams':
 								$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 								." FROM ".TBL_MATCHS.", "
 								.TBL_SCORES.", "
@@ -1834,7 +1806,7 @@ class Event extends DatabaseTable
 								$result_Players = $sql->db_Query($q_Players);
 								$numPlayers = mysql_numrows($result_Players);
 								break;
-								default:
+							default:
 							}
 
 							if($numPlayers > 0)
@@ -1987,25 +1959,24 @@ class Event extends DatabaseTable
 
 	function eventTypeToString()
 	{
-		$type = $this->getField('Type');
-		switch($type)
+		switch($this->getField('Type'))
 		{
-			case "One Player Ladder":
+		case "One Player Ladder":
 			$text = EB_EVENTS_L22;
 			break;
-			case "Team Ladder":
+		case "Team Ladder":
 			$text = EB_EVENTS_L23;
 			break;
-			case "Clan Ladder":
+		case "Clan Ladder":
 			$text = EB_EVENTS_L25;
 			break;
-			case "One Player Tournament":
+		case "One Player Tournament":
 			$text = EB_EVENTS_L33;
 			break;
-			case "Clan Tournament":
+		case "Clan Tournament":
 			$text = EB_EVENTS_L35;
 			break;
-			default:
+		default:
 			$text = $type;
 		}
 		return $text;
@@ -2016,22 +1987,22 @@ class Event extends DatabaseTable
 		$status = $this->getField('Status');
 		switch($status)
 		{
-			case 'draft':
+		case 'draft':
 			$text = EB_EVENTM_L136;
 			break;
-			case 'signup':
+		case 'signup':
 			$text = EB_EVENTM_L138;
 			break;
-			case 'checkin':
+		case 'checkin':
 			$text = EB_EVENTM_L139;
 			break;
-			case 'active':
+		case 'active':
 			$text = EB_EVENTM_L140;
 			break;
-			case 'finished':
+		case 'finished':
 			$text = EB_EVENTM_L141;
 			break;
-			default:
+		default:
 			$text = $status;
 		}
 		return $text;
@@ -2044,9 +2015,9 @@ class Event extends DatabaseTable
 		$time_comment = '';
 		switch($this->getField('Status'))
 		{
-			case 'draft':
+		case 'draft':
 			break;
-			case 'signup':
+		case 'signup':
 			if($this->getField('CheckinDuration') == 0)
 			{
 				$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $this->getField('StartDateTime'));
@@ -2056,33 +2027,66 @@ class Event extends DatabaseTable
 				$time_comment = EB_EVENT_L87.'&nbsp;'.get_formatted_timediff($time, $this->getField('StartDateTime') - INT_MINUTE*$this->getField('CheckinDuration'));
 			}
 			break;
-			case 'checkin':
+		case 'checkin':
 			$time_comment = EB_EVENT_L2.'&nbsp;'.get_formatted_timediff($time, $this->getField('StartDateTime'));
 			break;
-			case 'active':
+		case 'active':
 			if ($this->getField('EndDateTime') != 0)
 			{
 				$time_comment = EB_EVENT_L3.'&nbsp;'.get_formatted_timediff($time, $this->getField('EndDateTime'));
 			}
 			break;
-			case 'finished':
+		case 'finished':
 			$time_comment = EB_EVENT_L4;
 			break;
 		}
 		return $time_comment;
 	}
+	
+	function getCompetitionType()
+	{
+		switch($this->getField('Type'))
+		{
+		case 'One Player Ladder':
+		case 'Team Ladder':
+		case 'Clan Ladder':
+			$competition_type = 'Ladder';
+			break;
+		case 'One Player Tournament':
+		case 'Clan Tournament':
+			$competition_type = 'Tournament';
+			break;
+		default:
+		}
+		return $competition_type;
+	}
 
+	function getMatchPlayersType()
+	{
+		switch($this->getField('Type'))
+		{
+		case 'One Player Ladder':
+		case 'One Player Tournament':
+		case 'Team Ladder':
+			$match_players_type = 'Players';
+			break;
+		case 'Clan Tournament':
+		case 'Clan Ladder':
+			$match_players_type = 'Teams';
+			break;
+		default:
+		}
+		return $match_players_type;
+	}	
+	
 	function getTeams()
 	{
 		global $sql;
 
 		$teams = array();
-		$type = $this->getField('Type');
-		switch($type)
+		switch($this->getMatchPlayersType())
 		{
-			case 'One Player Ladder':
-			case 'Team Ladder':
-			case 'One Player Tournament':
+		case 'Players':
 			$q_Players = "SELECT ".TBL_GAMERS.".*, "
 			.TBL_PLAYERS.".*"
 			." FROM ".TBL_GAMERS.", "
@@ -2112,8 +2116,7 @@ class Event extends DatabaseTable
 				$teams[$player]['Avatar'] = $pavatar;
 			}
 			break;
-			case 'Clan Ladder':
-			case 'Clan Tournament':
+		case 'Teams':
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
 			.TBL_TEAMS.".*, "
 			.TBL_DIVISIONS.".* "
@@ -2146,12 +2149,9 @@ class Event extends DatabaseTable
 	{
 		global $sql;
 
-		$type = $this->getField('Type');
-		switch($type)
+		switch($this->getMatchPlayersType())
 		{
-			case 'One Player Ladder':
-			case 'Team Ladder':
-			case 'One Player Tournament':
+		case 'Players':
 			$q_Players = "SELECT ".TBL_GAMERS.".*, "
 			.TBL_PLAYERS.".*"
 			." FROM ".TBL_GAMERS.", "
@@ -2177,8 +2177,7 @@ class Event extends DatabaseTable
 				$result_2 = $sql->db_Query($q_2);
 			}
 			break;
-			case 'Clan Ladder':
-			case 'Clan Tournament':
+		case 'Teams':
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
 			.TBL_TEAMS.".*, "
 			.TBL_DIVISIONS.".* "
@@ -2216,17 +2215,17 @@ class Event extends DatabaseTable
 			$maxNbrPlayers = $this->getField('MaxNumberPlayers');
 			switch ($this->getField('Format'))
 			{
-				case 'Double Elimination':
+			case 'Double Elimination':
 				$file = 'include/brackets/de-'.$maxNbrPlayers.'.txt';
 				break;
-				case 'Single Elimination':
-				default:
+			case 'Single Elimination':
+			default:
 				$file = 'include/brackets/se-'.$maxNbrPlayers.'.txt';
 				break;
-				case 'Round-robin':
+			case 'Round-robin':
 				$file = 'include/brackets/rr-'.$maxNbrPlayers.'.txt';
 				break;
-				case 'Double Round-robin':
+			case 'Double Round-robin':
 				$file = 'include/brackets/drr-'.$maxNbrPlayers.'.txt';
 				break;
 			}

@@ -80,11 +80,11 @@ $matchups = generate_brackets($type, $serialize, $display_bracket_array);
 $nbrRounds = count($matchups);
 $nbrRows = 4*count($matchups[1]);
 
-		/* */
+/* */
 $brackets = array ();
 $content= array();
 // Initialize grid
-		for ($row = 1; $row <= $nbrRows; $row ++){
+for ($row = 1; $row <= $nbrRows; $row ++){
 	for ($column = 1; $column <= $nbrRounds; $column++){
 		$brackets[$row][2*$column-1] = '<td class="grid empty"></td>';
 		$brackets[$row][2*$column] = '<td class="grid border-none"></td>';
@@ -212,11 +212,11 @@ for ($round = 1; $round <= $nbrRounds; $round++){
 				
 				switch ($content[$round][$matchup][$match])
 				{
-					case 'E':
+				case 'E':
 					$results[$round][$matchup]['winner'] = ($match==0) ? 'bottom' : 'top';
 					$results[$round][$matchup]['bye'] = true;
 					break;
-					case 'N':
+				case 'N':
 					$results[$round][$matchup]['winner'] = ($match==0) ? 'bottom' : 'top';
 					break;
 				}
@@ -324,7 +324,7 @@ for ($round = 1; $round <= $nbrRounds; $round++){
 					$topWins .= '-';
 					$bottomWins .= '+';
 				}
-						if ($content[$round][$matchup][0][0] != 'E') {
+				if ($content[$round][$matchup][0][0] != 'E') {
 					$brackets[$row][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][$match], $topWins, 'victor');
 				} else {
 					$brackets[$row][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][$match], $bottomWins);
@@ -355,7 +355,7 @@ $bracket_html .= '<th colspan="2"></th>';
 $bracket_html .= '</tr></thead>';
 */
 $bracket_html .= '<tbody>';
-		for ($row = 1; $row <= $nbrRows; $row ++){
+for ($row = 1; $row <= $nbrRows; $row ++){
 	$bracket_html .= '<tr>';
 	for ($column = 1; $column <= 2*$nbrRounds; $column++){
 		$bracket_html .= $brackets[$row][$column];

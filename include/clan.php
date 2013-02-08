@@ -262,12 +262,12 @@ class Division extends DatabaseTable
 		$div_id = $this->fields['DivisionID'];
 		
 		$q = "SELECT ".TBL_USERS.".*"
-			." FROM ".TBL_USERS
-			." WHERE (".TBL_USERS.".user_id = '$user')";
-			$result = $sql->db_Query($q);
-			$Name  = mysql_result($result,0, TBL_USERS.".user_name");
-			$UniqueGameID = "";
-			updateGamer($user, $this->fields['Game'], $Name, $UniqueGameID);
+		." FROM ".TBL_USERS
+		." WHERE (".TBL_USERS.".user_id = '$user')";
+		$result = $sql->db_Query($q);
+		$Name  = mysql_result($result,0, TBL_USERS.".user_name");
+		$UniqueGameID = "";
+		updateGamer($user, $this->fields['Game'], $Name, $UniqueGameID);
 		
 		$q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
 		VALUES ($div_id,$user,$time)";

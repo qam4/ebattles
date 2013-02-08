@@ -93,11 +93,9 @@ $match_id = $_GET['matchid'];
 
 $event = new Event($event_id);
 
-switch($event->getField('Type'))
+switch($event->getMatchPlayersType())
 {
-	case "One Player Ladder":
-	case "Team Ladder":
-	case "One Player Tournament":
+case 'Players':
 	$q = "SELECT ".TBL_PLAYERS.".*, "
 	.TBL_USERS.".*, "
 	.TBL_GAMERS.".*"
@@ -138,8 +136,7 @@ switch($event->getField('Type'))
 		$players_name[$i+1] = $pclantag.$pname." ($prank_txt)";
 	}
 	break;
-	case "Clan Ladder":
-	case "Clan Tournament":
+case 'Teams':
 	$q = "SELECT ".TBL_CLANS.".*, "
 	.TBL_TEAMS.".*, "
 	.TBL_DIVISIONS.".* "
@@ -172,7 +169,7 @@ switch($event->getField('Type'))
 		$players_name[$i+1] = $pname." ($prank_txt)";
 	}
 	break;
-	default:
+default:
 }
 
 $text .= '
@@ -184,35 +181,35 @@ if(isset($_POST['result']))
 {
 	switch($_POST['result'])
 	{
-		case "1":
+	case "1":
 		// T1 won
 		if (!isset($_POST['rank1'])) $_POST['rank1'] = 'Team #1';
 		if (!isset($_POST['rank2'])) $_POST['rank2'] = 'Team #2';
 		break;
-		case "2":
+	case "2":
 		// T2 won
 		if (!isset($_POST['rank1'])) $_POST['rank1'] = 'Team #2';
 		if (!isset($_POST['rank2'])) $_POST['rank2'] = 'Team #1';
 		break;
-		case "3":
+	case "3":
 		// draw
 		if (!isset($_POST['rank1'])) $_POST['rank1'] = 'Team #1';
 		if (!isset($_POST['rank2'])) $_POST['rank2'] = 'Team #2';
 		if (!isset($_POST['draw2'])) $_POST['draw2'] = 1;
 		break;
-		case "4":
+	case "4":
 		// T1 forfeit
 		if (!isset($_POST['rank1'])) $_POST['rank1'] = 'Team #2';
 		if (!isset($_POST['rank2'])) $_POST['rank2'] = 'Team #1';
 		if (!isset($_POST['forfeit2'])) $_POST['forfeit2'] = 1;
 		break;
-		case "5":
+	case "5":
 		// T2 forfeit
 		if (!isset($_POST['rank1'])) $_POST['rank1'] = 'Team #1';
 		if (!isset($_POST['rank2'])) $_POST['rank2'] = 'Team #2';
 		if (!isset($_POST['forfeit2'])) $_POST['forfeit2'] = 1;
 		break;
-		}
+	}
 }
 
 if($match_id)
@@ -220,11 +217,9 @@ if($match_id)
 	$match = new Match($match_id);
 
 	// If match_id is not null, fill up the form information from the database
-	switch($event->getField('Type'))
+	switch($event->getMatchPlayersType())
 	{
-		case "One Player Ladder":
-		case "Team Ladder":
-		case "One Player Tournament":
+	case 'Players':
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_PLAYERS.".*, "
@@ -241,8 +236,7 @@ if($match_id)
 		." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 		break;
-		case "Clan Ladder":
-		case "Clan Tournament":
+	case 'Teams':
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_CLANS.".*, "
@@ -260,7 +254,7 @@ if($match_id)
 		." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
 		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 		break;
-		default:
+	default:
 	}
 
 	$result = $sql->db_Query($q);
@@ -290,11 +284,9 @@ if($match_id)
 	$nbr_teams = 0;
 	for($score=0;$score < $numScores;$score++)
 	{
-		switch($event->getField('Type'))
+		switch($event->getMatchPlayersType())
 		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "One Player Tournament":
+		case 'Players':
 			$pid  = mysql_result($result,$score, TBL_PLAYERS.".PlayerID");
 			$puid  = mysql_result($result,$score, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$score, TBL_PLAYERS.".Gamer");
@@ -304,15 +296,14 @@ if($match_id)
 			$pteam  = mysql_result($result,$score, TBL_PLAYERS.".Team");
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 			break;
-			case "Clan Ladder":
-			case "Clan Tournament":
+		case 'Teams':
 			$pid  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
 			$pname  = mysql_result($result,$score, TBL_CLANS.".Name");
 			$pavatar = mysql_result($result,$score, TBL_CLANS.".Image");
 			$pteam  = mysql_result($result,$score, TBL_TEAMS.".TeamID");
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam); // Use this function to get other clan info like clan id?
 			break;
-			default:
+		default:
 		}
 		$pscoreid  = mysql_result($result,$score, TBL_SCORES.".ScoreID");
 		$prank  = mysql_result($result,$score, TBL_SCORES.".Player_Rank");
@@ -360,21 +351,10 @@ if($match_id)
 
 
 $type = $event->getField('Type');
-switch($type)
-{
-	case "One Player Ladder":
-	case "Team Ladder":
-	case "Clan Ladder":
-	$event_type = 'Ladder';
-	break;
-	case "One Player Tournament":
-	case "Clan Tournament":
-	$event_type = 'Tournament';
-	default:
-}
+$competition_type = $event->getCompetitionType();
 $matchtype = $event->getField('MatchType');
 if(preg_match("/^\d+v\d$/", $matchtype)||
-   ($event_type == 'Tournament'))
+   ($competition_type == 'Tournament'))
 {
 	$matchreport_type = 'versus';
 	$nbr_teams = 2;
@@ -451,11 +431,9 @@ if (isset($_POST['submit']))
 		// Faction
 		if (!isset($_POST['faction'.$i])) $_POST['faction'.$i] = 0;
 
-		switch($event->getField('Type'))
+		switch($event->getMatchPlayersType())
 		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "One Player Tournament":
+		case 'Players':
 			$q =
 			"SELECT ".TBL_USERS.".*, "
 			.TBL_PLAYERS.".*"
@@ -499,8 +477,7 @@ if (isset($_POST['submit']))
 				$error_str .= '<li>'.EB_MATCHR_L6.$i.'&nbsp;'.EB_MATCHR_L7.$j.' '.EB_MATCHR_L8.'</li>';
 			}
 			break;
-			case "Clan Ladder":
-			case "Clan Tournament":
+		case 'Teams':
 			// Check if user is the team captain
 			$q = "SELECT ".TBL_DIVISIONS.".*, "
 			.TBL_TEAMS.".*"
@@ -541,7 +518,7 @@ if (isset($_POST['submit']))
 				$error_str .= '<li>'.EB_MATCHR_L39.$i.'&nbsp;'.EB_MATCHR_L40.$j.'</li>';
 			}
 			break;
-			default:
+		default:
 		}
 	}
 
@@ -561,22 +538,19 @@ if (isset($_POST['submit']))
 
 	if(!isset($_POST['matchschedule']))
 	{
-		switch($event->getField('Type'))
+		switch($event->getMatchPlayersType())
 		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "One Player Tournament":
+		case 'Players':
 			// Check if the reporter played in the match
 			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
 			$error_str .= '<li>'.EB_MATCHR_L9.'</li>';
 			break;
-			case "Clan Ladder":
-			case "Clan Tournament":
+		case 'Teams':
 			// Check if the reporter's team played in the match
 			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
 			$error_str .= '<li>'.EB_MATCHR_L37.'</li>';
 			break;
-			default:
+		default:
 		}
 	}
 
@@ -704,24 +678,21 @@ if (isset($_POST['submit']))
 			$pscore = $_POST['score'.$i];
 			$pfaction = $_POST['faction'.$i];
 
-			switch($event->getField('Type'))
+			switch($event->getMatchPlayersType())
 			{
-				case "One Player Ladder":
-				case "Team Ladder":
-				case "One Player Tournament":
+			case 'Players':
 				$q =
 				"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
 				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
 				";
 				break;
-				case "Clan Ladder":
-				case "Clan Tournament":
+			case 'Teams':
 				$q =
 				"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
 				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
 				";
 				break;
-				default:
+			default:
 			}
 			$result = $sql->db_Query($q);
 		}
@@ -734,11 +705,9 @@ if (isset($_POST['submit']))
 			$fromid = 0;
 			$subject = SITENAME." ".EB_MATCHR_L52;
 
-			switch($event->getField('Type'))
+			switch($event->getMatchPlayersType())
 			{
-				case "One Player Ladder":
-				case "Team Ladder":
-				case "One Player Tournament":
+			case 'Players':
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
@@ -753,10 +722,8 @@ if (isset($_POST['submit']))
 				$result_Players = $sql->db_Query($q_Players);
 				$numPlayers = mysql_numrows($result_Players);
 				echo "numPlayers: $numPlayers<br>";
-
 				break;
-				case "Clan Ladder":
-				case "Clan Tournament":
+			case 'Teams':
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
@@ -773,9 +740,8 @@ if (isset($_POST['submit']))
 				$result_Players = $sql->db_Query($q_Players);
 				$numPlayers = mysql_numrows($result_Players);
 				echo "numPlayers: $numPlayers<br>";
-
 				break;
-				default:
+			default:
 			}
 
 			if($numPlayers > 0)
@@ -809,18 +775,15 @@ if (isset($_POST['submit']))
 			// Automatically Update Players stats only if Match Approval is Disabled
 			if ($event->getField('MatchesApproval') == eb_UC_NONE)
 			{
-				switch($event->getField('Type'))
+				switch($event->getMatchPlayersType())
 				{
-					case "One Player Ladder":
-					case "Team Ladder":
-					case "One Player Tournament":
+				case 'Players':
 					$match->match_players_update();
 					break;
-					case "Clan Ladder":
-					case "Clan Tournament":
+				case 'Teams':
 					$match->match_teams_update();
 					break;
-					default:
+				default:
 				}
 				if($event->getField('FixturesEnable') == TRUE)
 				{

@@ -20,24 +20,24 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 	}
 	$score = preg_replace("/[\+\-]/","", $score);
 	switch ($content[0]) {
-		case 'E':
+	case 'E':
 		$text .= '&nbsp;';
 		break;
-		case 'N':
+	case 'N':
 		$text .= 'Not needed';
 		break;
-		case 'W':
+	case 'W':
 		$text .= '&nbsp;';
 		break;
-		case 'L':
+	case 'L':
 		$teams = substr($content,1);
 		$text .= EB_EVENT_L85.' '.$teams;
 		break;
-		case 'P':
+	case 'P':
 		$teams = substr($content,1);
 		$text .= EB_EVENT_L85.' '.$teams.' '.EB_EVENT_L86;
 		break;
-		case 'T':
+	case 'T':
 		$team = substr($content,1);
 		$team_name = $teams[$team-1]['Name'];
 		$team_image = 'images/ranks/a1.jpg';
@@ -50,13 +50,13 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 		$text .= '<td class="wins">';
 		switch($container_class)
 		{
-			case 'winner':
+		case 'winner':
 			//$text .= '<div class="wins">W</div>';
 			break;
-			case 'loser':
+		case 'loser':
 			//$text .= '<div class="wins">L</div>';
 			break;
-			case 'victor':
+		case 'victor':
 			$text .= '<div class="wins">'.$victor_str.'</div>';
 			break;
 		}
@@ -66,7 +66,7 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 		$text .= '</div></td>';
 		$text .= '</tr></tbody></table>';
 		break;
-		default:
+	default:
 		break;
 	}
 
@@ -134,7 +134,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 	if ($serialize){
 		switch ($type)
 		{
-			case 'se-128':
+		case 'se-128':
 			$matchups = array(
 			1=> array(
 			1 => array('T1', 'T128'),
@@ -282,7 +282,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			)
 			);
 			break;
-			case 'se-64':
+		case 'se-64':
 			$matchups = array(
 			1=> array(
 			1 => array('T1', 'T64'),
@@ -364,7 +364,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			)
 			);
 			break;
-			case 'se-32':
+		case 'se-32':
 			$matchups = array(
 			1=> array(
 			1 => array('T1', 'T32'),
@@ -412,7 +412,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			)
 			);
 			break;
-			case 'se-16':
+		case 'se-16':
 			$matchups = array(
 			1=> array(
 			1 => array('T1', 'T16'),
@@ -442,7 +442,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			)
 			);
 			break;
-			case 'se-8':
+		case 'se-8':
 			$matchups = array(
 			1=> array(
 			1 => array('T1', 'T8'),
@@ -462,7 +462,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			)
 			);
 			break;
-			case 'se-4':
+		case 'se-4':
 			$matchups = array(
 			1=> array(
 			1 => array('T1', 'T4'),
@@ -476,7 +476,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			)
 			);
 			break;
-			case 'se-2':
+		case 'se-2':
 			$matchups = array(
 			1=>array(
 			1 => array('T1', 'T2'),
@@ -486,7 +486,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			)
 			);
 			break;
-			case 'de-4':
+		case 'de-4':
 			$matchups = array(
 			1=>array(
 			1 => array('T1', 'T4'),
@@ -516,7 +516,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			)
 			);
 			break;
-			case 'de-8':
+		case 'de-8':
 			$matchups = array(
 			1=> array(
 			1 => array('T1', 'T8'),
@@ -598,7 +598,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			)
 			);
 			break;
-			case 'de-8-1':
+		case 'de-8-1':
 			$matchups = array(
 			1=> array(
 			1 => array('', ''),
@@ -680,7 +680,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			)
 			);
 			break;
-			case 'rr-4':
+		case 'rr-4':
 			// http://home.comcast.net/~wporter211/realsite/chess_etc/rrpair.htm
 			$matchups = array(
 			1=> array(
@@ -698,7 +698,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			4=> array()
 			);
 			break;
-			case 'drr-4':
+		case 'drr-4':
 			// http://home.comcast.net/~wporter211/realsite/chess_etc/rrpair.htm
 			$matchups = array(
 			1=> array(
@@ -728,7 +728,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			7=> array()
 			);
 			break;
-			case 'rr-8':
+		case 'rr-8':
 			// http://home.comcast.net/~wporter211/realsite/chess_etc/rrpair.htm
 			$matchups = array(
 			1=> array(
@@ -776,7 +776,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			8=> array()
 			);
 			break;
-			case 'drr-8':
+		case 'drr-8':
 			// http://home.comcast.net/~wporter211/realsite/chess_etc/rrpair.htm
 			$matchups = array(
 			1=> array(
@@ -866,7 +866,7 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			15=> array()
 			);
 			break;
-			}
+		}
 		
 		if($display_bracket_array)
 		{

@@ -137,12 +137,12 @@ else
 			}
 			/* Visitor not viewing own account */
 			else{
-			$text .= '<td class="eb_td">';
-			$text .= $pName;
-			$text .= '</td>';
-			$text .= '<td class="eb_td">';
-			$text .= $pGamer;
-			$text .= '</td>';
+				$text .= '<td class="eb_td">';
+				$text .= $pName;
+				$text .= '</td>';
+				$text .= '<td class="eb_td">';
+				$text .= $pGamer;
+				$text .= '</td>';
 			}
 			$text .= '</tr>';
 		}
@@ -856,39 +856,39 @@ else
 			$date = date("d M Y, h:i A",$aTime_local);
 
 			switch ($aType) {
-				case 'PlayerTookFirstPlace':
+			case 'PlayerTookFirstPlace':
 				$award = EB_AWARD_L2;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_gold_3.png").' alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/> ';
 				break;
-				case 'PlayerInTopTen':
+			case 'PlayerInTopTen':
 				$award = EB_AWARD_L4;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/award_star_bronze_3.png").' alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/> ';
 				break;
-				case 'PlayerStreak5':
+			case 'PlayerStreak5':
 				$award = EB_AWARD_L6;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_3.png").' alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/> ';
 				break;
-				case 'PlayerStreak10':
+			case 'PlayerStreak10':
 				$award = EB_AWARD_L8;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_3.png").' alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/> ';
 				break;
-				case 'PlayerStreak25':
+			case 'PlayerStreak25':
 				$award = EB_AWARD_L10;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_3.png").' alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/> ';
 				break;
-				case 'PlayerWonTournament':
+			case 'PlayerWonTournament':
 				$award = EB_AWARD_L12;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/trophy_gold.png").' alt="'.EB_AWARD_L13.'" title="'.EB_AWARD_L13.'"/> ';
 				break;
-				case 'PlayerRankFirst':
+			case 'PlayerRankFirst':
 				$award = EB_AWARD_L14;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_gold_1.png").' alt="'.EB_AWARD_L15.'" title="'.EB_AWARD_L15.'"/> ';
 				break;
-				case 'PlayerRankSecond':
+			case 'PlayerRankSecond':
 				$award = EB_AWARD_L16;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_silver_1.png").' alt="'.EB_AWARD_L17.'" title="'.EB_AWARD_L17.'"/> ';
 				break;
-				case 'PlayerRankThird':
+			case 'PlayerRankThird':
 				$award = EB_AWARD_L18;
 				$icon = '<img '.getActivityIconResize(e_PLUGIN."ebattles/images/awards/medal_bronze_1.png").' alt="'.EB_AWARD_L19.'" title="'.EB_AWARD_L19.'"/> ';
 				break;

@@ -14,15 +14,13 @@ if ($eventIsChanged == 1)
 $can_signup = 0;
 $cannot_signup_str = EB_EVENT_L75;
 $eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
-switch($event->getField('Type'))
+switch($event->getMatchPlayersType())
 {
-case "One Player Ladder":
-case "One Player Tournament":
+case 'Players':
 	if(($eMaxNumberPlayers == 0)||($nbrplayers < $eMaxNumberPlayers)) $can_signup = 1;
 	$tab_title = EB_EVENT_L77;
 	break;
-case "Clan Ladder":
-case "Clan Tournament":
+case 'Teams':
 	if(($eMaxNumberPlayers == 0)||($nbrteams < $eMaxNumberPlayers))	$can_signup = 1;
 	$tab_title = EB_EVENT_L84;
 	break;
@@ -328,7 +326,7 @@ case "Clan Tournament":
 								$text .= '<td>'.EB_EVENT_L90.'</td>';
 							}
 						}
-			
+						
 						// Player can quit an event if he has not played yet
 						$q_2 = "SELECT ".TBL_PLAYERS.".*"
 						." FROM ".TBL_PLAYERS.", "
@@ -610,6 +608,9 @@ if(mysql_numrows($result) == 1)
 		$can_challenge = 0;
 	}
 }
+
+//sc2:
+$can_submit_replay = 0;
 
 if($event->getField('FixturesEnable') == TRUE)
 {
@@ -938,9 +939,9 @@ if ($numMatches>0)
 $text .= '</div>';    // tabs-4 "Matches"
 
 $text .= '<div id="tabs-5">';
-switch($event->getField('Type'))
+switch($event->getMatchPlayersType())
 {
-case "One Player Tournament":
+case 'Players':
 	// Show list of players
 	$q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
 	.TBL_GAMERS.".*, "
@@ -986,7 +987,7 @@ case "One Player Tournament":
 		$text .= '</tbody></table>';
 	}
 	break;
-case "Clan Tournament":
+case 'Teams':
 	// Show list of teams
 	$q_Teams = "SELECT ".TBL_CLANS.".*, "
 	.TBL_TEAMS.".*, "

@@ -283,18 +283,18 @@ function displayPastEvents(){
 
 			switch($event->getField('Type'))
 			{
-				case "One Player Ladder":
-				case "One Player Tournament":
+			case "One Player Ladder":
+			case "One Player Tournament":
 				$nbrTeamPlayers = $nbrplayers;
 				break;
-				case "Team Ladder":
+			case "Team Ladder":
 				$nbrTeamPlayers = $nbrTeams.'/'.$nbrplayers;
 				break;
-				case "Clan Ladder":
-				case "Clan Tournament":
+			case "Clan Ladder":
+			case "Clan Tournament":
 				$nbrTeamPlayers = $nbrTeams;
 				break;
-				default:
+			default:
 			}
 
 			$text .= '<tr>

@@ -247,11 +247,9 @@ if (isset($_FILES['userfile'])) {
 					// Create scores
 					for($i=0;$i < $nbr_players;$i++)
 					{
-						switch($event->getField('Type'))
+						switch($event->getMatchPlayersType())
 						{
-							case "One Player Ladder":
-							case "Team Ladder":
-							case "One Player Tournament":
+						case 'Players':
 							$q =
 							"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Faction,Color,sColor,APM)
 							VALUES (
@@ -266,10 +264,9 @@ if (isset($_FILES['userfile'])) {
 							'".$scores[$i]['APM']."'
 							)";
 							break;
-							case "Clan Ladder":
-							case "Clan Tournament":
+						case 'Teams':
 							break;
-							default:
+						default:
 							$q = '';
 						}
 						$result = $sql->db_Query($q);
@@ -281,18 +278,15 @@ if (isset($_FILES['userfile'])) {
 					// Automatically Update Players stats only if Match Approval is Disabled
 					if ($event->getField('MatchesApproval') == eb_UC_NONE)
 					{
-						switch($event->getField('Type'))
+						switch($event->getMatchPlayersType())
 						{
-							case "One Player Ladder":
-							case "Team Ladder":
-							case "One Player Tournament":
+						case 'Players':
 							$match->match_players_update();
 							break;
-							case "Clan Ladder":
-							case "Clan Tournament":
+						case 'Teams':
 							$match->match_teams_update();
 							break;
-							default:
+						default:
 						}
 					}
 
@@ -306,8 +300,8 @@ if (isset($_FILES['userfile'])) {
 					$raw_name = urlencode($name);
 					$target_file = $target_path . basename($raw_name); 
 					$media_type = 'Replay';
-    				$media_path = $target_file;
-    				$submitter = USERID;
+					$media_path = $target_file;
+					$submitter = USERID;
 					$match->add_media($submitter , $media_path, $media_type);
 
 					header("Location: matchinfo.php?matchid=$match_id");

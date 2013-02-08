@@ -354,7 +354,7 @@ case "Clan Tournament":
 								$text .= '<td>'.EB_EVENT_L90.'</td>';
 							}
 						}
-			
+						
 						// Player can quit an event if he has not played yet
 						$q_2 = "SELECT ".TBL_PLAYERS.".*"
 						." FROM ".TBL_PLAYERS.", "
@@ -592,12 +592,12 @@ if (USERID==$eowner)
 	$can_approve = 1;
 }
 // Is the user a moderator?
-$q_2 = "SELECT ".TBL_EVENTMODS.".*"
+$q = "SELECT ".TBL_EVENTMODS.".*"
 ." FROM ".TBL_EVENTMODS
 ." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
 ."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
-$result_2 = $sql->db_Query($q_2);
-$numMods = mysql_numrows($result_2);
+$result = $sql->db_Query($q);
+$numMods = mysql_numrows($result);
 if ($numMods>0)
 {
 	$userclass |= eb_UC_EVENT_MODERATOR;
@@ -656,11 +656,9 @@ if(mysql_numrows($result) == 1)
 	}
 }
 
-switch($event->getField('Type'))
+switch($event->getMatchPlayersType())
 {
-case "One Player Ladder":
-case "Team Ladder":
-case "One Player Tournament":
+case 'Players':
 	if (($nbrplayersNotBanned < 2)||($pbanned))
 	{
 		$can_report = 0;
@@ -668,11 +666,8 @@ case "One Player Tournament":
 		$can_report_quickloss = 0;
 		$can_challenge = 0;
 	}
-	//sc2:
-	$can_submit_replay = 0;
 	break;
-case "Clan Ladder":
-case "Clan Tournament":
+case 'Teams':
 	if ($nbrteams < 2)
 	{
 		$can_report = 0;
@@ -680,11 +675,12 @@ case "Clan Tournament":
 		$can_report_quickloss = 0;
 		$can_challenge = 0;
 	}
-	//sc2:
-	$can_submit_replay = 0;
 	break;
 default:
 }
+
+//sc2:
+$can_submit_replay = 0;
 
 if($event->getField('FixturesEnable') == TRUE)
 {

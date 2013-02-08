@@ -84,11 +84,9 @@ class Challenge extends DatabaseTable
 			$result = $sql->db_Query($q);
 			$uteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
 
-			switch($event->getField('Type'))
+			switch($event->getMatchPlayersType())
 			{
-				case "One Player Ladder":
-				case "Team Ladder":
-				case "One Player Tournament":
+			case 'Players':
 				// Challenger Info
 				$q = "SELECT ".TBL_PLAYERS.".*, "
 				.TBL_USERS.".*"
@@ -131,8 +129,7 @@ class Challenge extends DatabaseTable
 				$isUserChallenged = (USERID == $challengedpuid) ? TRUE : FALSE;
 				$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
 				break;
-				case "Clan Ladder":
-				case "Clan Tournament":
+			case 'Teams':
 				// Challenger Info
 				$q = "SELECT ".TBL_TEAMS.".*"
 				."   AND (".TBL_TEAMS.".TeamID = '$cChallengertID')";
@@ -155,7 +152,7 @@ class Challenge extends DatabaseTable
 				$string .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$challengedtclanid.'">'.$challengedtclan.'</a>';
 				break;
 
-				default:
+			default:
 			}
 
 			// Event
@@ -302,11 +299,9 @@ class Challenge extends DatabaseTable
 			$output .= '<b>'.EB_CHALLENGE_L18.'</b><br />';
 			$output .= '<br />';
 
-			switch($event->getField('Type'))
+			switch($event->getMatchPlayersType())
 			{
-				case "One Player Ladder":
-				case "Team Ladder":
-				case "One Player Tournament":
+			case 'Players':
 				// Challenger Info
 				$q = "SELECT ".TBL_PLAYERS.".*, "
 				.TBL_USERS.".*"
@@ -349,8 +344,7 @@ class Challenge extends DatabaseTable
 				$isUserChallenged = (USERID == $challengedpuid) ? TRUE : FALSE;
 				$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$challengedpuid.'">'.$challengedpclantag.$challengedpname.'</a>';
 				break;
-				case "Clan Ladder":
-				case "Clan Tournament":
+			case 'Teams':
 				// Challenger Info
 				$q = "SELECT ".TBL_TEAMS.".*"
 				."   AND (".TBL_TEAMS.".TeamID = '$cChallengertID')";
@@ -373,7 +367,7 @@ class Challenge extends DatabaseTable
 				$string .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$challengedtclanid.'">'.$challengedtclan.'</a>';
 				break;
 
-				default:
+			default:
 			}
 			$output .= ' '.$string.'<br />';
 
@@ -492,11 +486,9 @@ class Challenge extends DatabaseTable
 			$fromid = 0;
 			$subject = SITENAME." ".EB_MATCHR_L52;
 
-			switch($event->getField('Type'))
+			switch($event->getMatchPlayersType())
 			{
-				case "One Player Ladder":
-				case "Team Ladder":
-				case "One Player Tournament":
+			case 'Players':
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
@@ -511,10 +503,8 @@ class Challenge extends DatabaseTable
 				$result_Players = $sql->db_Query($q_Players);
 				$numPlayers = mysql_numrows($result_Players);
 				//echo "numPlayers: $numPlayers<br>";
-
 				break;
-				case "Clan Ladder":
-				case "Clan Tournament":
+			case 'Teams':
 				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES.", "
@@ -533,7 +523,7 @@ class Challenge extends DatabaseTable
 				//echo "numPlayers: $numPlayers<br>";
 
 				break;
-				default:
+			default:
 			}
 
 			if($numPlayers > 0)

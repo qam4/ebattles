@@ -60,11 +60,9 @@ class Match extends DatabaseTable
 				{
 					$output .= "Team $i vs. Team $j<br />";
 
-					switch($event->getField('Type'))
+					switch($event->getMatchPlayersType())
 					{
-						case "One Player Ladder":
-						case "Team Ladder":
-						case "One Player Tournament":
+					case 'Players':
 						$q = "SELECT ".TBL_MATCHS.".*, "
 						.TBL_SCORES.".*, "
 						.TBL_PLAYERS.".*"
@@ -122,8 +120,7 @@ class Match extends DatabaseTable
 						$output .= "Team $j ELO: $teamB_ELO, rank: $teamB_Rank<br />";
 						$output .= "Team $j TS: mu = $teamB_TS_mu, sigma= $teamB_TS_sigma<br />";
 						break;
-						case "Clan Ladder":
-						case "Clan Tournament":
+					case 'Teams':
 						$q = "SELECT ".TBL_MATCHS.".*, "
 						.TBL_SCORES.".*, "
 						.TBL_TEAMS.".*"
@@ -181,7 +178,7 @@ class Match extends DatabaseTable
 						$output .= "Team $j ELO: $teamB_ELO, rank: $teamB_Rank<br />";
 						$output .= "Team $j TS: mu = $teamB_TS_mu, sigma= $teamB_TS_sigma<br />";
 						break;
-						default:
+					default:
 					}
 
 					$teamA_win = 0;
@@ -294,11 +291,9 @@ class Match extends DatabaseTable
 						$scoreLoss += $teamA_loss;
 						$scorePoints += $teamA_Points;
 
-						switch($event->getField('Type'))
+						switch($event->getMatchPlayersType())
 						{
-							case "One Player Ladder":
-							case "Team Ladder":
-							case "One Player Tournament":
+						case 'Players':
 							$pid = mysql_result($resultA,$k, TBL_PLAYERS.".PlayerID");
 							$q = "UPDATE ".TBL_SCORES
 							." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
@@ -311,8 +306,7 @@ class Match extends DatabaseTable
 							." WHERE (MatchID = '".$this->fields['MatchID']."')"
 							."   AND (Player = '$pid')";
 							break;
-							case "Clan Ladder":
-							case "Clan Tournament":
+						case 'Teams':
 							$pid = mysql_result($resultA,$k, TBL_TEAMS.".TeamID");
 							$q = "UPDATE ".TBL_SCORES
 							." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
@@ -325,7 +319,7 @@ class Match extends DatabaseTable
 							." WHERE (MatchID = '".$this->fields['MatchID']."')"
 							."   AND (Team = '$pid')";
 							break;
-							default:
+						default:
 						}
 						$result = $sql->db_Query($q);
 						$output .= "team A, Player $pid query: $q<br />";
@@ -348,11 +342,9 @@ class Match extends DatabaseTable
 						$scoreLoss += $teamB_loss;
 						$scorePoints += $teamB_Points;
 
-						switch($event->getField('Type'))
+						switch($event->getMatchPlayersType())
 						{
-							case "One Player Ladder":
-							case "Team Ladder":
-							case "One Player Tournament":
+						case 'Players':
 							$pid = mysql_result($resultB,$k, TBL_PLAYERS.".PlayerID");
 							$q = "UPDATE ".TBL_SCORES
 							." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
@@ -365,8 +357,7 @@ class Match extends DatabaseTable
 							." WHERE (MatchID = '".$this->fields['MatchID']."')"
 							."   AND (Player = '$pid')";
 							break;
-							case "Clan Ladder":
-							case "Clan Tournament":
+						case 'Teams':
 							$tid = mysql_result($resultB,$k, TBL_TEAMS.".TeamID");
 							$q = "UPDATE ".TBL_SCORES
 							." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
@@ -379,7 +370,7 @@ class Match extends DatabaseTable
 							." WHERE (MatchID = '".$this->fields['MatchID']."')"
 							." AND (Team = '$tid')";
 							break;
-							default:
+						default:
 						}
 						$result = $sql->db_Query($q);
 					}
@@ -388,11 +379,9 @@ class Match extends DatabaseTable
 			$output .= '<br />';
 
 			// Update scores score against
-			switch($event->getField('Type'))
+			switch($event->getMatchPlayersType())
 			{
-				case "One Player Ladder":
-				case "Team Ladder":
-				case "One Player Tournament":
+			case 'Players':
 				$q =
 				"SELECT ".TBL_SCORES.".*, "
 				.TBL_PLAYERS.".*"
@@ -401,8 +390,7 @@ class Match extends DatabaseTable
 				." WHERE (".TBL_SCORES.".MatchID = '".$this->fields['MatchID']."')"
 				."   AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
 				break;
-				case "Clan Ladder":
-				case "Clan Tournament":
+			case 'Teams':
 				$q =
 				"SELECT ".TBL_SCORES.".*, "
 				.TBL_TEAMS.".*"
@@ -411,25 +399,22 @@ class Match extends DatabaseTable
 				." WHERE (".TBL_SCORES.".MatchID = '".$this->fields['MatchID']."')"
 				."   AND (".TBL_SCORES.".Team = ".TBL_TEAMS.".TeamID)";
 				break;
-				default:
+			default:
 			}
 
 			$result = $sql->db_Query($q);
 			$nbr_players = mysql_numrows($result);
 			for($i=0;$i<$nbr_players;$i++)
 			{
-				switch($event->getField('Type'))
+				switch($event->getMatchPlayersType())
 				{
-					case "One Player Ladder":
-					case "Team Ladder":
-					case "One Player Tournament":
+				case 'Players':
 					$pid= mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 					break;
-					case "Clan Ladder":
-					case "Clan Tournament":
+				case 'Teams':
 					$pid= mysql_result($result,$i, TBL_TEAMS.".TeamID");
 					break;
-					default:
+				default:
 				}
 				$scoreid= mysql_result($result,$i, TBL_SCORES.".ScoreID");
 				$prank= mysql_result($result,$i, TBL_SCORES.".Player_Rank");
@@ -451,24 +436,21 @@ class Match extends DatabaseTable
 				}
 				$pOppScore /= $pnbrOpps;
 
-				switch($event->getField('Type'))
+				switch($event->getMatchPlayersType())
 				{
-					case "One Player Ladder":
-					case "Team Ladder":
-					case "One Player Tournament":
+				case 'Players':
 					$q_1 = "UPDATE ".TBL_SCORES
 					." SET Player_ScoreAgainst = $pOppScore"
 					." WHERE (MatchID = '".$this->fields['MatchID']."')"
 					." AND (Player = '$pid')";
 					break;
-					case "Clan Ladder":
-					case "Clan Tournament":
+				case 'Teams':
 					$q_1 = "UPDATE ".TBL_SCORES
 					." SET Player_ScoreAgainst = $pOppScore"
 					." WHERE (MatchID = '".$this->fields['MatchID']."')"
 					." AND (Team = '$pid')";
 					break;
-					default:
+				default:
 				}
 
 				$result_1 = $sql->db_Query($q_1);
@@ -494,18 +476,7 @@ class Match extends DatabaseTable
 		$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
 		$event = new Event($event_id);
 		$type = $event->getField('Type');
-		switch($type)
-		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "Clan Ladder":
-			$event_type = 'Ladder';
-			break;
-			case "One Player Tournament":
-			case "Clan Tournament":
-			$event_type = 'Tournament';
-			default:
-		}
+		$competition_type = $event->getCompetitionType();
 
 		// Update Teams with scores
 		$tdeltaELO         = array();
@@ -647,7 +618,7 @@ class Match extends DatabaseTable
 			if ($pStreak > $pStreak_Best) $pStreak_Best = $pStreak;
 			if ($pStreak < $pStreak_Worst) $pStreak_Worst = $pStreak;
 
-			if($event_type == 'Ladder')
+			if($competition_type == 'Ladder')
 			{
 				if ($pStreak == 5)
 				{
@@ -787,18 +758,7 @@ class Match extends DatabaseTable
 		$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
 		$event = new Event($event_id);
 		$type = $event->getField('Type');
-		switch($type)
-		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "Clan Ladder":
-			$event_type = 'Ladder';
-			break;
-			case "One Player Tournament":
-			case "Clan Tournament":
-			$event_type = 'Tournament';
-			default:
-		}
+		$competition_type = $event->getCompetitionType();
 
 		// Update Teams with scores
 		$q = "SELECT ".TBL_MATCHS.".*, "
@@ -881,7 +841,7 @@ class Match extends DatabaseTable
 			if ($tStreak > $tStreak_Best) $tStreak_Best = $tStreak;
 			if ($tStreak < $tStreak_Worst) $tStreak_Worst = $tStreak;
 
-			if($event_type == 'Ladder')
+			if($competition_type == 'Ladder')
 			{
 				if ($tStreak == 5)
 				{
@@ -941,18 +901,15 @@ class Match extends DatabaseTable
 		/* Event Info */
 		$event = new Event($event_id);
 
-		switch($event->getField('Type'))
+		switch($event->getMatchPlayersType())
 		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "One Player Tournament":
+		case 'Players':
 			$this->deletePlayersMatchScores();
 			break;
-			case "Clan Ladder":
-			case "Clan Tournament":
+		case 'Teams':
 			$this->deleteTeamsMatchScores();
 			break;
-			default:
+		default:
 		}
 
 		$event->setFieldDB('IsChanged', 1);
@@ -1352,11 +1309,9 @@ class Match extends DatabaseTable
 				$can_schedule = 0;
 				$userclass = 0;
 
-				switch($event->getField('Type'))
+				switch($event->getMatchPlayersType())
 				{
-					case "One Player Ladder":
-					case "Team Ladder":
-					case "One Player Tournament":
+				case 'Players':
 					// Get the match reporter's match team
 					$reporter_matchteam = 0;
 					$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
@@ -1393,8 +1348,7 @@ class Match extends DatabaseTable
 					$result_Opps = $sql->db_Query($q_Opps);
 					$numOpps = mysql_numrows($result_Opps);
 					break;
-					case "Clan Ladder":
-					case "Clan Tournament":
+				case 'Teams':
 					// Get the match reporter's match team
 					$reporter_matchteam = 0;
 					$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
@@ -1436,15 +1390,13 @@ class Match extends DatabaseTable
 					$numOpps = mysql_numrows($result_Opps);
 					//dbg: echo "numOpps: $numOpps, mt: $reporter_matchteam<br>";
 					break;
-					default:
+				default:
 				}
 
 				// Is the user a player in the match?
-				switch($event->getField('Type'))
+				switch($event->getMatchPlayersType())
 				{
-					case "One Player Ladder":
-					case "Team Ladder":
-					case "One Player Tournament":
+				case 'Players':
 					$q_UserPlayers = "SELECT DISTINCT ".TBL_SCORES.".*"
 					." FROM ".TBL_MATCHS.", "
 					.TBL_SCORES.", "
@@ -1460,8 +1412,7 @@ class Match extends DatabaseTable
 					$numUserPlayers = mysql_numrows($result_UserPlayers);
 
 					break;
-					case "Clan Ladder":
-					case "Clan Tournament":
+				case 'Teams':
 					$q_UserPlayers = "SELECT DISTINCT ".TBL_SCORES.".*"
 					." FROM ".TBL_MATCHS.", "
 					.TBL_SCORES.", "
@@ -1480,7 +1431,7 @@ class Match extends DatabaseTable
 					//dbg: echo "numUserPlayers: $numUserPlayers<br>";
 
 					break;
-					default:
+				default:
 				}
 
 				if (USERID==$event->getField('Owner'))
@@ -1521,11 +1472,9 @@ class Match extends DatabaseTable
 				$orderby_str = " ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 				if($nbr_teams==2) $orderby_str = " ORDER BY ".TBL_SCORES.".Player_MatchTeam";
 
-				switch($event->getField('Type'))
+				switch($event->getMatchPlayersType())
 				{
-					case "One Player Ladder":
-					case "Team Ladder":
-					case "One Player Tournament":
+				case 'Players':
 					$q = "SELECT ".TBL_MATCHS.".*, "
 					.TBL_SCORES.".*, "
 					.TBL_PLAYERS.".*, "
@@ -1542,8 +1491,7 @@ class Match extends DatabaseTable
 					." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 					.$orderby_str;
 					break;
-					case "Clan Ladder":
-					case "Clan Tournament":
+				case 'Teams':
 					$q = "SELECT ".TBL_MATCHS.".*, "
 					.TBL_SCORES.".*, "
 					.TBL_CLANS.".*, "
@@ -1561,7 +1509,7 @@ class Match extends DatabaseTable
 					." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
 					.$orderby_str;
 					break;
-					default:
+				default:
 				}
 
 				$result = $sql->db_Query($q);
@@ -1581,11 +1529,9 @@ class Match extends DatabaseTable
 				$matchteam = 0;
 				for ($index = 0; $index < $numPlayers; $index++)
 				{
-					switch($event->getField('Type'))
+					switch($event->getMatchPlayersType())
 					{
-						case "One Player Ladder":
-						case "Team Ladder":
-						case "One Player Tournament":
+					case 'Players':
 						$puid  = mysql_result($result,$index , TBL_USERS.".user_id");
 						$gamer_id = mysql_result($result,$index, TBL_PLAYERS.".Gamer");
 						$gamer = new Gamer($gamer_id);
@@ -1593,13 +1539,12 @@ class Match extends DatabaseTable
 						$pavatar = mysql_result($result,$index, TBL_USERS.".user_image");
 						$pteam  = mysql_result($result,$index , TBL_PLAYERS.".Team");
 						break;
-						case "Clan Ladder":
-						case "Clan Tournament":
+					case 'Teams':
 						$pname  = mysql_result($result,$index, TBL_CLANS.".Name");
 						$pavatar = mysql_result($result,$index, TBL_CLANS.".Image");
 						$pteam  = mysql_result($result,$index, TBL_TEAMS.".TeamID");
 						break;
-						default:
+					default:
 					}
 					list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 					$prank  = mysql_result($result,$index , TBL_SCORES.".Player_Rank");
@@ -1629,11 +1574,9 @@ class Match extends DatabaseTable
 					$image = '';
 					if ($pref['eb_avatar_enable_playersstandings'] == 1)
 					{
-					switch($event->getField('Type'))
+					switch($event->getMatchPlayersType())
 					{
-					case "One Player Ladder":
-					case "Team Ladder":
-					case "One Player Tournament":
+					case 'Players':
 					if($pavatar)
 					{
 					$image = '<img '.getAvatarResize(avatar($pavatar)).'/>';
@@ -1641,8 +1584,7 @@ class Match extends DatabaseTable
 					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).'/>';
 					}
 					break;
-					case "Clan Ladder":
-					case "Clan Tournament":
+					case 'Teams':
 					if($pavatar)
 					{
 					$image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).'/>';
@@ -1700,25 +1642,22 @@ class Match extends DatabaseTable
 
 					$string .= $pfactionIcon.' ';
 
-					switch($event->getField('Type'))
+					switch($event->getMatchPlayersType())
 					{
-						case "One Player Ladder":
-						case "Team Ladder":
-						case "One Player Tournament":
+					case 'Players':
 						$string .= '<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a>';
 						break;
-						case "Clan Ladder":
-						case "Clan Tournament":
+					case 'Teams':
 						$string .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$pclanid.'">'.$pclan.'</a>';
 						break;
-						default:
+					default:
 					}
 
 				}
 
 				//score here
 				if (($event->getField('AllowScore') == TRUE)
-				&&(($type & eb_MATCH_SCHEDULED) == 0))
+						&&(($type & eb_MATCH_SCHEDULED) == 0))
 				{
 					$string .= ' ('.$scores.') ';
 				}
