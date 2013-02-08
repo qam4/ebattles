@@ -189,11 +189,9 @@ function displayUserInfo($req_user, $profile_link){
 			$event = new Event($event_id);
 			$reported_by  = mysql_result($result_event,0, TBL_MATCHS.".ReportedBy");
 
-			switch($event->getField('Type'))
+			switch($event->getMatchPlayersType())
 			{
-				case "One Player Ladder":
-				case "Team Ladder":
-				case "One Player Tournament":
+			case 'Players':
 				$reporter_matchteam = 0;
 				$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 				." FROM ".TBL_MATCHS.", "
@@ -229,8 +227,7 @@ function displayUserInfo($req_user, $profile_link){
 				$result_Opps = $sql->db_Query($q_Opps);
 				$numOpps = mysql_numrows($result_Opps);
 				break;
-				case "Clan Ladder":
-				case "Clan Tournament":
+			case 'Teams':
 				$reporter_matchteam = 0;
 				$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 				." FROM ".TBL_MATCHS.", "
@@ -270,7 +267,7 @@ function displayUserInfo($req_user, $profile_link){
 				$result_Opps = $sql->db_Query($q_Opps);
 				$numOpps = mysql_numrows($result_Opps);
 				break;
-				default:
+			default:
 			}
 
 			if ($numOpps>0)
@@ -291,7 +288,7 @@ function displayUserInfo($req_user, $profile_link){
 
 		if ($numMatches > 0)
 		{
-//			$text .= '<span class="badge">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L73;
+			//			$text .= '<span class="badge">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L73;
 			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numMatches.'</span>';
 			$text .= '<a href="'.$profile_link.'#tabs-4">';
 			$text .= '&nbsp;'.EB_EVENT_L73;
@@ -348,7 +345,7 @@ function displayUserInfo($req_user, $profile_link){
 
 		if ($numMatches > 0)
 		{
-//			$text .= '<span class="badge">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L70;
+			//			$text .= '<span class="badge">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L70;
 			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numMatches.'</span>';
 			$text .= '<a href="'.$profile_link.'#tabs-4">';
 			$text .= '&nbsp;'.EB_EVENT_L70;
@@ -393,12 +390,12 @@ function displayUserInfo($req_user, $profile_link){
 
 		if ($numChallenges > 0)
 		{
-//			$text .= '<span class="badge">'.$numChallenges.'</span>&nbsp;'.EB_EVENT_L67;
+			//			$text .= '<span class="badge">'.$numChallenges.'</span>&nbsp;'.EB_EVENT_L67;
 			$text .= '<span style="background-color:red;	color:white;	font-family: Helvetica,Arial,sans-serif;	font-size: 9px;	line-height: 18px;	font-weight: bold;	padding:3px 6px;	margin:1px;	-moz-border-radius: 10px;	-khtml-border-radius: 10px;	-webkit-border-radius: 10px;	border-radius: 10px;">'.$numChallenges.'</span>';
 			$text .= '<a href="'.$profile_link.'#tabs-4">';
 			$text .= '&nbsp;'.EB_EVENT_L67;
 			$text .= '</a>';
-	}
+		}
 	}
 	$text .= '</td></tr>';
 

@@ -57,18 +57,15 @@ if(isset($_POST['qrsubmitloss']))
 	// Automatically Update Players stats only if Match Approval is Disabled
 	if ($event->getField('MatchesApproval') == eb_UC_NONE)
 	{
-		switch($event->getField('Type'))
+		switch($event->getMatchPlayersType())
 		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "One Player Tournament":
+		case 'Players':
 			$match->match_players_update();
 			break;
-			case "Clan Ladder":
-			case "Clan Tournament":
+		case 'Teams':
 			$match->match_teams_update();
 			break;
-			default:
+		default:
 		}
 		if($event->getField('FixturesEnable') == TRUE)
 		{
@@ -89,24 +86,21 @@ if (isset($_POST['approvematch']))
 	$event = new Event($event_id);
 	$match = new Match($match_id);
 
-	switch($event->getField('Type'))
+	switch($event->getMatchPlayersType())
 	{
-		case "One Player Ladder":
-		case "Team Ladder":
-		case "One Player Tournament":
+	case 'Players':
 		$match->match_players_update();
 		break;
-		case "Clan Ladder":
-		case "Clan Tournament":
+	case 'Teams':
 		$match->match_teams_update();
 		break;
-		default:
+	default:
 	}
 	if($event->getField('FixturesEnable') == TRUE)
 	{
 		$event->brackets(true);
 	}
-		$event->setFieldDB('IsChanged', 1);
+	$event->setFieldDB('IsChanged', 1);
 
 	header("Location: matchinfo.php?matchid=$match_id");
 	exit;

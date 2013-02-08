@@ -72,19 +72,7 @@ else
 	$eventStatus = $event->getField('Status');
 
 	$type = $event->getField('Type');
-	switch($type)
-	{
-		case "One Player Ladder":
-		case "Team Ladder":
-		case "Clan Ladder":
-		$event_type = 'Ladder';
-		break;
-		case "One Player Tournament":
-		case "Clan Tournament":
-		$event_type = 'Tournament';
-		default:
-	}
-	if($event_type=='Tournament') $event->setField('FixturesEnable', TRUE);
+	$competition_type = $event->getCompetitionType();
 
 	if ($pref['eb_events_update_delay_enable'] == 1)
 	{
@@ -97,10 +85,10 @@ else
 	}
 	
 	if (
-	(($time > $event->getField('NextUpdate_timestamp')) && ($eventIsChanged == 1))
-	||(file_exists($file) == FALSE)
-	||((file_exists($file_team) == FALSE) && (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "Clan Ladder")))
-	)
+			(($time > $event->getField('NextUpdate_timestamp')) && ($eventIsChanged == 1))
+			||(file_exists($file) == FALSE)
+			||((file_exists($file_team) == FALSE) && (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "Clan Ladder")))
+			)
 	{
 		$eneedupdate = 1;
 	}
@@ -297,12 +285,12 @@ else
 	$row = mysql_fetch_array($result);
 	$nbrteams = $row['NbrTeams'];
 	
-	switch($event_type)
+	switch($competition_type)
 	{
-		case 'Tournament':
+	case 'Tournament':
 		require_once(e_PLUGIN."ebattles/tournamentinfo.php");
 		break;
-		case 'Ladder':
+	case 'Ladder':
 		require_once(e_PLUGIN."ebattles/ladderinfo.php");
 		break;
 	}

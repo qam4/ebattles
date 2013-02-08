@@ -89,19 +89,8 @@ else
 	$event = new Event($event_id);
 
 	$type = $event->getField('Type');
-	switch($type)
-	{
-		case "One Player Ladder":
-		case "Team Ladder":
-		case "Clan Ladder":
-		$event_type = 'Ladder';
-		break;
-		case "One Player Tournament":
-		case "Clan Tournament":
-		$event_type = 'Tournament';
-		default:
-	}
-		
+	$competition_type = $event->getCompetitionType();
+	
 	$gName = mysql_result($result,0 , TBL_GAMES.".Name");
 	$mStatus  = mysql_result($result,0, TBL_MATCHS.".Status");
 	$reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
@@ -123,7 +112,7 @@ else
 		if ($cat_maxpoints>0) $categoriesToShow["$cat_name"] = TRUE;
 	}
 	
-	if($event_type == 'Tournament')
+	if($competition_type == 'Tournament')
 	{
 		$categoriesToShow["ELO"] = FALSE;
 		$categoriesToShow["Skill"] = FALSE;
@@ -158,11 +147,9 @@ else
 
 
 	// Get the scores for this match
-	switch($event->getField('Type'))
+	switch($event->getMatchPlayersType())
 	{
-		case "One Player Ladder":
-		case "Team Ladder":
-		case "One Player Tournament":
+	case 'Players':
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_PLAYERS.".*, "
@@ -179,8 +166,7 @@ else
 		." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 		break;
-		case "Clan Ladder":
-		case "Clan Tournament":
+	case 'Teams':
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
 		.TBL_CLANS.".*, "
@@ -198,7 +184,7 @@ else
 		." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
 		." ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 		break;
-		default:
+	default:
 	}
 
 	$result = $sql->db_Query($q);
@@ -231,11 +217,9 @@ else
 	$result_Mods = $sql->db_Query($q_Mods);
 	$numMods = mysql_numrows($result_Mods);
 
-	switch($event->getField('Type'))
+	switch($event->getMatchPlayersType())
 	{
-		case "One Player Ladder":
-		case "Team Ladder":
-		case "One Player Tournament":
+	case 'Players':
 		$reporter_matchteam = 0;
 		$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 		." FROM ".TBL_MATCHS.", "
@@ -271,8 +255,7 @@ else
 		$result_Opps = $sql->db_Query($q_Opps);
 		$numOpps = mysql_numrows($result_Opps);
 		break;
-		case "Clan Ladder":
-		case "Clan Tournament":
+	case 'Teams':
 		$reporter_matchteam = 0;
 		$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
 		." FROM ".TBL_MATCHS.", "
@@ -313,7 +296,7 @@ else
 		$numOpps = mysql_numrows($result_Opps);
 		//dbg: echo "numOpps: $numOpps, mt: $reporter_matchteam<br />";
 		break;
-		default:
+	default:
 	}
 
 	$userclass = 0;
@@ -366,7 +349,7 @@ else
 	if($event->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
 	if ($mStatus == 'active') $can_approve = 0;
 
-	if($event_type == 'Tournament')
+	if($competition_type == 'Tournament')
 	{
 		$can_edit = 0;
 	}
@@ -376,7 +359,7 @@ else
 
 	if($can_delete != 0)
 	{
-		$delete_text = ($event_type == 'Tournament') ? EB_MATCHD_L29 : EB_MATCHD_L5;
+		$delete_text = ($competition_type == 'Tournament') ? EB_MATCHD_L29 : EB_MATCHD_L5;
 		
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?eventid='.$event_id.'" method="post">';
 		$text .= '<div>';
@@ -415,14 +398,12 @@ else
 	$text .= ($categoriesToShow["Points"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_L10.'</th>' : '';
 	$text .= ($categoriesToShow["ELO"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_L11.'</th>' : '';
 	$text .= ($categoriesToShow["Skill"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_L12.'</th>' : '';
-	switch($event->getField('Type'))
+	switch($event->getMatchPlayersType())
 	{
-		case "One Player Ladder":
-		case "Team Ladder":
-		case "One Player Tournament":
+	case 'Players':
 		$text .= '<th class="eb_th2">'.EB_MATCHD_L13.'</th>';
 		break;
-		default:
+	default:
 		$text .= '<th class="eb_th2"></th>';
 		break;
 	}
@@ -430,11 +411,9 @@ else
 
 	for($i=0; $i < $numScores; $i++)
 	{
-		switch($event->getField('Type'))
+		switch($event->getMatchPlayersType())
 		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "One Player Tournament":
+		case 'Players':
 			$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 			$puid  = mysql_result($result,$i, TBL_USERS.".user_id");
 			$gamer_id = mysql_result($result,$i, TBL_PLAYERS.".Gamer");
@@ -444,15 +423,14 @@ else
 			$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 			break;
-			case "Clan Ladder":
-			case "Clan Tournament":
+		case 'Teams':
 			$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 			$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
 			$pavatar = mysql_result($result,$i, TBL_CLANS.".Image");
 			$pteam  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam); // Use this function to get other clan info like clan id?
 			break;
-			default:
+		default:
 		}
 		$pscoreid  = mysql_result($result,$i, TBL_SCORES.".ScoreID");
 		$prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
@@ -486,11 +464,9 @@ else
 		$image = "";
 		if ($pref['eb_avatar_enable_playersstandings'] == 1)
 		{
-			switch($event->getField('Type'))
+			switch($event->getMatchPlayersType())
 			{
-				case "One Player Ladder":
-				case "Team Ladder":
-				case "One Player Tournament":
+			case 'Players':
 				if($pavatar)
 				{
 					$image = '<img '.getAvatarResize(avatar($pavatar)).'/>';
@@ -498,8 +474,7 @@ else
 					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_image'], 'avatars')).'/>';
 				}
 				break;
-				case "Clan Ladder":
-				case "Clan Tournament":
+			case 'Teams':
 				if($pavatar)
 				{
 					$image = '<img '.getAvatarResize(getImagePath($pavatar, 'team_avatars')).'/>';
@@ -507,7 +482,7 @@ else
 					$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>';
 				}
 				break;
-				default:
+			default:
 			}
 		}
 
@@ -519,18 +494,15 @@ else
 			$text .= '<td class="eb_td"><b>'.$prank.'</b></td>';
 		}
 		$text .= '<td class="eb_td">'.$pMatchTeam.$pfactionIcon.'</td>';
-		switch($event->getField('Type'))
+		switch($event->getMatchPlayersType())
 		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "One Player Tournament":
+		case 'Players':
 			$text .= '<td class="eb_td">'.$image.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
 			break;
-			case "Clan Ladder":
-			case "Clan Tournament":
+		case 'Teams':
 			$text .= '<td class="eb_td">'.$image.' <a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$pclanid.'">'.$pclan.'</a></td>';
 			break;
-			default:
+		default:
 		}
 
 		$text .= ($categoriesToShow["Score"] == TRUE) ? '<td class="eb_td">'.$pscore.'</td>' : '';
@@ -540,11 +512,9 @@ else
 
 		// Opponent Ratings
 		$text .= '<td class="eb_td">';
-		switch($event->getField('Type'))
+		switch($event->getMatchPlayersType())
 		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "One Player Tournament":
+		case 'Players':
 			if ($numScores>0)
 			{
 				// Find all opponents ratings
@@ -582,10 +552,9 @@ else
 				$text .= '</table>';
 			}
 			break;
-			case "Clan Ladder":
-			case "Clan Tournament":
+		case 'Teams':
 			break;
-			default:
+		default:
 		}
 		$text .= '</td>';
 
@@ -643,15 +612,15 @@ else
 			$shadow='';
 			switch($mType)
 			{
-				case "Video":
+			case "Video":
 				$shadow = 'rel="shadowbox"';
 				$text .= '<td><img src="'.e_PLUGIN.'ebattles/images/film.png"/></td>';
 				break;
-				case "Screenshot":
+			case "Screenshot":
 				$shadow = 'rel="shadowbox"';
 				$text .= '<td><img src="'.e_PLUGIN.'ebattles/images/camera.png"/></td>';
 				break;
-				case "Replay":
+			case "Replay":
 				//$text .= '<form><input type="button" value="'.$array_types["$mType"].'" onclick="window.open(\''.$mPath.'\', \'download\'); return false;"/></form> '.EB_MATCHD_L24.' <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$mSubmitterID.'">'.$mSubmitterName.'</a>';
 				$text .= '<td><img src="'.e_PLUGIN.'ebattles/images/arrow_rotate_clockwise.png"/></td>';
 				break;

@@ -63,18 +63,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 	/* Event Info */
 	$event = new Event($event_id);
 	$type = $event->getField('Type');
-	switch($type)
-	{
-		case "One Player Ladder":
-		case "Team Ladder":
-		case "Clan Ladder":
-		$event_type = 'Ladder';
-		break;
-		case "One Player Tournament":
-		case "Clan Tournament":
-		$event_type = 'Tournament';
-		default:
-	}
+	$competition_type = $event->getCompetitionType();
 
 	$hide_ratings_column = $event->getField('hide_ratings_column');
 	if ($event->getField('RankingType') == "Classic") $hide_ratings_column = TRUE;
@@ -121,7 +110,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
 		switch($event->getField('Type'))
 		{
-			case "Team Ladder":
+		case "Team Ladder":
 			$tunique_opponents = 0;
 			$topponentsELO = 0;
 			$topponents = 0;
@@ -228,7 +217,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 			$tunique_opponents = count(array_unique($tplayers));
 
 			break;
-			case "Clan Ladder":
+		case "Clan Ladder":
 			$topponentsELO = 0;
 			$topponents = 0;
 			$trating = 0;
@@ -304,7 +293,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$topponentsELO /= $topponents;
 			}
 			break;
-			default:
+		default:
 		}
 
 		// For display
@@ -386,7 +375,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 			$display_cat = 1;
 			switch ($cat_name)
 			{
-				case "ELO":
+			case "ELO":
 				$cat_header_title = EB_STATS_L1;
 				$cat_header_text = EB_STATS_L2;
 				$min = min($ELO_score);
@@ -394,7 +383,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $ELO_score;
 				$stat_display[$cat_index] = $ELO;
 				break;
-				case "Skill":
+			case "Skill":
 				$cat_header_title = EB_STATS_L3;
 				$cat_header_text = EB_STATS_L4;
 				$min = min($Skill_score);
@@ -402,7 +391,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $Skill_score;
 				$stat_display[$cat_index] = $Skill;
 				break;
-				case "GamesPlayed":
+			case "GamesPlayed":
 				$cat_header_title = EB_STATS_L5;
 				$cat_header_text = EB_STATS_L6;
 				$min = 0; //min($games_played_score);
@@ -410,7 +399,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $games_played_score;
 				$stat_display[$cat_index] = $games_played;
 				break;
-				case "VictoryRatio":
+			case "VictoryRatio":
 				$cat_header_title = EB_STATS_L7;
 				$cat_header_text = EB_STATS_L8;
 				$min = 0; //min($victory_ratio_score);
@@ -418,7 +407,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $victory_ratio_score;
 				$stat_display[$cat_index] = $victory_ratio;
 				break;
-				case "VictoryPercent":
+			case "VictoryPercent":
 				$cat_header_title = EB_STATS_L9;
 				$cat_header_text = EB_STATS_L10;
 				$min = 0; //min($victory_percent_score);
@@ -426,7 +415,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $victory_percent_score;
 				$stat_display[$cat_index] = $victory_percent;
 				break;
-				case "WinDrawLoss":
+			case "WinDrawLoss":
 				$cat_header_title = EB_STATS_L11;
 				$cat_header_text = EB_STATS_L12;
 				$min = min($windrawloss_score);
@@ -434,7 +423,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $windrawloss_score;
 				$stat_display[$cat_index] = $windrawloss;
 				break;
-				case "UniqueOpponents":
+			case "UniqueOpponents":
 				$cat_header_title = EB_STATS_L13;
 				$cat_header_text = EB_STATS_L14;
 				$min = 0; //min($unique_opponents_score);
@@ -442,7 +431,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $unique_opponents_score;
 				$stat_display[$cat_index] = $unique_opponents;
 				break;
-				case "OpponentsELO":
+			case "OpponentsELO":
 				$cat_header_title = EB_STATS_L15;
 				$cat_header_text = EB_STATS_L16;
 				$min = min($opponentsELO_score);
@@ -450,13 +439,13 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $opponentsELO_score;
 				$stat_display[$cat_index] = $opponentsELO;
 				break;
-				case "Streaks":
+			case "Streaks":
 				switch($event->getField('Type'))
 				{
-					case "Team Ladder":
+				case "Team Ladder":
 					$display_cat = 0;
 					break;
-					case "Clan Ladder":
+				case "Clan Ladder":
 					$cat_header_title = EB_STATS_L17;
 					$cat_header_text = EB_STATS_L18;
 					$min = min($streaks_score);
@@ -464,10 +453,10 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 					$stat_score[$cat_index] = $streaks_score;
 					$stat_display[$cat_index] = $streaks;
 					break;
-					default:
+				default:
 				}
 				break;
-				case "Score":
+			case "Score":
 				$cat_header_title = EB_STATS_L19;
 				$cat_header_text = EB_STATS_L20;
 				$min = min($score_score);
@@ -475,7 +464,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $score_score;
 				$stat_display[$cat_index] = $score;
 				break;
-				case "ScoreAgainst":
+			case "ScoreAgainst":
 				$cat_header_title = EB_STATS_L21;
 				$cat_header_text = EB_STATS_L22;
 				$min = min($oppscore_score);
@@ -483,7 +472,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $oppscore_score;
 				$stat_display[$cat_index] = $oppscore;
 				break;
-				case "ScoreDiff":
+			case "ScoreDiff":
 				$cat_header_title = EB_STATS_L23;
 				$cat_header_text = EB_STATS_L24;
 				$min = min($scorediff_score);
@@ -491,7 +480,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $scorediff_score;
 				$stat_display[$cat_index] = $scorediff;
 				break;
-				case "Points":
+			case "Points":
 				$cat_header_title = EB_STATS_L25;
 				$cat_header_text = EB_STATS_L26;
 				$min = min($points_score);
@@ -499,7 +488,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stat_score[$cat_index] = $points_score;
 				$stat_display[$cat_index] = $points;
 				break;
-				default:
+			default:
 				$display_cat = 0;
 			}
 
@@ -509,7 +498,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
 				switch($event->getField('RankingType'))
 				{
-					case "CombinedStats":
+				case "CombinedStats":
 					if (($cat_InfoOnly == TRUE))
 					{
 						$cat_header = '<b title="'.$cat_header_title.'">'.$cat_header_text.'</b>';
@@ -546,14 +535,14 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 						$rating_max += $cat_maxpoints;
 					}
 					break;
-					case "Classic";
+				case "Classic";
 					$cat_header = '<b title="'.$cat_header_title.'">'.$cat_header_text.'</b>';
 					if (($cat_InfoOnly == FALSE))
 					{
 						$categories[] = $cat_index;
 					}
 					break;
-					default:
+				default:
 				}
 
 				$stat_cat_header[$cat_index] = $cat_header;
@@ -572,10 +561,10 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
 	switch($event->getField('Type'))
 	{
-		case "Team Ladder":
+	case "Team Ladder":
 		$stats[0][] = '<b>'.EB_STATS_L40.'</b>';
 		break;
-		default:
+	default:
 	}
 
 	// user rating not shown
@@ -592,7 +581,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
 	switch($event->getField('RankingType'))
 	{
-		case "CombinedStats":
+	case "CombinedStats":
 		$OverallScoreThreshold = 0;
 		$final_score = array();
 		for($team=0; $team < $numTeams; $team++)
@@ -624,7 +613,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 			$result_update = $sql->db_Query($q_update);
 		}
 		break;
-		case "Classic";
+	case "Classic";
 		$OverallScoreThreshold = $numTeams;
 		for($team=0; $team < $numTeams; $team++)
 		{
@@ -645,7 +634,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 			$result_update = $sql->db_Query($q_update);
 		}
 		break;
-		default:
+	default:
 	}
 
 	// Build results table
@@ -686,14 +675,14 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$result_update = $sql->db_Query($q_update);
 			}
 
-			if (($new_rankdelta != 0)&&($rank==1)&&($event_type == 'Ladder'))
+			if (($new_rankdelta != 0)&&($rank==1)&&($competition_type == 'Ladder'))
 			{
 				// Award: player took 1st place
 				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
 				VALUES ($tid,'TeamTookFirstPlace',$time)";
 				$result_Awards = $sql->db_Query($q_Awards);
 			}
-			if (($new_rankdelta != 0)&&(($prank>10)||($prank==0))&&($rank<=10)&&($event_type == 'Ladder'))
+			if (($new_rankdelta != 0)&&(($prank>10)||($prank==0))&&($rank<=10)&&($competition_type == 'Ladder'))
 			{
 				// Award: player enters top 10
 				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
@@ -728,21 +717,21 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 			{
 				switch ($tawardType)
 				{
-					case 'TeamStreak5':
+				case 'TeamStreak5':
 					if ($tstreak>=5)
 					{
 						$award = EB_AWARD_L6;
 						$trank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_bronze_3.png" alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'" style="vertical-align:middle"/>';
 					}
 					break;
-					case 'TeamStreak10':
+				case 'TeamStreak10':
 					if ($tstreak>=10)
 					{
 						$award = EB_AWARD_L8;
 						$trank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_silver_3.png" alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'" style="vertical-align:middle"/>';
 					}
 					break;
-					case 'TeamStreak25':
+				case 'TeamStreak25':
 					if ($tstreak>=25)
 					{
 						$award = EB_AWARD_L10;
@@ -806,10 +795,10 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
 		switch($event->getField('Type'))
 		{
-			case "Team Ladder":
+		case "Team Ladder":
 			$stats_row[] = "$nbr_players[$index]";
 			break;
-			default:
+		default:
 		}
 		if ($hide_ratings_column == FALSE)
 		$stats_row[] = number_format ($OverallScore[$index],2);

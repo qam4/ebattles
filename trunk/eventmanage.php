@@ -59,19 +59,8 @@ else
 	$rounds = unserialize($event->getFieldHTML('Rounds'));
 
 	$type = $event->getField('Type');
-	switch($type)
-	{
-		case "One Player Ladder":
-		case "Team Ladder":
-		case "Clan Ladder":
-		$event_type = 'Ladder';
-		break;
-		case "One Player Tournament":
-		case "Clan Tournament":
-		$event_type = 'Tournament';
-		default:
-	}
-	if($event_type=='Tournament') $event->setField('FixturesEnable', TRUE);
+	$competition_type = $event->getCompetitionType();
+
 	if($event->getField('FixturesEnable') == TRUE)
 	{
 		$players_seeding_enabled = true;
@@ -111,13 +100,13 @@ else
 		$text .= '<li><a href="#tabs-3">'.EB_EVENTM_L164.'</a></li>';
 		$text .= '<li><a href="#tabs-4">'.EB_EVENTM_L5.'</a></li>';
 		$text .= '<li><a href="#tabs-5">'.EB_EVENTM_L6.'</a></li>';
-		switch($event_type)
+		switch($competition_type)
 		{
-			case 'Ladder':
+		case 'Ladder':
 			$text .= '<li><a href="#tabs-6">'.EB_EVENTM_L7.'</a></li>';
 			$text .= '<li><a href="#tabs-7">'.EB_EVENTM_L121.'</a></li>';
 			break;
-			case 'Tournament':
+		case 'Tournament':
 			$text .= '<li><a href="#tabs-6">'.EB_EVENTM_L143.'</a></li>';
 			break;
 		}
@@ -294,8 +283,8 @@ else
 		';
 		//<!-- Enable/Disable Fixtures -->
 		$disabled_str = '';
-		if(($event_type=='Tournament') ||
-		($event->getField('Status')=='active'))
+		if(($competition_type=='Tournament') ||
+				($event->getField('Status')=='active'))
 		{
 			$disabled_str = 'disabled="disabled"';
 		}
@@ -334,11 +323,11 @@ else
 			$text .= '<select class="tbox" name="eventmaxnumberplayers" '.$disabled_str.'>';
 			switch ($event->getField('Format'))
 			{
-				case 'Double Elimination':
+			case 'Double Elimination':
 				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 				$text .= '<option value="8" '.($event->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
 				break;
-				case 'Single Elimination':
+			case 'Single Elimination':
 				$text .= '<option value="2" '.($event->getField('MaxNumberPlayers') == "2" ? 'selected="selected"' : '') .'>2</option>';
 				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 				$text .= '<option value="8" '.($event->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
@@ -346,15 +335,15 @@ else
 				$text .= '<option value="32" '.($event->getField('MaxNumberPlayers') == "32" ? 'selected="selected"' : '') .'>32</option>';
 				$text .= '<option value="64" '.($event->getField('MaxNumberPlayers') == "64" ? 'selected="selected"' : '') .'>64</option>';
 				$text .= '<option value="128" '.($event->getField('MaxNumberPlayers') == "128" ? 'selected="selected"' : '') .'>128</option>';
-				case 'Round-robin':
+			case 'Round-robin':
 				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 				$text .= '<option value="8" '.($event->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
 				break;
-				case 'Double Round-robin':
+			case 'Double Round-robin':
 				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 				$text .= '<option value="8" '.($event->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
 				break;
-				default:
+			default:
 				break;
 			}
 
@@ -364,7 +353,7 @@ else
 		{
 			$text .= '<input class="tbox" type="text" name="eventmaxnumberplayers" size="2" value="'.$event->getField('MaxNumberPlayers').'"/>';
 		}
-	
+		
 		$text .= '
 		</div>
 		</td>
@@ -372,13 +361,13 @@ else
 
 		if($event->getField('FixturesEnable') == TRUE)
 		{
-			switch($event_type)
+			switch($competition_type)
 			{
 				//<!-- Format -->
-				case "Ladder":
+			case "Ladder":
 				$disabled_str = '';
 				if(($event->getField('Status')=='active')||
-				($event->getField('FixturesEnable')==FALSE))
+						($event->getField('FixturesEnable')==FALSE))
 				{
 					$disabled_str = 'disabled="disabled"';
 				}
@@ -393,7 +382,7 @@ else
 				</tr>
 				';
 				break;
-				case "Tournament":
+			case "Tournament":
 				$disabled_str = ($event->getField('Status')!='active') ? '' : 'disabled="disabled"';
 				$text .= '
 				<tr>
@@ -511,9 +500,9 @@ else
 		/* Number of teams */
 		switch($event->getField('Type'))
 		{
-			case "Team Ladder":
-			case "Clan Ladder":
-			case "Clan Tournament":
+		case "Team Ladder":
+		case "Clan Ladder":
+		case "Clan Tournament":
 			$q = "SELECT COUNT(*) as NbrTeams"
 			." FROM ".TBL_TEAMS
 			." WHERE (".TBL_TEAMS.".Event = '$event_id')";
@@ -527,32 +516,32 @@ else
 			$text .= '</p>';
 			$text .= '</div>';
 			break;
-			default:
+		default:
 		}
 
 		/* Number of players */
 		switch($event->getField('Type'))
 		{
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "One Player Tournament":
+		case "One Player Ladder":
+		case "Team Ladder":
+		case "One Player Tournament":
 			$text .= '<div class="spacer">';
 			$text .= '<p>';
 			$text .= $numPlayers.' '.EB_EVENTM_L40.'<br />';
 			$text .= '</p>';
 			$text .= '</div>';
 			break;
-			default:
+		default:
 		}
 
 		$eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
 		/* Add Team/Player */
 		switch($event->getField('Type'))
 		{
-			case "Team Ladder":
-			case "Clan Ladder":
-			case "Clan Tournament":
-			if($event_type == 'Tournament')
+		case "Team Ladder":
+		case "Clan Ladder":
+		case "Clan Tournament":
+			if($competition_type == 'Tournament')
 			{
 				if($event->getField('Status')=='active')
 				{
@@ -615,9 +604,9 @@ else
 				';
 			}
 			break;
-			case "One Player Ladder":
-			case "One Player Tournament":
-			if($event_type == 'Tournament')
+		case "One Player Ladder":
+		case "One Player Tournament":
+			if($competition_type == 'Tournament')
 			{
 				if($event->getField('Status')=='active')
 				{
@@ -706,7 +695,7 @@ else
 				$text .= EB_EVENTM_L161.'<br />';
 			}
 			break;
-			default:
+		default:
 		}
 
 		$text .= '<br />';
@@ -719,9 +708,9 @@ else
 
 		switch($event->getField('Type'))
 		{
-			case "Team Ladder":
-			case "Clan Ladder":
-			case "Clan Tournament":
+		case "Team Ladder":
+		case "Clan Ladder":
+		case "Clan Tournament":
 			// Show list of teams here
 			if($teams_seeding_enabled == true)
 			{
@@ -826,15 +815,12 @@ else
 				$text .= '</tbody></table>';
 			}
 			break;
-			default:
+		default:
 		}
 
-		switch($event->getField('Type'))
+		switch($event->getMatchPlayersType())
 		{
-			// TODO: paginate/sort only for ladders? Does it conflict with seeding?
-			case "One Player Ladder":
-			case "Team Ladder":
-			case "One Player Tournament":
+		case 'Players':
 			// Show list of players here
 			$orderby_array = $array["$orderby"];
 			if($players_seeding_enabled == true)
@@ -986,7 +972,7 @@ else
 					{
 						if ($pcheckedin != 1)
 						{
-						$text .= ' <a href="javascript:checkin_player(\''.$pid.'\');" title="'.EB_EVENTM_L171.'""><img src="'.e_PLUGIN.'ebattles/images/tick.png" alt="'.EB_EVENTM_L171.'"/></a>';
+							$text .= ' <a href="javascript:checkin_player(\''.$pid.'\');" title="'.EB_EVENTM_L171.'""><img src="'.e_PLUGIN.'ebattles/images/tick.png" alt="'.EB_EVENTM_L171.'"/></a>';
 						}
 					}
 
@@ -998,7 +984,7 @@ else
 				$text .= '</form>';
 			}
 			break;
-			default:
+		default:
 		}
 
 		$text .= '
@@ -1013,10 +999,10 @@ else
 		<table class="eb_table" style="width:95%">
 		<tbody>
 		';
-		switch($event_type)
+		switch($competition_type)
 		{
-			case Ladder:
-			case Tournament:
+		case 'Ladder':
+		case 'Tournament':
 			$text .= '
 			<tr>
 			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L70.'<div class="smalltext">'.EB_EVENTM_L71.'</div></td>
@@ -1049,9 +1035,9 @@ else
 		</td>
 		</tr>
 		';
-		switch($event_type)
+		switch($competition_type)
 		{
-			case Ladder:
+		case 'Ladder':
 			$text .= '
 			<tr>
 			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L82.'<div class="smalltext">'.EB_EVENTM_L83.'</div></td>
@@ -1071,9 +1057,9 @@ else
 		</div>
 		';  // tab-page "Event Reset"
 
-		switch($event_type)
+		switch($competition_type)
 		{
-			case 'Ladder':
+		case 'Ladder':
 			//***************************************************************************************
 			// tab-page "Event Stats"
 			$cat_index = 0;
@@ -1190,46 +1176,46 @@ else
 				switch ($cat_name)
 				{
 
-					case "ELO":
+				case "ELO":
 					$cat_name_display = EB_EVENTM_L92;
 					break;
-					case "GamesPlayed":
+				case "GamesPlayed":
 					$cat_name_display = EB_EVENTM_L93;
 					break;
-					case "VictoryRatio":
+				case "VictoryRatio":
 					$cat_name_display = EB_EVENTM_L94;
 					break;
-					case "VictoryPercent":
+				case "VictoryPercent":
 					$cat_name_display = EB_EVENTM_L95;
 					break;
-					case "WinDrawLoss":
+				case "WinDrawLoss":
 					$cat_name_display = EB_EVENTM_L96;
 					break;
-					case "UniqueOpponents":
+				case "UniqueOpponents":
 					$cat_name_display = EB_EVENTM_L97;
 					break;
-					case "OpponentsELO":
+				case "OpponentsELO":
 					$cat_name_display = EB_EVENTM_L98;
 					break;
-					case "Streaks":
+				case "Streaks":
 					$cat_name_display = EB_EVENTM_L99;
 					break;
-					case "Skill":
+				case "Skill":
 					$cat_name_display = EB_EVENTM_L100;
 					break;
-					case "Score":
+				case "Score":
 					$cat_name_display = EB_EVENTM_L101;
 					break;
-					case "ScoreAgainst":
+				case "ScoreAgainst":
 					$cat_name_display = EB_EVENTM_L102;
 					break;
-					case "ScoreDiff":
+				case "ScoreDiff":
 					$cat_name_display = EB_EVENTM_L103;
 					break;
-					case "Points":
+				case "Points":
 					$cat_name_display = EB_EVENTM_L104;
 					break;
-					default:
+				default:
 				}
 
 				//---------------------------------------------------
@@ -1365,7 +1351,7 @@ else
 			</div>
 			';  // tab-page "Event Challenges"
 			break;
-			case 'Tournament':
+		case 'Tournament':
 			//***************************************************************************************
 			// tab-page "Brackets"
 			$text .= '<div id="tabs-6">';

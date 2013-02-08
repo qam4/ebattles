@@ -136,25 +136,25 @@ else{
 
 			switch($new_eventtype)
 			{
-				case 'One Player Ladder':
+			case 'One Player Ladder':
 				$event->setField('Type', 'One Player Ladder');
 				break;
-				case 'Team Ladder':
+			case 'Team Ladder':
 				$event->setField('Type', 'Team Ladder');
 				break;
-				case 'Clan Ladder':
+			case 'Clan Ladder':
 				$event->setField('Type', 'Clan Ladder');
 				break;
-				case 'One Player Tournament':
+			case 'One Player Tournament':
 				$event->setField('Type', 'One Player Tournament');
 				$event->setField('Format', 'Single Elimination');
 				$event->setField('MaxNumberPlayers', 16);
 				break;
-				case 'Clan Tournament':
+			case 'Clan Tournament':
 				$event->setField('Type', 'Clan Tournament');
 				$event->setField('Format', 'Single Elimination');
 				$event->setField('MaxNumberPlayers', 16);
-				default:
+			default:
 			}
 		}
 
@@ -546,29 +546,29 @@ else{
 			
 			switch ($format)
 			{
-				case 'Double Elimination':
+			case 'Double Elimination':
 				switch ($maxNbrPlayers)
 				{
-					case 4:
+				case 4:
 					$file = $path.'de-4.txt';
 					break;
-					case 8:
-					default:
+				case 8:
+				default:
 					$file = $path.'de-8-1.txt';
 					break;
 				}
 				break;
-				case 'Single Elimination':
-				default:
+			case 'Single Elimination':
+			default:
 				$file = $path.'se-'.$maxNbrPlayers.'.txt';
 				break;
-				case 'Round-robin':
+			case 'Round-robin':
 				$file = $path.'rr-'.$maxNbrPlayers.'.txt';
 				break;
-				case 'Double Round-robin':
+			case 'Double Round-robin':
 				$file = $path.'drr-'.$maxNbrPlayers.'.txt';
 				break;
-				default:
+			default:
 				$file = $path.'se-'.$maxNbrPlayers.'.txt';
 				break;
 			}
