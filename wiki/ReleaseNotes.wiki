@@ -1,6 +1,19 @@
 #summary eBattles Release Notes.
 #labels Featured
 
+
+= Revision 0.9.6 =
+== Added ==
+ * Code cleanup, use functions to get competition type (Tournament/Ladder), and match players type (Players/Teams)
+== Changed ==
+== Fixed ==
+ * Round-Robin tournaments issues (fixes #73)
+  * For rounds with "best of" matches more than 1, games are not scheduled after 2 games have been played.
+  * Deleted matches are not re-scheduled.
+  * Tournament will end if a game is played in the last round.
+ * Tournament: match is played, but the brackets do not show the result. (fixes #74)
+ * Fixed some issues in brackets theming
+
 = Revision 0.9.5 =
 == Added ==
  * Support for Leagues (round-robin tournaments) (fixes #40)
