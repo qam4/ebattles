@@ -2,10 +2,9 @@
 #labels Featured
 
 
-= Revision 0.9.6 =
+= Release 0.9.6 =
 == Added ==
  * Code cleanup, use functions to get competition type (Tournament/Ladder), and match players type (Players/Teams)
-== Changed ==
 == Fixed ==
  * Round-Robin tournaments issues (fixes #73)
   * For rounds with "best of" matches more than 1, games are not scheduled after 2 games have been played.
@@ -14,7 +13,7 @@
  * Tournament: match is played, but the brackets do not show the result. (fixes #74)
  * Fixed some issues in brackets theming
 
-= Revision 0.9.5 =
+= Release 0.9.5 =
 == Added ==
  * Support for Leagues (round-robin tournaments) (fixes #40)
   * New "Fixtures" tab in event manager
@@ -32,7 +31,7 @@
  * Fixed issue when using array_multisort()
  * Teams: Error deleting team. (fixes #72)
 
-= Revision 0.9.4 =
+= Release 0.9.4 =
 == Added ==
  * Add the map selection to the Match schedule (fixes #65)
  * Team invite system (fixes #64)
@@ -50,7 +49,7 @@
 == Fixed ==
  * Fix issue with plugin menu link, when tag {USERID} is not set. 
 
-= Revision 0.9.3 =
+= Release 0.9.3 =
 == Added ==
  * Added support for "double elimination" tournaments
   *Support 4 or 8 players
