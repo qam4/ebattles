@@ -41,7 +41,7 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 		$team = substr($content,1);
 		$team_name = $teams[$team-1]['Name'];
 		$team_image = 'images/ranks/a1.jpg';
-		$text .= '<table><tbody><tr>';
+		$text .= '<table class="player"><tbody><tr>';
 
 		$text .= '<td class="player"><div class="player">';
 		//$text .= '<img src="'.$team_image.'" style="vertical-align:middle" alt=""/>';
