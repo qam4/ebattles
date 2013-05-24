@@ -1695,7 +1695,7 @@ class Match extends DatabaseTable
 					{
 						$string .= EB_MATCH_L9.'&nbsp;'.$date.'.';
 					}
-					$nbr_comments = getCommentTotal("ebmatches", $this->fields['MatchID']);
+					$nbr_comments = ebGetCommentTotal("ebmatches", $this->fields['MatchID']);
 					$nbr_comments += ($mComments == '') ? 0 : 1 ;
 					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$this->fields['MatchID'].'" title="'.EB_MATCH_L4.'&nbsp;'.$this->fields['MatchID'].'">'.$nbr_comments.'&nbsp;';
 					$string .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;

@@ -360,7 +360,7 @@ function isV07() {
 * @param   int      id of the item comments are allowed for
 * @return  int      number of comments for the supplied parameters
 */
-function getCommentTotal($pluginid, $id) {
+function ebGetCommentTotal($pluginid, $id) {
 	global $pref, $e107cache, $tp;
 	$query = "where comment_item_id='$id' AND comment_type='$pluginid'";
 	$mysql = new db();
@@ -375,7 +375,7 @@ function getCommentTotal($pluginid, $id) {
 * @param   int      id of the item comments are allowed for
 * @return  string   HTML for existing comments for an item and the comments form to allow new comments to be posted
 */
-function getComment($pluginid, $id) {
+function ebGetComment($pluginid, $id) {
 	global $pref, $e107cache, $tp;
 
 	// Include the comment class. Normally, this file is included at a global level, so we need to make the variable
@@ -448,11 +448,11 @@ function getComment($pluginid, $id) {
 * @param   boolean  true to show the rating selection drop down if user not already rated this item
 * @return  string   HTML for existing comments for an item and the comments form to allow new comments to be posted
 */
-function getRating($pluginid, $id, $allowrating=true, $notext=false, $userid=false) {
+function ebGetRating($pluginid, $id, $allowrating=true, $notext=false, $userid=false) {
 	$rater = new rater();
 
 	$text = "";
-	$ratearray = $rater->getrating($pluginid, $id, $userid);
+	$ratearray = $rater->ebGetRating($pluginid, $id, $userid);
 	if ($ratearray)
 	{
 		if ($ratearray[0] == 0)

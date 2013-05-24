@@ -68,11 +68,18 @@ document.getElementById("f_date"+index).value = ""
 $event_id = $_GET['eventid'];
 $event = new Event($event_id);
 
+if(isset($_POST['challenged_player_choice']) && $_POST['challenged_player_choice']!="")
+{
+	$challenger = $_POST['submitted_by'];
+	$challenged = $_POST['challenged_player_choice'];
+
+	$text .= PlayerChallengeForm($event_id, $challenger, $challenged);
+}
 if(isset($_POST['challenge_player']))
 {
 	$challenger = $_POST['submitted_by'];
 	$challenged = $_POST['Challenged'];
-
+	
 	$text .= PlayerChallengeForm($event_id, $challenger, $challenged);
 }
 if(isset($_POST['challenge_player_submit']))
@@ -106,6 +113,13 @@ if(isset($_POST['challenge_player_submit']))
 		$text .= '<br />';
 		$text .= '<br />'.EB_CHALLENGE_L13.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_CHALLENGE_L14.'</a>]<br />';
 	}
+}
+if(isset($_POST['challenged_team_choice']) && $_POST['challenged_team_choice']!="")
+{
+	$challenger = $_POST['submitted_by'];
+	$challenged = $_POST['challenged_team_choice'];
+
+	$text .= TeamChallengeForm($event_id, $challenger, $challenged);
 }
 if(isset($_POST['challenge_team']))
 {
@@ -158,7 +172,8 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 	global $sql;
 	global $tp;
 	global $time;
-
+	
+	//$output .= "$event_id, $challengerpuid, $challengedpid".'<br />';
 	$event = new Event($event_id);
 
 	$output .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
@@ -169,6 +184,7 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 	// Attention here, we use user_id, so there has to be 1 user for 1 player
 	$output .= '<b>'.EB_CHALLENGE_L5.'</b>'; // Challenger
 	$q = "SELECT ".TBL_PLAYERS.".*, "
+	.TBL_GAMERS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_GAMERS.", "
@@ -196,6 +212,7 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 	// Challenged Info
 	$output .= '<b>'.EB_CHALLENGE_L6.'</b>'; // Challenged
 	$q = "SELECT ".TBL_PLAYERS.".*, "
+	.TBL_GAMERS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_GAMERS.", "
@@ -420,10 +437,10 @@ function TeamChallengeForm($event_id, $challengerpuid, $challengedtid)
 	$output .= '<b>'.EB_CHALLENGE_L6.'</b>'; // Challenged
 
 	$q = "SELECT ".TBL_TEAMS.".*"
-	."   AND (".TBL_TEAMS.".TeamID = '$challengedtid')";
+	." FROM ".TBL_TEAMS
+	." WHERE (".TBL_TEAMS.".TeamID = '$challengedtid')";
 	$result = $sql->db_Query($q);
-
-	$uteam  = mysql_result($result,0 , TBL_PLAYERS.".Team");
+	$uteam  = mysql_result($result,0 , TBL_TEAMS.".TeamID");
 	$trank  = mysql_result($result, 0, TBL_TEAMS.".Rank");
 	list($tclan, $tclantag, $tclanid) = getClanInfo($uteam);
 

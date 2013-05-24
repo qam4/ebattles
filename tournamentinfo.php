@@ -14,6 +14,7 @@ if ($eventIsChanged == 1)
 $can_signup = 0;
 $cannot_signup_str = EB_EVENT_L75;
 $eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
+$hide_fixtures = 0;
 switch($event->getMatchPlayersType())
 {
 case 'Players':
@@ -37,6 +38,14 @@ if(($event->getField('FixturesEnable') == TRUE) && ($event->getField('Status') !
 	$can_signup = 0;
 	$cannot_signup_str = EB_EVENT_L75;
 }
+if(($event->getField('HideFixtures') == 1) &&
+   (($event->getField('Status') == 'draft') ||
+    ($event->getField('Status') == 'checkin') ||
+    ($event->getField('Status') == 'signup')))
+{
+	$hide_fixtures = 1;
+}
+
 if(!check_class(e_UC_MEMBER))
 {
 	$can_signup = 0;
@@ -675,8 +684,15 @@ if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
 	$text .= EB_EVENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
 }
 
-list($bracket_html) = $event->brackets();
-$text .= $bracket_html;
+if($hide_fixtures == 0)
+{
+	list($bracket_html) = $event->brackets();
+	$text .= $bracket_html;
+}
+else
+{
+	$text .= EB_EVENT_L94;
+}
 
 $text .= '</div>';    // tabs-3 "Brackets"
 

@@ -533,7 +533,7 @@ else
 					if ($oMatchTeam != $pMatchTeam)
 					{
 						$text .= '<tr>';
-						$rating = getRating("ebscores", $pscoreid, $can_rate, true, $ouid);
+						$rating = ebGetRating("ebscores", $pscoreid, $can_rate, true, $ouid);
 						if (preg_match("/".EB_RATELAN_2."/", $rating))
 						{
 							$text .= '<td>'.$rating.'</td><td></td>';
@@ -689,7 +689,7 @@ else
 
 	unset($text);
 
-	$text .= getComment("ebmatches", $match_id);
+	$text .= ebGetComment("ebmatches", $match_id);
 	echo $text;
 
 }

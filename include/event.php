@@ -63,6 +63,7 @@ class Event extends DatabaseTable
 		$this->setField('MatchupsFile', '');
 		$this->setField('FixturesEnable', '0');
 		$this->setField('CheckinDuration', '0');
+		$this->setField('HideFixtures', '0');
 	}
 
 	function resetPlayers()

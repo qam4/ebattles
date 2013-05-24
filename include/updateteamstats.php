@@ -194,7 +194,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 								if ($ouid == $puid)
 								{
 									// Get user rating.
-									$rate = $rater->getrating("ebscores", $osid);
+									$rate = $rater->ebGetRating("ebscores", $osid);
 
 									$prating += $rate[0]*($rate[1] + $rate[2]/10);
 									$prating_votes += $rate[0];
@@ -276,7 +276,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 						if ($ouid == $puid)
 						{
 						// Get user rating.
-						$rate = $rater->getrating("ebscores", $osid);
+						$rate = $rater->ebGetRating("ebscores", $osid);
 
 						$prating += $rate[0]*($rate[1] + $rate[2]/10);
 						$prating_votes += $rate[0];
@@ -579,6 +579,9 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		$stats[0][] = $stat_cat_header[$category];
 	}
 
+	// Challenge column
+	$stats[0][] = "<b>".EB_CHALLENGE_L1."<b>";
+	
 	switch($event->getField('RankingType'))
 	{
 	case "CombinedStats":
@@ -814,6 +817,11 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$stats_row[] = $stat_display[$category][$index].'<br /><div class="smalltext">['.number_format ($final_score[$category][$index],2).']</div>';
 			}
 		}
+		
+		// Add challenge button here
+		$challenge_text = ' <a href="javascript:challenge_team_js(\''.$tid.'\');" title="'.EB_CHALLENGE_L1.' '.$pclantag.$name[$index].'"><img src="'.e_PLUGIN.'ebattles/images/challenge.png" alt="'.EB_CHALLENGE_L1.' '.$name[$index].'"/></a>';
+		$stats_row[] = $challenge_text;
+		
 		$stats[] = $stats_row;
 	}
 

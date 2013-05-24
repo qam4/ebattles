@@ -19,9 +19,11 @@ td.eb_td2 {
 th.eb_th {
 }
 th.eb_th1 {
+text-align: left;
 font-weight: normal;
 }
 th.eb_th2 {
+text-align: left;
 font-weight: bold;
 }
 td.eb_w40 {

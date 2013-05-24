@@ -530,6 +530,14 @@ else{
 			//TODO: if format changes, rounds should change too
 		}
 
+
+		/* Hide Fixtures */
+		$new_hide_fixtures = $_POST['hide_fixtures'];
+		if ($new_hide_fixtures != '')
+		{
+			$event->setField('HideFixtures', $new_hide_fixtures);
+		}
+
 		/* Event Max Number of Players */
 		$new_eventmaxnumberplayers = htmlspecialchars($_POST['eventmaxnumberplayers']);
 		if (preg_match("/^\d+$/", $new_eventmaxnumberplayers))

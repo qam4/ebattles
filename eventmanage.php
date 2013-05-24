@@ -309,6 +309,18 @@ else
 		</tr>
 		';
 
+		//<!-- Hide Fixtures -->
+		$text .= '
+		<tr>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L172.'</td>
+		<td class="eb_td"><select class="tbox" name="hide_fixtures">';
+		$text .= '<option value="0" '.($event->getField('HideFixtures') == "0" ? 'selected="selected"' : '').'>'.EB_EVENTM_L173.'</option>';
+		$text .= '<option value="1" '.($event->getField('HideFixtures') == "1" ? 'selected="selected"' : '').'>'.EB_EVENTM_L174.'</option>';
+		$text .= '</select>
+		</td>
+		</tr>
+		';		
+		
 		//<!-- Max Number of Players -->
 		$text .= '
 		<tr>
