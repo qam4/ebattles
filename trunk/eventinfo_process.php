@@ -42,18 +42,17 @@ if(isset($_POST['teamcheckinevent'])){
 }
 if(isset($_POST['joinevent'])){
 	
-	if ($_POST['joinEventPassword'] == $event->getField('password'))
+	if(($event->getField('password') == "") || ($_POST['joinEventPassword'] == $event->getField('password')))
 	{
 		$Name = $_POST["gamername"];
 		$UniqueGameID = $_POST["gameruniquegameid"];
 		updateGamer(USERID, $event->getField('Game'), $Name, $UniqueGameID);
 		$event->eventAddPlayer(USERID, 0, FALSE);
 	}
-
 	header("Location: eventinfo.php?eventid=$event_id");
 }
 if(isset($_POST['teamjoinevent'])){
-	if ($_POST['joinEventPassword'] == $event->getField('password'))
+	if(($event->getField('password') == "") || ($_POST['joinEventPassword'] == $event->getField('password')))
 	{
 		$div_id = $_POST['division'];
 		$event->eventAddDivision($div_id, FALSE);

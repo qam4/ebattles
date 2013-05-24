@@ -34,7 +34,6 @@ jQuery(function() {
 	};
 
 	$(function() {
-		$('#brackets').draggable();
 		$('.jq-button').button();
 		$('.tbox').addClass("ui-widget-content ui-corner-all");
 		$('#players_list_sortable tbody').sortable({

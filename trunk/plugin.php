@@ -186,7 +186,8 @@ Rounds text,
 MapPool text,
 MatchupsFile text,
 FixturesEnable tinyint(1) DEFAULT '0',
-CheckinDuration int default '0'
+CheckinDuration int default '0',
+HideFixtures int default '0'
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
@@ -756,12 +757,20 @@ if (versionsCompare($eb_version_string, "0.9.4") < 0)
 	);
 }
 
-if (versionsCompare($eb_version_string, "0.9.5") < 0)
+if (versionsCompare($eb_version_string, "0.9.6") < 0)
 {
-	// To revision 0.9.5
+	// To revision 0.9.6
 	array_push ($upgrade_alter_tables,
 	"ALTER TABLE ".TBL_EVENTS." ADD FixturesEnable tinyint(1) DEFAULT '0'",
 	"ALTER TABLE ".TBL_EVENTS." ADD CheckinDuration int default '0'"
+	);
+}
+
+if (versionsCompare($eb_version_string, "0.9.7") < 0)
+{
+	// To revision 0.9.7
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_EVENTS." ADD HideFixtures int default '0'"
 	);
 }
 

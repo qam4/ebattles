@@ -86,4 +86,11 @@ define("eb_MATCH_SCHEDULED", 2);
 
 define("eb_MAX_CHALLENGE_DATES", 3);
 define("eb_MAX_MAPS_PER_MATCH", 1);
+
+define("eb_EVENT_STATUS_DRAFT", 1);
+define("eb_EVENT_STATUS_SIGNUP", 2);
+define("eb_EVENT_STATUS_CHECKIN", 3);
+define("eb_EVENT_STATUS_ACTIVE", 4);
+define("eb_EVENT_STATUS_FINISHED", 5);
+
 ?>

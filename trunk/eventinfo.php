@@ -25,6 +25,23 @@ $text .= '
 <script type="text/javascript" src="./js/event.js"></script>
 ';
 
+$text .= "
+<script type='text/javascript'>
+<!--//
+function challenge_player_js(v)
+{
+document.getElementById('challenged_player_choice').value=v;
+document.getElementById('challenge_player_form').submit();
+}
+function challenge_team_js(v)
+{
+document.getElementById('challenged_team_choice').value=v;
+document.getElementById('challenge_team_form').submit();
+}
+//-->
+</script>
+";
+		
 if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;
 $orderby=$_GET['orderby'];
 

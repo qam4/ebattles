@@ -291,7 +291,8 @@ case "Clan Tournament":
 				$text .= '<tr><td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L18.'</td>';
 
 				// Is the user already signed up with that team?
-				$q_2 = "SELECT ".TBL_PLAYERS.".*"
+				$q_2 = "SELECT ".TBL_PLAYERS.".*, "
+				.TBL_GAMERS.".*"
 				." FROM ".TBL_PLAYERS.", "
 				.TBL_GAMERS
 				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
@@ -324,6 +325,7 @@ case "Clan Tournament":
 					$player_id  = mysql_result($result_2,0 , TBL_PLAYERS.".PlayerID");
 					$player_banned  = mysql_result($result_2,0 , TBL_PLAYERS.".Banned");
 					$player_checkedin  = mysql_result($result_2,0 , TBL_PLAYERS.".CheckedIn");
+					$player_name  = mysql_result($result_2,0 , TBL_GAMERS.".Name");
 
 					if ($player_banned)
 					{
@@ -334,7 +336,7 @@ case "Clan Tournament":
 					else
 					{
 						// User signed up & not banned
-						$text .= '<td>'.EB_EVENT_L22.'</td>';
+						$text .= '<td>'.EB_EVENT_L22.'&nbsp;'.$player_name.'</td>';
 
 						if($event->getField('Status') == 'checkin')
 						{
@@ -411,7 +413,8 @@ case "One Player Ladder":
 	}
 
 	// Is the user already signed up?
-	$q = "SELECT ".TBL_PLAYERS.".*"
+	$q = "SELECT ".TBL_PLAYERS.".*, "
+	.TBL_GAMERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_GAMERS
 	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
@@ -445,6 +448,7 @@ case "One Player Ladder":
 		$player_id  = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
 		$player_banned  = mysql_result($result,0 , TBL_PLAYERS.".Banned");
 		$player_checkedin  = mysql_result($result,0 , TBL_PLAYERS.".CheckedIn");
+		$player_name  = mysql_result($result,0 , TBL_GAMERS.".Name");
 
 		if ($player_banned)
 		{
@@ -455,7 +459,7 @@ case "One Player Ladder":
 		else
 		{
 			// User is signed up & not banned
-			$text .= '<tr><td>'.EB_EVENT_L31.'</td>';
+			$text .= '<tr><td>'.EB_EVENT_L31.'&nbsp;'.$player_name.'</td>';
 
 			if($event->getField('Status') == 'checkin')
 			{
@@ -730,6 +734,7 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "C
 
 	if(($can_challenge != 0)&&($event->getField('Type') == "Clan Ladder"))
 	{
+		$list_challenge_teams = array();
 		$text .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
 		$text .= '<table>';
 		$text .= '<tr>';
@@ -772,6 +777,7 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "C
 				else
 				$trank_txt = "#$trank";
 				$text .= '<option value="'.$tid.'">'.$tname.' ('.$trank_txt.')</option>';
+				$list_challenge_teams[] = $tid;
 			}
 		}
 		$text .= '
@@ -793,6 +799,15 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "C
 		$text .= '</tr>';
 		$text .= '</table>';
 		$text .= '</form>';
+
+		// Challenger team form
+		$text .= '<form id="challenge_team_form" action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
+		$text .= '<div>';
+		$text .= '<input type="hidden" name="challenged_team_choice" id="challenged_team_choice" value=""/>';
+		$text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
+		$text .= '<input type="hidden" name="submitted_by" value="'.$Challenger.'"/>';
+		$text .= '</div>';
+		$text .= '</form>';
 	}
 
 	if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
@@ -801,7 +816,7 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "C
 	}
 	$text .= '<div class="spacer">';
 	$text .= '<p>';
-	$text .= $nbrteams.' teams<br />';
+	$text .= $nbrteams.'&nbsp;'.EB_EVENT_L95.'<br />';
 	$text .= EB_EVENT_L47.'&nbsp;'.$event->getField('nbr_team_games_to_rank').'&nbsp;'.EB_EVENT_L48.'<br /><br />';
 	$text .= '</p>';
 
@@ -828,46 +843,49 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "C
 	array_splice($stats,0,1);
 	multi2dSortAsc($stats, $orderby, $sort_type);
 	$stats = array_merge($header, $stats);
+	//print_r($stats);
+
 	$num_columns = count($stats[0]) - 1;
 	$nbr_rows = count($stats);
-	$text .= html_show_table($stats, $nbr_rows, $num_columns);
 
-	$text .= '</div>';
+	if($can_challenge == 0)
+	{
+		// Remove "challenges" header (last column)
+		$stats[0][$num_columns] = "";
+	}
+	$stats_edited = array($stats[0]);
+	
+	for ($i = 1; $i <= $nbr_rows; $i++)
+	{
+		if($can_challenge == 0)
+		{
+			// Remove "challenges" column (last column)
+			$stats[$i][$num_columns] = "";
+		}
+		else
+		{
+			// Remove challenge button if you are not allowed to challenge
+			if(!check_can_challenge($stats[$i][$num_columns], $list_challenge_teams, "challenge_team_js"))
+			{
+				$stats[$i][$num_columns] = "";
+			}
+		}
+		$stats_edited[] = $stats[$i];
+	}
+
+	$text .= html_show_table($stats_edited, $nbr_rows, $num_columns);
+	$text .= '</div>';    // spacer
 	$text .= '</div>';    // tabs-2 "Teams Standings"
 }
 
 /* Players Standings */
 if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "One Player Ladder"))
 {
-	// Players standings stats
-	$stats = unserialize(implode('',file($file)));
-	//print_r($stats);
-
-	// Sorting the stats table
-	$header = $stats[0];
-
-	$new_header = array();
-	$column = 0;
-	foreach ($header as $header_cell)
-	{
-		//fm echo "column $column: $header_cell<br>";
-		$pieces = explode("<br />", $header_cell);
-
-		$new_header[] = '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&amp;orderby='.$column.'&amp;sort='.$sort.'">'.$pieces[0].'</a>'.$pieces[1];
-		$column++;
-	}
-	$header = array($new_header);
-	$header[0][0] = "header";
-
-	array_splice($stats,0,1);
-	multi2dSortAsc($stats, $orderby, $sort_type);
-	$stats = array_merge($header, $stats);
-	//print_r($stats);
-
 	$text .= '<div id="tabs-3">';
 
 	if($can_challenge != 0)
 	{
+		$list_challenge_players = array();
 		$text .= '<form action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
 		$text .= '<table>';
 		$text .= '<tr>';
@@ -915,8 +933,11 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 				else
 				$prank_txt = "#$prank";
 				$text .= '<option value="'.$pid.'">'.$pclantag.$pname.' ('.$prank_txt.')</option>';
+				
+				$list_challenge_players[] = $pid;
 			}
 		}
+		//fm:var_dump($list_challenge_players);
 		$text .= '
 		</select>
 		</div></td>
@@ -936,19 +957,22 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 		$text .= '</tr>';
 		$text .= '</table>';
 		$text .= '</form>';
+		
+		// Challenger player form
+		$text .= '<form id="challenge_player_form" action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
+		$text .= '<div>';
+		$text .= '<input type="hidden" name="challenged_player_choice" id="challenged_player_choice" value=""/>';
+		$text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
+		$text .= '<input type="hidden" name="submitted_by" value="'.$Challenger.'"/>';
+		$text .= '</div>';
+		$text .= '</form>';		
 	}
 
 	if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
 	{
 		$text .= EB_EVENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
 	}
-
-	/* set pagination variables */
-	$totalItems = $nbrplayers;
-	$pages->items_total = $totalItems;
-	$pages->mid_range = eb_PAGINATION_MIDRANGE;
-	$pages->paginate();
-
+	$text .= '<div class="spacer">';
 	$text .= '<p>';
 	$text .= $nbrplayers.'&nbsp;'.EB_EVENT_L51.'<br />';
 	$text .= EB_EVENT_L52.'&nbsp;'.$event->getField('nbr_games_to_rank').'&nbsp;'.EB_EVENT_L53.'<br />';
@@ -957,6 +981,38 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 	$text .= $myPosition_txt;
 
 	$text .= '<br />';
+
+	// Players standings stats
+	$stats = unserialize(implode('',file($file)));
+	//print_r($stats);
+
+	// Sorting the stats table
+	$header = $stats[0];
+
+	$new_header = array();
+	$column = 0;
+	foreach ($header as $header_cell)
+	{
+		//fm echo "column $column: $header_cell<br>";
+		$pieces = explode("<br />", $header_cell);
+
+		$new_header[] = '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&amp;orderby='.$column.'&amp;sort='.$sort.'">'.$pieces[0].'</a>'.$pieces[1];
+		$column++;
+	}
+	$header = array($new_header);
+	$header[0][0] = "header";
+
+	array_splice($stats,0,1);
+	multi2dSortAsc($stats, $orderby, $sort_type);
+	$stats = array_merge($header, $stats);
+	//print_r($stats);
+
+	/* set pagination variables */
+	$totalItems = $nbrplayers;
+	$pages->items_total = $totalItems;
+	$pages->mid_range = eb_PAGINATION_MIDRANGE;
+	$pages->paginate();
+
 	// Paginate
 	$text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
 	$text .= '<span style="float:right">';
@@ -969,20 +1025,39 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 
 	// Paginate the statistics array
 	$max_row = count($stats);
-	$stats_paginate = array($stats[0]);
 	$num_columns = count($stats[0]) - 1;
 	$nbr_rows = 1;
 
+	if($can_challenge == 0)
+	{
+		// Remove "challenges" header (last column)
+		$stats[0][$num_columns] = "";
+	}
+	$stats_paginate = array($stats[0]);
+	
 	for ($i = $pages->low + 1; $i <= $pages->high + 1; $i++)
 	{
 		if ($i < $max_row)
 		{
+			if($can_challenge == 0)
+			{
+				// Remove "challenges" column (last column)
+				$stats[$i][$num_columns] = "";
+			}
+			else
+			{
+				// Remove challenge button if you are not allowed to challenge
+				if(!check_can_challenge($stats[$i][$num_columns], $list_challenge_players, "challenge_player_js"))
+				{
+					$stats[$i][$num_columns] = "";
+				}
+			}
 			$stats_paginate[] = $stats[$i];
 			$nbr_rows ++;
 		}
 	}
 	$text .= html_show_table($stats_paginate, $nbr_rows, $num_columns);
-
+	$text .= '</div>';    // spacer
 	$text .= '</div>';    // tabs-3 "Players Standings"
 }
 
@@ -1477,5 +1552,19 @@ $text .= '</div>';    // tabs
 
 $text .= disclaimer();
 
+
+function check_can_challenge($stat, $list_challenge, $str)
+{
+	//echo "test: $stat<br>";
+	$regex = "/".$str."\(\'([a-zA-Z0-9_]*)\'\)/";
+	preg_match_all($regex, $stat, $matches);
+	$val = $matches[1][0];
+	
+	foreach($list_challenge as $player)
+	{
+		if($player == $val) return 1;
+	}
+	return 0;
+}
 ?>
 

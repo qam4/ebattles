@@ -253,7 +253,7 @@ else
 				$sid  = mysql_result($result_Scores,$scoreIndex, TBL_SCORES.".ScoreID");
 
 				// Get user rating.
-				$rate = $rater->getrating("ebscores", $sid);
+				$rate = $rater->ebGetRating("ebscores", $sid);
 
 				$prating += $rate[0]*($rate[1] + $rate[2]/10);
 				$prating_votes += $rate[0];

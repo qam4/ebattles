@@ -22,7 +22,7 @@ if(isset($_POST['joindivision']))
 	$clan_password  = mysql_result($result, 0, TBL_CLANS.".password");
 	$gid  = mysql_result($result, 0, TBL_DIVISIONS.".Game");
 	
-	if ($_POST['joindivisionPassword'] == $clan_password)
+	if(($clan_password == "") || ($_POST['joindivisionPassword'] == $clan_password))
 	{
 		$Name = $_POST["gamername"];
 		$UniqueGameID = $_POST["gameruniquegameid"];
