@@ -1,0 +1,178 @@
+#panel_wide,
+#panel_narrow,
+#panel_full,
+#panel_brackets {
+	background: #fff url(./images/sprite_tournament_list.png) repeat-y right 0;
+	margin: -5px 13px 0 13px;
+	position: relative;
+	z-index: 1;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	padding: 15px 0 15px 17px;
+	border: 1px solid #000;
+}
+#panel_narrow { background: #fff url(./images/sprite_tournament_details.png) repeat-y -950px 0 }
+#panel_full,
+#panel_brackets { background: #fff }
+#panel_brackets { padding: 10px 0 }
+#bracket_graffiti {
+	background: url(./images/sprite_tournament_bracket.png) repeat-x 0 0;
+	height: 63px;
+	margin: 0 12px;
+}
+#switch {
+	background: url(./images/sprite_tournament_bracket.png) no-repeat right -64px;
+	cursor: pointer;
+	float: left;
+	position: relative;
+	top: 16px;
+}
+#switch span {
+	background: url(./images/sprite_tournament_bracket.png) no-repeat 0 -64px;
+	color: #6a6a6a;
+	cursor: pointer;
+	display: block;
+	font: bold 12px Tahoma, Arial, sans-serif;
+	height: 28px;
+	text-shadow: #fff 1px 1px 0px;
+	width: 202px;
+}
+#switch span:hover { background-position: -202px -64px }
+#switch span#switched { background: url(./images/sprite_tournament_bracket.png) no-repeat 0 -92px }
+#switch span#switched:hover { background-position: -202px -92px }
+#brackets_frame {
+	position: relative;
+/*fm	width: 930px; */
+	overflow: auto;
+	z-index: 999;
+	margin: 0 10px;
+}
+#brackets {
+	position: absolute;
+/*	cursor: move; */
+	z-index: 100;
+	margin: 0;
+	display: block;
+}
+#brackets_dynamic_frame {
+	position: absolute;
+	z-index: 1001;
+}
+table.brackets {
+	border-collapse: collapse;
+	margin: 0;
+	padding: 0;
+}
+table.brackets #brackets_header td { margin: 0 0 -100px 0 }
+table.brackets #brackets_header th { background: url(./images/sprite_tournament_bracket.png) no-repeat 0 -214px }
+table.brackets #brackets_footer th { background: url(./images/sprite_tournament_bracket.png) no-repeat 0 bottom }
+table.brackets .spacer td { padding: 5px 0 0 0 }
+
+table.brackets table.player {
+	border-collapse: separate;
+	border-spacing: 2px;
+	margin-bottom: 0;
+	width:100%;
+	max-width:100%;
+}
+
+table.brackets th {
+	height: 40px;
+	color: #3c3c3c;
+	border: none;
+	text-align: center;
+	font: bold 12px Tahoma, Arial, sans-serif;
+	padding: 0;
+}
+table.brackets td {
+	margin: 0;
+	padding: 0;
+	/*height: 17px;*/
+	width: 120px;
+	font: 10px Tahoma, Arial, sans-serif
+ }
+table.brackets td.grid {
+	padding: 0;
+	width: 3px; !important;
+	min-width: 3px;
+	/*height: 17px !important;*/
+}
+table.brackets td div.container {
+	border: 1px solid #2f2f2f;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	width: 120px;
+	min-width: 120px;
+	/*fm: height: 19px;*/
+	margin: 0;
+	color: #646464;
+	overflow: hidden; /*fm: floats' container stretch up to accomodate the floats*/
+}
+table.brackets td div.player {
+	float: left;
+	margin: 0;
+	/*padding: 3px 3px 3px 3px;*/
+	display: block;
+	color: #646464;
+    font-weight: bold;
+}
+table.brackets td div.winner {
+	/*background: #CFE8D7;*/
+}
+table.brackets td div.loser {
+	/*background: #CFDBE8;*/
+}
+table.brackets td div.victor {
+	/*background: #CFE8D7;*/
+}
+table.brackets td div.loser div.player {
+    font-weight: normal;
+    color: #B1B1B1;
+}
+table.brackets td div.loser div.player img {
+	-moz-opacity: 0.3;
+	opacity: .30;
+	filter: alpha(opacity=30);
+}
+table.brackets td div.player .game_name {
+	display: none;
+	position: absolute;
+	margin-top: -11px;
+	margin-left: 24px;
+}
+table.brackets td img {
+	margin-top: -3px
+	/*	vertical-align:middle */
+}
+table.brackets td div.wins,
+table.brackets td div.wins_none {
+	color: #ff6c00;
+	font-weight: bold;
+}
+table.brackets td.wins {
+	width: 10%;
+}
+
+table.brackets td div.loser div.wins { color: #b1b1b1 }
+table.brackets td.score {
+	color: #646464;
+	font-weight: bold;
+	width: 10%;
+}
+table.brackets div.score.win{
+	color: #00FF00;
+}
+table.brackets div.score.loss {
+	color: #FF0000;
+}
+table.brackets td.match-details {
+	background: url(./images/sprite_tournament_bracket-2.png) repeat-y 0 0;
+	text-align: right;
+	vertical-align: middle;
+}
+table.brackets td.border-top { background: url(./images/sprite_tournament_bracket-2.png) no-repeat -160px 0 }
+table.brackets td.border-middle { background: url(./images/sprite_tournament_bracket-2.png) no-repeat -170px 0 }
+table.brackets td.border-bottom { background: url(./images/sprite_tournament_bracket-2.png) no-repeat -160px -19px }
+table.brackets td.border-vertical { background: url(./images/sprite_tournament_bracket-2.png) repeat-y -151px 0 }
