@@ -93,4 +93,6 @@ define("eb_EVENT_STATUS_CHECKIN", 3);
 define("eb_EVENT_STATUS_ACTIVE", 4);
 define("eb_EVENT_STATUS_FINISHED", 5);
 
+define ("eb_MIN_NUMBER_OF_DIVISION_MEMBERS_TO_CHALLENGE", 1)
+
 ?>

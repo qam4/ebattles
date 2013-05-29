@@ -747,67 +747,88 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "C
 		."   AND (".TBL_GAMERS.".User = '".USERID."')";
 		$result = $sql->db_Query($q);
 		$uteam = mysql_result($result,0 , TBL_PLAYERS.".Team");
-
-		$q = "SELECT ".TBL_CLANS.".*, "
-		.TBL_TEAMS.".*, "
-		.TBL_DIVISIONS.".* "
-		." FROM ".TBL_CLANS.", "
-		.TBL_TEAMS.", "
-		.TBL_DIVISIONS
-		." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
-		." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
-		." AND (".TBL_TEAMS.".Event = '$event_id')"
-		." ORDER BY ".TBL_CLANS.".Name";
+		
+		// My team info.
+		$q = "SELECT ".TBL_MEMBERS.".*, "
+		.TBL_DIVISIONS.".*, "
+		.TBL_TEAMS.".*"
+		." FROM ".TBL_MEMBERS.", "
+		.TBL_DIVISIONS.", "
+		.TBL_TEAMS
+		." WHERE (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+		." AND (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
+		." AND (".TBL_TEAMS.".TeamID = '$uteam')";
 		$result = $sql->db_Query($q);
-		$num_rows = mysql_numrows($result);
-
-		$text .= '<td><div>
-		<select class="tbox" name="Challenged">
-		';
-		for($i=0; $i<$num_rows; $i++)
+		// number of members in user's team.
+		$numMembers = mysql_numrows($result);	
+		$udiv = mysql_result($result,0 , TBL_DIVISIONS.".DivisionID");
+		$udivcaptain = mysql_result($result,0 , TBL_DIVISIONS.".Captain");
+		
+		// Check if user's team has enough players
+		// Check if user is captain of the team
+		if(($numMembers >= eb_MIN_NUMBER_OF_DIVISION_MEMBERS_TO_CHALLENGE)) // && ($udivcaptain == USERID))
 		{
-			$tid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-			$trank  = mysql_result($result,$i, TBL_TEAMS.".Rank");
-			$tname  = mysql_result($result,$i, TBL_CLANS.".Name");
+			$q = "SELECT ".TBL_CLANS.".*, "
+			.TBL_TEAMS.".*, "
+			.TBL_DIVISIONS.".* "
+			." FROM ".TBL_CLANS.", "
+			.TBL_TEAMS.", "
+			.TBL_DIVISIONS
+			." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
+			." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+			." AND (".TBL_TEAMS.".Event = '$event_id')"
+			." ORDER BY ".TBL_CLANS.".Name";
+			$result = $sql->db_Query($q);
+			$num_rows = mysql_numrows($result);
 
-			if(($uteam == 0)||($uteam != $tid))
+			$text .= '<td><div>
+			<select class="tbox" name="Challenged">
+			';
+			for($i=0; $i<$num_rows; $i++)
 			{
-				if ($trank==0)
-				$trank_txt = EB_EVENT_L54;
-				else
-				$trank_txt = "#$trank";
-				$text .= '<option value="'.$tid.'">'.$tname.' ('.$trank_txt.')</option>';
-				$list_challenge_teams[] = $tid;
+				$tid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+				$trank  = mysql_result($result,$i, TBL_TEAMS.".Rank");
+				$tname  = mysql_result($result,$i, TBL_CLANS.".Name");
+
+				if(($uteam == 0)||($uteam != $tid))
+				{
+					if ($trank==0)
+					$trank_txt = EB_EVENT_L54;
+					else
+					$trank_txt = "#$trank";
+					$text .= '<option value="'.$tid.'">'.$tname.' ('.$trank_txt.')</option>';
+					$list_challenge_teams[] = $tid;
+				}
 			}
+			$text .= '
+			</select>
+			</div></td>
+			';
+			$Challenger = USERID;
+			$text .= '<td><div>';
+			$text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
+			$text .= '<input type="hidden" name="submitted_by" value="'.$Challenger.'"/>';
+			$text .= '</div></td>';
+
+			$text .= '<td>';
+			$text .= '<div>';
+			$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
+			$text .= ebImageTextButton('challenge_team', 'challenge.png', EB_EVENT_L71);
+			$text .= '</div>';
+			$text .= '</td>';
+			$text .= '</tr>';
+			$text .= '</table>';
+			$text .= '</form>';
+
+			// Challenger team form
+			$text .= '<form id="challenge_team_form" action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
+			$text .= '<div>';
+			$text .= '<input type="hidden" name="challenged_team_choice" id="challenged_team_choice" value=""/>';
+			$text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
+			$text .= '<input type="hidden" name="submitted_by" value="'.$Challenger.'"/>';
+			$text .= '</div>';
+			$text .= '</form>';
 		}
-		$text .= '
-		</select>
-		</div></td>
-		';
-		$Challenger = USERID;
-		$text .= '<td><div>';
-		$text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
-		$text .= '<input type="hidden" name="submitted_by" value="'.$Challenger.'"/>';
-		$text .= '</div></td>';
-
-		$text .= '<td>';
-		$text .= '<div>';
-		$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
-		$text .= ebImageTextButton('challenge_team', 'challenge.png', EB_EVENT_L71);
-		$text .= '</div>';
-		$text .= '</td>';
-		$text .= '</tr>';
-		$text .= '</table>';
-		$text .= '</form>';
-
-		// Challenger team form
-		$text .= '<form id="challenge_team_form" action="'.e_PLUGIN.'ebattles/challengerequest.php?eventid='.$event_id.'" method="post">';
-		$text .= '<div>';
-		$text .= '<input type="hidden" name="challenged_team_choice" id="challenged_team_choice" value=""/>';
-		$text .= '<input type="hidden" name="EventID" value="'.$event_id.'"/>';
-		$text .= '<input type="hidden" name="submitted_by" value="'.$Challenger.'"/>';
-		$text .= '</div>';
-		$text .= '</form>';
 	}
 
 	if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
