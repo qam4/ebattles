@@ -234,15 +234,36 @@ function displayTeamDivisions($clan_id, $div_id){
 				$result_2 = $sql->db_Query($q_2);
 				if(!$result_2 || (mysql_numrows($result_2) < 1))
 				{
-					$hide_password = ($clan_password == "") ?  'hide ignore' : '';
+					// Make sure this user is not playing for another team
+					$q_3 = "SELECT ".TBL_MEMBERS.".*"
+					." FROM ".TBL_MEMBERS.", "
+					.TBL_DIVISIONS
+					." WHERE (".TBL_MEMBERS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+					." AND (".TBL_DIVISIONS.".Clan != '$clan_id')"
+					." AND (".TBL_MEMBERS.".User = ".USERID.")";
+					$result_3 = $sql->db_Query($q_3);
 
-					$text .= '
-					<div>
-					<input type="hidden" name="division" value="'.$div_id.'"/>
-					</div>
-					'.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12);
+					// Make sure this user is not admin of another team
+					$q_4 = "SELECT ".TBL_CLANS.".*"
+					." FROM ".TBL_CLANS
+					." WHERE (".TBL_CLANS.".ClanID != '$clan_id')"
+					." AND (".TBL_CLANS.".Owner = ".USERID.")";
+					$result_4 = $sql->db_Query($q_4);
 
-					$text .= gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $gamerUniqueGameID, $hide_password);
+					if(((!$result_3 || (mysql_numrows($result_3) < 1))
+					&& (!$result_4 || (mysql_numrows($result_4) < 1)))
+					|| (check_class($pref['eb_mod_class'])))
+					{
+						$hide_password = ($clan_password == "") ?  'hide ignore' : '';
+
+						$text .= '
+						<div>
+						<input type="hidden" name="division" value="'.$div_id.'"/>
+						</div>
+						'.ebImageTextButton('joindivision', 'user_add.png', EB_CLAN_L12);
+
+						$text .= gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $gamerUniqueGameID, $hide_password);
+					}
 				}
 				else
 				{
