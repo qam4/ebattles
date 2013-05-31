@@ -171,7 +171,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
 					if ($ouid == $puid)
 					{
 						// Get user rating.
-						$rate = $rater->ebGetRating("ebscores", $osid);
+						$rate = $rater->GetRating("ebscores", $osid);
 
 						$prating += $rate[0]*($rate[1] + $rate[2]/10);
 						$prating_votes += $rate[0];

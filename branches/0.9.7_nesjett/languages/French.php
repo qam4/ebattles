@@ -231,6 +231,12 @@ define('EB_EVENT_L92', 'Cliquez ici pour faire enregistrer votre équipe à ce t
 define('EB_EVENT_L93', 'Votre équipe est enregistée.');
 define('EB_EVENT_L94', 'Pas encore disponible.');
 define('EB_EVENT_L95', 'équipes');
+define('EB_EVENT_L96', 'Frais d’inscription');
+define('EB_EVENT_L97', 'Récompense du vainqueur');
+define('EB_EVENT_L98', 'Vous n’avez pas assez de');
+define('EB_EVENT_L99', 'YVotre balance est: ');
+define('EB_EVENT_L100', 'Mauvais mot de passe.');
+define('EB_EVENT_L101', 'Retour vers');
 
 define('EB_EVENTM_L1', 'Gérer');
 define('EB_EVENTM_L2', 'Sommaire');
@@ -409,6 +415,8 @@ define('EB_EVENTM_L171', 'Enregistrer ce joueur');
 define('EB_EVENTM_L172', 'Cacher les Fixtures');
 define('EB_EVENTM_L173', 'Jamais');
 define('EB_EVENTM_L174', 'Tant que le tournoi n’est pas commencé');
+define('EB_EVENTM_L175', 'Frais d’inscription en gold');
+define('EB_EVENTM_L176', 'Récompense du vainqueur en gold');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');
@@ -896,6 +904,16 @@ define('EB_TIME_L7', 'minutes');
 define('EB_TIME_L8', 'minute');
 define('EB_TIME_L9', 'secondes');
 define('EB_TIME_L10', 'seconde');
+
+define("EB_GOLD_L1", "eBattles Paramètres Gold");
+define("EB_GOLD_L2", "Mettre à jour");
+define("EB_GOLD_L3", "Paramètres sauvés");
+define("EB_GOLD_L4", "Groupe d’utilisateurs Gold");
+define("EB_GOLD_L5", "Groupe d’utilisateurs ayant la permission de changer les récompenses/frais des tournois");
+define("EB_GOLD_L6", "Jouer un match (récompense)");
+define("EB_GOLD_L7", "Inscription à un tournoi");
+define("EB_GOLD_L8", "Vainqueur du tournoi");
+define("EB_GOLD_L9", "Match joué");
 
 define('EB_ACTIVITY_L1', 'Pas d’activité');
 ?>

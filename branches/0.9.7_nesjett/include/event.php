@@ -64,6 +64,8 @@ class Event extends DatabaseTable
 		$this->setField('FixturesEnable', '0');
 		$this->setField('CheckinDuration', '0');
 		$this->setField('HideFixtures', '0');
+		$this->setField('GoldEntryFee', '0');
+		$this->setField('GoldWinningEvent', '0');
 	}
 
 	function resetPlayers()
@@ -510,6 +512,7 @@ class Event extends DatabaseTable
 	function displayEventSettingsForm($create=false)
 	{
 		global $sql;
+		global $pref;
 		
 		if (e_WYSIWYG)
 		{
@@ -968,6 +971,35 @@ class Event extends DatabaseTable
 			</td>
 			</tr>
 			';
+
+			//<!-- Gold -->
+			if(is_gold_system_active() && (check_class($pref['eb_gold_userclass'])))
+			{
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L175.'</td>
+				<td class="eb_td">
+				<div>
+				';
+				$text .= '<input class="tbox" type="text" name="event_gold_entry_fee" size="4" value="'.$this->getField('GoldEntryFee').'"/>';
+				$text .= '
+				</div>
+				</td>
+				</tr>
+				';
+				$text .= '
+				<tr>
+				<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L176.'</td>
+				<td class="eb_td">
+				<div>
+				';
+				$text .= '<input class="tbox" type="text" name="event_gold_winning_event" size="4" value="'.$this->getField('GoldWinningEvent').'"/>';
+				$text .= '
+				</div>
+				</td>
+				</tr>
+				';
+			}
 		}
 
 		//<!-- Start Date -->
@@ -1271,11 +1303,12 @@ class Event extends DatabaseTable
 	. 'E': empty
 	. 'N': not needed
 	*/
-	function brackets($scheduleNextMatches = false, $delete_match_id = 0) {
+	function brackets($scheduleNextMatches = false, $delete_match_id = 0, $style='elimination') {
 		global $sql;
 		global $time;
 		global $pref;
 		global $tp;
+		global $gold_obj;
 
 		$type = $this->fields['Type'];
 		$competition_type = $this->getCompetitionType();
@@ -1323,12 +1356,12 @@ class Event extends DatabaseTable
 						$content[$round][$matchup][$match] = ($matchupString == '') ? 'E' : $matchupString;
 						if ($matchupString == '')
 						{
-							$row = findRow($round, $matchup, $match);
+							$row = findRow($round, $matchup, $match, $style);
 							$matchupsRows[$round][$matchup][$match] = $row;
 						} else
 						{
 							if ($matchupString[0]=='T') {
-								$row = findRow($round, $matchup, $match);
+								$row = findRow($round, $matchup, $match, $style);
 								$matchupsRows[$round][$matchup][$match] = $row;
 								$team = substr($matchupString,1);
 								if ($team > $nbrTeams){
@@ -1384,7 +1417,7 @@ class Event extends DatabaseTable
 								$bye = $results[$matchupRound][$matchupMatchup]['bye'];
 								$deleted = $matchups[$matchupRound][$matchupMatchup]['deleted'];
 
-								$row = findRow($round, $matchup, $match);
+								$row = findRow($round, $matchup, $match, $style);
 
 								if($deleted == true){
 									$matchup_deleted = true;
@@ -1616,14 +1649,61 @@ class Event extends DatabaseTable
 											case "One Player Tournament":
 												$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
 												VALUES ($teamTopID,'PlayerWonTournament',$time)";
+												$result_Award = $sql->db_Query($q_Award);
+
+												// gold
+												if(is_gold_system_active() && ($this->getField('GoldWinningEvent')>0)) {												
+													// find player's user_id
+													$q = "SELECT ".TBL_PLAYERS.".*, "
+													.TBL_GAMERS.".*"
+													." FROM ".TBL_PLAYERS.", "
+													.TBL_GAMERS
+													." WHERE (".TBL_PLAYERS.".PlayerID = '$teamTopID')"
+													."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)";
+													$uid = mysql_result($result, 0 , TBL_GAMERS.".User");
+
+													$gold_param['gold_user_id'] = $uid;
+													$gold_param['gold_who_id'] = 0;
+													$gold_param['gold_amount'] = $this->getField('GoldWinningEvent');
+													$gold_param['gold_type'] = EB_L1;
+													$gold_param['gold_action'] = "credit";
+													$gold_param['gold_plugin'] = "ebattles";
+													$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
+													$gold_param['gold_forum'] = 0;
+													$gold_obj->gold_modify($gold_param);
+												}	
+
 												break;
 											case "Clan Tournament":
 												$q_Award = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
 												VALUES ($teamTopID,'TeamWonTournament',$time)";
+												$result_Award = $sql->db_Query($q_Award);
+
+												// gold
+												if(is_gold_system_active() && ($this->getField('GoldWinningEvent')>0)) {
+													// find team captain
+													$q = "SELECT ".TBL_TEAMS.".*, "
+													.TBL_DIVISIONS.".*"
+													." FROM ".TBL_TEAMS.", "
+													.TBL_DIVISIONS
+													." WHERE (".TBL_TEAMS.".TeamID = '$teamTopID')"
+													."   AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)";
+													$uid = mysql_result($result, 0 , TBL_DIVISIONS.".Captain");
+
+													$gold_param['gold_user_id'] = $uid;
+													$gold_param['gold_who_id'] = 0;
+													$gold_param['gold_amount'] = $this->getField('GoldWinningEvent');
+													$gold_param['gold_type'] = EB_L1;
+													$gold_param['gold_action'] = "credit";
+													$gold_param['gold_plugin'] = "ebattles";
+													$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
+													$gold_param['gold_forum'] = 0;
+													$gold_obj->gold_modify($gold_param);
+												}	
+
 												break;
 											default:
 											}
-											$result_Award = $sql->db_Query($q_Award);
 										}
 									}
 								}
@@ -1698,7 +1778,15 @@ class Event extends DatabaseTable
 							$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], $topWins);
 							$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins);
 						}
-						$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.'Matchup '.$round.','.$matchup.'"></td>';
+						switch($style)
+						{
+						case 'elimination':
+							$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.'Matchup '.$round.','.$matchup.'"></td>';
+							break;
+						case 'round-robin':
+							$brackets[$matchupsRows[$round][$matchup][1]+1][2*$round-1] = '<td rowspan="1" class="match-details" title="'.'Matchup '.$round.','.$matchup.'">&nbsp;</td>';
+							break;
+						}
 						$rounds[$round]['nbrMatchups']++;
 					}
 

@@ -188,7 +188,7 @@ else
 			$q = "SELECT ".TBL_PLAYERS.".*"
 			." FROM ".TBL_PLAYERS
 			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-			. "AND (".TBL_PLAYERS.".Rank = '1')";
+			."   AND (".TBL_PLAYERS.".Rank = '1')";
 			$result = $sql->db_Query($q);
 			$numPlayers = mysql_numrows($result);
 			//echo "numPlayers: $numPlayers<br>";			
@@ -198,6 +198,27 @@ else
 				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
 				VALUES ($pid,'PlayerRankFirst',$time+2)";
 				$result_Awards = $sql->db_Query($q_Awards);
+				
+				// gold
+				if(is_gold_system_active() && ($event->getField('GoldWinningEvent')>0)) {
+					$q = "SELECT ".TBL_PLAYERS.".*, "
+					.TBL_GAMERS.".*"
+					." FROM ".TBL_PLAYERS.", "
+					.TBL_GAMERS
+					." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
+					."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)";
+					$uid = mysql_result($result, 0 , TBL_GAMERS.".User");
+
+					$gold_param['gold_user_id'] = $uid;
+					$gold_param['gold_who_id'] = 0;
+					$gold_param['gold_amount'] = $event->getField('GoldWinningEvent');
+					$gold_param['gold_type'] = EB_L1;
+					$gold_param['gold_action'] = "credit";
+					$gold_param['gold_plugin'] = "ebattles";
+					$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
+					$gold_param['gold_forum'] = 0;
+					$gold_obj->gold_modify($gold_param);
+				}
 			}
 			
 			$q = "SELECT ".TBL_PLAYERS.".*"
@@ -242,6 +263,28 @@ else
 				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
 				VALUES ($pid,'TeamRankFirst',$time+2)";
 				$result_Awards = $sql->db_Query($q_Awards);
+
+				// gold
+				if(is_gold_system_active() && ($event->getField('GoldWinningEvent')>0)) {
+					// find team captain
+					$q = "SELECT ".TBL_TEAMS.".*, "
+					.TBL_DIVISIONS.".*"
+					." FROM ".TBL_TEAMS.", "
+					.TBL_DIVISIONS
+					." WHERE (".TBL_TEAMS.".TeamID = '$pid')"
+					."   AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)";
+					$uid = mysql_result($result, 0 , TBL_DIVISIONS.".Captain");
+
+					$gold_param['gold_user_id'] = $uid;
+					$gold_param['gold_who_id'] = 0;
+					$gold_param['gold_amount'] = $event->getField('GoldWinningEvent');
+					$gold_param['gold_type'] = EB_L1;
+					$gold_param['gold_action'] = "credit";
+					$gold_param['gold_plugin'] = "ebattles";
+					$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
+					$gold_param['gold_forum'] = 0;
+					$gold_obj->gold_modify($gold_param);
+				}	
 			}
 			
 			$q = "SELECT ".TBL_TEAMS.".*"
