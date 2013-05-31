@@ -452,7 +452,7 @@ function ebGetRating($pluginid, $id, $allowrating=true, $notext=false, $userid=f
 	$rater = new rater();
 
 	$text = "";
-	$ratearray = $rater->ebGetRating($pluginid, $id, $userid);
+	$ratearray = $rater->GetRating($pluginid, $id, $userid);
 	if ($ratearray)
 	{
 		if ($ratearray[0] == 0)
@@ -746,6 +746,28 @@ function get_users_inclass($class)
 		return $ret;
 	}
 	return FALSE;
+}
+
+function is_gold_system_active()
+{
+	global $gold_obj, $pref;
+
+	if(!isset($pref['plug_installed']['gold_system'])) return false;
+	if(!file_exists(e_PLUGIN."gold_system/includes/gold_class.php")) return false;
+	require_once(e_PLUGIN."gold_system/includes/gold_class.php");
+	if (!is_object($gold_obj))
+	{
+		$gold_obj = new gold;
+	} 
+
+	if(($prefs['eb_gold_active'] == true) || ($gold_obj->gold_plugins['ebattles'] == 1))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 ?>

@@ -233,6 +233,12 @@ define('EB_EVENT_L92', 'Click here to check-in your team to this event.');
 define('EB_EVENT_L93', 'Your team has checked-in.');
 define('EB_EVENT_L94', 'Not available yet.');
 define('EB_EVENT_L95', 'teams');
+define('EB_EVENT_L96', 'Signup cost');
+define('EB_EVENT_L97', 'Winner reward');
+define('EB_EVENT_L98', 'You do not have enough');
+define('EB_EVENT_L99', 'Your balance is: ');
+define('EB_EVENT_L100', 'Wrong password.');
+define('EB_EVENT_L101', 'Back to');
 
 define('EB_EVENTM_L1', 'Administrer');
 define('EB_EVENTM_L2', 'Turnerings Detaljer');
@@ -411,6 +417,8 @@ define('EB_EVENTM_L171', 'Check player in');
 define('EB_EVENTM_L172', 'Hide Fixtures');
 define('EB_EVENTM_L173', 'Never');
 define('EB_EVENTM_L174', 'Until event is live');
+define('EB_EVENTM_L175', 'Signup gold cost');
+define('EB_EVENTM_L176', 'Winner gold reward');
 
 define('EB_EVENTP_L1', 'Tidligere Turneringer');
 define('EB_EVENTP_L2', 'Tidligere Turneringer');
@@ -898,6 +906,16 @@ define('EB_TIME_L7', 'Minutter');
 define('EB_TIME_L8', 'Minut');
 define('EB_TIME_L9', 'Sekunder');
 define('EB_TIME_L10', 'Sekund');
+
+define("EB_GOLD_L1", "eBattles Gold Settings");
+define("EB_GOLD_L2", "Update");
+define("EB_GOLD_L3", "Settings Saved");
+define("EB_GOLD_L4", "Gold userclass");
+define("EB_GOLD_L5", "Userclass allowed to set gold rewards/costs for events");
+define("EB_GOLD_L6", "Play a match (reward)");
+define("EB_GOLD_L7", "Event signup");
+define("EB_GOLD_L8", "Event won");
+define("EB_GOLD_L9", "Played a match");
 
 define('EB_ACTIVITY_L1', 'No activity');
 ?>

@@ -558,6 +558,20 @@ if ($numMods>0)
 $text .= '</td></tr>';
 
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L82.'</td><td class="eb_td">'.$event->eventStatusToString().'</td></tr>';
+
+// Gold
+if(is_gold_system_active())
+{
+	if($event->getField('GoldEntryFee') > 0)
+	{
+		$text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L96.'</td><td class="eb_td">'.$gold_obj->formation($event->getField('GoldEntryFee')).'</td></tr>';
+	}
+	if($event->getField('GoldWinningEvent') > 0)
+	{
+		$text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L97.'</td><td class="eb_td">'.$gold_obj->formation($event->getField('GoldWinningEvent')).'</td></tr>';
+	}
+}
+
 $time_comment = $event->eventStatusToTimeComment();
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L42.'</td><td class="eb_td">'.$date_start.'</td></tr>';
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L43.'</td><td class="eb_td">'.$date_end.'</td></tr>';

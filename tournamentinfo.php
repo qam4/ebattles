@@ -272,7 +272,8 @@ case "Clan Tournament":
 				$text .= '<tr><td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L18.'</td>';
 
 				// Is the user already signed up with that team?
-				$q_2 = "SELECT ".TBL_PLAYERS.".*"
+				$q_2 = "SELECT ".TBL_PLAYERS.".*, "
+				.TBL_GAMERS.".*"
 				." FROM ".TBL_PLAYERS.", "
 				.TBL_GAMERS
 				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
@@ -305,6 +306,7 @@ case "Clan Tournament":
 					$player_id  = mysql_result($result_2,0 , TBL_PLAYERS.".PlayerID");
 					$player_banned  = mysql_result($result_2,0 , TBL_PLAYERS.".Banned");
 					$player_checkedin  = mysql_result($result_2,0 , TBL_PLAYERS.".CheckedIn");
+					$player_name  = mysql_result($result_2,0 , TBL_GAMERS.".Name");
 
 					if ($player_banned)
 					{
@@ -315,7 +317,7 @@ case "Clan Tournament":
 					else
 					{
 						// User signed up & not banned
-						$text .= '<td>'.EB_EVENT_L22.'</td>';
+						$text .= '<td>'.EB_EVENT_L22.'&nbsp;'.$player_name.'</td>';
 
 						if($event->getField('Status') == 'checkin')
 						{
@@ -392,7 +394,8 @@ case "One Player Ladder":
 	}
 
 	// Is the user already signed up?
-	$q = "SELECT ".TBL_PLAYERS.".*"
+	$q = "SELECT ".TBL_PLAYERS.".*, "
+	.TBL_GAMERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_GAMERS
 	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
@@ -426,6 +429,7 @@ case "One Player Ladder":
 		$player_id  = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
 		$player_banned  = mysql_result($result,0 , TBL_PLAYERS.".Banned");
 		$player_checkedin  = mysql_result($result,0 , TBL_PLAYERS.".CheckedIn");
+		$player_name  = mysql_result($result,0 , TBL_GAMERS.".Name");
 
 		if ($player_banned)
 		{
@@ -436,7 +440,7 @@ case "One Player Ladder":
 		else
 		{
 			// User is signed up & not banned
-			$text .= '<tr><td>'.EB_EVENT_L31.'</td>';
+			$text .= '<tr><td>'.EB_EVENT_L31.'&nbsp;'.$player_name.'</td>';
 
 			if($event->getField('Status') == 'checkin')
 			{
@@ -535,6 +539,20 @@ if ($numMods>0)
 $text .= '</td></tr>';
 
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L82.'</td><td class="eb_td">'.$event->eventStatusToString().'</td></tr>';
+
+// Gold
+if(is_gold_system_active())
+{
+	if($event->getField('GoldEntryFee') > 0)
+	{
+		$text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L96.'</td><td class="eb_td">'.$gold_obj->formation($event->getField('GoldEntryFee')).'</td></tr>';
+	}
+	if($event->getField('GoldWinningEvent') > 0)
+	{
+		$text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L97.'</td><td class="eb_td">'.$gold_obj->formation($event->getField('GoldWinningEvent')).'</td></tr>';
+	}
+}
+
 $time_comment = $event->eventStatusToTimeComment();
 $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L42.'</td><td class="eb_td">'.$date_start.'</td></tr>';
 $text .= '<tr><td class="eb_td eb_tdc1"></td><td class="eb_td">'.$time_comment.'</td></tr>';

@@ -105,6 +105,10 @@ else
 		case 'Ladder':
 			$text .= '<li><a href="#tabs-6">'.EB_EVENTM_L7.'</a></li>';
 			$text .= '<li><a href="#tabs-7">'.EB_EVENTM_L121.'</a></li>';
+			if($event->getField('FixturesEnable') == TRUE)
+			{
+				$text .= '<li><a href="#tabs-8">'.EB_EVENTM_L143.'</a></li>';
+			}
 			break;
 		case 'Tournament':
 			$text .= '<li><a href="#tabs-6">'.EB_EVENTM_L143.'</a></li>';
@@ -1362,6 +1366,16 @@ else
 			</form>
 			</div>
 			';  // tab-page "Event Challenges"
+			if($event->getField('FixturesEnable') == TRUE)
+			{
+				// tab-page "Brackets"
+				$text .= '<div id="tabs-8">';
+
+				list($bracket_html) = $event->brackets(false, 0, 'round-robin');
+				$text .= $bracket_html;
+
+				$text .= '</div>';  // tab-page "Brackets"
+			}
 			break;
 		case 'Tournament':
 			//***************************************************************************************
