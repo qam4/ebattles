@@ -74,25 +74,33 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 	return $text;
 }
 
-function findRow($round, $matchup, $match)
+function findRow($round, $matchup, $match, $style = 'elimination')
 {
-	if ($round==1)
+	switch($style)
 	{
-		$row = $matchup*4-3+2*$match;
-	}
-	else
-	{
-		if($match == 0)
+	case 'elimination':
+		if ($round==1)
 		{
-			$rowTop    = findRow($round-1, 2*$matchup-1, 0);
-			$rowBottom = findRow($round-1, 2*$matchup-1, 1);
+			$row = $matchup*4-3+2*$match;
 		}
 		else
 		{
-			$rowTop    = findRow($round-1, 2*$matchup, 0);
-			$rowBottom = findRow($round-1, 2*$matchup, 1);
+			if($match == 0)
+			{
+				$rowTop    = findRow($round-1, 2*$matchup-1, 0, $style);
+				$rowBottom = findRow($round-1, 2*$matchup-1, 1, $style);
+			}
+			else
+			{
+				$rowTop    = findRow($round-1, 2*$matchup, 0, $style);
+				$rowBottom = findRow($round-1, 2*$matchup, 1, $style);
+			}
+			$row = ($rowBottom - $rowTop)/2 + $rowTop;
 		}
-		$row = ($rowBottom - $rowTop)/2 + $rowTop;
+		break;
+	case 'round-robin':
+		$row = $matchup*4-3+2*$match;
+		break;
 	}
 	return $row;
 }

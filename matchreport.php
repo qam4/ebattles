@@ -802,12 +802,12 @@ if (isset($_POST['submit']))
 	if (!isset($_POST['matchreport'])&&!isset($_POST['matchedit'])&&!isset($_POST['matchscheduledreport'])&&!isset($_POST['matchschedule']))
 	{
 		$text .= '<p>'.EB_MATCHR_L33.'</p>';
-		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]</p>';
+		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>]</p>';
 	}
 	else if (!check_class(e_UC_MEMBER))
 	{
 		$text .= '<p>'.EB_MATCHR_L36.'</p>';
-		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">Event</a>]</p>';
+		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>]</p>';
 	}
 	else
 	{
