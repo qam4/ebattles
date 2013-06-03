@@ -78,7 +78,10 @@ $eplug_prefs = array(
 "eb_links_showmatchspending" => 1,
 "eb_links_showmatchesscheduled" => 1,
 "eb_links_showchallengesrequested" => 1,
-"eb_links_showchallengesunconfirmed" => 1
+"eb_links_showchallengesunconfirmed" => 1,
+"eb_gold_active" => false,
+"eb_gold_userclass" => e_UC_ADMIN,
+"eb_gold_playmatch" => 0
 );
 
 // List of table names -----------------------------------------------------------------------------------------------
@@ -187,7 +190,9 @@ MapPool text,
 MatchupsFile text,
 FixturesEnable tinyint(1) DEFAULT '0',
 CheckinDuration int default '0',
-HideFixtures int default '0'
+HideFixtures int default '0',
+GoldEntryFee int default '0',
+GoldWinningEvent int default '0'
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
@@ -772,6 +777,20 @@ if (versionsCompare($eb_version_string, "0.9.7") < 0)
 	array_push ($upgrade_alter_tables,
 	"ALTER TABLE ".TBL_EVENTS." ADD HideFixtures int default '0'"
 	);
+}
+
+if (versionsCompare($eb_version_string, "0.9.8") < 0)
+{
+	// To revision 0.9.8
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_EVENTS." ADD GoldEntryFee int default '0'",
+	"ALTER TABLE ".TBL_EVENTS." ADD GoldWinningEvent int default '0'"
+	);
+	array_push_associative ($upgrade_add_prefs, array(
+	"eb_gold_active" => false,
+	"eb_gold_userclass" => e_UC_ADMIN,
+	"eb_gold_playmatch" => 0
+	));
 }
 
 /*

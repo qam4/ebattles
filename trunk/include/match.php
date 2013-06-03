@@ -464,6 +464,8 @@ class Match extends DatabaseTable
 	function match_players_update()
 	{
 		global $sql;
+		global $gold_obj;
+		global $pref;
 
 		// Get event info
 		$q = "SELECT ".TBL_EVENTS.".*, "
@@ -662,6 +664,19 @@ class Match extends DatabaseTable
 			."     RankDelta = 0"
 			." WHERE (PlayerID = '$pid')";
 			$result_3 = $sql->db_Query($q_3);
+			
+			// gold
+			if(is_gold_system_active() && ($pref['eb_gold_playmatch'] > 0)) {												
+				$gold_param['gold_user_id'] = $puid;
+				$gold_param['gold_who_id'] = 0;
+				$gold_param['gold_amount'] = $pref['eb_gold_playmatch'];
+				$gold_param['gold_type'] = EB_L1;
+				$gold_param['gold_action'] = "credit";
+				$gold_param['gold_plugin'] = "ebattles";
+				$gold_param['gold_log'] = EB_GOLD_L9.": event=".$event_id.", user=".$puid;
+				$gold_param['gold_forum'] = 0;
+				$gold_obj->gold_modify($gold_param);
+			}
 		}
 
 		$q = "SELECT DISTINCT ".TBL_PLAYERS.".Team, "

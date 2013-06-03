@@ -268,6 +268,18 @@ else{
 			$event->setField('MaxMapsPerMatch', $new_eventmaxmapspermatch);
 		}
 
+		/* Gold */
+		$new_event_gold_entry_fee = htmlspecialchars($_POST['event_gold_entry_fee']);
+		if (preg_match("/^\d+$/", $new_event_gold_entry_fee))
+		{
+			$event->setField('GoldEntryFee', $new_event_gold_entry_fee);
+		}		
+		$new_event_gold_winning_event = htmlspecialchars($_POST['event_gold_winning_event']);
+		if (preg_match("/^\d+$/", $new_event_gold_winning_event))
+		{
+			$event->setField('GoldWinningEvent', $new_event_gold_winning_event);
+		}	
+		
 		/* Event Start Date */
 		$new_eventstartdate = $_POST['startdate'];
 		if ($new_eventstartdate != '')
