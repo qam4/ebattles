@@ -909,11 +909,33 @@ class Match extends DatabaseTable
 		//exit;
 	}
 
-	function deleteMatchScores($event_id)
+	function delete()
 	{
 		global $sql;
 
 		/* Event Info */
+		$match_id = $this->fields['MatchID'];
+		$event_id = $this->fields['Event'];
+		$event = new Event($event_id);
+
+		if($event->getField('FixturesEnable') == TRUE)
+		{
+			$event->brackets(true, $match_id);
+		}
+		else
+		{
+			$match->deleteMatchScores();
+		}
+
+		$event->setFieldDB('IsChanged', 1);
+	}
+
+	function deleteMatchScores()
+	{
+		global $sql;
+
+		/* Event Info */
+		$event_id = $this->fields['Event'];
 		$event = new Event($event_id);
 
 		switch($event->getMatchPlayersType())

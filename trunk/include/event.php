@@ -174,16 +174,16 @@ class Event extends DatabaseTable
 	function deletePlayers()
 	{
 		global $sql;
-		$q2 = "SELECT ".TBL_PLAYERS.".*"
+		$q = "SELECT ".TBL_PLAYERS.".*"
 		." FROM ".TBL_PLAYERS
 		." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')";
-		$result2 = $sql->db_Query($q2);
-		$num_players = mysql_numrows($result2);
+		$result = $sql->db_Query($q);
+		$num_players = mysql_numrows($result);
 		if ($num_players!=0)
 		{
 			for($j=0; $j<$num_players; $j++)
 			{
-				$pID  = mysql_result($result2,$j, TBL_PLAYERS.".PlayerID");
+				$pID  = mysql_result($result, $j, TBL_PLAYERS.".PlayerID");
 				deletePlayerAwards($pID);
 				deletePlayer($pID);
 			}
@@ -394,6 +394,22 @@ class Event extends DatabaseTable
 		{
 			$gamerID = mysql_result($result, 0, TBL_GAMERS.".GamerID");
 		}
+		
+		// Find next available seed
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')"
+		." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
+		$result = $sql->db_Query($q);
+		$numPlayers = mysql_numrows($result);
+		$looking_for_seed = 1;
+		$set_seed = false;
+		for($player = 0; $player<$numPlayers; $player++)
+		{
+			$pseed = mysql_result($result, $player, TBL_PLAYERS.".Seed");
+			if(isset($pseed) && ($pseed!=0)) $set_seed  = true;
+			if($pseed == $looking_for_seed) $looking_for_seed++;
+		}
 
 		// Is the user already signed up for the team?
 		$q = "SELECT ".TBL_PLAYERS.".*"
@@ -411,8 +427,20 @@ class Event extends DatabaseTable
 			VALUES (".$this->fields['EventID'].",$gamerID,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].",$time)";
 			$sql->db_Query($q);
 			echo "player created, query: $q<br>";
-			$this->setFieldDB('IsChanged', 1);
+			$last_id = mysql_insert_id();
+			
+			if($set_seed == true)
+			{
+				$q = "UPDATE ".TBL_PLAYERS." SET Seed = '".($looking_for_seed)."' WHERE (PlayerID = '".$last_id."')";
+				$sql->db_Query($q);
+			}
 
+			if(($this->getField('FixturesEnable') == TRUE)&&($this->getField('Status') == 'active'))
+			{
+				$this->brackets(true);
+			}			
+			$this->setFieldDB('IsChanged', 1);
+			
 			if ($notify)
 			{
 				$sendto = $user;
@@ -437,6 +465,22 @@ class Event extends DatabaseTable
 		global $sql;
 		global $time;
 
+		// Find next available seed
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
+		." WHERE (".TBL_TEAMS.".Event = '".$this->fields['EventID']."')"
+		." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
+		$result = $sql->db_Query($q);
+		$numTeams = mysql_numrows($result);
+		$looking_for_seed = 1;
+		$set_seed = false;
+		for($team = 0; $team<$numTeams; $team++)
+		{
+			$tseed = mysql_result($result, $team, TBL_TEAMS.".Seed");
+			if(isset($tseed) && ($tseed!=0)) $set_seed  = true;
+			if($tseed == $looking_for_seed) $looking_for_seed++;
+		}
+
 		//$add_players = ( $this->fields['Type'] == "Clan Ladder" ? false : true);
 		$add_players = true;
 
@@ -454,6 +498,18 @@ class Event extends DatabaseTable
 			$sql->db_Query($q);
 			$team_id =  mysql_insert_id();
 
+			if($set_seed == true)
+			{
+				$q = "UPDATE ".TBL_TEAMS." SET Seed = '".($looking_for_seed)."' WHERE (TeamID = '".$team_id."')";
+				$sql->db_Query($q);
+			}
+
+			if(($this->getField('FixturesEnable') == TRUE)&&($this->getField('Status') == 'active'))
+			{
+				$this->brackets(true);
+			}
+			$this->setFieldDB('IsChanged', 1);
+			
 			if ($add_players == true)
 			{
 				// All members of this division will automatically be signed up to this event
@@ -475,7 +531,6 @@ class Event extends DatabaseTable
 						$user_id  = mysql_result($result_2,$j, TBL_USERS.".user_id");
 						$this->eventAddPlayer($user_id, $team_id, $notify);
 					}
-					$this->setFieldDB('IsChanged', 1);
 				}
 			}
 		}
@@ -496,6 +551,29 @@ class Event extends DatabaseTable
 		$this->setField('Rounds', $new_rounds);
 	}
 
+	function initRounds() {
+		$matchups = $this->getMatchups();
+		$nbrRounds = count($matchups);
+
+		if($nbrRounds>0)
+		{
+			$rounds = unserialize($this->getFieldHTML('Rounds'));
+			if (!isset($rounds)) $rounds = array();
+			for ($round = 1; $round < $nbrRounds; $round++) {
+				if (!isset($rounds[$round])) {
+					$rounds[$round] = array();
+				}
+				if (!isset($rounds[$round]['Title'])) {
+					$rounds[$round]['Title'] = EB_EVENTM_L144.' '.$round;
+				}
+				if (!isset($rounds[$round]['BestOf'])) {
+					$rounds[$round]['BestOf'] = 1;
+				}
+			}
+			$this->updateRounds($rounds);
+		}
+	}
+
 	function updateMapPool($mapPool) {
 		$i = 0;
 		$mapString = '';
@@ -508,7 +586,7 @@ class Event extends DatabaseTable
 
 		$this->setField('MapPool', $mapString);
 	}
-
+	
 	function displayEventSettingsForm($create=false)
 	{
 		global $sql;
@@ -1321,7 +1399,10 @@ class Event extends DatabaseTable
 		// TODO: check for error (return false)
 		$rounds = unserialize($this->getFieldHTML('Rounds'));
 
-		$nbrTeams=count($teams);
+		//$nbrTeams=count($teams);
+		end($teams);
+		$last_seed = key($teams);
+		reset($teams);
 
 		$matchups = $this->getMatchups();
 		$nbrRounds = count($matchups);
@@ -1346,6 +1427,11 @@ class Event extends DatabaseTable
 			if ($round < $nbrRounds)
 			{
 				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
+					if (!isset($results[$round][$matchup]['matchs']))
+					{
+						$results[$round][$matchup]['winner'] = 'not played';
+						$results[$round][$matchup]['bye'] = false;
+					}
 					if (!isset($results[$round][$matchup]['winner'])) $results[$round][$matchup]['winner'] = 'not played';
 					if (!isset($results[$round][$matchup]['bye'])) $results[$round][$matchup]['bye'] = false;
 					if (!isset($matchups[$round][$matchup]['deleted'])) $matchups[$round][$matchup]['deleted'] = false;
@@ -1364,8 +1450,11 @@ class Event extends DatabaseTable
 								$row = findRow($round, $matchup, $match, $style);
 								$matchupsRows[$round][$matchup][$match] = $row;
 								$team = substr($matchupString,1);
-								if ($team > $nbrTeams){
+								if ($team > $last_seed+1){
 									$content[$round][$matchup][$match] = 'E';
+								}
+								else if(empty($teams[$team-1])) {
+									$content[$round][$matchup][$match] = 'F';
 								}
 							}
 							if ($matchupString[0]=='W') {
@@ -1479,6 +1568,9 @@ class Event extends DatabaseTable
 						case 'N':
 							$results[$round][$matchup]['winner'] = ($match==0) ? 'bottom' : 'top';
 							break;
+						case 'F':
+							$results[$round][$matchup]['winner'] = ($match==0) ? 'bottom' : 'top';
+							break;
 						}
 					}
 					
@@ -1506,7 +1598,7 @@ class Event extends DatabaseTable
 								//echo "match ".$current_match_id." deleted (M$round,$matchup,$match)<br>";
 								
 								$current_match = new Match($current_match_id);
-								$current_match->deleteMatchScores($event_id);
+								$current_match->deleteMatchScores();
 								
 								$results[$round][$matchup]['winner'] = 'not played';
 								unset($results[$round][$matchup]['matchs'][$match]);
@@ -1955,7 +2047,7 @@ class Event extends DatabaseTable
 						$rowBottom = $matchupsRows[$matchupRound][$matchupMatchup][1];
 						$row = ($rowBottom - $rowTop)/2 + $rowTop;
 
-						if($bye != 'bye'){
+						if($bye != true){
 							$brackets[$rowTop][2*$round-2] = '<td class="grid border-top"></td>';
 							$brackets[$rowBottom][2*$round-2] = '<td class="grid border-bottom"></td>';
 							for ($i = $rowTop+1; $i < $rowBottom; $i++){
@@ -2198,11 +2290,13 @@ class Event extends DatabaseTable
 				$pavatar = mysql_result($result,$player, TBL_USERS.".user_image");
 				$pteam  = mysql_result($result,$player , TBL_PLAYERS.".Team");
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
+				$pseed = mysql_result($result,$player , TBL_PLAYERS.".Seed");
+				if($pseed == 0) $pseed = $player + 1;
 
-				$teams[$player]['PlayerID'] = $playerID;
-				$teams[$player]['Name'] = $pname;
-				$teams[$player]['UniqueGameID'] = $pugid;
-				$teams[$player]['Avatar'] = $pavatar;
+				$teams[$pseed-1]['PlayerID'] = $playerID;
+				$teams[$pseed-1]['Name'] = $pname;
+				$teams[$pseed-1]['UniqueGameID'] = $pugid;
+				$teams[$pseed-1]['Avatar'] = $pavatar;
 			}
 			break;
 		case 'Teams':
@@ -2222,11 +2316,13 @@ class Event extends DatabaseTable
 			{
 				$pteam  = mysql_result($result,$team, TBL_TEAMS.".TeamID");
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
+				$pseed = mysql_result($result,$team , TBL_TEAMS.".Seed");
+				if($pseed == 0) $pseed = $team + 1;
 
-				$teams[$team]['PlayerID'] = $pteam;
-				$teams[$team]['Name'] = $pclan;
-				$teams[$team]['UniqueGameID'] = '';
-				$teams[$team]['Avatar'] = $pavatar;
+				$teams[$pseed-1]['PlayerID'] = $pteam;
+				$teams[$pseed-1]['Name'] = $pclan;
+				$teams[$pseed-1]['UniqueGameID'] = '';
+				$teams[$pseed-1]['Avatar'] = $pavatar;
 			}
 			break;
 		}
@@ -2296,6 +2392,43 @@ class Event extends DatabaseTable
 		}
 	}
 	
+	function updateSeeds()
+	{
+		global $sql;
+
+		switch($this->getMatchPlayersType())
+		{
+		case 'Players':
+			$q = "SELECT ".TBL_PLAYERS.".*"
+			." FROM ".TBL_PLAYERS
+			." WHERE (".TBL_PLAYERS.".Event = '".$this->getField('EventID')."')"
+			." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
+			$result = $sql->db_Query($q);
+			$num_players = mysql_numrows($result);
+			for($i=0; $i<$num_players; $i++)
+			{
+				$pID  = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+				$q2 = "UPDATE ".TBL_PLAYERS." SET Seed = '".($i+1)."' WHERE (PlayerID = '$pID')";
+				$result2 = $sql->db_Query($q2);
+			}
+			break;
+		case 'Teams':
+			$q = "SELECT ".TBL_TEAMS.".*"
+			." FROM ".TBL_TEAMS
+			." WHERE (".TBL_TEAMS.".Event = '".$this->getField('EventID')."')"
+			." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
+			$result = $sql->db_Query($q);
+			$num_teams = mysql_numrows($result);
+			for($i=0; $i<$num_teams; $i++)
+			{
+				$tID  = mysql_result($result, $i, TBL_TEAMS.".TeamID");
+				$q2 = "UPDATE ".TBL_TEAMS." SET Seed = '".($i+1)."' WHERE (TeamID = '$tID')";
+				$result2 = $sql->db_Query($q2);
+			}
+			break;
+		}
+	}
+	
 	function getMatchups()
 	{
 		$file = $this->getField('MatchupsFile');
@@ -2345,7 +2478,7 @@ function deletePlayerMatches($player_id)
 			set_time_limit(10);
 			$match_id  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
 			$match = new Match($match_id);
-			$match->deletePlayersMatchScores();
+			$match->delete();
 		}
 	}
 }
@@ -2353,11 +2486,22 @@ function deletePlayerMatches($player_id)
 function deletePlayer($player_id)
 {
 	global $sql;
+	
+	// Need to re-order the seeds for that event.
+	$q = "SELECT ".TBL_PLAYERS.".*"
+	." FROM ".TBL_PLAYERS
+	." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')";
+	$result = $sql->db_Query($q);
+	$event_id    = mysql_result($result,0 , TBL_PLAYERS.".Event");
+	
 	$q = "DELETE FROM ".TBL_PLAYERS
 	." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')";
 	$result = $sql->db_Query($q);
-}
 
+	$event = new Event($event_id);
+	$event->updateSeeds();
+}
+		
 function deletePlayerAwards($player_id)
 {
 	global $sql;
@@ -2376,9 +2520,20 @@ function checkinPlayer($player_id)
 function deleteTeam($team_id)
 {
 	global $sql;
+	
+	// Need to re-order the seeds for that event.
+	$q = "SELECT ".TBL_TEAMS.".*"
+	." FROM ".TBL_TEAMS
+	." WHERE (".TBL_TEAMS.".TeamID = '$team_id')";
+	$result = $sql->db_Query($q);
+	$event_id    = mysql_result($result,0 , TBL_TEAMS.".Event");
+	
 	$q = "DELETE FROM ".TBL_TEAMS
 	." WHERE (".TBL_TEAMS.".TeamID = '$team_id')";
 	$result = $sql->db_Query($q);
+
+	$event = new Event($event_id);
+	$event->updateSeeds();
 }
 
 function checkinTeam($team_id)

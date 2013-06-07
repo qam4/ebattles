@@ -92,6 +92,9 @@ $event_id = $_GET['eventid'];
 $match_id = $_GET['matchid'];
 
 $event = new Event($event_id);
+$type = $event->getField('Type');
+$competition_type = $event->getCompetitionType();
+$matchtype = $event->getField('MatchType');
 
 switch($event->getMatchPlayersType())
 {
@@ -126,14 +129,23 @@ case 'Players':
 		$pname = $gamer->getField('Name');
 		$pteam  = mysql_result($result,$i, TBL_PLAYERS.".Team");
 		list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
-		if ($prank==0)
-		$prank_txt = EB_EVENT_L54;
+		if($competition_type == 'Tournament')
+		{
+			$prank_txt = '';
+		}
 		else
-		$prank_txt = "#$prank";
+		{
+			if ($prank==0)
+			$prank_txt = EB_EVENT_L54;
+			else
+			$prank_txt = "#$prank";
+			
+			$prank_txt = " ($prank_txt)";
+		}
 
 		$players_id[$i+1] = $pid;
 		$players_uid[$i+1] = $puid;
-		$players_name[$i+1] = $pclantag.$pname." ($prank_txt)";
+		$players_name[$i+1] = $pclantag.$pname.$prank_txt;
 	}
 	break;
 case 'Teams':
@@ -159,14 +171,23 @@ case 'Teams':
 		$puid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
 		$prank  = mysql_result($result,$i, TBL_TEAMS.".Rank");
 		$pname  = mysql_result($result,$i, TBL_CLANS.".Name");
-		if ($prank==0)
-		$prank_txt = EB_EVENT_L54;
+		if($competition_type == 'Tournament')
+		{
+			$prank_txt = '';
+		}
 		else
-		$prank_txt = "#$prank";
+		{
+			if ($prank==0)
+			$prank_txt = EB_EVENT_L54;
+			else
+			$prank_txt = "#$prank";
+			
+			$prank_txt = " ($prank_txt)";
+		}
 
 		$players_id[$i+1] = $pid;
 		$players_uid[$i+1] = $puid;
-		$players_name[$i+1] = $pname." ($prank_txt)";
+		$players_name[$i+1] = $pname.$prank_txt;
 	}
 	break;
 default:
@@ -269,7 +290,7 @@ if($match_id)
 	$time_scheduled_local = $time_scheduled + TIMEOFFSET;
 	$date_scheduled = date("m/d/Y h:i A",$time_scheduled_local);
 	if (!isset($_POST['date_scheduled'])) $_POST['date_scheduled'] = $date_scheduled;
-
+	
 	$matchMaps = explode(",", mysql_result($result,0, TBL_MATCHS.".Maps"));
 	$map = 0;
 	foreach($matchMaps as $matchMap)
@@ -349,10 +370,6 @@ if($match_id)
 	if (!isset($_POST['nbr_teams'])) $_POST['nbr_teams'] = $nbr_teams;
 }
 
-
-$type = $event->getField('Type');
-$competition_type = $event->getCompetitionType();
-$matchtype = $event->getField('MatchType');
 if(preg_match("/^\d+v\d$/", $matchtype)||
    ($competition_type == 'Tournament'))
 {
@@ -522,7 +539,7 @@ if (isset($_POST['submit']))
 		}
 	}
 
-	if(isset($_POST['matchschedule']))
+	if(isset($_POST['matchschedule']) || isset($_POST['matchschedulededit']))
 	{
 		if($_POST['date_scheduled'] == '')
 		{
@@ -536,7 +553,7 @@ if (isset($_POST['submit']))
 		}
 	}
 
-	if(!isset($_POST['matchschedule']))
+	if(!isset($_POST['matchschedule'])&&!isset($_POST['matchschedulededit']))
 	{
 		switch($event->getMatchPlayersType())
 		{
@@ -560,7 +577,7 @@ if (isset($_POST['submit']))
 	}
 
 	// Check if a team has no player
-	if(!isset($_POST['matchschedule']))
+	if(!isset($_POST['matchschedule'])&&!isset($_POST['matchschedulededit']))
 	{
 		for($i=1;$i<=$nbr_teams;$i++)
 		{
@@ -591,20 +608,14 @@ if (isset($_POST['submit']))
 
 	if (!empty($error_str)) {
 		// show form again
-		user_form($players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass);
+		user_form($players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled);
 		// errors have occured, halt execution and show form again.
 		$text .= '<p style="color:red">'.EB_MATCHR_L14;
 		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
 	}
 	else
 	{
-		$text .= "OK<br />";
-		if($match_id)
-		{
-			// Match Edit, Need to delete the match scores and re-create new ones.
-			$match->deleteMatchScores($event_id);
-		}
-
+		$text .= "no errors<br />";
 		$nbr_players = $_POST['nbr_players'];
 
 		$actual_rank[1] = 1;
@@ -623,19 +634,39 @@ if (isset($_POST['submit']))
 
 		$text .= 'Comments: '.$tp->toHTML($comments).'<br />';
 
+		$create_scores = 0;
 		if($match_id)
 		{
 			// Edit Match --------------------------------------------
-			$q =
-			"UPDATE ".TBL_MATCHS
-			." SET ReportedBy = '$reported_by',"
-			."       TimeReported = '$time_reported',"
-			."       Comments = '$comments',"
-			."       Status= 'pending',"
-			."       Maps = '$map'"
-			." WHERE (MatchID = '$match_id')";
+			if($match->getField('Status') == 'scheduled')
+			{
+				$q =
+				"UPDATE ".TBL_MATCHS
+				." SET ReportedBy = '$reported_by',"
+				."       TimeScheduled = '$time_scheduled',"
+				."       Comments = '$comments',"
+				."       Status= 'scheduled',"
+				."       Maps = '$map'"
+				." WHERE (MatchID = '$match_id')";
 
-			$result = $sql->db_Query($q);
+				$result = $sql->db_Query($q);
+			}
+			else
+			{
+				// Need to delete the match scores and re-create new ones.
+				$match->delete();
+				$q =
+				"UPDATE ".TBL_MATCHS
+				." SET ReportedBy = '$reported_by',"
+				."       TimeReported = '$time_reported',"
+				."       Comments = '$comments',"
+				."       Status= 'pending',"
+				."       Maps = '$map'"
+				." WHERE (MatchID = '$match_id')";
+
+				$result = $sql->db_Query($q);
+				$create_scores = 1;
+			}			
 		}
 		else
 		{
@@ -656,141 +687,149 @@ if (isset($_POST['submit']))
 			$last_id = mysql_insert_id();
 			$match_id = $last_id;
 			$match = new Match($match_id);
+			$create_scores = 1;
 		}
 
-		// Create Scores ------------------------------------------
-		for($i=1;$i<=$nbr_players;$i++)
+		if($create_scores == 1)
 		{
-			$pid = $_POST['player'.$i];
-			$pteam = str_replace("Team #","",$_POST['team'.$i]);
-
-			$pforfeit = 0;
-			for($j=1;$j<=$nbr_teams;$j++)
+			// Create Scores ------------------------------------------
+			for($i=1;$i<=$nbr_players;$i++)
 			{
-				if( $_POST['rank'.$j] == "Team #".$pteam) {
-					$prank = $actual_rank[$j];
-					if ($_POST['forfeit'.$j] != "") {
-						$pforfeit = 1;
-					}
-				}
-			}
+				$pid = $_POST['player'.$i];
+				$pteam = str_replace("Team #","",$_POST['team'.$i]);
 
-			$pscore = $_POST['score'.$i];
-			$pfaction = $_POST['faction'.$i];
-
-			switch($event->getMatchPlayersType())
-			{
-			case 'Players':
-				$q =
-				"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
-				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
-				";
-				break;
-			case 'Teams':
-				$q =
-				"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
-				VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
-				";
-				break;
-			default:
-			}
-			$result = $sql->db_Query($q);
-		}
-		$text .= '--------------------<br />';
-
-		// Update scores stats
-		if(isset($_POST['matchschedule']))
-		{
-			// Send notification to all the players.
-			$fromid = 0;
-			$subject = SITENAME." ".EB_MATCHR_L52;
-
-			switch($event->getMatchPlayersType())
-			{
-			case 'Players':
-				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
-				." FROM ".TBL_MATCHS.", "
-				.TBL_SCORES.", "
-				.TBL_PLAYERS.", "
-				.TBL_GAMERS.", "
-				.TBL_USERS
-				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-				." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
-				$result_Players = $sql->db_Query($q_Players);
-				$numPlayers = mysql_numrows($result_Players);
-				echo "numPlayers: $numPlayers<br>";
-				break;
-			case 'Teams':
-				$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
-				." FROM ".TBL_MATCHS.", "
-				.TBL_SCORES.", "
-				.TBL_TEAMS.", "
-				.TBL_PLAYERS.", "
-				.TBL_GAMERS.", "
-				.TBL_USERS
-				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-				." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
-				." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
-				$result_Players = $sql->db_Query($q_Players);
-				$numPlayers = mysql_numrows($result_Players);
-				echo "numPlayers: $numPlayers<br>";
-				break;
-			default:
-			}
-
-			if($numPlayers > 0)
-			{
-				for($j=0; $j < $numPlayers; $j++)
+				$pforfeit = 0;
+				for($j=1;$j<=$nbr_teams;$j++)
 				{
-					$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
-					$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
-					$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$event->getField('Name').EB_MATCHR_L56;
-					$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
-					$sendtoemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
-					if (check_class($pref['eb_pm_notifications_class']))
-					{
-						sendNotification($sendto, $subject, $message, $fromid);
-					}
-					if (check_class($pref['eb_email_notifications_class']))
-					{
-						// Send email
-						require_once(e_HANDLER."mail.php");
-						sendemail($sendtoemail, $subject, $message);
+					if( $_POST['rank'.$j] == "Team #".$pteam) {
+						$prank = $actual_rank[$j];
+						if ($_POST['forfeit'.$j] != "") {
+							$pforfeit = 1;
+						}
 					}
 				}
-			}
 
-			header("Location: eventinfo.php?eventid=$event_id");
-		}
-		else
-		{
-			$match->match_scores_update();
+				$pscore = $_POST['score'.$i];
+				$pfaction = $_POST['faction'.$i];
 
-			// Automatically Update Players stats only if Match Approval is Disabled
-			if ($event->getField('MatchesApproval') == eb_UC_NONE)
-			{
 				switch($event->getMatchPlayersType())
 				{
 				case 'Players':
-					$match->match_players_update();
+					$q =
+					"INSERT INTO ".TBL_SCORES."(MatchID,Player,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
+					VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
+					";
 					break;
 				case 'Teams':
-					$match->match_teams_update();
+					$q =
+					"INSERT INTO ".TBL_SCORES."(MatchID,Team,Player_MatchTeam,Player_Score,Player_Rank,Player_Forfeit, Faction)
+					VALUES ($match_id,$pid,$pteam,$pscore,$prank,$pforfeit,$pfaction)
+					";
 					break;
 				default:
 				}
-				if($event->getField('FixturesEnable') == TRUE)
-				{
-					$event->brackets(true);
-				}
-				$event->setFieldDB('IsChanged', 1);
+				$result = $sql->db_Query($q);
 			}
+			$text .= '--------------------<br />';
+
+			// Update scores stats
+			if(isset($_POST['matchschedule']))
+			{
+				// Send notification to all the players.
+				$fromid = 0;
+				$subject = SITENAME." ".EB_MATCHR_L52;
+
+				switch($event->getMatchPlayersType())
+				{
+				case 'Players':
+					$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
+					." FROM ".TBL_MATCHS.", "
+					.TBL_SCORES.", "
+					.TBL_PLAYERS.", "
+					.TBL_GAMERS.", "
+					.TBL_USERS
+					." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+					." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
+					$result_Players = $sql->db_Query($q_Players);
+					$numPlayers = mysql_numrows($result_Players);
+					echo "numPlayers: $numPlayers<br>";
+					break;
+				case 'Teams':
+					$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
+					." FROM ".TBL_MATCHS.", "
+					.TBL_SCORES.", "
+					.TBL_TEAMS.", "
+					.TBL_PLAYERS.", "
+					.TBL_GAMERS.", "
+					.TBL_USERS
+					." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+					." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+					." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+					." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
+					$result_Players = $sql->db_Query($q_Players);
+					$numPlayers = mysql_numrows($result_Players);
+					echo "numPlayers: $numPlayers<br>";
+					break;
+				default:
+				}
+
+				if($numPlayers > 0)
+				{
+					for($j=0; $j < $numPlayers; $j++)
+					{
+						$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
+						$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
+						$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$event->getField('Name').EB_MATCHR_L56;
+						$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
+						$sendtoemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
+						if (check_class($pref['eb_pm_notifications_class']))
+						{
+							sendNotification($sendto, $subject, $message, $fromid);
+						}
+						if (check_class($pref['eb_email_notifications_class']))
+						{
+							// Send email
+							require_once(e_HANDLER."mail.php");
+							sendemail($sendtoemail, $subject, $message);
+						}
+					}
+				}
+
+				header("Location: eventinfo.php?eventid=$event_id");
+			}
+			else
+			{
+				$match->match_scores_update();
+
+				// Automatically Update Players stats only if Match Approval is Disabled
+				if ($event->getField('MatchesApproval') == eb_UC_NONE)
+				{
+					switch($event->getMatchPlayersType())
+					{
+					case 'Players':
+						$match->match_players_update();
+						break;
+					case 'Teams':
+						$match->match_teams_update();
+						break;
+					default:
+					}
+					if($event->getField('FixturesEnable') == TRUE)
+					{
+						$event->brackets(true);
+					}
+					$event->setFieldDB('IsChanged', 1);
+				}
+				header("Location: matchinfo.php?matchid=$match_id");
+			}
+		}
+		else
+		{
 			header("Location: matchinfo.php?matchid=$match_id");
 		}
 
@@ -799,7 +838,7 @@ if (isset($_POST['submit']))
 	// if we get here, all data checks were okay, process information as you wish.
 } else {
 
-	if (!isset($_POST['matchreport'])&&!isset($_POST['matchedit'])&&!isset($_POST['matchscheduledreport'])&&!isset($_POST['matchschedule']))
+	if (!isset($_POST['matchreport'])&&!isset($_POST['matchedit'])&&!isset($_POST['matchscheduledreport'])&&!isset($_POST['matchschedule'])&&!isset($_POST['matchschedulededit']))
 	{
 		$text .= '<p>'.EB_MATCHR_L33.'</p>';
 		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>]</p>';
@@ -813,7 +852,7 @@ if (isset($_POST['submit']))
 	{
 		$userclass = $_POST['userclass'];
 		// the form has not been submitted, let's show it
-		user_form($players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass);
+		user_form($players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled);
 	}
 }
 

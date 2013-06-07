@@ -31,33 +31,70 @@ if ($eneedupdate == 1)
 
 $can_signup = 0;
 $cannot_signup_str = EB_EVENT_L75;
-$eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
-switch($event->getField('Type'))
+
+$max_num_players_reached = 0;
+switch($event->getMatchPlayersType())
 {
-case "One Player Ladder":
-case "One Player Tournament":
-	if(($eMaxNumberPlayers == 0)||($nbrplayers < $eMaxNumberPlayers))	$can_signup = 1;
+case 'Players':
+	if(($eMaxNumberPlayers != 0)&&($nbr_players >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
 	break;
-case "Team Ladder":
-	if(($eMaxNumberPlayers == 0)||($nbrplayers < $eMaxNumberPlayers))	$can_signup = 1;
-	break;
-case "Clan Ladder":
-case "Clan Tournament":
-	if(($eMaxNumberPlayers == 0)||($nbrteams < $eMaxNumberPlayers))	$can_signup = 1;
+case 'Teams':
+	if(($eMaxNumberPlayers != 0)&&($nbr_teams >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
 	break;
 default:
 }
 
-if(($event->getField('FixturesEnable') == FALSE) && ($event->getField('Status') == 'finished'))
+if($event->getField('FixturesEnable') == TRUE)
 {
-	$can_signup = 0;
-	$cannot_signup_str = EB_EVENT_L83;
+	switch($event->getField('Status'))
+	{
+	case 'draft':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L75;
+		break;
+	case 'signup':
+		// Do not close signup when max players limit is reached
+		$can_signup = 1;
+		break;
+	case 'checkin':
+		$can_signup = 1;
+		break;
+	case 'active':
+		// No late-signups
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L75;
+		break;
+	case 'finished':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L83;
+		break;
+	}
 }
-if(($event->getField('FixturesEnable') == TRUE) && ($event->getField('Status') != 'signup'))
+if($event->getField('FixturesEnable') == FALSE)
 {
-	$can_signup = 0;
-	$cannot_signup_str = EB_EVENT_L75;
+	switch($event->getField('Status'))
+	{
+	case 'draft':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L75;
+		break;
+	case 'signup':
+	case 'checkin':
+	case 'active':
+		$can_signup = 1;
+		if($max_num_players_reached == 1)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENT_L75;
+		}
+		break;
+	case 'finished':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L83;
+		break;
+	}
 }
+
 if(!check_class(e_UC_MEMBER))
 {
 	$can_signup = 0;
@@ -358,7 +395,7 @@ case "Clan Tournament":
 						}
 						
 						// Player can quit an event if he has not played yet
-						$q_2 = "SELECT ".TBL_PLAYERS.".*"
+						$q_2 = "SELECT DISTINCT ".TBL_PLAYERS.".*"
 						." FROM ".TBL_PLAYERS.", "
 						.TBL_SCORES
 						." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')"
@@ -481,7 +518,7 @@ case "One Player Ladder":
 			}
 			
 			// Player can quit an event if he has not played yet
-			$q = "SELECT ".TBL_PLAYERS.".*"
+			$q = "SELECT DISTINCT ".TBL_PLAYERS.".*"
 			." FROM ".TBL_PLAYERS.", "
 			.TBL_SCORES
 			." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')"
@@ -686,7 +723,7 @@ case 'Players':
 	}
 	break;
 case 'Teams':
-	if ($nbrteams < 2)
+	if ($nbr_teams < 2)
 	{
 		$can_report = 0;
 		$can_schedule = 0;
@@ -830,7 +867,7 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "C
 	}
 	$text .= '<div class="spacer">';
 	$text .= '<p>';
-	$text .= $nbrteams.'&nbsp;'.EB_EVENT_L95.'<br />';
+	$text .= $nbr_teams.'&nbsp;'.EB_EVENT_L95.'<br />';
 	$text .= EB_EVENT_L47.'&nbsp;'.$event->getField('nbr_team_games_to_rank').'&nbsp;'.EB_EVENT_L48.'<br /><br />';
 	$text .= '</p>';
 
@@ -988,7 +1025,7 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 	}
 	$text .= '<div class="spacer">';
 	$text .= '<p>';
-	$text .= $nbrplayers.'&nbsp;'.EB_EVENT_L51.'<br />';
+	$text .= $nbr_players.'&nbsp;'.EB_EVENT_L51.'<br />';
 	$text .= EB_EVENT_L52.'&nbsp;'.$event->getField('nbr_games_to_rank').'&nbsp;'.EB_EVENT_L53.'<br />';
 	$text .= '</p>';
 
@@ -1022,7 +1059,7 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 	//print_r($stats);
 
 	/* set pagination variables */
-	$totalItems = $nbrplayers;
+	$totalItems = $nbr_players;
 	$pages->items_total = $totalItems;
 	$pages->mid_range = eb_PAGINATION_MIDRANGE;
 	$pages->paginate();

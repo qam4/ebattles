@@ -13,31 +13,73 @@ if ($eventIsChanged == 1)
 
 $can_signup = 0;
 $cannot_signup_str = EB_EVENT_L75;
-$eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
-$hide_fixtures = 0;
+
+$max_num_players_reached = 0;
 switch($event->getMatchPlayersType())
 {
 case 'Players':
-	if(($eMaxNumberPlayers == 0)||($nbrplayers < $eMaxNumberPlayers)) $can_signup = 1;
+	if(($eMaxNumberPlayers != 0)&&($nbr_players >= $eMaxNumberPlayers)) $max_num_players_reached = 1;
 	$tab_title = EB_EVENT_L77;
 	break;
 case 'Teams':
-	if(($eMaxNumberPlayers == 0)||($nbrteams < $eMaxNumberPlayers))	$can_signup = 1;
+	if(($eMaxNumberPlayers != 0)&&($nbr_teams >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
 	$tab_title = EB_EVENT_L84;
 	break;
 default:
 }
 
-if(($event->getField('FixturesEnable') == FALSE) && ($event->getField('Status') == 'finished'))
+if($event->getField('FixturesEnable') == TRUE)
 {
-	$can_signup = 0;
-	$cannot_signup_str = EB_EVENT_L83;
+	switch($event->getField('Status'))
+	{
+	case 'draft':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L75;
+		break;
+	case 'signup':
+		// Do not close signup when max players limit is reached
+		$can_signup = 1;
+		break;
+	case 'checkin':
+		$can_signup = 1;
+		break;
+	case 'active':
+		// No late-signups
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L75;
+		break;
+	case 'finished':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L83;
+		break;
+	}
 }
-if(($event->getField('FixturesEnable') == TRUE) && ($event->getField('Status') != 'signup'))
+if($event->getField('FixturesEnable') == FALSE)
 {
-	$can_signup = 0;
-	$cannot_signup_str = EB_EVENT_L75;
+	switch($event->getField('Status'))
+	{
+	case 'draft':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L75;
+		break;
+	case 'signup':
+	case 'checkin':
+	case 'active':
+		$can_signup = 1;
+		if($max_num_players_reached == 1)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENT_L75;
+		}
+		break;
+	case 'finished':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L83;
+		break;
+	}
 }
+
+$hide_fixtures = 0;
 if(($event->getField('HideFixtures') == 1) &&
    (($event->getField('Status') == 'draft') ||
     ($event->getField('Status') == 'checkin') ||
@@ -462,7 +504,7 @@ case "One Player Ladder":
 			}
 			
 			// Player can quit an event if he has not played yet
-			$q = "SELECT ".TBL_PLAYERS.".*"
+			$q = "SELECT DISTINCT ".TBL_PLAYERS.".*"
 			." FROM ".TBL_PLAYERS.", "
 			.TBL_SCORES
 			." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')"

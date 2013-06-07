@@ -40,15 +40,7 @@ else
 		$event = new Event($event_id);
 		$match_id = $_POST['matchid'];
 		$match = new Match($match_id);
-		
-		if($event->getField('FixturesEnable') == TRUE)
-		{
-			$event->brackets(true, $match_id);
-		}
-		else
-		{
-			$match->deleteMatchScores($event_id);
-		}
+		$match->delete();
 		$text .= '<br />'.EB_MATCHDEL_L3.'<br />';
 	}
 	$text .= '<br />'.EB_MATCHDEL_L4.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHDEL_L5.'</a>]<br />';
