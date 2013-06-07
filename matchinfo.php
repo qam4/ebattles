@@ -96,6 +96,9 @@ else
 	$reported_by  = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
 	$reported_by_name  = mysql_result($result,0, TBL_USERS.".user_name");
 	$matchMaps = explode(",", mysql_result($result,0, TBL_MATCHS.".Maps"));
+	$mTimeScheduled  = mysql_result($result, 0, TBL_MATCHS.".TimeScheduled");
+	$mTimeScheduled_local = $mTimeScheduled + TIMEOFFSET;
+	$dateScheduled = date("d M Y, h:i A",$mTimeScheduled_local);
 
 	$categoriesToShow = array();
 	$q_Categories = "SELECT ".TBL_STATSCATEGORIES.".*"
@@ -354,6 +357,12 @@ else
 		$can_edit = 0;
 	}
 
+	if($mStatus == 'scheduled')
+	{
+		$can_edit = 1;
+		$text .= '<div>'.EB_MATCH_L16.'&nbsp;'.EB_MATCH_L17.'&nbsp;'.$dateScheduled.'.'.'</div>';
+	}
+
 	if ($mStatus == 'pending')
 	$text .= '<div>'.EB_MATCHD_L18.'</div>';
 
@@ -385,7 +394,14 @@ else
 		$text .= '<div>';
 		$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 		$text .= '</div>';
-		$text .= ebImageTextButton('matchedit', 'pencil.png', EB_MATCHD_L27);
+		if($mStatus == 'scheduled')
+		{
+			$text .= ebImageTextButton('matchschedulededit', 'pencil.png', EB_MATCHD_L27);
+		}
+		else
+		{
+			$text .= ebImageTextButton('matchedit', 'pencil.png', EB_MATCHD_L27);
+		}
 		$text .= '</form>';
 	}
 	$text .= '<br />';

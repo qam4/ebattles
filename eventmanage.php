@@ -57,6 +57,7 @@ else
 	$event = new Event($event_id);
 	$eventStatus = $event->getField('Status');
 	$rounds = unserialize($event->getFieldHTML('Rounds'));
+	$eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
 
 	$type = $event->getField('Type');
 	$competition_type = $event->getCompetitionType();
@@ -351,6 +352,7 @@ else
 				$text .= '<option value="32" '.($event->getField('MaxNumberPlayers') == "32" ? 'selected="selected"' : '') .'>32</option>';
 				$text .= '<option value="64" '.($event->getField('MaxNumberPlayers') == "64" ? 'selected="selected"' : '') .'>64</option>';
 				$text .= '<option value="128" '.($event->getField('MaxNumberPlayers') == "128" ? 'selected="selected"' : '') .'>128</option>';
+				break;
 			case 'Round-robin':
 				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 				$text .= '<option value="8" '.($event->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
@@ -383,7 +385,7 @@ else
 			case "Ladder":
 				$disabled_str = '';
 				if(($event->getField('Status')=='active')||
-						($event->getField('FixturesEnable')==FALSE))
+				   ($event->getField('FixturesEnable')==FALSE))
 				{
 					$disabled_str = 'disabled="disabled"';
 				}
@@ -416,6 +418,8 @@ else
 			//<!-- Rounds -->
 			$matchups = $event->getMatchups();
 			$nbrRounds = count($matchups);
+			// work around for events without rounds
+			$event->initRounds();
 
 			if($nbrRounds>0)
 			{
@@ -425,7 +429,6 @@ else
 				<td class="eb_td">';
 
 				$rounds = unserialize($event->getFieldHTML('Rounds'));
-				if (!isset($rounds)) $rounds = array();
 				$text .= '<table class="table_left"><tbody>';
 				$text .= '<tr>';
 				$text .= '<th>'.EB_EVENTM_L144.'</th>';
@@ -433,16 +436,6 @@ else
 				$text .= '<th>'.EB_EVENTM_L146.'</th>';
 				$text .= '</tr>';
 				for ($round = 1; $round < $nbrRounds; $round++) {
-					if (!isset($rounds[$round])) {
-						$rounds[$round] = array();
-					}
-					if (!isset($rounds[$round]['Title'])) {
-						$rounds[$round]['Title'] = EB_EVENTM_L144.' '.$round;
-					}
-					if (!isset($rounds[$round]['BestOf'])) {
-						$rounds[$round]['BestOf'] = 1;
-					}
-
 					$text .= '<tr>';
 					$text .= '<td>'.EB_EVENTM_L144.' '.$round.'</td>';
 					$text .= '<td><input class="tbox" type="text" size="40" name="round_title_'.$round.'" value="'.$rounds[$round]['Title'].'"/></td>';
@@ -550,23 +543,106 @@ else
 		default:
 		}
 
-		$eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
 		/* Add Team/Player */
-		switch($event->getField('Type'))
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L75;
+		$kick_enable = 1;
+		$del_player_games_enable = 1;
+
+		$max_num_players_reached = 0;
+		switch($event->getMatchPlayersType())
 		{
-		case "Team Ladder":
-		case "Clan Ladder":
-		case "Clan Tournament":
-			if($competition_type == 'Tournament')
+		case 'Players':
+			if(($eMaxNumberPlayers != 0)&&($numPlayers >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
+			break;
+		case 'Teams':
+			if(($eMaxNumberPlayers != 0)&&($nbrTeams >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
+			break;
+		default:
+		}
+
+		if($event->getField('FixturesEnable') == TRUE)
+		{
+			switch($event->getField('Status'))
 			{
-				if($event->getField('Status')=='active')
+			case 'draft':
+				$can_signup = 0;
+				$cannot_signup_str = EB_EVENT_L75;
+				break;
+			case 'signup':
+				// Do not close signup when max players limit is reached
+				$can_signup = 1;
+				break;
+			case 'checkin':
+				$can_signup = 1;
+				break;
+			case 'active':
+				// deleting a player shuffles the seeds, it should not be done after event has started.
+				$kick_enable = 0;
+
+				// late-signups ok, until we reach the max players limit, or a game has been played.
+				$can_signup = 1;
+				if($max_num_players_reached == 1)
 				{
-					$text .= EB_EVENTM_L163.'<br />';
-					break;
+					$can_signup = 0;
+					$cannot_signup_str = EB_EVENT_L75;
 				}
+
+				$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+				." FROM ".TBL_MATCHS.", "
+				.TBL_SCORES
+				." WHERE (Event = '$event_id')"
+				." AND (".TBL_MATCHS.".Status = 'active')"
+				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
+				$result = $sql->db_Query($q);
+
+				$row = mysql_fetch_array($result);
+				$numMatches = $row['NbrMatches'];
+
+				if($numMatches > 0)
+				{
+					$can_signup = 0;
+					$cannot_signup_str = EB_EVENT_L75;
+				}
+				break;
+			case 'finished':
+				$can_signup = 0;
+				$cannot_signup_str = EB_EVENT_L83;
+				break;
 			}
-			if(($eMaxNumberPlayers == 0) || ($numTeams < $eMaxNumberPlayers))
+		}
+		if($event->getField('FixturesEnable') == FALSE)
+		{
+			switch($event->getField('Status'))
 			{
+			case 'draft':
+				$can_signup = 0;
+				$cannot_signup_str = EB_EVENT_L75;
+				break;
+			case 'signup':
+			case 'checkin':
+			case 'active':
+				$can_signup = 1;
+				if($max_num_players_reached == 1)
+				{
+					$can_signup = 0;
+					$cannot_signup_str = EB_EVENT_L75;
+				}
+				break;
+			case 'finished':
+				$can_signup = 0;
+				$cannot_signup_str = EB_EVENT_L83;
+				break;
+			}
+		}
+
+		if($can_signup == 1)
+		{
+			switch($event->getField('Type'))
+			{
+			case "Team Ladder":
+			case "Clan Ladder":
+			case "Clan Tournament":
 				// Form to add a team's division to the event
 				$q = "SELECT ".TBL_DIVISIONS.".*, "
 				.TBL_CLANS.".*"
@@ -618,20 +694,9 @@ else
 				</table>
 				</form>
 				';
-			}
-			break;
-		case "One Player Ladder":
-		case "One Player Tournament":
-			if($competition_type == 'Tournament')
-			{
-				if($event->getField('Status')=='active')
-				{
-					$text .= EB_EVENTM_L162.'<br />';
-					break;
-				}
-			}
-			if(($eMaxNumberPlayers == 0) || ($numPlayers < $eMaxNumberPlayers))
-			{
+				break;
+			case "One Player Ladder":
+			case "One Player Tournament":
 				// Form to add a player to the event
 				$q = "SELECT ".TBL_GAMERS.".*, "
 				.TBL_USERS.".*"
@@ -705,13 +770,13 @@ else
 				</table>
 				</form>
 				';
+				break;
+			default:
 			}
-			else
-			{
-				$text .= EB_EVENTM_L161.'<br />';
-			}
-			break;
-		default:
+		}
+		else
+		{
+			$text .= $cannot_signup_str.'<br />';
 		}
 
 		$text .= '<br />';
@@ -730,7 +795,7 @@ else
 			// Show list of teams here
 			if($teams_seeding_enabled == true)
 			{
-				$order_by_str = " ORDER BY ".TBL_TEAMS.".Seed";
+				$order_by_str = " ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
 			}
 			else
 			{
@@ -748,11 +813,11 @@ else
 			." AND (".TBL_TEAMS.".Event = '$event_id')"
 			.$order_by_str;
 			$result = $sql->db_Query($q_Teams);
-			$num_rows = mysql_numrows($result);
-			if(!$result || ($num_rows < 0)){
+			$numTeams = mysql_numrows($result);
+			if(!$result || ($numTeams < 0)){
 				$text .= EB_EVENTM_L51.'<br />';
 			}
-			if($num_rows == 0){
+			if($numTeams == 0){
 				$text .= EB_EVENTM_L115.'<br />';
 			}
 			else
@@ -793,7 +858,7 @@ else
 				}
 				$text .= '</tr></thead>';
 				$text .= '<tbody>';
-				for($i=0; $i < $num_rows; $i++){
+				for($i=0; $i < $numTeams; $i++){
 					$clan_id  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 					$clan = new Clan($clan_id);
 					$tid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
@@ -841,7 +906,7 @@ else
 			$orderby_array = $array["$orderby"];
 			if($players_seeding_enabled == true)
 			{
-				$order_by_str = " ORDER BY ".TBL_PLAYERS.".Seed";
+				$order_by_str = " ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
 			}
 			else
 			{
@@ -860,10 +925,10 @@ else
 			.$order_by_str
 			." $pages->limit";
 			$result = $sql->db_Query($q_Players);
-			$num_rows = mysql_numrows($result);
-			if(!$result || ($num_rows < 0)){
+			$numPlayers = mysql_numrows($result);
+			if(!$result || ($numPlayers < 0)){
 				$text .= EB_EVENTM_L51.'<br />';
-			} else if($num_rows == 0){
+			} else if($numPlayers == 0){
 				$text .= EB_EVENTM_L52.'<br />';
 			}
 			else
@@ -929,7 +994,7 @@ else
 				$text .= '<input type="hidden" id="checkin_player" name="checkin_player" value=""/>';
 				$text .= '</th></tr></thead>';
 				$text .= '<tbody>';
-				for($i=0; $i<$num_rows; $i++)
+				for($i=0; $i<$numPlayers; $i++)
 				{
 					$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
 					$puid = mysql_result($result,$i, TBL_USERS.".user_id");
@@ -945,6 +1010,14 @@ else
 					$pteam = mysql_result($result,$i, TBL_PLAYERS.".Team");
 					$pcheckedin = mysql_result($result,$i, TBL_PLAYERS.".CheckedIn");
 					list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
+					
+					$q_2 = "SELECT DISTINCT ".TBL_PLAYERS.".*"
+						." FROM ".TBL_PLAYERS.", "
+						.TBL_SCORES
+						." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
+						." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
+					$result_2 = $sql->db_Query($q_2);
+					$nbrscores = mysql_numrows($result_2);
 
 					$text .= '<tr id="player_'.$pid.'">';
 					if($players_seeding_enabled == true)
@@ -972,11 +1045,11 @@ else
 					{
 						$text .= ' <a href="javascript:ban_player(\''.$pid.'\');" title="'.EB_EVENTM_L62.'" onclick="return confirm(\''.EB_EVENTM_L63.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="'.EB_EVENTM_L62.'"/></a>';
 					}
-					if (($pgames == 0)&&($pawards == 0))
+					if (($kick_enable==1)&&($nbrscores == 0)&&($pawards == 0))
 					{
 						$text .= ' <a href="javascript:kick_player(\''.$pid.'\');" title="'.EB_EVENTM_L64.'" onclick="return confirm(\''.EB_EVENTM_L65.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_EVENTM_L64.'"/></a>';
 					}
-					if ($pgames != 0)
+					if (($del_player_games_enable==1)&&($nbrscores != 0))
 					{
 						$text .= ' <a href="javascript:del_player_games(\''.$pid.'\');" title="'.EB_EVENTM_L66.'" onclick="return confirm(\''.EB_EVENTM_L67.'\')"><img src="'.e_PLUGIN.'ebattles/images/controller_delete.ico" alt="'.EB_EVENTM_L66.'"/></a>';
 					}

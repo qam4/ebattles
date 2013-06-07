@@ -18,7 +18,7 @@ if(isset($_POST['quitevent'])){
 
 	// Player can quit an event if he has not played yet
 	// TODO - can quit if event not started.
-	$q = "SELECT ".TBL_PLAYERS.".*"
+	$q = "SELECT DISTINCT ".TBL_PLAYERS.".*"
 	." FROM ".TBL_PLAYERS.", "
 	.TBL_SCORES
 	." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"

@@ -12,8 +12,11 @@ $player = $_POST['player'];
 print_r($player);
 
 for ($i = 0; $i < count($player); $i++) {
-	$q = "UPDATE ".TBL_PLAYERS." SET Seed = '".($i+1)."' WHERE (PlayerID = '".$player[$i]."')";
-	$result = $sql->db_Query($q);
+	if($player[$i] != 'none')
+	{
+		$q = "UPDATE ".TBL_PLAYERS." SET Seed = '".($i+1)."' WHERE (PlayerID = '".$player[$i]."')";
+		$result = $sql->db_Query($q);
+	}
 }
 	
 ?>

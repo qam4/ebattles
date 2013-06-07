@@ -12,8 +12,11 @@ $team = $_POST['team'];
 print_r($team);
 
 for ($i = 0; $i < count($team); $i++) {
-	$q = "UPDATE ".TBL_TEAMS." SET Seed = '".($i+1)."' WHERE (TeamID = '".$team[$i]."')";
-	$result = $sql->db_Query($q);
+	if($team[$i] != 'none')
+	{
+		$q = "UPDATE ".TBL_TEAMS." SET Seed = '".($i+1)."' WHERE (TeamID = '".$team[$i]."')";
+		$result = $sql->db_Query($q);
+	}
 }
 	
 ?>

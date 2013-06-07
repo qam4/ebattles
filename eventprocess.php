@@ -148,12 +148,24 @@ else{
 			case 'One Player Tournament':
 				$event->setField('Type', 'One Player Tournament');
 				$event->setField('Format', 'Single Elimination');
-				$event->setField('MaxNumberPlayers', 16);
+				$event->setField('FixturesEnable', TRUE);
+				$maxNbrPlayers = 16;
+				$event->setField('MaxNumberPlayers', $maxNbrPlayers);
+				$path = 'include/brackets/';
+				$file = $path.'se-'.$maxNbrPlayers.'.txt';
+				$event->setField('MatchupsFile', $file);
+				$event->initRounds();
 				break;
 			case 'Clan Tournament':
 				$event->setField('Type', 'Clan Tournament');
 				$event->setField('Format', 'Single Elimination');
-				$event->setField('MaxNumberPlayers', 16);
+				$event->setField('FixturesEnable', TRUE);
+				$maxNbrPlayers = 16;
+				$event->setField('MaxNumberPlayers', $maxNbrPlayers);
+				$path = 'include/brackets/';
+				$file = $path.'se-'.$maxNbrPlayers.'.txt';
+				$event->setField('MatchupsFile', $file);
+				$event->initRounds();
 			default:
 			}
 		}
@@ -426,6 +438,7 @@ else{
 	if(isset($_POST['kick_player']) && $_POST['kick_player']!="")
 	{
 		$playerid = $_POST['kick_player'];
+		deletePlayerMatches($playerid);
 		deletePlayer($playerid);
 		// TODO: only for ladders?
 		updateStats($event_id, $time, TRUE);
@@ -516,8 +529,7 @@ else{
 	
 	if(isset($_POST['eventfixturessave']))
 	{
-		
-		var_dump($_POST);
+		//var_dump($_POST);
 		/* Event Fixtures enable/disable */
 		if($_POST['eventfixturesenable'] != "")
 		{
@@ -573,13 +585,14 @@ else{
 					$file = $path.'de-4.txt';
 					break;
 				case 8:
+					$file = $path.'de-8-1.txt';
+					break;
 				default:
 					$file = $path.'de-8-1.txt';
 					break;
 				}
 				break;
 			case 'Single Elimination':
-			default:
 				$file = $path.'se-'.$maxNbrPlayers.'.txt';
 				break;
 			case 'Round-robin':

@@ -87,9 +87,26 @@ else
 
 	$eventIsChanged = $event->getField('IsChanged');
 	$eventStatus = $event->getField('Status');
+	$eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
 
 	$type = $event->getField('Type');
 	$competition_type = $event->getCompetitionType();
+
+	/* Nbr players */
+	$q = "SELECT COUNT(*) as NbrPlayers"
+	." FROM ".TBL_PLAYERS
+	." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
+	$result = $sql->db_Query($q);
+	$row = mysql_fetch_array($result);
+	$nbr_players = $row['NbrPlayers'];
+	
+	/* Nbr Teams */
+	$q = "SELECT COUNT(*) as NbrTeams"
+	." FROM ".TBL_TEAMS
+	." WHERE (Event = '$event_id')";
+	$result = $sql->db_Query($q);
+	$row = mysql_fetch_array($result);
+	$nbr_teams = $row['NbrTeams'];
 
 	if ($pref['eb_events_update_delay_enable'] == 1)
 	{
@@ -141,40 +158,98 @@ else
 	}
 	if($eventStatus=='checkin')
 	{
-		if($time > $event->getField('StartDateTime'))
+		$checkin_end = false;
+		
+		if($event->getField('CheckinDuration') > 0)
 		{
-			if($event->getField('CheckinDuration') > 0)
+			// End 'checkin' at the beginning of the event, or when we've reached the max number of players
+			$q = "SELECT ".TBL_TEAMS.".*"
+			." FROM ".TBL_TEAMS
+			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+			." AND (".TBL_TEAMS.".CheckedIn = '0')";
+			$result = $sql->db_Query($q);
+			$nbr_teams_not_checked_in = mysql_numrows($result);
+			$nbr_teams_checked_in = $nbr_teams - $nbr_teams_not_checked_in;
+
+			if(($time > $event->getField('StartDateTime')) ||
+			   ($nbr_teams_checked_in >= $eMaxNumberPlayers))
 			{
+				$checkin_end = true;
 				// Delete teams who have not checked in
-				$q = "SELECT ".TBL_TEAMS.".*"
-				." FROM ".TBL_TEAMS
-				." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-				." AND (".TBL_TEAMS.".CheckedIn = '0')";
-				$result = $sql->db_Query($q);
-				$nbrTeams = mysql_numrows($result);
-				for($i=0; $i<$nbrTeams; $i++)
+				for($i=0; $i<$nbr_teams_not_checked_in; $i++)
 				{
 					$tID = mysql_result($result, $i, TBL_TEAMS.".TeamID");
 					deleteTeam($tID);
 				}
+			}
 
+			$q = "SELECT ".TBL_PLAYERS.".*"
+			." FROM ".TBL_PLAYERS
+			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+			." AND (".TBL_PLAYERS.".CheckedIn = '0')";
+			$result = $sql->db_Query($q);
+			$nbr_players_not_checked_in = mysql_numrows($result);
+			$nbr_players_checked_in = $nbr_players - $nbr_players_not_checked_in;
+
+			if(($time > $event->getField('StartDateTime')) ||
+			   ($nbr_players_checked_in >= $eMaxNumberPlayers))
+			{
+				$checkin_end = true;
 				// Delete players who have not checked in
-				$q = "SELECT ".TBL_PLAYERS.".*"
-				." FROM ".TBL_PLAYERS
-				." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-				." AND (".TBL_PLAYERS.".CheckedIn = '0')";
-				$result = $sql->db_Query($q);
-				$nbrPlayers = mysql_numrows($result);
-				for($i=0; $i<$nbrPlayers; $i++)
+				for($i=0; $i<$nbr_players_not_checked_in; $i++)
 				{
 					$pID = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
 					deletePlayer($pID);
 				}
 			}
+		}
+		else
+		{
+			// no checkin
+			if($time > $event->getField('StartDateTime'))
+			{
+				$checkin_end = true;
+				
+				if(($eMaxNumberPlayers > 0)||($nbr_teams > $eMaxNumberPlayers))
+				{
+					// Delete teams so that we are left with max number of teams
+					$q = "SELECT ".TBL_TEAMS.".*"
+					." FROM ".TBL_TEAMS
+					." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+					." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
+					$result = $sql->db_Query($q);
+					$nbr_teams = mysql_numrows($result);
+					for($i=$eMaxNumberPlayers; $i<$nbr_teams; $i++)
+					{
+						$tID = mysql_result($result, $i, TBL_TEAMS.".TeamID");
+						deleteTeam($tID);
+					}
+				}
 
+				// Delete players so that we are left with max number of players
+				if(($eMaxNumberPlayers > 0)||($nbr_players > $eMaxNumberPlayers))
+				{
+					$q = "SELECT ".TBL_PLAYERS.".*"
+					." FROM ".TBL_PLAYERS
+					." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+					." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
+					$result = $sql->db_Query($q);
+					$nbr_players = mysql_numrows($result);
+					for($i=$eMaxNumberPlayers; $i<$nbr_players; $i++)
+					{
+						$pID = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+						deletePlayer($pID);
+					}
+				}
+			}
+		}
+		
+		if($checkin_end == true)
+		{
 			$eventStatus = 'active';
 			if($event->getField('FixturesEnable') == TRUE)
 			{
+				$event->updateSeeds();
 				$event->brackets(true);
 			}			
 			$event->setFieldDB('IsChanged', 1);
@@ -327,7 +402,7 @@ else
 	." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
 	$result = $sql->db_Query($q);
 	$row = mysql_fetch_array($result);
-	$nbrplayers = $row['NbrPlayers'];
+	$nbr_players = $row['NbrPlayers'];
 	
 	$q = "SELECT COUNT(*) as NbrPlayers"
 	." FROM ".TBL_PLAYERS
@@ -343,7 +418,7 @@ else
 	." WHERE (Event = '$event_id')";
 	$result = $sql->db_Query($q);
 	$row = mysql_fetch_array($result);
-	$nbrteams = $row['NbrTeams'];
+	$nbr_teams = $row['NbrTeams'];
 	
 	switch($competition_type)
 	{

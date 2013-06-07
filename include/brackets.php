@@ -26,6 +26,9 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 	case 'N':
 		$text .= 'Not needed';
 		break;
+	case 'F':
+		$text .= '&nbsp;';
+		break;
 	case 'W':
 		$text .= '&nbsp;';
 		break;
