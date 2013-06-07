@@ -44,9 +44,33 @@ if($event->getField('FixturesEnable') == TRUE)
 		$can_signup = 1;
 		break;
 	case 'active':
-		// No late-signups
-		$can_signup = 0;
-		$cannot_signup_str = EB_EVENT_L75;
+		$can_signup = 1;
+		if($max_num_players_reached == 1)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENT_L75;
+		}
+		if($event->getField('AllowLateSignups') == FALSE)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENT_L75;
+		}
+		// Check if one game has been played
+		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+		." FROM ".TBL_MATCHS.", "
+		.TBL_SCORES
+		." WHERE (Event = '$event_id')"
+		." AND (".TBL_MATCHS.".Status = 'active')"
+		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
+		$result = $sql->db_Query($q);
+
+		$row = mysql_fetch_array($result);
+		$numMatches = $row['NbrMatches'];
+		if($numMatches > 0)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENT_L75;
+		}
 		break;
 	case 'finished':
 		$can_signup = 0;
@@ -71,6 +95,11 @@ if($event->getField('FixturesEnable') == FALSE)
 			$can_signup = 0;
 			$cannot_signup_str = EB_EVENT_L75;
 		}
+		if($event->getField('AllowLateSignups') == FALSE)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENT_L75;
+		}
 		break;
 	case 'finished':
 		$can_signup = 0;
@@ -86,6 +115,12 @@ if(($event->getField('HideFixtures') == 1) &&
     ($event->getField('Status') == 'signup')))
 {
 	$hide_fixtures = 1;
+}
+
+if($event->getField('SignupsEnable') == FALSE)
+{
+	$can_signup = 0;
+	$cannot_signup_str = EB_EVENT_L75;
 }
 
 if(!check_class(e_UC_MEMBER))

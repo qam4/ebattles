@@ -330,6 +330,26 @@ else{
 			$event->setField('CheckinDuration', $new_checkin_duration);
 		}
 		
+		/* Event Signups Enable */
+		if ($_POST['eventsignupsenable'] != "")
+		{
+			$event->setField('SignupsEnable', 1);
+		}
+		else
+		{
+			$event->setField('SignupsEnable', 0);
+		}
+
+		/* Event Allow Late Signups */
+		if ($_POST['eventallowlatesignups'] != "")
+		{
+			$event->setField('AllowLateSignups', 1);
+		}
+		else
+		{
+			$event->setField('AllowLateSignups', 0);
+		}
+		
 		/* Event Description */
 		$event->setField('Description', $_POST['eventdescription']);
 

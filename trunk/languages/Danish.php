@@ -419,6 +419,8 @@ define('EB_EVENTM_L173', 'Never');
 define('EB_EVENTM_L174', 'Until event is live');
 define('EB_EVENTM_L175', 'Signup gold cost');
 define('EB_EVENTM_L176', 'Winner gold reward');
+define('EB_EVENTM_L177', 'Enable/disable signup');
+define('EB_EVENTM_L178', 'Allow late signups');
 
 define('EB_EVENTP_L1', 'Tidligere Turneringer');
 define('EB_EVENTP_L2', 'Tidligere Turneringer');

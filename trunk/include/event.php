@@ -66,6 +66,8 @@ class Event extends DatabaseTable
 		$this->setField('HideFixtures', '0');
 		$this->setField('GoldEntryFee', '0');
 		$this->setField('GoldWinningEvent', '0');
+		$this->setField('SignupsEnable', '1');
+		$this->setField('AllowLateSignups', '1');
 	}
 
 	function resetPlayers()
@@ -1151,6 +1153,48 @@ class Event extends DatabaseTable
 		</tr>
 		';
 
+		//<!-- Signups Enable -->
+		$text .= '
+		<tr>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L177.'</td>
+		<td class="eb_td">
+		<div>
+		';
+		$text .= '<input class="tbox" type="checkbox" name="eventsignupsenable"';
+		if ($this->getField('SignupsEnable') == true)
+		{
+			$text .= ' checked="checked"/>';
+		}
+		else
+		{
+			$text .= '/>';
+		}
+		$text .= '
+		</div>
+		</td>
+		</tr>';		
+
+		//<!-- Allow Late Signups -->
+		$text .= '
+		<tr>
+		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L178.'</td>
+		<td class="eb_td">
+		<div>
+		';
+		$text .= '<input class="tbox" type="checkbox" name="eventallowlatesignups"';
+		if ($this->getField('AllowLateSignups') == true)
+		{
+			$text .= ' checked="checked"/>';
+		}
+		else
+		{
+			$text .= '/>';
+		}
+		$text .= '
+		</div>
+		</td>
+		</tr>';
+		
 		if ($create==false)
 		{
 			switch($competition_type)
