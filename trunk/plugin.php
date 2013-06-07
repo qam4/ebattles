@@ -786,9 +786,7 @@ if (versionsCompare($eb_version_string, "0.9.8") < 0)
 	// To revision 0.9.8
 	array_push ($upgrade_alter_tables,
 	"ALTER TABLE ".TBL_EVENTS." ADD GoldEntryFee int default '0'",
-	"ALTER TABLE ".TBL_EVENTS." ADD GoldWinningEvent int default '0'",
-	"ALTER TABLE ".TBL_EVENTS." ADD SignupsEnable tinyint(1) DEFAULT '1'",
-	"ALTER TABLE ".TBL_EVENTS." ADD AllowLateSignups tinyint(1) DEFAULT '1'"
+	"ALTER TABLE ".TBL_EVENTS." ADD GoldWinningEvent int default '0'"
 	);
 	array_push_associative ($upgrade_add_prefs, array(
 	"eb_gold_active" => false,
@@ -797,6 +795,14 @@ if (versionsCompare($eb_version_string, "0.9.8") < 0)
 	));
 }
 
+if (versionsCompare($eb_version_string, "0.9.9") < 0)
+{
+	// To revision 0.9.9
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_EVENTS." ADD SignupsEnable tinyint(1) DEFAULT '1'",
+	"ALTER TABLE ".TBL_EVENTS." ADD AllowLateSignups tinyint(1) DEFAULT '1'"
+	);
+}
 /*
 echo "<br>Prefs upgrade:";
 print_r($upgrade_add_prefs);
