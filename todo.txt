@@ -1,13 +1,8 @@
-. event option: allow late signup (enable/disable)
-  - for fixtured, it will be disabled once 1 game is played
-. event option: enable/disable signup (prevent users from signing up)
 . fix?: if we lower the max number of players, what do we do if number_players>max_number_players
  1: can only happen if event is not started yet. after that, the button is disabled
     So the only issue is with non-fixtures events, during signup, where we do not allow more than max_players
 . add "player substitution" for fixtured (if no game played yet by the user we want to replace)
-. (done) Edit time of scheduled match
 . Event admin "Add" non-gamers?
-. Prevent "quit"/"kick" if fixturesenabled=1 && status='active', because deleting a player re-orders the seeds, which screws up the bracket.
 . Notification for deleted players?
 . Add "forfeit" button for non-accepted challenges (or accepted, but not played?)
  - active matches
@@ -15,7 +10,14 @@
  - scheduled matches
  - challenges requested (not yet confirmed/accepted)
  Need to find which case
-
+. "chekin" only makes sense for fixtured events?
+ 
+DONE
+. Edit time of scheduled match
+. Prevent "quit"/"kick" if fixturesenabled=1 && status='active', because deleting a player re-orders the seeds, which screws up the bracket.
+. event option: allow late signup (enable/disable)
+  - for fixtured, it will be disabled once 1 game is played
+. event option: enable/disable signup (prevent users from signing up)
 
 .Fixtures
  . disable challenges if fixtures are enabled

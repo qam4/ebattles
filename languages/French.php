@@ -417,6 +417,8 @@ define('EB_EVENTM_L173', 'Jamais');
 define('EB_EVENTM_L174', 'Tant que le tournoi n’est pas commencé');
 define('EB_EVENTM_L175', 'Frais d’inscription en gold');
 define('EB_EVENTM_L176', 'Récompense du vainqueur en gold');
+define('EB_EVENTM_L177', 'Activer/Désactiver l’inscription');
+define('EB_EVENTM_L178', 'Autoriser les inscriptions en retard');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');

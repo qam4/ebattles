@@ -192,7 +192,9 @@ FixturesEnable tinyint(1) DEFAULT '0',
 CheckinDuration int default '0',
 HideFixtures int default '0',
 GoldEntryFee int default '0',
-GoldWinningEvent int default '0'
+GoldWinningEvent int default '0',
+SignupsEnable tinyint(1) DEFAULT '1',
+AllowLateSignups tinyint(1) DEFAULT '1'
 ) ENGINE = MyISAM;",
 "CREATE TABLE ".TBL_EVENTMODS."
 (
@@ -784,7 +786,9 @@ if (versionsCompare($eb_version_string, "0.9.8") < 0)
 	// To revision 0.9.8
 	array_push ($upgrade_alter_tables,
 	"ALTER TABLE ".TBL_EVENTS." ADD GoldEntryFee int default '0'",
-	"ALTER TABLE ".TBL_EVENTS." ADD GoldWinningEvent int default '0'"
+	"ALTER TABLE ".TBL_EVENTS." ADD GoldWinningEvent int default '0'",
+	"ALTER TABLE ".TBL_EVENTS." ADD SignupsEnable tinyint(1) DEFAULT '1'",
+	"ALTER TABLE ".TBL_EVENTS." ADD AllowLateSignups tinyint(1) DEFAULT '1'"
 	);
 	array_push_associative ($upgrade_add_prefs, array(
 	"eb_gold_active" => false,
