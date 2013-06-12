@@ -103,12 +103,18 @@ class DatabaseTable
 		}
 		$q .= " WHERE (".$this->primary_key." = '$this->id')";
 		$result = $sql->db_Query($q);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}		
 	}
 	function updateFieldDB($field) {
 		global $sql;
 		
 		$q = "UPDATE $this->tablename SET ".$field." = '".$this->fields[$field]."' WHERE ($this->primary_key = '$this->id')";
 		$result = $sql->db_Query($q);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}
 	}
 	function setFieldDB($field, $value) {
 		$this->setField($field, $value);

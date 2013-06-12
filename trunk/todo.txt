@@ -10,8 +10,9 @@
  - scheduled matches
  - challenges requested (not yet confirmed/accepted)
  Need to find which case
-. "chekin" only makes sense for fixtured events?
- 
+. "checkin" only makes sense for fixtured events?
+. late checkins instead of late signups when checkin is enabled?
+
 DONE
 . Edit time of scheduled match
 . Prevent "quit"/"kick" if fixturesenabled=1 && status='active', because deleting a player re-orders the seeds, which screws up the bracket.

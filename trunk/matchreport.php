@@ -635,59 +635,61 @@ if (isset($_POST['submit']))
 		$text .= 'Comments: '.$tp->toHTML($comments).'<br />';
 
 		$create_scores = 0;
-		if($match_id)
+		
+		//var_dump($_POST);
+		//exit;
+
+		if(isset($_POST['matchschedulededit']))
 		{
-			// Edit Match --------------------------------------------
-			if($match->getField('Status') == 'scheduled')
-			{
-				$q =
-				"UPDATE ".TBL_MATCHS
-				." SET ReportedBy = '$reported_by',"
-				."       TimeScheduled = '$time_scheduled',"
-				."       Comments = '$comments',"
-				."       Status= 'scheduled',"
-				."       Maps = '$map'"
-				." WHERE (MatchID = '$match_id')";
-
-				$result = $sql->db_Query($q);
-			}
-			else
-			{
-				// Need to delete the match scores and re-create new ones.
-				$match->delete();
-				$q =
-				"UPDATE ".TBL_MATCHS
-				." SET ReportedBy = '$reported_by',"
-				."       TimeReported = '$time_reported',"
-				."       Comments = '$comments',"
-				."       Status= 'pending',"
-				."       Maps = '$map'"
-				." WHERE (MatchID = '$match_id')";
-
-				$result = $sql->db_Query($q);
-				$create_scores = 1;
-			}			
+			$q =
+			"UPDATE ".TBL_MATCHS
+			." SET ReportedBy = '$reported_by',"
+			."       TimeScheduled = '$time_scheduled',"
+			."       Comments = '$comments',"
+			."       Status= 'scheduled',"
+			."       Maps = '$map'"
+			." WHERE (MatchID = '$match_id')";
+			$result = $sql->db_Query($q);
 		}
-		else
+		if(isset($_POST['matchedit'])||isset($_POST['matchscheduledreport']))
+		{
+			// Need to delete the match scores and re-create new ones.
+			$match->deleteMatchScores();
+			$q =
+			"UPDATE ".TBL_MATCHS
+			." SET ReportedBy = '$reported_by',"
+			."       TimeReported = '$time_reported',"
+			."       Comments = '$comments',"
+			."       Status= 'pending',"
+			."       Maps = '$map'"
+			." WHERE (MatchID = '$match_id')";
+
+			$result = $sql->db_Query($q);
+			$create_scores = 1;
+		}
+		if(isset($_POST['matchschedule']))
 		{
 			// Create Match ------------------------------------------
-			if(isset($_POST['matchschedule']))
-			{
-				$q =
-				"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled, Maps)
-				VALUES ($event_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled, '$map')";
-			}
-			else
-			{
-				$q =
-				"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status, Maps)
-				VALUES ($event_id,'$reported_by', '$time_reported', '$comments', 'pending', '$map')";
-			}
+			$q =
+			"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported, Comments, Status, TimeScheduled, Maps)
+			VALUES ($event_id,'$reported_by', $time_reported, '$comments', 'scheduled', $time_scheduled, '$map')";
 			$result = $sql->db_Query($q);
+			$create_scores = 1;
 			$last_id = mysql_insert_id();
 			$match_id = $last_id;
 			$match = new Match($match_id);
+		}
+		if(isset($_POST['matchreport']))
+		{
+			// Create Match ------------------------------------------
+			$q =
+			"INSERT INTO ".TBL_MATCHS."(Event,ReportedBy,TimeReported,Comments, Status, Maps)
+			VALUES ($event_id,'$reported_by', '$time_reported', '$comments', 'pending', '$map')";
+			$result = $sql->db_Query($q);
 			$create_scores = 1;
+			$last_id = mysql_insert_id();
+			$match_id = $last_id;
+			$match = new Match($match_id);
 		}
 
 		if($create_scores == 1)

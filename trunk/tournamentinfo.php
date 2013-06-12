@@ -48,7 +48,7 @@ if($event->getField('FixturesEnable') == TRUE)
 		if($max_num_players_reached == 1)
 		{
 			$can_signup = 0;
-			$cannot_signup_str = EB_EVENT_L75;
+			$cannot_signup_str = EB_EVENTM_L161;
 		}
 		if($event->getField('AllowLateSignups') == FALSE)
 		{
@@ -93,7 +93,7 @@ if($event->getField('FixturesEnable') == FALSE)
 		if($max_num_players_reached == 1)
 		{
 			$can_signup = 0;
-			$cannot_signup_str = EB_EVENT_L75;
+			$cannot_signup_str = EB_EVENTM_L161;
 		}
 		if($event->getField('AllowLateSignups') == FALSE)
 		{
