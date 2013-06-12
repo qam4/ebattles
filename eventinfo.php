@@ -172,7 +172,7 @@ else
 			$nbr_teams_checked_in = $nbr_teams - $nbr_teams_not_checked_in;
 
 			if(($time > $event->getField('StartDateTime')) ||
-			   ($nbr_teams_checked_in >= $eMaxNumberPlayers))
+			   (($eMaxNumberPlayers != 0)&&($nbr_teams_checked_in >= $eMaxNumberPlayers)))
 			{
 				$checkin_end = true;
 				// Delete teams who have not checked in
@@ -192,7 +192,7 @@ else
 			$nbr_players_checked_in = $nbr_players - $nbr_players_not_checked_in;
 
 			if(($time > $event->getField('StartDateTime')) ||
-			   ($nbr_players_checked_in >= $eMaxNumberPlayers))
+			   (($eMaxNumberPlayers != 0)&&($nbr_players_checked_in >= $eMaxNumberPlayers)))
 			{
 				$checkin_end = true;
 				// Delete players who have not checked in
@@ -210,7 +210,7 @@ else
 			{
 				$checkin_end = true;
 				
-				if(($eMaxNumberPlayers > 0)||($nbr_teams > $eMaxNumberPlayers))
+				if(($eMaxNumberPlayers != 0)&&($nbr_teams > $eMaxNumberPlayers))
 				{
 					// Delete teams so that we are left with max number of teams
 					$q = "SELECT ".TBL_TEAMS.".*"
@@ -227,7 +227,7 @@ else
 				}
 
 				// Delete players so that we are left with max number of players
-				if(($eMaxNumberPlayers > 0)||($nbr_players > $eMaxNumberPlayers))
+				if(($eMaxNumberPlayers != 0)&&($nbr_players > $eMaxNumberPlayers))
 				{
 					$q = "SELECT ".TBL_PLAYERS.".*"
 					." FROM ".TBL_PLAYERS

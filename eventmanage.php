@@ -566,8 +566,7 @@ else
 			switch($event->getField('Status'))
 			{
 			case 'draft':
-				$can_signup = 0;
-				$cannot_signup_str = EB_EVENT_L75;
+				$can_signup = 1;
 				break;
 			case 'signup':
 				// Do not close signup when max players limit is reached
@@ -585,7 +584,7 @@ else
 				if($max_num_players_reached == 1)
 				{
 					$can_signup = 0;
-					$cannot_signup_str = EB_EVENT_L75;
+					$cannot_signup_str = EB_EVENTM_L161;
 				}
 
 				$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
@@ -602,7 +601,7 @@ else
 				if($numMatches > 0)
 				{
 					$can_signup = 0;
-					$cannot_signup_str = EB_EVENT_L75;
+					$cannot_signup_str = EB_EVENTM_L162;
 				}
 				break;
 			case 'finished':
@@ -616,8 +615,7 @@ else
 			switch($event->getField('Status'))
 			{
 			case 'draft':
-				$can_signup = 0;
-				$cannot_signup_str = EB_EVENT_L75;
+				$can_signup = 1;
 				break;
 			case 'signup':
 			case 'checkin':
@@ -626,7 +624,7 @@ else
 				if($max_num_players_reached == 1)
 				{
 					$can_signup = 0;
-					$cannot_signup_str = EB_EVENT_L75;
+					$cannot_signup_str = EB_EVENTM_L161;
 				}
 				break;
 			case 'finished':

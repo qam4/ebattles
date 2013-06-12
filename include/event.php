@@ -771,8 +771,17 @@ class Event extends DatabaseTable
 		if ($create==false)
 		{
 			//<!-- Match Type -->
-			//$disabled_str = ($this->getField('Status')!='active') ? '' : 'disabled="disabled"';
+			// Can change only if no players are signed up
+			$q2 = "SELECT ".TBL_PLAYERS.".*"
+			." FROM ".TBL_PLAYERS
+			." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')";
+			$result2 = $sql->db_Query($q2);
+			$num_rows_2 = mysql_numrows($result2);
 			$disabled_str = '';
+			if ($num_rows_2!=0)
+			{
+			$disabled_str = 'disabled="disabled"';
+			}
 			$text .= '
 			<tr>
 			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L132.'</td>

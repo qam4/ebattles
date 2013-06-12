@@ -172,7 +172,6 @@ else{
 
 		/* Event MatchType */
 		// Can change only if no players are signed up
-		// TODO: should disable the select button.
 		$q2 = "SELECT ".TBL_PLAYERS.".*"
 		." FROM ".TBL_PLAYERS
 		." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
@@ -512,7 +511,7 @@ else{
 		$event->deleteMatches();
 		$event->resetResults();
 		$event->updateFieldDB('Results');
-		$event->setFieldDB('Status', 'signup');
+		$event->setFieldDB('Status', 'draft');
 
 		//echo "-- eventresetscores --<br />";
 		header("Location: eventmanage.php?eventid=$event_id");
@@ -526,7 +525,7 @@ else{
 		$event->deleteTeams();
 		$event->resetResults();
 		$event->updateFieldDB('Results');
-		$event->setFieldDB('Status', 'signup');
+		$event->setFieldDB('Status', 'draft');
 
 		//echo "-- eventresetevent --<br />";
 		header("Location: eventmanage.php?eventid=$event_id");

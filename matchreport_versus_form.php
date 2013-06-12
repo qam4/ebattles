@@ -188,10 +188,9 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 		$text .= '</tr>';
 		$text .= '</tbody></table>';
 	}
-	
-	if($event->getField('FixturesEnable') == FALSE)
-	{
 
+	if(!isset($_POST['matchschedulededit']))
+	{
 		// TABLE - Teams
 		$p = 1; // player index
 		//$text .= EB_MATCHR_L20;
@@ -361,6 +360,10 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 	$text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 	$text .= '<input type="hidden" name="time_reported" value="'.$time_reported.'"/>';
+	if(isset($_POST['matchreport']))
+	{
+		$text .= '<input type="hidden" name="matchreport" value="1"/>';
+	}
 	if(isset($_POST['matchscheduledreport']))
 	{
 		$text .= '<input type="hidden" name="matchscheduledreport" value="1"/>';

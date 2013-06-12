@@ -350,7 +350,7 @@ else
 
 	if($userclass < $event->getField('MatchesApproval')) $can_approve = 0;
 	if($event->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
-	if ($mStatus == 'active') $can_approve = 0;
+	if ($mStatus != 'pending') $can_approve = 0;
 
 	if($competition_type == 'Tournament')
 	{
