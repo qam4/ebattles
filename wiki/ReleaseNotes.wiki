@@ -1,6 +1,43 @@
 #summary eBattles Release Notes.
 #labels Featured
+= Release 0.9.9 =
+== New ==
+ * Integration with *[http://www.e107gold.com/news.php Gold system]* plugin version 4.0+ (fixes #79)
+  * Gold system admin can set userclass allowed to set gold rewards/costs for eBattles events
+  * Gold system admin can set a gold award for playing a match
+  * Event admins can set a gold cost for event signup
+   * In the case of team events, the captain of the team pays the gold cost.
+  * Event admins can set a gold award for the event winner
+   * In the case of team events, the captain of the team gets the gold award.
+ * Added the *"challenge" button* at the end of each raw of the results table. (fixes #75)
+  * Applies only if challenges are enable, and the user is allowed to challenge.
+ * Added event option to *hide fixtures* from players ("Never" or "Until event is live") (fixes #77)
+ * For fixtured events, do not stop signup if we reach the max number of players limit.
+  * If checkin is enabled (checkin duration>0), checkin stops when event starts, or when the when we've reached the max number of players limit.
+   * Then only the players who have checked in play in the event
+  * If checkin is disabled, and max number of players limit is set, we delete players so that we are left with max number of players.
+   * Players are chosen based highest seed first, then the earlier they joined.
+ * Let event mods *edit the scheduled time* of scheduled matches (related to issue #87)
+ * Events *late signups* (fixes #90 and #50)
+  * New event option to allow late signups. (until the max number of players limit is hit, or one game has been played.)
+  * If this is disabled, players can not sign up once the event is started.
+ * New event option to *enable or disable signups* (fixes #80)
+  * If this is disabled, players can not sign up.
+ * Added *Round-robin fixtures preview* in event admin page (fixes #89)
+== Changed ==
+ * UI: replaced draggable brackets by scrollbars
+ * For fixtured events, players cannot quit, or be kicked once the event has started
+ * Reset event puts it back to "draft" mode instead of "signup"
+ * Added a check for db query in database class.
 
+== Fixed ==
+ * Do not show rank in tournaments match report (fixes #91)
+ * Fixed a bug with fixtured event rounds titles and "best of" values are not initialized properly.
+ * Fixed "Event/Team signup does not work on Firefox." (fixes #76)
+ * Fixed compatibility issue with krooze arcade plugin (fixes #78)
+ * Fixed missing player name in signup tab.
+ * Fixed: could not add players to "draft" event.
+ * Fixed: Should only be able to approve a match if it is pending.
 
 = Release 0.9.6 =
 == Added ==
