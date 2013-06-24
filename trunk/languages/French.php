@@ -237,6 +237,7 @@ define('EB_EVENT_L98', 'Vous n’avez pas assez de');
 define('EB_EVENT_L99', 'YVotre balance est: ');
 define('EB_EVENT_L100', 'Mauvais mot de passe.');
 define('EB_EVENT_L101', 'Retour vers');
+define('EB_EVENT_L102', 'Match');
 
 define('EB_EVENTM_L1', 'Gérer');
 define('EB_EVENTM_L2', 'Sommaire');

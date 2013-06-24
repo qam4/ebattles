@@ -133,13 +133,12 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	/////////////////
 	/// MAIN FORM ///
 	/////////////////
-	$text .= '<form id="matchreport" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$event_id.$match_str.'" method="post">';
+	$text .= '<form id="matchreportform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$event_id.$match_str.'" method="post">';
 	$text .= '<div>';
 	// TABLE - Player/Teams Add/Remove
 	//----------------------------------
 	$text .= EB_MATCHR_L15;
 	$text .= '<table id="matchresult_nbrPlayersTeams"><tbody>';
-	$text .= '<tr><td><input type="hidden" name="matchreport" value="1"/></td></tr>';
 	// Players
 	$text .= '<tr><td>'.$nbr_players.'&nbsp;'.EB_MATCHR_L21.'</td>';
 	$text .= '<td><input type="hidden" name="nbr_players" value="'.$_POST['nbr_players'].'"/>';
@@ -400,6 +399,10 @@ function user_form($players_id, $players_name, $event_id, $match_id, $allowDraw,
 	$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 	$text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 	$text .= '<input type="hidden" name="time_reported" value="'.$time_reported.'"/>';
+	if(isset($_POST['matchreport']))
+	{
+		$text .= '<input type="hidden" name="matchreport" value="1"/>';
+	}
 	if(isset($_POST['matchscheduledreport']))
 	{
 		$text .= '<input type="hidden" name="matchscheduledreport" value="1"/>';

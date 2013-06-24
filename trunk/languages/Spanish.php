@@ -238,6 +238,7 @@ define('EB_EVENT_L98', 'You do not have enough');
 define('EB_EVENT_L99', 'Your balance is: ');
 define('EB_EVENT_L100', 'Wrong password.');
 define('EB_EVENT_L101', 'Back to');
+define('EB_EVENT_L102', 'Matchup');
 
 define('EB_EVENTM_L1', 'Gestionar - EVENTO');
 define('EB_EVENTM_L2', 'Resumen');

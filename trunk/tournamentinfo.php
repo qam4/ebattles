@@ -416,7 +416,7 @@ case "Clan Tournament":
 						}
 						
 						// Player can quit an event if he has not played yet
-						$q_2 = "SELECT ".TBL_PLAYERS.".*"
+						$q_2 = "SELECT DISTINCT ".TBL_PLAYERS.".*"
 						." FROM ".TBL_PLAYERS.", "
 						.TBL_SCORES
 						." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')"
@@ -927,19 +927,20 @@ else
 			$text .= ' ('.EB_EVENTM_L146.' '.$rounds[$round]['BestOf'].')';
 			$text .= '<table class="table_left">';
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
-				//$text .= 'Matchup '.$matchup.'<br>';
 				$nbrMatchs = count($results[$round][$matchup]['matchs']);
-				for ($match = $nbrMatchs - 1; $match >= 0; $match--) {
+				if($nbrMatchs>0)	$text .= '<tr><td><b>'.EB_EVENT_L102.' '.$matchup.'</b></td></tr>';
+				for ($match = 0; $match < $nbrMatchs; $match++) {
 					$current_match = $results[$round][$matchup]['matchs'][$match];
 					$match_id  = $current_match['match_id'];
 					$matchObj = new Match($match_id);
 					if($matchObj->getField('Status') == 'active')
 					{
-						$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO);
+						$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO, EB_MATCH_L1.'&nbsp;'.($match+1).'&nbsp;');
 					}
 				}
 			}
 			$text .= '</table>';
+			$text .= '<br />';
 		}
 	}
 }

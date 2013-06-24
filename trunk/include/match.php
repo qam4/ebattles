@@ -1281,7 +1281,7 @@ class Match extends DatabaseTable
 		//exit;
 	}
 
-	function displayMatchInfo($type = 0)
+	function displayMatchInfo($type = 0, $header='')
 	{
 		global $time;
 		global $sql;
@@ -1553,6 +1553,7 @@ class Match extends DatabaseTable
 				$numPlayers = mysql_numrows($result);
 				$pname = '';
 				$string .= '<tr>';
+				if($header) $string .= '<td>'.$header.'</td>';
 				$scores = '';
 
 				if (($type & eb_MATCH_NOEVENTINFO) == 0)

@@ -1926,10 +1926,10 @@ class Event extends DatabaseTable
 						switch($style)
 						{
 						case 'elimination':
-							$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.'Matchup '.$round.','.$matchup.'"></td>';
+							$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'"></td>';
 							break;
 						case 'round-robin':
-							$brackets[$matchupsRows[$round][$matchup][1]+1][2*$round-1] = '<td rowspan="1" class="match-details" title="'.'Matchup '.$round.','.$matchup.'">&nbsp;</td>';
+							$brackets[$matchupsRows[$round][$matchup][1]+1][2*$round-1] = '<td rowspan="1" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'">&nbsp;</td>';
 							break;
 						}
 						$rounds[$round]['nbrMatchups']++;
