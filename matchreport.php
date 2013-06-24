@@ -371,7 +371,7 @@ if($match_id)
 }
 
 if(preg_match("/^\d+v\d$/", $matchtype)||
-   ($competition_type == 'Tournament'))
+   ($event->getField('FixturesEnable') == TRUE))
 {
 	$matchreport_type = 'versus';
 	$nbr_teams = 2;
@@ -636,9 +636,6 @@ if (isset($_POST['submit']))
 
 		$create_scores = 0;
 		
-		//var_dump($_POST);
-		//exit;
-
 		if(isset($_POST['matchschedulededit']))
 		{
 			$q =

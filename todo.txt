@@ -12,6 +12,7 @@
  Need to find which case
 . "checkin" only makes sense for fixtured events?
 . late checkins instead of late signups when checkin is enabled?
+. Bug: edit match in fixtured event deletes it and creates new one, but there is a mismatch with the bracket results.
 
 DONE
 . Edit time of scheduled match

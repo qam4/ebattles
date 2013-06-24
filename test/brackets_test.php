@@ -260,7 +260,7 @@ for ($round = 1; $round <= $nbrRounds; $round++){
 					$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], $topWins);
 					$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins);
 				}
-				$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.'Matchup '.$round.','.$matchup.'"></td>';
+				$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'"></td>';
 				$rounds[$round]['nbrMatchups']++;
 			}
 			/*
