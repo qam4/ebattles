@@ -16,6 +16,10 @@ require_once(e_PLUGIN."ebattles/include/event.php");
 ********************************************************************/
 require_once(HEADERF);
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
+$text .= '
+<script type="text/javascript" src="./js/matchreport.js"></script>
+<script type="text/javascript" src="./js/event.js"></script>
+';
 $text .= "
 <script type='text/javascript'>
 <!--//
@@ -390,19 +394,19 @@ else
 	}
 	if($can_edit != 0)
 	{
-		$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'" method="post">';
-		$text .= '<div>';
-		$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
-		$text .= '</div>';
 		if($mStatus == 'scheduled')
 		{
-			$text .= ebImageTextButton('matchschedulededit', 'pencil.png', EB_MATCHD_L27);
+			$text .= '<div>';
+			$text .= ebImageLink('matchschedulededit', '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchschedulededit&amp;userclass='.$userclass, 'pencil.png', EB_MATCHD_L27, 'matchreport_link jq-button');
+			$text .= '</div>';
 		}
 		else
 		{
-			$text .= ebImageTextButton('matchedit', 'pencil.png', EB_MATCHD_L27);
-		}
-		$text .= '</form>';
+
+			$text .= '<div>';
+			$text .= ebImageLink('matchedit', '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchedit&amp;userclass='.$userclass, 'pencil.png', EB_MATCHD_L27, 'matchreport_link jq-button');
+			$text .= '</div>';
+		}		
 	}
 	$text .= '<br />';
 	$text .= '<table class="eb_table" style="width:95%"><tbody>';

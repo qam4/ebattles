@@ -13,6 +13,7 @@ Validation (http://bassistance.de/jquery-plugins/jquery-plugin-validation/)
 Form (http://malsup.com/jquery/form/) plugins
 -->
 <script type="text/javascript" src="./js/jquery.form.js"></script>
+<script type="text/javascript" src="./js/jquery.popupform.js"></script>
 <script type="text/javascript" src="./js/jquery.validate.js"></script>
 <script type="text/javascript" src="./js/jquery.cookie.js"></script>
 <script type="text/javascript" src="./js/jquery-ui-timepicker-addon.js"></script>

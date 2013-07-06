@@ -52,8 +52,8 @@ if(isset($_POST['challenge_accept']))
 		$text .= $challenge->challengeConfirmForm();
 
 		// errors have occured, halt execution and show form again.
-		$text .= '<p style="color:red">'.EB_MATCHR_L14;
-		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
+		$text .= '<div class="eb_errors">'.EB_MATCHR_L14;
+		$text .= '<ul>'.$error_str.'</ul></div>';
 	}
 	else
 	{

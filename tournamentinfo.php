@@ -928,16 +928,21 @@ else
 			$text .= '<table class="table_left">';
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
 				$nbrMatchs = count($results[$round][$matchup]['matchs']);
-				if($nbrMatchs>0)	$text .= '<tr><td><b>'.EB_EVENT_L102.' '.$matchup.'</b></td></tr>';
+				$text_add = '';
+				$nbrMatchsActive = 0;
 				for ($match = 0; $match < $nbrMatchs; $match++) {
 					$current_match = $results[$round][$matchup]['matchs'][$match];
 					$match_id  = $current_match['match_id'];
 					$matchObj = new Match($match_id);
 					if($matchObj->getField('Status') == 'active')
 					{
-						$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO, EB_MATCH_L1.'&nbsp;'.($match+1).'&nbsp;');
+						$nbrMatchsActive++;
+						$text_add .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO, EB_MATCH_L1.'&nbsp;'.($match+1).'&nbsp;');
 					}
 				}
+				if($nbrMatchsActive>0)	$text .= '<tr><td><b>'.EB_EVENT_L102.' '.$matchup.'</b></td></tr>';
+				$text .= $text_add;
+
 			}
 			$text .= '</table>';
 			$text .= '<br />';
@@ -1009,7 +1014,7 @@ if ($numMatches>0)
 	}
 	else
 	{
-		for ($round = 0; $round < $nbrRounds; $round++){
+		for ($round = $nbrRounds; $round > 0; $round--){
 			$nbrMatchups = count($matchups[$round]);
 			$found_match = 0;
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
@@ -1031,17 +1036,21 @@ if ($numMatches>0)
 				$text .= ' ('.EB_EVENTM_L146.' '.$rounds[$round]['BestOf'].')';
 				$text .= '<table class="table_left">';
 				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
-					//$text .= 'Matchup '.$matchup.'<br>';
 					$nbrMatchs = count($results[$round][$matchup]['matchs']);
+					$text_add = '';
+					$nbrMatchsScheduled = 0;
 					for ($match = 0; $match < $nbrMatchs; $match++) {
 						$current_match = $results[$round][$matchup]['matchs'][$match];
 						$match_id  = $current_match['match_id'];
 						$matchObj = new Match($match_id);
 						if($matchObj->getField('Status') == 'scheduled')
 						{
-							$text .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED);
+							$nbrMatchsScheduled++;
+							$text_add .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO, EB_MATCH_L1.'&nbsp;'.($match+1).'&nbsp;');
 						}
 					}
+					if($nbrMatchsScheduled>0)	$text .= '<tr><td><b>'.EB_EVENT_L102.' '.$matchup.'</b></td></tr>';
+					$text .= $text_add;
 				}
 				$text .= '</table>';
 			}
