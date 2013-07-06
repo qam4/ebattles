@@ -4,11 +4,7 @@ jQuery(function() {
 	});
 
 	// our form submit and valiation
-	var aform = $("#form-event-settings").validate({
-
-		// make sure we show/hide both blocks
-		errorContainer: "#errorblock-div1",
-
+	var form_event_settings = $("#form-event-settings").validate({
 		ignore: ".ignore",
 
 		// rules/messages are for the validation
@@ -28,6 +24,7 @@ jQuery(function() {
 		// make sure we show/hide both blocks
 		errorContainer: "#errorblock-div1, #errorblock-div2",
 
+		//errorLabelContainer : this is the id (or any jquery selector string) of the element that will contain the error labels generated for each invalid field
 		// put all error messages in a UL
 		errorLabelContainer: "#errorblock-div2 ul",
 
@@ -54,6 +51,8 @@ jQuery(function() {
 		height: 350,
 		width: 300,
 		modal: true,
+		draggable: false,
+		resizable: false,
 		buttons: {
 			'Submit': function()
 			{
@@ -73,6 +72,16 @@ jQuery(function() {
 	var abutton = $('#joinevent').click(function() {
 		$('#modal-form-signup').dialog('open');
 	});
-
+	
+	$('.matchreport_link').popUpForm({  
+		title : 'Match Report',
+		container   : '#matchreportform',  
+		width       : 440,  
+		draggable   : false,
+		resizable   : false,
+		beforeSubmit: function() { },  
+		onSuccess   : function() { window.location.reload(); },  
+		onError     : function(error) { alert('Sorry there was an error submitting your form: '+error); }  
+	});  	
 }); // end main jQuery function start
 

@@ -1805,6 +1805,7 @@ class Event extends DatabaseTable
 													.TBL_GAMERS
 													." WHERE (".TBL_PLAYERS.".PlayerID = '$teamTopID')"
 													."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)";
+													$result = $sql->db_Query($q);
 													$uid = mysql_result($result, 0 , TBL_GAMERS.".User");
 
 													$gold_param['gold_user_id'] = $uid;
@@ -1833,6 +1834,7 @@ class Event extends DatabaseTable
 													.TBL_DIVISIONS
 													." WHERE (".TBL_TEAMS.".TeamID = '$teamTopID')"
 													."   AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)";
+													$result = $sql->db_Query($q);
 													$uid = mysql_result($result, 0 , TBL_DIVISIONS.".Captain");
 
 													$gold_param['gold_user_id'] = $uid;

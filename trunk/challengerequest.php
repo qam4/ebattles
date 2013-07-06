@@ -103,8 +103,8 @@ if(isset($_POST['challenge_player_submit']))
 		$text .= PlayerChallengeForm($event_id, $challenger, $challenged);
 
 		// errors have occured, halt execution and show form again.
-		$text .= '<p style="color:red">'.EB_MATCHR_L14;
-		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
+		$text .= '<div class="eb_errors">'.EB_MATCHR_L14;
+		$text .= '<ul>'.$error_str.'</ul></div>';
 	}
 	else
 	{
@@ -149,8 +149,8 @@ if(isset($_POST['challenge_team_submit']))
 		$text .= TeamChallengeForm($event_id, $challenger, $challenged);
 
 		// errors have occured, halt execution and show form again.
-		$text .= '<p style="color:red">'.EB_MATCHR_L14;
-		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
+		$text .= '<div class="eb_errors">'.EB_MATCHR_L14;
+		$text .= '<ul>'.$error_str.'</ul></div>';
 	}
 	else
 	{

@@ -21,7 +21,7 @@ function gamerEventSignupModalForm($event_id, $gamerID, $gamerName, $gamerUnique
 	<p>
 	<!-- fancy icon -->
 	<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
-	<strong>'.EB_GAMER_L1.'</strong>'.EB_GAMER_L2.'
+	<strong>'.EB_GAMER_L1.'</strong> '.EB_GAMER_L2.'
 	</p>
 	<!-- validation plugin will target this UL for error messages -->
 	<ul></ul>
@@ -36,11 +36,11 @@ function gamerEventSignupModalForm($event_id, $gamerID, $gamerName, $gamerUnique
 	<fieldset>
 	<legend>'.EB_GAMER_L3.'</legend>
 	<p class="'.$hide_password.'">
-	<label for="joinEventPassword">'.EB_EVENT_L27.'</label><span class="required">*</span>
+	<label for="joinEventPassword">'.EB_EVENT_L27.'<span class="required">*</span></label>
 	<input type="password" name="joinEventPassword" id="joinEventPassword" class="text '.$hide_password.'" />
 	</p>
 	<p>
-	<label for="gamername">'.EB_GAMER_L4.'</label><span class="required">*</span>
+	<label for="gamername">'.EB_GAMER_L4.'<span class="required">*</span></label>
 	<input type="text" size="10" name="gamername" id="gamername" class="text required" value="'.$gamerName.'"/>
 	</p>
 	<p>
@@ -66,7 +66,7 @@ function gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $
 	<p>
 	<!-- fancy icon -->
 	<span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
-	<strong>'.EB_GAMER_L1.'</strong>'.EB_GAMER_L2.'
+	<strong>'.EB_GAMER_L1.'</strong> '.EB_GAMER_L2.'
 	</p>
 	<!-- validation plugin will target this UL for error messages -->
 	<ul></ul>
@@ -82,11 +82,11 @@ function gamerDivisionSignupModalForm($clan_id, $div_id, $gamerID, $gamerName, $
 	<fieldset>
 	<legend>'.EB_GAMER_L3.'</legend>
 	<p class="'.$hide_password.'">
-	<label for="joindivisionPassword">'.EB_CLAN_L11.'</label><span class="required">*</span>
+	<label for="joindivisionPassword">'.EB_CLAN_L11.'<span class="required">*</span></label>
 	<input type="password" name="joindivisionPassword" id="joindivisionPassword" class="text required '.$hide_password.'" />
 	</p>
 	<p>
-	<label for="gamername">'.EB_GAMER_L4.'</label><span class="required">*</span>
+	<label for="gamername">'.EB_GAMER_L4.'<span class="required">*</span></label>
 	<input type="text" size="10" name="gamername" id="gamername" class="text required" value="'.$gamerName.'"/>
 	</p>
 	<p>

@@ -1,3 +1,9 @@
+Match report in dialog.
+- change dialog title?
+- show href="#", and use href-data to create url.
+- show matchreport link in bracket
+  
+
 . fix?: if we lower the max number of players, what do we do if number_players>max_number_players
  1: can only happen if event is not started yet. after that, the button is disabled
     So the only issue is with non-fixtures events, during signup, where we do not allow more than max_players
@@ -12,7 +18,8 @@
  Need to find which case
 . "checkin" only makes sense for fixtured events?
 . late checkins instead of late signups when checkin is enabled?
-. Bug: edit match in fixtured event deletes it and creates new one, but there is a mismatch with the bracket results.
+. add platforms to game
+. add "game" page, with events for each game
 
 DONE
 . Edit time of scheduled match
@@ -20,8 +27,9 @@ DONE
 . event option: allow late signup (enable/disable)
   - for fixtured, it will be disabled once 1 game is played
 . event option: enable/disable signup (prevent users from signing up)
+. Bug: edit match in fixtured event deletes it and creates new one, but there is a mismatch with the bracket results.
 
-.Fixtures
+. Fixtures
  . disable challenges if fixtures are enabled
 
 . Teams

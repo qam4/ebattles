@@ -1748,18 +1748,13 @@ class Match extends DatabaseTable
 
 					$string .= '</div></td>';
 				}
-
+				
 				if ($can_report == 1)
 				{
 					$string .= '<td>';
-					$string .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$this->fields['MatchID'].'" method="post">';
-					$text .= '<div>';
-					$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
-					$text .= '</div>';
 					$string .= '<div>';
-					$string .= ebImageTextButton('matchscheduledreport', 'page_white_edit.png', '', 'simple', '', EB_EVENT_L57);
+					$string .= ebImageLink('matchscheduledreport', '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$this->fields['MatchID'].'&amp;actionid=matchscheduledreport&amp;userclass='.$userclass, 'page_white_edit.png', '', 'matchreport_link', '', EB_EVENT_L57);
 					$string .= '</div>';
-					$string .= '</form>';
 					$string .= '</td>';
 				}
 

@@ -41,7 +41,17 @@ width: 40%;
 #teams_list_sortable tbody:hover{cursor:move}
 #teams_list_sortable tr{}
 #ajaxSpinnerContainer {height:11px;display:none;}
-
+.loading { background: url(../images/ajax-loader.gif) center no-repeat !important}
+#matchreportform {
+text-align: left;
+}
+.eb_errors {
+text-align: left;
+color:red;
+}
+.eb_errors ul {
+color:red;
+}
 fieldset { padding:0; border:0; }
 /*
 label
@@ -56,12 +66,15 @@ label.error {
         padding-left: .3em; vertical-align: top;  
 }
 */
+label {
+	display:inline-block;
+}
 label.error{
-font-size: 11px;
-background: #fbfcda url('../images/exclamation.png') no-repeat left;
-border:1px solid #dbdbd3;
-margin-top:4px;
-padding-left:20px;
+	background: url('../images/exclamation.png') no-repeat left;
+	margin-left:4px;
+	padding-left:20px;
+	padding-top:4px;
+	padding-bottom:4px;
 }
 input.error {
 border:1px solid red;
@@ -74,9 +87,10 @@ span.required{
 }
 
 #modal-form-signup label {
-width: 100px;	
-display: inline-block;
-vertical-align: top;
+  width:100px;
+}
+#modal-form-signup label.error {
+  width:200px;
 }
 
 /* css for timepicker */

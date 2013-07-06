@@ -19,77 +19,18 @@ require_once(e_PLUGIN."ebattles/include/clan.php");
 // Specify if we use WYSIWYG for text areas
 global $e_wysiwyg;
 $e_wysiwyg = "match_comment";  // set $e_wysiwyg before including HEADERF
-require_once(HEADERF);
-require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
-$text .= '
-<script type="text/javascript">
-';
-$text .= "
-<!--
-function SwitchSelected(id)
-{
-var select = document.getElementById('rank'+id);
-nbr_ranks = select.length
-new_rank_txt = select.options[select.selectedIndex].text
 
-for (k = 1; k <= nbr_ranks; k++)
-{
-old_rank_found=0
-for (j = 1; j <= nbr_ranks; j++)
-{
-var select = document.getElementById('rank'+j);
-rank_txt = select.options[select.selectedIndex].text
-if (rank_txt == 'Team #'+k) {old_rank_found=1}
-}
-if (old_rank_found==0) {old_rank = k}
-}
+/*
+//dbg form
+$text .= "<br>_POST: ";
+$text .=serialize($_POST);
+*/
 
-for (j = 1; j <= nbr_ranks; j++)
-{
-if (j!=id)
-{
-var select = document.getElementById('rank'+j);
-rank_txt = select.options[select.selectedIndex].text
-if (rank_txt == new_rank_txt) {select.selectedIndex=old_rank-1}
-}
-}
-}
-//-->
-";
-$text .= '
-</script>
-';
-$text .= "
-<script type='text/javascript'>
-<!--//
-// Forms
-$(function() {
-$('.timepicker').datetimepicker({
-ampm: true,
-timeFormat: 'hh:mm TT',
-stepHour: 1,
-stepMinute: 10,
-minDate: 0
-});
-});
-//-->
-</script>
-";
-
-$text .= '
-<script type="text/javascript">
-<!--//
-function clearDate(frm)
-{
-document.getElementById("f_date").value = ""
-}
-//-->
-</script>
-';
 /* Event Name */
 $event_id = $_GET['eventid'];
 $match_id = $_GET['matchid'];
+$action = $_GET['actionid'];
 
 $event = new Event($event_id);
 $type = $event->getField('Type');
@@ -282,7 +223,7 @@ if($match_id)
 	$numScores = mysql_numrows($result);
 
 	if (!isset($_POST['nbr_players']))   $_POST['nbr_players'] = $numScores;
-	if (!isset($_POST['reported_by'])&&!isset($_POST['matchscheduledreport']))   $_POST['reported_by'] = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
+	if (!isset($_POST['reported_by'])&&($action!='matchscheduledreport'))   $_POST['reported_by'] = mysql_result($result,0, TBL_MATCHS.".ReportedBy");
 	if (!isset($_POST['match_comment'])) $_POST['match_comment'] = mysql_result($result,0, TBL_MATCHS.".Comments");
 	if (!isset($_POST['time_reported'])) $_POST['time_reported'] = mysql_result($result,0, TBL_MATCHS.".TimeReported");
 
@@ -539,7 +480,7 @@ if (isset($_POST['submit']))
 		}
 	}
 
-	if(isset($_POST['matchschedule']) || isset($_POST['matchschedulededit']))
+	if($action=='matchschedule' || $action=='matchschedulededit')
 	{
 		if($_POST['date_scheduled'] == '')
 		{
@@ -553,7 +494,7 @@ if (isset($_POST['submit']))
 		}
 	}
 
-	if(!isset($_POST['matchschedule'])&&!isset($_POST['matchschedulededit']))
+	if($action!='matchschedule'&&$action!='matchschedulededit')
 	{
 		switch($event->getMatchPlayersType())
 		{
@@ -577,7 +518,7 @@ if (isset($_POST['submit']))
 	}
 
 	// Check if a team has no player
-	if(!isset($_POST['matchschedule'])&&!isset($_POST['matchschedulededit']))
+	if($action!='matchschedule'&&$action!='matchschedulededit')
 	{
 		for($i=1;$i<=$nbr_teams;$i++)
 		{
@@ -597,21 +538,12 @@ if (isset($_POST['submit']))
 
 	//$error_str = 'test';
 
-	/*
-	//dbg form
-	echo "<br>_POST: ";
-	print_r($_POST);    // show $_POST
-	echo "<br>_GET: ";
-	print_r($_GET);     // show $_GET
-	exit;
-	*/
-
 	if (!empty($error_str)) {
 		// show form again
-		user_form($players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled);
+		user_form($action, $players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled);
 		// errors have occured, halt execution and show form again.
-		$text .= '<p style="color:red">'.EB_MATCHR_L14;
-		$text .= '<ul style="color:red">'.$error_str.'</ul></p>';
+		$text .= '<div class="eb_errors">'.EB_MATCHR_L14;
+		$text .= '<ul>'.$error_str.'</ul></div>';
 	}
 	else
 	{
@@ -636,7 +568,7 @@ if (isset($_POST['submit']))
 
 		$create_scores = 0;
 		
-		if(isset($_POST['matchschedulededit']))
+		if($action=='matchschedulededit')
 		{
 			$q =
 			"UPDATE ".TBL_MATCHS
@@ -648,7 +580,7 @@ if (isset($_POST['submit']))
 			." WHERE (MatchID = '$match_id')";
 			$result = $sql->db_Query($q);
 		}
-		if(isset($_POST['matchedit'])||isset($_POST['matchscheduledreport']))
+		if($action=='matchedit'||$action=='matchscheduledreport')
 		{
 			// Need to delete the match scores and re-create new ones.
 			$match->deleteMatchScores();
@@ -664,7 +596,7 @@ if (isset($_POST['submit']))
 			$result = $sql->db_Query($q);
 			$create_scores = 1;
 		}
-		if(isset($_POST['matchschedule']))
+		if($action=='matchschedule')
 		{
 			// Create Match ------------------------------------------
 			$q =
@@ -676,7 +608,7 @@ if (isset($_POST['submit']))
 			$match_id = $last_id;
 			$match = new Match($match_id);
 		}
-		if(isset($_POST['matchreport']))
+		if($action=='matchreport')
 		{
 			// Create Match ------------------------------------------
 			$q =
@@ -732,7 +664,7 @@ if (isset($_POST['submit']))
 			$text .= '--------------------<br />';
 
 			// Update scores stats
-			if(isset($_POST['matchschedule']))
+			if($action=='matchschedule')
 			{
 				// Send notification to all the players.
 				$fromid = 0;
@@ -754,7 +686,6 @@ if (isset($_POST['submit']))
 					." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 					$result_Players = $sql->db_Query($q_Players);
 					$numPlayers = mysql_numrows($result_Players);
-					echo "numPlayers: $numPlayers<br>";
 					break;
 				case 'Teams':
 					$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
@@ -772,7 +703,6 @@ if (isset($_POST['submit']))
 					." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 					$result_Players = $sql->db_Query($q_Players);
 					$numPlayers = mysql_numrows($result_Players);
-					echo "numPlayers: $numPlayers<br>";
 					break;
 				default:
 				}
@@ -799,7 +729,7 @@ if (isset($_POST['submit']))
 					}
 				}
 
-				header("Location: eventinfo.php?eventid=$event_id");
+				//header("Location: eventinfo.php?eventid=$event_id");
 			}
 			else
 			{
@@ -824,42 +754,48 @@ if (isset($_POST['submit']))
 					}
 					$event->setFieldDB('IsChanged', 1);
 				}
-				header("Location: matchinfo.php?matchid=$match_id");
+				//header("Location: matchinfo.php?matchid=$match_id");
 			}
 		}
 		else
 		{
-			header("Location: matchinfo.php?matchid=$match_id");
+			//header("Location: matchinfo.php?matchid=$match_id");
 		}
 
+		echo "match reported";
 		exit();
 	}
 	// if we get here, all data checks were okay, process information as you wish.
 } else {
-
-	if (!isset($_POST['matchreport'])&&!isset($_POST['matchedit'])&&!isset($_POST['matchscheduledreport'])&&!isset($_POST['matchschedule'])&&!isset($_POST['matchschedulededit']))
+	switch($action)
 	{
+		case 'matchreport':
+		case 'matchedit':
+		case 'matchscheduledreport':
+		case 'matchschedule':
+		case 'matchschedulededit':
+		if (!check_class(e_UC_MEMBER))
+		{
+			$text .= '<p>'.EB_MATCHR_L36.'</p>';
+			$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>]</p>';
+		}
+		else
+		{
+			$userclass = $_POST['userclass'];
+			// the form has not been submitted, let's show it
+			user_form($action, $players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled);
+		}
+		break;
+		default:
 		$text .= '<p>'.EB_MATCHR_L33.'</p>';
 		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>]</p>';
-	}
-	else if (!check_class(e_UC_MEMBER))
-	{
-		$text .= '<p>'.EB_MATCHR_L36.'</p>';
-		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>]</p>';
-	}
-	else
-	{
-		$userclass = $_POST['userclass'];
-		// the form has not been submitted, let's show it
-		user_form($players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled);
+		break;
 	}
 }
 
-$text .= '
-</div>
-';
+$text .= '</div>';  /* spacer */
 
-$ns->tablerender($event->getField('Name')." (".$event->eventTypeToString().") - ".EB_MATCHR_L32, $text);
-require_once(FOOTERF);
-exit;
+echo $text;
+
+
 ?>

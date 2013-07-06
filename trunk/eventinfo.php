@@ -22,6 +22,7 @@ require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 $pages = new Paginator;
 
 $text .= '
+<script type="text/javascript" src="./js/matchreport.js"></script>
 <script type="text/javascript" src="./js/event.js"></script>
 ';
 
@@ -41,7 +42,7 @@ document.getElementById('challenge_team_form').submit();
 //-->
 </script>
 ";
-		
+
 if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;
 $orderby=$_GET['orderby'];
 
@@ -282,6 +283,7 @@ else
 					.TBL_GAMERS
 					." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
 					."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)";
+					$result = $sql->db_Query($q);
 					$uid = mysql_result($result, 0 , TBL_GAMERS.".User");
 
 					$gold_param['gold_user_id'] = $uid;
@@ -348,6 +350,7 @@ else
 					.TBL_DIVISIONS
 					." WHERE (".TBL_TEAMS.".TeamID = '$pid')"
 					."   AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)";
+					$result = $sql->db_Query($q);
 					$uid = mysql_result($result, 0 , TBL_DIVISIONS.".Captain");
 
 					$gold_param['gold_user_id'] = $uid;

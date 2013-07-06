@@ -702,6 +702,24 @@ function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title=
 			<div style="clear:both"></div>';
 }
 
+function ebImageLink($name, $href, $href_data, $image, $text, $class='', $confirm='', $title='', $other='')
+{
+	$image_str   = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'" style="vertical-align:middle"/>' : '';
+	$confirm_str = ($confirm!='') ? 'onclick="return confirm(\''.$confirm.'\');"' : '';
+	$class_str   = ($class!='') ? 'class="'.$class.'"' : 'class="jq-button"';
+	$title_str   = ($title!='') ? 'title="'.$title.'"' : '';
+	$text_str    = ($text != '') ? '&nbsp;'.$text : '';
+	$href_str    = ($href != '') ? 'href="'.$href.'"' : 'href="#"';
+	$href_data_str    = ($href_data != '') ? 'href-data="'.$href_data.'"' : '';
+	return '<div class="buttons">
+	        <a '.$class_str.' '.$href_str.' '.$href_data_str.' name="'.$name.'" id="'.$name.'" '.$title_str.' '.$confirm_str.' '.$other.'>
+			'.$image_str
+			.$text_str
+			.'</a>
+			</div>
+			<div style="clear:both"></div>';
+}
+
 // Append associative array elements
 function array_push_associative(&$arr) {
 	$args = func_get_args();

@@ -4,11 +4,7 @@ jQuery(function() {
 	});
 
 	// our form submit and valiation
-	var aform = $("#form-clan-settings").validate({
-
-		// make sure we show/hide both blocks
-		errorContainer: "#errorblock-div1",
-
+	var form_clan_settings = $("#form-clan-settings").validate({
 		ignore: ".ignore",
 
 		// rules/messages are for the validation
@@ -52,6 +48,8 @@ jQuery(function() {
 		height: 350,
 		width: 300,
 		modal: true,
+		draggable: false,
+		resizable: false,
 		buttons: {
 			'Submit': function()
 			{
