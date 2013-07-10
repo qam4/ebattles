@@ -478,7 +478,7 @@ else
 	{
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<th class="eb_th2">';
+		$text .= '<th style="width:40%" class="eb_th2">';
 		$text .= EB_USER_L24;
 		$text .= '</th>';
 		$text .= '<th class="eb_th2">';
@@ -522,7 +522,7 @@ else
 	{
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<th class="eb_th2">';
+		$text .= '<th style="width:40%" class="eb_th2">';
 		$text .= EB_USER_L28;
 		$text .= '</th>';
 		$text .= '<th class="eb_th2">';
@@ -570,7 +570,7 @@ else
 	{
 		$text .= '<table class="eb_table" style="width:95%">';
 		$text .= '<tr>';
-		$text .= '<th class="eb_th2">';
+		$text .= '<th style="width:40%" class="eb_th2">';
 		$text .= EB_USER_L24;
 		$text .= '</th>';
 		$text .= '<th class="eb_th2">';
@@ -690,7 +690,7 @@ else
 	if ($numMatches>0)
 	{
 		$text .= '<p><b>';
-		$text .= $numMatches.'&nbsp;'.EB_EVENT_L64;
+		$text .= '<span class="badge">'.$numMatches.'</span>&nbsp;'.EB_EVENT_L64;
 		$text .= '</b></p>';
 		$text .= '<br />';
 

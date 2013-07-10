@@ -75,12 +75,13 @@ jQuery(function() {
 	
 	$('.matchreport_link').popUpForm({  
 		title : 'Match Report',
-		container   : '#matchreportform',  
+		container   : '#matchreportcontainer',  
+		form        : '#matchreportform',  
 		width       : 440,  
 		draggable   : false,
 		resizable   : false,
 		beforeSubmit: function() { },  
-		onSuccess   : function() { window.location.reload(); },  
+		onSuccess   : function() { window.location.href = window.location.href; },  
 		onError     : function(error) { alert('Sorry there was an error submitting your form: '+error); }  
 	});  	
 }); // end main jQuery function start

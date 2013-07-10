@@ -1,13 +1,14 @@
 <?php
 
 function html_bracket_team_cell($teams, $content, $score, $container_class='') {
+	global $pref;
 
 	//echo "html_bracket_team_cell: $teams, $content, $score, $container_class<br>";
 	$text = '<td><div class="container '.$container_class.'">';
 	if ($container_class=='victor')
 	{
 		$victor_image = 'images/awards/trophy_gold.png';
-		$victor_str = '<img src="'.$victor_image.'" style="vertical-align:middle" alt=""/>';
+		$victor_str = '<img src="'.$victor_image.'" alt=""/>';
 	}
 	$score_class = 'score';
 	if (preg_match("/^\d+\+$/",$score))
@@ -21,16 +22,16 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 	$score = preg_replace("/[\+\-]/","", $score);
 	switch ($content[0]) {
 	case 'E':
-		$text .= '&nbsp;';
+		$text .= '<div class="player">&nbsp;</div>;';
 		break;
 	case 'N':
-		$text .= 'Not needed';
+		$text .= '<div class="player">Not needed</div>';
 		break;
 	case 'F':
-		$text .= '&nbsp;';
+		$text .= '<div class="player">&nbsp;</div>';
 		break;
 	case 'W':
-		$text .= '&nbsp;';
+		$text .= '<div class="player">&nbsp;</div>';
 		break;
 	case 'L':
 		$teams = substr($content,1);
@@ -43,11 +44,20 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 	case 'T':
 		$team = substr($content,1);
 		$team_name = $teams[$team-1]['Name'];
-		$team_image = 'images/ranks/a1.jpg';
+		$team_avatar = $teams[$team-1]['Avatar'];
+		$team_image = "";
+		if ($pref['eb_avatar_enable_playersstandings'] == 1)
+		{
+			if($team_avatar)
+			{
+				$team_image = '<img '.getImageResize($team_avatar, 16).' alt="'.$team_avatar.'"'.'/>';
+			}
+		}
+
 		$text .= '<table class="player"><tbody><tr>';
 
 		$text .= '<td class="player"><div class="player">';
-		//$text .= '<img src="'.$team_image.'" style="vertical-align:middle" alt=""/>';
+		$text .= $team_image;
 		$text .= $team_name;
 		$text .= '</div></td>';
 		$text .= '<td class="wins">';

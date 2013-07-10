@@ -926,7 +926,7 @@ class Event extends DatabaseTable
 		$text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.((($this->getField('MatchesApproval') & eb_UC_EVENT_MODERATOR)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L111.'</option>';
 		$text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.((($this->getField('MatchesApproval') & eb_UC_EVENT_OWNER)!=0) ? 'selected="selected"' : '') .'>'.EB_EVENTM_L110.'</option>';
 		$text .= '</select>';
-		$text .= ($nbrMatchesPending>0) ? '<div><img src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'" style="vertical-align:text-top;"/>&nbsp;'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</div>' : '';
+		$text .= ($nbrMatchesPending>0) ? '<div><img class="eb_image" src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'"/>&nbsp;'.$nbrMatchesPending.'&nbsp;'.EB_EVENT_L64.'</div>' : '';
 		$text .= '
 		</div>
 		</td>
@@ -1415,8 +1415,8 @@ class Event extends DatabaseTable
 	. topWins
 	. bottomWins
 	. matchs[match]
-	. played
-	. match_id
+	  . winner: not played/top/bottom
+	  . match_id
 	- rounds[round]
 	. Title
 	. BestOf
@@ -1653,6 +1653,9 @@ class Event extends DatabaseTable
 								$current_match = new Match($current_match_id);
 								$current_match->deleteMatchScores();
 								
+								$results[$round][$matchup]['winner'] = 'not played';
+								$results[$round][$matchup]['topWins'] = 0;
+								$results[$round][$matchup]['bottomWins'] = 0;
 								$results[$round][$matchup]['winner'] = 'not played';
 								unset($results[$round][$matchup]['matchs'][$match]);
 								
@@ -1928,7 +1931,27 @@ class Event extends DatabaseTable
 						switch($style)
 						{
 						case 'elimination':
-							$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'"></td>';
+							$current_match = $results[$round][$matchup]['matchs'][$nbr_matchs-1];
+
+							$string = '';
+							if((isset($current_match)) && ($current_match['winner'] == 'not played'))
+							{
+								$matchObj = new Match($current_match['match_id']);
+								$permissions = $matchObj->get_permissions(USERID);
+								$userclass = $permissions['userclass'];
+								$can_report = $permissions['can_report'];
+								
+								if($can_report == 1)
+								{
+									$string .= '<div>';
+									$string .= ebImageLink('matchscheduledreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$matchObj->fields['MatchID'].'&amp;actionid=matchscheduledreport&amp;userclass='.$userclass, 'page_white_edit.png', '', 'matchreport_link', '', EB_MATCH_L1.' '.$nbr_matchs);
+									$string .= '</div>';
+								}
+							}
+
+							$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'">
+							'.$string.'
+							</td>';
 							break;
 						case 'round-robin':
 							$brackets[$matchupsRows[$round][$matchup][1]+1][2*$round-1] = '<td rowspan="1" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'">&nbsp;</td>';
@@ -2324,7 +2347,8 @@ class Event extends DatabaseTable
 		{
 		case 'Players':
 			$q_Players = "SELECT ".TBL_GAMERS.".*, "
-			.TBL_PLAYERS.".*"
+			.TBL_PLAYERS.".*, "
+			.TBL_USERS.".*"
 			." FROM ".TBL_GAMERS.", "
 			.TBL_PLAYERS.", "
 			.TBL_USERS
@@ -2510,6 +2534,183 @@ class Event extends DatabaseTable
 		$matchups = unserialize(implode('',file($file)));
 		return $matchups;
 	}
+	
+	function get_permissions($user_id)
+	{
+		global $sql;
+		global $pref;
+		
+		$can_approve = 0;
+		$can_report = 0;
+		$can_schedule = 0;
+		$can_report_quickloss = 0;
+		$can_submit_replay = 0;
+		$can_challenge = 0;
+		$userclass = 0;
+		
+		$event_id = $this->fields['EventID'];
+		
+		// Check if user can report
+		// Is the user admin?
+		if (check_class($pref['eb_mod_class']))
+		{
+			$userclass |= eb_UC_EB_MODERATOR;
+			$can_report = 1;
+			$can_submit_replay = 1;
+			$can_schedule = 1;
+			$can_approve = 1;
+		}
+
+		// Is the user event owner?
+		if ($user_id==$eowner)
+		{
+			$userclass |= eb_UC_EVENT_OWNER;
+			$can_report = 1;
+			$can_submit_replay = 1;
+			$can_schedule = 1;
+			$can_approve = 1;
+		}
+		// Is the user a moderator?
+		$q = "SELECT ".TBL_EVENTMODS.".*"
+		." FROM ".TBL_EVENTMODS
+		." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
+		."   AND (".TBL_EVENTMODS.".User = ".$user_id.")";
+		$result = $sql->db_Query($q);
+		$numMods = mysql_numrows($result);
+		if ($numMods>0)
+		{
+			$userclass |= eb_UC_EVENT_MODERATOR;
+			$can_report = 1;
+			$can_submit_replay = 1;
+			$can_schedule = 1;
+			$can_approve = 1;
+		}
+		/*
+		if ($userIsDivisionCaptain == TRUE)
+		{
+		$userclass |= eb_UC_EVENT_PLAYER;
+		$can_report = 1;
+		}
+		*/
+
+		// Is the user a player?
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS.", "
+		.TBL_GAMERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+		."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+		."   AND (".TBL_GAMERS.".User = ".$user_id.")";
+		$result = $sql->db_Query($q);
+
+		$pbanned=0;
+		if(mysql_numrows($result) == 1)
+		{
+			$userclass |= eb_UC_EVENT_PLAYER;
+			$row = mysql_fetch_array($result);
+			$pbanned = $row['Banned'];
+
+			// Is the event started, and not ended
+			if ($this->getField('Status') == 'active')
+			{
+				$can_report = 1;
+				$can_report_quickloss = 1;
+				$can_submit_replay = 1;
+				$can_challenge = 1;
+			}
+		}
+
+		/* Nbr players */
+		$q = "SELECT COUNT(*) as NbrPlayers"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+		."   AND (".TBL_PLAYERS.".Banned != 1)";
+		$result = $sql->db_Query($q);
+		$row = mysql_fetch_array($result);
+		$nbrplayersNotBanned = $row['NbrPlayers'];
+		
+		/* Nbr Teams */
+		$q = "SELECT COUNT(*) as NbrTeams"
+		." FROM ".TBL_TEAMS
+		." WHERE (Event = '$event_id')";
+		$result = $sql->db_Query($q);
+		$row = mysql_fetch_array($result);
+		$nbr_teams = $row['NbrTeams'];
+		switch($this->getMatchPlayersType())
+		{
+		case 'Players':
+			if (($nbrplayersNotBanned < 2)||($pbanned))
+			{
+				$can_report = 0;
+				$can_schedule = 0;
+				$can_report_quickloss = 0;
+				$can_challenge = 0;
+			}
+			break;
+		case 'Teams':
+			if ($nbr_teams < 2)
+			{
+				$can_report = 0;
+				$can_schedule = 0;
+				$can_report_quickloss = 0;
+				$can_challenge = 0;
+			}
+			break;
+		default:
+		}
+
+		//sc2:
+		$can_submit_replay = 0;
+
+		if($this->getField('FixturesEnable') == TRUE)
+		{
+			$can_report = 0;
+			$can_schedule = 0;
+			$can_report_quickloss = 0;
+			$can_challenge = 0;
+		}
+
+		// check if only 1 player with this userid
+		$q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
+		.TBL_USERS.".*"
+		." FROM ".TBL_PLAYERS.", "
+		.TBL_GAMERS.", "
+		.TBL_USERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+		."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+		."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
+		."   AND (".TBL_USERS.".user_id = ".$user_id.")";
+		$result = $sql->db_Query($q);
+		$numPlayers = mysql_numrows($result);
+		if ($numPlayers>1)
+		$can_report_quickloss = 0;
+
+		// Check if AllowScore is set
+		if ($this->getField('AllowScore')==TRUE)
+		$can_report_quickloss = 0;
+
+		if($this->getField('Type') == "Clan Ladder") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
+		if($this->getField('quick_loss_report')==FALSE) $can_report_quickloss = 0;
+		if($userclass < $this->getField('match_report_userclass')) $can_report = 0;
+		if($userclass < $this->getField('match_replay_report_userclass')) $can_submit_replay = 0;
+
+		if($userclass < $this->getField('MatchesApproval')) $can_approve = 0;
+		if($this->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
+
+		if($this->getField('ChallengesEnable')==FALSE) $can_challenge= 0;		
+
+
+		$permissions = array();
+		$permissions['userclass'] = $userclass;
+		$permissions['can_approve'] = $can_approve;
+		$permissions['can_report'] = $can_report;
+		$permissions['can_schedule'] = $can_schedule;
+		$permissions['can_report_quickloss'] = $can_report_quickloss;
+		$permissions['can_submit_replay'] = $can_submit_replay;
+		$permissions['can_challenge'] = $can_challenge;
+		
+		return $permissions;
+	}	
+	
 }
 
 function deletePlayerMatches($player_id)

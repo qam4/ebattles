@@ -91,6 +91,7 @@ else
 	$result = $sql->db_Query($q);
 	$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
 	$event = new Event($event_id);
+	$match = new Match($match_id);
 
 	$type = $event->getField('Type');
 	$competition_type = $event->getCompetitionType();
@@ -214,156 +215,17 @@ else
 		$comments  = EB_MATCHD_L3;
 	}
 
-	// Can I delete the game
-	//-----------------------
-	// Is the user a moderator?
-	$q_Mods = "SELECT ".TBL_EVENTMODS.".*"
-	." FROM ".TBL_EVENTMODS
-	." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
-	."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
-	$result_Mods = $sql->db_Query($q_Mods);
-	$numMods = mysql_numrows($result_Mods);
-
-	switch($event->getMatchPlayersType())
-	{
-	case 'Players':
-		$reporter_matchteam = 0;
-		$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
-		." FROM ".TBL_MATCHS.", "
-		.TBL_SCORES.", "
-		.TBL_PLAYERS.", "
-		.TBL_GAMERS.", "
-		.TBL_USERS
-		." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-		." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-		." AND (".TBL_GAMERS.".User = '$reported_by')";
-		$result_Reporter = $sql->db_Query($q_Reporter);
-		$numRows = mysql_numrows($result_Reporter);
-		if ($numRows>0)
-		{
-			$reporter_matchteam = mysql_result($result_Reporter,0, TBL_SCORES.".Player_MatchTeam");
-		}
-
-		// Is the user an opponent of the reporter?
-		$q_Opps = "SELECT DISTINCT ".TBL_SCORES.".*"
-		." FROM ".TBL_MATCHS.", "
-		.TBL_SCORES.", "
-		.TBL_PLAYERS.", "
-		.TBL_GAMERS.", "
-		.TBL_USERS
-		." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-		." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-		." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
-		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-		." AND (".TBL_GAMERS.".User = ".USERID.")";
-		$result_Opps = $sql->db_Query($q_Opps);
-		$numOpps = mysql_numrows($result_Opps);
-		break;
-	case 'Teams':
-		$reporter_matchteam = 0;
-		$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
-		." FROM ".TBL_MATCHS.", "
-		.TBL_SCORES.", "
-		.TBL_TEAMS.", "
-		.TBL_PLAYERS.", "
-		.TBL_GAMERS.", "
-		.TBL_USERS
-		." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-		." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
-		." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-		." AND (".TBL_GAMERS.".User = '$reported_by')";
-		$result_Reporter = $sql->db_Query($q_Reporter);
-		$numRows = mysql_numrows($result_Reporter);
-		if ($numRows>0)
-		{
-			$reporter_matchteam = mysql_result($result_Reporter,0, TBL_SCORES.".Player_MatchTeam");
-		}
-
-		// Is the user an opponent of the reporter?
-		$q_Opps = "SELECT DISTINCT ".TBL_SCORES.".*"
-		." FROM ".TBL_MATCHS.", "
-		.TBL_SCORES.", "
-		.TBL_TEAMS.", "
-		.TBL_PLAYERS.", "
-		.TBL_GAMERS.", "
-		.TBL_USERS
-		." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-		." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
-		." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
-		." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-		." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-		." AND (".TBL_GAMERS.".User = ".USERID.")";
-		$result_Opps = $sql->db_Query($q_Opps);
-		$numOpps = mysql_numrows($result_Opps);
-		//dbg: echo "numOpps: $numOpps, mt: $reporter_matchteam<br />";
-		break;
-	default:
-	}
-
-	$userclass = 0;
-	$can_edit = 0;
-	$can_approve = 0;
-	$can_delete = 0;
-	$can_submit_media = 0;
-	$can_delete_media = 0;
-
-	if ((USERID==$reported_by)&&($mStatus == 'pending')) $can_edit = 1;
-
-	if (check_class($pref['eb_mod_class']))  $can_delete = 1;
-	if (USERID==$event->getField('Owner'))
-	{
-		$userclass |= eb_UC_EVENT_OWNER;
-		$can_delete = 1;
-		$can_approve = 1;
-		$can_edit = 1;
-		$can_submit_media = 1;
-		$can_delete_media = 1;
-	}
-	if ($numMods>0)
-	{
-		$userclass |= eb_UC_EB_MODERATOR;
-		$can_delete = 1;
-		$can_approve = 1;
-		$can_edit = 1;
-		$can_submit_media = 1;
-		$can_delete_media = 1;
-	}
-	if (check_class($pref['eb_mod_class']))
-	{
-		$userclass |= eb_UC_EB_MODERATOR;
-		$can_approve = 1;
-		$can_edit = 1;
-		$can_submit_media = 1;
-		$can_delete_media = 1;
-	}
-	if ($numOpps>0)
-	{
-		$userclass |= eb_UC_EVENT_PLAYER;
-		$can_approve = 1;
-	}
-	if (($numPlayed>0)&&(check_class($pref['eb_media_submit_class'])))
-	{
-		$can_submit_media = 1;
-	}
-
-	if($userclass < $event->getField('MatchesApproval')) $can_approve = 0;
-	if($event->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
-	if ($mStatus != 'pending') $can_approve = 0;
-
-	if($competition_type == 'Tournament')
-	{
-		$can_edit = 0;
-	}
+	//------------ permissions --------------
+	$permissions = $match->get_permissions(USERID);
+	$userclass = $permissions['userclass'];
+	$can_edit = $permissions['can_edit'];
+	$can_approve = $permissions['can_approve'];
+	$can_delete = $permissions['can_delete'];
+	$can_submit_media = $permissions['can_submit_media'];
+	$can_delete_media = $permissions['can_delete_media'];
 
 	if($mStatus == 'scheduled')
 	{
-		$can_edit = 1;
 		$text .= '<div>'.EB_MATCH_L16.'&nbsp;'.EB_MATCH_L17.'&nbsp;'.$dateScheduled.'.'.'</div>';
 	}
 
@@ -397,14 +259,14 @@ else
 		if($mStatus == 'scheduled')
 		{
 			$text .= '<div>';
-			$text .= ebImageLink('matchschedulededit', '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchschedulededit&amp;userclass='.$userclass, 'pencil.png', EB_MATCHD_L27, 'matchreport_link jq-button');
+			$text .= ebImageLink('matchschedulededit', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchschedulededit&amp;userclass='.$userclass, 'pencil.png', EB_MATCHD_L27, 'matchreport_link jq-button');
 			$text .= '</div>';
 		}
 		else
 		{
 
 			$text .= '<div>';
-			$text .= ebImageLink('matchedit', '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchedit&amp;userclass='.$userclass, 'pencil.png', EB_MATCHD_L27, 'matchreport_link jq-button');
+			$text .= ebImageLink('matchedit', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchedit&amp;userclass='.$userclass, 'pencil.png', EB_MATCHD_L27, 'matchreport_link jq-button');
 			$text .= '</div>';
 		}		
 	}

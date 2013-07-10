@@ -168,20 +168,43 @@ button.positive, .buttons a.positive{
 }
 
 .badge1{
-	display:block;
-	position:absolute;
 	background-color:red;
 	color:white;
 	font-family: Helvetica,Arial,sans-serif;
 	font-size: 9px;
-	line-height: 17px;
 	font-weight: bold;
-	margin-top: 1px;
-	margin-left: 7px;
-	padding: 0 6px;
+	padding:3px 6px;
+	margin: 1px;
 	-moz-border-radius: 10px;
 	-khtml-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
-	height:20px;
+}
+
+img.eb_game_icon{
+	vertical-align: middle;
+}
+img.eb_activity_icon{
+	vertical-align: middle;
+}
+img.eb_activity_game_icon{
+	vertical-align: middle;
+}
+img.eb_avatar{
+	vertical-align: middle;
+}
+img.eb_faction_icon{
+	vertical-align: middle;
+}
+img.eb_map_image{
+	vertical-align: middle;
+}
+img.eb_image{
+	vertical-align: middle;
+}
+.eb_button img{
+	vertical-align: middle;
+}
+.eb_link img{
+	vertical-align: middle;
 }

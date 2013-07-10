@@ -10,6 +10,7 @@
         // Defaults and options  
         var defaults = {  
             container   : '',
+            form        : '',
 			position    : ['center', 40],
             modal       : true,  
             resizeable  : false,  
@@ -37,6 +38,7 @@
 				 */ 
 				var url = obj.attr('href-data') + ' ' + opts.container; 
 				//var url = obj.attr('href'); 
+				var name = obj.attr('name');
 				
 				// show a spinner or something via css
 				var popup_dialog = $('<div id="popupdialog" style="display:none" class="loading"></div>').appendTo('body');
@@ -53,7 +55,7 @@
                     modal       : opts.modal, 
                     resizable   : opts.resizeable, 
                     draggable   : opts.draggable, 
-                    title       : opts.title 
+                    title       : name 
  				});
 				// load remote content
 				popup_dialog.load(
@@ -78,7 +80,7 @@
 								else
 								{
 									initDatePicker();
-									$(opts.container).ajaxForm(ajaxForm_options); 
+									$(opts.form).ajaxForm(ajaxForm_options); 
 								}
 							}    // post-submit callback 
 					 
@@ -93,7 +95,7 @@
 							//timeout:   3000 
 						}; 
 
-						$(opts.container).ajaxForm(ajaxForm_options); 		
+						$(opts.form).ajaxForm(ajaxForm_options); 		
 
 					}
 				);

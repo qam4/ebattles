@@ -3,6 +3,7 @@ if(!defined("e107_INIT")){ exit(); }
 
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/match.php");
 
 $ebattles_title = $pref['eb_links_menuheading'];
 $events_link    = e_PLUGIN.'ebattles/events.php';
@@ -165,118 +166,11 @@ function displayUserInfo($req_user, $profile_link){
 		{
 			// For each match played by user
 			$match_id  = mysql_result($result,$match, TBL_MATCHS.".MatchID");
-			$mPlayerMatchTeam  = mysql_result($result,$match, TBL_SCORES.".Player_MatchTeam");
+			$matchObj = new Match($match_id);
 
-			$userclass = 0;
-			$can_approve = 0;
-
-			// Get event information
-			$q_event = "SELECT ".TBL_EVENTS.".*, "
-			.TBL_GAMES.".*, "
-			.TBL_MATCHS.".*, "
-			.TBL_USERS.".*"
-			." FROM ".TBL_EVENTS.", "
-			.TBL_GAMES.", "
-			.TBL_MATCHS.", "
-			.TBL_USERS
-			." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-			."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)"
-			."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-			."   AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)";
-
-			$result_event = $sql->db_Query($q_event);
-			$event_id = mysql_result($result_event,0 , TBL_EVENTS.".EventID");
-			$event = new Event($event_id);
-			$reported_by  = mysql_result($result_event,0, TBL_MATCHS.".ReportedBy");
-
-			switch($event->getMatchPlayersType())
-			{
-			case 'Players':
-				$reporter_matchteam = 0;
-				$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
-				." FROM ".TBL_MATCHS.", "
-				.TBL_SCORES.", "
-				.TBL_PLAYERS.", "
-				.TBL_GAMERS.", "
-				.TBL_USERS
-				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-				." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				." AND (".TBL_GAMERS.".User = '$reported_by')";
-				$result_Reporter = $sql->db_Query($q_Reporter);
-				$numRows = mysql_numrows($result_Reporter);
-				if ($numRows>0)
-				{
-					$reporter_matchteam = mysql_result($result_Reporter,0, TBL_SCORES.".Player_MatchTeam");
-				}
-
-				// Is the user an opponent of the reporter?
-				$q_Opps = "SELECT DISTINCT ".TBL_SCORES.".*"
-				." FROM ".TBL_MATCHS.", "
-				.TBL_SCORES.", "
-				.TBL_PLAYERS.", "
-				.TBL_GAMERS.", "
-				.TBL_USERS
-				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-				." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-				." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
-				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				." AND (".TBL_GAMERS.".User = ".USERID.")";
-				$result_Opps = $sql->db_Query($q_Opps);
-				$numOpps = mysql_numrows($result_Opps);
-				break;
-			case 'Teams':
-				$reporter_matchteam = 0;
-				$q_Reporter = "SELECT DISTINCT ".TBL_SCORES.".*"
-				." FROM ".TBL_MATCHS.", "
-				.TBL_SCORES.", "
-				.TBL_TEAMS.", "
-				.TBL_PLAYERS.", "
-				.TBL_GAMERS.", "
-				.TBL_USERS
-				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-				." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
-				." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				." AND (".TBL_GAMERS.".User = '$reported_by')";
-				$result_Reporter = $sql->db_Query($q_Reporter);
-				$numRows = mysql_numrows($result_Reporter);
-				if ($numRows>0)
-				{
-					$reporter_matchteam = mysql_result($result_Reporter,0, TBL_SCORES.".Player_MatchTeam");
-				}
-
-				// Is the user an opponent of the reporter?
-				$q_Opps = "SELECT DISTINCT ".TBL_SCORES.".*"
-				." FROM ".TBL_MATCHS.", "
-				.TBL_SCORES.", "
-				.TBL_TEAMS.", "
-				.TBL_PLAYERS.", "
-				.TBL_GAMERS.", "
-				.TBL_USERS
-				." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-				." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-				." AND (".TBL_SCORES.".Player_MatchTeam != '$reporter_matchteam')"
-				." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
-				." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-				." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-				." AND (".TBL_GAMERS.".User = ".USERID.")";
-				$result_Opps = $sql->db_Query($q_Opps);
-				$numOpps = mysql_numrows($result_Opps);
-				break;
-			default:
-			}
-
-			if ($numOpps>0)
-			{
-				$userclass |= eb_UC_EVENT_PLAYER;
-				$can_approve = 1;
-			}
-			if($userclass < $event->getField('MatchesApproval')) $can_approve = 0;
-			if($event->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
+			$permissions = $matchObj->get_permissions(USERID);
+			$userclass = $permissions['userclass'];
+			$can_approve = $permissions['can_approve'];
 
 			if ($can_approve == 1)
 			{

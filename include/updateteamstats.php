@@ -710,11 +710,11 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 
 			if ($rank==1)
 			{
-				$trank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/award_star_gold_3.png" alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'" style="vertical-align:middle"/>';
+				$trank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/awards/award_star_gold_3.png" alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/>';
 			}
 			else if (($rank<=10)&&(($rank+$trankdelta>min(10,$numTeams))||($rank+$trankdelta==0)))
 			{
-				$trank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/award_star_bronze_3.png" alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'" style="vertical-align:middle"/>';
+				$trank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/awards/award_star_bronze_3.png" alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/>';
 			}
 			else if (($numAwards>0)&&($tawardType!='TeamTookFirstPlace')&&($tawardType!='TeamInTopTen')&&($tstreak>=5))
 			{
@@ -724,36 +724,36 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 					if ($tstreak>=5)
 					{
 						$award = EB_AWARD_L6;
-						$trank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_bronze_3.png" alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'" style="vertical-align:middle"/>';
+						$trank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/awards/medal_bronze_3.png" alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/>';
 					}
 					break;
 				case 'TeamStreak10':
 					if ($tstreak>=10)
 					{
 						$award = EB_AWARD_L8;
-						$trank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_silver_3.png" alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'" style="vertical-align:middle"/>';
+						$trank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/awards/medal_silver_3.png" alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/>';
 					}
 					break;
 				case 'TeamStreak25':
 					if ($tstreak>=25)
 					{
 						$award = EB_AWARD_L10;
-						$trank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_gold_3.png" alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'" style="vertical-align:middle"/>';
+						$trank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/awards/medal_gold_3.png" alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/>';
 					}
 					break;
 				}
 			}
 			else if ($trankdelta>0)
 			{
-				$trank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/arrow_up.gif" alt="+'.$trankdelta.'" title="+'.$trankdelta.'" style="vertical-align:middle"/>';
+				$trank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/arrow_up.gif" alt="+'.$trankdelta.'" title="+'.$trankdelta.'"/>';
 			}
 			else if (($trankdelta<0)&&($rank+$trankdelta!=0))
 			{
-				$trank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/arrow_down.gif" alt="'.$trankdelta.'" title="'.$trankdelta.'" style="vertical-align:middle"/>';
+				$trank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/arrow_down.gif" alt="'.$trankdelta.'" title="'.$trankdelta.'"/>';
 			}
 			else if ($rank+$trankdelta==0)
 			{
-				$trank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/arrow_up.gif" alt="Up" title="'.EB_STATS_L37.'" style="vertical-align:middle"/>';
+				$trank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/arrow_up.gif" alt="Up" title="'.EB_STATS_L37.'"/>';
 			}
 		}
 
@@ -819,7 +819,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		}
 		
 		// Add challenge button here
-		$challenge_text = ' <a href="javascript:challenge_team_js(\''.$tid.'\');" title="'.EB_CHALLENGE_L1.' '.$pclantag.$name[$index].'"><img src="'.e_PLUGIN.'ebattles/images/challenge.png" alt="'.EB_CHALLENGE_L1.' '.$name[$index].'"/></a>';
+		$challenge_text = ' <a href="javascript:challenge_team_js(\''.$tid.'\');" title="'.EB_CHALLENGE_L1.' '.$pclantag.$name[$index].'"><img class="eb_image" src="'.e_PLUGIN.'ebattles/images/challenge.png" alt="'.EB_CHALLENGE_L1.' '.$name[$index].'"/></a>';
 		$stats_row[] = $challenge_text;
 		
 		$stats[] = $stats_row;
