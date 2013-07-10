@@ -1,8 +1,10 @@
 Match report in dialog.
-- change dialog title?
-- show href="#", and use href-data to create url.
-- show matchreport link in bracket
+- userinfo uses displaymatchinfo, but no dialog appear.
+- matchscheduledreport -> check if match exists.
+- match.can_edit is wrong.
+  now it's always true for scheduled matchs
   
+  what i want is: is i can report, then if it's a tourny disable edit, then if it's scheduled, enable it.
 
 . fix?: if we lower the max number of players, what do we do if number_players>max_number_players
  1: can only happen if event is not started yet. after that, the button is disabled
@@ -20,6 +22,13 @@ Match report in dialog.
 . late checkins instead of late signups when checkin is enabled?
 . add platforms to game
 . add "game" page, with events for each game
+. matchinfo.php should use Match object!
+. user avatar in brackets
+. show number of matches pending in tab?
+. "badge" css not working??? -> in menu
+. probably would be better to recalculate the barckets every time, rather than when schedulematch is true?
+. delete match in bracket if event over -> change status / remove rewards?
+. brackets. shorten players name if too long.
 
 DONE
 . Edit time of scheduled match

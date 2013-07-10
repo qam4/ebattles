@@ -79,6 +79,16 @@ else
 
 	$event = new Event($event_id);
 
+	//------------ permissions --------------
+	$permissions = $event->get_permissions(USERID);
+	$userclass = $permissions['userclass'];
+	$can_approve = $permissions['can_approve'];
+	$can_report = $permissions['can_report'];
+	$can_schedule = $permissions['can_schedule'];
+	$can_report_quickloss = $permissions['can_report_quickloss'];
+	$can_submit_replay = $permissions['can_submit_replay'];
+	$can_challenge = $permissions['can_challenge'];
+
 	$rounds = unserialize($event->getFieldHTML('Rounds'));
 	$egame = mysql_result($result,0 , TBL_GAMES.".Name");
 	$egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
@@ -399,30 +409,6 @@ else
 
 	$event->setFieldDB('Status', $eventStatus);
 
-	/* Nbr players */
-	$q = "SELECT COUNT(*) as NbrPlayers"
-	." FROM ".TBL_PLAYERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
-	$result = $sql->db_Query($q);
-	$row = mysql_fetch_array($result);
-	$nbr_players = $row['NbrPlayers'];
-	
-	$q = "SELECT COUNT(*) as NbrPlayers"
-	." FROM ".TBL_PLAYERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-	."   AND (".TBL_PLAYERS.".Banned != 1)";
-	$result = $sql->db_Query($q);
-	$row = mysql_fetch_array($result);
-	$nbrplayersNotBanned = $row['NbrPlayers'];
-	
-	/* Nbr Teams */
-	$q = "SELECT COUNT(*) as NbrTeams"
-	." FROM ".TBL_TEAMS
-	." WHERE (Event = '$event_id')";
-	$result = $sql->db_Query($q);
-	$row = mysql_fetch_array($result);
-	$nbr_teams = $row['NbrTeams'];
-	
 	switch($competition_type)
 	{
 	case 'Tournament':

@@ -136,6 +136,19 @@ if(!check_class(e_UC_MEMBER))
 	$cannot_signup_str = EB_EVENT_L34;
 }
 
+// Put nbrMatches pending in tab header
+$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+." FROM ".TBL_MATCHS.", "
+.TBL_SCORES
+." WHERE (".TBL_MATCHS.".Event = '$event_id')"
+." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+." AND (".TBL_MATCHS.".Status = 'pending')";
+$result = $sql->db_Query($q);
+$row = mysql_fetch_array($result);
+$nbrMatchesPending = $row['NbrMatches'];
+if ($nbrMatchesPending == 0) $can_approve = 0;
+$match_pending_text = ($can_approve == 1) ? ' <span class="badge1">'.$nbrMatchesPending.'</span>' : '';
+
 $text .= '<div id="tabs">';
 $text .= '<ul>';
 $text .= '<li><a href="#tabs-1">'.EB_EVENT_L35.'</a></li>';
@@ -147,7 +160,7 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 {
 	$text .= '<li><a href="#tabs-3">'.EB_EVENT_L49.'</a></li>';
 }
-$text .= '<li><a href="#tabs-4">'.EB_EVENT_L58.'</a></li>';
+$text .= '<li><a href="#tabs-4">'.EB_EVENT_L58.$match_pending_text.'</a></li>';
 $text .= '<li><a href="#tabs-5">'.EB_EVENT_L63.'</a></li>';
 $text .= '</ul>';
 
@@ -654,56 +667,6 @@ $text .= '</tbody></table>';
 $text .= '</div>';    // tabs-1 "Info"
 
 /* Teams Standings */
-$can_approve = 0;
-$can_report = 0;
-$can_schedule = 0;
-$can_report_quickloss = 0;
-$can_submit_replay = 0;
-$can_challenge = 0;
-$userclass = 0;
-// Check if user can report
-// Is the user admin?
-if (check_class($pref['eb_mod_class']))
-{
-	$userclass |= eb_UC_EB_MODERATOR;
-	$can_report = 1;
-	$can_submit_replay = 1;
-	$can_schedule = 1;
-	$can_approve = 1;
-}
-
-// Is the user event owner?
-if (USERID==$eowner)
-{
-	$userclass |= eb_UC_EVENT_OWNER;
-	$can_report = 1;
-	$can_submit_replay = 1;
-	$can_schedule = 1;
-	$can_approve = 1;
-}
-// Is the user a moderator?
-$q = "SELECT ".TBL_EVENTMODS.".*"
-." FROM ".TBL_EVENTMODS
-." WHERE (".TBL_EVENTMODS.".Event = '$event_id')"
-."   AND (".TBL_EVENTMODS.".User = ".USERID.")";
-$result = $sql->db_Query($q);
-$numMods = mysql_numrows($result);
-if ($numMods>0)
-{
-	$userclass |= eb_UC_EVENT_MODERATOR;
-	$can_report = 1;
-	$can_submit_replay = 1;
-	$can_schedule = 1;
-	$can_approve = 1;
-}
-/*
-if ($userIsDivisionCaptain == TRUE)
-{
-$userclass |= eb_UC_EVENT_PLAYER;
-$can_report = 1;
-}
-*/
-
 // Is the user a player?
 $q = "SELECT ".TBL_PLAYERS.".*"
 ." FROM ".TBL_PLAYERS.", "
@@ -716,8 +679,6 @@ $result = $sql->db_Query($q);
 $pbanned=0;
 if(mysql_numrows($result) == 1)
 {
-	$userclass |= eb_UC_EVENT_PLAYER;
-
 	$row = mysql_fetch_array($result);
 	$prank = $row['Rank'];
 	$pbanned = $row['Banned'];
@@ -735,79 +696,7 @@ if(mysql_numrows($result) == 1)
 	$myPosition_txt = '<p>';
 	$myPosition_txt .= '<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'&amp;page='.$link_page.'&amp;ipp='.$pages->items_per_page.$pages->querystring.'">'.EB_EVENT_L55.': '.$prank_txt.'</a><br />';
 	$myPosition_txt .= '</p>';
-
-	// Is the event started, and not ended
-	if ($event->getField('Status') == 'active')
-	{
-		$can_report = 1;
-		$can_report_quickloss = 1;
-		$can_submit_replay = 1;
-		$can_challenge = 1;
-	}
 }
-
-switch($event->getMatchPlayersType())
-{
-case 'Players':
-	if (($nbrplayersNotBanned < 2)||($pbanned))
-	{
-		$can_report = 0;
-		$can_schedule = 0;
-		$can_report_quickloss = 0;
-		$can_challenge = 0;
-	}
-	break;
-case 'Teams':
-	if ($nbr_teams < 2)
-	{
-		$can_report = 0;
-		$can_schedule = 0;
-		$can_report_quickloss = 0;
-		$can_challenge = 0;
-	}
-	break;
-default:
-}
-
-//sc2:
-$can_submit_replay = 0;
-
-if($event->getField('FixturesEnable') == TRUE)
-{
-	$can_report = 0;
-	$can_schedule = 0;
-	$can_report_quickloss = 0;
-	$can_challenge = 0;
-}
-
-// check if only 1 player with this userid
-$q = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
-.TBL_USERS.".*"
-." FROM ".TBL_PLAYERS.", "
-.TBL_GAMERS.", "
-.TBL_USERS
-." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-."   AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-."   AND (".TBL_USERS.".user_id = ".USERID.")";
-$result = $sql->db_Query($q);
-$numPlayers = mysql_numrows($result);
-if ($numPlayers>1)
-$can_report_quickloss = 0;
-
-// Check if AllowScore is set
-if ($event->getField('AllowScore')==TRUE)
-$can_report_quickloss = 0;
-
-if($event->getField('Type') == "Clan Ladder") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
-if($event->getField('quick_loss_report')==FALSE) $can_report_quickloss = 0;
-if($userclass < $event->getField('match_report_userclass')) $can_report = 0;
-if($userclass < $event->getField('match_replay_report_userclass')) $can_submit_replay = 0;
-
-if($userclass < $event->getField('MatchesApproval')) $can_approve = 0;
-if($event->getField('MatchesApproval') == eb_UC_NONE) $can_approve = 0;
-
-if($event->getField('ChallengesEnable')==FALSE) $can_challenge= 0;
 
 //fm: Need userclass for match scheduling
 
@@ -1149,20 +1038,6 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 
 /* Matches */
 $text .= '<div id="tabs-4">';
-$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
-." FROM ".TBL_MATCHS.", "
-.TBL_SCORES
-." WHERE (".TBL_MATCHS.".Event = '$event_id')"
-." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-." AND (".TBL_MATCHS.".Status = 'pending')";
-$result = $sql->db_Query($q);
-$row = mysql_fetch_array($result);
-$nbrMatchesPending = $row['NbrMatches'];
-if ($nbrMatchesPending == 0) $can_approve = 0;
-
-// TODO: put back nbrMatches pending in tab header?
-//	$text .= ($can_approve == 1) ? ' <span style="color:red">('.$nbrMatchesPending.')</span>' : '';
-
 /* Display Match Report buttons */
 if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||($can_schedule != 0))
 {
@@ -1188,7 +1063,7 @@ if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||
 	{
 		$text .= '<td>';
 		$text .= '<div>';
-		$text .= ebImageLink('matchreport', '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;actionid=matchreport&amp;userclass='.$userclass, 'page_white_edit.png', EB_EVENT_L57, 'matchreport_link jq-button');
+		$text .= ebImageLink('matchreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;actionid=matchreport&amp;userclass='.$userclass, 'page_white_edit.png', EB_EVENT_L57, 'matchreport_link jq-button');
 		$text .= '</div>';
 		$text .= '</td>';
 	}
@@ -1196,7 +1071,7 @@ if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||
 	{
 		$text .= '<td>';
 		$text .= '<div>';
-		$text .= ebImageLink('matchschedule', '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;actionid=matchschedule&amp;userclass='.$userclass, 'add.png', EB_EVENT_L72, 'matchreport_link jq-button');
+		$text .= ebImageLink('matchschedule', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;actionid=matchschedule&amp;userclass='.$userclass, 'add.png', EB_EVENT_L72, 'matchreport_link jq-button');
 		$text .= '</div>';
 		$text .= '</td>';
 		}

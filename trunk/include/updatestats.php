@@ -538,7 +538,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
 		$prank_side_image = "";
 		if($banned[$index]==1)
 		{
-			$rank = '<span title="'.EB_STATS_L33.'"><img src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="'.EB_STATS_L34.'" title="'.EB_STATS_L34.'"/></span>';
+			$rank = '<span title="'.EB_STATS_L33.'"><img class="eb_image" src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="'.EB_STATS_L34.'" title="'.EB_STATS_L34.'"/></span>';
 			$prankdelta_string = "";
 			$q_update = "UPDATE ".TBL_PLAYERS." SET Rank = 0 WHERE (PlayerID = '$pid') AND (Event = '$event_id')";
 			$result_update = $sql->db_Query($q_update);
@@ -597,11 +597,11 @@ function updateStats($event_id, $time, $serialize = TRUE)
 
 			if ($rank==1)
 			{
-				$prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/award_star_gold_3.png" alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'" style="vertical-align:middle"/>';
+				$prank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/awards/award_star_gold_3.png" alt="'.EB_AWARD_L3.'" title="'.EB_AWARD_L3.'"/>';
 			}
 			else if (($rank<=10)&&(($rank+$prankdelta>min(10,$numPlayers))||($rank+$prankdelta==0)))
 			{
-				$prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/award_star_bronze_3.png" alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'" style="vertical-align:middle"/>';
+				$prank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/awards/award_star_bronze_3.png" alt="'.EB_AWARD_L5.'" title="'.EB_AWARD_L5.'"/>';
 			}
 			else if (($numAwards>0)&&($pawardType!='PlayerTookFirstPlace')&&($pawardType!='PlayerInTopTen')&&($pstreak>=5))
 			{
@@ -611,36 +611,36 @@ function updateStats($event_id, $time, $serialize = TRUE)
 					if ($pstreak>=5)
 					{
 						$award = EB_AWARD_L6;
-						$prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_bronze_3.png" alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'" style="vertical-align:middle"/>';
+						$prank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/awards/medal_bronze_3.png" alt="'.EB_AWARD_L7.'" title="'.EB_AWARD_L7.'"/>';
 					}
 					break;
 				case 'PlayerStreak10':
 					if ($pstreak>=10)
 					{
 						$award = EB_AWARD_L8;
-						$prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_silver_3.png" alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'" style="vertical-align:middle"/>';
+						$prank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/awards/medal_silver_3.png" alt="'.EB_AWARD_L9.'" title="'.EB_AWARD_L9.'"/>';
 					}
 					break;
 				case 'PlayerStreak25':
 					if ($pstreak>=25)
 					{
 						$award = EB_AWARD_L10;
-						$prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/awards/medal_gold_3.png" alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'" style="vertical-align:middle"/>';
+						$prank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/awards/medal_gold_3.png" alt="'.EB_AWARD_L11.'" title="'.EB_AWARD_L11.'"/>';
 					}
 					break;
 				}
 			}
 			else if ($prankdelta>0)
 			{
-				$prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/arrow_up.gif" alt="+'.$prankdelta.'" title="+'.$prankdelta.'" style="vertical-align:middle"/>';
+				$prank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/arrow_up.gif" alt="+'.$prankdelta.'" title="+'.$prankdelta.'"/>';
 			}
 			else if (($prankdelta<0)&&($rank+$prankdelta!=0))
 			{
-				$prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/arrow_down.gif" alt="'.$prankdelta.'" title="'.$prankdelta.'" style="vertical-align:middle"/>';
+				$prank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/arrow_down.gif" alt="'.$prankdelta.'" title="'.$prankdelta.'"/>';
 			}
 			else if ($rank+$prankdelta==0)
 			{
-				$prank_side_image = '<img src="'.e_PLUGIN.'ebattles/images/arrow_up.gif" alt="Up" title="'.EB_STATS_L37.'" style="vertical-align:middle"/>';
+				$prank_side_image = '<img class="eb_image" src="'.e_PLUGIN.'ebattles/images/arrow_up.gif" alt="Up" title="'.EB_STATS_L37.'"/>';
 			}
 		}
 
@@ -696,7 +696,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
 		}
 		
 		// Add challenge button here
-		$challenge_text = ' <a href="javascript:challenge_player_js(\''.$pid.'\');" title="'.EB_CHALLENGE_L1.' '.$pclantag.$name[$index].'"><img src="'.e_PLUGIN.'ebattles/images/challenge.png" alt="'.EB_CHALLENGE_L1.' '.$pclantag.$name[$index].'"/></a>';
+		$challenge_text = ' <a href="javascript:challenge_player_js(\''.$pid.'\');" title="'.EB_CHALLENGE_L1.' '.$pclantag.$name[$index].'"><img class="eb_image" src="'.e_PLUGIN.'ebattles/images/challenge.png" alt="'.EB_CHALLENGE_L1.' '.$pclantag.$name[$index].'"/></a>';
 		$stats_row[] = $challenge_text;
 		
 		$stats[] = $stats_row;

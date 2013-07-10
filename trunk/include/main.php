@@ -293,7 +293,7 @@ function imageResize($image, $target, $force_resize=FALSE) {
 	}
 	else
 	{
-		return 'style="max-height:'.$target.'px; max-width:'.$target.'px; vertical-align:middle;"';
+		return 'style="max-height:'.$target.'px; max-width:'.$target.'px;"';
 	}
 }
 
@@ -306,37 +306,37 @@ function getImageResize($icon, $max_size, $enable_max_resize=TRUE, $force_resize
 	}
 	else
 	{
-		return 'src="'.$icon.'" style="vertical-align:middle;"';
+		return 'src="'.$icon;
 	}
 }
 
 function getGameIconResize($gicon) {
 	global $pref;
-	return getImageResize(getImagePath($gicon, 'games_icons'), $pref['eb_max_image_size'], $pref['eb_max_image_size_check']).' alt="'.$gicon.'"';
+	return 'class="eb_game_icon" '.getImageResize(getImagePath($gicon, 'games_icons'), $pref['eb_max_image_size'], $pref['eb_max_image_size_check']).' alt="'.$gicon.'"';
 }
 
 function getActivityIconResize($icon) {
 	global $pref;
-	return getImageResize($icon, $pref['eb_activity_max_image_size'], $pref['eb_activity_max_image_size_check']);
+	return 'class="eb_activity_icon" '.getImageResize($icon, $pref['eb_activity_max_image_size'], $pref['eb_activity_max_image_size_check']);
 }
 
 function getActivityGameIconResize($gicon) {
 	global $pref;
-	return getImageResize(getImagePath($gicon, 'games_icons'), $pref['eb_activity_max_image_size'], $pref['eb_activity_max_image_size_check']).' alt="'.$gicon.'"';
+	return 'class="eb_activity_game_icon" '.getImageResize(getImagePath($gicon, 'games_icons'), $pref['eb_activity_max_image_size'], $pref['eb_activity_max_image_size_check']).' alt="'.$gicon.'"';
 }
 
 function getAvatarResize($icon) {
 	global $pref;
-	return getImageResize($icon, $pref['eb_max_avatar_size']).' alt="'.$icon.'"';
+	return 'class="eb_avatar" '.getImageResize($icon, $pref['eb_max_avatar_size']).' alt="'.$icon.'"';
 }
 
 function getFactionIconResize($ficon) {
 	global $pref;
-	return getImageResize(getImagePath($ficon, 'games_factions'), $pref['eb_max_image_size'], $pref['eb_max_image_size_check']).' alt="'.$ficon.'"';
+	return 'class="eb_faction_icon" '.getImageResize(getImagePath($ficon, 'games_factions'), $pref['eb_max_image_size'], $pref['eb_max_image_size_check']).' alt="'.$ficon.'"';
 }
 function getMapImageResize($mimage) {
 	global $pref;
-	return getImageResize(getImagePath($mimage, 'games_maps'), $pref['eb_max_map_image_size'], $pref['eb_max_map_image_size_check']).' alt="'.$mimage.'"';
+	return 'class="eb_map_image" '.getImageResize(getImagePath($mimage, 'games_maps'), $pref['eb_max_map_image_size'], $pref['eb_max_map_image_size_check']).' alt="'.$mimage.'"';
 }
 
 function floatToSQL($number)
@@ -693,26 +693,26 @@ function versionsCompare($version1, $version2)
 
 function ebImageTextButton($name, $image, $text, $class='', $confirm='', $title='', $other='')
 {
-	$image_str   = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'" style="vertical-align:middle"/>' : '';
+	$image_str   = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'"/>' : '';
 	$confirm_str = ($confirm!='') ? 'onclick="return confirm(\''.$confirm.'\');"' : '';
-	$class_str   = ($class!='') ? 'class="'.$class.'"' : 'class="jq-button"';
+	$class_str   = ($class!='') ? 'class="eb_button '.$class.'"' : 'class="eb_button jq-button"';
 	$title_str   = ($title!='') ? 'title="'.$title.'"' : '';
 	$text_str    = ($text != '') ? '&nbsp;'.$text : '';
 	return '<div class="buttons"><button '.$class_str.' type="submit" name="'.$name.'" id="'.$name.'" '.$title_str.' '.$confirm_str.' '.$other.'>'.$image_str.$text_str.'</button></div>
 			<div style="clear:both"></div>';
 }
 
-function ebImageLink($name, $href, $href_data, $image, $text, $class='', $confirm='', $title='', $other='')
+function ebImageLink($id, $name, $href, $href_data, $image, $text, $class='', $confirm='', $title='', $other='')
 {
-	$image_str   = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'" style="vertical-align:middle"/>' : '';
+	$image_str   = ($image!='') ? '<img src="'.e_PLUGIN.'ebattles/images/'.$image.'" alt="'.$text.'"/>' : '';
 	$confirm_str = ($confirm!='') ? 'onclick="return confirm(\''.$confirm.'\');"' : '';
-	$class_str   = ($class!='') ? 'class="'.$class.'"' : 'class="jq-button"';
+	$class_str   = ($class!='') ? 'class="eb_link '.$class.'"' : 'class="eb_link jq-button"';
 	$title_str   = ($title!='') ? 'title="'.$title.'"' : '';
 	$text_str    = ($text != '') ? '&nbsp;'.$text : '';
 	$href_str    = ($href != '') ? 'href="'.$href.'"' : 'href="#"';
 	$href_data_str    = ($href_data != '') ? 'href-data="'.$href_data.'"' : '';
 	return '<div class="buttons">
-	        <a '.$class_str.' '.$href_str.' '.$href_data_str.' name="'.$name.'" id="'.$name.'" '.$title_str.' '.$confirm_str.' '.$other.'>
+	        <a '.$class_str.' '.$href_str.' '.$href_data_str.' name="'.$name.'" id="'.$id.'" '.$title_str.' '.$confirm_str.' '.$other.'>
 			'.$image_str
 			.$text_str
 			.'</a>

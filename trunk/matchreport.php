@@ -37,6 +37,12 @@ $type = $event->getField('Type');
 $competition_type = $event->getCompetitionType();
 $matchtype = $event->getField('MatchType');
 
+//------------ event permissions --------------
+$event_permissions = $event->get_permissions(USERID);
+$userclass = $event_permissions['userclass'];
+$can_report = $event_permissions['can_report'];
+$can_schedule = $event_permissions['can_schedule'];
+
 switch($event->getMatchPlayersType())
 {
 case 'Players':
@@ -135,7 +141,7 @@ default:
 }
 
 $text .= '
-<div class="spacer">
+<div class="spacer" id="matchreportcontainer">
 ';
 
 // Set rank/draw based on result
@@ -177,6 +183,11 @@ if(isset($_POST['result']))
 if($match_id)
 {
 	$match = new Match($match_id);
+
+	//------------ event permissions --------------
+	$match_permissions = $match->get_permissions(USERID);
+	$can_report_scheduled = $match_permissions['can_report'];
+	$can_edit = $match_permissions['can_edit'];
 
 	// If match_id is not null, fill up the form information from the database
 	switch($event->getMatchPlayersType())
@@ -767,13 +778,33 @@ if (isset($_POST['submit']))
 	}
 	// if we get here, all data checks were okay, process information as you wish.
 } else {
+var_dump($match_permissions);
+	$show_report_form = 0;
 	switch($action)
 	{
-		case 'matchreport':
-		case 'matchedit':
-		case 'matchscheduledreport':
-		case 'matchschedule':
-		case 'matchschedulededit':
+	case 'matchreport':
+		if($can_report == 1) $show_report_form = 1;
+		break;
+	case 'matchscheduledreport':
+		if($can_report_scheduled == 1) $show_report_form = 1;
+		break;
+	case 'matchedit':
+		if($can_edit == 1) $show_report_form = 1;
+		break;
+	case 'matchschedulededit':
+		if($can_edit == 1) $show_report_form = 1;
+		break;
+	case 'matchschedule':
+		if($can_schedule == 1) $show_report_form = 1;
+		break;
+	}
+		switch($action)
+	{
+	case 'matchreport':
+	case 'matchscheduledreport':
+	case 'matchedit':
+	case 'matchschedulededit':
+	case 'matchschedule':
 		if (!check_class(e_UC_MEMBER))
 		{
 			$text .= '<p>'.EB_MATCHR_L36.'</p>';
@@ -781,14 +812,23 @@ if (isset($_POST['submit']))
 		}
 		else
 		{
-			$userclass = $_POST['userclass'];
-			// the form has not been submitted, let's show it
-			user_form($action, $players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled);
+			if($show_report_form == 1)
+			{
+				$userclass = $_POST['userclass'];
+				// the form has not been submitted, let's show it
+				user_form($action, $players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled);
+			}
+			else
+			{
+				$text .= '<p>'.EB_MATCHR_L33.'</p>';
+				//dbg:$text .= 'userlass='.$userclass;
+				//$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>]</p>';
+			}
 		}
 		break;
-		default:
+	default:
 		$text .= '<p>'.EB_MATCHR_L33.'</p>';
-		$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>]</p>';
+		//$text .= '<p>'.EB_MATCHR_L34.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a>]</p>';
 		break;
 	}
 }
