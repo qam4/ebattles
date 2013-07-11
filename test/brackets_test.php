@@ -11,7 +11,7 @@ echo '</head>';
 echo '<body>';
 
 // Test bracket
-$type = 'drr-8';
+$type = 'rr-16';
 $serialize = TRUE;
 $display_bracket_array = TRUE;
 

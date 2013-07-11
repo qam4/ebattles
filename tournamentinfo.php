@@ -677,7 +677,7 @@ if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
 
 if($hide_fixtures == 0)
 {
-	list($bracket_html) = $event->brackets();
+	list($bracket_html) = $event->brackets(false, 0, 'elimination');
 	$text .= $bracket_html;
 }
 else
@@ -713,23 +713,17 @@ if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||
 	if($can_report != 0)
 	{
 		$text .= '<td>';
-		$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'" method="post">';
 		$text .= '<div>';
-		$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
-		$text .= ebImageTextButton('matchreport', 'page_white_edit.png', EB_EVENT_L57);
+		$text .= ebImageLink('matchreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;actionid=matchreport&amp;userclass='.$userclass, 'page_white_edit.png', EB_EVENT_L57, 'matchreport_link jq-button');
 		$text .= '</div>';
-		$text .= '</form>';
 		$text .= '</td>';
 	}
 	if($can_schedule != 0)
 	{
 		$text .= '<td>';
-		$text .= '<form action="'.e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'" method="post">';
 		$text .= '<div>';
-		$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
-		$text .= ebImageTextButton('matchschedule', 'add.png', EB_EVENT_L72);
+		$text .= ebImageLink('matchschedule', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;actionid=matchschedule&amp;userclass='.$userclass, 'add.png', EB_EVENT_L72, 'matchreport_link jq-button');
 		$text .= '</div>';
-		$text .= '</form>';
 		$text .= '</td>';
 	}
 	$text .= '</tr>';
@@ -896,7 +890,7 @@ if ($numMatches>0)
 	}
 	else
 	{
-		for ($round = $nbrRounds; $round > 0; $round--){
+		for ($round = 0; $round < $nbrRounds; $round++){
 			$nbrMatchups = count($matchups[$round]);
 			$found_match = 0;
 			for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){

@@ -1,8 +1,9 @@
 function SwitchSelected(id)
 {
 	var select = document.getElementById('rank'+id);
+	
 	nbr_ranks = select.length
-	new_rank_txt = select.options[select.selectedIndex].text
+	new_rank_value = select.options[select.selectedIndex].value
 
 	for (k = 1; k <= nbr_ranks; k++)
 	{
@@ -10,8 +11,8 @@ function SwitchSelected(id)
 		for (j = 1; j <= nbr_ranks; j++)
 		{
 			var select = document.getElementById('rank'+j);
-			rank_txt = select.options[select.selectedIndex].text
-			if (rank_txt == 'Team #'+k) {old_rank_found=1}
+			rank_value = select.options[select.selectedIndex].value
+			if (rank_value == 'Team #'+k) {old_rank_found=1}
 		}
 		if (old_rank_found==0) {old_rank = k}
 	}
@@ -21,8 +22,8 @@ function SwitchSelected(id)
 		if (j!=id)
 		{
 			var select = document.getElementById('rank'+j);
-			rank_txt = select.options[select.selectedIndex].text
-			if (rank_txt == new_rank_txt) {select.selectedIndex=old_rank-1}
+			rank_value = select.options[select.selectedIndex].value
+			if (rank_value == new_rank_value) {select.selectedIndex=old_rank-1}
 		}
 	}
 }

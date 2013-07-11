@@ -141,6 +141,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 	/////////////////
 	// TODO: Forfeit????
 	$text .= '<form id="matchreportform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$event_id.$match_str.$action_str.'" method="post">';
+	$text .= '<div>';
 	// TABLE - Players/Teams Selection
 	//----------------------------------
 	// List of all Factions
@@ -366,8 +367,11 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 	$text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 	$text .= '<input type="hidden" name="time_reported" value="'.$time_reported.'"/>';
 	$text .= '<input class="button" type="submit" value="'.$matchreport_str.'" name="submit"/>';
+	$text .= '<span id="ajaxSpinnerContainer">
+	<img src="'.e_PLUGIN.'ebattles/images/ajax-loader.gif" title="working..." alt="working..."/>
+	'.EB_EVENTM_L157.'
+	</span>';
 	$text .= '</div>';
-	$text .= '<br /><br />';
 	$text .= '</div>';
 	$text .= '</form>';
 }

@@ -164,11 +164,11 @@ else
 
 	$text .= '<div id="tabs-2">';    // tab-page "Events"
 	
-	$text .= '<table class="table_left">';
-	$text .= '<tr>';
-	$text .= '<td>';
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_events_create_class'])))
 	{
+		$text .= '<table class="table_left">';
+		$text .= '<tr>';
+		$text .= '<td>';
 		$text .= '<form action="'.e_PLUGIN.'ebattles/eventcreate.php" method="post">';
 		$text .= '<div>';
 		$text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
@@ -176,15 +176,16 @@ else
 		$text .= ebImageTextButton('createevent', 'add.png', EB_EVENTS_L20);
 		$text .= '</div>';
 		$text .= '</form>';
+		$text .= '</td>';
+		$text .= '</tr>';	
+		$text .= '</table>';
 	}
-	$text .= '</td>';
-	$text .= '<td>';
+
+	$text .= '<div class="spacer">';
 	$text .= '<a href="'.$events_link.'">';
 	$text .= EB_MENU_L2;
 	$text .= '</a>';
-	$text .= '</td>';
-	$text .= '</tr>';	
-	$text .= '</table>';
+	$text .= '</div><br />';
 	
 	/* Display list of events where the user is a player */
 	$text .= '<div class="spacer"><b>'.EB_USER_L8.'</b></div>';
@@ -430,11 +431,11 @@ else
 	*/
 	$text .= '<div id="tabs-3">';   // tab-page "Teams"
 
-	$text .= '<table class="table_left">';
-	$text .= '<tr>';
-	$text .= '<td>';
 	if((strcmp(USERID,$req_user) == 0)&&(check_class($pref['eb_teams_create_class'])))
 	{
+		$text .= '<table class="table_left">';
+		$text .= '<tr>';
+		$text .= '<td>';
 		$text .= '<form action="'.e_PLUGIN.'ebattles/clancreate.php" method="post">';
 		$text .= '<div>';
 		$text .= '<input type="hidden" name="userid" value="'.$req_user.'"/>';
@@ -442,16 +443,17 @@ else
 		$text .= '</div>';
 		$text .= ebImageTextButton('createteam', 'add.png', EB_CLANS_L7);
 		$text .= '</form>';
+		$text .= '</td>';
+		$text .= '</tr>';	
+		$text .= '</table>';	
 	}
-	$text .= '</td>';
-	$text .= '<td>';
+
+	$text .= '<div class="spacer">';
 	$text .= '<a href="'.$teams_link.'">';
 	$text .= EB_MENU_L3;
 	$text .= '</a>';
-	$text .= '</td>';
-	$text .= '</tr>';	
-	$text .= '</table>';	
-
+	$text .= '</div><br />';
+	
 	/* Display list of divisions where the user is a member */
 	$text .= '<div class="spacer"><b>'.EB_USER_L22.'</b></div>';
 	$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L23.'</div>';

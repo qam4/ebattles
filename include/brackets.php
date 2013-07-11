@@ -44,21 +44,39 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 	case 'T':
 		$team = substr($content,1);
 		$team_name = $teams[$team-1]['Name'];
+		$team_uniqueid = $teams[$team-1]['UniqueGameID'];
+		$team_seed = $teams[$team-1]['seed'];
 		$team_avatar = $teams[$team-1]['Avatar'];
+		
+		//Get the lenght of the string.
+		$team_name_short = $team_name;
+		$str_length = strlen($team_name_short);       
+		$total_str_length = 12;
+		
 		$team_image = "";
 		if ($pref['eb_avatar_enable_playersstandings'] == 1)
 		{
 			if($team_avatar)
 			{
 				$team_image = '<img '.getImageResize($team_avatar, 16).' alt="'.$team_avatar.'"'.'/>';
+				$total_str_length -= 3;
 			}
+		}
+
+		if($str_length > $total_str_length)
+		{
+		   //displaying the replaced string.
+		   $team_name_short = substr($team_name_short, 0, $total_str_length-3)."...";
 		}
 
 		$text .= '<table class="player"><tbody><tr>';
 
-		$text .= '<td class="player"><div class="player">';
+		$text .= '<td class="seed"><div class="seed">';
+		$text .= $team_seed;
+		$text .= '</div></td>';
+		$text .= '<td class="player"><div class="player" title="'.$team_name.'.'.$team_uniqueid.'">';
 		$text .= $team_image;
-		$text .= $team_name;
+		$text .= $team_name_short;
 		$text .= '</div></td>';
 		$text .= '<td class="wins">';
 		switch($container_class)
@@ -114,6 +132,8 @@ function findRow($round, $matchup, $match, $style = 'elimination')
 	case 'round-robin':
 		$row = $matchup*4-3+2*$match;
 		break;
+	default:
+		$row = 0;
 	}
 	return $row;
 }
@@ -887,6 +907,162 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 			15=> array()
 			);
 			break;
+		case 'rr-16':
+			// http://home.comcast.net/~wporter211/realsite/chess_etc/rrpair.htm
+			$matchups = array(
+			1=> array(
+			1 => array('T1', 'T16'),
+			2 => array('T15', 'T2'),
+			3 => array('T14', 'T3'),
+			4 => array('T13', 'T4'),
+			5 => array('T12', 'T5'),
+			6 => array('T11', 'T6'),
+			7 => array('T10', 'T7'),
+			8 => array('T9', 'T8')
+			),
+			2=> array(
+			1 => array('T16', 'T9'),
+			2 => array('T8', 'T10'),
+			3 => array('T7', 'T11'),
+			4 => array('T6', 'T12'),
+			5 => array('T5', 'T13'),
+			6 => array('T4', 'T14'),
+			7 => array('T3', 'T15'),
+			8 => array('T2', 'T1')
+			),
+			3=> array(
+			1 => array('T2', 'T16'),
+			2 => array('T1', 'T3'),
+			3 => array('T15', 'T4'),
+			4 => array('T14', 'T5'),
+			5 => array('T13', 'T6'),
+			6 => array('T12', 'T7'),
+			7 => array('T11', 'T8'),
+			8 => array('T10', 'T9')
+			),
+			4=> array(
+			1 => array('T16', 'T10'),
+			2 => array('T9', 'T11'),
+			3 => array('T8', 'T12'),
+			4 => array('T7', 'T13'),
+			5 => array('T6', 'T14'),
+			6 => array('T5', 'T15'),
+			7 => array('T4', 'T1'),
+			8 => array('T3', 'T2')
+			),
+			5=> array(
+			1 => array('T3', 'T16'),
+			2 => array('T2', 'T4'),
+			3 => array('T1', 'T5'),
+			4 => array('T15', 'T6'),
+			5 => array('T14', 'T7'),
+			6 => array('T13', 'T8'),
+			7 => array('T12', 'T9'),
+			8 => array('T11', 'T10')
+			),
+			6=> array(
+			1 => array('T16', 'T11'),
+			2 => array('T10', 'T12'),
+			3 => array('T9', 'T13'),
+			4 => array('T8', 'T14'),
+			5 => array('T7', 'T15'),
+			6 => array('T6', 'T1'),
+			7 => array('T5', 'T2'),
+			8 => array('T4', 'T3')
+			),
+			7=> array(
+			1 => array('T4', 'T16'),
+			2 => array('T3', 'T5'),
+			3 => array('T2', 'T6'),
+			4 => array('T1', 'T7'),
+			5 => array('T15', 'T8'),
+			6 => array('T14', 'T9'),
+			7 => array('T13', 'T10'),
+			8 => array('T12', 'T11')
+			),
+			8=> array(
+			1 => array('T16', 'T12'),
+			2 => array('T11', 'T13'),
+			3 => array('T10', 'T14'),
+			4 => array('T9', 'T15'),
+			5 => array('T8', 'T1'),
+			6 => array('T7', 'T2'),
+			7 => array('T6', 'T3'),
+			8 => array('T5', 'T4')
+			),
+			9=> array(
+			1 => array('T5', 'T16'),
+			2 => array('T4', 'T6'),
+			3 => array('T3', 'T7'),
+			4 => array('T2', 'T8'),
+			5 => array('T1', 'T9'),
+			6 => array('T15', 'T10'),
+			7 => array('T14', 'T11'),
+			8 => array('T13', 'T12')
+			),
+			10=> array(
+			1 => array('T16', 'T13'),
+			2 => array('T12', 'T14'),
+			3 => array('T11', 'T15'),
+			4 => array('T10', 'T1'),
+			5 => array('T9', 'T2'),
+			6 => array('T8', 'T3'),
+			7 => array('T7', 'T4'),
+			8 => array('T6', 'T5')
+			),
+			11=> array(
+			1 => array('T6', 'T16'),
+			2 => array('T5', 'T7'),
+			3 => array('T4', 'T8'),
+			4 => array('T3', 'T9'),
+			5 => array('T2', 'T10'),
+			6 => array('T1', 'T11'),
+			7 => array('T15', 'T12'),
+			8 => array('T14', 'T13')
+			),
+			12=> array(
+			1 => array('T16', 'T14'),
+			2 => array('T13', 'T15'),
+			3 => array('T12', 'T1'),
+			4 => array('T11', 'T2'),
+			5 => array('T10', 'T3'),
+			6 => array('T9', 'T4'),
+			7 => array('T8', 'T5'),
+			8 => array('T7', 'T6')
+			),
+			13=> array(
+			1 => array('T7', 'T16'),
+			2 => array('T6', 'T8'),
+			3 => array('T5', 'T9'),
+			4 => array('T4', 'T10'),
+			5 => array('T3', 'T11'),
+			6 => array('T2', 'T12'),
+			7 => array('T1', 'T13'),
+			8 => array('T15', 'T14')
+			),
+			14=> array(
+			1 => array('T16', 'T15'),
+			2 => array('T14', 'T1'),
+			3 => array('T13', 'T2'),
+			4 => array('T12', 'T3'),
+			5 => array('T11', 'T4'),
+			6 => array('T10', 'T5'),
+			7 => array('T9', 'T6'),
+			8 => array('T8', 'T7')
+			),
+			15=> array(
+			1 => array('T8', 'T16'),
+			2 => array('T7', 'T9'),
+			3 => array('T6', 'T10'),
+			4 => array('T5', 'T11'),
+			5 => array('T4', 'T12'),
+			6 => array('T3', 'T13'),
+			7 => array('T2', 'T14'),
+			8 => array('T1', 'T15')
+			),
+			16=> array()
+			);
+			break;	
 		}
 		
 		if($display_bracket_array)

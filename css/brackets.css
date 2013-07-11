@@ -82,7 +82,6 @@ table.brackets td div.container {
 	padding:1px;
 	color: #646464;
 	overflow: hidden;
-	height: 20px;
 }
 table.brackets td div.player {
 	margin-left: 2px;
@@ -114,6 +113,9 @@ table.brackets td img {
 	margin-left: 1px;
 	margin-right: 3px;
 	vertical-align: -4px;
+}
+table.brackets td.seed {
+	width: 12px;
 }
 table.brackets td div.wins,
 table.brackets td div.wins_none {

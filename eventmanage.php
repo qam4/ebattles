@@ -24,6 +24,7 @@ require_once(e_HANDLER."userclass_class.php");
 ********************************************************************/
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 $text .= '
+<script type="text/javascript" src="./js/matchreport.js"></script>
 <script type="text/javascript" src="./js/event.js"></script>
 <script type="text/javascript" src="./js/slider.js"></script>
 ';
@@ -356,6 +357,7 @@ else
 			case 'Round-robin':
 				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
 				$text .= '<option value="8" '.($event->getField('MaxNumberPlayers') == "8" ? 'selected="selected"' : '') .'>8</option>';
+				$text .= '<option value="16" '.($event->getField('MaxNumberPlayers') == "16" ? 'selected="selected"' : '') .'>16</option>';
 				break;
 			case 'Double Round-robin':
 				$text .= '<option value="4" '.($event->getField('MaxNumberPlayers') == "4" ? 'selected="selected"' : '') .'>4</option>';
@@ -1453,7 +1455,7 @@ else
 			// tab-page "Brackets"
 			$text .= '<div id="tabs-6">';
 
-			list($bracket_html) = $event->brackets();
+			list($bracket_html) = $event->brackets(false, 0, 'elimination');
 			$text .= $bracket_html;
 
 			$text .= '</div>';  // tab-page "Brackets"
