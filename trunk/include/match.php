@@ -19,14 +19,7 @@ class Match extends DatabaseTable
 		global $sql;
 
 		// Get event info
-		$q = "SELECT ".TBL_EVENTS.".*, "
-		.TBL_MATCHS.".*"
-		." FROM ".TBL_EVENTS.", "
-		.TBL_MATCHS
-		." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
-		."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)";
-		$result = $sql->db_Query($q);
-		$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
+		$event_id = $this->fields['Event'];
 		$event = new Event($event_id);
 
 		// Initialize scores ELO/TrueSkill
@@ -468,14 +461,7 @@ class Match extends DatabaseTable
 		global $pref;
 
 		// Get event info
-		$q = "SELECT ".TBL_EVENTS.".*, "
-		.TBL_MATCHS.".*"
-		." FROM ".TBL_EVENTS.", "
-		.TBL_MATCHS
-		." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
-		."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)";
-		$result = $sql->db_Query($q);
-		$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
+		$event_id = $this->fields['Event'];
 		$event = new Event($event_id);
 		$type = $event->getField('Type');
 		$competition_type = $event->getCompetitionType();
@@ -763,14 +749,7 @@ class Match extends DatabaseTable
 		global $sql;
 
 		// Get event info
-		$q = "SELECT ".TBL_EVENTS.".*, "
-		.TBL_MATCHS.".*"
-		." FROM ".TBL_EVENTS.", "
-		.TBL_MATCHS
-		." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
-		."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)";
-		$result = $sql->db_Query($q);
-		$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
+		$event_id = $this->fields['Event'];
 		$event = new Event($event_id);
 		$type = $event->getField('Type');
 		$competition_type = $event->getCompetitionType();
@@ -1636,16 +1615,7 @@ class Match extends DatabaseTable
 		$can_delete_media = 0;
 		
 		$match_id = $this->fields['MatchID'];
-
-		// Get event info
-		$q = "SELECT ".TBL_EVENTS.".*, "
-		.TBL_MATCHS.".*"
-		." FROM ".TBL_EVENTS.", "
-		.TBL_MATCHS
-		." WHERE (".TBL_MATCHS.".MatchID = '".$match_id."')"
-		."   AND (".TBL_EVENTS.".EventID = ".TBL_MATCHS.".Event)";
-		$result = $sql->db_Query($q);
-		$event_id = mysql_result($result,0 , TBL_EVENTS.".EventID");
+		$event_id = $this->fields['Event'];
 		$event = new Event($event_id);
 
 		$type = $event->getField('Type');

@@ -81,8 +81,12 @@ jQuery(function() {
 		draggable   : false,
 		resizable   : false,
 		beforeSubmit: function() { },  
-		onSuccess   : function() { window.location.href = window.location.href; },  
-		onError     : function(error) { alert('Sorry there was an error submitting your form: '+error); }  
+		onSuccess   : function() { 
+			window.location.href = window.location.href;
+		},  
+		onError     : function(error) {
+			alert('Sorry there was an error submitting your form: '+error);
+		}  
 	});  	
 }); // end main jQuery function start
 

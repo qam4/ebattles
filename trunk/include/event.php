@@ -1434,7 +1434,7 @@ class Event extends DatabaseTable
 	. 'E': empty
 	. 'N': not needed
 	*/
-	function brackets($scheduleNextMatches = false, $delete_match_id = 0, $style='elimination') {
+	function brackets($scheduleNextMatches = false, $delete_match_id = 0, $style='') {
 		global $sql;
 		global $time;
 		global $pref;
@@ -1928,33 +1928,35 @@ class Event extends DatabaseTable
 							$brackets[$matchupsRows[$round][$matchup][0]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][0], $topWins);
 							$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins);
 						}
+
+						$current_match = $results[$round][$matchup]['matchs'][$nbr_matchs-1];
+
+						$string = '';
+						if((isset($current_match)) && ($current_match['winner'] == 'not played'))
+						{
+							$matchObj = new Match($current_match['match_id']);
+							$permissions = $matchObj->get_permissions(USERID);
+							$userclass = $permissions['userclass'];
+							$can_report = $permissions['can_report'];
+							
+							if($can_report == 1)
+							{
+								$string .= '<div>';
+								$string .= ebImageLink('matchscheduledreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$matchObj->fields['MatchID'].'&amp;actionid=matchscheduledreport&amp;userclass='.$userclass, 'page_white_edit.png', '', 'matchreport_link', '', EB_MATCH_L1.' '.$nbr_matchs);
+								$string .= '</div>';
+							}
+						}
 						switch($style)
 						{
 						case 'elimination':
-							$current_match = $results[$round][$matchup]['matchs'][$nbr_matchs-1];
-
-							$string = '';
-							if((isset($current_match)) && ($current_match['winner'] == 'not played'))
-							{
-								$matchObj = new Match($current_match['match_id']);
-								$permissions = $matchObj->get_permissions(USERID);
-								$userclass = $permissions['userclass'];
-								$can_report = $permissions['can_report'];
-								
-								if($can_report == 1)
-								{
-									$string .= '<div>';
-									$string .= ebImageLink('matchscheduledreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$matchObj->fields['MatchID'].'&amp;actionid=matchscheduledreport&amp;userclass='.$userclass, 'page_white_edit.png', '', 'matchreport_link', '', EB_MATCH_L1.' '.$nbr_matchs);
-									$string .= '</div>';
-								}
-							}
-
 							$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'">
 							'.$string.'
 							</td>';
 							break;
 						case 'round-robin':
-							$brackets[$matchupsRows[$round][$matchup][1]+1][2*$round-1] = '<td rowspan="1" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'">&nbsp;</td>';
+							$brackets[$matchupsRows[$round][$matchup][1]+1][2*$round-1] = '<td rowspan="1" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'">
+							'.$string.'
+							</td>';
 							break;
 						}
 						$rounds[$round]['nbrMatchups']++;
@@ -2376,6 +2378,7 @@ class Event extends DatabaseTable
 				$teams[$pseed-1]['Name'] = $pname;
 				$teams[$pseed-1]['UniqueGameID'] = $pugid;
 				$teams[$pseed-1]['Avatar'] = $pavatar;
+				$teams[$pseed-1]['seed'] = $pseed;
 			}
 			break;
 		case 'Teams':
@@ -2402,6 +2405,7 @@ class Event extends DatabaseTable
 				$teams[$pseed-1]['Name'] = $pclan;
 				$teams[$pseed-1]['UniqueGameID'] = '';
 				$teams[$pseed-1]['Avatar'] = $pavatar;
+				$teams[$pseed-1]['seed'] = $pseed;
 			}
 			break;
 		}

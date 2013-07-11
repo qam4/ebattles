@@ -407,8 +407,11 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 	$text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 	$text .= '<input type="hidden" name="time_reported" value="'.$time_reported.'"/>';
 	$text .= '<input class="button" type="submit" value="'.$matchreport_str.'" name="submit"/>';
+	$text .= '<span id="ajaxSpinnerContainer">
+	<img src="'.e_PLUGIN.'ebattles/images/ajax-loader.gif" title="working..." alt="working..."/>
+	'.EB_EVENTM_L157.'
+	</span>';
 	$text .= '</div>';
-	$text .= '<br /><br />';
 	$text .= '</div>';
 	$text .= '</form>';
 }
