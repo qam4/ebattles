@@ -108,6 +108,12 @@ span.required{
 	white-space: nowrap;
 }
 
+/* Remove extra button spacing/padding in Firefox */
+button::-moz-focus-inner {
+    padding: 0;
+    border: 0
+}
+
 /* POSITIVE */
 button.positive, .buttons a.positive{
     color:#529214;
@@ -140,7 +146,7 @@ button.positive, .buttons a.positive{
 
 /* SIMPLE */
 .buttons a.simple, button.simple{
-    background-color:transparent;
+    background:transparent;
     border:0px;
 
     outline: 0;
@@ -151,6 +157,13 @@ button.positive, .buttons a.positive{
     position: relative;
     text-align: center;
 }
+.buttons a.simple:hover, button.simple:hover{
+    background:transparent;
+}
+.buttons a.simple, button.simple img{
+    margin:0px;
+}
+
 
 .badge{
 	background-color:red;

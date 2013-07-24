@@ -170,6 +170,8 @@ else
 	if($eventStatus=='checkin')
 	{
 		$checkin_end = false;
+		$delete_teams = false;
+		$delete_players = false;
 		
 		if($event->getField('CheckinDuration') > 0)
 		{
@@ -186,12 +188,7 @@ else
 			   (($eMaxNumberPlayers != 0)&&($nbr_teams_checked_in >= $eMaxNumberPlayers)))
 			{
 				$checkin_end = true;
-				// Delete teams who have not checked in
-				for($i=0; $i<$nbr_teams_not_checked_in; $i++)
-				{
-					$tID = mysql_result($result, $i, TBL_TEAMS.".TeamID");
-					deleteTeam($tID);
-				}
+				$delete_teams = true;
 			}
 
 			$q = "SELECT ".TBL_PLAYERS.".*"
@@ -206,12 +203,7 @@ else
 			   (($eMaxNumberPlayers != 0)&&($nbr_players_checked_in >= $eMaxNumberPlayers)))
 			{
 				$checkin_end = true;
-				// Delete players who have not checked in
-				for($i=0; $i<$nbr_players_not_checked_in; $i++)
-				{
-					$pID = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
-					deletePlayer($pID);
-				}
+				$delete_players = true;
 			}
 		}
 		else
@@ -223,37 +215,48 @@ else
 				
 				if(($eMaxNumberPlayers != 0)&&($nbr_teams > $eMaxNumberPlayers))
 				{
-					// Delete teams so that we are left with max number of teams
-					$q = "SELECT ".TBL_TEAMS.".*"
-					." FROM ".TBL_TEAMS
-					." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-					." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
-					$result = $sql->db_Query($q);
-					$nbr_teams = mysql_numrows($result);
-					for($i=$eMaxNumberPlayers; $i<$nbr_teams; $i++)
-					{
-						$tID = mysql_result($result, $i, TBL_TEAMS.".TeamID");
-						deleteTeam($tID);
-					}
+					$delete_teams = true;
 				}
 
-				// Delete players so that we are left with max number of players
 				if(($eMaxNumberPlayers != 0)&&($nbr_players > $eMaxNumberPlayers))
 				{
-					$q = "SELECT ".TBL_PLAYERS.".*"
-					." FROM ".TBL_PLAYERS
-					." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-					." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
-					$result = $sql->db_Query($q);
-					$nbr_players = mysql_numrows($result);
-					for($i=$eMaxNumberPlayers; $i<$nbr_players; $i++)
-					{
-						$pID = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
-						deletePlayer($pID);
-					}
+					$delete_players = true;
 				}
 			}
 		}
+		
+		/*
+		if($delete_teams == true)
+		{
+			// Delete teams so that we are left with max number of teams
+			$q = "SELECT ".TBL_TEAMS.".*"
+			." FROM ".TBL_TEAMS
+			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+			." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
+			$result = $sql->db_Query($q);
+			$nbr_teams = mysql_numrows($result);
+			for($i=$eMaxNumberPlayers; $i<$nbr_teams; $i++)
+			{
+				$tID = mysql_result($result, $i, TBL_TEAMS.".TeamID");
+				deleteTeam($tID);
+			}
+		}
+		if($delete_players == true)
+		{
+			// Delete players so that we are left with max number of players
+			$q = "SELECT ".TBL_PLAYERS.".*"
+			." FROM ".TBL_PLAYERS
+			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+			." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
+			$result = $sql->db_Query($q);
+			$nbr_players = mysql_numrows($result);
+			for($i=$eMaxNumberPlayers; $i<$nbr_players; $i++)
+			{
+				$pID = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+				deletePlayer($pID);
+			}
+		}
+		*/		
 		
 		if($checkin_end == true)
 		{

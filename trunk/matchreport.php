@@ -778,7 +778,6 @@ if (isset($_POST['submit']))
 	}
 	// if we get here, all data checks were okay, process information as you wish.
 } else {
-var_dump($match_permissions);
 	$show_report_form = 0;
 	switch($action)
 	{

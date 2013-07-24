@@ -42,6 +42,8 @@ else
 		$match = new Match($match_id);
 		$match->delete();
 		$text .= '<br />'.EB_MATCHDEL_L3.'<br />';
+		
+		header("Location: eventinfo.php?eventid=$event_id");
 	}
 	$text .= '<br />'.EB_MATCHDEL_L4.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHDEL_L5.'</a>]<br />';
 }

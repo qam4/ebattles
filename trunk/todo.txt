@@ -1,10 +1,5 @@
 Match report in dialog.
-- userinfo uses displaymatchinfo, but no dialog appear.
 - matchscheduledreport -> check if match exists.
-- match.can_edit is wrong.
-  now it's always true for scheduled matchs
-  
-  what i want is: is i can report, then if it's a tourny disable edit, then if it's scheduled, enable it.
 
 . fix?: if we lower the max number of players, what do we do if number_players>max_number_players
  1: can only happen if event is not started yet. after that, the button is disabled
@@ -19,19 +14,23 @@ Match report in dialog.
  - challenges requested (not yet confirmed/accepted)
  Need to find which case
 . "checkin" only makes sense for fixtured events?
-. late checkins instead of late signups when checkin is enabled?
 . add platforms to game
 . add "game" page, with events for each game
 . matchinfo.php should use Match object!
-. user avatar in brackets
-. show number of matches pending in tab?
-. "badge" css not working??? -> in menu
-. probably would be better to recalculate the barckets every time, rather than when schedulematch is true?
-. delete match in bracket if event over -> change status / remove rewards?
-. brackets. shorten players name if too long.
+. probably would be better to recalculate the brackets every time, rather than when schedulematch is true?
+. seeding/page split not correct.
+. Support for "replacing player" by another one.
+. gamer profile should have a "game" selector
+
+Stats per game:
+1. what if i want to reset the stats at some point.
+2. what if i want to have stats for a period of time (season...)
+3. do I want to count stats for every event, or only "Official"
 
 DONE
-. Edit time of scheduled match
+. late checkins instead of late signups when checkin is enabled?
+it looks like signups not checked in are kicked 
+. delete match in bracket if event over -> change status (finished -> active) / remove rewards?
 . Prevent "quit"/"kick" if fixturesenabled=1 && status='active', because deleting a player re-orders the seeds, which screws up the bracket.
 . event option: allow late signup (enable/disable)
   - for fixtured, it will be disabled once 1 game is played

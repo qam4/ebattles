@@ -102,7 +102,7 @@ if (isset($_POST['approvematch']))
 	}
 	$event->setFieldDB('IsChanged', 1);
 
-	header("Location: matchinfo.php?matchid=$match_id");
+	header("Location: eventinfo.php?eventid=$event_id");
 	exit;
 }
 if (isset($_POST['addmedia']))

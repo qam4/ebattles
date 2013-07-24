@@ -484,6 +484,12 @@ else{
 	{
 		$playerid = $_POST['checkin_player'];
 		checkinPlayer($playerid);
+		if(($event->getField('FixturesEnable') == TRUE)&&($event->getField('Status') == 'active'))
+		{
+			$event->brackets(true);
+		}			
+		$event->setFieldDB('IsChanged', 1);
+
 		header("Location: eventmanage.php?eventid=$event_id");
 		exit();
 	}

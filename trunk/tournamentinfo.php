@@ -12,6 +12,7 @@ if ($eventIsChanged == 1)
 
 $can_signup = 0;
 $cannot_signup_str = EB_EVENT_L75;
+$can_checkin = 0;
 
 $max_num_players_reached = 0;
 switch($event->getMatchPlayersType())
@@ -40,19 +41,23 @@ if($event->getField('FixturesEnable') == TRUE)
 		$can_signup = 1;
 		break;
 	case 'checkin':
+		$can_checkin = 1;
 		$can_signup = 1;
 		break;
 	case 'active':
 		$can_signup = 1;
+		$can_checkin = 1;
 		if($max_num_players_reached == 1)
 		{
 			$can_signup = 0;
 			$cannot_signup_str = EB_EVENTM_L161;
+			$can_checkin = 0;
 		}
 		if($event->getField('AllowLateSignups') == FALSE)
 		{
 			$can_signup = 0;
 			$cannot_signup_str = EB_EVENT_L75;
+			$can_checkin = 0;
 		}
 		// Check if one game has been played
 		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
@@ -69,6 +74,7 @@ if($event->getField('FixturesEnable') == TRUE)
 		{
 			$can_signup = 0;
 			$cannot_signup_str = EB_EVENT_L75;
+			$can_checkin = 0;
 		}
 		break;
 	case 'finished':
@@ -86,18 +92,37 @@ if($event->getField('FixturesEnable') == FALSE)
 		$cannot_signup_str = EB_EVENT_L75;
 		break;
 	case 'signup':
-	case 'checkin':
-	case 'active':
 		$can_signup = 1;
 		if($max_num_players_reached == 1)
 		{
 			$can_signup = 0;
 			$cannot_signup_str = EB_EVENTM_L161;
 		}
+		break;
+	case 'checkin':
+		$can_signup = 1;
+		$can_checkin = 1;
+		if($max_num_players_reached == 1)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENTM_L161;
+			$can_checkin = 0;
+		}
+		break;
+	case 'active':
+		$can_signup = 1;
+		$can_checkin = 1;
+		if($max_num_players_reached == 1)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENTM_L161;
+			$can_checkin = 0;
+		}
 		if($event->getField('AllowLateSignups') == FALSE)
 		{
 			$can_signup = 0;
 			$cannot_signup_str = EB_EVENT_L75;
+			$can_checkin = 0;
 		}
 		break;
 	case 'finished':
@@ -260,7 +285,7 @@ case "Clan Tournament":
 				
 				$text .= '<td>'.EB_EVENT_L13.'</td>';
 				
-				if($event->getField('Status') == 'checkin')
+				if($can_checkin == 1)
 				{
 					if($team_checkedin != 1)
 					{
@@ -408,7 +433,7 @@ case "Clan Tournament":
 						// User signed up & not banned
 						$text .= '<td>'.EB_EVENT_L22.'&nbsp;'.$player_name.'</td>';
 
-						if($event->getField('Status') == 'checkin')
+						if($can_checkin == 1)
 						{
 							if($player_checkedin != 1)
 							{
@@ -531,7 +556,7 @@ case "One Player Ladder":
 			// User is signed up & not banned
 			$text .= '<tr><td>'.EB_EVENT_L31.'&nbsp;'.$player_name.'</td>';
 
-			if($event->getField('Status') == 'checkin')
+			if($can_checkin == 1)
 			{
 				if($player_checkedin != 1)
 				{
@@ -690,11 +715,11 @@ $text .= '</div>';    // tabs-3 "Brackets"
 /* Matches */
 $text .= '<div id="tabs-4">';
 /* Display Match Report buttons */
-if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||($can_schedule != 0))
+if(($can_report_quickloss == 1)||($can_report == 1)||($can_submit_replay == 1)||($can_schedule == 1))
 {
 	$text .= '<table>';
 	$text .= '<tr>';
-	if($can_submit_replay != 0)
+	if($can_submit_replay == 1)
 	{
 		$text .= '<td>';
 		$text .= '<form action="'.e_PLUGIN.'ebattles/submitreplay.php?eventid='.$event_id.'" method="post"><div>';
@@ -702,7 +727,7 @@ if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||
 		$text .= '</div></form>';
 		$text .= '</td>';
 	}
-	if($can_report_quickloss != 0)
+	if($can_report_quickloss == 1)
 	{
 		$text .= '<td>';
 		$text .= '<form action="'.e_PLUGIN.'ebattles/quickreport.php?eventid='.$event_id.'" method="post"><div>';
@@ -710,15 +735,15 @@ if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||
 		$text .= '</div></form>';
 		$text .= '</td>';
 	}
-	if($can_report != 0)
+	if($can_report == 1)
 	{
 		$text .= '<td>';
 		$text .= '<div>';
-		$text .= ebImageLink('matchreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;actionid=matchreport&amp;userclass='.$userclass, 'page_white_edit.png', EB_EVENT_L57, 'matchreport_link jq-button');
+		$text .= ebImageLink('matchreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;actionid=matchreport&amp;userclass='.$userclass, 'report.png', EB_EVENT_L57, 'matchreport_link jq-button');
 		$text .= '</div>';
 		$text .= '</td>';
 	}
-	if($can_schedule != 0)
+	if($can_schedule == 1)
 	{
 		$text .= '<td>';
 		$text .= '<div>';
@@ -922,7 +947,7 @@ if ($numMatches>0)
 						if($matchObj->getField('Status') == 'scheduled')
 						{
 							$nbrMatchsScheduled++;
-							$text_add .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO, EB_MATCH_L1.'&nbsp;'.($match+1).'&nbsp;');
+							$text_add .= $matchObj->displayMatchInfo(eb_MATCH_NOEVENTINFO|eb_MATCH_SCHEDULED, EB_MATCH_L1.'&nbsp;'.($match+1).'&nbsp;');
 						}
 					}
 					if($nbrMatchsScheduled>0)	$text .= '<tr><td><b>'.EB_EVENT_L102.' '.$matchup.'</b></td></tr>';
@@ -959,6 +984,11 @@ case 'Players':
 		//sc2:	$text .= '<th class="eb_th2">'.EB_EVENT_L78.'</th>';
 		$text .= '<th class="eb_th2">'.EB_EVENT_L79.'</th>';
 		$text .= '<th class="eb_th2">'.EB_EVENT_L80.'</th>';
+		if($event->getField('CheckinDuration') > 0)
+		{
+			// Column "Checked in
+			$text .= '<th class="eb_th2">'.EB_EVENTM_L170.'</th>';
+		}
 		$text .= '</tr>';
 		for ($player = 0; $player < $numPlayers; $player++)
 		{
@@ -974,11 +1004,18 @@ case 'Players':
 			$puid = mysql_result($result, $player , TBL_GAMERS.".User");
 			$pName = mysql_result($result, $player , TBL_GAMERS.".Name");
 			$pGamer = mysql_result($result, $player , TBL_GAMERS.".UniqueGameID");
+			$pcheckedin = mysql_result($result, $player, TBL_PLAYERS.".CheckedIn");
 
 			$text .= '<tr>';
 			//sc2: $text .= '<td class="eb_td">'.$pFactionImage.'</td>';
 			$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pName.'</a></td>';
 			$text .= '<td class="eb_td">'.$pGamer.'</td>';
+			if($event->getField('CheckinDuration') > 0)
+			{
+				// Column "Checked in"
+				$img = ($pcheckedin) ? '<img src="'.e_PLUGIN.'ebattles/images/tick.png" alt="'.EB_EVENTM_L64.'"/>' : '';
+				$text .= '<td class="eb_td">'.$img.'</td>';
+			}
 			$text .= '</tr>';
 		}
 		$text .= '</tbody></table>';
@@ -1000,14 +1037,20 @@ case 'Teams':
 	if($numTeams>0)
 	{
 		$text .= '<table class="eb_table" style="width:95%"><tbody>';
-		$text .= '<tr>
-		<th class="eb_th2">'.EB_CLANS_L5.'</th>
-		<th class="eb_th2">'.EB_CLANS_L6.'</th>
-		</tr>';
+		$text .= '<tr>';
+		$text .= '<th class="eb_th2">'.EB_CLANS_L5.'</th>';
+		$text .= '<th class="eb_th2">'.EB_CLANS_L6.'</th>';
+		if($event->getField('CheckinDuration') > 0)
+		{
+			// Column "Checked in
+			$text .= '<th class="eb_th2">'.EB_EVENTM_L170.'</th>';
+		}
+		$text .= '</tr>';
 		for($i=0; $i < $numTeams; $i++){
 			// TODO: use Clan
 			$clan_id  = mysql_result($result,$i, TBL_CLANS.".ClanID");
 			$clan = new Clan($clan_id);
+			$tcheckedin = mysql_result($result,$i, TBL_TEAMS.".CheckedIn");
 
 			$image = "";
 			if ($pref['eb_avatar_enable_teamslist'] == 1)
@@ -1020,10 +1063,16 @@ case 'Teams':
 				}
 			}
 
-			$text .= '<tr>
-			<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a></td>
-			<td class="eb_td">'.$clan->getField('Tag').'</td>
-			</tr>';
+			$text .= '<tr>';
+			$text .= '<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').'</a></td>';
+			$text .= '<td class="eb_td">'.$clan->getField('Tag').'</td>';
+			if($event->getField('CheckinDuration') > 0)
+			{
+				// Column "Checked in"
+				$img = ($tcheckedin) ? '<img src="'.e_PLUGIN.'ebattles/images/tick.png" alt="'.EB_EVENTM_L64.'"/>' : '';
+				$text .= '<td class="eb_td">'.$img.'</td>';
+			}
+			$text .= '</tr>';
 		}
 		$text .= '</tbody></table>';
 	}

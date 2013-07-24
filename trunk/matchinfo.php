@@ -122,6 +122,10 @@ else
 	
 	if($competition_type == 'Tournament')
 	{
+		$categoriesToShow["Score"] = FALSE;
+		if ($event->getField('AllowScore')==TRUE) {
+			$categoriesToShow["Score"] = TRUE;
+		}
 		$categoriesToShow["ELO"] = FALSE;
 		$categoriesToShow["Skill"] = FALSE;
 	}
@@ -232,7 +236,7 @@ else
 	if ($mStatus == 'pending')
 	$text .= '<div>'.EB_MATCHD_L18.'</div>';
 
-	if($can_delete != 0)
+	if($can_delete == 1)
 	{
 		$delete_text = ($competition_type == 'Tournament') ? EB_MATCHD_L29 : EB_MATCHD_L5;
 		
@@ -244,7 +248,7 @@ else
 		$text .= ebImageTextButton('deletematch', 'cross.png', EB_MATCHD_L4, 'negative jq-button', $delete_text);
 		$text .= '</form>';
 	}
-	if($can_approve != 0)
+	if($can_approve == 1)
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
 		$text .= '<div>';
@@ -254,19 +258,19 @@ else
 		$text .= ebImageTextButton('approvematch', 'accept.png', EB_MATCHD_L17, 'positive jq-button');
 		$text .= '</form>';
 	}
-	if($can_edit != 0)
+	if($can_edit == 1)
 	{
 		if($mStatus == 'scheduled')
 		{
 			$text .= '<div>';
-			$text .= ebImageLink('matchschedulededit', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchschedulededit&amp;userclass='.$userclass, 'pencil.png', EB_MATCHD_L27, 'matchreport_link jq-button');
+			$text .= ebImageLink('matchschedulededit', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchschedulededit&amp;userclass='.$userclass, 'page_white_edit.png', EB_MATCHD_L27, 'matchreport_link jq-button');
 			$text .= '</div>';
 		}
 		else
 		{
 
 			$text .= '<div>';
-			$text .= ebImageLink('matchedit', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchedit&amp;userclass='.$userclass, 'pencil.png', EB_MATCHD_L27, 'matchreport_link jq-button');
+			$text .= ebImageLink('matchedit', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchedit&amp;userclass='.$userclass, 'page_white_edit.png', EB_MATCHD_L27, 'matchreport_link jq-button');
 			$text .= '</div>';
 		}		
 	}
@@ -526,7 +530,7 @@ else
 	$text .= "<a href='http://www.youtube.com/v/iSZoeNuX4gk' rel='shadowbox'>My Video</a>";
 	*/
 
-	if($can_submit_media != 0)
+	if($can_submit_media == 1)
 	{
 		$text .= '<form action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
 		$text .= '<div>';

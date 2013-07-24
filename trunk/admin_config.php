@@ -458,7 +458,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 		$text .= '<td class="forumheader3"><input class="tbox" type="text" name="factionname'.$fID.'" size="20" value="'.$fName.'" maxlength="32"/></td>';
 		$text .= '<td class="forumheader3"><input class="tbox" type="text" name="factionicon'.$fID.'" size="40" value="'.$fIcon.'" maxlength="64"/></td>';
 		$text .= '<td class="forumheader3">';
-		$text .= '<a href="javascript:edit_faction(\''.$fID.'\');" title="'.EB_GAME_L31.'"><img src="'.e_PLUGIN.'ebattles/images/pencil.png" alt="'.EB_GAME_L31.'"/></a>';
+		$text .= '<a href="javascript:edit_faction(\''.$fID.'\');" title="'.EB_GAME_L31.'"><img src="'.e_PLUGIN.'ebattles/images/page_white_edit.png" alt="'.EB_GAME_L31.'"/></a>';
 		$text .= '<a href="javascript:del_faction(\''.$fID.'\');" title="'.EB_GAME_L20.'" onclick="return confirm(\''.EB_GAME_L21.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_GAME_L20.'"/></a>';
 		$text .= '</td>';
 		$text .= '</tr>';
@@ -533,7 +533,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 		$text .= '<td class="forumheader3"><input class="tbox" type="text" name="mapimage'.$mID.'" size="40" value="'.$mImage.'" maxlength="64" title="'.EB_GAME_L27.'"/></td>';
 		$text .= '<td class="forumheader3"><input class="tbox" type="text" name="mapdescription'.$mID.'" size="40" value="'.$mDescrition.'" maxlength="63"/></td>';
 		$text .= '<td class="forumheader3">';
-		$text .= '<a href="javascript:edit_map(\''.$mID.'\');" title="'.EB_GAME_L31.'"><img src="'.e_PLUGIN.'ebattles/images/pencil.png" alt="'.EB_GAME_L31.'"/></a>';
+		$text .= '<a href="javascript:edit_map(\''.$mID.'\');" title="'.EB_GAME_L31.'"><img src="'.e_PLUGIN.'ebattles/images/page_white_edit.png" alt="'.EB_GAME_L31.'"/></a>';
 		$text .= '<a href="javascript:del_map(\''.$mID.'\');" title="'.EB_GAME_L29.'" onclick="return confirm(\''.EB_GAME_L30.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_GAME_L29.'"/></a>';
 		$text .= '</td>';
 		$text .= '</tr>';
@@ -984,7 +984,7 @@ function displayGames(){
 			$text .= '<td class="forumheader3">'.$gid.'</td>';
 			$text .= '<td class="forumheader3"><img '.getGameIconResize($gicon).' title="'.$gicon.'"/></td>';
 			$text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;gameid='.$gid.'">'.$gname.'</a></td>';
-			$text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;gameid='.$gid.'"><img src="'.e_PLUGIN.'ebattles/images/pencil.png" alt="'.EB_GAMES_L11.'" title="'.EB_GAMES_L11.'"/></a>';
+			$text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;gameid='.$gid.'"><img src="'.e_PLUGIN.'ebattles/images/page_white_edit.png" alt="'.EB_GAMES_L11.'" title="'.EB_GAMES_L11.'"/></a>';
 			$text .= '<a href="javascript:buttonval(\''.$gid.'\');" title="'.EB_GAMES_L12.'" onclick="return confirm(\''.EB_GAMES_L13.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_GAMES_L12.'"/></a>';
 			$text .= '</td>';
 			$text .= '</tr>';

@@ -1265,6 +1265,8 @@ class Match extends DatabaseTable
 		global $time;
 		global $sql;
 		global $pref;
+		
+		$match_id = $this->fields['MatchID'];
 
 		$string ='';
 		// Get info about the match
@@ -1277,7 +1279,7 @@ class Match extends DatabaseTable
 		.TBL_USERS.", "
 		.TBL_EVENTS.", "
 		.TBL_GAMES
-		." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
+		." WHERE (".TBL_MATCHS.".MatchID = '".$match_id."')"
 		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 		." AND (".TBL_USERS.".user_id = ".TBL_MATCHS.".ReportedBy)"
 		." AND (".TBL_MATCHS.".Event = ".TBL_EVENTS.".EventID)"
@@ -1305,7 +1307,7 @@ class Match extends DatabaseTable
 			// Calculate number of players and teams for the match
 			$q = "SELECT DISTINCT ".TBL_SCORES.".Player_MatchTeam"
 			." FROM ".TBL_SCORES
-			." WHERE (".TBL_SCORES.".MatchID = '".$this->fields['MatchID']."')";
+			." WHERE (".TBL_SCORES.".MatchID = '".$match_id."')";
 			$result = $sql->db_Query($q);
 			$nbr_teams = mysql_numrows($result);
 
@@ -1314,7 +1316,7 @@ class Match extends DatabaseTable
 			.TBL_SCORES.".Player_Rank"
 			." FROM ".TBL_MATCHS.", "
 			.TBL_SCORES
-			." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
+			." WHERE (".TBL_MATCHS.".MatchID = '".$match_id."')"
 			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
 			$result = $sql->db_Query($q);
 			$numRanks = mysql_numrows($result);
@@ -1326,7 +1328,9 @@ class Match extends DatabaseTable
 				$can_approve = $permissions['can_approve'];
 				$can_report = $permissions['can_report'];
 				$can_schedule = $permissions['can_schedule'];
-
+				$can_delete = $permissions['can_delete'];
+				$can_edit = $permissions['can_edit'];
+				
 				$orderby_str = " ORDER BY ".TBL_SCORES.".Player_Rank, ".TBL_SCORES.".Player_MatchTeam";
 				if($nbr_teams==2) $orderby_str = " ORDER BY ".TBL_SCORES.".Player_MatchTeam";
 
@@ -1342,7 +1346,7 @@ class Match extends DatabaseTable
 					.TBL_PLAYERS.", "
 					.TBL_GAMERS.", "
 					.TBL_USERS
-					." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
+					." WHERE (".TBL_MATCHS.".MatchID = '".$match_id."')"
 					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 					." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
 					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
@@ -1360,7 +1364,7 @@ class Match extends DatabaseTable
 					.TBL_CLANS.", "
 					.TBL_TEAMS.", "
 					.TBL_DIVISIONS
-					." WHERE (".TBL_MATCHS.".MatchID = '".$this->fields['MatchID']."')"
+					." WHERE (".TBL_MATCHS.".MatchID = '".$match_id."')"
 					." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 					." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
 					." AND (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
@@ -1527,13 +1531,13 @@ class Match extends DatabaseTable
 				}
 				if ($can_approve == 1)
 				{
-					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$this->fields['MatchID'].'"><img class="eb_image" src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'"/></a>';
+					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img class="eb_image" src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'"/></a>';
 				}
 				else
 				{
 					if((($type & eb_MATCH_SCHEDULED) == 0)||($can_schedule == 1))
 					{
-						$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$this->fields['MatchID'].'"><img class="eb_image" src="'.e_PLUGIN.'ebattles/images/magnify.png" alt="'.EB_MATCH_L5.'" title="'.EB_MATCH_L5.'"/></a>';
+						$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img class="eb_image" src="'.e_PLUGIN.'ebattles/images/magnify.png" alt="'.EB_MATCH_L5.'" title="'.EB_MATCH_L5.'"/></a>';
 					}
 				}
 
@@ -1554,9 +1558,9 @@ class Match extends DatabaseTable
 					{
 						$string .= EB_MATCH_L9.'&nbsp;'.$date.'.';
 					}
-					$nbr_comments = ebGetCommentTotal("ebmatches", $this->fields['MatchID']);
+					$nbr_comments = ebGetCommentTotal("ebmatches", $match_id);
 					$nbr_comments += ($mComments == '') ? 0 : 1 ;
-					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$this->fields['MatchID'].'" title="'.EB_MATCH_L4.'&nbsp;'.$this->fields['MatchID'].'">'.$nbr_comments.'&nbsp;';
+					$string .= ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'" title="'.EB_MATCH_L4.'&nbsp;'.$match_id.'">'.$nbr_comments.'&nbsp;';
 					$string .= ($nbr_comments > 1) ? EB_MATCH_L10 : EB_MATCH_L11;
 					$string .= '</a>';
 					$string .= '</div></td>';
@@ -1570,13 +1574,57 @@ class Match extends DatabaseTable
 					$string .= '</div></td>';
 				}
 				
-				if ($can_report == 1)
+				if(($type & eb_MATCH_NO_EDIT_ICONS) == 0)
 				{
-					$string .= '<td>';
-					$string .= '<div>';
-					$string .= ebImageLink('matchscheduledreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$this->fields['MatchID'].'&amp;actionid=matchscheduledreport&amp;userclass='.$userclass, 'page_white_edit.png', '', 'matchreport_link', '', EB_EVENT_L57);
-					$string .= '</div>';
-					$string .= '</td>';
+					if($can_delete == 1)
+					{
+						$delete_text = ($competition_type == 'Tournament') ? EB_MATCHD_L29 : EB_MATCHD_L5;
+						
+						$string .= '<td>';
+						$string .= '<form action="'.e_PLUGIN.'ebattles/matchdelete.php?eventid='.$event_id.'" method="post">';
+						$string .= '<div>';
+						$string .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+						$string .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
+						$string .= '</div>';
+						$string .= ebImageTextButton('deletematch', 'cross.png', '', 'simple', $delete_text, EB_MATCHD_L4);
+						$string .= '</form>';
+						$string .= '</td>';
+					}
+					if($can_approve == 1)
+					{
+						$string .= '<td>';
+						$string .= '<form id="approvematch_form" action="'.e_PLUGIN.'ebattles/matchprocess.php" method="post">';
+						$string .= '<div>';
+						$string .= '<input type="hidden" name="eventid" value="'.$event_id.'"/>';
+						$string .= '<input type="hidden" name="matchid" value="'.$match_id.'"/>';
+						$string .= '</div>';
+						$string .= ebImageTextButton('approvematch', 'accept.png', '', 'simple', '', EB_MATCHD_L17);
+						$string .= '</form>';
+						$string .= '</td>';
+					}
+					if($can_edit == 1)
+					{
+						if($this->getField('Status') == 'scheduled')
+						{
+							$string .= '<td>';
+							$string .= ebImageLink('matchschedulededit', EB_MATCHR_L46, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchschedulededit&amp;userclass='.$userclass, 'page_white_edit.png', '', 'matchreport_link', '', EB_MATCHD_L27);
+							$string .= '</td>';
+						}
+						else
+						{
+							$string .= '<td>';
+							$string .= ebImageLink('matchedit', EB_MATCHR_L46, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchedit&amp;userclass='.$userclass, 'page_white_edit.png', '', 'matchreport_link', '', EB_MATCHD_L27);
+							$string .= '</td>';
+						}		
+					}	
+					if ($can_report == 1)
+					{
+						$string .= '<td>';
+						$string .= '<div>';
+						$string .= ebImageLink('matchscheduledreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchscheduledreport&amp;userclass='.$userclass, 'report.png', '', 'matchreport_link', '', EB_MATCHD_L30);
+						$string .= '</div>';
+						$string .= '</td>';
+					}
 				}
 
 				$string .= '</tr>';
