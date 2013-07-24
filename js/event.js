@@ -87,6 +87,12 @@ jQuery(function() {
 		onError     : function(error) {
 			alert('Sorry there was an error submitting your form: '+error);
 		}  
-	});  	
+	});
+
+/*
+	$('#approvematch_form').ajaxForm(function() { 
+		window.location.href = window.location.href; 
+	});
+*/
 }); // end main jQuery function start
 

@@ -59,7 +59,7 @@ function displayRecentActivity($event_id){
 			$match_id  = mysql_result($result,$i, TBL_MATCHS.".MatchID");
 			$match = new Match($match_id);
 			$events[$nbr_events][0] = $match->getField('TimeReported');
-			$events[$nbr_events][1] = $match->displayMatchInfo();
+			$events[$nbr_events][1] = $match->displayMatchInfo(eb_MATCH_NO_EDIT_ICONS);
 			$nbr_events ++;
 		}
 	}

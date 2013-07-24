@@ -548,6 +548,7 @@ else
 		/* Add Team/Player */
 		$can_signup = 0;
 		$cannot_signup_str = EB_EVENT_L75;
+		$can_checkin = 0;
 		$kick_enable = 1;
 		$del_player_games_enable = 1;
 
@@ -558,7 +559,7 @@ else
 			if(($eMaxNumberPlayers != 0)&&($numPlayers >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
 			break;
 		case 'Teams':
-			if(($eMaxNumberPlayers != 0)&&($nbrTeams >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
+			if(($eMaxNumberPlayers != 0)&&($numTeams >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
 			break;
 		default:
 		}
@@ -575,6 +576,7 @@ else
 				$can_signup = 1;
 				break;
 			case 'checkin':
+				$can_checkin = 1;
 				$can_signup = 1;
 				break;
 			case 'active':
@@ -583,12 +585,15 @@ else
 
 				// late-signups ok, until we reach the max players limit, or a game has been played.
 				$can_signup = 1;
+				$can_checkin = 1;
 				if($max_num_players_reached == 1)
 				{
 					$can_signup = 0;
 					$cannot_signup_str = EB_EVENTM_L161;
+					$can_checkin = 0;
 				}
 
+				// Check if one game has been played
 				$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
 				." FROM ".TBL_MATCHS.", "
 				.TBL_SCORES
@@ -599,11 +604,11 @@ else
 
 				$row = mysql_fetch_array($result);
 				$numMatches = $row['NbrMatches'];
-
 				if($numMatches > 0)
 				{
 					$can_signup = 0;
 					$cannot_signup_str = EB_EVENTM_L162;
+					$can_checkin = 0;
 				}
 				break;
 			case 'finished':
@@ -623,10 +628,18 @@ else
 			case 'checkin':
 			case 'active':
 				$can_signup = 1;
+				$can_checkin = 1;
 				if($max_num_players_reached == 1)
 				{
 					$can_signup = 0;
 					$cannot_signup_str = EB_EVENTM_L161;
+					$can_checkin = 0;
+				}
+				if($event->getField('AllowLateSignups') == FALSE)
+				{
+					$can_signup = 0;
+					$cannot_signup_str = EB_EVENT_L75;
+					$can_checkin = 0;
 				}
 				break;
 			case 'finished':
@@ -854,7 +867,7 @@ else
 				if($event->getField('CheckinDuration') > 0)
 				{
 					// Column "Checked in
-					$text .= '<th class="eb_th2">'.EB_EVENTM_L170;
+					$text .= '<th class="eb_th2">'.EB_EVENTM_L170.'</th>';
 				}
 				$text .= '</tr></thead>';
 				$text .= '<tbody>';
@@ -982,7 +995,7 @@ else
 				if($event->getField('CheckinDuration') > 0)
 				{
 					// Column "Checked in
-					$text .= '<th class="eb_th2">'.EB_EVENTM_L170;
+					$text .= '<th class="eb_th2">'.EB_EVENTM_L170.'</th>';
 				}
 				
 				$text .= '<th class="eb_th2">'.EB_EVENTM_L59;

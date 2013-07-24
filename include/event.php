@@ -1005,7 +1005,7 @@ class Event extends DatabaseTable
 			{
 				$text .= '/>';
 			}
-			$text .= EB_EVENTM_L128;
+			$text .= '&nbsp;'.EB_EVENTM_L128;
 			$text .= '</div>';
 			switch($competition_type)
 			{
@@ -1407,19 +1407,19 @@ class Event extends DatabaseTable
 	- format: 'Single elimination', ...
 	- maxNbrPlayers: max number of players
 	- teams[player]
-	. Name
-	. PlayerID
+	 . Name
+	 . PlayerID
 	- results[round][matchup]
-	. winner: not played/top/bottom
-	. bye: true/false
-	. topWins
-	. bottomWins
-	. matchs[match]
+	 . winner: not played/top/bottom
+	 . bye: true/false
+	 . topWins
+	 . bottomWins
+	 . matchs[match]
 	  . winner: not played/top/bottom
 	  . match_id
 	- rounds[round]
-	. Title
-	. BestOf
+	 . Title
+	 . BestOf
 
 	variables:
 	- $matchup[round][matchup][0(top)-1(bottom)] unserialized from file
@@ -1477,7 +1477,7 @@ class Event extends DatabaseTable
 			$nbrMatchups = count($matchups[$round]);
 			$rounds[$round]['nbrMatchups'] = 0;
 
-			if ($round < $nbrRounds)
+			if ($round < $nbrRounds)	// all but last
 			{
 				for ($matchup = 1; $matchup <= $nbrMatchups; $matchup ++){
 					if (!isset($results[$round][$matchup]['matchs']))
@@ -1625,7 +1625,7 @@ class Event extends DatabaseTable
 							$results[$round][$matchup]['winner'] = ($match==0) ? 'bottom' : 'top';
 							break;
 						}
-					}
+					}	// for(match)
 					
 					/* Nbr of matches in the matchup */
 					$nbr_matchs = count($results[$round][$matchup]['matchs']);
@@ -1648,8 +1648,8 @@ class Event extends DatabaseTable
 								*/
 								
 								$current_match_id = $results[$round][$matchup]['matchs'][$match]['match_id'];
-								//echo "match ".$current_match_id." deleted (M$round,$matchup,$match)<br>";
-								
+								echo "match ".$current_match_id." deleted (M$round,$matchup,$match)<br>";
+
 								$current_match = new Match($current_match_id);
 								$current_match->deleteMatchScores();
 								
@@ -1660,9 +1660,91 @@ class Event extends DatabaseTable
 								unset($results[$round][$matchup]['matchs'][$match]);
 								
 								$match_deleted = true;
-							}
-						}
-					}
+							
+								if(($this->getField('Status')=='finished')&&($competition_type == 'Tournament'))
+								{
+									// if tournament was finished, we need to remove awards
+									$this->setFieldDB('Status', 'active');
+								
+									// Find who got the award for winning the tournament
+									switch($type)
+									{
+									case "One Player Tournament":
+										$q = "SELECT ".TBL_PLAYERS.".*, "
+										.TBL_GAMERS.".*, "
+										.TBL_EVENTS.".*, "
+										.TBL_AWARDS.".*"
+										." FROM ".TBL_PLAYERS.", "
+										.TBL_GAMERS.", "
+										.TBL_EVENTS.", "
+										.TBL_AWARDS
+										." WHERE (".TBL_PLAYERS.".PlayerID = ".TBL_AWARDS.".Player)"
+										."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+										."   AND (".TBL_PLAYERS.".Event = '$event_id')"
+										."   AND (".TBL_AWARDS.".Type = 'PlayerWonTournament')";
+										$result = $sql->db_Query($q);
+										$pid = mysql_result($result, 0 , TBL_PLAYERS.".PlayerID");
+										$uid = mysql_result($result, 0 , TBL_GAMERS.".User");
+										$aid = mysql_result($result, 0 , TBL_AWARDS.".AwardID");
+										
+										$q = "DELETE FROM ".TBL_AWARDS
+										." WHERE (".TBL_AWARDS.".AwardID = '$aid')";
+										$result = $sql->db_Query($q);
+										
+										// gold
+										if(is_gold_system_active() && ($this->getField('GoldWinningEvent')>0)) {												
+											$gold_param['gold_user_id'] = $uid;
+											$gold_param['gold_who_id'] = 0;
+											$gold_param['gold_amount'] = $this->getField('GoldWinningEvent');
+											$gold_param['gold_type'] = EB_L1;
+											$gold_param['gold_action'] = "debit";
+											$gold_param['gold_plugin'] = "ebattles";
+											$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
+											$gold_param['gold_forum'] = 0;
+											$gold_obj->gold_modify($gold_param);
+										}
+										break;
+									case "Clan Tournament":
+										$q = "SELECT ".TBL_TEAMS.".*, "
+										.TBL_DIVISIONS.".*, "
+										.TBL_EVENTS.".*, "
+										.TBL_AWARDS.".*"
+										." FROM ".TBL_TEAMS.", "
+										.TBL_DIVISIONS.", "
+										.TBL_EVENTS.", "
+										.TBL_AWARDS
+										." WHERE (".TBL_TEAMS.".TeamID = ".TBL_AWARDS.".Team)"
+										."   AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
+										."   AND (".TBL_TEAMS.".Event = '$event_id')"
+										."   AND (".TBL_AWARDS.".Type = 'TeamWonTournament')";
+										$result = $sql->db_Query($q);
+										$pid = mysql_result($result, 0 , TBL_TEAMS.".TeamID");
+										$uid = mysql_result($result, 0 , TBL_DIVISIONS.".Captain");
+										$aid = mysql_result($result, 0 , TBL_AWARDS.".AwardID");
+										
+										$q = "DELETE FROM ".TBL_AWARDS
+										." WHERE (".TBL_AWARDS.".AwardID = '$aid')";
+										$result = $sql->db_Query($q);
+
+										// gold
+										if(is_gold_system_active() && ($this->getField('GoldWinningEvent')>0)) {
+											$gold_param['gold_user_id'] = $uid;
+											$gold_param['gold_who_id'] = 0;
+											$gold_param['gold_amount'] = $this->getField('GoldWinningEvent');
+											$gold_param['gold_type'] = EB_L1;
+											$gold_param['gold_action'] = "debit";
+											$gold_param['gold_plugin'] = "ebattles";
+											$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
+											$gold_param['gold_forum'] = 0;
+											$gold_obj->gold_modify($gold_param);
+										}
+										break;
+									default:
+									}								
+								}	// remove awards
+							}	// delete
+						}	// for(match)
+					}	// if(nbr_matchs>0)
 					
 					if ($match_deleted==true)
 					{
@@ -1685,7 +1767,7 @@ class Event extends DatabaseTable
 
 						$results[$round][$matchup]['topWins'] = 0;
 						$results[$round][$matchup]['bottomWins'] = 0;
-						if ($nbr_matchs > 0) 
+						if ($nbr_matchs > 0)
 						{
 							for($match = 0; $match < $nbr_matchs; $match++)
 							{
@@ -1745,150 +1827,142 @@ class Event extends DatabaseTable
 										
 										if ($numScores>0)
 										{
-											$i = 0;
-											switch($this->getMatchPlayersType())
-											{
-											case 'Players':
-												$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-												break;
-											case 'Teams':
-												$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-												break;
-											default:
-											}
-											$pscoreid  = mysql_result($result,$i, TBL_SCORES.".ScoreID");
-											$prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
-											$pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
+											for($i = 0; $i<$numScores; $i++) {
 											
-											$teamTop    = substr($content[$round][$matchup][0],1);
-											$teamBottom = substr($content[$round][$matchup][1],1);
-											
-											$teamTopID = $teams[$teamTop-1]['PlayerID'];
-											$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
-											
-											if ($teamTopID == $pid)
-											{
-												$current_match_winner = 'top';
+												switch($this->getMatchPlayersType())
+												{
+												case 'Players':
+													$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
+													break;
+												case 'Teams':
+													$pid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
+													break;
+												default:
+												}
+												$pscoreid  = mysql_result($result,$i, TBL_SCORES.".ScoreID");
+												$prank  = mysql_result($result,$i, TBL_SCORES.".Player_Rank");
+												$pscore  = mysql_result($result,$i, TBL_SCORES.".Player_Score");
+												$pMatchTeam  = mysql_result($result,$i, TBL_SCORES.".Player_MatchTeam");
+												
+												$teamTop    = substr($content[$round][$matchup][0],1);
+												$teamBottom = substr($content[$round][$matchup][1],1);
+												
+												$results[$round][$matchup]['matchs'][$match]['scores'][$i] = $pscore;
+												
+												if($i==0)
+												{
+													$teamTopID = $teams[$teamTop-1]['PlayerID'];
+													$teamBottomID = $teams[$teamBottom-1]['PlayerID'];
+
+													if ($teamTopID == $pid)
+													{
+														$current_match_winner = 'top';
+													}
+													else
+													{
+														$current_match_winner = 'bottom';
+													}
+													$results[$round][$matchup]['matchs'][$match]['winner'] = $current_match_winner;
+												}
 											}
-											else
-											{
-												$current_match_winner = 'bottom';
-											}
-											$results[$round][$matchup]['matchs'][$match]['winner'] = $current_match_winner;
 										}
 									}										
-								}
+								}	// match not played
 								
+								$matchupWinnerID = 0;
 								if($current_match_winner == 'top')
 								{
 									$results[$round][$matchup]['topWins'] += 1;
 									if ($results[$round][$matchup]['topWins'] == ($rounds[$round]['BestOf'] + 1)/2)
 									{
 										$results[$round][$matchup]['winner'] = 'top';
+										$matchupWinnerID = $teamTopID;
 										//echo "Match $matchs, top won<br>";
-										if(($round == $nbrRounds-1)&&($competition_type == 'Tournament'))
-										{
-											// top has won the tournament
-											$this->setFieldDB('Status', 'finished');
-
-											// Award: player wins tournament
-											switch($type)
-											{
-											case "One Player Tournament":
-												$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-												VALUES ($teamTopID,'PlayerWonTournament',$time)";
-												$result_Award = $sql->db_Query($q_Award);
-
-												// gold
-												if(is_gold_system_active() && ($this->getField('GoldWinningEvent')>0)) {												
-													// find player's user_id
-													$q = "SELECT ".TBL_PLAYERS.".*, "
-													.TBL_GAMERS.".*"
-													." FROM ".TBL_PLAYERS.", "
-													.TBL_GAMERS
-													." WHERE (".TBL_PLAYERS.".PlayerID = '$teamTopID')"
-													."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)";
-													$result = $sql->db_Query($q);
-													$uid = mysql_result($result, 0 , TBL_GAMERS.".User");
-
-													$gold_param['gold_user_id'] = $uid;
-													$gold_param['gold_who_id'] = 0;
-													$gold_param['gold_amount'] = $this->getField('GoldWinningEvent');
-													$gold_param['gold_type'] = EB_L1;
-													$gold_param['gold_action'] = "credit";
-													$gold_param['gold_plugin'] = "ebattles";
-													$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
-													$gold_param['gold_forum'] = 0;
-													$gold_obj->gold_modify($gold_param);
-												}	
-
-												break;
-											case "Clan Tournament":
-												$q_Award = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
-												VALUES ($teamTopID,'TeamWonTournament',$time)";
-												$result_Award = $sql->db_Query($q_Award);
-
-												// gold
-												if(is_gold_system_active() && ($this->getField('GoldWinningEvent')>0)) {
-													// find team captain
-													$q = "SELECT ".TBL_TEAMS.".*, "
-													.TBL_DIVISIONS.".*"
-													." FROM ".TBL_TEAMS.", "
-													.TBL_DIVISIONS
-													." WHERE (".TBL_TEAMS.".TeamID = '$teamTopID')"
-													."   AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)";
-													$result = $sql->db_Query($q);
-													$uid = mysql_result($result, 0 , TBL_DIVISIONS.".Captain");
-
-													$gold_param['gold_user_id'] = $uid;
-													$gold_param['gold_who_id'] = 0;
-													$gold_param['gold_amount'] = $this->getField('GoldWinningEvent');
-													$gold_param['gold_type'] = EB_L1;
-													$gold_param['gold_action'] = "credit";
-													$gold_param['gold_plugin'] = "ebattles";
-													$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
-													$gold_param['gold_forum'] = 0;
-													$gold_obj->gold_modify($gold_param);
-												}	
-
-												break;
-											default:
-											}
-										}
 									}
-								}
+								}	// winner==top
 								if($current_match_winner == 'bottom')
 								{
 									$results[$round][$matchup]['bottomWins'] += 1;
 									if ($results[$round][$matchup]['bottomWins'] == ($rounds[$round]['BestOf'] + 1)/2)
 									{
 										$results[$round][$matchup]['winner'] = 'bottom';
+										$matchupWinnerID= $teamBottomID;
 										//echo "Match $matchs, bottom won<br>";
-										if(($round == $nbrRounds-1)&&($competition_type == 'Tournament'))
-										{
-											// bottom has won the tournament
-											$this->setFieldDB('Status', 'finished');
-
-											// Award: player wins tournament
-											switch($type)
-											{
-											case "One Player Tournament":
-												$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-												VALUES ($teamBottomID,'PlayerWonTournament',$time)";
-												break;
-											case "Clan Tournament":
-												$q_Award = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
-												VALUES ($teamBottomID,'TeamWonTournament',$time)";
-												break;
-											default:
-											}
-											$result_Award = $sql->db_Query($q_Award);
-										}
 									}
-								}
-							}
-						}
-					}
+								}	// winner==bottom
+								
+								if($matchupWinnerID != 0) {
+									if(($round == $nbrRounds-1)&&($competition_type == 'Tournament'))
+									{
+										// player has won the tournament
+										$this->setFieldDB('Status', 'finished');
+
+										// Award: player wins tournament
+										switch($type)
+										{
+										case "One Player Tournament":
+											$q_Award = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+											VALUES ($matchupWinnerID,'PlayerWonTournament',$time)";
+											$result_Award = $sql->db_Query($q_Award);
+
+											// gold
+											if(is_gold_system_active() && ($this->getField('GoldWinningEvent')>0)) {												
+												// find player's user_id
+												$q = "SELECT ".TBL_PLAYERS.".*, "
+												.TBL_GAMERS.".*"
+												." FROM ".TBL_PLAYERS.", "
+												.TBL_GAMERS
+												." WHERE (".TBL_PLAYERS.".PlayerID = '$matchupWinnerID')"
+												."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)";
+												$result = $sql->db_Query($q);
+												$uid = mysql_result($result, 0 , TBL_GAMERS.".User");
+
+												$gold_param['gold_user_id'] = $uid;
+												$gold_param['gold_who_id'] = 0;
+												$gold_param['gold_amount'] = $this->getField('GoldWinningEvent');
+												$gold_param['gold_type'] = EB_L1;
+												$gold_param['gold_action'] = "credit";
+												$gold_param['gold_plugin'] = "ebattles";
+												$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
+												$gold_param['gold_forum'] = 0;
+												$gold_obj->gold_modify($gold_param);
+											}
+											break;
+										case "Clan Tournament":
+											$q_Award = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+											VALUES ($matchupWinnerID,'TeamWonTournament',$time)";
+											$result_Award = $sql->db_Query($q_Award);
+
+											// gold
+											if(is_gold_system_active() && ($this->getField('GoldWinningEvent')>0)) {
+												// find team captain
+												$q = "SELECT ".TBL_TEAMS.".*, "
+												.TBL_DIVISIONS.".*"
+												." FROM ".TBL_TEAMS.", "
+												.TBL_DIVISIONS
+												." WHERE (".TBL_TEAMS.".TeamID = '$matchupWinnerID')"
+												."   AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)";
+												$result = $sql->db_Query($q);
+												$uid = mysql_result($result, 0 , TBL_DIVISIONS.".Captain");
+
+												$gold_param['gold_user_id'] = $uid;
+												$gold_param['gold_who_id'] = 0;
+												$gold_param['gold_amount'] = $this->getField('GoldWinningEvent');
+												$gold_param['gold_type'] = EB_L1;
+												$gold_param['gold_action'] = "credit";
+												$gold_param['gold_plugin'] = "ebattles";
+												$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
+												$gold_param['gold_forum'] = 0;
+												$gold_obj->gold_modify($gold_param);
+											}
+											break;
+										default:
+										}
+									}	// last round
+								}	// if(matchupWinner!=0)
+							}	// for(match)
+						}	// if(nbr_matchs>0)
+					}	// update results
 
 					$topWins = $results[$round][$matchup]['topWins'];
 					$bottomWins = $results[$round][$matchup]['bottomWins'];
@@ -1929,38 +2003,123 @@ class Event extends DatabaseTable
 							$brackets[$matchupsRows[$round][$matchup][1]][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][1], $bottomWins);
 						}
 
-						$current_match = $results[$round][$matchup]['matchs'][$nbr_matchs-1];
+						$matchup_string = '';
+						
+						if($nbr_matchs>0) {
+							$tbl = array();
+							for($match = 0; $match < $nbr_matchs; $match++) {
+								$match_id = $results[$round][$matchup]['matchs'][$match]['match_id'];
+								$match_winner = $results[$round][$matchup]['matchs'][$match]['winner'];
+								$score_0 = $results[$round][$matchup]['matchs'][$match]['scores'][0];
+								$score_1 = $results[$round][$matchup]['matchs'][$match]['scores'][1];
+								
+								$score_0_str = '&nbsp;';
+								$score_1_str = '&nbsp;';
+								if ($this->getField('AllowScore') == TRUE)
+								{
+									if(isset($score_0)) $score_0_str = $score_0;
+									if(isset($score_1)) $score_1_str = $score_1;
+								}
 
-						$string = '';
-						if((isset($current_match)) && ($current_match['winner'] == 'not played'))
-						{
-							$matchObj = new Match($current_match['match_id']);
-							$permissions = $matchObj->get_permissions(USERID);
-							$userclass = $permissions['userclass'];
-							$can_report = $permissions['can_report'];
-							
-							if($can_report == 1)
-							{
-								$string .= '<div>';
-								$string .= ebImageLink('matchscheduledreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$matchObj->fields['MatchID'].'&amp;actionid=matchscheduledreport&amp;userclass='.$userclass, 'page_white_edit.png', '', 'matchreport_link', '', EB_MATCH_L1.' '.$nbr_matchs);
-								$string .= '</div>';
+								switch($match_winner)
+								{
+									case 'top':
+										$class_str = 'match-winner';
+										$score_str = $score_0_str;
+										$match_link_str = '<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><div class="'.$class_str .'" title="'.EB_MATCH_L1.' '.($match+1).'">'.$score_str.'</div></a>';
+										$tbl[$match][0] = '<td>'.$match_link_str.'</td>';
+
+										$class_str = 'match-loser';
+										$score_str = $score_1_str;
+										$match_link_str = '<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><div class="'.$class_str .'" title="'.EB_MATCH_L1.' '.($match+1).'">'.$score_str.'</div></a>';
+										$tbl[$match][1] = '<td>'.$match_link_str.'</td>';
+									break;
+									case 'bottom':
+										$class_str = 'match-loser';
+										$score_str = $score_1_str;
+										$match_link_str = '<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><div class="'.$class_str .'" title="'.EB_MATCH_L1.' '.($match+1).'">'.$score_str.'</div></a>';
+										$tbl[$match][0] = '<td>'.$match_link_str.'</td>';
+
+										$class_str = 'match-winner';
+										$score_str = $score_0_str;
+										$match_link_str = '<a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><div class="'.$class_str .'" title="'.EB_MATCH_L1.' '.($match+1).'">'.$score_str.'</div></a>';
+										$tbl[$match][1] = '<td>'.$match_link_str.'</td>';
+									break;
+									default:
+										$class_str = 'match-not-played';
+										$matchObj = new Match($match_id);
+										$permissions = $matchObj->get_permissions(USERID);
+										$userclass = $permissions['userclass'];
+										$can_report = $permissions['can_report'];
+										$can_approve = $permissions['can_approve'];
+										$can_delete = $permissions['can_delete'];
+										$can_edit = $permissions['can_edit'];
+										$match_link_str = '';
+										$tbl[$match][0] = '';
+
+										if ($can_approve == 1)
+										{
+											$match_link_str = ' <a href="'.e_PLUGIN.'ebattles/matchinfo.php?matchid='.$match_id.'"><img class="eb_image" src="'.e_PLUGIN.'ebattles/images/exclamation.png" alt="'.EB_MATCH_L13.'" title="'.EB_MATCH_L13.'"/></a>';
+											$tbl[$match][0] .= '<td rowspan="2" class="'.$class_str.'"><div class="'.$class_str.'" title="'.EB_MATCH_L1.' '.($match+1).'">'.$match_link_str.'</div></td>';
+										}
+										/*
+										if($can_edit == 1)
+										{
+											if($matchObj->getField('Status') == 'scheduled')
+											{
+												$match_link_str = ebImageLink('matchschedulededit', EB_MATCHR_L46, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchschedulededit&amp;userclass='.$userclass, 'page_white_edit.png', '', 'matchreport_link', '', EB_MATCHR_L46.' '.($match+1));
+												$tbl[$match][0] .= '<td rowspan="2" class="'.$class_str.'"><div class="'.$class_str.'">'.$match_link_str.'</div></td>';
+											}
+											else
+											{
+												$match_link_str = ebImageLink('matchedit', EB_MATCHR_L46, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchedit&amp;userclass='.$userclass, 'page_white_edit.png', '', 'matchreport_link', '', EB_MATCHR_L46.' '.($match+1));
+												$tbl[$match][0] .= '<td rowspan="2" class="'.$class_str.'"><div class="'.$class_str.'">'.$match_link_str.'</div></td>';
+											}		
+										}
+										*/
+										if($can_report == 1)
+										{
+											$match_link_str = ebImageLink('matchscheduledreport', EB_MATCHR_L32, '', e_PLUGIN.'ebattles/matchreport.php?eventid='.$event_id.'&amp;matchid='.$match_id.'&amp;actionid=matchscheduledreport&amp;userclass='.$userclass, 'report.png', '', 'matchreport_link', '', EB_MATCHR_L32.' '.($match+1));
+											$tbl[$match][0] .= '<td rowspan="2" class="'.$class_str.'"><div class="'.$class_str.'" title="'.EB_MATCH_L1.' '.($match+1).'">'.$match_link_str.'</div></td>';
+										}										
+										
+										$tbl[$match][1] = '';
+									break;
+								}
+							}							
+						
+							$matchup_string = '<table class="brackets-matchup"><tbody>';
+							$matchup_string .= '<tr>';
+							for($match = 0; $match < $nbr_matchs; $match++) {
+								$matchup_string .= $tbl[$match][0];
 							}
+							$matchup_string .= '</tr>';
+							$matchup_string .= '<tr>';
+							for($match = 0; $match < $nbr_matchs; $match++) {
+								$matchup_string .= $tbl[$match][1];
+							}
+							$matchup_string .= '</tr>';
+							$matchup_string .= '</tbody></table>';
+							
+							//echo $tbl_str;
 						}
+
 						switch($style)
 						{
 						case 'elimination':
 							$brackets[$matchupsRows[$round][$matchup][0]+1][2*$round-1] = '<td rowspan="'.$rowspan.'" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'">
-							'.$string.'
+							'.$matchup_string.'
 							</td>';
 							break;
 						case 'round-robin':
 							$brackets[$matchupsRows[$round][$matchup][1]+1][2*$round-1] = '<td rowspan="1" class="match-details" title="'.EB_EVENT_L102.' '.$round.','.$matchup.'">
-							'.$string.'
+							'.$matchup_string.'
 							</td>';
 							break;
 						}
 						$rounds[$round]['nbrMatchups']++;
-					}
+						
+					}	// if(content!='E')
 
 
 					if(($scheduleNextMatches == true)
@@ -2029,71 +2188,74 @@ class Event extends DatabaseTable
 							$match_array['match_id'] = $match_id;
 							$results[$round][$matchup]['matchs'][$nbr_matchs] = $match_array;
 
-							// Send notification to all the players.
-							$fromid = 0;
-							$subject = SITENAME." ".EB_MATCHR_L52;
-
-							switch($this->getMatchPlayersType())
+							if($nbr_matchs == 0)
 							{
-							case 'Players':
-								$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
-								." FROM ".TBL_MATCHS.", "
-								.TBL_SCORES.", "
-								.TBL_PLAYERS.", "
-								.TBL_GAMERS.", "
-								.TBL_USERS
-								." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-								." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-								." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
-								." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-								." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
-								$result_Players = $sql->db_Query($q_Players);
-								$numPlayers = mysql_numrows($result_Players);
-								break;
-							case 'Teams':
-								$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
-								." FROM ".TBL_MATCHS.", "
-								.TBL_SCORES.", "
-								.TBL_TEAMS.", "
-								.TBL_PLAYERS.", "
-								.TBL_GAMERS.", "
-								.TBL_USERS
-								." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
-								." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
-								." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
-								." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
-								." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
-								." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
-								$result_Players = $sql->db_Query($q_Players);
-								$numPlayers = mysql_numrows($result_Players);
-								break;
-							default:
-							}
+								// Send notification to all the players.
+								$fromid = 0;
+								$subject = SITENAME." ".EB_MATCHR_L52;
 
-							if($numPlayers > 0)
-							{
-								for($j=0; $j < $numPlayers; $j++)
+								switch($this->getMatchPlayersType())
 								{
-									$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
-									$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
-									$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$this->getField('Name').EB_MATCHR_L56;
-									$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
-									$sendtoemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
-									if (check_class($pref['eb_pm_notifications_class']))
+								case 'Players':
+									$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
+									." FROM ".TBL_MATCHS.", "
+									.TBL_SCORES.", "
+									.TBL_PLAYERS.", "
+									.TBL_GAMERS.", "
+									.TBL_USERS
+									." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+									." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+									." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+									." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+									." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
+									$result_Players = $sql->db_Query($q_Players);
+									$numPlayers = mysql_numrows($result_Players);
+									break;
+								case 'Teams':
+									$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
+									." FROM ".TBL_MATCHS.", "
+									.TBL_SCORES.", "
+									.TBL_TEAMS.", "
+									.TBL_PLAYERS.", "
+									.TBL_GAMERS.", "
+									.TBL_USERS
+									." WHERE (".TBL_MATCHS.".MatchID = '$match_id')"
+									." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+									." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+									." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+									." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
+									." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
+									$result_Players = $sql->db_Query($q_Players);
+									$numPlayers = mysql_numrows($result_Players);
+									break;
+								default:
+								}
+
+								if($numPlayers > 0)
+								{
+									for($j=0; $j < $numPlayers; $j++)
 									{
-										// Send PM
-										sendNotification($sendto, $subject, $message, $fromid);
-									}
-									if (check_class($pref['eb_email_notifications_class']))
-									{
-										// Send email
-										require_once(e_HANDLER."mail.php");
-										sendemail($sendtoemail, $subject, $message);
+										$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
+										$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
+										$message = EB_MATCHR_L53.$pname.EB_MATCHR_L54.EB_MATCHR_L55.$this->getField('Name').EB_MATCHR_L56;
+										$sendto = mysql_result($result_Players, $j, TBL_USERS.".user_id");
+										$sendtoemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");
+										if (check_class($pref['eb_pm_notifications_class']))
+										{
+											// Send PM
+											sendNotification($sendto, $subject, $message, $fromid);
+										}
+										if (check_class($pref['eb_email_notifications_class']))
+										{
+											// Send email
+											require_once(e_HANDLER."mail.php");
+											sendemail($sendtoemail, $subject, $message);
+										}
 									}
 								}
-							}
-						}
-					}
+							}	// if(nbr_matchs==0)
+						}	// create match
+					}	// schedule next match
 					
 					/*
 					echo 'M'.$round.','.$matchup.':<br>';
@@ -2103,7 +2265,7 @@ class Event extends DatabaseTable
 					echo '- content: top='.$content[$round][$matchup][0].', bottom='.$content[$round][$matchup][1].'<br>';
 					echo '- winner='.$results[$round][$matchup]['winner'].', bye='.$results[$round][$matchup]['bye'].'<br>';
 					*/
-				}
+				}	// for(matchup)
 			}
 			else
 			{
@@ -2164,7 +2326,7 @@ class Event extends DatabaseTable
 							$brackets[$row][2*$round-1] = html_bracket_team_cell($teams, $content[$round][$matchup][$match], $bottomWins);
 						}
 					}
-				}
+				}	// for(matchup)
 			}
 			$rowspan = 2*$rowspan + 1;
 		}
@@ -2178,7 +2340,10 @@ class Event extends DatabaseTable
 		for ($i = 1; $i < $nbrRounds; $i++) {
 			if ($rounds[$i]['nbrMatchups'] != 0)
 			{
-				$bracket_html .= '<th colspan="2" title="'.EB_EVENTM_L146.' '.$rounds[$i]['BestOf'].'">'.$rounds[$i]['Title'].'</th>';
+				$bracket_html .= '<th colspan="2" title="'.EB_EVENTM_L146.' '.$rounds[$i]['BestOf'].'">';
+				$bracket_html .= $rounds[$i]['Title'].'<br />';
+				$bracket_html .= '<div class="smalltext">'.EB_EVENTM_L146.' '.$rounds[$i]['BestOf'].'</div>';
+				$bracket_html .= '</th>';
 			}
 			else
 			{
@@ -2343,11 +2508,17 @@ class Event extends DatabaseTable
 	function getTeams()
 	{
 		global $sql;
-
+		
 		$teams = array();
+		$checkedin_str = '';
 		switch($this->getMatchPlayersType())
 		{
 		case 'Players':
+			if($this->getField('CheckinDuration') > 0)
+			{
+				$checkedin_str = " AND (".TBL_PLAYERS.".CheckedIn = '1')";
+			}
+			
 			$q_Players = "SELECT ".TBL_GAMERS.".*, "
 			.TBL_PLAYERS.".*, "
 			.TBL_USERS.".*"
@@ -2357,7 +2528,8 @@ class Event extends DatabaseTable
 			." WHERE (".TBL_PLAYERS.".Event = '".$this->getField('EventID')."')"
 			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 			." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
-			." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
+			.$checkedin_str
+			." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";			
 			$result = $sql->db_Query($q_Players);
 			$nbrPlayers = mysql_numrows($result);
 			for ($player = 0; $player < $nbrPlayers; $player++)
@@ -2371,8 +2543,7 @@ class Event extends DatabaseTable
 				$pavatar = mysql_result($result,$player, TBL_USERS.".user_image");
 				$pteam  = mysql_result($result,$player , TBL_PLAYERS.".Team");
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
-				$pseed = mysql_result($result,$player , TBL_PLAYERS.".Seed");
-				if($pseed == 0) $pseed = $player + 1;
+				$pseed = $player + 1;
 
 				$teams[$pseed-1]['PlayerID'] = $playerID;
 				$teams[$pseed-1]['Name'] = $pname;
@@ -2382,6 +2553,11 @@ class Event extends DatabaseTable
 			}
 			break;
 		case 'Teams':
+			if($this->getField('CheckinDuration') > 0)
+			{
+				$checkedin_str = " AND (".TBL_TEAMS.".CheckedIn = '1')";
+			}
+
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
 			.TBL_TEAMS.".*, "
 			.TBL_DIVISIONS.".* "
@@ -2391,6 +2567,7 @@ class Event extends DatabaseTable
 			." WHERE (".TBL_CLANS.".ClanID = ".TBL_DIVISIONS.".Clan)"
 			." AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)"
 			." AND (".TBL_TEAMS.".Event = '".$this->getField('EventID')."')"
+			.$checkedin_str
 			." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
 			$result = $sql->db_Query($q_Teams);
 			$nbrTeams = mysql_numrows($result);
@@ -2398,8 +2575,7 @@ class Event extends DatabaseTable
 			{
 				$pteam  = mysql_result($result,$team, TBL_TEAMS.".TeamID");
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
-				$pseed = mysql_result($result,$team , TBL_TEAMS.".Seed");
-				if($pseed == 0) $pseed = $team + 1;
+				$pseed = $team + 1;
 
 				$teams[$pseed-1]['PlayerID'] = $pteam;
 				$teams[$pseed-1]['Name'] = $pclan;

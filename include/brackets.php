@@ -92,9 +92,12 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 			break;
 		}
 		$text .= '</td>';
-		$text .= '<td class="'.$score_class.'"><div class="'.$score_class.'">';
-		$text .= $score;
-		$text .= '</div></td>';
+		if($score!='')
+		{
+			$text .= '<td class="'.$score_class.'"><div class="'.$score_class.'">';
+			$text .= $score;
+			$text .= '</div></td>';
+		}
 		$text .= '</tr></tbody></table>';
 		break;
 	default:

@@ -132,7 +132,7 @@ else
 				$text .= '<input class="tbox" type="text" name="gameruniqueid'.$pID.'" size="40" value="'.$pGamer.'" maxlength="64"/>';
 				$text .= '</td>';
 				$text .= '<td class="eb_td">';
-				$text .= '<a href="javascript:edit_gamer(\''.$pID.'\');" title="'.EB_USER_L39.'"><img src="'.e_PLUGIN.'ebattles/images/pencil.png" alt="'.EB_USER_L39.'"/></a>';
+				$text .= '<a href="javascript:edit_gamer(\''.$pID.'\');" title="'.EB_USER_L39.'"><img src="'.e_PLUGIN.'ebattles/images/page_white_edit.png" alt="'.EB_USER_L39.'"/></a>';
 				$text .= '</td>';
 			}
 			/* Visitor not viewing own account */

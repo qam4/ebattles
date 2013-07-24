@@ -35,11 +35,25 @@ if(isset($_POST['quitevent'])){
 if(isset($_POST['checkinevent'])){
 	$pid = $_POST['player'];
 	checkinPlayer($pid);
+	
+	if(($event->getField('FixturesEnable') == TRUE)&&($event->getField('Status') == 'active'))
+	{
+		$event->brackets(true);
+	}			
+	$event->setFieldDB('IsChanged', 1);
+	
 	header("Location: eventinfo.php?eventid=$event_id");
 }
 if(isset($_POST['teamcheckinevent'])){
 	$team_id = $_POST['team'];
 	checkinTeam($team_id);
+
+	if(($event->getField('FixturesEnable') == TRUE)&&($event->getField('Status') == 'active'))
+	{
+		$event->brackets(true);
+	}			
+	$event->setFieldDB('IsChanged', 1);
+
 	header("Location: eventinfo.php?eventid=$event_id");
 }
 if(isset($_POST['joinevent'])){

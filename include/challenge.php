@@ -210,7 +210,7 @@ class Challenge extends DatabaseTable
 			}
 			*/
 
-			if($can_delete != 0)
+			if($can_delete == 1)
 			{
 				$string .= '<td>';
 				$string .= '<form action="'.e_PLUGIN.'ebattles/challengeconfirm.php?eventid='.$event_id.'&amp;challengeid='.$this->fields['ChallengeID'].'" method="post">';
