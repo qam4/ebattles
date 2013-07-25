@@ -625,6 +625,7 @@ define('EB_MATCHD_L26', 'Êtes-vous sûr de vouloir effacer ce media?');
 define('EB_MATCHD_L27', 'Editer ce match');
 define('EB_MATCHD_L28', 'Forfait');
 define('EB_MATCHD_L29', 'Si vous effacez ce match, tous les matchs heritant de celui-ci seront effacés. Êtes-vous sûr de vouloir effacer ce match?');
+define('EB_MATCHD_L30', 'Rapportez ce match');
 
 define('EB_MATCHDEL_L1', 'Match');
 define('EB_MATCHDEL_L2', 'Vous n’êtes pas autorisé à effacer ce match.');

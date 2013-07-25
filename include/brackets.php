@@ -1,4 +1,5 @@
 <?php
+require_once(e_HANDLER."avatar_handler.php");
 
 function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 	global $pref;
@@ -58,11 +59,11 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 		{
 			if($team_avatar)
 			{
-				$team_image = '<img '.getImageResize($team_avatar, 16).' alt="'.$team_avatar.'"'.'/>';
+				$team_image = '<img '.getImageResize(avatar($team_avatar), 16).' alt="'.$team_avatar.'"'.'/>';
 				$total_str_length -= 3;
 			}
 		}
-
+		
 		if($str_length > $total_str_length)
 		{
 		   //displaying the replaced string.

@@ -625,6 +625,7 @@ define('EB_MATCHD_L26', '�Est� seguro que desea eliminar este medio?');
 define('EB_MATCHD_L27', 'Editar este partido');
 define('EB_MATCHD_L28', 'Forfeit');
 define('EB_MATCHD_L29', 'If you delete this match, every match inheriting from this match will be deleted. Are you sure you want to delete this match?');
+define('EB_MATCHD_L30', 'Report this match');
 
 define('EB_MATCHDEL_L1', 'Eliminar Partido');
 define('EB_MATCHDEL_L2', 'Usted no esta autorizado para eliminar este partido.');
