@@ -154,19 +154,23 @@ table.brackets-matchup {
 
 table.brackets-matchup td {
 	border: 1px solid #000;
-    color: #000;
+	color: #000;
 	font-size: 8px;
 }
 
 table.brackets-matchup td a {
 	text-decoration: none;
-    color: #000;
+	color: #000;
+	padding:0px;
+	margin:0px;
 }
 table.brackets-matchup td div {
 	min-width: 10px;
 /*fm	max-width: 20px; */
 	line-height: 8px;
 	overflow: hidden;
+	padding:0px;
+	margin:0px;
 }
 table.brackets-matchup td div.match-winner {
 	background: #99FF99;

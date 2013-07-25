@@ -2574,6 +2574,7 @@ class Event extends DatabaseTable
 			for ($team = 0; $team < $nbrTeams; $team++)
 			{
 				$pteam  = mysql_result($result,$team, TBL_TEAMS.".TeamID");
+				$pavatar = '';	// TODO: no team avatar for now
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 				$pseed = $team + 1;
 

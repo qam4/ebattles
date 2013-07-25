@@ -5,6 +5,7 @@ require_once(e_PLUGIN.'ebattles/include/ELO.php');
 require_once(e_PLUGIN.'ebattles/include/trueskill.php');
 require_once(e_PLUGIN.'ebattles/include/event.php');
 require_once(e_PLUGIN.'ebattles/include/event.php');
+require_once(e_HANDLER."avatar_handler.php");
 
 class Match extends DatabaseTable
 {

@@ -306,7 +306,7 @@ function getImageResize($icon, $max_size, $enable_max_resize=TRUE, $force_resize
 	}
 	else
 	{
-		return 'src="'.$icon;
+        return 'src="'.$icon.'"';
 	}
 }
 
