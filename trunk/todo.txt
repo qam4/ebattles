@@ -19,13 +19,19 @@ Match report in dialog.
 . matchinfo.php should use Match object!
 . probably would be better to recalculate the brackets every time, rather than when schedulematch is true?
 . seeding/page split not correct.
-. Support for "replacing player" by another one.
 . gamer profile should have a "game" selector
 
 Stats per game:
 1. what if i want to reset the stats at some point.
 2. what if i want to have stats for a period of time (season...)
 3. do I want to count stats for every event, or only "Official"
+4. Add new field to events, called "Category"?
+   So we can get stats for all the events falling in that category?
+   this category needs to link to a list of categories set in the admin page?
+   categorie could contain 
+    . unique id
+    . text field (tags)
+	. date range (season)
 
 DONE
 . late checkins instead of late signups when checkin is enabled?
