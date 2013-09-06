@@ -6,6 +6,7 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 
 	//echo "html_bracket_team_cell: $teams, $content, $score, $container_class<br>";
 	$text = '<td><div class="container '.$container_class.'">';
+	//$text .= '<div>'.$content.'</div>';
 	if ($container_class=='victor')
 	{
 		$victor_image = 'images/awards/trophy_gold.png';
