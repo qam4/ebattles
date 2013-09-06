@@ -65,24 +65,29 @@ else
 
 	if($event->getField('FixturesEnable') == TRUE)
 	{
-		$players_seeding_enabled = true;
-		$teams_seeding_enabled = true;
+		$show_seeds_players = true;
+		$can_change_seeds_players = true;
+		$show_seeds_teams = true;
+		$can_change_seeds_teams = true;
 	}
 	else
 	{
-		$players_seeding_enabled = false;
-		$teams_seeding_enabled = false;
+		$show_seeds_players = false;
+		$can_change_seeds_players = false;
+		$show_seeds_teams = false;
+		$can_change_seeds_teams = false;
 	}
 
 	if($event->getField('Type')=='Team Ladder')
 	{
-		$teams_seeding_enabled = false;
+		$show_seeds_teams = false;
+		$can_change_seeds_teams = false;
 	}
 	
 	if($event->getField('Status')=='active')
 	{
-		$players_seeding_enabled = false;
-		$teams_seeding_enabled = false;
+		$can_change_seeds_players = false;
+		$can_change_seeds_teams = false;
 	}
 
 	$can_manage = 0;
@@ -806,7 +811,7 @@ else
 		case "Clan Ladder":
 		case "Clan Tournament":
 			// Show list of teams here
-			if($teams_seeding_enabled == true)
+			if($show_seeds_teams == true)
 			{
 				$order_by_str = " ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
 			}
@@ -835,7 +840,7 @@ else
 			}
 			else
 			{
-				if($teams_seeding_enabled == true)
+				if($can_change_seeds_teams == true)
 				{
 					$text .= '<table class="table_left">';
 					$text .= '<tr>';
@@ -853,11 +858,11 @@ else
 					$text .= '</table>';
 				}
 
-				$teams_list_id = ($teams_seeding_enabled == true) ? 'teams_list_sortable' : 'teams_list';
+				$teams_list_id = ($can_change_seeds_teams == true) ? 'teams_list_sortable' : 'teams_list';
 
 				$text .= '<table id="'.$teams_list_id.'" class="eb_table" style="width:95%"><thead>';
 				$text .= '<tr>';
-				if($teams_seeding_enabled == true)
+				if($show_seeds_teams == true)
 				{
 					// Column "Seed"
 					$text .= '<th class="eb_th2">'.EB_EVENTM_L154.'</th>';
@@ -891,7 +896,7 @@ else
 					}
 
 					$text .= '<tr id="team_'.$tid.'">';
-					if($teams_seeding_enabled == true)
+					if($show_seeds_teams == true)
 					{
 						// Column "Seed"
 						$text .= '<td class="eb_td">'.$tseed.'</td>';
@@ -917,7 +922,7 @@ else
 		case 'Players':
 			// Show list of players here
 			$orderby_array = $array["$orderby"];
-			if($players_seeding_enabled == true)
+			if($show_seeds_players == true)
 			{
 				$order_by_str = " ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
 			}
@@ -957,7 +962,7 @@ else
 				$text .= $pages->display_items_per_page();
 				$text .= '</span><br /><br />';
 				/* Display table contents */
-				if($players_seeding_enabled == true)
+				if($can_change_seeds_players == true)
 				{
 					$text .= '<table class="table_left">';
 					$text .= '<tr>';
@@ -975,13 +980,13 @@ else
 					$text .= '</table>';
 				}
 
-				$players_list_id = ($players_seeding_enabled == true) ? 'players_list_sortable' : 'players_list';
+				$players_list_id = ($can_change_seeds_players == true) ? 'players_list_sortable' : 'players_list';
 
 				$text .= '<form id="playersform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
 				$text .= '<table id="'.$players_list_id.'" class="eb_table" style="width:95%"><thead>';
 				$text .= '<tr>';
 
-				if($players_seeding_enabled == true)
+				if($show_seeds_players == true)
 				{
 					// Column "Seed"
 					$text .= '<th class="eb_th2">'.EB_EVENTM_L154.'</th>';
@@ -1033,7 +1038,7 @@ else
 					$nbrscores = mysql_numrows($result_2);
 
 					$text .= '<tr id="player_'.$pid.'">';
-					if($players_seeding_enabled == true)
+					if($show_seeds_players == true)
 					{
 						// Column "Seed"
 						$text .= '<td class="eb_td">'.$pseed.'</td>';
@@ -1072,7 +1077,7 @@ else
 					}
 					if($event->getField('CheckinDuration') > 0)
 					{
-						if ($pcheckedin != 1)
+						if(($pcheckedin != 1)&&($can_checkin==1))
 						{
 							$text .= ' <a href="javascript:checkin_player(\''.$pid.'\');" title="'.EB_EVENTM_L171.'""><img src="'.e_PLUGIN.'ebattles/images/tick.png" alt="'.EB_EVENTM_L171.'"/></a>';
 						}

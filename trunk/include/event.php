@@ -405,11 +405,11 @@ class Event extends DatabaseTable
 		$result = $sql->db_Query($q);
 		$numPlayers = mysql_numrows($result);
 		$looking_for_seed = 1;
-		$set_seed = false;
+		$set_seed = true;
 		for($player = 0; $player<$numPlayers; $player++)
 		{
 			$pseed = mysql_result($result, $player, TBL_PLAYERS.".Seed");
-			if(isset($pseed) && ($pseed!=0)) $set_seed  = true;
+			//if(isset($pseed) && ($pseed!=0)) $set_seed  = true;
 			if($pseed == $looking_for_seed) $looking_for_seed++;
 		}
 
@@ -475,11 +475,11 @@ class Event extends DatabaseTable
 		$result = $sql->db_Query($q);
 		$numTeams = mysql_numrows($result);
 		$looking_for_seed = 1;
-		$set_seed = false;
+		$set_seed = true;
 		for($team = 0; $team<$numTeams; $team++)
 		{
 			$tseed = mysql_result($result, $team, TBL_TEAMS.".Seed");
-			if(isset($tseed) && ($tseed!=0)) $set_seed  = true;
+			//if(isset($tseed) && ($tseed!=0)) $set_seed  = true;
 			if($tseed == $looking_for_seed) $looking_for_seed++;
 		}
 
@@ -1447,15 +1447,13 @@ class Event extends DatabaseTable
 		$format = $this->fields['Format'];
 		$event_id = $this->fields['EventID'];
 		$teams = $this->getTeams();
+		
+		//var_dump($teams);
+		
 		$results = unserialize($this->getFieldHTML('Results'));
 		
 		// TODO: check for error (return false)
 		$rounds = unserialize($this->getFieldHTML('Rounds'));
-
-		//$nbrTeams=count($teams);
-		end($teams);
-		$last_seed = key($teams);
-		reset($teams);
 
 		$matchups = $this->getMatchups();
 		$nbrRounds = count($matchups);
@@ -1503,11 +1501,8 @@ class Event extends DatabaseTable
 								$row = findRow($round, $matchup, $match, $style);
 								$matchupsRows[$round][$matchup][$match] = $row;
 								$team = substr($matchupString,1);
-								if ($team > $last_seed+1){
+								if (empty($teams[$team-1])) {
 									$content[$round][$matchup][$match] = 'E';
-								}
-								else if(empty($teams[$team-1])) {
-									$content[$round][$matchup][$match] = 'F';
 								}
 							}
 							if ($matchupString[0]=='W') {
@@ -2543,7 +2538,8 @@ class Event extends DatabaseTable
 				$pavatar = mysql_result($result,$player, TBL_USERS.".user_image");
 				$pteam  = mysql_result($result,$player , TBL_PLAYERS.".Team");
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
-				$pseed = $player + 1;
+				$pseed = mysql_result($result,$player , TBL_PLAYERS.".Seed");
+				if($pseed == 0) $pseed = $player+1;
 
 				$teams[$pseed-1]['PlayerID'] = $playerID;
 				$teams[$pseed-1]['Name'] = $pname;
@@ -2576,7 +2572,8 @@ class Event extends DatabaseTable
 				$pteam  = mysql_result($result,$team, TBL_TEAMS.".TeamID");
 				$pavatar = '';	// TODO: no team avatar for now
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
-				$pseed = $team + 1;
+				$pseed = mysql_result($result,$team, TBL_TEAMS.".Seed");
+				if($pseed == 0) $pseed = $team+1;
 
 				$teams[$pseed-1]['PlayerID'] = $pteam;
 				$teams[$pseed-1]['Name'] = $pclan;

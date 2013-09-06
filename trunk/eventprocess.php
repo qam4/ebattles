@@ -246,7 +246,7 @@ else{
 		{
 			$event->setField('ForfeitWinPoints', $new_eventforfeitwinpoints);
 		}
-		$new_eventforfeitlosspoints = htmlspecialchars($_POST['$eventforfeitlosspoints']);
+		$new_eventforfeitlosspoints = htmlspecialchars($_POST['eventforfeitlosspoints']);
 		if (preg_match("/^-?\d+$/", $new_eventforfeitlosspoints))
 		{
 			$event->setField('ForfeitLossPoints', $new_eventforfeitlosspoints);
