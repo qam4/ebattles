@@ -38,6 +38,17 @@ class Clan extends DatabaseTable
 			$insertjs = "rows='5' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
 		}
 
+		if($create==true)
+		{
+			$clan_str='';
+			$action_str='actionid=create';
+		}
+		else
+		{
+			$clan_str='clanid='.$this->getField('ClanID');
+			$action_str='&amp;actionid=edit';
+		}
+
 		$text .= "
 		<script type='text/javascript'>
 		<!--//
@@ -50,7 +61,7 @@ class Clan extends DatabaseTable
 
 		if ($this->getField('Image') == '' && $pref['eb_avatar_default_team_image'] != '') $this->setFieldDB('Image', $pref['eb_avatar_default_team_image']);
 
-		$text .= '<form id="form-clan-settings" action="'.e_PLUGIN.'ebattles/clanprocess.php?clanid='.$this->getField('ClanID').'" method="post">';
+		$text .= '<form id="form-clan-settings" action="'.e_PLUGIN.'ebattles/clanprocess.php?'.$clan_str.$action_str.'" method="post">';
 		$text .= '
 		<table class="eb_table" style="width:95%">
 		<tbody>

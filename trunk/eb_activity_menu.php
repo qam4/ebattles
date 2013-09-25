@@ -10,7 +10,7 @@ require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/match.php");
 
-$event_id = $_GET['eventid'];
+$event_id = intval($_GET['eventid']);
 
 $ebattles_title = $pref['eb_activity_menuheading'];
 $text = displayRecentActivity($event_id);

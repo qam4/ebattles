@@ -920,4 +920,6 @@ define("EB_GOLD_L8", "Event won");
 define("EB_GOLD_L9", "Played a match");
 
 define('EB_ACTIVITY_L1', 'No activity');
+
+define('EB_ERROR', 'Error!')
 ?>

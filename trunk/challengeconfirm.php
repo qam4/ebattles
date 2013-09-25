@@ -14,17 +14,15 @@ require_once(e_PLUGIN."ebattles/include/challenge.php");
 ********************************************************************/
 require_once(HEADERF);
 
-/*
-//dbg form
-echo "<br>_POST: ";
-print_r($_POST);    // show $_POST
-echo "<br>_GET: ";
-print_r($_GET);     // show $_GET
-*/
-
-/* Event Name */
-$event_id = $_GET['eventid'];
-$challenge_id = $_GET['challengeid'];
+$event_id = intval($_GET['eventid']);
+$challenge_id = intval($_GET['challengeid']);
+if((!$event_id)||(!$challenge_id))
+{
+	$text .= '<br />'.EB_ERROR.'<br />';
+	$ns->tablerender(EB_CHALLENGE_L1, $text);
+	require_once(FOOTERF);
+	exit;
+}
 
 $event = new Event($event_id);
 $challenge = new Challenge($challenge_id);

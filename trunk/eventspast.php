@@ -68,13 +68,13 @@ function displayPastEvents(){
 	'start'  => array(EB_EVENTS_L8, TBL_EVENTS.'.StartDateTime')
 	);
 	if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
-	$gameid = $_GET['gameid'];
+	$gameid = eb_sanitize($_GET['gameid']);
 
 	if (!isset($_GET['matchtype'])) $_GET['matchtype'] = "All";
-	$matchtype = $_GET['matchtype'];
+	$matchtype = eb_sanitize($_GET['matchtype']);
 
 	if (!isset($_GET['orderby'])) $_GET['orderby'] = 'game';
-	$orderby=$_GET['orderby'];
+	$orderby= eb_sanitize($_GET['orderby']);
 
 	$sort = "ASC";
 	if(isset($_GET["sort"]) && !empty($_GET["sort"]))
@@ -312,10 +312,7 @@ function displayPastEvents(){
 		$text .= '</tbody></table><br />';
 
 		$text .= '<div>';
-		$text .= '
-		<form action="'.e_PLUGIN.'ebattles/events.php" method="post">
-		'.ebImageTextButton('submit', 'action_back.gif', EB_EVENTP_L3.' '.EB_EVENTP_L4).'
-		</form>';
+		$text .= ebImageLink('back_to_events', '', e_PLUGIN.'ebattles/events.php', '', 'action_back.gif', EB_EVENTP_L3.' '.EB_EVENTP_L4, 'jq-button');
 		$text .= '</div>';
 
 	}

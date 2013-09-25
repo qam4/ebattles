@@ -904,7 +904,7 @@ class Match extends DatabaseTable
 		}
 		else
 		{
-			$match->deleteMatchScores();
+			$this->deleteMatchScores();
 		}
 
 		$event->setFieldDB('IsChanged', 1);

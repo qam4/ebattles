@@ -92,13 +92,13 @@ function displayCurrentEvents(){
 	'start'  => array(EB_EVENTS_L8, TBL_EVENTS.'.StartDateTime')
 	);
 	if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
-	$gameid = $_GET['gameid'];
+	$gameid = eb_sanitize($_GET['gameid']);
 
 	if (!isset($_GET['matchtype'])) $_GET['matchtype'] = "All";
-	$matchtype = $_GET['matchtype'];
+	$matchtype = eb_sanitize($_GET['matchtype']);
 
 	if (!isset($_GET['orderby'])) $_GET['orderby'] = 'game';
-	$orderby=$_GET['orderby'];
+	$orderby= eb_sanitize($_GET['orderby']);
 
 	$sort = "ASC";
 	if(isset($_GET["sort"]) && !empty($_GET["sort"]))
@@ -353,10 +353,10 @@ function displayRecentEvents(){
 	$rowsPerPage = $pref['eb_default_items_per_page'];
 
 	if (!isset($_GET['gameid'])) $_GET['gameid'] = "All";
-	$gameid = $_GET['gameid'];
+	$gameid = eb_sanitize($_GET['gameid']);
 
 	if (!isset($_GET['matchtype'])) $_GET['matchtype'] = "All";
-	$matchtype = $_GET['matchtype'];
+	$matchtype = eb_sanitize($_GET['matchtype']);
 
 	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_EVENTS.".Game = '$gameid')";
 	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_GAMES.".MatchTypes LIKE '%$matchtype%')";
@@ -539,10 +539,7 @@ function displayRecentEvents(){
 		$text .= '</tbody></table><br />';
 
 		$text .= '<div>';
-		$text .= '
-		<form action="'.e_PLUGIN.'ebattles/eventspast.php" method="post">
-		'.ebImageTextButton('submit', 'action_back.gif', EB_EVENTS_L21).'
-		</form>';
+		$text .= ebImageLink('link_to_eventspast', '', e_PLUGIN.'ebattles/eventspast.php', '', 'action_back.gif', EB_EVENTS_L21, 'jq-button');
 		$text .= '</div>';
 
 	}

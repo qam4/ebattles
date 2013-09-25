@@ -603,6 +603,17 @@ class Event extends DatabaseTable
 			require_once(e_HANDLER."ren_help.php");
 			$insertjs = "rows='5' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'";
 		}
+		
+		if($create==true)
+		{
+			$event_str='';
+			$action_str='actionid=create';
+		}
+		else
+		{
+			$event_str='eventid='.$this->getField('EventID');
+			$action_str='&amp;actionid=edit';
+		}
 
 		/* Nbr players */
 		$q = "SELECT COUNT(*) as NbrPlayers"
@@ -692,7 +703,7 @@ class Event extends DatabaseTable
 		</script>
 		";
 
-		$text .= '<form id="form-event-settings" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$this->getField('EventID').'" method="post">';
+		$text .= '<form id="form-event-settings" action="'.e_PLUGIN.'ebattles/eventprocess.php?'.$event_str.$action_str.'" method="post">';
 		$text .= '
 		<table class="eb_table" style="width:95%">
 		<tbody>
@@ -2781,7 +2792,7 @@ class Event extends DatabaseTable
 		$result = $sql->db_Query($q);
 
 		$pbanned=0;
-		if(mysql_numrows($result) == 1)
+		if(mysql_numrows($result) > 0)
 		{
 			$userclass |= eb_UC_EVENT_PLAYER;
 			$row = mysql_fetch_array($result);
@@ -2796,7 +2807,7 @@ class Event extends DatabaseTable
 				$can_challenge = 1;
 			}
 		}
-
+		
 		/* Nbr players */
 		$q = "SELECT COUNT(*) as NbrPlayers"
 		." FROM ".TBL_PLAYERS

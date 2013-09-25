@@ -9,7 +9,7 @@ require_once(HEADERF);
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
 global $sql;
-$event_id = $_GET['eventid'];
+$event_id = intval($_GET['eventid']);
 
 $MAX_FILE_SIZE = 4000000;
 

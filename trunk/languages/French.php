@@ -920,4 +920,6 @@ define("EB_GOLD_L8", "Vainqueur du tournoi");
 define("EB_GOLD_L9", "Match joué");
 
 define('EB_ACTIVITY_L1', 'Pas d’activité');
+
+define('EB_ERROR', 'Erreur!')
 ?>

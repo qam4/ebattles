@@ -18,15 +18,6 @@ $e_wysiwyg = "challenge_comments";  // set $e_wysiwyg before including HEADERF
 require_once(HEADERF);
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 
-/*
-/*
-//dbg form
-echo "<br>_POST: ";
-print_r($_POST);    // show $_POST
-echo "<br>_GET: ";
-print_r($_GET);     // show $_GET
-*/
-
 if (e_WYSIWYG)
 {
 	$insertjs = "rows='15'";
@@ -65,7 +56,15 @@ document.getElementById("f_date"+index).value = ""
 </script>
 ';
 /* Event Name */
-$event_id = $_GET['eventid'];
+$event_id = intval($_GET['eventid']);
+if(!$event_id)
+{
+	$text .= '<br />'.EB_ERROR.'<br />';
+	$ns->tablerender(EB_CHALLENGE_L1, $text);
+	require_once(FOOTERF);
+	exit;
+}
+
 $event = new Event($event_id);
 
 if(isset($_POST['challenged_player_choice']) && $_POST['challenged_player_choice']!="")
