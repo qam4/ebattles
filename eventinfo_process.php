@@ -8,7 +8,12 @@ require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN.'ebattles/include/event.php');
 require_once(e_PLUGIN.'ebattles/include/gamer.php');
 
-$event_id = $_GET['eventid'];
+$event_id = intval($_GET['eventid']);
+if(!$event_id)
+{
+	header("Location: ./events.php");
+	exit();
+}
 $event = new Event($event_id);
 
 $error_str = '';

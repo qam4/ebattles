@@ -13,68 +13,66 @@ require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(HEADERF);
 
 /* Clan Name */
-$clan_id = $_GET['clanid'];
-$div_id = $_GET['divid'];
-
-if (!$clan_id)
+$clan_id = intval($_GET['clanid']);
+$div_id = intval($_GET['divid']);
+if(!$clan_id)
 {
 	header("Location: ./clans.php");
-	exit();
+    exit();
 }
-else
-{
-	require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
-	require_once(e_PLUGIN."ebattles/claninfo_process.php");
 
-	$text .= '
-	<script type="text/javascript" src="./js/clan.js"></script>
-	';
+require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
+require_once(e_PLUGIN."ebattles/claninfo_process.php");
 
-	$q = "SELECT ".TBL_CLANS.".*"
-	." FROM ".TBL_CLANS
-	." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
-	$result = $sql->db_Query($q);
-	$num_rows = mysql_numrows($result);
+$text .= '
+<script type="text/javascript" src="./js/clan.js"></script>
+';
 
-	$clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
+$q = "SELECT ".TBL_CLANS.".*"
+." FROM ".TBL_CLANS
+." WHERE (".TBL_CLANS.".ClanID = '$clan_id')";
+$result = $sql->db_Query($q);
+$num_rows = mysql_numrows($result);
 
-	$text .= '<div id="tabs">';
-	$text .= '<ul>';
-	$text .= '<li><a href="#tabs-1">'.EB_CLAN_L2.'</a></li>';
-	$text .= '<li><a href="#tabs-2">'.EB_CLAN_L3.'</a></li>';
-	$text .= '<li><a href="#tabs-3">'.EB_CLAN_L4.'</a></li>';
-	$text .= '<li><a href="#tabs-4">'.EB_CLAN_L31.'</a></li>';
-	$text .= '</ul>';
-	/**
-	* Display Latest Games
-	*/
-	$text .= '<div id="tabs-1">';
-	displayTeamSummary($clan_id);
-	$text .= '</div>';
+$clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
 
-	/**
-	* Display Divisions
-	*/
-	$text .= '<div id="tabs-2">';
-	displayTeamDivisions($clan_id, $div_id);
-	$text .= '</div>';
+$text .= '<div id="tabs">';
+$text .= '<ul>';
+$text .= '<li><a href="#tabs-1">'.EB_CLAN_L2.'</a></li>';
+$text .= '<li><a href="#tabs-2">'.EB_CLAN_L3.'</a></li>';
+$text .= '<li><a href="#tabs-3">'.EB_CLAN_L4.'</a></li>';
+$text .= '<li><a href="#tabs-4">'.EB_CLAN_L31.'</a></li>';
+$text .= '</ul>';
+/**
+* Display Latest Games
+*/
+$text .= '<div id="tabs-1">';
+displayTeamSummary($clan_id);
+$text .= '</div>';
 
-	/**
-	* Display Events
-	*/
-	$text .= '<div id="tabs-3">';
-	displayTeamEvents($clan_id, $div_id);
-	$text .= '</div>';
+/**
+* Display Divisions
+*/
+$text .= '<div id="tabs-2">';
+displayTeamDivisions($clan_id, $div_id);
+$text .= '</div>';
 
-	/**
-	* Display Awards
-	*/
-	$text .= '<div id="tabs-4">';
-	displayTeamAwards($clan_id);
-	$text .= '</div>';
+/**
+* Display Events
+*/
+$text .= '<div id="tabs-3">';
+displayTeamEvents($clan_id, $div_id);
+$text .= '</div>';
 
-	$text .= '</div>';
-}
+/**
+* Display Awards
+*/
+$text .= '<div id="tabs-4">';
+displayTeamAwards($clan_id);
+$text .= '</div>';
+
+$text .= '</div>';
+
 $ns->tablerender("$clan_name", $text);
 require_once(FOOTERF);
 exit;
@@ -86,69 +84,69 @@ Functions
 * displayTeamSummary - Displays ...
 */
 function displayTeamSummary($clan_id){
-	global $sql;
-	global $text;
-	global $pref;
-	global $tp;
+global $sql;
+global $text;
+global $pref;
+global $tp;
 
-	$q = "SELECT ".TBL_CLANS.".*, "
-	.TBL_USERS.".*"
-	." FROM ".TBL_CLANS.", "
-	.TBL_USERS
-	." WHERE (".TBL_CLANS.".ClanID = '$clan_id')"
-	." AND (".TBL_USERS.".user_id = ".TBL_CLANS.".Owner)";
+$q = "SELECT ".TBL_CLANS.".*, "
+.TBL_USERS.".*"
+." FROM ".TBL_CLANS.", "
+.TBL_USERS
+." WHERE (".TBL_CLANS.".ClanID = '$clan_id')"
+." AND (".TBL_USERS.".user_id = ".TBL_CLANS.".Owner)";
 
-	$result = $sql->db_Query($q);
-	$num_rows = mysql_numrows($result);
+$result = $sql->db_Query($q);
+$num_rows = mysql_numrows($result);
 
-	$clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
-	$clan_owner  = mysql_result($result,0, TBL_USERS.".user_id");
-	$clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
-	$clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
-	$clan_avatar    = mysql_result($result,0, TBL_CLANS.".Image");
-	$clan_website    = mysql_result($result,0, TBL_CLANS.".websiteURL");
-	$clan_email    = mysql_result($result,0, TBL_CLANS.".email");
-	$clan_IM    = mysql_result($result,0, TBL_CLANS.".IM");
-	$clan_Description    = mysql_result($result,0, TBL_CLANS.".Description");
+$clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
+$clan_owner  = mysql_result($result,0, TBL_USERS.".user_id");
+$clan_owner_name   = mysql_result($result,0, TBL_USERS.".user_name");
+$clan_tag    = mysql_result($result,0, TBL_CLANS.".Tag");
+$clan_avatar    = mysql_result($result,0, TBL_CLANS.".Image");
+$clan_website    = mysql_result($result,0, TBL_CLANS.".websiteURL");
+$clan_email    = mysql_result($result,0, TBL_CLANS.".email");
+$clan_IM    = mysql_result($result,0, TBL_CLANS.".IM");
+$clan_Description    = mysql_result($result,0, TBL_CLANS.".Description");
 
-	$can_manage = 0;
-	if (check_class($pref['eb_mod_class'])) $can_manage = 1;
-	if (USERID==$clan_owner) $can_manage = 1;
-	if ($can_manage == 1)
-	$text .= '
-	<form action="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'" method="post">
-	'.ebImageTextButton('submit', 'page_white_edit.png', EB_CLAN_L8).'
-	</form>';
+$can_manage = 0;
+if (check_class($pref['eb_mod_class'])) $can_manage = 1;
+if (USERID==$clan_owner) $can_manage = 1;
+if ($can_manage == 1)
+$text .= '
+<form action="'.e_PLUGIN.'ebattles/clanmanage.php?clanid='.$clan_id.'" method="post">
+'.ebImageTextButton('submit', 'page_white_edit.png', EB_CLAN_L8).'
+</form>';
 
-	$text .= '<b>'.$clan_name.' ('.$clan_tag.')</b><br />';
+$text .= '<b>'.$clan_name.' ('.$clan_tag.')</b><br />';
 
-	$image = "";
-	if($clan_avatar)
-	{
-		$image = '<img '.getAvatarResize(getImagePath($clan_avatar, 'team_avatars')).'/>';
-	} else if ($pref['eb_avatar_default_team_image'] != ''){
-		$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>';
-	}
-	$text .= '<div>'.$image.'</div>';
+$image = "";
+if($clan_avatar)
+{
+	$image = '<img '.getAvatarResize(getImagePath($clan_avatar, 'team_avatars')).'/>';
+} else if ($pref['eb_avatar_default_team_image'] != ''){
+	$image = '<img '.getAvatarResize(getImagePath($pref['eb_avatar_default_team_image'], 'team_avatars')).'/>';
+}
+$text .= '<div>'.$image.'</div>';
 
-	$text .= '<table class="eb_table table_left"><tbody>';
+$text .= '<table class="eb_table table_left"><tbody>';
 
-	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L7.':</td>';
-	$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a></td>';
-	$text .= '</tr>';
-	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L27.':</td>';
-	$text .= '<td class="eb_td"><a href="http://'.$clan_website.'" rel="external">'.$clan_website.'</a></td>';
-	$text .= '</tr>';
-	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L28.':</td>';
-	$text .= '<td class="eb_td"><a href="mailto:'.$clan_email.'">'.$clan_email.'</a></td>';
-	$text .= '</tr>';
-	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L29.':</td>';
-	$text .= '<td class="eb_td">'.$clan_IM.'</td>';
-	$text .= '</tr>';
-	$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L30.':</td>';
-	$text .= '<td class="eb_td">'.$tp->toHTML($clan_Description, true).'</td>';
-	$text .= '</tr>';
-	$text .= '</tbody></table>';
+$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L7.':</td>';
+$text .= '<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$clan_owner.'">'.$clan_owner_name.'</a></td>';
+$text .= '</tr>';
+$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L27.':</td>';
+$text .= '<td class="eb_td"><a href="http://'.$clan_website.'" rel="external">'.$clan_website.'</a></td>';
+$text .= '</tr>';
+$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L28.':</td>';
+$text .= '<td class="eb_td"><a href="mailto:'.$clan_email.'">'.$clan_email.'</a></td>';
+$text .= '</tr>';
+$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L29.':</td>';
+$text .= '<td class="eb_td">'.$clan_IM.'</td>';
+$text .= '</tr>';
+$text .= '<tr><td class="eb_td eb_tdc1">'.EB_CLAN_L30.':</td>';
+$text .= '<td class="eb_td">'.$tp->toHTML($clan_Description, true).'</td>';
+$text .= '</tr>';
+$text .= '</tbody></table>';
 
 }
 

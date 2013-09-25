@@ -44,7 +44,7 @@ document.getElementById('challenge_team_form').submit();
 ";
 
 if (!isset($_GET['orderby'])) $_GET['orderby'] = 1;
-$orderby=$_GET['orderby'];
+$orderby= intval($_GET['orderby']);
 
 $sort = "DESC";
 if(isset($_GET["sort"]) && !empty($_GET["sort"]))
@@ -54,378 +54,376 @@ if(isset($_GET["sort"]) && !empty($_GET["sort"]))
 }
 
 /* Event Name */
-$event_id = $_GET['eventid'];
+$event_id = intval($_GET['eventid']);
 
 if (!$event_id)
 {
 	header("Location: ./events.php");
 	exit();
 }
+
+$file = 'cache/sql_cache_event_'.$event_id.'.txt';
+$file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
+
+$q = "SELECT ".TBL_EVENTS.".*, "
+.TBL_GAMES.".*, "
+.TBL_USERS.".*"
+." FROM ".TBL_EVENTS.", "
+.TBL_GAMES.", "
+.TBL_USERS
+." WHERE (".TBL_EVENTS.".EventID = '$event_id')"
+."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
+."   AND (".TBL_USERS.".user_id = ".TBL_EVENTS.".Owner)";
+$result = $sql->db_Query($q);
+
+$event = new Event($event_id);
+
+//------------ permissions --------------
+$permissions = $event->get_permissions(USERID);
+$userclass = $permissions['userclass'];
+$can_approve = $permissions['can_approve'];
+$can_report = $permissions['can_report'];
+$can_schedule = $permissions['can_schedule'];
+$can_report_quickloss = $permissions['can_report_quickloss'];
+$can_submit_replay = $permissions['can_submit_replay'];
+$can_challenge = $permissions['can_challenge'];
+
+$rounds = unserialize($event->getFieldHTML('Rounds'));
+$egame = mysql_result($result,0 , TBL_GAMES.".Name");
+$egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
+$egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
+$eowner = mysql_result($result,0 , TBL_USERS.".user_id");
+$eownername = mysql_result($result,0 , TBL_USERS.".user_name");
+
+$eventIsChanged = $event->getField('IsChanged');
+$eventStatus = $event->getField('Status');
+$eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
+
+$type = $event->getField('Type');
+$competition_type = $event->getCompetitionType();
+
+/* Nbr players */
+$q = "SELECT COUNT(*) as NbrPlayers"
+." FROM ".TBL_PLAYERS
+." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
+$result = $sql->db_Query($q);
+$row = mysql_fetch_array($result);
+$nbr_players = $row['NbrPlayers'];
+
+/* Nbr Teams */
+$q = "SELECT COUNT(*) as NbrTeams"
+." FROM ".TBL_TEAMS
+." WHERE (Event = '$event_id')";
+$result = $sql->db_Query($q);
+$row = mysql_fetch_array($result);
+$nbr_teams = $row['NbrTeams'];
+
+if ($pref['eb_events_update_delay_enable'] == 1)
+{
+	$eneedupdate = 0;
+}
 else
 {
-	$file = 'cache/sql_cache_event_'.$event_id.'.txt';
-	$file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
+	// Force always update
+	$eneedupdate = 1;
+}
 
-	$q = "SELECT ".TBL_EVENTS.".*, "
-	.TBL_GAMES.".*, "
-	.TBL_USERS.".*"
-	." FROM ".TBL_EVENTS.", "
-	.TBL_GAMES.", "
-	.TBL_USERS
-	." WHERE (".TBL_EVENTS.".EventID = '$event_id')"
-	."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
-	."   AND (".TBL_USERS.".user_id = ".TBL_EVENTS.".Owner)";
-	$result = $sql->db_Query($q);
+if (
+		(($time > $event->getField('NextUpdate_timestamp')) && ($eventIsChanged == 1))
+		||(file_exists($file) == FALSE)
+		||((file_exists($file_team) == FALSE) && (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "Clan Ladder")))
+		)
+{
+	$eneedupdate = 1;
+}
 
-	$event = new Event($event_id);
+if($event->getField('StartDateTime')!=0)
+{
+	$startdatetime_local = $event->getField('StartDateTime') + TIMEOFFSET;
+	$date_start = date("d M Y, h:i A",$startdatetime_local);
+}
+else
+{
+	$date_start = "-";
+}
+if($event->getField('EndDateTime')!=0)
+{
+	$enddatetime_local = $event->getField('EndDateTime') + TIMEOFFSET;
+	$date_end = date("d M Y, h:i A",$enddatetime_local);
+}
+else
+{
+	$date_end = "-";
+}
 
-	//------------ permissions --------------
-	$permissions = $event->get_permissions(USERID);
-	$userclass = $permissions['userclass'];
-	$can_approve = $permissions['can_approve'];
-	$can_report = $permissions['can_report'];
-	$can_schedule = $permissions['can_schedule'];
-	$can_report_quickloss = $permissions['can_report_quickloss'];
-	$can_submit_replay = $permissions['can_submit_replay'];
-	$can_challenge = $permissions['can_challenge'];
+/* Update event "status" */
+$checkinDuration = INT_MINUTE*$event->getField('CheckinDuration');
 
-	$rounds = unserialize($event->getFieldHTML('Rounds'));
-	$egame = mysql_result($result,0 , TBL_GAMES.".Name");
-	$egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
-	$egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
-	$eowner = mysql_result($result,0 , TBL_USERS.".user_id");
-	$eownername = mysql_result($result,0 , TBL_USERS.".user_name");
-
-	$eventIsChanged = $event->getField('IsChanged');
-	$eventStatus = $event->getField('Status');
-	$eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
-
-	$type = $event->getField('Type');
-	$competition_type = $event->getCompetitionType();
-
-	/* Nbr players */
-	$q = "SELECT COUNT(*) as NbrPlayers"
-	." FROM ".TBL_PLAYERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
-	$result = $sql->db_Query($q);
-	$row = mysql_fetch_array($result);
-	$nbr_players = $row['NbrPlayers'];
+if($eventStatus=='signup')
+{
+	if($time > ($event->getField('StartDateTime') - $checkinDuration))
+	{
+		$eventStatus = 'checkin';
+	}
+}
+if($eventStatus=='checkin')
+{
+	$checkin_end = false;
+	$delete_teams = false;
+	$delete_players = false;
 	
-	/* Nbr Teams */
-	$q = "SELECT COUNT(*) as NbrTeams"
-	." FROM ".TBL_TEAMS
-	." WHERE (Event = '$event_id')";
-	$result = $sql->db_Query($q);
-	$row = mysql_fetch_array($result);
-	$nbr_teams = $row['NbrTeams'];
+	if($event->getField('CheckinDuration') > 0)
+	{
+		// End 'checkin' at the beginning of the event, or when we've reached the max number of players
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
+		." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+		." AND (".TBL_TEAMS.".CheckedIn = '0')";
+		$result = $sql->db_Query($q);
+		$nbr_teams_not_checked_in = mysql_numrows($result);
+		$nbr_teams_checked_in = $nbr_teams - $nbr_teams_not_checked_in;
 
-	if ($pref['eb_events_update_delay_enable'] == 1)
-	{
-		$eneedupdate = 0;
-	}
-	else
-	{
-		// Force always update
-		$eneedupdate = 1;
-	}
-	
-	if (
-			(($time > $event->getField('NextUpdate_timestamp')) && ($eventIsChanged == 1))
-			||(file_exists($file) == FALSE)
-			||((file_exists($file_team) == FALSE) && (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "Clan Ladder")))
-			)
-	{
-		$eneedupdate = 1;
-	}
-	
-	if($event->getField('StartDateTime')!=0)
-	{
-		$startdatetime_local = $event->getField('StartDateTime') + TIMEOFFSET;
-		$date_start = date("d M Y, h:i A",$startdatetime_local);
-	}
-	else
-	{
-		$date_start = "-";
-	}
-	if($event->getField('EndDateTime')!=0)
-	{
-		$enddatetime_local = $event->getField('EndDateTime') + TIMEOFFSET;
-		$date_end = date("d M Y, h:i A",$enddatetime_local);
-	}
-	else
-	{
-		$date_end = "-";
-	}
-	
-	/* Update event "status" */
-	$checkinDuration = INT_MINUTE*$event->getField('CheckinDuration');
-	
-	if($eventStatus=='signup')
-	{
-		if($time > ($event->getField('StartDateTime') - $checkinDuration))
+		if(($time > $event->getField('StartDateTime')) ||
+		   (($eMaxNumberPlayers != 0)&&($nbr_teams_checked_in >= $eMaxNumberPlayers)))
 		{
-			$eventStatus = 'checkin';
+			$checkin_end = true;
+			$delete_teams = true;
+		}
+
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+		." AND (".TBL_PLAYERS.".CheckedIn = '0')";
+		$result = $sql->db_Query($q);
+		$nbr_players_not_checked_in = mysql_numrows($result);
+		$nbr_players_checked_in = $nbr_players - $nbr_players_not_checked_in;
+
+		if(($time > $event->getField('StartDateTime')) ||
+		   (($eMaxNumberPlayers != 0)&&($nbr_players_checked_in >= $eMaxNumberPlayers)))
+		{
+			$checkin_end = true;
+			$delete_players = true;
 		}
 	}
-	if($eventStatus=='checkin')
+	else
 	{
-		$checkin_end = false;
-		$delete_teams = false;
-		$delete_players = false;
-		
-		if($event->getField('CheckinDuration') > 0)
+		// no checkin
+		if($time > $event->getField('StartDateTime'))
 		{
-			// End 'checkin' at the beginning of the event, or when we've reached the max number of players
-			$q = "SELECT ".TBL_TEAMS.".*"
-			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-			." AND (".TBL_TEAMS.".CheckedIn = '0')";
-			$result = $sql->db_Query($q);
-			$nbr_teams_not_checked_in = mysql_numrows($result);
-			$nbr_teams_checked_in = $nbr_teams - $nbr_teams_not_checked_in;
-
-			if(($time > $event->getField('StartDateTime')) ||
-			   (($eMaxNumberPlayers != 0)&&($nbr_teams_checked_in >= $eMaxNumberPlayers)))
+			$checkin_end = true;
+			
+			if(($eMaxNumberPlayers != 0)&&($nbr_teams > $eMaxNumberPlayers))
 			{
-				$checkin_end = true;
 				$delete_teams = true;
 			}
 
-			$q = "SELECT ".TBL_PLAYERS.".*"
-			." FROM ".TBL_PLAYERS
-			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-			." AND (".TBL_PLAYERS.".CheckedIn = '0')";
-			$result = $sql->db_Query($q);
-			$nbr_players_not_checked_in = mysql_numrows($result);
-			$nbr_players_checked_in = $nbr_players - $nbr_players_not_checked_in;
-
-			if(($time > $event->getField('StartDateTime')) ||
-			   (($eMaxNumberPlayers != 0)&&($nbr_players_checked_in >= $eMaxNumberPlayers)))
+			if(($eMaxNumberPlayers != 0)&&($nbr_players > $eMaxNumberPlayers))
 			{
-				$checkin_end = true;
 				$delete_players = true;
 			}
 		}
-		else
+	}
+	
+	/*
+	if($delete_teams == true)
+	{
+		// Delete teams so that we are left with max number of teams
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
+		." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+		." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
+		$result = $sql->db_Query($q);
+		$nbr_teams = mysql_numrows($result);
+		for($i=$eMaxNumberPlayers; $i<$nbr_teams; $i++)
 		{
-			// no checkin
-			if($time > $event->getField('StartDateTime'))
-			{
-				$checkin_end = true;
-				
-				if(($eMaxNumberPlayers != 0)&&($nbr_teams > $eMaxNumberPlayers))
-				{
-					$delete_teams = true;
-				}
-
-				if(($eMaxNumberPlayers != 0)&&($nbr_players > $eMaxNumberPlayers))
-				{
-					$delete_players = true;
-				}
-			}
-		}
-		
-		/*
-		if($delete_teams == true)
-		{
-			// Delete teams so that we are left with max number of teams
-			$q = "SELECT ".TBL_TEAMS.".*"
-			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-			." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
-			$result = $sql->db_Query($q);
-			$nbr_teams = mysql_numrows($result);
-			for($i=$eMaxNumberPlayers; $i<$nbr_teams; $i++)
-			{
-				$tID = mysql_result($result, $i, TBL_TEAMS.".TeamID");
-				deleteTeam($tID);
-			}
-		}
-		if($delete_players == true)
-		{
-			// Delete players so that we are left with max number of players
-			$q = "SELECT ".TBL_PLAYERS.".*"
-			." FROM ".TBL_PLAYERS
-			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-			." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
-			$result = $sql->db_Query($q);
-			$nbr_players = mysql_numrows($result);
-			for($i=$eMaxNumberPlayers; $i<$nbr_players; $i++)
-			{
-				$pID = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
-				deletePlayer($pID);
-			}
-		}
-		*/		
-		
-		if($checkin_end == true)
-		{
-			$eventStatus = 'active';
-			if($event->getField('FixturesEnable') == TRUE)
-			{
-				$event->updateSeeds();
-				$event->brackets(true);
-			}			
-			$event->setFieldDB('IsChanged', 1);
+			$tID = mysql_result($result, $i, TBL_TEAMS.".TeamID");
+			deleteTeam($tID);
 		}
 	}
-	if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime') != 0) && ($eventStatus!='finished'))
+	if($delete_players == true)
 	{
-		$eventStatus = 'finished';
-		if (($type == "One Player Ladder") || ($type == "Team Ladder") )
+		// Delete players so that we are left with max number of players
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+		." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
+		$result = $sql->db_Query($q);
+		$nbr_players = mysql_numrows($result);
+		for($i=$eMaxNumberPlayers; $i<$nbr_players; $i++)
 		{
-			$q = "SELECT ".TBL_PLAYERS.".*"
-			." FROM ".TBL_PLAYERS
-			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-			."   AND (".TBL_PLAYERS.".Rank = '1')";
-			$result = $sql->db_Query($q);
-			$numPlayers = mysql_numrows($result);
-			//echo "numPlayers: $numPlayers<br>";			
-			if($numPlayers == 1)
-			{	
-				$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
-				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-				VALUES ($pid,'PlayerRankFirst',$time+2)";
-				$result_Awards = $sql->db_Query($q_Awards);
-				
-				// gold
-				if(is_gold_system_active() && ($event->getField('GoldWinningEvent')>0)) {
-					$q = "SELECT ".TBL_PLAYERS.".*, "
-					.TBL_GAMERS.".*"
-					." FROM ".TBL_PLAYERS.", "
-					.TBL_GAMERS
-					." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
-					."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)";
-					$result = $sql->db_Query($q);
-					$uid = mysql_result($result, 0 , TBL_GAMERS.".User");
-
-					$gold_param['gold_user_id'] = $uid;
-					$gold_param['gold_who_id'] = 0;
-					$gold_param['gold_amount'] = $event->getField('GoldWinningEvent');
-					$gold_param['gold_type'] = EB_L1;
-					$gold_param['gold_action'] = "credit";
-					$gold_param['gold_plugin'] = "ebattles";
-					$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
-					$gold_param['gold_forum'] = 0;
-					$gold_obj->gold_modify($gold_param);
-				}
-			}
-			
-			$q = "SELECT ".TBL_PLAYERS.".*"
-			." FROM ".TBL_PLAYERS
-			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-			. "AND (".TBL_PLAYERS.".Rank = '2')";
-			$result = $sql->db_Query($q);
-			$numPlayers = mysql_numrows($result);
-			if($numPlayers == 1)
-			{				
-				$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
-				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-				VALUES ($pid,'PlayerRankSecond',$time+1)";
-				$result_Awards = $sql->db_Query($q_Awards);
-			}
-
-			$q = "SELECT ".TBL_PLAYERS.".*"
-			." FROM ".TBL_PLAYERS
-			." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-			. "AND (".TBL_PLAYERS.".Rank = '3')";
-			$result = $sql->db_Query($q);
-			$numPlayers = mysql_numrows($result);
-			if($numPlayers == 1)
-			{				
-				$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
-				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
-				VALUES ($pid,'PlayerRankThird',$time)";
-				$result_Awards = $sql->db_Query($q_Awards);
-			}
+			$pID = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+			deletePlayer($pID);
+		}
+	}
+	*/		
+	
+	if($checkin_end == true)
+	{
+		$eventStatus = 'active';
+		if($event->getField('FixturesEnable') == TRUE)
+		{
+			$event->updateSeeds();
+			$event->brackets(true);
 		}			
-		if (($type == "Clan Ladder") || ($type == "Team Ladder") )
-		{
-			$q = "SELECT ".TBL_TEAMS.".*"
-			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-			. "AND (".TBL_TEAMS.".Rank = '1')";
-			$result = $sql->db_Query($q);
-			$numTeams = mysql_numrows($result);
-			if($numTeams == 1)
-			{				
-				$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
-				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
-				VALUES ($pid,'TeamRankFirst',$time+2)";
-				$result_Awards = $sql->db_Query($q_Awards);
-
-				// gold
-				if(is_gold_system_active() && ($event->getField('GoldWinningEvent')>0)) {
-					// find team captain
-					$q = "SELECT ".TBL_TEAMS.".*, "
-					.TBL_DIVISIONS.".*"
-					." FROM ".TBL_TEAMS.", "
-					.TBL_DIVISIONS
-					." WHERE (".TBL_TEAMS.".TeamID = '$pid')"
-					."   AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)";
-					$result = $sql->db_Query($q);
-					$uid = mysql_result($result, 0 , TBL_DIVISIONS.".Captain");
-
-					$gold_param['gold_user_id'] = $uid;
-					$gold_param['gold_who_id'] = 0;
-					$gold_param['gold_amount'] = $event->getField('GoldWinningEvent');
-					$gold_param['gold_type'] = EB_L1;
-					$gold_param['gold_action'] = "credit";
-					$gold_param['gold_plugin'] = "ebattles";
-					$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
-					$gold_param['gold_forum'] = 0;
-					$gold_obj->gold_modify($gold_param);
-				}	
-			}
-			
-			$q = "SELECT ".TBL_TEAMS.".*"
-			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-			. "AND (".TBL_TEAMS.".Rank = '2')";
-			$result = $sql->db_Query($q);
-			$numTeams = mysql_numrows($result);
-			if($numTeams == 1)
-			{				
-				$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
-				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
-				VALUES ($pid,'TeamRankSecond',$time+1)";
-				$result_Awards = $sql->db_Query($q_Awards);
-			}
-
-			$q = "SELECT ".TBL_TEAMS.".*"
-			." FROM ".TBL_TEAMS
-			." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-			. "AND (".TBL_TEAMS.".Rank = '3')";
-			$result = $sql->db_Query($q);
-			$numTeams = mysql_numrows($result);
-			if($numTeams == 1)
-			{				
-				$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
-				$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
-				VALUES ($pid,'TeamRankThird',$time)";
-				$result_Awards = $sql->db_Query($q_Awards);
-			}
-		}	
-		
-		
+		$event->setFieldDB('IsChanged', 1);
 	}
-
-	$event->setFieldDB('Status', $eventStatus);
-
-	switch($competition_type)
-	{
-	case 'Tournament':
-		require_once(e_PLUGIN."ebattles/tournamentinfo.php");
-		break;
-	case 'Ladder':
-		require_once(e_PLUGIN."ebattles/ladderinfo.php");
-		break;
-	}
-
-	$ns->tablerender($event->getField('Name')." ($egame - ".$event->eventTypeToString().")", $text);
-	require_once(FOOTERF);
-	exit;
 }
+if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime') != 0) && ($eventStatus!='finished'))
+{
+	$eventStatus = 'finished';
+	if (($type == "One Player Ladder") || ($type == "Team Ladder") )
+	{
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+		."   AND (".TBL_PLAYERS.".Rank = '1')";
+		$result = $sql->db_Query($q);
+		$numPlayers = mysql_numrows($result);
+		//echo "numPlayers: $numPlayers<br>";			
+		if($numPlayers == 1)
+		{	
+			$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
+			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+			VALUES ($pid,'PlayerRankFirst',$time+2)";
+			$result_Awards = $sql->db_Query($q_Awards);
+			
+			// gold
+			if(is_gold_system_active() && ($event->getField('GoldWinningEvent')>0)) {
+				$q = "SELECT ".TBL_PLAYERS.".*, "
+				.TBL_GAMERS.".*"
+				." FROM ".TBL_PLAYERS.", "
+				.TBL_GAMERS
+				." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
+				."   AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)";
+				$result = $sql->db_Query($q);
+				$uid = mysql_result($result, 0 , TBL_GAMERS.".User");
+
+				$gold_param['gold_user_id'] = $uid;
+				$gold_param['gold_who_id'] = 0;
+				$gold_param['gold_amount'] = $event->getField('GoldWinningEvent');
+				$gold_param['gold_type'] = EB_L1;
+				$gold_param['gold_action'] = "credit";
+				$gold_param['gold_plugin'] = "ebattles";
+				$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
+				$gold_param['gold_forum'] = 0;
+				$gold_obj->gold_modify($gold_param);
+			}
+		}
+		
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+		. "AND (".TBL_PLAYERS.".Rank = '2')";
+		$result = $sql->db_Query($q);
+		$numPlayers = mysql_numrows($result);
+		if($numPlayers == 1)
+		{				
+			$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
+			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+			VALUES ($pid,'PlayerRankSecond',$time+1)";
+			$result_Awards = $sql->db_Query($q_Awards);
+		}
+
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+		. "AND (".TBL_PLAYERS.".Rank = '3')";
+		$result = $sql->db_Query($q);
+		$numPlayers = mysql_numrows($result);
+		if($numPlayers == 1)
+		{				
+			$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
+			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
+			VALUES ($pid,'PlayerRankThird',$time)";
+			$result_Awards = $sql->db_Query($q_Awards);
+		}
+	}			
+	if (($type == "Clan Ladder") || ($type == "Team Ladder") )
+	{
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
+		." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+		. "AND (".TBL_TEAMS.".Rank = '1')";
+		$result = $sql->db_Query($q);
+		$numTeams = mysql_numrows($result);
+		if($numTeams == 1)
+		{				
+			$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
+			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+			VALUES ($pid,'TeamRankFirst',$time+2)";
+			$result_Awards = $sql->db_Query($q_Awards);
+
+			// gold
+			if(is_gold_system_active() && ($event->getField('GoldWinningEvent')>0)) {
+				// find team captain
+				$q = "SELECT ".TBL_TEAMS.".*, "
+				.TBL_DIVISIONS.".*"
+				." FROM ".TBL_TEAMS.", "
+				.TBL_DIVISIONS
+				." WHERE (".TBL_TEAMS.".TeamID = '$pid')"
+				."   AND (".TBL_TEAMS.".Division = ".TBL_DIVISIONS.".DivisionID)";
+				$result = $sql->db_Query($q);
+				$uid = mysql_result($result, 0 , TBL_DIVISIONS.".Captain");
+
+				$gold_param['gold_user_id'] = $uid;
+				$gold_param['gold_who_id'] = 0;
+				$gold_param['gold_amount'] = $event->getField('GoldWinningEvent');
+				$gold_param['gold_type'] = EB_L1;
+				$gold_param['gold_action'] = "credit";
+				$gold_param['gold_plugin'] = "ebattles";
+				$gold_param['gold_log'] = EB_GOLD_L8.": event=".$event_id.", user=".$uid;
+				$gold_param['gold_forum'] = 0;
+				$gold_obj->gold_modify($gold_param);
+			}	
+		}
+		
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
+		." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+		. "AND (".TBL_TEAMS.".Rank = '2')";
+		$result = $sql->db_Query($q);
+		$numTeams = mysql_numrows($result);
+		if($numTeams == 1)
+		{				
+			$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
+			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+			VALUES ($pid,'TeamRankSecond',$time+1)";
+			$result_Awards = $sql->db_Query($q_Awards);
+		}
+
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
+		." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+		. "AND (".TBL_TEAMS.".Rank = '3')";
+		$result = $sql->db_Query($q);
+		$numTeams = mysql_numrows($result);
+		if($numTeams == 1)
+		{				
+			$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
+			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
+			VALUES ($pid,'TeamRankThird',$time)";
+			$result_Awards = $sql->db_Query($q_Awards);
+		}
+	}	
+	
+	
+}
+
+$event->setFieldDB('Status', $eventStatus);
+
+switch($competition_type)
+{
+case 'Tournament':
+	require_once(e_PLUGIN."ebattles/tournamentinfo.php");
+	break;
+case 'Ladder':
+	require_once(e_PLUGIN."ebattles/ladderinfo.php");
+	break;
+}
+
+$ns->tablerender($event->getField('Name')." ($egame - ".$event->eventTypeToString().")", $text);
+require_once(FOOTERF);
+exit;
 
 ?>
 

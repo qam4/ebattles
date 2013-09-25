@@ -8,8 +8,8 @@ require_once(e_PLUGIN."ebattles/include/main.php");
 
 if (isset($_POST['edit_gamer']) && $_POST['edit_gamer']!="")
 {
-    $user_id = $_GET['userid'];
-    $gamer_id = $_POST['edit_gamer'];
+    $user_id = intval($_GET['userid']);
+    $gamer_id = intval($_POST['edit_gamer']);
     $gamer_name = $_POST['gamername'.$gamer_id];
     $gamer_uniqueid = $_POST['gameruniqueid'.$gamer_id];
 

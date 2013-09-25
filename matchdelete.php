@@ -22,31 +22,29 @@ global $sql;
 $text = '';
 
 /* Event Name */
-$event_id = $_GET['eventid'];
-
+$event_id = intval($_GET['eventid']);
 if (!$event_id)
 {
 	header("Location: ./events.php");
 	exit();
 }
+
+if (!isset($_POST['deletematch']))
+{
+	$text .= '<br />'.EB_MATCHDEL_L2.'<br />';
+}
 else
 {
-	if (!isset($_POST['deletematch']))
-	{
-		$text .= '<br />'.EB_MATCHDEL_L2.'<br />';
-	}
-	else
-	{
-		$event = new Event($event_id);
-		$match_id = $_POST['matchid'];
-		$match = new Match($match_id);
-		$match->delete();
-		$text .= '<br />'.EB_MATCHDEL_L3.'<br />';
-		
-		header("Location: eventinfo.php?eventid=$event_id");
-	}
-	$text .= '<br />'.EB_MATCHDEL_L4.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHDEL_L5.'</a>]<br />';
+	$event = new Event($event_id);
+	$match_id = $_POST['matchid'];
+	$match = new Match($match_id);
+	$match->delete();
+	$text .= '<br />'.EB_MATCHDEL_L3.'<br />';
+	
+	header("Location: eventinfo.php?eventid=$event_id");
 }
+$text .= '<br />'.EB_MATCHDEL_L4.' [<a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.EB_MATCHDEL_L5.'</a>]<br />';
+
 $ns->tablerender(EB_MATCHDEL_L1, $text);
 require_once(FOOTERF);
 exit;

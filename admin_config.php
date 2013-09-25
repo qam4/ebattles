@@ -287,7 +287,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	$numGames = mysql_numrows($result);
 
 	if (!isset($_GET['gameid'])) $_GET['gameid'] = mysql_result($result,0 , TBL_GAMES.".GameID");
-	$game_id = $_GET['gameid'];
+	$game_id = intval($_GET['gameid']);
 
 	$q2 = "SELECT ".TBL_GAMES.".*"
 	." FROM ".TBL_GAMES
@@ -914,7 +914,7 @@ function displayGames(){
 	);
 
 	if (!isset($_GET['orderby'])) $_GET['orderby'] = 'game';
-	$orderby=$_GET['orderby'];
+	$orderby= eb_sanitize($_GET['orderby']);
 
 	$sort = "ASC";
 	if(isset($_GET["sort"]) && !empty($_GET["sort"]))

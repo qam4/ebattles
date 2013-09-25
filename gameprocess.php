@@ -31,11 +31,17 @@ if ($can_manage == 0)
     exit();
 }
 
+$game_id = intval($_GET['gameid']);
+if (!$game_id)
+{
+// [fm] gamecreate?
+	header("location:".e_HTTP."index.php");
+	exit();
+}
+
 // GameManage Process
 if(isset($_POST['gamesettingssave']))
 {
-    $game_id = $_GET['gameid'];
-
     /* Game Name */
     $new_gamename = $tp->toDB($_POST['gameName']);
     if ($new_gamename != '')
@@ -65,7 +71,6 @@ if(isset($_POST['gamesettingssave']))
 }
 if(isset($_POST['gamedelete']))
 {
-    $game_id = $_GET['gameid'];
     deleteGame($game_id);
 
     header("Location: admin_config.php?eb_games");
@@ -97,7 +102,7 @@ if(isset($_POST['delete_selected_games']))
 {
     if (count($_POST['game_sel']) > 0)
     {
-        $del_ids=$_POST['game_sel'];
+        $del_ids = $_POST['game_sel'];
         foreach($del_ids as $game_id)
         {
             deleteGame($game_id);
@@ -126,7 +131,7 @@ if(isset($_POST['update_selected_games']))
 {
     if (count($_POST['game_sel']) > 0)
     {
-        $del_ids=$_POST['game_sel'];
+        $del_ids = $_POST['game_sel'];
         foreach($del_ids as $game_id)
         {
             updateGame($game_id);
@@ -151,7 +156,6 @@ if(isset($_POST['add_games']))
 }
 if (isset($_POST['addfaction']))
 {
-    $game_id = $_GET['gameid'];
     $faction_name = $_POST['factionname'];
     $faction_icon = $_POST['factionicon'];
 
@@ -167,7 +171,6 @@ if (isset($_POST['addfaction']))
 }
 if (isset($_POST['edit_faction']) && $_POST['edit_faction']!="")
 {
-    $game_id = $_GET['gameid'];
     $faction = $_POST['edit_faction'];
     $faction_name = $_POST['factionname'.$faction];
     $faction_icon = $_POST['factionicon'.$faction];
@@ -184,7 +187,6 @@ if (isset($_POST['edit_faction']) && $_POST['edit_faction']!="")
 }
 if (isset($_POST['del_faction']) && $_POST['del_faction']!="")
 {
-    $game_id = $_GET['gameid'];
     $faction = $_POST['del_faction'];
 
     delete_faction($faction);
@@ -194,7 +196,6 @@ if (isset($_POST['del_faction']) && $_POST['del_faction']!="")
 }
 if (isset($_POST['addmap']))
 {
-    $game_id = $_GET['gameid'];
     $map_name = $_POST['mapname'];
     $map_image = $_POST['mapimage'];
     $map_description = $_POST['mapdescription'];
@@ -212,7 +213,6 @@ if (isset($_POST['addmap']))
 }
 if (isset($_POST['edit_map']) && $_POST['edit_map']!="")
 {
-    $game_id = $_GET['gameid'];
     $map = $_POST['edit_map'];
     $map_name = $_POST['mapname'.$map];
     $map_image = $_POST['mapimage'.$map];
@@ -230,7 +230,6 @@ if (isset($_POST['edit_map']) && $_POST['edit_map']!="")
 }
 if (isset($_POST['del_map']) && $_POST['del_map']!="")
 {
-    $game_id = $_GET['gameid'];
     $map = $_POST['del_map'];
     
     delete_map($map);

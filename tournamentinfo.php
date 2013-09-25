@@ -132,6 +132,8 @@ if($event->getField('FixturesEnable') == FALSE)
 	}
 }
 
+if($event->getField('CheckinDuration') == 0) $can_checkin = 0;
+
 $hide_fixtures = 0;
 if(($event->getField('HideFixtures') == 1) &&
    (($event->getField('Status') == 'draft') ||

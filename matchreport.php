@@ -20,17 +20,14 @@ require_once(e_PLUGIN."ebattles/include/clan.php");
 global $e_wysiwyg;
 $e_wysiwyg = "match_comment";  // set $e_wysiwyg before including HEADERF
 
-
-/*
-//dbg form
-$text .= "<br>_POST: ";
-$text .=serialize($_POST);
-*/
-
-/* Event Name */
-$event_id = $_GET['eventid'];
-$match_id = $_GET['matchid'];
-$action = $_GET['actionid'];
+$event_id = intval($_GET['eventid']);
+$match_id = intval($_GET['matchid']);
+$action = eb_sanitize($_GET['actionid']);
+if(!$event_id)
+{
+	header("Location: ./events.php");
+	exit();
+}
 
 $event = new Event($event_id);
 $type = $event->getField('Type');
