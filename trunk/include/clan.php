@@ -303,6 +303,7 @@ class Division extends DatabaseTable
 				$event = new Event($event_id);
 
 				$team_id = mysql_result($result_2,$j, TBL_TEAMS.".TeamID");
+				$team_banned = mysql_result($result_2,$j, TBL_TEAMS.".Banned");
 
 				// Verify there is no other player for that user/event/team
 				$q = "SELECT COUNT(*) as NbrPlayers"
@@ -315,8 +316,8 @@ class Division extends DatabaseTable
 				$nbrplayers = $row['NbrPlayers'];
 				if ($nbrplayers == 0)
 				{
-					$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma)
-					VALUES ($event_id, $gamerID, $team_id, ".$event->getField('ELO_default').", ".$event->getField('TS_default_mu').", ".$event->getField('TS_default_sigma').")";
+					$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma,Banned)
+					VALUES ($event_id, $gamerID, $team_id, ".$event->getField('ELO_default').", ".$event->getField('TS_default_mu').", ".$event->getField('TS_default_sigma').", $team_banned)";
 					$sql->db_Query($q);
 					$event->setFieldDB('IsChanged', 1);
 				}

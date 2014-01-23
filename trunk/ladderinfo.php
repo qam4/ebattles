@@ -307,30 +307,39 @@ case "Clan Tournament":
 			{
 				// Division is signed up.
 				$team_id  = mysql_result($result_2, 0 , TBL_TEAMS.".TeamID");
+				$team_banned  = mysql_result($result_2,0 , TBL_TEAMS.".Banned");
 				$team_checkedin  = mysql_result($result_2,0 , TBL_TEAMS.".CheckedIn");
 				
-				$text .= '<td>'.EB_EVENT_L13.'</td>';
-				
-				if($can_checkin == 1)
+				if ($team_banned)
 				{
-					if($team_checkedin != 1)
+					// Team is banned
+					$text .= '<td>'.EB_EVENT_L20.'<br />
+							'.EB_EVENT_L21.'</td>';
+				}
+				else
+				{
+					$text .= '<td>'.EB_EVENT_L13.'</td>';
+					
+					if($can_checkin == 1)
 					{
-						$text .= '<td style="text-align:right">
-								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
-								<div>
-								<input type="hidden" name="joinEventPassword" value=""/>
-								<input type="hidden" name="team" value="'.$team_id.'"/>
-								'.ebImageTextButton('teamcheckinevent', 'user_go.ico', EB_EVENT_L91, 'jq-button', '', EB_EVENT_L92).'
-								</div>
-								</form></td>
-								';
-					}
-					else
-					{
-						$text .= '<td>'.EB_EVENT_L93.'</td>';
+						if($team_checkedin != 1)
+						{
+							$text .= '<td style="text-align:right">
+									<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">
+									<div>
+									<input type="hidden" name="joinEventPassword" value=""/>
+									<input type="hidden" name="team" value="'.$team_id.'"/>
+									'.ebImageTextButton('teamcheckinevent', 'user_go.ico', EB_EVENT_L91, 'jq-button', '', EB_EVENT_L92).'
+									</div>
+									</form></td>
+									';
+						}
+						else
+						{
+							$text .= '<td>'.EB_EVENT_L93.'</td>';
+						}
 					}
 				}
-				
 			}
 			$text .= '</tr>';
 		}
@@ -408,6 +417,8 @@ case "Clan Tournament":
 			{
 				// Division is signed up
 				$team_id  = mysql_result($result_2,0 , TBL_TEAMS.".TeamID");
+				$team_banned  = mysql_result($result_2,0 , TBL_TEAMS.".Banned");
+				if($team_banned) $cannot_signup_str = EB_EVENTM_L54;
 
 				$text .= '<tr><td>'.EB_EVENT_L15.'&nbsp;'.$clan_name.'&nbsp;'.EB_EVENT_L18.'</td>';
 
@@ -424,7 +435,7 @@ case "Clan Tournament":
 				if(!$result_2 || (mysql_numrows($result_2) == 0))
 				{
 					// User is not signed up
-					if ($can_signup==1)
+					if(($can_signup==1)&&($team_banned))
 					{
 						$text .= '<td>
 								<form action="'.e_PLUGIN.'ebattles/eventinfo_process.php?eventid='.$event_id.'" method="post">

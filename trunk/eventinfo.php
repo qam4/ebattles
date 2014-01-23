@@ -110,6 +110,14 @@ $result = $sql->db_Query($q);
 $row = mysql_fetch_array($result);
 $nbr_players = $row['NbrPlayers'];
 
+$q = "SELECT ".TBL_PLAYERS.".*"
+." FROM ".TBL_PLAYERS
+." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+." AND (".TBL_PLAYERS.".CheckedIn = '0')";
+$result = $sql->db_Query($q);
+$nbr_players_not_checked_in = mysql_numrows($result);
+$nbr_players_checked_in = $nbr_players - $nbr_players_not_checked_in;
+
 /* Nbr Teams */
 $q = "SELECT COUNT(*) as NbrTeams"
 ." FROM ".TBL_TEAMS
@@ -117,6 +125,14 @@ $q = "SELECT COUNT(*) as NbrTeams"
 $result = $sql->db_Query($q);
 $row = mysql_fetch_array($result);
 $nbr_teams = $row['NbrTeams'];
+
+$q = "SELECT ".TBL_TEAMS.".*"
+." FROM ".TBL_TEAMS
+." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+." AND (".TBL_TEAMS.".CheckedIn = '0')";
+$result = $sql->db_Query($q);
+$nbr_teams_not_checked_in = mysql_numrows($result);
+$nbr_teams_checked_in = $nbr_teams - $nbr_teams_not_checked_in;
 
 if ($pref['eb_events_update_delay_enable'] == 1)
 {
@@ -175,28 +191,12 @@ if($eventStatus=='checkin')
 	if($event->getField('CheckinDuration') > 0)
 	{
 		// End 'checkin' at the beginning of the event, or when we've reached the max number of players
-		$q = "SELECT ".TBL_TEAMS.".*"
-		." FROM ".TBL_TEAMS
-		." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-		." AND (".TBL_TEAMS.".CheckedIn = '0')";
-		$result = $sql->db_Query($q);
-		$nbr_teams_not_checked_in = mysql_numrows($result);
-		$nbr_teams_checked_in = $nbr_teams - $nbr_teams_not_checked_in;
-
 		if(($time > $event->getField('StartDateTime')) ||
 		   (($eMaxNumberPlayers != 0)&&($nbr_teams_checked_in >= $eMaxNumberPlayers)))
 		{
 			$checkin_end = true;
 			$delete_teams = true;
 		}
-
-		$q = "SELECT ".TBL_PLAYERS.".*"
-		." FROM ".TBL_PLAYERS
-		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-		." AND (".TBL_PLAYERS.".CheckedIn = '0')";
-		$result = $sql->db_Query($q);
-		$nbr_players_not_checked_in = mysql_numrows($result);
-		$nbr_players_checked_in = $nbr_players - $nbr_players_not_checked_in;
 
 		if(($time > $event->getField('StartDateTime')) ||
 		   (($eMaxNumberPlayers != 0)&&($nbr_players_checked_in >= $eMaxNumberPlayers)))
