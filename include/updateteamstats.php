@@ -319,6 +319,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		$oppscore[] = ($tgames_played>0) ? number_format($toppscore/$tgames_played,2) : 0;
 		$scorediff[] = ($tgames_played>0) ? number_format(($tscore - $toppscore)/$tgames_played,2) : 0;
 		$points[] = $tpoints;
+		$banned[] = $tbanned;
 
 		// Actual score (not for display)
 		$games_played_score[] = $tgames_played;
@@ -338,7 +339,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		$scorediff_score[] = ($tgames_played>0) ? ($tscore - $toppscore)/$tgames_played : 0;
 		$points_score[] = $tpoints;
 
-		if ($tgames_played >= $event->getField('nbr_team_games_to_rank'))
+		if (($tgames_played >= $event->getField('nbr_team_games_to_rank'))&&($tbanned == 0))
 		{
 			$teams_rated++;
 		}
@@ -590,7 +591,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		for($team=0; $team < $numTeams; $team++)
 		{
 			$OverallScore[$team]=0;
-			if ($games_played[$team] >= $event->getField('nbr_team_games_to_rank'))
+			if (($games_played[$team] >= $event->getField('nbr_team_games_to_rank'))&&($banned[$team] == 0))
 			{
 				for ($category=0; $category < $numDisplayedCategories; $category++)
 				{
@@ -620,7 +621,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		$OverallScoreThreshold = $numTeams;
 		for($team=0; $team < $numTeams; $team++)
 		{
-			if ($games_played[$team] >= $event->getField('nbr_team_games_to_rank'))
+			if (($games_played[$team] >= $event->getField('nbr_team_games_to_rank'))&&($banned[$team] == 0))
 			{
 				$OverallScore[$team] = array_search($team, $ranks, false) + $numTeams + 1;
 			}
@@ -645,7 +646,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 	$q_Teams = "SELECT *"
 	." FROM ".TBL_TEAMS
 	." WHERE (Event = '$event_id')"
-	." ORDER BY ".TBL_TEAMS.".OverallScore DESC, ".TBL_TEAMS.".ELORanking DESC";
+	." ORDER BY ".TBL_TEAMS.".OverallScore DESC, ".TBL_TEAMS.".GamesPlayed DESC, ".TBL_TEAMS.".ELORanking DESC, ".TBL_TEAMS.".Banned ASC";
 	$result_Teams = $sql->db_Query($q_Teams);
 	$ranknumber = 1;
 	for($team=0; $team < $numTeams; $team++)
@@ -658,10 +659,19 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		$index = array_search($tid,$id);
 
 		$trank_side_image = "";
-		if($OverallScore[$index] <= $OverallScoreThreshold)
+		if($banned[$index]==1)
+		{
+			$rank = '<span title="'.EB_STATS_L33.'"><img class="eb_image" src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="'.EB_STATS_L34.'" title="'.EB_STATS_L34.'"/></span>';
+			$prankdelta_string = "";
+			$q_update = "UPDATE ".TBL_TEAMS." SET Rank = 0 WHERE (TeamID = '$tid') AND (Event = '$event_id')";
+			$result_update = $sql->db_Query($q_update);
+		}
+		elseif($OverallScore[$index] <= $OverallScoreThreshold)
 		{
 			$rank = '<span title="'.EB_STATS_L35.'">'.EB_STATS_L36.'</span>';
 			$trankdelta_string = "";
+			$q_update = "UPDATE ".TBL_TEAMS." SET Rank = 0 WHERE (TeamID = '$tid') AND (Event = '$event_id')";
+			$result_update = $sql->db_Query($q_update);
 		}
 		else
 		{
@@ -793,7 +803,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 			}
 		}
 
-		$stats_row[] = $image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid[$index].'"><b>'.$name[$index].'</b></a>';
+		$stats_row[] = $image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clanid[$index].'"><b>'.$name[$index].' ('.$clantag[$index].')</b></a>';
 		//  ('.$clantag[$index].')
 
 		switch($event->getField('Type'))

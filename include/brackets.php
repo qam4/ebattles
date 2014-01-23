@@ -24,7 +24,7 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 	$score = preg_replace("/[\+\-]/","", $score);
 	switch ($content[0]) {
 	case 'E':
-		$text .= '<div class="player">&nbsp;</div>;';
+		$text .= '<div class="player">&nbsp;</div>';
 		break;
 	case 'N':
 		$text .= '<div class="player">Not needed</div>';

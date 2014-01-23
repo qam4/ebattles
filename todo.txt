@@ -1,3 +1,16 @@
+1/15/2013
+. tournament, checkin enabled, if no one has checked in, the brackets shows a ";"
+
+. ban/kick/del_games/del_awards for teams
+ - team banned -> need all players banned.
+ - if player joins a banned team, it should be banned too.
+  - jointeamevent: event->eventAddPlayer(team) -> not allowed if team banned.
+  - division->addMember()
+ - show cheked in players/teams in ladders?
+  - banned teams/players should not appear in players list in report match dialog.
+. automatic checkin if log after checkin starts?
+
+-----------------------------------------------------------------------
 Match report in dialog.
 - matchscheduledreport -> check if match exists.
 

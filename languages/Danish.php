@@ -422,6 +422,17 @@ define('EB_EVENTM_L175', 'Signup gold cost');
 define('EB_EVENTM_L176', 'Winner gold reward');
 define('EB_EVENTM_L177', 'Enable/disable signup');
 define('EB_EVENTM_L178', 'Allow late signups');
+define('EB_EVENTM_L180', 'Un-ban Team');
+define('EB_EVENTM_L181', 'Are you sure you want to un-ban this team?');
+define('EB_EVENTM_L182', 'Ban Team');
+define('EB_EVENTM_L183', 'Are you sure you want to ban this team?');
+define('EB_EVENTM_L184', 'Kick Team');
+define('EB_EVENTM_L185', 'Are you sure you want to delete this team?');
+define('EB_EVENTM_L186', 'Delete Team Games');
+define('EB_EVENTM_L187', 'Are you sure you want to delete this team games?');
+define('EB_EVENTM_L188', 'Delete Team Awards');
+define('EB_EVENTM_L189', 'Are you sure you want to delete this team awards?');
+define('EB_EVENTM_L190', 'Check team in');
 
 define('EB_EVENTP_L1', 'Tidligere Turneringer');
 define('EB_EVENTP_L2', 'Tidligere Turneringer');

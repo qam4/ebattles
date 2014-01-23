@@ -420,6 +420,17 @@ define('EB_EVENTM_L175', 'Frais d’inscription en gold');
 define('EB_EVENTM_L176', 'Récompense du vainqueur en gold');
 define('EB_EVENTM_L177', 'Activer/Désactiver l’inscription');
 define('EB_EVENTM_L178', 'Autoriser les inscriptions en retard');
+define('EB_EVENTM_L180', 'Dé-bannir l’Équipe');
+define('EB_EVENTM_L181', 'Êtes-vous sûr de vouloir annuler l’exclusion de cette équipe?');
+define('EB_EVENTM_L182', 'Exclure l’Équipe');
+define('EB_EVENTM_L183', 'Êtes-vous sûr de vouloir exclure cette équipe?');
+define('EB_EVENTM_L184', 'Kick l’Équipe');
+define('EB_EVENTM_L185', 'Êtes-vous sûr de vouloir supprimer cette équipe?');
+define('EB_EVENTM_L186', 'Supprimer les Matchs de l’Équipe');
+define('EB_EVENTM_L187', 'Êtes-vous sûr de vouloir supprimer les matchs de cette équipe?');
+define('EB_EVENTM_L188', 'Supprimer les Trophés de l’Équipe');
+define('EB_EVENTM_L189', 'Êtes-vous sûr de vouloir supprimer les trophés de cette équipe?');
+define('EB_EVENTM_L190', 'Enregistrer cette équipe');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');

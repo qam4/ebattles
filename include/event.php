@@ -699,6 +699,37 @@ class Event extends DatabaseTable
 		document.getElementById('checkin_player').value=v;
 		document.getElementById('playersform').submit();
 		}
+		
+		function kick_team(v)
+		{
+		document.getElementById('kick_team').value=v;
+		document.getElementById('teamsform').submit();
+		}
+		function ban_team(v)
+		{
+		document.getElementById('ban_team').value=v;
+		document.getElementById('teamsform').submit();
+		}
+		function unban_team(v)
+		{
+		document.getElementById('unban_team').value=v;
+		document.getElementById('teamsform').submit();
+		}
+		function del_team_games(v)
+		{
+		document.getElementById('del_team_games').value=v;
+		document.getElementById('teamsform').submit();
+		}
+		function del_team_awards(v)
+		{
+		document.getElementById('del_team_awards').value=v;
+		document.getElementById('teamsform').submit();
+		}
+		function checkin_team(v)
+		{
+		document.getElementById('checkin_team').value=v;
+		document.getElementById('teamsform').submit();
+		}
 		//-->
 		</script>
 		";
@@ -2820,10 +2851,11 @@ class Event extends DatabaseTable
 		/* Nbr Teams */
 		$q = "SELECT COUNT(*) as NbrTeams"
 		." FROM ".TBL_TEAMS
-		." WHERE (Event = '$event_id')";
+		." WHERE (Event = '$event_id')"
+		."   AND (".TBL_TEAMS.".Banned != 1)";
 		$result = $sql->db_Query($q);
 		$row = mysql_fetch_array($result);
-		$nbr_teams = $row['NbrTeams'];
+		$nbrteamsNotBanned = $row['NbrTeams'];
 		switch($this->getMatchPlayersType())
 		{
 		case 'Players':
@@ -2836,7 +2868,7 @@ class Event extends DatabaseTable
 			}
 			break;
 		case 'Teams':
-			if ($nbr_teams < 2)
+			if ($nbrteamsNotBanned < 2)
 			{
 				$can_report = 0;
 				$can_schedule = 0;
@@ -2962,6 +2994,46 @@ function checkinPlayer($player_id)
 	$result = $sql->db_Query($q);
 }
 
+function banPlayer($player_id)
+{
+	global $sql;
+	$q = "UPDATE ".TBL_PLAYERS." SET Banned = '1' WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')";
+	$result = $sql->db_Query($q);
+}
+
+function unbanPlayer($player_id)
+{
+	global $sql;
+	$q = "UPDATE ".TBL_PLAYERS." SET Banned = '0' WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')";
+	$result = $sql->db_Query($q);
+}
+
+function deleteTeamMatches($team_id)
+{
+	global $sql;
+
+	$q = "SELECT ".TBL_MATCHS.".*, "
+	.TBL_SCORES.".*"
+	." FROM ".TBL_MATCHS.", "
+	.TBL_SCORES
+	." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+	." AND (".TBL_SCORES.".Team = '$team_id')";
+	$result = $sql->db_Query($q);
+	$num_matches = mysql_numrows($result);
+	echo "<br>team_id $team_id";
+	echo "<br>num_matches $num_matches";
+	if ($num_matches!=0)
+	{
+		for($j=0; $j<$num_matches; $j++)
+		{
+			set_time_limit(10);
+			$match_id  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
+			$match = new Match($match_id);
+			$match->delete();
+		}
+	}
+}
+
 function deleteTeam($team_id)
 {
 	global $sql;
@@ -2979,6 +3051,14 @@ function deleteTeam($team_id)
 
 	$event = new Event($event_id);
 	$event->updateSeeds();
+}
+
+function deleteTeamAwards($team_id)
+{
+	global $sql;
+	$q = "DELETE FROM ".TBL_AWARDS
+	." WHERE (".TBL_AWARDS.".Team = '$team_id')";
+	$result = $sql->db_Query($q);
 }
 
 function checkinTeam($team_id)
@@ -3002,4 +3082,45 @@ function checkinTeam($team_id)
 	}
 }
 
+function banTeam($team_id)
+{
+	global $sql;
+	global $time;
+	
+	$q = "UPDATE ".TBL_TEAMS." SET Banned = '1' WHERE (".TBL_TEAMS.".TeamID = '$team_id')";
+	$result = $sql->db_Query($q);
+	
+	// Checkin all the players of that team
+	$q = "SELECT ".TBL_PLAYERS.".*"
+	." FROM ".TBL_PLAYERS
+	." WHERE (".TBL_PLAYERS.".Team = '$team_id')";
+	$result = $sql->db_Query($q);
+	$numPlayers = mysql_numrows($result);
+	for($i=0; $i<$numPlayers; $i++)
+	{		
+		$player_id = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+		banPlayer($player_id);
+	}
+}
+
+function unbanTeam($team_id)
+{
+	global $sql;
+	global $time;
+	
+	$q = "UPDATE ".TBL_TEAMS." SET Banned = '0' WHERE (".TBL_TEAMS.".TeamID = '$team_id')";
+	$result = $sql->db_Query($q);
+	
+	// Checkin all the players of that team
+	$q = "SELECT ".TBL_PLAYERS.".*"
+	." FROM ".TBL_PLAYERS
+	." WHERE (".TBL_PLAYERS.".Team = '$team_id')";
+	$result = $sql->db_Query($q);
+	$numPlayers = mysql_numrows($result);
+	for($i=0; $i<$numPlayers; $i++)
+	{		
+		$player_id = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+		unbanPlayer($player_id);
+	}
+}
 ?>
