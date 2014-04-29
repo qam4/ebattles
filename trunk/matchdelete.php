@@ -39,6 +39,10 @@ else
 	$match_id = $_POST['matchid'];
 	$match = new Match($match_id);
 	$match->delete();
+	if($event->getField('FixturesEnable') == TRUE)
+	{
+		$event->brackets(true);
+	}
 	$text .= '<br />'.EB_MATCHDEL_L3.'<br />';
 	
 	header("Location: eventinfo.php?eventid=$event_id");

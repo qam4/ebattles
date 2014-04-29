@@ -217,6 +217,13 @@ img.eb_image{
 }
 .eb_button img{
 	vertical-align: middle;
+#	opacity:0.4;
+#	filter:alpha(opacity=40); /* For IE8 and earlier */
+}
+.eb_button img:hover{
+	vertical-align: middle;
+	opacity:1;
+	filter:alpha(opacity=100); /* For IE8 and earlier */
 }
 .eb_link img{
 	vertical-align: middle;

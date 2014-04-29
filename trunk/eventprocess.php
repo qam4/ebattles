@@ -453,9 +453,11 @@ if(isset($_POST['unban_player']) && $_POST['unban_player']!="")
 if(isset($_POST['kick_player']) && $_POST['kick_player']!="")
 {
 	$playerid = $_POST['kick_player'];
-	deletePlayerMatches($playerid);
 	deletePlayer($playerid);
-	// TODO: only for ladders?
+	if(($event->getField('FixturesEnable') == TRUE)&&($event->getField('Status') == 'active'))
+	{
+		$event->brackets(true);
+	}
 	updateStats($event_id, $time, TRUE);
 	header("Location: eventmanage.php?eventid=$event_id");
 	exit();
@@ -464,7 +466,10 @@ if(isset($_POST['del_player_games']) && $_POST['del_player_games']!="")
 {
 	$playerid = $_POST['del_player_games'];
 	deletePlayerMatches($playerid);
-	// TODO: only for ladders?
+	if($event->getField('FixturesEnable') == TRUE)
+	{
+		$event->brackets(true);
+	}
 	updateStats($event_id, $time, TRUE);
 	header("Location: eventmanage.php?eventid=$event_id");
 	exit();
@@ -489,6 +494,14 @@ if(isset($_POST['checkin_player']) && $_POST['checkin_player']!="")
 	header("Location: eventmanage.php?eventid=$event_id");
 	exit();
 }
+if(isset($_POST['replace_player']) && $_POST['replace_player']!="")
+{
+	$playerid = $_POST['replace_player'];
+	$new_seed = $_POST['replace_player_'.$playerid];
+	$event->replacePlayer($playerid, $new_seed);
+	header("Location: eventmanage.php?eventid=$event_id");
+	exit();
+}
 if(isset($_POST['ban_team']) && $_POST['ban_team']!="")
 {
 	$teamid = $_POST['ban_team'];
@@ -510,9 +523,11 @@ if(isset($_POST['unban_team']) && $_POST['unban_team']!="")
 if(isset($_POST['kick_team']) && $_POST['kick_team']!="")
 {
 	$teamid = $_POST['kick_team'];
-	deleteTeamMatches($teamid);
 	deleteTeam($teamid);
-	// TODO: only for ladders?
+	if(($event->getField('FixturesEnable') == TRUE)&&($event->getField('Status') == 'active'))
+	{
+		$event->brackets(true);
+	}
 	updateStats($event_id, $time, TRUE);
 	header("Location: eventmanage.php?eventid=$event_id");
 	exit();
@@ -521,7 +536,10 @@ if(isset($_POST['del_team_games']) && $_POST['del_team_games']!="")
 {
 	$teamid = $_POST['del_team_games'];
 	deleteTeamMatches($teamid);
-	// TODO: only for ladders?
+	if($event->getField('FixturesEnable') == TRUE)
+	{
+		$event->brackets(true);
+	}
 	updateStats($event_id, $time, TRUE);
 	header("Location: eventmanage.php?eventid=$event_id");
 	exit();
@@ -543,6 +561,14 @@ if(isset($_POST['checkin_team']) && $_POST['checkin_team']!="")
 	}			
 	$event->setFieldDB('IsChanged', 1);
 
+	header("Location: eventmanage.php?eventid=$event_id");
+	exit();
+}
+if(isset($_POST['replace_team']) && $_POST['replace_team']!="")
+{
+	$teamid = $_POST['replace_team'];
+	$new_seed = $_POST['replace_team_'.$teamid];
+	$event->replaceTeam($teamid, $new_seed);
 	header("Location: eventmanage.php?eventid=$event_id");
 	exit();
 }

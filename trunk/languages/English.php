@@ -240,6 +240,7 @@ define('EB_EVENT_L99', 'Your balance is: ');
 define('EB_EVENT_L100', 'Wrong password.');
 define('EB_EVENT_L101', 'Back to');
 define('EB_EVENT_L102', 'Matchup');
+define('EB_EVENT_L103', 'Not seeded');
 
 define('EB_EVENTM_L1', 'Manage');
 define('EB_EVENTM_L2', 'Summary');
@@ -288,7 +289,7 @@ define('EB_EVENTM_L44', 'Add a Player');
 define('EB_EVENTM_L45', 'Add Player');
 define('EB_EVENTM_L46', 'Notify the user by PM.');
 define('EB_EVENTM_L47', 'Kick');
-define('EB_EVENTM_L48', 'You can kick (delete) a player who has no games played and no awards.<br />
+define('EB_EVENTM_L48', 'You can kick a player.<br />This will delete the player, the games he played and his awards.<br />
 A kicked player can re-signup to the event.');
 define('EB_EVENTM_L49', 'Ban');
 define('EB_EVENTM_L50', 'You can temporarily ban/unban a player.<br />
@@ -433,6 +434,7 @@ define('EB_EVENTM_L187', 'Are you sure you want to delete this team games?');
 define('EB_EVENTM_L188', 'Delete Team Awards');
 define('EB_EVENTM_L189', 'Are you sure you want to delete this team awards?');
 define('EB_EVENTM_L190', 'Check team in');
+define('EB_EVENTM_L191', 'Replace');
 
 define('EB_EVENTP_L1', 'Past Events');
 define('EB_EVENTP_L2', 'Past Events');

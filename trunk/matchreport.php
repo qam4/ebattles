@@ -693,7 +693,7 @@ if (isset($_POST['submit']))
 					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 					." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 					$result_Players = $sql->db_Query($q_Players);
-					$numPlayers = mysql_numrows($result_Players);
+					$nbr_players = mysql_numrows($result_Players);
 					break;
 				case 'Teams':
 					$q_Players = "SELECT DISTINCT ".TBL_USERS.".*"
@@ -710,14 +710,14 @@ if (isset($_POST['submit']))
 					." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 					." AND (".TBL_GAMERS.".User = ".TBL_USERS.".user_id)";
 					$result_Players = $sql->db_Query($q_Players);
-					$numPlayers = mysql_numrows($result_Players);
+					$nbr_players = mysql_numrows($result_Players);
 					break;
 				default:
 				}
 
-				if($numPlayers > 0)
+				if($nbr_players > 0)
 				{
-					for($j=0; $j < $numPlayers; $j++)
+					for($j=0; $j < $nbr_players; $j++)
 					{
 						$pname = mysql_result($result_Players, $j, TBL_USERS.".user_name");
 						$pemail = mysql_result($result_Players, $j, TBL_USERS.".user_email");

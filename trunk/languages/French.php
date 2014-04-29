@@ -238,6 +238,7 @@ define('EB_EVENT_L99', 'YVotre balance est: ');
 define('EB_EVENT_L100', 'Mauvais mot de passe.');
 define('EB_EVENT_L101', 'Retour vers');
 define('EB_EVENT_L102', 'Match');
+define('EB_EVENT_L103', 'Liste d’attente');
 
 define('EB_EVENTM_L1', 'Gérer');
 define('EB_EVENTM_L2', 'Sommaire');
@@ -286,7 +287,7 @@ define('EB_EVENTM_L44', 'Ajouter un Joueur');
 define('EB_EVENTM_L45', 'Ajouter le Joueur');
 define('EB_EVENTM_L46', 'Aviser le joueur de l’équipe par PM.');
 define('EB_EVENTM_L47', 'Kick');
-define('EB_EVENTM_L48', 'Vous pouvez "kicker" (supprimer) un joueur qui n’a pas de matchs joués ou de trophés<br />
+define('EB_EVENTM_L48', 'Vous pouvez "kicker" un joueur. Cela supprime le joueur, les matchs qu’il a joués ou ses trophés<br />
 Un joueur "kické" peut se re-inscrire au tournoi.');
 define('EB_EVENTM_L49', 'Exclure');
 define('EB_EVENTM_L50', 'Vous pouvez temporairement bannir/débannir un joueur.<br />

@@ -88,7 +88,6 @@ $can_report_quickloss = $permissions['can_report_quickloss'];
 $can_submit_replay = $permissions['can_submit_replay'];
 $can_challenge = $permissions['can_challenge'];
 
-$rounds = unserialize($event->getFieldHTML('Rounds'));
 $egame = mysql_result($result,0 , TBL_GAMES.".Name");
 $egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
 $egameicon = mysql_result($result,0 , TBL_GAMES.".Icon");
@@ -97,6 +96,7 @@ $eownername = mysql_result($result,0 , TBL_USERS.".user_name");
 
 $eventIsChanged = $event->getField('IsChanged');
 $eventStatus = $event->getField('Status');
+$rounds = unserialize($event->getFieldHTML('Rounds'));
 $eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
 
 $type = $event->getField('Type');
@@ -113,10 +113,10 @@ $nbr_players = $row['NbrPlayers'];
 $q = "SELECT ".TBL_PLAYERS.".*"
 ." FROM ".TBL_PLAYERS
 ." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-." AND (".TBL_PLAYERS.".CheckedIn = '0')";
+." AND (".TBL_PLAYERS.".CheckedIn = '1')"
+." AND (".TBL_PLAYERS.".Seed <= '$eMaxNumberPlayers')";
 $result = $sql->db_Query($q);
-$nbr_players_not_checked_in = mysql_numrows($result);
-$nbr_players_checked_in = $nbr_players - $nbr_players_not_checked_in;
+$nbr_players_checked_in = mysql_numrows($result);
 
 /* Nbr Teams */
 $q = "SELECT COUNT(*) as NbrTeams"
@@ -129,10 +129,10 @@ $nbr_teams = $row['NbrTeams'];
 $q = "SELECT ".TBL_TEAMS.".*"
 ." FROM ".TBL_TEAMS
 ." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-." AND (".TBL_TEAMS.".CheckedIn = '0')";
+." AND (".TBL_TEAMS.".CheckedIn = '1')"
+." AND (".TBL_TEAMS.".Seed <= '$eMaxNumberPlayers')";
 $result = $sql->db_Query($q);
-$nbr_teams_not_checked_in = mysql_numrows($result);
-$nbr_teams_checked_in = $nbr_teams - $nbr_teams_not_checked_in;
+$nbr_teams_checked_in = mysql_numrows($result);
 
 if ($pref['eb_events_update_delay_enable'] == 1)
 {
@@ -185,24 +185,20 @@ if($eventStatus=='signup')
 if($eventStatus=='checkin')
 {
 	$checkin_end = false;
-	$delete_teams = false;
-	$delete_players = false;
 	
 	if($event->getField('CheckinDuration') > 0)
 	{
-		// End 'checkin' at the beginning of the event, or when we've reached the max number of players
+		// End 'checkin' at the beginning of the event, or when we've reached enough checkins
 		if(($time > $event->getField('StartDateTime')) ||
 		   (($eMaxNumberPlayers != 0)&&($nbr_teams_checked_in >= $eMaxNumberPlayers)))
 		{
 			$checkin_end = true;
-			$delete_teams = true;
 		}
 
 		if(($time > $event->getField('StartDateTime')) ||
 		   (($eMaxNumberPlayers != 0)&&($nbr_players_checked_in >= $eMaxNumberPlayers)))
 		{
 			$checkin_end = true;
-			$delete_players = true;
 		}
 	}
 	else
@@ -211,58 +207,14 @@ if($eventStatus=='checkin')
 		if($time > $event->getField('StartDateTime'))
 		{
 			$checkin_end = true;
-			
-			if(($eMaxNumberPlayers != 0)&&($nbr_teams > $eMaxNumberPlayers))
-			{
-				$delete_teams = true;
-			}
-
-			if(($eMaxNumberPlayers != 0)&&($nbr_players > $eMaxNumberPlayers))
-			{
-				$delete_players = true;
-			}
 		}
 	}
-	
-	/*
-	if($delete_teams == true)
-	{
-		// Delete teams so that we are left with max number of teams
-		$q = "SELECT ".TBL_TEAMS.".*"
-		." FROM ".TBL_TEAMS
-		." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-		." ORDER BY ".TBL_TEAMS.".Seed, ".TBL_TEAMS.".Joined";
-		$result = $sql->db_Query($q);
-		$nbr_teams = mysql_numrows($result);
-		for($i=$eMaxNumberPlayers; $i<$nbr_teams; $i++)
-		{
-			$tID = mysql_result($result, $i, TBL_TEAMS.".TeamID");
-			deleteTeam($tID);
-		}
-	}
-	if($delete_players == true)
-	{
-		// Delete players so that we are left with max number of players
-		$q = "SELECT ".TBL_PLAYERS.".*"
-		." FROM ".TBL_PLAYERS
-		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-		." ORDER BY ".TBL_PLAYERS.".Seed, ".TBL_PLAYERS.".Joined";
-		$result = $sql->db_Query($q);
-		$nbr_players = mysql_numrows($result);
-		for($i=$eMaxNumberPlayers; $i<$nbr_players; $i++)
-		{
-			$pID = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
-			deletePlayer($pID);
-		}
-	}
-	*/		
 	
 	if($checkin_end == true)
 	{
 		$eventStatus = 'active';
 		if($event->getField('FixturesEnable') == TRUE)
 		{
-			$event->updateSeeds();
 			$event->brackets(true);
 		}			
 		$event->setFieldDB('IsChanged', 1);
@@ -278,9 +230,9 @@ if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime')
 		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 		."   AND (".TBL_PLAYERS.".Rank = '1')";
 		$result = $sql->db_Query($q);
-		$numPlayers = mysql_numrows($result);
-		//echo "numPlayers: $numPlayers<br>";			
-		if($numPlayers == 1)
+		$nbr_players_rank_1 = mysql_numrows($result);
+		//echo "nbr_players_rank_1: $nbr_players_rank_1<br>";			
+		if($nbr_players_rank_1 == 1)
 		{	
 			$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
 			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
@@ -315,8 +267,8 @@ if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime')
 		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 		. "AND (".TBL_PLAYERS.".Rank = '2')";
 		$result = $sql->db_Query($q);
-		$numPlayers = mysql_numrows($result);
-		if($numPlayers == 1)
+		$nbr_players_rank_2 = mysql_numrows($result);
+		if($nbr_players_rank_2 == 1)
 		{				
 			$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
 			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
@@ -329,8 +281,8 @@ if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime')
 		." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
 		. "AND (".TBL_PLAYERS.".Rank = '3')";
 		$result = $sql->db_Query($q);
-		$numPlayers = mysql_numrows($result);
-		if($numPlayers == 1)
+		$nbr_players_rank_3 = mysql_numrows($result);
+		if($nbr_players_rank_3 == 1)
 		{				
 			$pid = mysql_result($result,0 , TBL_PLAYERS.".PlayerID");
 			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Player,Type,timestamp)
@@ -345,8 +297,8 @@ if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime')
 		." WHERE (".TBL_TEAMS.".Event = '$event_id')"
 		. "AND (".TBL_TEAMS.".Rank = '1')";
 		$result = $sql->db_Query($q);
-		$numTeams = mysql_numrows($result);
-		if($numTeams == 1)
+		$nbr_teams_rank_1 = mysql_numrows($result);
+		if($nbr_teams_rank_1 == 1)
 		{				
 			$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
 			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
@@ -382,8 +334,8 @@ if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime')
 		." WHERE (".TBL_TEAMS.".Event = '$event_id')"
 		. "AND (".TBL_TEAMS.".Rank = '2')";
 		$result = $sql->db_Query($q);
-		$numTeams = mysql_numrows($result);
-		if($numTeams == 1)
+		$nbr_teams_rank_2 = mysql_numrows($result);
+		if($nbr_teams_rank_2 == 1)
 		{				
 			$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
 			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
@@ -396,20 +348,161 @@ if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime')
 		." WHERE (".TBL_TEAMS.".Event = '$event_id')"
 		. "AND (".TBL_TEAMS.".Rank = '3')";
 		$result = $sql->db_Query($q);
-		$numTeams = mysql_numrows($result);
-		if($numTeams == 1)
+		$nbr_teams_rank_3 = mysql_numrows($result);
+		if($nbr_teams_rank_3 == 1)
 		{				
 			$pid = mysql_result($result,0 , TBL_TEAMS.".TeamID");
 			$q_Awards = "INSERT INTO ".TBL_AWARDS."(Team,Type,timestamp)
 			VALUES ($pid,'TeamRankThird',$time)";
 			$result_Awards = $sql->db_Query($q_Awards);
 		}
-	}	
-	
-	
+	}
 }
 
 $event->setFieldDB('Status', $eventStatus);
+
+$can_signup = 0;
+$cannot_signup_str = EB_EVENT_L75;
+$can_checkin = 0;
+
+$max_num_players_reached = 0;
+switch($event->getMatchPlayersType())
+{
+case 'Players':
+	if(($eMaxNumberPlayers != 0)&&($nbr_players >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
+	$tab_title = EB_EVENT_L77;
+	break;
+case 'Teams':
+	if(($eMaxNumberPlayers != 0)&&($nbr_teams >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
+	$tab_title = EB_EVENT_L84;
+	break;
+default:
+}
+
+if($event->getField('FixturesEnable') == TRUE)
+{
+	$show_seeds_players = true;
+	$show_seeds_teams = true;
+	switch($event->getField('Status'))
+	{
+	case 'draft':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L75;
+		break;
+	case 'signup':
+		// Do not close signup when max players limit is reached (wait list for non seeded players)
+		$can_signup = 1;
+		break;
+	case 'checkin':
+		$can_checkin = 1;
+		$can_signup = 1;
+		break;
+	case 'active':
+		// late signups ok, until a game has been played.
+		$can_signup = 1;
+		$can_checkin = 1;
+		if($event->getField('AllowLateSignups') == FALSE)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENT_L75;
+			$can_checkin = 0;
+		}
+		// Check if one game has been played
+		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
+		." FROM ".TBL_MATCHS.", "
+		.TBL_SCORES
+		." WHERE (Event = '$event_id')"
+		." AND (".TBL_MATCHS.".Status = 'active')"
+		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
+		$result = $sql->db_Query($q);
+
+		$row = mysql_fetch_array($result);
+		$numMatches = $row['NbrMatches'];
+		if($numMatches > 0)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENT_L75;
+			$can_checkin = 0;
+		}
+		break;
+	case 'finished':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L83;
+		$can_checkin = 0;
+		break;
+	}
+}
+if($event->getField('FixturesEnable') == FALSE)
+{
+	$show_seeds_players = false;
+	$show_seeds_teams = false;
+	switch($event->getField('Status'))
+	{
+	case 'draft':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L75;
+		break;
+	case 'signup':
+		$can_signup = 1;
+		if($max_num_players_reached == 1)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENTM_L161;
+		}
+		break;
+	case 'checkin':
+		$can_signup = 1;
+		$can_checkin = 1;
+		if($max_num_players_reached == 1)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENTM_L161;
+		}
+		break;
+	case 'active':
+		$can_signup = 1;
+		$can_checkin = 1;
+		if($max_num_players_reached == 1)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENTM_L161;
+		}
+		if($event->getField('AllowLateSignups') == FALSE)
+		{
+			$can_signup = 0;
+			$cannot_signup_str = EB_EVENT_L75;
+		}
+		break;
+	case 'finished':
+		$can_signup = 0;
+		$cannot_signup_str = EB_EVENT_L83;
+		$can_checkin = 0;
+		break;
+	}
+}
+
+if($event->getField('CheckinDuration') == 0) $can_checkin = 0;
+
+$hide_fixtures = 0;
+if(($event->getField('HideFixtures') == 1) &&
+   (($event->getField('Status') == 'draft') ||
+    ($event->getField('Status') == 'checkin') ||
+    ($event->getField('Status') == 'signup')))
+{
+	$hide_fixtures = 1;
+}
+
+if($event->getField('SignupsEnable') == FALSE)
+{
+	$can_signup = 0;
+	$cannot_signup_str = EB_EVENT_L75;
+}
+
+if(!check_class(e_UC_MEMBER))
+{
+	$can_signup = 0;
+	$cannot_signup_str = EB_EVENT_L34;
+}
 
 switch($competition_type)
 {

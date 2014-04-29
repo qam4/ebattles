@@ -19,7 +19,7 @@ class Event extends DatabaseTable
 		parent::__construct($primaryID);
 		
 		// Force "Enable fixtures" for tournaments
-		if($this->getCompetitionType()=='Tournament') $this->setField('FixturesEnable', TRUE);
+		if($this->getCompetitionType()=='Tournament') $this->setFieldDB('FixturesEnable', TRUE);
 	}
 	
 	function setDefaultFields()
@@ -186,7 +186,6 @@ class Event extends DatabaseTable
 			for($j=0; $j<$num_players; $j++)
 			{
 				$pID  = mysql_result($result, $j, TBL_PLAYERS.".PlayerID");
-				deletePlayerAwards($pID);
 				deletePlayer($pID);
 			}
 		}
@@ -195,9 +194,19 @@ class Event extends DatabaseTable
 	function deleteTeams()
 	{
 		global $sql;
-		$q3 = "DELETE FROM ".TBL_TEAMS
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
 		." WHERE (".TBL_TEAMS.".Event = '".$this->fields['EventID']."')";
-		$result3 = $sql->db_Query($q3);
+		$result = $sql->db_Query($q);
+		$num_teams = mysql_numrows($result);
+		if ($num_teams!=0)
+		{
+			for($j=0; $j<$num_teams; $j++)
+			{
+				$tID  = mysql_result($result, $j, TBL_TEAMS.".TeamID");
+				deleteTeam($tID);
+			}
+		}
 	}
 
 	function deleteMods()
@@ -495,8 +504,8 @@ class Event extends DatabaseTable
 		$numTeams = mysql_numrows($result);
 		if($numTeams == 0)
 		{
-			$q = "INSERT INTO ".TBL_TEAMS."(Event,Division,ELORanking,TS_mu,TS_sigma)
-			VALUES (".$this->fields['EventID'].",$div_id,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].")";
+			$q = "INSERT INTO ".TBL_TEAMS."(Event,Division,ELORanking,TS_mu,TS_sigma,Joined)
+			VALUES (".$this->fields['EventID'].",$div_id,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].",$time)";
 			$sql->db_Query($q);
 			$team_id =  mysql_insert_id();
 
@@ -699,7 +708,11 @@ class Event extends DatabaseTable
 		document.getElementById('checkin_player').value=v;
 		document.getElementById('playersform').submit();
 		}
-		
+		function replace_player(v)
+		{
+		document.getElementById('replace_player').value=v;
+		document.getElementById('playersform').submit();
+		}		
 		function kick_team(v)
 		{
 		document.getElementById('kick_team').value=v;
@@ -730,6 +743,11 @@ class Event extends DatabaseTable
 		document.getElementById('checkin_team').value=v;
 		document.getElementById('teamsform').submit();
 		}
+		function replace_team(v)
+		{
+		document.getElementById('replace_team').value=v;
+		document.getElementById('teamsform').submit();
+		}		
 		//-->
 		</script>
 		";
@@ -1483,6 +1501,8 @@ class Event extends DatabaseTable
 		global $tp;
 		global $gold_obj;
 
+		$this->updateFields();
+
 		$type = $this->fields['Type'];
 		$competition_type = $this->getCompetitionType();
 		
@@ -1493,6 +1513,7 @@ class Event extends DatabaseTable
 		//var_dump($teams);
 		
 		$results = unserialize($this->getFieldHTML('Results'));
+		$update_results = false;
 		
 		// TODO: check for error (return false)
 		$rounds = unserialize($this->getFieldHTML('Rounds'));
@@ -1529,6 +1550,9 @@ class Event extends DatabaseTable
 					if (!isset($results[$round][$matchup]['bye'])) $results[$round][$matchup]['bye'] = false;
 					if (!isset($matchups[$round][$matchup]['deleted'])) $matchups[$round][$matchup]['deleted'] = false;
 					
+					/* Nbr of matches in the matchup */
+					$nbr_matchs = count($results[$round][$matchup]['matchs']);
+
 					$matchup_deleted = false;
 					for($match = 0; $match < 2; $match++){
 						$matchupString = $matchups[$round][$matchup][$match];
@@ -1574,16 +1598,23 @@ class Event extends DatabaseTable
 									$brackets[$row][2*$round-2] = '<td class="grid border-middle"></td>';
 								}
 								
-								if($deleted == true){
-									$matchup_deleted = true;
-								}
-
 								$matchupsRows[$round][$matchup][$match] = $row;
 								if ($winner == 'top') {
 									$content[$round][$matchup][$match] = $content[$matchupRound][$matchupMatchup][0];
 								}
 								else if ($winner == 'bottom') {
 									$content[$round][$matchup][$match] = $content[$matchupRound][$matchupMatchup][1];
+								} else {
+									// Not played
+									// Detect if match has been previously scheduled and needs to be deleted
+									if($nbr_matchs > 0)
+									{
+										$deleted = true;
+									}
+								}
+
+								if($deleted == true){
+									$matchup_deleted = true;
 								}
 							}
 							if (($matchupString[0]=='L')||($matchupString[0]=='P')) {
@@ -1597,10 +1628,6 @@ class Event extends DatabaseTable
 								$deleted = $matchups[$matchupRound][$matchupMatchup]['deleted'];
 
 								$row = findRow($round, $matchup, $match, $style);
-
-								if($deleted == true){
-									$matchup_deleted = true;
-								}
 
 								$matchupsRows[$round][$matchup][$match] = $row;
 								if ($winner == 'top') {
@@ -1644,8 +1671,17 @@ class Event extends DatabaseTable
 									}
 								}
 								else {
+									// Not played
+									// Detect if match has been previously scheduled and needs to be deleted
+									if($nbr_matchs > 0)
+									{
+										$deleted = true;
+									}
 								}
-								//echo "L$matchupRound,$matchupMatchup: ".$content[$round][$matchup][$match]."<br>";
+
+								if($deleted == true){
+									$matchup_deleted = true;
+								}
 							}
 						}
 
@@ -1664,14 +1700,11 @@ class Event extends DatabaseTable
 						}
 					}	// for(match)
 					
-					/* Nbr of matches in the matchup */
-					$nbr_matchs = count($results[$round][$matchup]['matchs']);
-					
 					/* Match deletion*/
 					if($nbr_matchs > 0)
 					{
 						$match_deleted = false;
-						for($match=0;$match < $nbr_matchs; $match++)
+						for($match = 0;$match < $nbr_matchs; $match++)
 						{
 							if(($results[$round][$matchup]['matchs'][$match]['match_id'] == $delete_match_id)
 									||($match_deleted == true)
@@ -1683,6 +1716,7 @@ class Event extends DatabaseTable
 								var_dump($match_deleted);
 								var_dump($matchup_deleted);
 								*/
+								$update_results = true;
 								
 								$current_match_id = $results[$round][$matchup]['matchs'][$match]['match_id'];
 								echo "match ".$current_match_id." deleted (M$round,$matchup,$match)<br>";
@@ -1789,6 +1823,14 @@ class Event extends DatabaseTable
 						$nbr_matchs = count($results[$round][$matchup]['matchs']);
 					}
 					
+					// If we try to replace an empty spot by a player, we need to reset the byes
+					if(($content[$round][$matchup][0][0]=='T')
+					 &&($content[$round][$matchup][1][0]=='T')
+					 &&($results[$round][$matchup]['bye'] == true)) {
+						$results[$round][$matchup]['winner'] = 'not played';
+						$results[$round][$matchup]['bye'] = false;
+					}
+
 					/* Update results */
 					if(($scheduleNextMatches == true)
 							&&($content[$round][$matchup][0][0]=='T')
@@ -1801,6 +1843,7 @@ class Event extends DatabaseTable
 						$results[$round][$matchup]['matchs'][$match]['winner']
 						$results[$round][$matchup]['winner']
 						*/
+						$update_results = true;
 
 						$results[$round][$matchup]['topWins'] = 0;
 						$results[$round][$matchup]['bottomWins'] = 0;
@@ -2163,6 +2206,8 @@ class Event extends DatabaseTable
 							&&($content[$round][$matchup][0][0]=='T')
 							&&($content[$round][$matchup][1][0]=='T')
 							&&($results[$round][$matchup]['winner'] == 'not played')) {
+						$update_results = true;
+						
 						$current_match = $results[$round][$matchup]['matchs'][$nbr_matchs-1];
 						//var_dump($current_match);
 
@@ -2411,7 +2456,7 @@ class Event extends DatabaseTable
 		var_dump($content);
 		var_dump($teams);
 		*/
-		if($scheduleNextMatches == true) {
+		if($update_results == true) {
 			$this->updateResults($results);
 			$this->updateFieldDB('Results');
 		}
@@ -2551,11 +2596,6 @@ class Event extends DatabaseTable
 		switch($this->getMatchPlayersType())
 		{
 		case 'Players':
-			if($this->getField('CheckinDuration') > 0)
-			{
-				$checkedin_str = " AND (".TBL_PLAYERS.".CheckedIn = '1')";
-			}
-			
 			$q_Players = "SELECT ".TBL_GAMERS.".*, "
 			.TBL_PLAYERS.".*, "
 			.TBL_USERS.".*"
@@ -2580,7 +2620,7 @@ class Event extends DatabaseTable
 				$pavatar = mysql_result($result,$player, TBL_USERS.".user_image");
 				$pteam  = mysql_result($result,$player , TBL_PLAYERS.".Team");
 				list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
-				$pseed = mysql_result($result,$player , TBL_PLAYERS.".Seed");
+				$pseed = mysql_result($result, $player, TBL_PLAYERS.".Seed");
 				if($pseed == 0) $pseed = $player+1;
 
 				$teams[$pseed-1]['PlayerID'] = $playerID;
@@ -2591,11 +2631,6 @@ class Event extends DatabaseTable
 			}
 			break;
 		case 'Teams':
-			if($this->getField('CheckinDuration') > 0)
-			{
-				$checkedin_str = " AND (".TBL_TEAMS.".CheckedIn = '1')";
-			}
-
 			$q_Teams = "SELECT ".TBL_CLANS.".*, "
 			.TBL_TEAMS.".*, "
 			.TBL_DIVISIONS.".* "
@@ -2919,7 +2954,7 @@ class Event extends DatabaseTable
 
 		if($this->getField('ChallengesEnable')==FALSE) $can_challenge= 0;		
 
-
+		//echo "e($event_id).perm.can_report=$can_report<br>";
 		$permissions = array();
 		$permissions['userclass'] = $userclass;
 		$permissions['can_approve'] = $can_approve;
@@ -2930,8 +2965,151 @@ class Event extends DatabaseTable
 		$permissions['can_challenge'] = $can_challenge;
 		
 		return $permissions;
-	}	
+	}
 	
+	function replacePlayer($player_id, $new_seed)
+	{
+		global $sql;
+		global $time;
+		
+		$error = 0;
+		
+		// Get player's old seed
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')";
+		$result = $sql->db_Query($q);
+		$old_seed = mysql_result($result, 0, TBL_PLAYERS.".Seed");
+		echo "old_seed: $old_seed<br>";
+		
+		// Find player_target
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')"
+		." AND (".TBL_PLAYERS.".Seed = '$new_seed')";
+		$result = $sql->db_Query($q);
+		$numPlayers = mysql_numrows($result);
+		if($numPlayers == 1)
+		{
+			$player_target_id = mysql_result($result, 0, TBL_PLAYERS.".PlayerID");
+			echo "player_target_id: $player_target_id<br>";
+			
+			$q_2 = "SELECT count(*) "
+			." FROM ".TBL_MATCHS.", "
+			.TBL_SCORES.", "
+			.TBL_PLAYERS
+			." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+			." AND (".TBL_MATCHS.".Status = 'active')"
+			." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+			." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
+			." AND   (".TBL_PLAYERS.".Team != 0)))"
+			." AND (".TBL_PLAYERS.".PlayerID = '$player_target_id')";
+			$result_2 = $sql->db_Query($q_2);
+			$pmatches = mysql_result($result_2, 0);
+			echo "pmatches: $pmatches<br>";
+			
+			if($pmatches > 0)
+			{
+				// Cannot switch with a player_target who has played already ???
+				$error = 1;
+			}
+			else
+			{
+				// Delete player_target matches
+				// And then change his seed.
+				deletePlayerMatches($player_target_id);
+				
+				// Update player's seed
+				$q = "UPDATE ".TBL_PLAYERS." SET Seed = '".($old_seed)."' WHERE (PlayerID = '".$player_target_id."')";
+				$sql->db_Query($q);
+			}
+		}
+		
+		if($error==0)
+		{
+			// Update player's seed
+			$q = "UPDATE ".TBL_PLAYERS." SET Seed = '".($new_seed)."' WHERE (PlayerID = '".$player_id."')";
+			$sql->db_Query($q);
+			if(($this->getField('FixturesEnable') == TRUE)&&($this->getField('Status') == 'active'))
+			{
+				$this->brackets(true);
+			}			
+			$this->setFieldDB('IsChanged', 1);
+		}
+		
+		return $error;
+	}
+	
+	function replaceTeam($team_id, $new_seed)
+	{
+		global $sql;
+		global $time;
+		
+		$error = 0;
+		
+		// Get team's old seed
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
+		." WHERE (".TBL_TEAMS.".TeamID = '$team_id')";
+		$result = $sql->db_Query($q);
+		$old_seed = mysql_result($result, 0, TBL_TEAMS.".Seed");
+		echo "old_seed: $old_seed<br>";
+		
+		// Find team_target
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
+		." WHERE (".TBL_TEAMS.".Event = '".$this->fields['EventID']."')"
+		." AND (".TBL_TEAMS.".Seed = '$new_seed')";
+		$result = $sql->db_Query($q);
+		$numTeams = mysql_numrows($result);
+		if($numTeams == 1)
+		{
+			$team_target_id = mysql_result($result, 0, TBL_TEAMS.".TeamID");
+			echo "team_target_id: $team_target_id<br>";
+			
+			$q_2 = "SELECT count(*) "
+			." FROM ".TBL_MATCHS.", "
+			.TBL_SCORES.", "
+			.TBL_TEAMS
+			." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+			." AND (".TBL_MATCHS.".Status = 'active')"
+			." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+			." AND (".TBL_TEAMS.".TeamID = '$team_target_id')";
+			$result_2 = $sql->db_Query($q_2);
+			$tmatches = mysql_result($result_2, 0);
+			echo "tmatches: $tmatches<br>";
+			
+			if($tmatches > 0)
+			{
+				// Cannot switch with a team_target who has played already ???
+				$error = 1;
+			}
+			else
+			{
+				// Delete team_target matches
+				// And then change his seed.
+				deleteTeamMatches($team_target_id);
+				
+				// Update team's seed
+				$q = "UPDATE ".TBL_TEAMS." SET Seed = '".($old_seed)."' WHERE (TeamID = '".$team_target_id."')";
+				$sql->db_Query($q);
+			}
+		}
+		
+		if($error==0)
+		{
+			// Update team's seed
+			$q = "UPDATE ".TBL_TEAMS." SET Seed = '".($new_seed)."' WHERE (TeamID = '".$team_id."')";
+			$sql->db_Query($q);
+			if(($this->getField('FixturesEnable') == TRUE)&&($this->getField('Status') == 'active'))
+			{
+				$this->brackets(true);
+			}			
+			$this->setFieldDB('IsChanged', 1);
+		}
+		
+		return $error;
+	}	
 }
 
 function deletePlayerMatches($player_id)
@@ -2953,7 +3131,7 @@ function deletePlayerMatches($player_id)
 		for($j=0; $j<$num_matches; $j++)
 		{
 			set_time_limit(10);
-			$match_id  = mysql_result($result,$j, TBL_MATCHS.".MatchID");
+			$match_id = mysql_result($result,$j, TBL_MATCHS.".MatchID");
 			$match = new Match($match_id);
 			$match->delete();
 		}
@@ -2964,19 +3142,11 @@ function deletePlayer($player_id)
 {
 	global $sql;
 	
-	// Need to re-order the seeds for that event.
-	$q = "SELECT ".TBL_PLAYERS.".*"
-	." FROM ".TBL_PLAYERS
-	." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')";
-	$result = $sql->db_Query($q);
-	$event_id    = mysql_result($result,0 , TBL_PLAYERS.".Event");
-	
+	deletePlayerAwards($player_id);
+	deletePlayerMatches($player_id);
 	$q = "DELETE FROM ".TBL_PLAYERS
 	." WHERE (".TBL_PLAYERS.".PlayerID = '$player_id')";
 	$result = $sql->db_Query($q);
-
-	$event = new Event($event_id);
-	$event->updateSeeds();
 }
 		
 function deletePlayerAwards($player_id)
@@ -3038,24 +3208,42 @@ function deleteTeam($team_id)
 {
 	global $sql;
 	
-	// Need to re-order the seeds for that event.
-	$q = "SELECT ".TBL_TEAMS.".*"
-	." FROM ".TBL_TEAMS
-	." WHERE (".TBL_TEAMS.".TeamID = '$team_id')";
+	deleteTeamAwards($team_id);
+	deleteTeamMatches($team_id);
+
+	// delete all the players of that team
+	$q = "SELECT ".TBL_PLAYERS.".*"
+	." FROM ".TBL_PLAYERS
+	." WHERE (".TBL_PLAYERS.".Team = '$team_id')";
 	$result = $sql->db_Query($q);
-	$event_id    = mysql_result($result,0 , TBL_TEAMS.".Event");
-	
+	$numPlayers = mysql_numrows($result);
+	for($i=0; $i<$numPlayers; $i++)
+	{		
+		$player_id = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+		deletePlayer($player_id);
+	}
+
 	$q = "DELETE FROM ".TBL_TEAMS
 	." WHERE (".TBL_TEAMS.".TeamID = '$team_id')";
 	$result = $sql->db_Query($q);
-
-	$event = new Event($event_id);
-	$event->updateSeeds();
 }
 
 function deleteTeamAwards($team_id)
 {
 	global $sql;
+
+	// delete all the awards of players of that team
+	$q = "SELECT ".TBL_PLAYERS.".*"
+	." FROM ".TBL_PLAYERS
+	." WHERE (".TBL_PLAYERS.".Team = '$team_id')";
+	$result = $sql->db_Query($q);
+	$numPlayers = mysql_numrows($result);
+	for($i=0; $i<$numPlayers; $i++)
+	{		
+		$player_id = mysql_result($result, $i, TBL_PLAYERS.".PlayerID");
+		deletePlayerAwards($player_id);
+	}
+	
 	$q = "DELETE FROM ".TBL_AWARDS
 	." WHERE (".TBL_AWARDS.".Team = '$team_id')";
 	$result = $sql->db_Query($q);

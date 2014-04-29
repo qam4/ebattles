@@ -4,10 +4,10 @@
 */
 
 $(function() {
-	$( "#tabs" ).tabs({
-		cookie: {
-			// store cookie for a day, without, it would be a session cookie
-			expires: 1
-		}
+	$("#tabs").tabs({ 
+		activate: function (e, ui) { 
+			$.cookie('selected-tab', ui.newTab.index(), { path: '/' }); 
+		}, 
+		active: $.cookie('selected-tab')        
 	});
 });

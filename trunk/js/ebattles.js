@@ -37,9 +37,10 @@ jQuery(function() {
 		$('.jq-button').button();
 		$('.tbox').addClass("ui-widget-content ui-corner-all");
 		$('#players_list_sortable tbody').sortable({
-    		helper: fixHelper,
-    		cursor: 'move',
-    		update : function () {
+			helper: fixHelper,
+			cursor: 'move',
+			placeholder: "ui-state-highlight",
+			update : function () {
 				var order = $(this).sortable('serialize');
 				//alert(order);
 				$.ajax({
@@ -56,9 +57,10 @@ jQuery(function() {
 			}
 		}).disableSelection();
 		$('#teams_list_sortable tbody').sortable({
-    		helper: fixHelper,
-    		cursor: 'move',
-    		update : function () {
+			helper: fixHelper,
+			cursor: 'move',
+			placeholder: "ui-state-highlight",
+ 			update : function () {
 				var order = $(this).sortable('serialize');
 				//alert(order);
 				$.ajax({

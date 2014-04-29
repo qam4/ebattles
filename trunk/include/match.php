@@ -900,7 +900,7 @@ class Match extends DatabaseTable
 
 		if($event->getField('FixturesEnable') == TRUE)
 		{
-			$event->brackets(true, $match_id);
+			$event->brackets(false, $match_id);
 		}
 		else
 		{
@@ -1762,7 +1762,7 @@ class Match extends DatabaseTable
 		default:
 		}
 
-		// Is the user a player in the match?
+		// Is the user a player in the match & not banned?
 		switch($event->getMatchPlayersType())
 		{
 		case 'Players':
@@ -1775,10 +1775,12 @@ class Match extends DatabaseTable
 			." WHERE (".TBL_MATCHS.".MatchID = '".$match_id."')"
 			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 			." AND (".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+			." AND (".TBL_PLAYERS.".Banned != 1)"
 			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 			." AND (".TBL_GAMERS.".User = ".$user_id.")";
 			$result_UserPlayers = $sql->db_Query($q_UserPlayers);
 			$numUserPlayers = mysql_numrows($result_UserPlayers);
+			//dbg: echo "numUserPlayers: $numUserPlayers<br>";
 
 			break;
 		case 'Teams':
@@ -1792,7 +1794,9 @@ class Match extends DatabaseTable
 			." WHERE (".TBL_MATCHS.".MatchID = '".$match_id."')"
 			." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
 			." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+			." AND (".TBL_TEAMS.".Banned != 1)"
 			." AND (".TBL_PLAYERS.".Team = ".TBL_TEAMS.".TeamID)"
+			." AND (".TBL_PLAYERS.".Banned != 1)"
 			." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 			." AND (".TBL_GAMERS.".User = ".$user_id.")";
 			$result_UserPlayers = $sql->db_Query($q_UserPlayers);
@@ -1864,7 +1868,8 @@ class Match extends DatabaseTable
 				$can_edit = 0;
 			}
 		}
-
+		
+		//echo "m($match_id).perm.can_report=$can_report<br>";
 		$permissions = array();
 		$permissions['userclass'] = $userclass;
 		$permissions['can_edit'] = $can_edit;
