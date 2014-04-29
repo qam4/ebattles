@@ -1,3 +1,27 @@
+4/25/2014
+. (resolved) max_num_players_reached -> for ladder -> hard limit, for tourny -> wait list.
+
+3/23/2014
+. (resolved) adding a player to a bracket after tournament starts is a problem.
+A player who previously add a bye will not
+There will be a match too many.
+
+2/27/2014
+. (resolved) kick_team does not erase matchs.
+. (resolved) can't replace "empty" seed.
+. (resolved) remove pagination for players_list in eventmanage, not working with player replace/shuffle...
+
+
+2/4/2013
+.IMPORTANT
+ if fixtures_enabled=1 && status='active', we can not re-order the seeds, because it would screw up the bracket.
+-> Prevent "quit"/"kick"
+-> if 'checkin_enabled' and 1 seeded player has not checked in?
+
+http://jsfiddle.net/Q8wHS/
+http://stackoverflow.com/questions/12221179/jquery-ui-sortable-add-placeholders-to-lists-to-simulate-empty-spaces
+
+-----------------------------------------------------------------------
 1/15/2013
 . tournament, checkin enabled, if no one has checked in, the brackets shows a ";"
 
@@ -6,7 +30,7 @@
  - if player joins a banned team, it should be banned too.
   - jointeamevent: event->eventAddPlayer(team) -> not allowed if team banned.
   - division->addMember()
- - show cheked in players/teams in ladders?
+ - show checked in players/teams in ladders?
   - banned teams/players should not appear in players list in report match dialog.
 . automatic checkin if log after checkin starts?
 

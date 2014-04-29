@@ -45,15 +45,17 @@ $q = "SELECT ".TBL_EVENTS.".*, "
 ." WHERE (".TBL_EVENTS.".EventID = '$event_id')"
 ."   AND (".TBL_EVENTS.".Game = ".TBL_GAMES.".GameID)"
 ."   AND (".TBL_USERS.".user_id = ".TBL_EVENTS.".Owner)";
-
 $result = $sql->db_Query($q);
+
+$event = new Event($event_id);
+
 $egame = mysql_result($result,0 , TBL_GAMES.".Name");
-$egameicon  = mysql_result($result,0 , TBL_GAMES.".Icon");
 $egameid = mysql_result($result,0 , TBL_GAMES.".GameID");
+$egameicon  = mysql_result($result,0 , TBL_GAMES.".Icon");
 $eowner = mysql_result($result,0 , TBL_USERS.".user_id");
 $eownername = mysql_result($result,0 , TBL_USERS.".user_name");
 
-$event = new Event($event_id);
+$eventIsChanged = $event->getField('IsChanged');
 $eventStatus = $event->getField('Status');
 $rounds = unserialize($event->getFieldHTML('Rounds'));
 $eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
@@ -61,30 +63,77 @@ $eMaxNumberPlayers = $event->getField('MaxNumberPlayers');
 $type = $event->getField('Type');
 $competition_type = $event->getCompetitionType();
 
+/* Nbr players */
+$q = "SELECT COUNT(*) as NbrPlayers"
+." FROM ".TBL_PLAYERS
+." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
+$result = $sql->db_Query($q);
+$row = mysql_fetch_array($result);
+$nbr_players = $row['NbrPlayers'];
+
+$q = "SELECT ".TBL_PLAYERS.".*"
+." FROM ".TBL_PLAYERS
+." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
+." AND (".TBL_PLAYERS.".CheckedIn = '1')"
+." AND (".TBL_PLAYERS.".Seed <= '$eMaxNumberPlayers')";
+$result = $sql->db_Query($q);
+$nbr_players_checked_in = mysql_numrows($result);
+
+/* Nbr Teams */
+$q = "SELECT COUNT(*) as NbrTeams"
+." FROM ".TBL_TEAMS
+." WHERE (Event = '$event_id')";
+$result = $sql->db_Query($q);
+$row = mysql_fetch_array($result);
+$nbr_teams = $row['NbrTeams'];
+
+$q = "SELECT ".TBL_TEAMS.".*"
+." FROM ".TBL_TEAMS
+." WHERE (".TBL_TEAMS.".Event = '$event_id')"
+." AND (".TBL_TEAMS.".CheckedIn = '1')"
+." AND (".TBL_TEAMS.".Seed <= '$eMaxNumberPlayers')";
+$result = $sql->db_Query($q);
+$nbr_teams_checked_in = mysql_numrows($result);
+
 if($event->getField('FixturesEnable') == TRUE)
 {
-	$show_seeds_players = true;
-	$can_change_seeds_players = true;
-	$show_seeds_teams = true;
-	$can_change_seeds_teams = true;
+	$paginate = false;
+	if($event->getField('Status')=='active')
+	{
+		$show_seeds_players = true;
+		$can_change_seeds_players = false;
+		$can_replace_player = true;
+
+		$show_seeds_teams = true;
+		$can_change_seeds_teams = false;
+		$can_replace_team = true;
+	}	
+	else
+	{
+		$show_seeds_players = true;
+		$can_change_seeds_players = true;
+		$can_replace_player = false;
+
+		$show_seeds_teams = true;
+		$can_change_seeds_teams = true;
+		$can_replace_team = false;
+	}
 }
 else
 {
+	$paginate = true;
 	$show_seeds_players = false;
 	$can_change_seeds_players = false;
+	$can_replace_player = false;
+
 	$show_seeds_teams = false;
 	$can_change_seeds_teams = false;
+	$can_replace_team = false;
 }
 
 if($event->getField('Type')=='Team Ladder')
 {
 	$show_seeds_teams = false;
-	$can_change_seeds_teams = false;
-}
-
-if($event->getField('Status')=='active')
-{
-	$can_change_seeds_players = false;
 	$can_change_seeds_teams = false;
 }
 
@@ -494,39 +543,7 @@ if(isset($_GET["sort"]) && !empty($_GET["sort"]))
 	$sort = ($_GET["sort"]=="ASC") ? "DESC" : "ASC";
 }
 
-/* Nbr players */
-$q = "SELECT COUNT(*) as NbrPlayers"
-." FROM ".TBL_PLAYERS
-." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
-$result = $sql->db_Query($q);
-$row = mysql_fetch_array($result);
-$numPlayers = $row['NbrPlayers'];
-
-$q = "SELECT ".TBL_PLAYERS.".*"
-." FROM ".TBL_PLAYERS
-." WHERE (".TBL_PLAYERS.".Event = '$event_id')"
-." AND (".TBL_PLAYERS.".CheckedIn = '0')";
-$result = $sql->db_Query($q);
-$nbr_players_not_checked_in = mysql_numrows($result);
-$nbr_players_checked_in = $nbr_players - $nbr_players_not_checked_in;
-
-/* Nbr Teams */
-$q = "SELECT COUNT(*) as NbrTeams"
-." FROM ".TBL_TEAMS
-." WHERE (Event = '$event_id')";
-$result = $sql->db_Query($q);
-$row = mysql_fetch_array($result);
-$numTeams = $row['NbrTeams'];
-
-$q = "SELECT ".TBL_TEAMS.".*"
-." FROM ".TBL_TEAMS
-." WHERE (".TBL_TEAMS.".Event = '$event_id')"
-." AND (".TBL_TEAMS.".CheckedIn = '0')";
-$result = $sql->db_Query($q);
-$nbr_teams_not_checked_in = mysql_numrows($result);
-$nbr_teams_checked_in = $nbr_teams - $nbr_teams_not_checked_in;
-
-$totalItems = $numPlayers;
+$totalItems = $nbr_players;
 $pages->items_total = $totalItems;
 $pages->mid_range = eb_PAGINATION_MIDRANGE;
 $pages->paginate();
@@ -539,7 +556,7 @@ case "Clan Ladder":
 case "Clan Tournament":
 	$text .= '<div class="spacer">';
 	$text .= '<p>';
-	$text .= $numTeams.' '.EB_EVENTM_L114.'<br />';
+	$text .= $nbr_teams.' '.EB_EVENTM_L114.'<br />';
 	$text .= '</p>';
 	$text .= '</div>';
 	break;
@@ -554,7 +571,7 @@ case "Team Ladder":
 case "One Player Tournament":
 	$text .= '<div class="spacer">';
 	$text .= '<p>';
-	$text .= $numPlayers.' '.EB_EVENTM_L40.'<br />';
+	$text .= $nbr_players.' '.EB_EVENTM_L40.'<br />';
 	$text .= '</p>';
 	$text .= '</div>';
 	break;
@@ -573,10 +590,10 @@ $max_num_players_reached = 0;
 switch($event->getMatchPlayersType())
 {
 case 'Players':
-	if(($eMaxNumberPlayers != 0)&&((($event->getField('CheckinDuration') > 0)?$nbr_players_checked_in:$numPlayers) >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
+	if(($eMaxNumberPlayers != 0)&&($nbr_players >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
 	break;
 case 'Teams':
-	if(($eMaxNumberPlayers != 0)&&((($event->getField('CheckinDuration') > 0)?$nbr_teams_checked_in:$numTeams) >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
+	if(($eMaxNumberPlayers != 0)&&($nbr_teams >= $eMaxNumberPlayers))	$max_num_players_reached = 1;
 	break;
 default:
 }
@@ -597,36 +614,9 @@ if($event->getField('FixturesEnable') == TRUE)
 		$can_signup = 1;
 		break;
 	case 'active':
-		// deleting a player shuffles the seeds, it should not be done after event has started.
-		$kick_enable = 0;
-
-		// late-signups ok, until we reach the max players limit, or a game has been played.
+		// late-signups ok.
 		$can_signup = 1;
 		$can_checkin = 1;
-		if($max_num_players_reached == 1)
-		{
-			$can_signup = 0;
-			$cannot_signup_str = EB_EVENTM_L161;
-			$can_checkin = 0;
-		}
-
-		// Check if one game has been played
-		$q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
-		." FROM ".TBL_MATCHS.", "
-		.TBL_SCORES
-		." WHERE (Event = '$event_id')"
-		." AND (".TBL_MATCHS.".Status = 'active')"
-		." AND (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)";
-		$result = $sql->db_Query($q);
-
-		$row = mysql_fetch_array($result);
-		$numMatches = $row['NbrMatches'];
-		if($numMatches > 0)
-		{
-			$can_signup = 0;
-			$cannot_signup_str = EB_EVENTM_L162;
-			$can_checkin = 0;
-		}
 		break;
 	case 'finished':
 		$can_signup = 0;
@@ -646,12 +636,6 @@ if($event->getField('FixturesEnable') == FALSE)
 	case 'active':
 		$can_signup = 1;
 		$can_checkin = 1;
-		if($max_num_players_reached == 1)
-		{
-			$can_signup = 0;
-			$cannot_signup_str = EB_EVENTM_L161;
-			$can_checkin = 0;
-		}
 		break;
 	case 'finished':
 		$can_signup = 0;
@@ -805,9 +789,9 @@ else
 
 $text .= '<br />';
 $text .= '<table class="table_left">';
-$text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L47.':</td>';
+$text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L47.':&nbsp;</td>';
 $text .= '<td>'.EB_EVENTM_L48.'</td></tr>';
-$text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L49.':</td>';
+$text .= '<tr><td style="vertical-align:top">'.EB_EVENTM_L49.':&nbsp;</td>';
 $text .= '<td>'.EB_EVENTM_L50.'</td></tr>';
 $text .= '</table>';
 
@@ -837,10 +821,10 @@ case "Clan Tournament":
 	." AND (".TBL_TEAMS.".Event = '$event_id')"
 	.$order_by_str;
 	$result = $sql->db_Query($q_Teams);
-	$numTeams = mysql_numrows($result);
-	if(!$result || ($numTeams < 0)){
+	$nbr_teams = mysql_numrows($result);
+	if(!$result || ($nbr_teams < 0)){
 		$text .= EB_EVENTM_L51.'<br />';
-	} else if ($numTeams == 0){
+	} else if ($nbr_teams == 0){
 		$text .= EB_EVENTM_L115.'<br />';
 	}
 	else
@@ -866,7 +850,7 @@ case "Clan Tournament":
 		$teams_list_id = ($can_change_seeds_teams == true) ? 'teams_list_sortable' : 'teams_list';
 
 		$text .= '<form id="teamsform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-		$text .= '<table id="'.$teams_list_id.'" class="eb_table" style="width:95%"><thead>';
+		$text .= '<table id="'.$teams_list_id.'" class="eb_table" style="width:90%"><thead>';
 		$text .= '<tr>';
 		if($show_seeds_teams == true)
 		{
@@ -879,9 +863,10 @@ case "Clan Tournament":
 		$text .= '<th class="eb_th2">'.EB_EVENTM_L56.'</th>';
 		if($event->getField('CheckinDuration') > 0)
 		{
-			// Column "Checked in
+			// Column "Checked in"
 			$text .= '<th class="eb_th2">'.EB_EVENTM_L170.'</th>';
 		}
+		// Column "Actions"
 		$text .= '<th class="eb_th2">'.EB_EVENTM_L59;
 		$text .= '<input type="hidden" id="ban_team" name="ban_team" value=""/>';
 		$text .= '<input type="hidden" id="unban_team" name="unban_team" value=""/>';
@@ -889,21 +874,38 @@ case "Clan Tournament":
 		$text .= '<input type="hidden" id="del_team_games" name="del_team_games" value=""/>';
 		$text .= '<input type="hidden" id="del_team_awards" name="del_team_awards" value=""/>';
 		$text .= '<input type="hidden" id="checkin_team" name="checkin_team" value=""/>';
-		$text .= '</th></tr></thead>';
+		$text .= '<input type="hidden" id="replace_team" name="replace_team" value=""/>';
+		$text .= '</th>';
+		$text .= '</tr></thead>';
 		$text .= '<tbody>';
-		for($i=0; $i < $numTeams; $i++)
+
+		$can_replace_seed = array();
+		for($seed=1; $seed<=$eMaxNumberPlayers; $seed++){
+			$can_replace_seed[$seed] = true;
+		}
+		
+		$can_replace = false;
+		for($team=0; $team < $nbr_teams; $team++)
 		{
-			$clan_id  = mysql_result($result,$i, TBL_CLANS.".ClanID");
+			$clan_id  = mysql_result($result,$team, TBL_CLANS.".ClanID");
 			$clan = new Clan($clan_id);
-			$tid  = mysql_result($result,$i, TBL_TEAMS.".TeamID");
-			$tjoined  = mysql_result($result,$i, TBL_TEAMS.".Joined");
+			$tid  = mysql_result($result,$team, TBL_TEAMS.".TeamID");
+			$tjoined  = mysql_result($result,$team, TBL_TEAMS.".Joined");
 			$tjoined_local = $tjoined + TIMEOFFSET;
 			$date  = date("d M Y",$tjoined_local);
-			$tseed  = mysql_result($result,$i, TBL_TEAMS.".Seed");
-			if($tseed == 0) $tseed = $i+1;
-			$tbanned = mysql_result($result,$i, TBL_TEAMS.".Banned");
-			$tgames = mysql_result($result,$i, TBL_TEAMS.".GamesPlayed");
-			$tcheckedin = mysql_result($result,$i, TBL_TEAMS.".CheckedIn");
+			$waiting_list = FALSE;
+			$tseed  = mysql_result($result,$team, TBL_TEAMS.".Seed");
+			if($tseed == 0) $tseed = $team+1;
+			if($tseed>$eMaxNumberPlayers)
+			{
+				$tseed = '';
+				// Waiting list
+				$waiting_list = true;
+			}
+
+			$tbanned = mysql_result($result,$team, TBL_TEAMS.".Banned");
+			$tgames = mysql_result($result,$team, TBL_TEAMS.".GamesPlayed");
+			$tcheckedin = mysql_result($result,$team, TBL_TEAMS.".CheckedIn");
 
 			$q_2 = "SELECT DISTINCT ".TBL_TEAMS.".*"
 				." FROM ".TBL_TEAMS.", "
@@ -911,7 +913,20 @@ case "Clan Tournament":
 				." WHERE (".TBL_TEAMS.".TeamID = '$tid')"
 				." AND (".TBL_SCORES.".Team = ".TBL_TEAMS.".TeamID)";
 			$result_2 = $sql->db_Query($q_2);
-			$nbrscores = mysql_numrows($result_2);
+			$tscores = mysql_numrows($result_2);
+
+			$q_2 = "SELECT count(*) "
+			." FROM ".TBL_MATCHS.", "
+			.TBL_SCORES.", "
+			.TBL_TEAMS
+			." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+			." AND (".TBL_MATCHS.".Status = 'active')"
+			." AND (".TBL_TEAMS.".TeamID = ".TBL_SCORES.".Team)"
+			." AND (".TBL_TEAMS.".TeamID = '$tid')";
+			$result_2 = $sql->db_Query($q_2);
+			$tmatches = mysql_result($result_2, 0);
+			// Can replace only if the team has not played a match yet
+			if($tmatches > 0) $can_replace_seed[$tseed] = false;
 
 			$q_2 = "SELECT DISTINCT ".TBL_AWARDS.".*"
 				." FROM ".TBL_AWARDS.", "
@@ -936,11 +951,33 @@ case "Clan Tournament":
 			if($show_seeds_teams == true)
 			{
 				// Column "Seed"
-				$text .= '<td class="eb_td">'.$tseed.'</td>';
+				if($can_replace_seed[$tseed] == true) $can_replace = true;
+
+				$text .= '<td class="eb_td">'.$tseed;
+				if($waiting_list == true)
+				{
+					if(($can_replace_team == true)&&($can_replace==true))
+					{
+						$text .= '<select class="tbox" name="replace_team_'.$tid.'">';
+						for($seed=1; $seed<=$eMaxNumberPlayers; $seed++){
+							if($can_replace_seed[$seed] == true)
+							{
+								$text .= '<option value="'.$seed.'">'.htmlspecialchars($seed).'</option>';
+							}
+						}
+						$text .= '</select>';
+						$text .= ' <a href="javascript:replace_team(\''.$tid.'\');" title="'.EB_EVENTM_L191.'""><img src="'.e_PLUGIN.'ebattles/images/arrow_refresh.png" alt="'.EB_EVENTM_L191.'"/></a>';
+					}
+					else
+					{
+						// Not seeded
+						$text .= EB_EVENT_L103;
+					}
+				}
+				$text .= '</td>';
 			}
 			// Column "Team"
 			$text .= '<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'">'.$clan->getField('Name').' ('.$clan->getField('Tag').')</a></td>';
-			
 			// Column "Joined"
 			$text .= '<td class="eb_td">'.(($tbanned) ? EB_EVENTM_L54 : $date).'</td>';
 
@@ -951,6 +988,7 @@ case "Clan Tournament":
 				$text .= '<td class="eb_td">'.$img.'</td>';
 			}
 
+			// Column "Actions"
 			$text .= '<td class="eb_td">';
 			if ($tbanned)
 			{
@@ -960,11 +998,11 @@ case "Clan Tournament":
 			{
 				$text .= ' <a href="javascript:ban_team(\''.$tid.'\');" title="'.EB_EVENTM_L182.'" onclick="return confirm(\''.EB_EVENTM_L183.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="'.EB_EVENTM_L62.'"/></a>';
 			}
-			if (($kick_enable==1)&&($nbrscores == 0)&&($tawards == 0))
+			if ($kick_enable==1)
 			{
 				$text .= ' <a href="javascript:kick_team(\''.$tid.'\');" title="'.EB_EVENTM_L184.'" onclick="return confirm(\''.EB_EVENTM_L185.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_EVENTM_L64.'"/></a>';
 			}
-			if (($del_team_games_enable==1)&&($nbrscores != 0))
+			if (($del_team_games_enable==1)&&($tscores != 0))
 			{
 				$text .= ' <a href="javascript:del_team_games(\''.$tid.'\');" title="'.EB_EVENTM_L186.'" onclick="return confirm(\''.EB_EVENTM_L187.'\')"><img src="'.e_PLUGIN.'ebattles/images/controller_delete.ico" alt="'.EB_EVENTM_L66.'"/></a>';
 			}
@@ -979,8 +1017,6 @@ case "Clan Tournament":
 					$text .= ' <a href="javascript:checkin_team(\''.$tid.'\');" title="'.EB_EVENTM_L190.'""><img src="'.e_PLUGIN.'ebattles/images/tick.png" alt="'.EB_EVENTM_L190.'"/></a>';
 				}
 			}
-
-
 			$text .= '</td>';
 			$text .= '</tr>';
 		}
@@ -990,11 +1026,10 @@ case "Clan Tournament":
 	break;
 default:
 }
-
 switch($event->getMatchPlayersType())
 {
 case 'Players':
-	// Show list of players here
+	// Show list of players
 	$orderby_array = $array["$orderby"];
 	if($show_seeds_players == true)
 	{
@@ -1005,7 +1040,7 @@ case 'Players':
 		$order_by_str = " ORDER BY $orderby_array[1] $sort";
 	}
 
-	$q_Players = "SELECT ".TBL_PLAYERS.".*, "
+	$q_Players = "SELECT DISTINCT ".TBL_PLAYERS.".*, "
 	.TBL_GAMERS.".*, "
 	.TBL_USERS.".*"
 	." FROM ".TBL_PLAYERS.", "
@@ -1015,26 +1050,29 @@ case 'Players':
 	." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 	." AND (".TBL_USERS.".user_id = ".TBL_GAMERS.".User)"
 	.$order_by_str
-	." $pages->limit";
+	.(($paginate==true)?" $pages->limit":'');
 	$result = $sql->db_Query($q_Players);
-	$numPlayers = mysql_numrows($result);
-	if(!$result || ($numPlayers < 0)){
+	$nbr_players = mysql_numrows($result);
+	if(!$result || ($nbr_players < 0)){
 		$text .= EB_EVENTM_L51.'<br />';
-	} else if($numPlayers == 0){
+	} else if($nbr_players == 0){
 		$text .= EB_EVENTM_L52.'<br />';
 	}
 	else
 	{
-		// Paginate
-		$text .= '<br />';
-		$text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
-		$text .= '<span style="float:right">';
-		// Go To Page
-		$text .= $pages->display_jump_menu();
-		$text .= '&nbsp;&nbsp;&nbsp;';
-		// Items per page
-		$text .= $pages->display_items_per_page();
-		$text .= '</span><br /><br />';
+		if($paginate == true)
+		{
+			// Paginate
+			$text .= '<br />';
+			$text .= '<span class="paginate" style="float:left;">'.$pages->display_pages().'</span>';
+			$text .= '<span style="float:right">';
+			// Go To Page
+			$text .= $pages->display_jump_menu();
+			$text .= '&nbsp;&nbsp;&nbsp;';
+			// Items per page
+			$text .= $pages->display_items_per_page();
+			$text .= '</span><br /><br />';
+		}
 		/* Display table contents */
 		if($can_change_seeds_players == true)
 		{
@@ -1057,15 +1095,13 @@ case 'Players':
 		$players_list_id = ($can_change_seeds_players == true) ? 'players_list_sortable' : 'players_list';
 
 		$text .= '<form id="playersform" action="'.e_PLUGIN.'ebattles/eventprocess.php?eventid='.$event_id.'" method="post">';
-		$text .= '<table id="'.$players_list_id.'" class="eb_table" style="width:95%"><thead>';
+		$text .= '<table id="'.$players_list_id.'" class="eb_table" style="width:90%"><thead>';
 		$text .= '<tr>';
-
 		if($show_seeds_players == true)
 		{
 			// Column "Seed"
 			$text .= '<th class="eb_th2">'.EB_EVENTM_L154.'</th>';
 		}
-
 		// Columns Player/Joined
 		foreach($array as $opt=>$opt_array)
 		{
@@ -1074,9 +1110,10 @@ case 'Players':
 
 		if($event->getField('CheckinDuration') > 0)
 		{
-			// Column "Checked in
+			// Column "Checked in"
 			$text .= '<th class="eb_th2">'.EB_EVENTM_L170.'</th>';
 		}
+		// Column "Actions"
 		$text .= '<th class="eb_th2">'.EB_EVENTM_L59;
 		$text .= '<input type="hidden" id="ban_player" name="ban_player" value=""/>';
 		$text .= '<input type="hidden" id="unban_player" name="unban_player" value=""/>';
@@ -1084,23 +1121,49 @@ case 'Players':
 		$text .= '<input type="hidden" id="del_player_games" name="del_player_games" value=""/>';
 		$text .= '<input type="hidden" id="del_player_awards" name="del_player_awards" value=""/>';
 		$text .= '<input type="hidden" id="checkin_player" name="checkin_player" value=""/>';
-		$text .= '</th></tr></thead>';
+		$text .= '<input type="hidden" id="replace_player" name="replace_player" value=""/>';
+		$text .= '</th>';
+		$text .= '</tr></thead>';
 		$text .= '<tbody>';
-		for($i=0; $i<$numPlayers; $i++)
+
+		$can_replace_seed = array();
+		for($seed=1; $seed<=$eMaxNumberPlayers; $seed++){
+			$can_replace_seed[$seed] = true;
+		}
+
+		$can_replace = false;
+		for($player=0; $player < $nbr_players; $player++)
 		{
-			$pid  = mysql_result($result,$i, TBL_PLAYERS.".PlayerID");
-			$puid = mysql_result($result,$i, TBL_USERS.".user_id");
-			$pname  = mysql_result($result,$i, TBL_GAMERS.".Name");
-			$puniquegameid  = mysql_result($result,$i, TBL_GAMERS.".UniqueGameID");
-			$pjoined  = mysql_result($result,$i, TBL_PLAYERS.".Joined");
+			/* sc2:
+			$pFactionIcon = mysql_result($result, $player , TBL_FACTIONS.".Icon");
+			$pFactionName = mysql_result($result, $player , TBL_FACTIONS.".Name");
+			if($pFactionName){
+			$pFactionImage = ' <img '.getFactionIconResize($fIcon).' title="'.$fName.'"/>';
+			} else {
+			$pFactionImage = '';
+			}
+			*/
+			$pid  = mysql_result($result, $player, TBL_PLAYERS.".PlayerID");
+			$puid = mysql_result($result, $player, TBL_GAMERS.".User");
+			$pname  = mysql_result($result, $player, TBL_GAMERS.".Name");
+			$puniquegameid  = mysql_result($result, $player, TBL_GAMERS.".UniqueGameID");
+			$pjoined  = mysql_result($result, $player, TBL_PLAYERS.".Joined");
 			$pjoined_local = $pjoined + TIMEOFFSET;
 			$date  = date("d M Y",$pjoined_local);
-			$pseed  = mysql_result($result,$i, TBL_PLAYERS.".Seed");
-			if($pseed == 0) $pseed = $i+1;
-			$pbanned = mysql_result($result,$i, TBL_PLAYERS.".Banned");
-			$pgames = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
-			$pteam = mysql_result($result,$i, TBL_PLAYERS.".Team");
-			$pcheckedin = mysql_result($result,$i, TBL_PLAYERS.".CheckedIn");
+			$waiting_list = FALSE;
+			$pseed  = mysql_result($result, $player, TBL_PLAYERS.".Seed");
+			if($pseed == 0) $pseed = $player+1;
+			if($pseed>$eMaxNumberPlayers)
+			{
+				$pseed = '';
+				// Waiting list
+				$waiting_list = true;
+			}
+
+			$pbanned = mysql_result($result, $player, TBL_PLAYERS.".Banned");
+			$pgames = mysql_result($result, $player, TBL_PLAYERS.".GamesPlayed");
+			$pteam = mysql_result($result, $player, TBL_PLAYERS.".Team");
+			$pcheckedin = mysql_result($result, $player, TBL_PLAYERS.".CheckedIn");
 			list($pclan, $pclantag, $pclanid) = getClanInfo($pteam);
 			
 			$q_2 = "SELECT DISTINCT ".TBL_PLAYERS.".*"
@@ -1109,7 +1172,22 @@ case 'Players':
 				." WHERE (".TBL_PLAYERS.".PlayerID = '$pid')"
 				." AND (".TBL_SCORES.".Player = ".TBL_PLAYERS.".PlayerID)";
 			$result_2 = $sql->db_Query($q_2);
-			$nbrscores = mysql_numrows($result_2);
+			$pscores = mysql_numrows($result_2);
+			
+			$q_2 = "SELECT count(*) "
+			." FROM ".TBL_MATCHS.", "
+			.TBL_SCORES.", "
+			.TBL_PLAYERS
+			." WHERE (".TBL_SCORES.".MatchID = ".TBL_MATCHS.".MatchID)"
+			." AND (".TBL_MATCHS.".Status = 'active')"
+			." AND ((".TBL_PLAYERS.".PlayerID = ".TBL_SCORES.".Player)"
+			." OR   ((".TBL_PLAYERS.".Team = ".TBL_SCORES.".Team)"
+			." AND   (".TBL_PLAYERS.".Team != 0)))"
+			." AND (".TBL_PLAYERS.".PlayerID = '$pid')";
+			$result_2 = $sql->db_Query($q_2);
+			$pmatches = mysql_result($result_2, 0);
+			// Can replace only if the player has not played a match yet
+			if($pmatches > 0) $can_replace_seed[$pseed] = false;
 			
 			$q_2 = "SELECT DISTINCT ".TBL_AWARDS.".*"
 				." FROM ".TBL_AWARDS.", "
@@ -1126,14 +1204,36 @@ case 'Players':
 			if($show_seeds_players == true)
 			{
 				// Column "Seed"
-				$text .= '<td class="eb_td">'.$pseed.'</td>';
-			}
+				if($can_replace_seed[$pseed] == true) $can_replace = true;
 
+				$text .= '<td class="eb_td">'.$pseed;
+				if($waiting_list == true)
+				{
+					if(($can_replace_player == true)&&($can_replace==true))
+					{
+						$text .= '<select class="tbox" name="replace_player_'.$pid.'">';
+						for($seed=1; $seed<=$eMaxNumberPlayers; $seed++){
+							if($can_replace_seed[$seed] == true)
+							{
+								$text .= '<option value="'.$seed.'">'.htmlspecialchars($seed).'</option>';
+							}
+						}
+						$text .= '</select>';
+						$text .= ' <a href="javascript:replace_player(\''.$pid.'\');" title="'.EB_EVENTM_L191.'""><img src="'.e_PLUGIN.'ebattles/images/arrow_refresh.png" alt="'.EB_EVENTM_L191.'"/></a>';
+					}
+					else
+					{
+						// Not seeded
+						$text .= EB_EVENT_L103;
+					}
+				}
+				$text .= '</td>';
+			}
+			//sc2: $text .= '<td class="eb_td">'.$pFactionImage.'</td>';
 			// Column "Player"
-			$text .= '<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.'</a></td>';
+			$text .= '<td class="eb_td">'.$image.'&nbsp;<a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$puid.'">'.$pclantag.$pname.(($puniquegameid!='')?'&nbsp;['.$puniquegameid.']':'').'</a></td>';
 			// Column "Joined"
 			$text .= '<td class="eb_td">'.(($pbanned) ? EB_EVENTM_L54 : $date).'</td>';
-
 			if($event->getField('CheckinDuration') > 0)
 			{
 				// Column "Checked in"
@@ -1141,6 +1241,7 @@ case 'Players':
 				$text .= '<td class="eb_td">'.$img.'</td>';
 			}
 
+			// Column "Actions"
 			$text .= '<td class="eb_td">';
 			if ($pbanned)
 			{
@@ -1150,11 +1251,11 @@ case 'Players':
 			{
 				$text .= ' <a href="javascript:ban_player(\''.$pid.'\');" title="'.EB_EVENTM_L62.'" onclick="return confirm(\''.EB_EVENTM_L63.'\')"><img src="'.e_PLUGIN.'ebattles/images/user_delete.ico" alt="'.EB_EVENTM_L62.'"/></a>';
 			}
-			if (($kick_enable==1)&&($nbrscores == 0)&&($pawards == 0))
+			if ($kick_enable==1)
 			{
 				$text .= ' <a href="javascript:kick_player(\''.$pid.'\');" title="'.EB_EVENTM_L64.'" onclick="return confirm(\''.EB_EVENTM_L65.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_EVENTM_L64.'"/></a>';
 			}
-			if (($del_player_games_enable==1)&&($nbrscores != 0))
+			if (($del_player_games_enable==1)&&($pscores != 0))
 			{
 				$text .= ' <a href="javascript:del_player_games(\''.$pid.'\');" title="'.EB_EVENTM_L66.'" onclick="return confirm(\''.EB_EVENTM_L67.'\')"><img src="'.e_PLUGIN.'ebattles/images/controller_delete.ico" alt="'.EB_EVENTM_L66.'"/></a>';
 			}
@@ -1169,8 +1270,6 @@ case 'Players':
 					$text .= ' <a href="javascript:checkin_player(\''.$pid.'\');" title="'.EB_EVENTM_L171.'""><img src="'.e_PLUGIN.'ebattles/images/tick.png" alt="'.EB_EVENTM_L171.'"/></a>';
 				}
 			}
-
-
 			$text .= '</td>';
 			$text .= '</tr>';
 		}

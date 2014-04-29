@@ -66,9 +66,9 @@ $q = "SELECT DISTINCT ".TBL_SCORES.".*"
 ." AND (".TBL_PLAYERS.".Gamer = ".TBL_GAMERS.".GamerID)"
 ." AND (".TBL_GAMERS.".User = ".USERID.")";
 $result = $sql->db_Query($q);
-$numPlayers = mysql_numrows($result);
+$nbr_players = mysql_numrows($result);
 
-if ($numPlayers>0)
+if ($nbr_players>0)
 {
 	$uteam = mysql_result($result,0 , TBL_SCORES.".Player_MatchTeam");
 }
@@ -414,7 +414,7 @@ for($i=0; $i < $numScores; $i++)
 				$oteam  = mysql_result($result,$opponentIndex, TBL_PLAYERS.".Team");
 				list($oclan, $oclantag, $oclanid) = getClanInfo($oteam);
 
-				if (($numPlayers>0)&&($ouid == USERID)&&($uteam!=$pMatchTeam)) $can_rate = TRUE;
+				if (($nbr_players>0)&&($ouid == USERID)&&($uteam!=$pMatchTeam)) $can_rate = TRUE;
 				if ($oMatchTeam != $pMatchTeam)
 				{
 					$text .= '<tr>';

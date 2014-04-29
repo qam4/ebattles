@@ -20,8 +20,17 @@ $time = time();
 
 switch ($pref['eb_tab_theme'])
 {
+case 'ebattles':
+	$tab_theme = 'css/custom-theme/jquery-ui-1.10.4.custom.css';
+    break;
+case 'ui-lightness':
+	$tab_theme = '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/ui-lightness/jquery-ui.css';
+    break;
+case 'ui-darkness':
+	$tab_theme = '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/ui-darkness/jquery-ui.css';
+    break;
 default:
-	$tab_theme = 'css/custom-theme/jquery-ui-1.8.16.custom.css';
+	$tab_theme = '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/black-tie/jquery-ui.css';
 }
 
 $eplug_css = array(
@@ -119,6 +128,21 @@ class DatabaseTable
 	function setFieldDB($field, $value) {
 		$this->setField($field, $value);
 		$this->updateFieldDB($field);
+	}
+	function updateFields() {
+		global $sql;
+		
+		$q = "SELECT *"
+		." FROM $this->tablename"
+		." WHERE ($this->primary_key = '$this->id')";
+		$result = $sql->db_Query($q);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}
+		
+		if ($row = mysql_fetch_assoc($result)) {
+			$this->fields = $row;
+		} // while		
 	}
 	function insert()
 	{

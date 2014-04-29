@@ -240,6 +240,7 @@ define('EB_EVENT_L99', 'Your balance is: ');
 define('EB_EVENT_L100', 'Wrong password.');
 define('EB_EVENT_L101', 'Back to');
 define('EB_EVENT_L102', 'Matchup');
+define('EB_EVENT_L103', 'Not seeded');
 
 define('EB_EVENTM_L1', 'Administrer');
 define('EB_EVENTM_L2', 'Turnerings Detaljer');
@@ -433,6 +434,7 @@ define('EB_EVENTM_L187', 'Are you sure you want to delete this team games?');
 define('EB_EVENTM_L188', 'Delete Team Awards');
 define('EB_EVENTM_L189', 'Are you sure you want to delete this team awards?');
 define('EB_EVENTM_L190', 'Check team in');
+define('EB_EVENTM_L191', 'Replace');
 
 define('EB_EVENTP_L1', 'Tidligere Turneringer');
 define('EB_EVENTP_L2', 'Tidligere Turneringer');

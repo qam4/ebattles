@@ -719,6 +719,9 @@ if(!isset($qs[0]) || (isset($qs[0]) && $qs[0] == "config")){
 	<td class='forumheader3' style='width:40%'>".EB_ADMIN_L14.": </td>
 	<td class='forumheader3' style='width:60%'>
 	<input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'default' ? "checked='checked'" :"")." value='default' />Default
+	<input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'ebattles' ? "checked='checked'" :"")." value='ebattles' />eBattles
+	<input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'ui-lightness' ? "checked='checked'" :"")." value='ui-lightness' />Light
+	<input type='radio' size='40' name='eb_tab_theme' ".($pref['eb_tab_theme'] == 'ui-darkness' ? "checked='checked'" :"")." value='ui-darkness' />Dark
 	</td>
 	</tr>
 	";
