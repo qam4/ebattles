@@ -37,6 +37,14 @@ class Event extends DatabaseTable
 		$this->setField('TS_default_sigma', floatToSQL(TS_sigma0));
 		$this->setField('TS_beta', floatToSQL(TS_beta));
 		$this->setField('TS_epsilon', floatToSQL(TS_epsilon));
+		$this->setField('TS_tau', floatToSQL(TS_tau));
+		$this->setField('G2_default_r', floatToSQL(G2_r0));
+		$this->setField('G2_default_RD', floatToSQL(G2_RD0));
+		$this->setField('G2_default_sigma', floatToSQL(G2_sigma0));
+		$this->setField('G2_tau', floatToSQL(G2_tau));
+		$this->setField('G2_epsilon', floatToSQL(G2_epsilon));
+		$this->setField('rating_period', eb_rating_period);
+		$this->setField('next_rating_timestamp', '0');
 		$this->setField('IsChanged', '1');
 		$this->setField('AllowDraw', '0');
 		$this->setField('AllowForfeit', '0');
@@ -88,6 +96,9 @@ class Event extends DatabaseTable
 				." SET ELORanking = '".$this->fields['ELO_default']."',"
 				."     TS_mu = '".floatToSQL($this->fields['TS_default_mu'])."',"
 				."     TS_sigma = '".floatToSQL($this->fields['TS_default_sigma'])."',"
+				."     G2_r = '".floatToSQL($this->fields['G2_default_r'])."',"
+				."     G2_RD = '".floatToSQL($this->fields['G2_default_RD'])."',"
+				."     G2_sigma = '".floatToSQL($this->fields['G2_default_sigma'])."',"
 				."     GamesPlayed = 0,"
 				."     Loss = 0,"
 				."     Win = 0,"
@@ -125,7 +136,10 @@ class Event extends DatabaseTable
 				$q2 = "UPDATE ".TBL_TEAMS
 				." SET ELORanking = '".$this->fields['ELO_default']."',"
 				."     TS_mu = '".floatToSQL($this->fields['TS_default_mu'])."',"
-				."     TS_sigma = '".floatToSQL($this->fields['TS_default_mu'])."',"
+				."     TS_sigma = '".floatToSQL($this->fields['TS_default_sigma'])."',"
+				."     G2_r = '".floatToSQL($this->fields['G2_default_r'])."',"
+				."     G2_RD = '".floatToSQL($this->fields['G2_default_RD'])."',"
+				."     G2_sigma = '".floatToSQL($this->fields['G2_default_sigma'])."',"
 				."     GamesPlayed = 0,"
 				."     Loss = 0,"
 				."     Win = 0,"
@@ -434,8 +448,8 @@ class Event extends DatabaseTable
 		echo "num_rows: $num_rows<br>";
 		if ($num_rows==0)
 		{
-			$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma,Joined)
-			VALUES (".$this->fields['EventID'].",$gamerID,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].",$time)";
+			$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma,G2_r,G2_RD,G2_sigma,Joined)
+			VALUES (".$this->fields['EventID'].",$gamerID,$team,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].",".$this->fields['G2_default_r'].",".$this->fields['G2_default_RD'].",".$this->fields['G2_default_sigma'].",$time)";
 			$sql->db_Query($q);
 			echo "player created, query: $q<br>";
 			$last_id = mysql_insert_id();
@@ -504,8 +518,8 @@ class Event extends DatabaseTable
 		$numTeams = mysql_numrows($result);
 		if($numTeams == 0)
 		{
-			$q = "INSERT INTO ".TBL_TEAMS."(Event,Division,ELORanking,TS_mu,TS_sigma,Joined)
-			VALUES (".$this->fields['EventID'].",$div_id,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].",$time)";
+			$q = "INSERT INTO ".TBL_TEAMS."(Event,Division,ELORanking,TS_mu,TS_sigma,G2_r,G2_RD,G2_sigma,Joined)
+			VALUES (".$this->fields['EventID'].",$div_id,".$this->fields['ELO_default'].",".$this->fields['TS_default_mu'].",".$this->fields['TS_default_sigma'].",".$this->fields['G2_default_r'].",".$this->fields['G2_default_RD'].",".$this->fields['G2_default_sigma'].",$time)";
 			$sql->db_Query($q);
 			$team_id =  mysql_insert_id();
 
@@ -832,16 +846,7 @@ class Event extends DatabaseTable
 		{
 			//<!-- Match Type -->
 			// Can change only if no players are signed up
-			$q2 = "SELECT ".TBL_PLAYERS.".*"
-			." FROM ".TBL_PLAYERS
-			." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')";
-			$result2 = $sql->db_Query($q2);
-			$num_rows_2 = mysql_numrows($result2);
-			$disabled_str = '';
-			if ($num_rows_2!=0)
-			{
-			$disabled_str = 'disabled="disabled"';
-			}
+			$disabled_str = ($nbrplayers+$nbrteams==0) ? '' : 'disabled="disabled"';
 			$text .= '
 			<tr>
 			<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L132.'</td>
@@ -1414,6 +1419,10 @@ class Event extends DatabaseTable
 		$q =
 		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMaxValue)
 		VALUES ('$last_id', 'Skill', 4)";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
+		VALUES ('$last_id', 'Glicko2')";
 		$result = $sql->db_Query($q);
 		$q =
 		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName, CategoryMaxValue, InfoOnly)
@@ -3109,7 +3118,61 @@ class Event extends DatabaseTable
 		}
 		
 		return $error;
-	}	
+	}
+	
+	function rating_period_update()
+	{
+		global $sql;
+
+		$q = "SELECT ".TBL_PLAYERS.".*"
+		." FROM ".TBL_PLAYERS
+		." WHERE (".TBL_PLAYERS.".Event = '".$this->fields['EventID']."')";
+		$result = $sql->db_Query($q);
+		$num_players = mysql_numrows($result);
+		if ($num_players!=0)
+		{
+			for($j=0; $j< $num_players; $j++)
+			{
+				$PlayerID  = mysql_result($result,$j, TBL_PLAYERS.".PlayerID");
+				$pG2_RD = mysql_result($result,$j, TBL_PLAYERS.".G2_RD");
+				$pG2_sigma = mysql_result($result,$j, TBL_PLAYERS.".G2_sigma");
+				$pG2_phi = g2_from_g1_deviation($pG2_RD, G2_qinv);
+				
+				// Glicko 2 rating deviation periodic update
+				$pG2_phi = g2_rating_period($pG2_phi, $pG2_sigma);
+				$pG2_RD = g2_to_g1_deviation($pG2_phi, G2_qinv);
+
+				$q2 = "UPDATE ".TBL_PLAYERS
+				." SET G2_RD = '".floatToSQL($pG2_RD)."'"
+				." WHERE (PlayerID = '$PlayerID')";
+				$result2 = $sql->db_Query($q2);
+			}
+		}
+		$q = "SELECT ".TBL_TEAMS.".*"
+		." FROM ".TBL_TEAMS
+		." WHERE (".TBL_TEAMS.".Event = '".$this->fields['EventID']."')";
+		$result = $sql->db_Query($q);
+		$num_teams = mysql_numrows($result);
+		if ($num_teams!=0)
+		{
+			for($j=0; $j< $num_teams; $j++)
+			{
+				$TeamID  = mysql_result($result,$j, TBL_TEAMS.".TeamID");
+				$tG2_RD = mysql_result($result,$j, TBL_TEAMS.".G2_RD");
+				$tG2_sigma = mysql_result($result,$j, TBL_TEAMS.".G2_sigma");
+				$tG2_phi = g2_from_g1_deviation($pG2_RD, G2_qinv);
+				
+				// Glicko 2 rating deviation periodic update
+				$tG2_phi = g2_rating_period($tG2_phi, $tG2_sigma);
+				$tG2_RD = g2_to_g1_deviation($tG2_phi, G2_qinv);
+				
+				$q2 = "UPDATE ".TBL_TEAMS
+				." SET G2_RD = '".floatToSQL($tG2_RD)."'"
+				." WHERE (TeamID = '$TeamID')";
+				$result2 = $sql->db_Query($q2);
+			}
+		}
+	}
 }
 
 function deletePlayerMatches($player_id)

@@ -271,6 +271,7 @@ class Division extends DatabaseTable
 		global $time;
 		
 		$div_id = $this->fields['DivisionID'];
+		$game_id = $this->fields['Game'];
 		
 		$q = "SELECT ".TBL_USERS.".*"
 		." FROM ".TBL_USERS
@@ -278,7 +279,7 @@ class Division extends DatabaseTable
 		$result = $sql->db_Query($q);
 		$Name  = mysql_result($result,0, TBL_USERS.".user_name");
 		$UniqueGameID = "";
-		updateGamer($user, $this->fields['Game'], $Name, $UniqueGameID);
+		$gamerID = updateGamer($user, $game_id, $Name, $UniqueGameID);
 		
 		$q = " INSERT INTO ".TBL_MEMBERS."(Division,User,timestamp)
 		VALUES ($div_id,$user,$time)";
@@ -316,8 +317,8 @@ class Division extends DatabaseTable
 				$nbrplayers = $row['NbrPlayers'];
 				if ($nbrplayers == 0)
 				{
-					$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma,Banned)
-					VALUES ($event_id, $gamerID, $team_id, ".$event->getField('ELO_default').", ".$event->getField('TS_default_mu').", ".$event->getField('TS_default_sigma').", $team_banned)";
+					$q = " INSERT INTO ".TBL_PLAYERS."(Event,Gamer,Team,ELORanking,TS_mu,TS_sigma,G2_r,G2_RD,G2_sigma,Joined,Banned)
+					VALUES ($event_id, $gamerID, $team_id, ".$event->getField('ELO_default').", ".$event->getField('TS_default_mu').", ".$event->getField('TS_default_sigma').",".$event->fields['G2_default_r'].",".$event->fields['G2_default_RD'].",".$event->fields['G2_default_sigma'].",$time, $team_banned)";
 					$sql->db_Query($q);
 					$event->setFieldDB('IsChanged', 1);
 				}

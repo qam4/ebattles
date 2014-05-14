@@ -2,12 +2,17 @@
 // functions for Trueskill calculation.
 //___________________________________________________________________
 
-function Trueskill_update($epsilon,$beta, $A_mu, $A_sigma, $A_rank, $B_mu, $B_sigma, $B_rank)
+function Trueskill_update($epsilon, $beta, $tau, $A_mu, $A_sigma, $A_rank, $B_mu, $B_sigma, $B_rank)
 {
     $output = '';
     
     if ($epsilon == 0) $epsilon = 1.0;
+    if ($tau == 0) $tau = 0.0833333;
 
+	// dynamic factor
+	$A_sigma = sqrt(pow($A_sigma,2) + pow($tau,2));
+	$B_sigma = sqrt(pow($B_sigma,2) + pow($tau,2));
+	
     if($A_rank==$B_rank)
     {
         // Draw

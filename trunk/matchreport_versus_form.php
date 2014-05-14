@@ -225,21 +225,34 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 			$text .= '</thead>';
 
 			$text .= '<tbody>';
-			$select_disabled_str = (($action=='matchscheduledreport')) ? 'disabled="disabled"' : '';
 			for($i=1;$i<=$nbr_players;$i++)
 			{
 				if ($_POST['team'.$i] == 'Team #'.$t)
 				{
-					$text .= '<tr><td>'.EB_MATCHR_L23.$p.'</td>';
+					$text .= '<tr><td>'.EB_MATCHR_L23.$p.':&nbsp;</td>';
 		
-					$text .= '<td><select class="tbox" name="player'.$i.'" '.$select_disabled_str.'>';
-					for($j=1;$j <= $max_nbr_players+1;$j++)
+					if($action=='matchscheduledreport')
 					{
-						$text .= '<option value="'.$players_id[($j-1)].'"';
-						if (strtolower($_POST['player'.$i]) == strtolower($players_id[($j-1)])) $text .= ' selected="selected"';
-						$text .= '>'.$players_name[($j-1)].'</option>';
+						for($j=1;$j <= $max_nbr_players+1;$j++)
+						{
+							if (strtolower($_POST['player'.$i]) == strtolower($players_id[($j-1)])) 
+							{
+								$text .= '<td><input type="hidden" name="player'.$i.'" value="'.$players_id[($j-1)].'"/>';
+								$text .= $players_name[($j-1)].'</td>';;
+							}
+						}
 					}
-					$text .= '</select></td>';
+					else
+					{
+						$text .= '<td><select class="tbox" name="player'.$i.'">';
+						for($j=1;$j <= $max_nbr_players+1;$j++)
+						{
+							$text .= '<option value="'.$players_id[($j-1)].'"';
+							if (strtolower($_POST['player'.$i]) == strtolower($players_id[($j-1)])) $text .= ' selected="selected"';
+							$text .= '>'.$players_name[($j-1)].'</option>';
+						}
+						$text .= '</select></td>';
+					}
 					$text .= '<td><input type="hidden" name="team'.$i.'" value="Team #'.$t.'"/></td>';
 					if ($action!='matchschedule'&&$action!='matchschedulededit')
 					{
