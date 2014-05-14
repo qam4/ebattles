@@ -799,6 +799,83 @@ if(isset($_POST['eventstatssave']))
 
 	// Hide ratings column
 	$event->setFieldDB('hide_ratings_column', ($_POST['hideratings'] != "") ? 1 : 0);
+
+	
+	// Advanced settings
+	$new_eventELO_default = htmlspecialchars($_POST['eventELO_default']);
+	if (preg_match("/^\d+$/", $new_eventELO_default))
+	{
+		$event->setFieldDB('ELO_default', $new_eventELO_default);
+	}
+	$new_eventELO_K = htmlspecialchars($_POST['eventELO_K']);
+	if (preg_match("/^\d+$/", $new_eventELO_K))
+	{
+		$event->setFieldDB('ELO_K', $new_eventELO_K);
+	}
+	$new_eventELO_M = htmlspecialchars($_POST['eventELO_M']);
+	if (preg_match("/^\d+$/", $new_eventELO_M))
+	{
+		$event->setFieldDB('ELO_M', $new_eventELO_M);
+	}
+
+	$new_eventTS_default_mu = htmlspecialchars($_POST['eventTS_default_mu']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventTS_default_mu))
+	{
+		$event->setFieldDB('TS_default_mu', floatToSQL($new_eventTS_default_mu));
+	}
+	$new_eventTS_default_sigma = htmlspecialchars($_POST['eventTS_default_sigma']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventTS_default_sigma))
+	{
+		$event->setFieldDB('TS_default_sigma', floatToSQL($new_eventTS_default_sigma));
+	}
+	$new_eventTS_beta = htmlspecialchars($_POST['eventTS_beta']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventTS_beta))
+	{
+		$event->setFieldDB('TS_beta', floatToSQL($new_eventTS_beta));
+	}
+	$new_eventTS_epsilon = htmlspecialchars($_POST['eventTS_epsilon']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventTS_epsilon))
+	{
+		$event->setFieldDB('TS_epsilon', floatToSQL($new_eventTS_epsilon));
+	}
+	$new_eventTS_tau = htmlspecialchars($_POST['eventTS_tau']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventTS_tau))
+	{
+		$event->setFieldDB('TS_tau', floatToSQL($new_eventTS_tau));
+	}
+
+	$new_eventG2_default_r = htmlspecialchars($_POST['eventG2_default_r']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventG2_default_r))
+	{
+		$event->setFieldDB('G2_default_r', floatToSQL($new_eventG2_default_r));
+	}
+	$new_eventG2_default_RD = htmlspecialchars($_POST['eventG2_default_RD']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventG2_default_RD))
+	{
+		$event->setFieldDB('G2_default_RD', floatToSQL($new_eventG2_default_RD));
+	}
+	$new_eventG2_default_sigma = htmlspecialchars($_POST['eventG2_default_sigma']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventG2_default_sigma))
+	{
+		$event->setFieldDB('G2_default_sigma', floatToSQL($new_eventG2_default_sigma));
+	}
+	$new_eventG2_tau = htmlspecialchars($_POST['eventG2_tau']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventG2_tau))
+	{
+		$event->setFieldDB('G2_tau', floatToSQL($new_eventG2_tau));
+	}
+	$new_eventG2_epsilon = htmlspecialchars($_POST['eventG2_epsilon']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventG2_epsilon))
+	{
+		$event->setFieldDB('G2_epsilon', floatToSQL($new_eventG2_epsilon));
+	}
+
+	$new_eventrating_period = htmlspecialchars($_POST['eventrating_period']);
+	if (preg_match("/^\d+\.*\d*$/", $new_eventrating_period))
+	{
+		$event->setFieldDB('rating_period', floatToSQL($new_eventrating_period));
+	}
+	
 	$event->setFieldDB('IsChanged', 1);
 
 	header("Location: eventmanage.php?eventid=$event_id");

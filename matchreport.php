@@ -281,6 +281,9 @@ if($match_id)
 		$pdeltaELO  = mysql_result($result,$score, TBL_SCORES.".Player_deltaELO");
 		$pdeltaTS_mu  = mysql_result($result,$score, TBL_SCORES.".Player_deltaTS_mu");
 		$pdeltaTS_sigma  = mysql_result($result,$score, TBL_SCORES.".Player_deltaTS_sigma");
+		$pdeltaG2_mu  = mysql_result($result,$score, TBL_SCORES.".Player_deltaG2_mu");
+		$pdeltaG2_phi  = mysql_result($result,$score, TBL_SCORES.".Player_deltaG2_phi");
+		$pdeltaG2_sigma  = mysql_result($result,$score, TBL_SCORES.".Player_deltaG2_sigma");
 		$pscore  = mysql_result($result,$score, TBL_SCORES.".Player_Score");
 		$pOppScore  = mysql_result($result,$score, TBL_SCORES.".Player_ScoreAgainst");
 		$ppoints  = mysql_result($result,$score, TBL_SCORES.".Player_Points");

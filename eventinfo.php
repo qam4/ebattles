@@ -145,10 +145,10 @@ else
 }
 
 if (
-		(($time > $event->getField('NextUpdate_timestamp')) && ($eventIsChanged == 1))
-		||(file_exists($file) == FALSE)
-		||((file_exists($file_team) == FALSE) && (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "Clan Ladder")))
-		)
+	(($time > $event->getField('NextUpdate_timestamp')) && ($eventIsChanged == 1))
+	||(file_exists($file) == FALSE)
+	||((file_exists($file_team) == FALSE) && (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "Clan Ladder")))
+)
 {
 	$eneedupdate = 1;
 }
@@ -360,6 +360,23 @@ if(($time > $event->getField('EndDateTime')) && ($event->getField('EndDateTime')
 }
 
 $event->setFieldDB('Status', $eventStatus);
+
+// Rating Period
+$rating_period = $event->getField('rating_period');
+$next_rating_timestamp = $event->getField('next_rating_timestamp');
+if(($rating_period > 0)&&($eventStatus == 'active'))
+{
+	if($next_rating_timestamp == 0) $next_rating_timestamp = $event->getField('StartDateTime') + INT_DAY * $rating_period;
+
+	while($time > $next_rating_timestamp)
+	{
+		$event->rating_period_update();
+		$next_rating_timestamp += INT_DAY * $rating_period;
+	}
+	$event->setFieldDB('next_rating_timestamp', $next_rating_timestamp);
+}
+$next_rating_timestamp_local = $next_rating_timestamp + TIMEOFFSET;
+$date_next_rating = date("d M Y, h:i A",$next_rating_timestamp_local);
 
 $can_signup = 0;
 $cannot_signup_str = EB_EVENT_L75;

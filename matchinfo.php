@@ -13,6 +13,7 @@ require_once(e_HANDLER."avatar_handler.php");
 require_once(e_PLUGIN."ebattles/include/main.php");
 require_once(e_PLUGIN."ebattles/include/clan.php");
 require_once(e_PLUGIN."ebattles/include/event.php");
+require_once(e_PLUGIN."ebattles/include/glicko2.php");
 /*******************************************************************
 ********************************************************************/
 require_once(HEADERF);
@@ -127,6 +128,7 @@ if($competition_type == 'Tournament')
 	}
 	$categoriesToShow["ELO"] = FALSE;
 	$categoriesToShow["Skill"] = FALSE;
+	$categoriesToShow["Glicko2"] = FALSE;
 }
 
 //dbg: print_r($categoriesToShow);
@@ -283,6 +285,7 @@ $text .= ($categoriesToShow["Score"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_
 $text .= ($categoriesToShow["Points"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_L10.'</th>' : '';
 $text .= ($categoriesToShow["ELO"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_L11.'</th>' : '';
 $text .= ($categoriesToShow["Skill"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_L12.'</th>' : '';
+$text .= ($categoriesToShow["Glicko2"] == TRUE) ? '<th class="eb_th2">'.EB_MATCHD_L31.'</th>' : '';
 switch($event->getMatchPlayersType())
 {
 case 'Players':
@@ -323,6 +326,9 @@ for($i=0; $i < $numScores; $i++)
 	$pdeltaELO  = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
 	$pdeltaTS_mu  = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
 	$pdeltaTS_sigma  = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
+	$pdeltaG2_mu  = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_mu");
+	$pdeltaG2_phi  = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_phi");
+	$pdeltaG2_sigma  = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_sigma");
 	$pscore  = mysql_result($result,$i, TBL_SCORES.".Player_Score");
 	$pOppScore  = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
 	$ppoints  = mysql_result($result,$i, TBL_SCORES.".Player_Points");
@@ -394,6 +400,7 @@ for($i=0; $i < $numScores; $i++)
 	$text .= ($categoriesToShow["Points"] == TRUE) ? '<td class="eb_td">'.$ppoints.'</td>' : '';
 	$text .= ($categoriesToShow["ELO"] == TRUE) ? '<td class="eb_td">'.$pdeltaELO.'</td>' : '';
 	$text .= ($categoriesToShow["Skill"] == TRUE) ? '<td class="eb_td">'.number_format($pdeltaTS_mu,2).'</td>' : '';
+	$text .= ($categoriesToShow["Glicko2"] == TRUE) ? '<td class="eb_td">'.number_format(g2_to_g1_deviation($pdeltaG2_mu, G2_qinv),0).'</td>' : '';
 
 	// Opponent Ratings
 	$text .= '<td class="eb_td">';

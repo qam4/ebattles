@@ -1496,6 +1496,9 @@ case 'Ladder':
 		case "Skill":
 			$cat_name_display = EB_EVENTM_L100;
 			break;
+		case "Glicko2":
+			$cat_name_display = EB_EVENTM_L192;
+			break;
 		case "Score":
 			$cat_name_display = EB_EVENTM_L101;
 			break;
@@ -1571,8 +1574,133 @@ case 'Ladder':
 	$text .= '/>&nbsp;'.EB_EVENTM_L106.'</td>';
 
 	$text .= '
-	</tr></tbody></table>
+	</tr></tbody></table><br/>';
+	
+	//<!-- Advanced settings -->
+	$text .= EB_EVENTM_L193.'<br/>';
+	
+	$text .= '
+	<table class="eb_table" style="width:95%">
+	<tbody>
+	';
+	//<!-- ELO -->
+	$text .= '
+	<tr>
+	<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L194.'</td>
+	<td class="eb_td">
+	<table class="table_left">
+	<tr>
+	<td>'.EB_EVENTM_L195.'</td>
+	<td>'.EB_EVENTM_L196.'</td>
+	<td>'.EB_EVENTM_L197.'</td>
+	</tr>
+	<tr>
+	<td>
+	<div><input class="tbox" type="text" name="eventELO_default" value="'.$event->getField('ELO_default').'"/></div>
+	</td>
+	<td>
+	<div><input class="tbox" type="text" name="eventELO_K" value="'.$event->getField('ELO_K').'"/></div>
+	</td>
+	<td>
+	<div><input class="tbox" type="text" name="eventELO_M" value="'.$event->getField('ELO_M').'"/></div>
+	</td>
+	</tr>
+	</table>
+	</td>
+	</tr>
+	';
+	
+	//<!-- TrueSkill -->
+	$text .= '
+	<tr>
+	<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L198.'</td>
+	<td class="eb_td">
+	<table class="table_left">
+	<tr>
+	<td>'.EB_EVENTM_L199.'</td>
+	<td>'.EB_EVENTM_L200.'</td>
+	<td>'.EB_EVENTM_L201.'</td>
+	<td>'.EB_EVENTM_L202.'</td>
+	<td>'.EB_EVENTM_L203.'</td>
+	</tr>
+	<tr>
+	<td>
+	<div><input class="tbox" type="text" name="eventTS_default_mu" value="'.$event->getField('TS_default_mu').'"/></div>
+	</td>
+	<td>
+	<div><input class="tbox" type="text" name="eventTS_default_sigma" value="'.$event->getField('TS_default_sigma').'"/></div>
+	</td>
+	<td>
+	<div><input class="tbox" type="text" name="eventTS_beta" value="'.$event->getField('TS_beta').'"/></div>
+	</td>
+	<td>
+	<div><input class="tbox" type="text" name="eventTS_epsilon" value="'.$event->getField('TS_epsilon').'"/></div>
+	</td>
+	<td>
+	<div><input class="tbox" type="text" name="eventTS_tau" value="'.$event->getField('TS_tau').'"/></div>
+	</td>
+	</tr>
+	</table>
+	</td>
+	</tr>
+	';
+	
+	//<!-- Glicko 2 -->
+	$text .= '
+	<tr>
+	<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L204.'</td>
+	<td class="eb_td">
+	<table class="table_left">
+	<tr>
+	<td>'.EB_EVENTM_L205.'</td>
+	<td>'.EB_EVENTM_L206.'</td>
+	<td>'.EB_EVENTM_L207.'</td>
+	<td>'.EB_EVENTM_L208.'</td>
+	<td>'.EB_EVENTM_L209.'</td>
+	</tr>
+	<tr>
+	<td>
+	<div><input class="tbox" type="text" name="eventG2_default_r" value="'.$event->getField('G2_default_r').'"/></div>
+	</td>
+	<td>
+	<div><input class="tbox" type="text" name="eventG2_default_RD" value="'.$event->getField('G2_default_RD').'"/></div>
+	</td>
+	<td>
+	<div><input class="tbox" type="text" name="eventG2_default_sigma" value="'.$event->getField('G2_default_sigma').'"/></div>
+	</td>
+	<td>
+	<div><input class="tbox" type="text" name="eventG2_tau" value="'.$event->getField('G2_tau').'"/></div>
+	</td>
+	<td>
+	<div><input class="tbox" type="text" name="eventG2_epsilon" value="'.$event->getField('G2_epsilon').'"/></div>
+	</td>
+	</tr>
+	</table>
+	</td>
+	</tr>
+	';
 
+	$text .= '
+	<tr>
+	<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L210.'</td>
+	<td class="eb_td">
+	<table class="table_left">
+	<tr>
+	<td>
+	<div><input class="tbox" type="text" name="eventrating_period" value="'.$event->getField('rating_period').'"/></div>
+	</td>
+	</tr>
+	</table>
+	</td>
+	</tr>
+	';
+	
+	$text .= '
+	</tbody>
+	</table>
+	';
+	
+	$text .= '
 	<!-- Save Button -->
 	<table><tr><td>
 	<div>

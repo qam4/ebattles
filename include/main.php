@@ -171,8 +171,8 @@ class DatabaseTable
 		$q .= ")";
 		$result = $sql->db_Query($q);
 		if(!$result) {
-			echo '[dB insert] Error!';
-			var_dump($q);
+			echo '[dB insert] Error!<br>';
+			echo "query=$q";
 			exit;
 			return 0;
 		}
@@ -365,7 +365,7 @@ function getMapImageResize($mimage) {
 
 function floatToSQL($number)
 {
-	return number_format($number, 5, ".", "");
+	return number_format($number, 6, ".", "");
 }
 
 // ************************************************

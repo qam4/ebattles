@@ -68,9 +68,17 @@ define("TS_Mu0"     , 25);
 define("TS_sigma0"  , TS_Mu0/3);
 define("TS_beta"    , TS_Mu0/6);
 define("TS_epsilon" , 1.0);
+define("TS_tau" , TS_Mu0/300);
 define("PointsPerWin_DEFAULT" , 3);
 define("PointsPerDraw_DEFAULT" , 1);
 define("PointsPerLoss_DEFAULT" , 0);
+define("G2_r0", 1500);
+define("G2_RD0", 350);
+define("G2_sigma0", 0.06);
+define("G2_tau", 0.5);
+define("G2_epsilon", 0.000001);
+define("G2_qinv", 173.7178); //400/log(10);
+define("eb_rating_period", 1);	// in days
 
 // Match report userclass
 define("eb_UC_EB_MODERATOR", 8);

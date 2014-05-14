@@ -152,6 +152,14 @@ TS_default_mu float DEFAULT '".floatToSQL(TS_Mu0)."',
 TS_default_sigma float DEFAULT '".floatToSQL(TS_sigma0)."',
 TS_beta float DEFAULT '".floatToSQL(TS_beta)."',
 TS_epsilon float DEFAULT '".floatToSQL(TS_epsilon)."',
+TS_tau float DEFAULT '".floatToSQL(TS_tau)."',
+G2_default_r float DEFAULT '".floatToSQL(G2_r0)."',
+G2_default_RD float DEFAULT '".floatToSQL(G2_RD0)."',
+G2_default_sigma float DEFAULT '".floatToSQL(G2_sigma0)."',
+G2_tau float DEFAULT '".floatToSQL(G2_tau)."',
+G2_epsilon float DEFAULT '".floatToSQL(G2_epsilon)."',
+rating_period float DEFAULT '".eb_rating_period."',
+next_rating_timestamp int(11) unsigned not null,
 Owner int(10) unsigned NOT NULL,
 INDEX (Owner),
 FOREIGN KEY (Owner) REFERENCES ".TBL_USERS." (user_id),
@@ -266,6 +274,9 @@ OverallScore float DEFAULT '0',
 ELORanking int DEFAULT '".ELO_DEFAULT."',
 TS_mu float DEFAULT '".floatToSQL(TS_Mu0)."',
 TS_sigma float DEFAULT '".floatToSQL(TS_sigma0)."',
+G2_r float DEFAULT '".floatToSQL(G2_r0)."',
+G2_RD float DEFAULT '".floatToSQL(G2_RD0)."',
+G2_sigma float DEFAULT '".floatToSQL(G2_sigma0)."',
 GamesPlayed int DEFAULT '0',
 Win int DEFAULT '0',
 Draw int DEFAULT '0',
@@ -320,6 +331,9 @@ OverallScore float DEFAULT '0',
 ELORanking int DEFAULT '".ELO_DEFAULT."',
 TS_mu float DEFAULT '".floatToSQL(TS_Mu0)."',
 TS_sigma float DEFAULT '".floatToSQL(TS_sigma0)."',
+G2_r float DEFAULT '".floatToSQL(G2_r0)."',
+G2_RD float DEFAULT '".floatToSQL(G2_RD0)."',
+G2_sigma float DEFAULT '".floatToSQL(G2_sigma0)."',
 GamesPlayed int DEFAULT '0',
 Win int DEFAULT '0',
 Draw int DEFAULT '0',
@@ -352,6 +366,9 @@ Player_MatchTeam int DEFAULT '0',
 Player_deltaELO int DEFAULT '0',
 Player_deltaTS_mu float DEFAULT '0',
 Player_deltaTS_sigma float DEFAULT '0',
+Player_deltaG2_mu float DEFAULT '0',
+Player_deltaG2_phi float DEFAULT '0',
+Player_deltaG2_sigma float DEFAULT '0',
 Player_Score int DEFAULT '0',
 Player_ScoreAgainst int DEFAULT '0',
 Player_Rank int DEFAULT '0',
@@ -803,6 +820,31 @@ if (versionsCompare($eb_version_string, "0.9.9") < 0)
 	"ALTER TABLE ".TBL_EVENTS." ADD AllowLateSignups tinyint(1) DEFAULT '1'"
 	);
 }
+
+if (versionsCompare($eb_version_string, "0.9.13") < 0)
+{
+	// To revision 0.9.13
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_EVENTS." ADD TS_tau float DEFAULT '".floatToSQL(TS_tau)."'",
+	"ALTER TABLE ".TBL_EVENTS." ADD G2_default_r float DEFAULT '".floatToSQL(G2_r0)."'",
+	"ALTER TABLE ".TBL_EVENTS." ADD G2_default_RD float DEFAULT '".floatToSQL(G2_RD0)."'",
+	"ALTER TABLE ".TBL_EVENTS." ADD G2_default_sigma float DEFAULT '".floatToSQL(G2_sigma0)."'",
+	"ALTER TABLE ".TBL_EVENTS." ADD G2_tau float DEFAULT '".floatToSQL(G2_tau)."'",
+	"ALTER TABLE ".TBL_EVENTS." ADD G2_epsilon float DEFAULT '".floatToSQL(G2_epsilon)."'",
+	"ALTER TABLE ".TBL_EVENTS." ADD rating_period float DEFAULT '".floatToSQL(eb_rating_period)."'",
+	"ALTER TABLE ".TBL_EVENTS." ADD next_rating_timestamp int(11) unsigned not null",
+	"ALTER TABLE ".TBL_PLAYERS." ADD G2_r float DEFAULT '".floatToSQL(G2_r0)."'",
+	"ALTER TABLE ".TBL_PLAYERS." ADD G2_RD float DEFAULT '".floatToSQL(G2_RD0)."'",
+	"ALTER TABLE ".TBL_PLAYERS." ADD G2_sigma float DEFAULT '".floatToSQL(G2_sigma0)."'",
+	"ALTER TABLE ".TBL_TEAMS." ADD G2_r float DEFAULT '".floatToSQL(G2_r0)."'",
+	"ALTER TABLE ".TBL_TEAMS." ADD G2_RD float DEFAULT '".floatToSQL(G2_RD0)."'",
+	"ALTER TABLE ".TBL_TEAMS." ADD G2_sigma float DEFAULT '".floatToSQL(G2_sigma0)."'",
+	"ALTER TABLE ".TBL_SCORES." ADD Player_deltaG2_mu float DEFAULT '0'",
+	"ALTER TABLE ".TBL_SCORES." ADD Player_deltaG2_phi float DEFAULT '0'",
+	"ALTER TABLE ".TBL_SCORES." ADD Player_deltaG2_sigma float DEFAULT '0'"
+	);
+}
+
 /*
 echo "<br>Prefs upgrade:";
 print_r($upgrade_add_prefs);

@@ -7,9 +7,16 @@
 /* Update */
 if ($eventIsChanged == 1)
 {
+	$new_nextupdate = $time + 60*$pref['eb_events_update_delay'];
+	$event->setFieldDB('NextUpdate_timestamp', $new_nextupdate);
+
 	$event->setFieldDB('IsChanged', 0);
 	$eventIsChanged = 0;
 }
+
+$nextupdate_timestamp = $event->getField('NextUpdate_timestamp');
+$nextupdate_timestamp_local = $nextupdate_timestamp + TIMEOFFSET;
+$date_nextupdate = date("d M Y, h:i A",$nextupdate_timestamp_local);
 
 // Put nbrMatches pending in tab header
 $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
@@ -544,30 +551,8 @@ $text .= '<tr><td class="eb_td eb_tdc1">'.EB_EVENT_L44.'</td><td class="eb_td">'
 $text .= '</tbody></table>';
 $text .= '</div>';    // tabs-1 "Info"
 
-/* Teams Standings */
-$nextupdate_timestamp_local_local = $nextupdate_timestamp_local + TIMEOFFSET;
-$date_nextupdate = date("d M Y, h:i A",$nextupdate_timestamp_local_local);
-
-if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "Clan Ladder"))
-{
-	$text .= '<div id="tabs-2">';
-
-	if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
-	{
-		$text .= EB_EVENT_L46.'&nbsp;'.$date_nextupdate.'<br />';
-	}
-
-
-	$text .= '</div>';    // tabs-2 "Teams Standings"
-}
-
 /* Players Standings */
 $text .= '<div id="tabs-3">';
-
-if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
-{
-	$text .= EB_EVENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
-}
 
 if($hide_fixtures == 0)
 {

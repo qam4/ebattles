@@ -3,6 +3,7 @@
 //___________________________________________________________________
 require_once(e_PLUGIN.'ebattles/include/ELO.php');
 require_once(e_PLUGIN.'ebattles/include/trueskill.php');
+require_once(e_PLUGIN.'ebattles/include/glicko2.php');
 require_once(e_PLUGIN.'ebattles/include/event.php');
 require_once(e_PLUGIN.'ebattles/include/event.php');
 require_once(e_HANDLER."avatar_handler.php");
@@ -23,14 +24,21 @@ class Match extends DatabaseTable
 		$event_id = $this->fields['Event'];
 		$event = new Event($event_id);
 
-		// Initialize scores ELO/TrueSkill
+		// Initialize scores ELO/TrueSkill/Glicko2
 		$deltaELO = 0;
 		$deltaTS_mu = 0;
 		$deltaTS_sigma = 1;
+		$deltaG2_mu = 0;
+		$deltaG2_phi = 1;
+		$deltaG2_sigma = 1;
+		$G2_r0 = $event->getField('G2_default_r');
 		$q = "UPDATE ".TBL_SCORES
 		." SET Player_deltaELO = '".floatToSQL($deltaELO)."',"
 		."     Player_deltaTS_mu = '".floatToSQL($deltaTS_mu)."',"
 		."     Player_deltaTS_sigma = '".floatToSQL($deltaTS_sigma)."',"
+		."     Player_deltaG2_mu = '".floatToSQL($deltaG2_mu)."',"
+		."     Player_deltaG2_phi = '".floatToSQL($deltaG2_phi)."',"
+		."     Player_deltaG2_sigma = '".floatToSQL($deltaG2_sigma)."',"
 		."     Player_Win = 0,"
 		."     Player_Draw = 0,"
 		."     Player_Loss = 0,"
@@ -87,16 +95,28 @@ class Match extends DatabaseTable
 						$teamA_ELO=0;
 						$teamA_TS_mu=0;
 						$teamA_TS_sigma2=0;
+						$teamA_G2_r=0;
+						$teamA_G2_RD2=0;
+						$teamA_G2_sigma2=0;
 						for ($k=0;$k<$NbrPlayersTeamA;$k++)
 						{
 							$teamA_ELO += mysql_result($resultA,$k, TBL_PLAYERS.".ELORanking");
 							$teamA_TS_mu += mysql_result($resultA,$k, TBL_PLAYERS.".TS_mu");
 							$teamA_TS_sigma2 += pow(mysql_result($resultA,$k, TBL_PLAYERS.".TS_sigma"),2);
+							$teamA_G2_r += mysql_result($resultA,$k, TBL_PLAYERS.".G2_r");
+							$teamA_G2_RD2 += pow(mysql_result($resultA,$k, TBL_PLAYERS.".G2_RD"),2);
+							$teamA_G2_sigma2 += pow(mysql_result($resultA,$k, TBL_PLAYERS.".G2_sigma"),2);
 						}
 						$teamA_TS_sigma = sqrt($teamA_TS_sigma2);
+						$teamA_G2_RD = sqrt($teamA_G2_RD2);
+						$teamA_G2_sigma = sqrt($teamA_G2_sigma2);
+						$teamA_G2_mu = g2_from_g1_rating($teamA_G2_r, $G2_r0, G2_qinv);
+						$teamA_G2_phi = g2_from_g1_deviation($teamA_G2_RD, G2_qinv);
+						
 						$output .= "Team $i ELO: $teamA_ELO, rank: $teamA_Rank<br />";
 						$output .= "Team $i TS: mu = $teamA_TS_mu, sigma= $teamA_TS_sigma<br />";
-
+						$output .= "Team $i TS: mu = $teamA_TS_mu, sigma= $teamA_TS_sigma<br />";
+						$output .= "Team $i G2: mu = $teamA_G2_mu, phi= $teamA_G2_phi, sigma= $teamA_G2_sigma<br />";
 
 						$NbrPlayersTeamB = mysql_numrows($resultB);
 						$teamB_Rank= mysql_result($resultB,0, TBL_SCORES.".Player_Rank");
@@ -104,15 +124,26 @@ class Match extends DatabaseTable
 						$teamB_ELO=0;
 						$teamB_TS_mu=0;
 						$teamB_TS_sigma2=0;
+						$teamB_G2_r=0;
+						$teamB_G2_RD2=0;
+						$teamB_G2_sigma2=0;
 						for ($k=0;$k<$NbrPlayersTeamB;$k++)
 						{
 							$teamB_ELO += mysql_result($resultB,$k, TBL_PLAYERS.".ELORanking");
 							$teamB_TS_mu += mysql_result($resultB,$k, TBL_PLAYERS.".TS_mu");
 							$teamB_TS_sigma2 += pow(mysql_result($resultB,$k, TBL_PLAYERS.".TS_sigma"),2);
+							$teamB_G2_r += mysql_result($resultB,$k, TBL_PLAYERS.".G2_r");
+							$teamB_G2_RD2 += pow(mysql_result($resultB,$k, TBL_PLAYERS.".G2_RD"),2);
+							$teamB_G2_sigma2 += pow(mysql_result($resultB,$k, TBL_PLAYERS.".G2_sigma"),2);
 						}
 						$teamB_TS_sigma = sqrt($teamB_TS_sigma2);
+						$teamB_G2_RD = sqrt($teamB_G2_RD2);
+						$teamB_G2_sigma = sqrt($teamB_G2_sigma2);
+						$teamB_G2_mu = g2_from_g1_rating($teamB_G2_r, $G2_r0, G2_qinv);
+						$teamB_G2_phi = g2_from_g1_deviation($teamB_G2_RD, G2_qinv);
 						$output .= "Team $j ELO: $teamB_ELO, rank: $teamB_Rank<br />";
 						$output .= "Team $j TS: mu = $teamB_TS_mu, sigma= $teamB_TS_sigma<br />";
+						$output .= "Team $j G2: mu = $teamB_G2_mu, phi= $teamB_G2_phi, sigma= $teamB_G2_sigma<br />";
 						break;
 					case 'Teams':
 						$q = "SELECT ".TBL_MATCHS.".*, "
@@ -145,32 +176,53 @@ class Match extends DatabaseTable
 						$teamA_ELO=0;
 						$teamA_TS_mu=0;
 						$teamA_TS_sigma2=0;
+						$teamA_G2_r=0;
+						$teamA_G2_RD2=0;
+						$teamA_G2_sigma2=0;
 						for ($k=0;$k<$NbrPlayersTeamA;$k++)
 						{
 							$teamA_ELO += mysql_result($resultA,$k, TBL_TEAMS.".ELORanking");
 							$teamA_TS_mu += mysql_result($resultA,$k, TBL_TEAMS.".TS_mu");
 							$teamA_TS_sigma2 += pow(mysql_result($resultA,$k, TBL_TEAMS.".TS_sigma"),2);
+							$teamA_G2_r += mysql_result($resultA,$k, TBL_TEAMS.".G2_r");
+							$teamA_G2_RD2 += pow(mysql_result($resultA,$k, TBL_TEAMS.".G2_RD"),2);
+							$teamA_G2_sigma2 += pow(mysql_result($resultA,$k, TBL_TEAMS.".G2_sigma"),2);
 						}
 						$teamA_TS_sigma = sqrt($teamA_TS_sigma2);
+						$teamA_G2_RD = sqrt($teamA_G2_RD2);
+						$teamA_G2_sigma = sqrt($teamA_G2_sigma2);
+						$teamA_G2_mu = g2_from_g1_rating($teamA_G2_r, $G2_r0, G2_qinv);
+						$teamA_G2_phi = g2_from_g1_deviation($teamA_G2_RD, G2_qinv);						
 						$output .= "Team $i ELO: $teamA_ELO, rank: $teamA_Rank<br />";
 						$output .= "Team $i TS: mu = $teamA_TS_mu, sigma= $teamA_TS_sigma<br />";
-
-
+						$output .= "Team $i G2: mu = $teamA_G2_mu, phi= $teamA_G2_phi, sigma= $teamA_G2_sigma<br />";
+						
 						$NbrPlayersTeamB = mysql_numrows($resultB);
 						$teamB_Rank= mysql_result($resultB,0, TBL_SCORES.".Player_Rank");
 						$teamB_Forfeit= mysql_result($resultB,0, TBL_SCORES.".Player_Forfeit");
 						$teamB_ELO=0;
 						$teamB_TS_mu=0;
 						$teamB_TS_sigma2=0;
+						$teamB_G2_r=0;
+						$teamB_G2_RD2=0;
+						$teamB_G2_sigma2=0;
 						for ($k=0;$k<$NbrPlayersTeamB;$k++)
 						{
 							$teamB_ELO += mysql_result($resultB,$k, TBL_TEAMS.".ELORanking");
 							$teamB_TS_mu += mysql_result($resultB,$k, TBL_TEAMS.".TS_mu");
 							$teamB_TS_sigma2 += pow(mysql_result($resultB,$k, TBL_TEAMS.".TS_sigma"),2);
+							$teamB_G2_r += mysql_result($resultB,$k, TBL_TEAMS.".G2_r");
+							$teamB_G2_RD2 += pow(mysql_result($resultB,$k, TBL_TEAMS.".G2_RD"),2);
+							$teamB_G2_sigma2 += pow(mysql_result($resultB,$k, TBL_TEAMS.".G2_sigma"),2);
 						}
 						$teamB_TS_sigma = sqrt($teamB_TS_sigma2);
+						$teamB_G2_RD = sqrt($teamB_G2_RD2);
+						$teamB_G2_sigma = sqrt($teamB_G2_sigma2);
+						$teamB_G2_mu = g2_from_g1_rating($teamB_G2_r, $G2_r0, G2_qinv);
+						$teamB_G2_phi = g2_from_g1_deviation($teamB_G2_RD, G2_qinv);
 						$output .= "Team $j ELO: $teamB_ELO, rank: $teamB_Rank<br />";
 						$output .= "Team $j TS: mu = $teamB_TS_mu, sigma= $teamB_TS_sigma<br />";
+						$output .= "Team $j G2: mu = $teamB_G2_mu, phi= $teamB_G2_phi, sigma= $teamB_G2_sigma<br />";
 						break;
 					default:
 					}
@@ -250,13 +302,14 @@ class Match extends DatabaseTable
 					// New TrueSkill ------------------------------------------
 					$beta=$event->getField('TS_beta');          // beta
 					$epsilon=$event->getField('TS_epsilon');    // draw probability
+					$tau=$event->getField('TS_tau');        // dynamics factor
 					if (($teamA_Forfeit == 1)||($teamB_Forfeit == 1))
 					{
-						$update = array(0,0,0,0);
+						$update = array(0,1,0,1);
 					}
 					else
 					{
-						$update = Trueskill_update($epsilon,$beta, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Rank, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Rank);
+						$update = Trueskill_update($epsilon, $beta, $tau, $teamA_TS_mu, $teamA_TS_sigma, $teamA_Rank, $teamB_TS_mu, $teamB_TS_sigma, $teamB_Rank);
 					}
 
 					$teamA_deltaTS_mu = $update[0];
@@ -266,12 +319,36 @@ class Match extends DatabaseTable
 					$output .= "Team $i TS: delta mu = $teamA_deltaTS_mu, delta sigma= $teamA_deltaTS_sigma<br />";
 					$output .= "Team $j TS: delta mu = $teamB_deltaTS_mu, delta sigma= $teamB_deltaTS_sigma<br />";
 
+					// New Glicko 2 ------------------------------------------
+					$epsilon=$event->getField('G2_epsilon');    // 
+					$tau=$event->getField('G2_tau');            // volatility variance
+					if (($teamA_Forfeit == 1)||($teamB_Forfeit == 1))
+					{
+						$update = array(0,1,1,0,1,1);
+					}
+					else
+					{
+						$update_A = glicko2_update($teamA_G2_mu, $teamA_G2_phi, $teamA_G2_sigma, $teamA_Rank, $teamB_G2_mu, $teamB_G2_phi, $teamB_G2_sigma, $teamB_Rank, $tau, $epsilon);
+						$update_B = glicko2_update($teamB_G2_mu, $teamB_G2_phi, $teamB_G2_sigma, $teamB_Rank, $teamA_G2_mu, $teamA_G2_phi, $teamA_G2_sigma, $teamA_Rank, $tau, $epsilon);
+					}
+					$teamA_deltaG2_mu = $update_A[0];
+					$teamA_deltaG2_phi = $update_A[1];
+					$teamA_deltaG2_sigma = $update_A[2];
+					$teamB_deltaG2_mu = $update_B[0];
+					$teamB_deltaG2_phi = $update_B[1];
+					$teamB_deltaG2_sigma = $update_B[2];
+					$output .= "Team $i G2: delta mu = $teamA_deltaG2_mu, delta phi= $teamA_deltaG2_phi, delta sigma= $teamA_deltaG2_sigma<br />";
+					$output .= "Team $j G2: delta mu = $teamB_deltaG2_mu, delta phi= $teamB_deltaG2_phi, delta sigma= $teamB_deltaG2_sigma<br />";					
+
 					// Update Scores ------------------------------------------
 					for ($k=0;$k<$NbrPlayersTeamA;$k++)
 					{
 						$scoreELO = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaELO");
 						$scoreTS_mu = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_mu");
 						$scoreTS_sigma = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaTS_sigma");
+						$scoreG2_mu = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaG2_mu");
+						$scoreG2_phi = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaG2_phi");
+						$scoreG2_sigma = mysql_result($resultA,$k, TBL_SCORES.".Player_deltaG2_sigma");
 						$scoreWin = mysql_result($resultA,$k, TBL_SCORES.".Player_Win");
 						$scoreDraw = mysql_result($resultA,$k, TBL_SCORES.".Player_Draw");
 						$scoreLoss = mysql_result($resultA,$k, TBL_SCORES.".Player_Loss");
@@ -280,6 +357,9 @@ class Match extends DatabaseTable
 						$scoreELO += $deltaELO/$NbrPlayersTeamA;
 						$scoreTS_mu += $teamA_deltaTS_mu/$NbrPlayersTeamA;
 						$scoreTS_sigma *= $teamA_deltaTS_sigma;
+						$scoreG2_mu += $teamA_deltaG2_mu/$NbrPlayersTeamA;
+						$scoreG2_phi *= $teamA_deltaG2_phi;
+						$scoreG2_sigma *= $teamA_deltaG2_sigma;
 						$scoreWin += $teamA_win;
 						$scoreDraw += $teamA_draw;
 						$scoreLoss += $teamA_loss;
@@ -293,6 +373,9 @@ class Match extends DatabaseTable
 							." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
 							."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
 							."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."',"
+							."     Player_deltaG2_mu = '".floatToSQL($scoreG2_mu)."',"
+							."     Player_deltaG2_phi = '".floatToSQL($scoreG2_phi)."',"
+							."     Player_deltaG2_sigma = '".floatToSQL($scoreG2_sigma)."',"
 							."     Player_Win = $scoreWin,"
 							."     Player_Draw = $scoreDraw,"
 							."     Player_Loss = $scoreLoss,"
@@ -306,6 +389,9 @@ class Match extends DatabaseTable
 							." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
 							."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
 							."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."',"
+							."     Player_deltaG2_mu = '".floatToSQL($scoreG2_mu)."',"
+							."     Player_deltaG2_phi = '".floatToSQL($scoreG2_phi)."',"
+							."     Player_deltaG2_sigma = '".floatToSQL($scoreG2_sigma)."',"
 							."     Player_Win = $scoreWin,"
 							."     Player_Draw = $scoreDraw,"
 							."     Player_Loss = $scoreLoss,"
@@ -323,6 +409,9 @@ class Match extends DatabaseTable
 						$scoreELO = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaELO");
 						$scoreTS_mu = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_mu");
 						$scoreTS_sigma = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaTS_sigma");
+						$scoreG2_mu = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaG2_mu");
+						$scoreG2_phi = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaG2_phi");
+						$scoreG2_sigma = mysql_result($resultB,$k, TBL_SCORES.".Player_deltaG2_sigma");
 						$scoreWin = mysql_result($resultB,$k, TBL_SCORES.".Player_Win");
 						$scoreDraw = mysql_result($resultB,$k, TBL_SCORES.".Player_Draw");
 						$scoreLoss = mysql_result($resultB,$k, TBL_SCORES.".Player_Loss");
@@ -331,6 +420,9 @@ class Match extends DatabaseTable
 						$scoreELO -= $deltaELO/$NbrPlayersTeamB;
 						$scoreTS_mu += $teamB_deltaTS_mu/$NbrPlayersTeamB;
 						$scoreTS_sigma *= $teamB_deltaTS_sigma;
+						$scoreG2_mu += $teamB_deltaG2_mu/$NbrPlayersTeamB;
+						$scoreG2_phi *= $teamB_deltaG2_phi;
+						$scoreG2_sigma *= $teamB_deltaG2_sigma;
 						$scoreWin += $teamB_win;
 						$scoreDraw += $teamB_draw;
 						$scoreLoss += $teamB_loss;
@@ -344,6 +436,9 @@ class Match extends DatabaseTable
 							." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
 							."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
 							."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."',"
+							."     Player_deltaG2_mu = '".floatToSQL($scoreG2_mu)."',"
+							."     Player_deltaG2_phi = '".floatToSQL($scoreG2_phi)."',"
+							."     Player_deltaG2_sigma = '".floatToSQL($scoreG2_sigma)."',"
 							."     Player_Win = $scoreWin,"
 							."     Player_Draw = $scoreDraw,"
 							."     Player_Loss = $scoreLoss,"
@@ -357,6 +452,9 @@ class Match extends DatabaseTable
 							." SET Player_deltaELO = '".floatToSQL($scoreELO)."',"
 							."     Player_deltaTS_mu = '".floatToSQL($scoreTS_mu)."',"
 							."     Player_deltaTS_sigma = '".floatToSQL($scoreTS_sigma)."',"
+							."     Player_deltaG2_mu = '".floatToSQL($scoreG2_mu)."',"
+							."     Player_deltaG2_phi = '".floatToSQL($scoreG2_phi)."',"
+							."     Player_deltaG2_sigma = '".floatToSQL($scoreG2_sigma)."',"
 							."     Player_Win = $scoreWin,"
 							."     Player_Draw = $scoreDraw,"
 							."     Player_Loss = $scoreLoss,"
@@ -466,11 +564,15 @@ class Match extends DatabaseTable
 		$event = new Event($event_id);
 		$type = $event->getField('Type');
 		$competition_type = $event->getCompetitionType();
+		$G2_r0 = $event->getField('G2_default_r');
 
 		// Update Teams with scores
 		$tdeltaELO         = array();
 		$tdeltaTS_mu       = array();
 		$tdeltaTS_sigma    = array();
+		$tdeltaG2_mu       = array();
+		$tdeltaG2_phi      = array();
+		$tdeltaG2_sigma    = array();
 		$tdeltaGamesPlayed = array();
 		$tdeltaWins        = array();
 		$tdeltaDraws       = array();
@@ -498,6 +600,9 @@ class Match extends DatabaseTable
 			$tdeltaELO[$tid] = 0;
 			$tdeltaTS_mu[$tid] = 0;
 			$tdeltaTS_sigma[$tid] = 0;
+			$tdeltaG2_mu[$tid] = 0;
+			$tdeltaG2_phi[$tid] = 0;
+			$tdeltaG2_sigma[$tid] = 0;
 			$tdeltaGamesPlayed[$tid] = 0;
 			$tdeltaWins[$tid] = 0;
 			$tdeltaDraws[$tid] = 0;
@@ -539,6 +644,11 @@ class Match extends DatabaseTable
 			$pELO          = mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
 			$pTS_mu        = mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
 			$pTS_sigma     = mysql_result($result,$i, TBL_PLAYERS.".TS_sigma");
+			$pG2_r         = mysql_result($result,$i, TBL_PLAYERS.".G2_r");
+			$pG2_RD        = mysql_result($result,$i, TBL_PLAYERS.".G2_RD");
+			$pG2_sigma     = mysql_result($result,$i, TBL_PLAYERS.".G2_sigma");
+			$pG2_mu        = g2_from_g1_rating($pG2_r, $G2_r0, G2_qinv);
+			$pG2_phi       = g2_from_g1_deviation($pG2_RD, G2_qinv);
 			$pGamesPlayed  = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
 			$pWins         = mysql_result($result,$i, TBL_PLAYERS.".Win");
 			$pDraws        = mysql_result($result,$i, TBL_PLAYERS.".Draw");
@@ -554,6 +664,9 @@ class Match extends DatabaseTable
 			$pdeltaELO         = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
 			$pdeltaTS_mu       = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
 			$pdeltaTS_sigma    = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
+			$pdeltaG2_mu       = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_mu");
+			$pdeltaG2_phi      = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_phi");
+			$pdeltaG2_sigma    = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_sigma");
 			$pdeltaGamesPlayed = 1;
 			$pdeltaWins        = mysql_result($result,$i, TBL_SCORES.".Player_Win");
 			$pdeltaDraws       = mysql_result($result,$i, TBL_SCORES.".Player_Draw");
@@ -565,6 +678,11 @@ class Match extends DatabaseTable
 			$pELO         += $pdeltaELO;
 			$pTS_mu       += $pdeltaTS_mu;
 			$pTS_sigma    *= $pdeltaTS_sigma;
+			$pG2_mu       += $pdeltaG2_mu;
+			$pG2_phi      *= $pdeltaG2_phi;
+			$pG2_sigma    *= $pdeltaG2_sigma;
+			$pG2_r         = g2_to_g1_rating($pG2_mu, $G2_r0, G2_qinv);
+			$pG2_RD        = g2_to_g1_deviation($pG2_phi, G2_qinv);
 			$pGamesPlayed += $pdeltaGamesPlayed;
 			$pWins        += $pdeltaWins;
 			$pDraws       += $pdeltaDraws;
@@ -578,6 +696,9 @@ class Match extends DatabaseTable
 				$tdeltaELO[$pteam]         += $pdeltaELO;
 				$tdeltaTS_mu[$pteam]       += $pdeltaTS_mu;
 				$tdeltaTS_sigma[$pteam]    += $pdeltaTS_sigma;
+				$tdeltaG2_mu[$pteam]       += $pdeltaG2_mu;
+				$tdeltaG2_phi[$pteam]      += $pdeltaG2_phi;
+				$tdeltaG2_sigma[$pteam]    += $pdeltaG2_sigma;
 				$tdeltaGamesPlayed[$pteam] += 1;
 				$tdeltaWins[$pteam]        += $pdeltaWins;
 				$tdeltaDraws[$pteam]       += $pdeltaDraws;
@@ -638,6 +759,9 @@ class Match extends DatabaseTable
 			." SET ELORanking = '".floatToSQL($pELO)."',"
 			."     TS_mu = '".floatToSQL($pTS_mu)."',"
 			."     TS_sigma = '".floatToSQL($pTS_sigma)."',"
+			."     G2_r = '".floatToSQL($pG2_r)."',"
+			."     G2_RD = '".floatToSQL($pG2_RD)."',"
+			."     G2_sigma = '".floatToSQL($pG2_sigma)."',"
 			."     GamesPlayed = $pGamesPlayed,"
 			."     Loss = $pLosses,"
 			."     Win = $pWins,"
@@ -688,6 +812,11 @@ class Match extends DatabaseTable
 			$tELO         = mysql_result($result_Teams,$team, TBL_TEAMS.".ELORanking");
 			$tTS_mu       = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_mu");
 			$tTS_sigma    = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_sigma");
+			$tG2_r        = mysql_result($result_Teams,$team, TBL_TEAMS.".G2_r");
+			$tG2_RD       = mysql_result($result_Teams,$team, TBL_TEAMS.".G2_RD");
+			$tG2_sigma    = mysql_result($result_Teams,$team, TBL_TEAMS.".G2_sigma");
+			$tG2_mu       = g2_from_g1_rating($tG2_r, $G2_r0, G2_qinv);
+			$tG2_phi      = g2_from_g1_deviation($tG2_RD, G2_qinv);
 			$tGamesPlayed = mysql_result($result_Teams,$team, TBL_TEAMS.".GamesPlayed");
 			$tWins        = mysql_result($result_Teams,$team, TBL_TEAMS.".Win");
 			$tDraws       = mysql_result($result_Teams,$team, TBL_TEAMS.".Draw");
@@ -698,6 +827,9 @@ class Match extends DatabaseTable
 			$tdeltaELO[$tid]         /= $tnbrPlayers[$tid];
 			$tdeltaTS_mu[$tid]       /= $tnbrPlayers[$tid];
 			$tdeltaTS_sigma[$tid]    /= $tnbrPlayers[$tid];
+			$tdeltaG2_mu[$tid]       /= $tnbrPlayers[$tid];
+			$tdeltaG2_phi[$tid]      /= $tnbrPlayers[$tid];
+			$tdeltaG2_sigma[$tid]    /= $tnbrPlayers[$tid];
 			$tdeltaGamesPlayed[$tid] /= $tnbrPlayers[$tid];
 			$tdeltaWins[$tid]        /= $tnbrPlayers[$tid];
 			$tdeltaDraws[$tid]       /= $tnbrPlayers[$tid];
@@ -709,6 +841,11 @@ class Match extends DatabaseTable
 			$tELO         += $tdeltaELO[$tid];
 			$tTS_mu       += $tdeltaTS_mu[$tid];
 			$tTS_sigma    *= $tdeltaTS_sigma[$tid];
+			$tG2_mu       += $tdeltaG2_mu[$tid];
+			$tG2_phi      *= $tdeltaG2_phi[$tid];
+			$tG2_sigma    *= $tdeltaG2_sigma[$tid];
+			$tG2_r         = g2_to_g1_rating($tG2_mu, $G2_r0, G2_qinv);
+			$tG2_RD        = g2_to_g1_deviation($tG2_phi, G2_qinv);
 			$tGamesPlayed += $tdeltaGamesPlayed[$tid];
 			$tWins        += $tdeltaWins[$tid];
 			$tDraws       += $tdeltaDraws[$tid];
@@ -717,14 +854,23 @@ class Match extends DatabaseTable
 			$tOppScore    += $tdeltaOppScore[$tid];
 			$tPoints      += $tdeltaPoints[$tid];
 
-			$output .= "Team: $tid, new ELO: $tdeltaELO[$tid]<br />";
-			$output .= "Team: $tid, Games played: $tdeltaGamesPlayed[$tid]<br>";
-			$output .= "Match id: ".$this->fields['MatchID']."<br>";
+			$output .= "Team: $tid<br />";
+			$output .= "delta ELO: $tdeltaELO[$tid]<br />";
+			$output .= "delta TS mu: $tdeltaTS_mu[$tid]<br />";
+			$output .= "delta TS sigma: $tdeltaTS_sigma[$tid]<br />";
+			$output .= "delta G2 mu: $tdeltaG2_mu[$tid]<br />";
+			$output .= "delta G2 phi: $tdeltaG2_phi[$tid]<br />";
+			$output .= "delta G2 sigma: $tdeltaG2_sigma[$tid]<br />";
+			$output .= "Games played: $tdeltaGamesPlayed[$tid]<br />";
+			$output .= "Match id: ".$this->fields['MatchID']."<br />";
 
 			$q_update = "UPDATE ".TBL_TEAMS
 			." SET ELORanking = '".floatToSQL($tELO)."',"
 			."     TS_mu = '".floatToSQL($tTS_mu)."',"
 			."     TS_sigma = '".floatToSQL($tTS_sigma)."',"
+			."     G2_r = '".floatToSQL($tG2_r)."',"
+			."     G2_RD = '".floatToSQL($tG2_RD)."',"
+			."     G2_sigma = '".floatToSQL($tG2_sigma)."',"
 			."     GamesPlayed = $tGamesPlayed,"
 			."     Loss = $tLosses,"
 			."     Win = $tWins,"
@@ -735,13 +881,12 @@ class Match extends DatabaseTable
 			."     RankDelta = 0"
 			." WHERE (TeamID = '$tid')";
 			$result_update = $sql->db_Query($q_update);
-			$output .= "<br>$q";
 		}
 
 		$q = "UPDATE ".TBL_MATCHS." SET Status = 'active' WHERE (MatchID = '".$this->fields['MatchID']."')";
 		$result = $sql->db_Query($q);
 
-		//var_dump($output);
+		//echo "$output";
 		//exit;
 	}
 
@@ -754,6 +899,7 @@ class Match extends DatabaseTable
 		$event = new Event($event_id);
 		$type = $event->getField('Type');
 		$competition_type = $event->getCompetitionType();
+		$G2_r0 = $event->getField('G2_default_r');
 
 		// Update Teams with scores
 		$q = "SELECT ".TBL_MATCHS.".*, "
@@ -784,6 +930,11 @@ class Match extends DatabaseTable
 			$tELO          = mysql_result($result,$i, TBL_TEAMS.".ELORanking");
 			$tTS_mu        = mysql_result($result,$i, TBL_TEAMS.".TS_mu");
 			$tTS_sigma     = mysql_result($result,$i, TBL_TEAMS.".TS_sigma");
+			$tG2_r         = mysql_result($result,$i, TBL_TEAMS.".G2_r");
+			$tG2_RD        = mysql_result($result,$i, TBL_TEAMS.".G2_RD");
+			$tG2_sigma     = mysql_result($result,$i, TBL_TEAMS.".G2_sigma");
+			$tG2_mu        = g2_from_g1_rating($tG2_r, $G2_r0, G2_qinv);
+			$tG2_phi       = g2_from_g1_deviation($tG2_RD, G2_qinv);
 			$tGamesPlayed  = mysql_result($result,$i, TBL_TEAMS.".GamesPlayed");
 			$tWins         = mysql_result($result,$i, TBL_TEAMS.".Win");
 			$tDraws        = mysql_result($result,$i, TBL_TEAMS.".Draw");
@@ -798,6 +949,9 @@ class Match extends DatabaseTable
 			$tdeltaELO         = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
 			$tdeltaTS_mu       = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
 			$tdeltaTS_sigma    = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
+			$tdeltaG2_mu       = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_mu");
+			$tdeltaG2_phi      = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_phi");
+			$tdeltaG2_sigma    = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_sigma");
 			$tdeltaGamesPlayed = 1;
 			$tdeltaWins        = mysql_result($result,$i, TBL_SCORES.".Player_Win");
 			$tdeltaDraws       = mysql_result($result,$i, TBL_SCORES.".Player_Draw");
@@ -809,6 +963,11 @@ class Match extends DatabaseTable
 			$tELO         += $tdeltaELO;
 			$tTS_mu       += $tdeltaTS_mu;
 			$tTS_sigma    *= $tdeltaTS_sigma;
+			$tG2_mu       += $tdeltaG2_mu;
+			$tG2_phi      *= $tdeltaG2_phi;
+			$tG2_sigma    *= $tdeltaG2_sigma;
+			$tG2_r         = g2_to_g1_rating($tG2_mu, $G2_r0, G2_qinv);
+			$tG2_RD        = g2_to_g1_deviation($tG2_phi, G2_qinv);
 			$tGamesPlayed += $tdeltaGamesPlayed;
 			$tWins        += $tdeltaWins;
 			$tDraws       += $tdeltaDraws;
@@ -867,6 +1026,9 @@ class Match extends DatabaseTable
 			." SET ELORanking = '".floatToSQL($tELO)."',"
 			."     TS_mu = '".floatToSQL($tTS_mu)."',"
 			."     TS_sigma = '".floatToSQL($tTS_sigma)."',"
+			."     G2_r = '".floatToSQL($tG2_r)."',"
+			."     G2_RD = '".floatToSQL($tG2_RD)."',"
+			."     G2_sigma = '".floatToSQL($tG2_sigma)."',"
 			."     GamesPlayed = $tGamesPlayed,"
 			."     Loss = $tLosses,"
 			."     Win = $tWins,"
@@ -936,11 +1098,18 @@ class Match extends DatabaseTable
 	{
 		global $sql;
 
+		// Get event info
+		$event_id = $this->fields['Event'];
+		$event = new Event($event_id);
+		$G2_r0 = $event->getField('G2_default_r');
 
 		// Update Teams with scores
 		$tdeltaELO         = array();
 		$tdeltaTS_mu       = array();
 		$tdeltaTS_sigma    = array();
+		$tdeltaG2_mu       = array();
+		$tdeltaG2_phi      = array();
+		$tdeltaG2_sigma    = array();
 		$tdeltaGamesPlayed = array();
 		$tdeltaWins        = array();
 		$tdeltaDraws       = array();
@@ -968,6 +1137,9 @@ class Match extends DatabaseTable
 			$tdeltaELO[$tid]         = 0;
 			$tdeltaTS_mu[$tid]       = 0;
 			$tdeltaTS_sigma[$tid]    = 0;
+			$tdeltaG2_mu[$tid]       = 0;
+			$tdeltaG2_phi[$tid]      = 0;
+			$tdeltaG2_sigma[$tid]    = 0;
 			$tdeltaGamesPlayed[$tid] = 0;
 			$tdeltaWins[$tid]        = 0;
 			$tdeltaDraws[$tid]       = 0;
@@ -1008,6 +1180,11 @@ class Match extends DatabaseTable
 			$pELO          = mysql_result($result,$i, TBL_PLAYERS.".ELORanking");
 			$pTS_mu        = mysql_result($result,$i, TBL_PLAYERS.".TS_mu");
 			$pTS_sigma     = mysql_result($result,$i, TBL_PLAYERS.".TS_sigma");
+			$pG2_r         = mysql_result($result,$i, TBL_PLAYERS.".G2_r");
+			$pG2_RD        = mysql_result($result,$i, TBL_PLAYERS.".G2_RD");
+			$pG2_sigma     = mysql_result($result,$i, TBL_PLAYERS.".G2_sigma");
+			$pG2_mu        = g2_from_g1_rating($pG2_r, $G2_r0, G2_qinv);
+			$pG2_phi       = g2_from_g1_deviation($pG2_RD, G2_qinv);
 			$pGamesPlayed  = mysql_result($result,$i, TBL_PLAYERS.".GamesPlayed");
 			$pWins         = mysql_result($result,$i, TBL_PLAYERS.".Win");
 			$pDraws        = mysql_result($result,$i, TBL_PLAYERS.".Draw");
@@ -1023,6 +1200,9 @@ class Match extends DatabaseTable
 			$pdeltaELO         = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
 			$pdeltaTS_mu       = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
 			$pdeltaTS_sigma    = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
+			$pdeltaG2_mu       = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_mu");
+			$pdeltaG2_phi      = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_phi");
+			$pdeltaG2_sigma    = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_sigma");
 			$pdeltaGamesPlayed = 1;
 			$pdeltaWins        = mysql_result($result,$i, TBL_SCORES.".Player_Win");
 			$pdeltaDraws       = mysql_result($result,$i, TBL_SCORES.".Player_Draw");
@@ -1034,6 +1214,11 @@ class Match extends DatabaseTable
 			$pELO         -= $pdeltaELO;
 			$pTS_mu       -= $pdeltaTS_mu;
 			$pTS_sigma    /= $pdeltaTS_sigma;
+			$pG2_mu       -= $pdeltaG2_mu;
+			$pG2_phi      /= $pdeltaG2_phi;
+			$pG2_sigma    /= $pdeltaG2_sigma;
+			$pG2_r         = g2_to_g1_rating($pG2_mu, $G2_r0, G2_qinv);
+			$pG2_RD        = g2_to_g1_deviation($pG2_phi, G2_qinv);
 			$pGamesPlayed -= $pdeltaGamesPlayed;
 			$pWins        -= $pdeltaWins;
 			$pDraws       -= $pdeltaDraws;
@@ -1049,6 +1234,9 @@ class Match extends DatabaseTable
 				$tdeltaELO[$pteam]         += $pdeltaELO;
 				$tdeltaTS_mu[$pteam]       += $pdeltaTS_mu;
 				$tdeltaTS_sigma[$pteam]    += $pdeltaTS_sigma;
+				$tdeltaG2_mu[$pteam]       += $pdeltaG2_mu;
+				$tdeltaG2_phi[$pteam]      += $pdeltaG2_phi;
+				$tdeltaG2_sigma[$pteam]    += $pdeltaG2_sigma;
 				$tdeltaGamesPlayed[$pteam] += 1;
 				$tdeltaWins[$pteam]        += $pdeltaWins;
 				$tdeltaDraws[$pteam]       += $pdeltaDraws;
@@ -1065,6 +1253,9 @@ class Match extends DatabaseTable
 				." SET ELORanking = '".floatToSQL($pELO)."',"
 				."     TS_mu = '".floatToSQL($pTS_mu)."',"
 				."     TS_sigma = '".floatToSQL($pTS_sigma)."',"
+				."     G2_r = '".floatToSQL($pG2_r)."',"
+				."     G2_RD = '".floatToSQL($pG2_RD)."',"
+				."     G2_sigma = '".floatToSQL($pG2_sigma)."',"
 				."     GamesPlayed = $pGamesPlayed,"
 				."     Loss = $pLosses,"
 				."     Win = $pWins,"
@@ -1107,6 +1298,11 @@ class Match extends DatabaseTable
 			$tELO         = mysql_result($result_Teams,$team, TBL_TEAMS.".ELORanking");
 			$tTS_mu       = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_mu");
 			$tTS_sigma    = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_sigma");
+			$tG2_r        = mysql_result($result_Teams,$team, TBL_TEAMS.".G2_r");
+			$tG2_RD       = mysql_result($result_Teams,$team, TBL_TEAMS.".G2_RD");
+			$tG2_sigma    = mysql_result($result_Teams,$team, TBL_TEAMS.".G2_sigma");
+			$tG2_mu       = g2_from_g1_rating($tG2_r, $G2_r0, G2_qinv);
+			$tG2_phi      = g2_from_g1_deviation($tG2_RD, G2_qinv);
 			$tGamesPlayed = mysql_result($result_Teams,$team, TBL_TEAMS.".GamesPlayed");
 			$tWins        = mysql_result($result_Teams,$team, TBL_TEAMS.".Win");
 			$tDraws       = mysql_result($result_Teams,$team, TBL_TEAMS.".Draw");
@@ -1117,6 +1313,9 @@ class Match extends DatabaseTable
 			$tdeltaELO[$tid]         /= $tnbrPlayers[$tid];
 			$tdeltaTS_mu[$tid]       /= $tnbrPlayers[$tid];
 			$tdeltaTS_sigma[$tid]    /= $tnbrPlayers[$tid];
+			$tdeltaG2_mu[$tid]       /= $tnbrPlayers[$tid];
+			$tdeltaG2_phi[$tid]      /= $tnbrPlayers[$tid];
+			$tdeltaG2_sigma[$tid]    /= $tnbrPlayers[$tid];
 			$tdeltaGamesPlayed[$tid] /= $tnbrPlayers[$tid];
 			$tdeltaWins[$tid]        /= $tnbrPlayers[$tid];
 			$tdeltaDraws[$tid]       /= $tnbrPlayers[$tid];
@@ -1129,6 +1328,11 @@ class Match extends DatabaseTable
 			$tELO         -= $tdeltaELO[$tid];
 			$tTS_mu       -= $tdeltaTS_mu[$tid];
 			$tTS_sigma    /= $tdeltaTS_sigma[$tid];
+			$tG2_mu       -= $tdeltaG2_mu[$tid];
+			$tG2_phi      /= $tdeltaG2_phi[$tid];
+			$tG2_sigma    /= $tdeltaG2_sigma[$tid];
+			$tG2_r         = g2_to_g1_rating($tG2_mu[$tid], $G2_r0, G2_qinv);
+			$tG2_RD        = g2_to_g1_deviation($tG2_phi[$tid], G2_qinv);
 			$tGamesPlayed -= $tdeltaGamesPlayed[$tid];
 			$tWins        -= $tdeltaWins[$tid];
 			$tDraws       -= $tdeltaDraws[$tid];
@@ -1146,6 +1350,9 @@ class Match extends DatabaseTable
 				." SET ELORanking = '".floatToSQL($tELO)."',"
 				."     TS_mu = '".floatToSQL($tTS_mu)."',"
 				."     TS_sigma = '".floatToSQL($tTS_sigma)."',"
+				."     G2_r = '".floatToSQL($tG2_r)."',"
+				."     G2_RD = '".floatToSQL($tG2_RD)."',"
+				."     G2_sigma = '".floatToSQL($tG2_sigma)."',"
 				."     GamesPlayed = $tGamesPlayed,"
 				."     Loss = $tLosses,"
 				."     Win = $tWins,"
@@ -1172,6 +1379,11 @@ class Match extends DatabaseTable
 	{
 		global $sql;
 
+		// Get event info
+		$event_id = $this->fields['Event'];
+		$event = new Event($event_id);
+		$G2_r0 = $event->getField('G2_default_r');
+
 		// Update Players with scores
 		$q = "SELECT ".TBL_MATCHS.".*, "
 		.TBL_SCORES.".*, "
@@ -1193,6 +1405,11 @@ class Match extends DatabaseTable
 			$tELO         = mysql_result($result,$i, TBL_TEAMS.".ELORanking");
 			$tTS_mu       = mysql_result($result,$i, TBL_TEAMS.".TS_mu");
 			$tTS_sigma    = mysql_result($result,$i, TBL_TEAMS.".TS_sigma");
+			$tG2_r        = mysql_result($result,$i, TBL_TEAMS.".G2_r");
+			$tG2_RD       = mysql_result($result,$i, TBL_TEAMS.".G2_RD");
+			$tG2_sigma    = mysql_result($result,$i, TBL_TEAMS.".G2_sigma");
+			$tG2_mu       = g2_from_g1_rating($tG2_r, $G2_r0, G2_qinv);
+			$tG2_phi      = g2_from_g1_deviation($tG2_RD, G2_qinv);
 			$tGamesPlayed = mysql_result($result,$i, TBL_TEAMS.".GamesPlayed");
 			$tWins        = mysql_result($result,$i, TBL_TEAMS.".Win");
 			$tDraws       = mysql_result($result,$i, TBL_TEAMS.".Draw");
@@ -1205,6 +1422,9 @@ class Match extends DatabaseTable
 			$tdeltaELO         = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
 			$tdeltaTS_mu       = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_mu");
 			$tdeltaTS_sigma    = mysql_result($result,$i, TBL_SCORES.".Player_deltaTS_sigma");
+			$tdeltaG2_mu       = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_mu");
+			$tdeltaG2_phi      = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_phi");
+			$tdeltaG2_sigma    = mysql_result($result,$i, TBL_SCORES.".Player_deltaG2_sigma");
 			$tdeltaGamesPlayed = 1;
 			$tdeltaWins        = mysql_result($result,$i, TBL_SCORES.".Player_Win");
 			$tdeltaDraws       = mysql_result($result,$i, TBL_SCORES.".Player_Draw");
@@ -1216,6 +1436,11 @@ class Match extends DatabaseTable
 			$tELO           -= $tdeltaELO;
 			$tTS_mu         -= $tdeltaTS_mu;
 			$tTS_sigma      /= $tdeltaTS_sigma;
+			$tG2_mu         -= $tdeltaG2_mu;
+			$tG2_phi        /= $tdeltaG2_phi;
+			$tG2_sigma      /= $tdeltaG2_sigma;
+			$tG2_r           = g2_to_g1_rating($tG2_mu, $G2_r0, G2_qinv);
+			$tG2_RD          = g2_to_g1_deviation($tG2_phi, G2_qinv);
 			$tGamesPlayed   -= $tdeltaGamesPlayed;
 			$tWins          -= $tdeltaWins;
 			$tDraws         -= $tdeltaDraws;
@@ -1232,6 +1457,9 @@ class Match extends DatabaseTable
 				." SET ELORanking = '".floatToSQL($tELO)."',"
 				."     TS_mu = '".floatToSQL($tTS_mu)."',"
 				."     TS_sigma = '".floatToSQL($tTS_sigma)."',"
+				."     G2_r = '".floatToSQL($tG2_r)."',"
+				."     G2_RD = '".floatToSQL($tG2_RD)."',"
+				."     G2_sigma = '".floatToSQL($tG2_sigma)."',"
 				."     GamesPlayed = $tGamesPlayed,"
 				."     Loss = $tLosses,"
 				."     Win = $tWins,"

@@ -9,7 +9,6 @@ if ($eneedupdate == 1)
 {
 	$new_nextupdate = $time + 60*$pref['eb_events_update_delay'];
 	$event->setFieldDB('NextUpdate_timestamp', $new_nextupdate);
-	$nextupdate_timestamp_local = $new_nextupdate;
 
 	$event->setFieldDB('IsChanged', 0);
 	$eventIsChanged = 0;
@@ -28,6 +27,10 @@ if ($eneedupdate == 1)
 	default:
 	}
 }
+
+$nextupdate_timestamp = $event->getField('NextUpdate_timestamp');
+$nextupdate_timestamp_local = $nextupdate_timestamp + TIMEOFFSET;
+$date_nextupdate = date("d M Y, h:i A",$nextupdate_timestamp_local);
 
 // Put nbrMatches pending in tab header
 $q = "SELECT COUNT(DISTINCT ".TBL_MATCHS.".MatchID) as NbrMatches"
@@ -604,9 +607,6 @@ if(mysql_numrows($result) == 1)
 
 //fm: Need userclass for match scheduling
 
-$nextupdate_timestamp_local_local = $nextupdate_timestamp_local + TIMEOFFSET;
-$date_nextupdate = date("d M Y, h:i A",$nextupdate_timestamp_local_local);
-
 if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "Clan Ladder"))
 {
 	$text .= '<div id="tabs-2">';
@@ -689,9 +689,13 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "C
 		$text .= '</form>';
 	}
 
-	if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
+	if (($time < $nextupdate_timestamp) && ($eventIsChanged == 1))
 	{
 		$text .= EB_EVENT_L46.'&nbsp;'.$date_nextupdate.'<br />';
+	}
+	if(($rating_period > 0)&&($eventStatus == 'active'))
+	{
+		$text .= EB_EVENT_L104.'&nbsp;'.$date_next_rating.'<br />';
 	}
 	$text .= '<div class="spacer">';
 	$text .= '<p>';
@@ -847,10 +851,15 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 		$text .= '</form>';		
 	}
 
-	if (($time < $nextupdate_timestamp_local) && ($eventIsChanged == 1))
+	if (($time < $nextupdate_timestamp) && ($eventIsChanged == 1))
 	{
 		$text .= EB_EVENT_L50.'&nbsp;'.$date_nextupdate.'<br />';
 	}
+	if(($rating_period > 0)&&($eventStatus == 'active'))
+	{
+		$text .= EB_EVENT_L104.'&nbsp;'.$date_next_rating.'<br />';
+	}
+	
 	$text .= '<div class="spacer">';
 	$text .= '<p>';
 	$text .= $nbr_players.'&nbsp;'.EB_EVENT_L51.'<br />';
@@ -943,7 +952,7 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 /* Matches */
 $text .= '<div id="tabs-4">';
 /* Display Match Report buttons */
-if(($can_report_quickloss != 0)||($can_report != 0)||($can_submit_replay != 0)||($can_schedule != 0))
+if(($can_report_quickloss == 1)||($can_report == 1)||($can_submit_replay == 1)||($can_schedule == 1))
 {
 	$text .= '<table>';
 	$text .= '<tr>';
