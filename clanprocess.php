@@ -69,7 +69,7 @@ if(isset($_POST['clandeletediv']))
 {
 	$div_id = $_POST['clandiv'];
 	$division = new Division($div_id);
-
+	
 	$q_DivScores = "SELECT ".TBL_DIVISIONS.".*, "
 	.TBL_TEAMS.".*, "
 	.TBL_PLAYERS.".*, "
@@ -93,7 +93,7 @@ if(isset($_POST['clandeletediv']))
 		$division->deleteDiv();
 	}
 	//echo "-- clandeletediv --<br />";
-	header("Location: clanmanage.php?clanid=$clan_id&divid=$div_id");
+	header("Location: clanmanage.php?clanid=$clan_id");
 	exit();
 }
 if(isset($_POST['clanadddiv']))
@@ -120,7 +120,7 @@ if(isset($_POST['clanadddiv']))
 		$division->addMember($clan_owner, FALSE);
 	}
 	//echo "-- clanadddiv --<br />";
-	header("Location: clanmanage.php?clanid=$clan_id&divid=$last_id");
+	header("Location: clanmanage.php?clanid=$clan_id&amp;gameid=$divgame");
 	exit();
 }
 
@@ -183,13 +183,15 @@ if(isset($_POST['clanchangedivcaptain']))
 {
 	$clan_div = $_POST['clandiv'];
 	$div_captain = $tp->toDB($_POST['divcaptain']);
+	$division = new Division($clan_div);
+	$game_id = $division->getField('Game');
 
 	/* Division Captain */
 	$q2 = "UPDATE ".TBL_DIVISIONS." SET Captain = '$div_captain' WHERE (DivisionID = '$clan_div')";
 	$result2 = $sql->db_Query($q2);
 
 	//echo "-- clanchangedivcaptain --<br />";
-	header("Location: clanmanage.php?clanid=$clan_id&divid=$clan_div");
+	header("Location: clanmanage.php?clanid=$clan_id&amp;gameid=$game_id");
 	exit();
 }
 
@@ -200,6 +202,9 @@ if (isset($_POST['kick']))
 	// And we can delete players only if they have not scored yet.
 	// Therefore, we can only delete members if they have not played in a match yet.
 	$clan_div = $_POST['clandiv'];
+	$division = new Division($clan_div);
+	$game_id = $division->getField('Game');
+
 	if (count($_POST['del']) > 0)
 	{
 		$del_ids = $_POST['del'];
@@ -212,7 +217,7 @@ if (isset($_POST['kick']))
 		}
 	}
 	//echo "-- kick --<br />";
-	header("Location: clanmanage.php?clanid=$clan_id&divid=$clan_div");
+	header("Location: clanmanage.php?clanid=$clan_id&amp;gameid=$game_id");
 	exit();
 }
 
@@ -221,11 +226,12 @@ if(isset($_POST['claninviteuser']))
 	$user = $_POST['user'];
 	$clan_div = $_POST['clandiv'];
 	$division = new Division($clan_div);
+	$game_id = $division->getField('Game');
 	
 	$division->addMember($user, TRUE);
 
 	//echo "-- claninviteuser --<br />";
-	header("Location: clanmanage.php?clanid=$clan_id&divid=$clan_div");
+	header("Location: clanmanage.php?clanid=$clan_id&amp;gameid=$game_id");
 	exit();
 }
 

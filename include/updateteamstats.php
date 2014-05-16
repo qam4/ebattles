@@ -14,7 +14,7 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 	global $pref;
 
 	$rater = new rater();
-	$file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
+	$file_team = e_PLUGIN.'ebattles/cache/sql_cache_event_team_'.$event_id.'.txt';
 
 	$id = array();
 	$uid = array();

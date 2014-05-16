@@ -119,6 +119,32 @@ function displayCurrentEvents(){
 	$result_Games = $sql->db_Query($q_Games);
 	$numGames = mysql_numrows($result_Games);
 
+	if ($numGames>0)
+	{
+		//$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L35.'</div>';
+
+		// Display list of games icons
+		$games_links_list = '<div class="spacer">';
+		for($i=0; $i<$numGames; $i++)
+		{
+			$gname  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
+			$gicon  = mysql_result($result_Games,$i , TBL_GAMES.".Icon");
+			$gid  = mysql_result($result_Games,$i, TBL_GAMES.".GameID");
+			if($gameid=="All") $gname_selected = EB_EVENTS_L10;
+
+			if($gid==$gameid)
+			{
+				$gname_selected = $gname;
+			}
+
+			$games_links_list .= '<a href="'.e_PLUGIN.'ebattles/events.php?gameid='.$gid.'"><img '.getGameIconResize($gicon).' title="'.$gname.'"/></a>';
+			$games_links_list .= '&nbsp;';
+		}
+		$games_links_list .= '<br /><b>'.$gname_selected.'</b></div><br />';
+	}	
+	
+	$text .= $games_links_list;
+	
 	// Drop down list to select Match type to display
 	$q_mt = "SELECT ".TBL_GAMES.".*"
 	." FROM ".TBL_GAMES.", "
@@ -137,18 +163,7 @@ function displayCurrentEvents(){
 	$text .= '<div>';
 	$text .= '<table class="table_left">';
 	$text .= '<tr>';
-	// Games drop down
-	$text .= '<td>'.EB_EVENTS_L9.'<br />';
-	$text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
-	$text .= '<option value="All" '.(($gameid == "All") ? 'selected="selected"' : '').'>'.EB_EVENTS_L10.'</option>';
-	for($i=0; $i<$numGames; $i++)
-	{
-		$gName  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
-		$gid  = mysql_result($result_Games,$i, TBL_GAMES.".GameID");
-		$text .= '<option value="'.$gid.'" '.(($gameid == $gid) ? 'selected="selected"': '').'>'.htmlspecialchars($gName).'</option>';
-	}
-	$text .= '</select>';
-	$text .= '</td>';
+
 	// Match Types drop down
 	$text .= '<td>'.EB_EVENTS_L32.'<br />';
 	$text .= '<select class="tbox" name="matchtype" onchange="this.form.submit()">';
@@ -248,8 +263,11 @@ function displayCurrentEvents(){
 		/* Display table contents */
 		$text .= '<table class="eb_table" style="width:95%"><tbody>';
 		$text .= '<tr>
-		<th class="eb_th2">'.EB_EVENTS_L13.'</th>
-		<th colspan="2" class="eb_th2">'.EB_EVENTS_L14.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L13.'</th>';
+		if($gameid=="All") {
+			$text .= '<th colspan="2" class="eb_th2">'.EB_EVENTS_L14.'</th>';
+		}
+		$text .= '
 		<th class="eb_th2">'.EB_EVENTS_L15.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L16.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L17.'</th>
@@ -326,9 +344,12 @@ function displayCurrentEvents(){
 			}
 
 			$text .= '<tr>
-			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a></td>
-			<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
-			<td class="eb_td">'.$gName.'</td>
+			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a></td>';
+			if($gameid=="All") {
+				$text .= '<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
+				<td class="eb_td">'.$gName.'</td>';
+			}
+			$text .= '
 			<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').$event->eventTypeToString().'</td>
 			<td class="eb_td">'.$date_start.'</td>
 			<td class="eb_td">'.$date_end.'</td>
@@ -371,6 +392,32 @@ function displayRecentEvents(){
 	$result_Games = $sql->db_Query($q_Games);
 	$numGames = mysql_numrows($result_Games);
 
+	if ($numGames>0)
+	{
+		//$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L35.'</div>';
+
+		// Display list of games icons
+		$games_links_list = '<div class="spacer">';
+		for($i=0; $i<$numGames; $i++)
+		{
+			$gname  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
+			$gicon  = mysql_result($result_Games,$i , TBL_GAMES.".Icon");
+			$gid  = mysql_result($result_Games,$i, TBL_GAMES.".GameID");
+			if($gameid=="All") $gname_selected = EB_EVENTS_L10;
+
+			if($gid==$gameid)
+			{
+				$gname_selected = $gname;
+			}
+
+			$games_links_list .= '<a href="'.e_PLUGIN.'ebattles/events.php?gameid='.$gid.'"><img '.getGameIconResize($gicon).' title="'.$gname.'"/></a>';
+			$games_links_list .= '&nbsp;';
+		}
+		$games_links_list .= '<br /><b>'.$gname_selected.'</b></div><br />';
+	}	
+	
+	$text .= $games_links_list;
+
 	// Drop down list to select Match type to display
 	$q_mt = "SELECT ".TBL_GAMES.".*"
 	." FROM ".TBL_GAMES.", "
@@ -384,21 +431,11 @@ function displayRecentEvents(){
 	{
 		$gmatchtypes  .= ','.mysql_result($result_mt,$i, TBL_GAMES.".MatchTypes");
 	}
-	$text .= '<form action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
+	$text .= '<form id="submitformrecent" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'" method="get">';
+	$text .= '<div>';
 	$text .= '<table class="table_left">';
 	$text .= '<tr>';
-	// Games drop down
-	$text .= '<td>'.EB_EVENTS_L9.'<br />';
-	$text .= '<select class="tbox" name="gameid" onchange="this.form.submit()">';
-	$text .= '<option value="All" '.(($gameid == "All") ? 'selected="selected"' : '').'>'.EB_EVENTS_L10.'</option>';
-	for($i=0; $i<$numGames; $i++)
-	{
-		$gName  = mysql_result($result_Games,$i, TBL_GAMES.".Name");
-		$gid  = mysql_result($result_Games,$i, TBL_GAMES.".GameID");
-		$text .= '<option value="'.$gid.'" '.(($gameid == $gid) ? 'selected="selected"': '').'>'.htmlspecialchars($gName).'</option>';
-	}
-	$text .= '</select>';
-	$text .= '</td>';
+
 	// Match Types drop down
 	$text .= '<td>'.EB_EVENTS_L32.'<br />';
 	$text .= '<select class="tbox" name="matchtype" onchange="this.form.submit()">';
@@ -417,7 +454,6 @@ function displayRecentEvents(){
 	$text .= '</td>';
 	$text .= '</tr>';
 	$text .= '</table>';
-	$text .= '</form>';
 
 	$game_string = ($gameid == "All") ? "" : "   AND (".TBL_EVENTS.".Game = '$gameid')";
 	$matchtype_string = ($matchtype == "All") ? "" : "   AND (".TBL_EVENTS.".MatchType = '$matchtype')";
@@ -437,18 +473,26 @@ function displayRecentEvents(){
 	if(!$result || ($numEvents < 0))
 	{
 		/* Error occurred, return given name by default */
-		$text .= '<div>'.EB_EVENTS_L11.'</div>';
+		$text .= EB_EVENTS_L11.'</div>';
+		$text .= '</form><br/>';
 	} else if($numEvents == 0)
 	{
-		$text .= '<div>'.EB_EVENTS_L12.'</div>';
+		$text .= EB_EVENTS_L12.'</div>';
+		$text .= '</form><br/>';
 	}
 	else
 	{
+		$text .= '</div>';
+		$text .= '</form><br/><br/>';
+
 		/* Display table contents */
 		$text .= '<table class="eb_table" style="width:95%"><tbody>';
 		$text .= '<tr>
-		<th class="eb_th2">'.EB_EVENTS_L13.'</th>
-		<th colspan="2" class="eb_th2">'.EB_EVENTS_L14.'</th>
+		<th class="eb_th2">'.EB_EVENTS_L13.'</th>';
+		if($gameid=="All") {
+			$text .= '<th colspan="2" class="eb_th2">'.EB_EVENTS_L14.'</th>';
+		}
+		$text .= '
 		<th class="eb_th2">'.EB_EVENTS_L15.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L16.'</th>
 		<th class="eb_th2">'.EB_EVENTS_L17.'</th>
@@ -525,9 +569,12 @@ function displayRecentEvents(){
 			}
 
 			$text .= '<tr>
-			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a></td>
-			<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
-			<td class="eb_td">'.$gName.'</td>
+			<td class="eb_td"><a href="'.e_PLUGIN.'ebattles/eventinfo.php?eventid='.$event_id.'">'.$event->getField('Name').'</a></td>';
+			if($gameid=="All") {
+				$text .= '<td class="eb_td"><img '.getGameIconResize($gIcon).'/></td>
+				<td class="eb_td">'.$gName.'</td>';
+			}
+			$text .= '
 			<td class="eb_td">'.(($event->getField('MatchType')!='') ? $event->getField('MatchType').' - ' : '').$event->eventTypeToString().'</td>
 			<td class="eb_td">'.$date_start.'</td>
 			<td class="eb_td">'.$date_end.'</td>

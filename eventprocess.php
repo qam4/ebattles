@@ -676,7 +676,7 @@ if(isset($_POST['eventfixturessave']))
 
 	if($update_matchupsfile!=0)
 	{
-		$path = 'include/brackets/';
+		$path = e_PLUGIN.'ebattles/include/brackets/';
 		$maxNbrPlayers = $event->getField('MaxNumberPlayers');
 		$format = $event->getField('Format');
 		
