@@ -64,22 +64,6 @@ $result2 = $sql->db_Query($q2);
 $uid  = mysql_result($result2,0, TBL_USERS.".user_id");
 $uname  = mysql_result($result2,0, TBL_USERS.".user_name");
 
-$text .= '<div id="tabs">';
-$text .= '<ul>';
-$text .= '<li><a href="#tabs-1">'.EB_USER_L2.'</a></li>';
-$text .= '<li><a href="#tabs-2">'.EB_USER_L3.'</a></li>';
-$text .= '<li><a href="#tabs-3">'.EB_USER_L4.'</a></li>';
-$text .= '<li><a href="#tabs-4">'.EB_USER_L5.'</a></li>';
-$text .= '<li><a href="#tabs-5">'.EB_USER_L6.'</a></li>';
-$text .= '</ul>';
-
-/*
----------------------
-Player Profile
----------------------
-*/
-$text .= '<div id="tabs-1">';    // tab-page "Profile"
-
 $games_links_list = '';
 $q = " SELECT *"
 ." FROM ".TBL_GAMERS.", "
@@ -112,6 +96,23 @@ if ($num_gamers>0)
 	}
 	$games_links_list .= '<br /><b>'.$gname_selected.'</b></div><br />';
 }
+
+
+$text .= '<div id="tabs">';
+$text .= '<ul>';
+$text .= '<li><a href="#tabs-1">'.EB_USER_L2.'</a></li>';
+$text .= '<li><a href="#tabs-2">'.EB_USER_L3.'</a></li>';
+$text .= '<li><a href="#tabs-3">'.EB_USER_L4.'</a></li>';
+$text .= '<li><a href="#tabs-4">'.EB_USER_L5.'</a></li>';
+$text .= '<li><a href="#tabs-5">'.EB_USER_L6.'</a></li>';
+$text .= '</ul>';
+
+/*
+---------------------
+Player Profile
+---------------------
+*/
+$text .= '<div id="tabs-1">';    // tab-page "Profile"
 $text .= $games_links_list;
 
 /* Link to user profile */

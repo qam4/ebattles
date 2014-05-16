@@ -2108,6 +2108,9 @@ class Match extends DatabaseTable
 		$permissions['can_submit_media'] = $can_submit_media;
 		$permissions['can_delete_media'] = $can_delete_media;
 		
+		//echo "match $match_id permissions:<br>";
+		//var_dump($permissions);
+		
 		return $permissions;
 	}
 }

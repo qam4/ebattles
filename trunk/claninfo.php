@@ -14,7 +14,8 @@ require_once(HEADERF);
 
 /* Clan Name */
 $clan_id = intval($_GET['clanid']);
-$div_id = intval($_GET['divid']);
+$game_id = intval($_GET['gameid']);
+
 if(!$clan_id)
 {
 	header("Location: ./clans.php");
@@ -25,7 +26,7 @@ require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 require_once(e_PLUGIN."ebattles/claninfo_process.php");
 
 $text .= '
-<script type="text/javascript" src="./js/clan.js"></script>
+<script type="text/javascript" src="'.e_PLUGIN.'ebattles/js/clan.js"></script>
 ';
 
 $q = "SELECT ".TBL_CLANS.".*"
@@ -35,6 +36,44 @@ $result = $sql->db_Query($q);
 $num_rows = mysql_numrows($result);
 
 $clan_name   = mysql_result($result,0, TBL_CLANS.".Name");
+
+$q = "SELECT ".TBL_CLANS.".*, "
+.TBL_DIVISIONS.".*, "
+.TBL_GAMES.".*"
+." FROM ".TBL_CLANS.", "
+.TBL_DIVISIONS.", "
+.TBL_GAMES
+." WHERE (".TBL_CLANS.".ClanID = '$clan_id')"
+." AND (".TBL_DIVISIONS.".Clan = ".TBL_CLANS.".ClanID)"
+." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
+$result = $sql->db_Query($q);
+$num_divs = mysql_numrows($result);
+
+if ($num_divs>0)
+{
+	//$text .= '<div>'.$uname.'&nbsp;'.EB_USER_L35.'</div>';
+
+	// Display list of games icons
+	$games_links_list = '<div class="spacer">';
+	for($i=0; $i<$num_divs; $i++)
+	{
+		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
+		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
+		$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
+		if($game_id=="") $game_id = $gid;
+		
+		if($gid==$game_id)
+		{
+			$gname_selected = $gname;
+		}
+
+		$games_links_list .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'&amp;gameid='.$gid.'"><img '.getGameIconResize($gicon).' title="'.$gname.'"/></a>';
+		$games_links_list .= '&nbsp;';
+	}
+	$games_links_list .= '<br /><b>'.$gname_selected.'</b></div><br />';
+}
+
+
 
 $text .= '<div id="tabs">';
 $text .= '<ul>';
@@ -54,14 +93,16 @@ $text .= '</div>';
 * Display Divisions
 */
 $text .= '<div id="tabs-2">';
-displayTeamDivisions($clan_id, $div_id);
+$text .= $games_links_list;
+displayTeamDivisions($clan_id, $game_id);
 $text .= '</div>';
 
 /**
 * Display Events
 */
 $text .= '<div id="tabs-3">';
-displayTeamEvents($clan_id, $div_id);
+$text .= $games_links_list;
+displayTeamEvents($clan_id, $game_id);
 $text .= '</div>';
 
 /**
@@ -153,7 +194,7 @@ $text .= '</tbody></table>';
 /**
 * displayTeamDivisions - Displays ...
 */
-function displayTeamDivisions($clan_id, $div_id){
+function displayTeamDivisions($clan_id, $game_id){
 	global $sql;
 	global $text;
 
@@ -171,35 +212,21 @@ function displayTeamDivisions($clan_id, $div_id){
 	." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
 
 	$result = $sql->db_Query($q);
-	$num_rows = mysql_numrows($result);
-	$text .= '<div class="spacer">';
-	for($i=0; $i<$num_rows; $i++)
-	{
-		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
-		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
-		$gdiv_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
-		if($div_id=="") $div_id = $gdiv_id;
-
-		$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'&amp;divid='.$gdiv_id.'"><img '.getGameIconResize($gicon).' title="'.$gname.'"/></a>';
-		$text .= '&nbsp;';
-	}
-	$text .= '<br /></div>';
-
-	for($i=0; $i<$num_rows; $i++)
+	$num_divs = mysql_numrows($result);
+	for($i=0; $i<$num_divs; $i++)
 	{
 		$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
 		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
-		$gdiv_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
+		$div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 		$div_captain  = mysql_result($result,$i, TBL_USERS.".user_id");
 		$div_captain_name  = mysql_result($result,$i, TBL_USERS.".user_name");
 		$clan_password   = mysql_result($result,$i, TBL_CLANS.".password");
 		$clan_id   = mysql_result($result,$i, TBL_CLANS.".ClanID");
 
-		if($gdiv_id == $div_id)
+		if($gid == $game_id)
 		{
 			$text .= '<div class="spacer">';
-			$text .= '<b>'.$gname.'</b><br />';
 			$text .= '<p>'.EB_CLAN_L9.': <a href="'.e_PLUGIN.'ebattles/userinfo.php?user='.$div_captain.'">'.$div_captain_name.'</a></p>';
 
 			if(check_class(e_UC_MEMBER))
@@ -357,7 +384,7 @@ function displayTeamDivisions($clan_id, $div_id){
 /**
 * displayTeamEvents - Displays ...
 */
-function displayTeamEvents($clan_id, $div_id){
+function displayTeamEvents($clan_id, $game_id){
 	global $sql;
 	global $text;
 	global $time;
@@ -373,31 +400,18 @@ function displayTeamEvents($clan_id, $div_id){
 	." AND (".TBL_GAMES.".GameID = ".TBL_DIVISIONS.".Game)";
 
 	$result = $sql->db_Query($q);
-	$num_rows = mysql_numrows($result);
+	$num_divs = mysql_numrows($result);
 
-	$text .= '<div class="spacer">';
-	for($i=0; $i<$num_rows; $i++)
+	for($i=0; $i<$num_divs; $i++)
 	{
+		$gid  = mysql_result($result,$i, TBL_GAMES.".GameID");
 		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
 		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
-		$gdiv_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
-		if($div_id=="") $div_id = $gdiv_id;
+		$div_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
 
-		$text .= '<a href="'.e_PLUGIN.'ebattles/claninfo.php?clanid='.$clan_id.'&amp;divid='.$gdiv_id.'"><img '.getGameIconResize($gicon).' title="'.$gname.'"/></a>';
-		$text .= '&nbsp;';
-	}
-	$text .= '<br /></div>';
-
-	for($i=0; $i<$num_rows; $i++)
-	{
-		$gname  = mysql_result($result,$i, TBL_GAMES.".Name");
-		$gicon  = mysql_result($result,$i , TBL_GAMES.".Icon");
-		$gdiv_id  = mysql_result($result,$i, TBL_DIVISIONS.".DivisionID");
-
-		if($gdiv_id == $div_id)
+		if($gid == $game_id)
 		{
 			$text .= '<div class="spacer">';
-			$text .= '<b>'.$gname.'</b><br />';
 
 			$q_2 = "SELECT ".TBL_TEAMS.".*, "
 			.TBL_EVENTS.".*"

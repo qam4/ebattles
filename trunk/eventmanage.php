@@ -24,9 +24,9 @@ require_once(e_HANDLER."userclass_class.php");
 ********************************************************************/
 require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 $text .= '
-<script type="text/javascript" src="./js/matchreport.js"></script>
-<script type="text/javascript" src="./js/event.js"></script>
-<script type="text/javascript" src="./js/slider.js"></script>
+<script type="text/javascript" src="'.e_PLUGIN.'ebattles/js/matchreport.js"></script>
+<script type="text/javascript" src="'.e_PLUGIN.'ebattles/js/event.js"></script>
+<script type="text/javascript" src="'.e_PLUGIN.'ebattles/js/slider.js"></script>
 ';
 
 $event_id = intval($_GET['eventid']);

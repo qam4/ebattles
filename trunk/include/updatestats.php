@@ -15,7 +15,7 @@ function updateStats($event_id, $time, $serialize = TRUE)
 	global $pref;
 
 	$rater = new rater();
-	$file = 'cache/sql_cache_event_'.$event_id.'.txt';
+	$file = e_PLUGIN.'ebattles/cache/sql_cache_event_'.$event_id.'.txt';
 
 	$id = array();
 	$uid = array();

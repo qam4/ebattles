@@ -22,8 +22,8 @@ require_once(e_PLUGIN."ebattles/include/ebattles_header.php");
 $pages = new Paginator;
 
 $text .= '
-<script type="text/javascript" src="./js/matchreport.js"></script>
-<script type="text/javascript" src="./js/event.js"></script>
+<script type="text/javascript" src="'.e_PLUGIN.'ebattles/js/matchreport.js"></script>
+<script type="text/javascript" src="'.e_PLUGIN.'ebattles/js/event.js"></script>
 ';
 
 $text .= "
@@ -62,8 +62,8 @@ if (!$event_id)
 	exit();
 }
 
-$file = 'cache/sql_cache_event_'.$event_id.'.txt';
-$file_team = 'cache/sql_cache_event_team_'.$event_id.'.txt';
+$file = e_PLUGIN.'ebattles/cache/sql_cache_event_'.$event_id.'.txt';
+$file_team = e_PLUGIN.'ebattles/cache/sql_cache_event_team_'.$event_id.'.txt';
 
 $q = "SELECT ".TBL_EVENTS.".*, "
 .TBL_GAMES.".*, "

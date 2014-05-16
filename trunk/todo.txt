@@ -6,7 +6,8 @@
 . Add to stats: "activity"
  Measure of activity could be:
   - high glicko sigma = low activity (sigma0=350, lowers when you play, increases when you don't)
-  - ???
+  - gain an acivity point if you play in the rating period, and loose one if you don't
+  - ?
   - decay/bonus
 . Winner/loser report 1v1: prefill player 1 and result. Only need to choose player 2
 . like division/gamer, change events.php to have game_id icon

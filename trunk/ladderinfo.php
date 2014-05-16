@@ -704,9 +704,16 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "C
 	$text .= '</p>';
 
 	// Teams standings stats
-	$stats = unserialize(implode('',file($file_team)));
+	$lines = file($file_team);
+	if($lines) {
+		$stats = unserialize(implode('', $lines));
+	}
+	else
+	{
+		echo "Error openig file $file<br>";	// [fm] LANGUAGE
+	}
 	//print_r($stats);
-
+	
 	// Sorting the stats table
 	$header = $stats[0];
 
@@ -871,7 +878,14 @@ if (($event->getField('Type') == "Team Ladder")||($event->getField('Type') == "O
 	$text .= '<br />';
 
 	// Players standings stats
-	$stats = unserialize(implode('',file($file)));
+	$lines = file($file);
+	if($lines) {
+		$stats = unserialize(implode('', $lines));
+	}
+	else
+	{
+		echo "Error openig file $file<br>";	// [fm] LANGUAGE
+	}
 	//print_r($stats);
 
 	// Sorting the stats table

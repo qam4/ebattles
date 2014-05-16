@@ -2459,10 +2459,15 @@ class Event extends DatabaseTable
 		$bracket_html .= '</div>'; // panel-brackets
 
 		/*
+		echo "rounds:<br>";
 		var_dump($rounds);
+		echo "matchups:<br>";
 		var_dump($matchups);
+		echo "results:<br>";
 		var_dump($results);
+		echo "content:<br>";
 		var_dump($content);
+		echo "teams:<br>";
 		var_dump($teams);
 		*/
 		if($update_results == true) {
@@ -2781,22 +2786,30 @@ class Event extends DatabaseTable
 			switch ($this->getField('Format'))
 			{
 			case 'Double Elimination':
-				$file = 'include/brackets/de-'.$maxNbrPlayers.'.txt';
+				$file = e_PLUGIN.'ebattles/include/brackets/de-'.$maxNbrPlayers.'.txt';
 				break;
 			case 'Single Elimination':
 			default:
-				$file = 'include/brackets/se-'.$maxNbrPlayers.'.txt';
+				$file = e_PLUGIN.'ebattles/include/brackets/se-'.$maxNbrPlayers.'.txt';
 				break;
 			case 'Round-robin':
-				$file = 'include/brackets/rr-'.$maxNbrPlayers.'.txt';
+				$file = e_PLUGIN.'ebattles/include/brackets/rr-'.$maxNbrPlayers.'.txt';
 				break;
 			case 'Double Round-robin':
-				$file = 'include/brackets/drr-'.$maxNbrPlayers.'.txt';
+				$file = e_PLUGIN.'ebattles/include/brackets/drr-'.$maxNbrPlayers.'.txt';
 				break;
 			}
 		}
-		$matchups = unserialize(implode('',file($file)));
-		return $matchups;
+		$lines = file($file);
+		if($lines) {
+			$matchups = unserialize(implode('', $lines));
+			return $matchups;
+		}
+		else
+		{
+			echo "[getMatchups] error openig file $file<br>";
+			return FALSE;
+		}
 	}
 	
 	function get_permissions($user_id)
@@ -2972,6 +2985,9 @@ class Event extends DatabaseTable
 		$permissions['can_report_quickloss'] = $can_report_quickloss;
 		$permissions['can_submit_replay'] = $can_submit_replay;
 		$permissions['can_challenge'] = $can_challenge;
+		
+		//echo "event $event_id permissions:<br>";
+		//var_dump($permissions);
 		
 		return $permissions;
 	}

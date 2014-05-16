@@ -1090,7 +1090,15 @@ function generate_brackets($type, $serialize=true, $display_bracket_array=true)
 		fclose($fp);
 	} else {
 		//echo 'test';
-		$matchups = unserialize(implode('',file($file)));
+		$lines = file($file);
+		if($lines) {
+			$matchups = unserialize(implode('', $lines));
+		}
+		else
+		{
+			echo "[generate_brackets] error openig file $file<br>";
+			return FALSE;
+		}
 	}
 	
 	return $matchups;
