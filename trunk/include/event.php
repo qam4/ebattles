@@ -816,7 +816,7 @@ class Event extends DatabaseTable
 			if ($this->getField('Game') == $gid)
 			{
 				$text .= '<option value="'.$gid.'" selected="selected">'.htmlspecialchars($gname).'</option>';
-				$ematchtypes = explode(",", mysql_result($result,$i, TBL_GAMES.".MatchTypes"));
+				$ematchtypes = explode(",", preg_replace('/\s+/', '', mysql_result($result,$i, TBL_GAMES.".MatchTypes")));
 			}
 			else
 			{

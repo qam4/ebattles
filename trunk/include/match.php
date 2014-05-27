@@ -324,7 +324,8 @@ class Match extends DatabaseTable
 					$tau=$event->getField('G2_tau');            // volatility variance
 					if (($teamA_Forfeit == 1)||($teamB_Forfeit == 1))
 					{
-						$update = array(0,1,1,0,1,1);
+						$update_A = array(0,1,1,0,1,1);
+						$update_B = array(0,1,1,0,1,1);
 					}
 					else
 					{

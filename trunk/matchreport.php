@@ -321,8 +321,9 @@ if($match_id)
 	}
 	if (!isset($_POST['nbr_teams'])) $_POST['nbr_teams'] = $nbr_teams;
 }
+//[dbg]$text .= "--$matchtype--";
 
-if(preg_match("/^\d+v\d$/", $matchtype)||
+if(preg_match("/^\d+v\d+$/", $matchtype)||
    ($event->getField('FixturesEnable') == TRUE))
 {
 	$matchreport_type = 'versus';
@@ -342,6 +343,11 @@ if(preg_match("/^\d+v\d$/", $matchtype)||
 	if (!isset($_POST['nbr_players'])) $_POST['nbr_players'] = $nbr_players;
 	require_once(e_PLUGIN.'ebattles/matchreport_versus_form.php');
 }
+else if(preg_match("/FFA/", $matchtype))
+{
+	$matchreport_type = 'FFA';
+	require_once(e_PLUGIN.'ebattles/matchreport_ffa_form.php');
+}
 else
 {
 	$matchreport_type = 'ranked';
@@ -349,7 +355,7 @@ else
 }
 
 // has the form been submitted?
-if (isset($_POST['submit']))
+if (isset($_POST['submit_match']))
 {
 	// the form has been submitted
 	// perform data checks.

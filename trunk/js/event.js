@@ -72,7 +72,7 @@ jQuery(function() {
 	var abutton = $('#joinevent').click(function() {
 		$('#modal-form-signup').dialog('open');
 	});
-	
+
 	$('.matchreport_link').popUpForm({  
 		title : 'Match Report',
 		container   : '#matchreportcontainer',  
@@ -80,15 +80,19 @@ jQuery(function() {
 		width       : 440,  
 		draggable   : false,
 		resizable   : false,
-		beforeSubmit: function() { },  
+		beforeSubmit: function() { 
+			//alert('matchreport_link beforeSubmit!');
+		},  
 		onSuccess   : function() { 
+			//alert('matchreport_link onSuccess!');
+
 			window.location.href = window.location.href;
 		},  
 		onError     : function(error) {
 			alert('Sorry there was an error submitting your form: '+error);
 		}  
 	});
-
+	
 /*
 	$('#approvematch_form').ajaxForm(function() { 
 		window.location.href = window.location.href; 

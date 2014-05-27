@@ -87,6 +87,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 	// if vars are not set, set them as empty.
 	if (!isset($_POST['nbr_players'])) $_POST['nbr_players'] = 2;
 	if (!isset($_POST['nbr_teams'])) $_POST['nbr_teams'] = 2;
+	// This form should only be used for 2 teams matches (1v1, 2v2, ...)
 
 	// now to output the form HTML.
 	$max_nbr_players = count($players_id)-1;
@@ -198,38 +199,42 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 	if($action!='matchschedulededit')
 	{
 		// TABLE - Teams
-		$p = 1; // player index
 		//$text .= EB_MATCHR_L20;
+
+		$text .= '<table id="matchresult_teams" style="text-align:center" class="table_left">';
+		$text .= '<thead>';
+		$text .= '<tr>';
+		$text .= '<th class="eb_th1"></th>';	// Team #
+		$text .= '<th class="eb_th1"></th>';	// Player #
+		$text .= '<th class="eb_th1"></th>';	// Name
+		if ($action!='matchschedule'&&$action!='matchschedulededit'&&($allowScore == TRUE)) $text .= '<th class="eb_th1">'.EB_MATCHR_L26.'</th>';	// Score
+		if ($action!='matchschedule'&&$action!='matchschedulededit'&&($numFactions > 0)) $text .= '<th class="eb_th1">'.EB_MATCHR_L41.'</th>';	// Faction
+		$text .= '</tr>';
+		$text .= '</thead>';
+
+		$text .= '<tbody>';
+		$p = 1; // player index
 		for($t=1; $t<=$nbr_teams; $t++)
 		{
-			$text .= '<table id="matchresult_teams'.$t.'" style="text-align:center" class="table_left">';
-			$text .= '<thead>';
-			$text .= '<tr>';
-			$text .= '<th class="eb_th2">';
-			$text .= ($nbr_players > 2) ? EB_MATCHR_L10.$t : '';
-			$text .= '</th>';
-			$text .= '</tr>';
-			$text .= '</thead>';
-			$text .= '<tbody>';
+			if($nbr_players > 2) $p = 1; // reset player number
+
 			$text .= '<tr>';
 			$text .= '<td>';
-			$text .= '<table><thead>';
-			$text .= '<tr>';
-			$text .= '<th class="eb_th1"></th>';	// blank
-			//$text .= '<th class="eb_th1">'.EB_MATCHR_L58.'</th>';	// Name
-			$text .= '<th class="eb_th1"></th>';	// Name
-			$text .= '<th class="eb_th1"></th>';	// Team
-			if ($action!='matchschedule'&&$action!='matchschedulededit'&&($allowScore == TRUE)) $text .= '<th class="eb_th1">'.EB_MATCHR_L26.'</th>';	// Score
-			if ($action!='matchschedule'&&$action!='matchschedulededit'&&($numFactions > 0)) $text .= '<th class="eb_th1">'.EB_MATCHR_L41.'</th>';	// Faction
+			$text .= ($nbr_players > 2) ? EB_MATCHR_L10.$t : '';
+			$text .= '</td>';
 			$text .= '</tr>';
-			$text .= '</thead>';
 
-			$text .= '<tbody>';
 			for($i=1;$i<=$nbr_players;$i++)
 			{
 				if ($_POST['team'.$i] == 'Team #'.$t)
 				{
-					$text .= '<tr><td>'.EB_MATCHR_L23.$p.':&nbsp;</td>';
+					$text .= '<tr>';
+					
+					$text .= '<td>';
+					$text .= '<input type="hidden" name="team'.$i.'" value="Team #'.$t.'"/>';
+					$text .= '</td>';
+				
+					$text .= '<td>'.EB_MATCHR_L23.$p.':&nbsp;</td>';
 		
 					if($action=='matchscheduledreport')
 					{
@@ -238,7 +243,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 							if (strtolower($_POST['player'.$i]) == strtolower($players_id[($j-1)])) 
 							{
 								$text .= '<td><input type="hidden" name="player'.$i.'" value="'.$players_id[($j-1)].'"/>';
-								$text .= $players_name[($j-1)].'</td>';;
+								$text .= $players_name[($j-1)].'</td>';
 							}
 						}
 					}
@@ -253,13 +258,12 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 						}
 						$text .= '</select></td>';
 					}
-					$text .= '<td><input type="hidden" name="team'.$i.'" value="Team #'.$t.'"/></td>';
 					if ($action!='matchschedule'&&$action!='matchschedulededit')
 					{
 						if ($allowScore == TRUE)
 						{
 							$text .= '<td>';
-							$text .= '<input class="tbox" type="text" size="3" name="score'.$i.'" value="'.$_POST['score'.$p].'"/>';
+							$text .= '<input class="tbox" type="text" size="3" name="score'.$i.'" value="'.$_POST['score'.$i].'"/>';
 							$text .= '</td>';
 						}
 						if ($numFactions > 0)
@@ -280,18 +284,15 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 						}
 					}
 					$p++;
+					$text .= '</tr>';
 				}
-				$text .= '</tr>';
 			}
-			$text .= '</tbody></table>';
-			$text .= '</td>';
-			$text .= '</tr>';
-			$text .= '</tbody>';
-			$text .= '</table>';
 		}
+		$text .= '</tbody>';
+		$text .= '</table>';
 
 		$text .= '<br />';
-
+		
 		// Map Selection
 		//----------------------------------
 		// List of all Maps
@@ -379,7 +380,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 	$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 	$text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 	$text .= '<input type="hidden" name="time_reported" value="'.$time_reported.'"/>';
-	$text .= '<input class="button" type="submit" value="'.$matchreport_str.'" name="submit"/>';
+	$text .= '<input class="button" type="submit" value="'.$matchreport_str.'" name="submit_match"/>';
 	$text .= '<span id="ajaxSpinnerContainer">
 	<img src="'.e_PLUGIN.'ebattles/images/ajax-loader.gif" title="working..." alt="working..."/>
 	'.EB_EVENTM_L157.'
