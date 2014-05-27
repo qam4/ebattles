@@ -974,7 +974,7 @@ function displayGames(){
 		$text .= '<tr>';
 		$text .= '<td class="eb_td2"><input class="tbox" type="checkbox" name="sAll" onclick="selectAll(this)" /> ('.EB_GAMES_L9.')</td>';
 		foreach($array as $opt=>$opt_array)
-		$text .= '<td class="eb_td2"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
+		$text .= '<td class="eb_td2"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&orderby='.$opt.'&amp;sort='.$sort.'">'.$opt_array[0].'</a></td>';
 		$text .= '<td class="eb_td2">'.EB_GAMES_L10;
 		$text .= '<input type="hidden" id="delete_game" name="delete_game" value=""/></td></tr>';
 		for($i=0; $i<$num_rows; $i++){
@@ -986,8 +986,8 @@ function displayGames(){
 			$text .= '<td class="forumheader3"><input class="tbox" type="checkbox" name="game_sel[]" value="'.$gid.'" /></td>';
 			$text .= '<td class="forumheader3">'.$gid.'</td>';
 			$text .= '<td class="forumheader3"><img '.getGameIconResize($gicon).' title="'.$gicon.'"/></td>';
-			$text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;gameid='.$gid.'">'.$gname.'</a></td>';
-			$text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&amp;gameid='.$gid.'"><img src="'.e_PLUGIN.'ebattles/images/page_white_edit.png" alt="'.EB_GAMES_L11.'" title="'.EB_GAMES_L11.'"/></a>';
+			$text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&gameid='.$gid.'">'.$gname.'</a></td>';
+			$text .= '<td class="forumheader3"><a href="'.e_PLUGIN.'ebattles/admin_config.php?eb_games&gameid='.$gid.'"><img src="'.e_PLUGIN.'ebattles/images/page_white_edit.png" alt="'.EB_GAMES_L11.'" title="'.EB_GAMES_L11.'"/></a>';
 			$text .= '<a href="javascript:buttonval(\''.$gid.'\');" title="'.EB_GAMES_L12.'" onclick="return confirm(\''.EB_GAMES_L13.'\')"><img src="'.e_PLUGIN.'ebattles/images/cross.png" alt="'.EB_GAMES_L12.'"/></a>';
 			$text .= '</td>';
 			$text .= '</tr>';

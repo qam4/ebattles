@@ -66,7 +66,7 @@ if(isset($_POST['gamesettingssave']))
     $q = "UPDATE ".TBL_GAMES." SET MatchTypes = '$new_gamematchtypes' WHERE (GameID = '$game_id')";
     $result = $sql->db_Query($q);
 
-    header("Location: admin_config.php?eb_games&amp;gameid=$game_id");
+    header("Location: admin_config.php?eb_games&gameid=$game_id");
     exit();
 }
 if(isset($_POST['gamedelete']))
@@ -86,7 +86,7 @@ if (isset($_POST['gamecreate']))
     $q = "UPDATE ".TBL_GAMES." SET Name = '".EB_GAME_L1." - $last_id' WHERE (GameID = '$last_id')";
     $result = $sql->db_Query($q);
 
-    header("Location: admin_config.php?eb_games&amp;gameid=".$last_id);
+    header("Location: admin_config.php?eb_games&gameid=".$last_id);
     exit();
 }
 // GamesManage Process
@@ -166,7 +166,7 @@ if (isset($_POST['addfaction']))
 
     //dbg: echo "Faction: $game_id, $faction_icon, $faction_name";
 
-    header("Location: admin_config.php?eb_games&amp;gameid=$game_id");
+    header("Location: admin_config.php?eb_games&gameid=$game_id");
     exit();
 }
 if (isset($_POST['edit_faction']) && $_POST['edit_faction']!="")
@@ -182,7 +182,7 @@ if (isset($_POST['edit_faction']) && $_POST['edit_faction']!="")
 
     //dbg: echo "Update Faction: $faction, $faction_icon, $faction_name";
 
-    header("Location: admin_config.php?eb_games&amp;gameid=$game_id");
+    header("Location: admin_config.php?eb_games&gameid=$game_id");
     exit();
 }
 if (isset($_POST['del_faction']) && $_POST['del_faction']!="")
@@ -191,7 +191,7 @@ if (isset($_POST['del_faction']) && $_POST['del_faction']!="")
 
     delete_faction($faction);
 
-    header("Location: admin_config.php?eb_games&amp;gameid=$game_id");
+    header("Location: admin_config.php?eb_games&gameid=$game_id");
     exit();
 }
 if (isset($_POST['addmap']))
@@ -208,7 +208,7 @@ if (isset($_POST['addmap']))
     //dbg: echo "Map: $game_id, $map_image, $map_name, $map_description";
     //exit();
 
-    header("Location: admin_config.php?eb_games&amp;gameid=$game_id");
+    header("Location: admin_config.php?eb_games&gameid=$game_id");
     exit();
 }
 if (isset($_POST['edit_map']) && $_POST['edit_map']!="")
@@ -225,7 +225,7 @@ if (isset($_POST['edit_map']) && $_POST['edit_map']!="")
 
     //dbg: echo "Update Map: $map, $map_image, $map_name, $map_description";
 
-    header("Location: admin_config.php?eb_games&amp;gameid=$game_id");
+    header("Location: admin_config.php?eb_games&gameid=$game_id");
     exit();
 }
 if (isset($_POST['del_map']) && $_POST['del_map']!="")
@@ -234,7 +234,7 @@ if (isset($_POST['del_map']) && $_POST['del_map']!="")
     
     delete_map($map);
 
-    header("Location: admin_config.php?eb_games&amp;gameid=$game_id");
+    header("Location: admin_config.php?eb_games&gameid=$game_id");
     exit();
 }
 exit();

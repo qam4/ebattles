@@ -56,7 +56,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 	{
 		$match_str = '&amp;matchid='.$match_id;
 	}
-
+	
 	if($action)
 	{
 		$action_str = '&amp;actionid='.$action;
@@ -90,7 +90,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 
 	// now to output the form HTML.
 	$max_nbr_players = count($players_id)-1;
-	
+
 	$nbr_players = $_POST['nbr_players'];
 	$nbr_teams = $_POST['nbr_teams'];
 
@@ -114,17 +114,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 		//debug - echo "Player #".$i.": ".$_POST['player'.$i]."<br />";
 	}
 
-	if (isset($_POST['addTeam']))
-	{
-		$nbr_teams++;
-	}
-	if (isset($_POST['removeTeam']))
-	{
-		$nbr_teams--;
-	}
-	if($nbr_teams > $max_nbr_players) $nbr_teams = $max_nbr_players;
-	if($nbr_teams < 2) $nbr_teams = 2;
-
+	$nbr_teams = $nbr_players;
 	$_POST['nbr_teams']=$nbr_teams;
 	for($i=1;$i<=$nbr_players;$i++)
 	{
@@ -151,7 +141,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 	if(($action!='matchscheduledreport')
 	&&($action!='matchschedulededit'))
 	{
-		$text .= EB_MATCHR_L15;
+		$text .= EB_MATCHR_L71;
 		$text .= '<table id="matchresult_nbrPlayersTeams"><tbody>';
 		// Nbr of Players
 		$text .= '<tr><td>'.$nbr_players.'&nbsp;'.EB_MATCHR_L21.'</td>';
@@ -176,28 +166,6 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 		}
 		$text .= '</tr>';
 
-		// Nbr of Teams
-		$text .= '<tr><td>'.$nbr_teams.'&nbsp;'.EB_MATCHR_L22.'</td>';
-		$text .= '<td><input type="hidden" name="nbr_teams" value="'.$_POST['nbr_teams'].'"/>';
-		// Add Team
-		if($nbr_teams<$nbr_players)
-		{
-			$text .= '<input class="button" type="submit" value="'.EB_MATCHR_L18.'" name="addTeam"/></td>';
-		}
-		else
-		{
-			$text .= '<input class="button_disabled" type="submit" value="'.EB_MATCHR_L18.'" name="addTeam" disabled="disabled"/></td>';
-		}
-		// Remove Team
-		if($nbr_teams>2)
-		{
-			$text .= '<td><input class="button" type="submit" value="'.EB_MATCHR_L19.'" name="removeTeam"/></td>';
-		}
-		else
-		{
-			$text .= '<td><input class="button_disabled" type="submit" value="'.EB_MATCHR_L19.'" name="removeTeam" disabled="disabled"/></td>';
-		}
-		$text .= '</tr>';
 		$text .= '</tbody></table>';
 
 		//$text .= '<p><input class="inspector" type="button" value="Inspect" onclick="junkdrawer.inspectListOrder(\'matchresultlist\')"/></p>';
@@ -215,146 +183,127 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 
 	$disable_input = (($action=='matchscheduledreport')) ? 1 : 0;
 
-	if ($action!='matchscheduledreport') $text .= EB_MATCHR_L20;
-	$text .= '<table id="matchresult_selectPlayersTeams"><tbody>';
-	$text .= '<tr><td></td><td>'.EB_MATCHR_L38.'</td>';
-	$text .= '<td>'.EB_MATCHR_L25.'</td>';
-	if ($action!='matchschedule'&&$action!='matchschedulededit'&&($allowScore == TRUE)) $text .= '<td>'.EB_MATCHR_L26.'</td>';
-	if ($action!='matchschedule'&&$action!='matchschedulededit'&&($numFactions > 0)) $text .= '<td>'.EB_MATCHR_L41.'</td>';
+	// TABLE - Teams
+	//$text .= EB_MATCHR_L20;
+
+	$text .= '<table id="matchresult_teams" style="text-align:center" class="table_left">';
+	$text .= '<thead>';
+	$text .= '<tr>';
+	$text .= '<th class="eb_th1"></th>';	// Team #
+	$text .= '<th class="eb_th1"></th>';	// Player #
+	$text .= '<th class="eb_th1"></th>';	// Name
+	if ($action!='matchschedule'&&$action!='matchschedulededit'&&($allowScore == TRUE)) $text .= '<th class="eb_th1">'.EB_MATCHR_L26.'</th>';	// Score
+	if ($action!='matchschedule'&&$action!='matchschedulededit'&&($numFactions > 0)) $text .= '<th class="eb_th1">'.EB_MATCHR_L41.'</th>';	// Faction
+	if ($action!='matchschedule'&&$action!='matchschedulededit'&&($allowDraw == TRUE)) $text .= '<th class="eb_th1">'.EB_MATCHR_L27.'</th>';
+	if ($action!='matchschedule'&&$action!='matchschedulededit'&&($allowForfeit == TRUE)) $text .= '<th class="eb_th1">'.EB_MATCHR_L57.'</th>';
 	$text .= '</tr>';
+	$text .= '</thead>';
 
-
-	for($i=1;$i<=$nbr_players;$i++)
+	$text .= '<tbody>';
+	$p = 1; // player index
+	for($t=1; $t<=$nbr_teams; $t++)
 	{
-		$text .= '<tr><td>'.EB_MATCHR_L23.$i.':&nbsp;</td>';
+		//if($nbr_players > 2) $p = 1; // reset player number
 
-		if($disable_input==1)
+		for($i=1;$i<=$nbr_players;$i++)
 		{
-			for($j=1;$j <= $max_nbr_players+1;$j++)
+			if ($_POST['team'.$i] == 'Team #'.$t)
 			{
-				if (strtolower($_POST['player'.$i]) == strtolower($players_id[($j-1)])) 
-				{
-					$text .= '<td><input type="hidden" name="player'.$i.'" value="'.$players_id[($j-1)].'"/>';
-					$text .= $players_name[($j-1)].'</td>';
-				}
-			}
-		}
-		else
-		{
-			$text .= '<td><select class="tbox" name="player'.$i.'">';
-			for($j=1;$j <= $max_nbr_players+1;$j++)
-			{
-				$text .= '<option value="'.$players_id[($j-1)].'"';
-				if (strtolower($_POST['player'.$i]) == strtolower($players_id[($j-1)])) $text .= ' selected="selected"';
-				$text .= '>'.$players_name[($j-1)].'</option>';
-			}
-			$text .= '</select></td>';
-		}
-
-		if($disable_input==1)
-		{
-			for($j=1;$j<=$nbr_teams;$j++)
-			{
-				if (strtolower($_POST['team'.$i]) == 'team #'.$j)
-				{
-					$text .= '<td><input type="hidden" name="team'.$j.'" value="Team #'.$j.'"/>';
-					$text .= EB_MATCHR_L29.$j.'</td>';
-				}
-			}
-		}
-		else
-		{
-			$text .= '<td><select class="tbox" name="team'.$i.'">';
-			for($j=1;$j<=$nbr_teams;$j++)
-			{
-				$text .= '<option value="Team #'.$j.'"';
-				if (strtolower($_POST['team'.$i]) == 'team #'.$j) $text .= ' selected="selected"';
-				$text .= '>'.EB_MATCHR_L29.$j.'</option>';
-			}
-			$text .= '</select></td>';
-		}
-		if ($action!='matchschedule'&&$action!='matchschedulededit')
-		{
-			if ($allowScore == TRUE)
-			{
+				$text .= '<tr>';
+				
 				$text .= '<td>';
-				$text .= '<input class="tbox" type="text" size="3" name="score'.$i.'" value="'.$_POST['score'.$i].'"/>';
+				$text .= '<input type="hidden" name="team'.$i.'" value="Team #'.$t.'"/>';
 				$text .= '</td>';
-			}
-			if ($numFactions > 0)
-			{
-				$text .= '<td><select class="tbox" name="faction'.$i.'">';
-				$text .= '<option value="0"';
-				$text .= '>'.EB_MATCHR_L43.'</option>';
-				for($faction=1;$faction<=$numFactions;$faction++)
+			
+				if($action=='matchscheduledreport')
 				{
-					$fID = mysql_result($result_Factions,$faction - 1 , TBL_FACTIONS.".FactionID");
-					$fIcon = mysql_result($result_Factions,$faction - 1, TBL_FACTIONS.".Icon");
-					$fName = mysql_result($result_Factions,$faction - 1, TBL_FACTIONS.".Name");
-					$text .= '<option value="'.$fID.'"';
-					if (strtolower($_POST['faction'.$i]) == $fID) $text .= ' selected="selected"';
-					$text .= '>'.$fName.'</option>';
+					// [todo] need to be able to edit ranks if match scheduled report.
+					$text .= '<td>'.EB_MATCHR_L28.$p.':&nbsp;</td>';
 				}
-				$text .= '</select></td>';
+				else
+				{
+					$text .= '<td>'.EB_MATCHR_L23.$p.':&nbsp;</td>';
+				}
+	
+				if($disable_input==1)
+				{
+					for($j=1;$j <= $max_nbr_players+1;$j++)
+					{
+						if (strtolower($_POST['player'.$i]) == strtolower($players_id[($j-1)])) 
+						{
+							$text .= '<td><input type="hidden" name="player'.$i.'" value="'.$players_id[($j-1)].'"/>';
+							$text .= $players_name[($j-1)].'</td>';
+						}
+					}
+				}
+				else
+				{
+					$text .= '<td><select class="tbox" name="player'.$i.'">';
+					for($j=1;$j <= $max_nbr_players+1;$j++)
+					{
+						$text .= '<option value="'.$players_id[($j-1)].'"';
+						if (strtolower($_POST['player'.$i]) == strtolower($players_id[($j-1)])) $text .= ' selected="selected"';
+						$text .= '>'.$players_name[($j-1)].'</option>';
+					}
+					$text .= '</select></td>';
+				}
+				if ($action!='matchschedule'&&$action!='matchschedulededit')
+				{
+					if ($allowScore == TRUE)
+					{
+						$text .= '<td>';
+						$text .= '<input class="tbox" type="text" size="3" name="score'.$i.'" value="'.$_POST['score'.$i].'"/>';
+						$text .= '</td>';
+					}
+					if ($numFactions > 0)
+					{
+						$text .= '<td><select class="tbox" name="faction'.$i.'">';
+						$text .= '<option value="0"';
+						$text .= '>'.EB_MATCHR_L43.'</option>';
+						for($faction=1;$faction<=$numFactions;$faction++)
+						{
+							$fID = mysql_result($result_Factions,$faction - 1 , TBL_FACTIONS.".FactionID");
+							$fIcon = mysql_result($result_Factions,$faction - 1, TBL_FACTIONS.".Icon");
+							$fName = mysql_result($result_Factions,$faction - 1, TBL_FACTIONS.".Name");
+							$text .= '<option value="'.$fID.'"';
+							if (strtolower($_POST['faction'.$i]) == $fID) $text .= ' selected="selected"';
+							$text .= '>'.$fName.'</option>';
+						}
+						$text .= '</select></td>';
+					}
+					if ($allowDraw == TRUE)
+					{
+						$text .= '<td>';
+						if ($i>1)
+						{
+							$text .= '<input class="tbox" type="checkbox" name="draw'.$i.'" value="1"';
+							if (strtolower($_POST['draw'.$i]) != "") $text .= ' checked="checked"';
+							$text .= '/>';
+						}
+						$text .= '</td>';
+					}
+					if ($allowForfeit == TRUE)
+					{
+						$text .= '<td>';
+						if ($i>1)
+						{
+							$text .= '<input class="tbox" type="checkbox" name="forfeit'.$i.'" value="1"';
+							if (strtolower($_POST['forfeit'.$i]) != "") $text .= ' checked="checked"';
+							$text .= '/>';
+						}
+						$text .= '</td>';
+					}
+				}
+				$p++;
+				$text .= '</tr>';
 			}
 		}
-		$text .= '</tr>';
 	}
-	$text .= '</tbody></table>';
+	$text .= '</tbody>';
+	$text .= '</table>';
+
 	$text .= '<br />';
-
-	if($action!='matchschedule'&&$action!='matchschedulededit')
-	{
-		// TABLE - Teams Rank Selection
-		//----------------------------------
-		$text .= EB_MATCHR_L24;
-		$text .= '<table id="matchresult_rankTeams"><tbody>';
-		$text .= '<tr><td></td><td>'.EB_MATCHR_L25.'</td>';
-		if ($allowDraw == TRUE) $text .= '<td>'.EB_MATCHR_L27.'</td>';
-		if ($allowForfeit == TRUE) $text .= '<td>'.EB_MATCHR_L57.'</td>';
-		$text .= '</tr>';
-
-		for($i=1;$i<=$nbr_teams;$i++)
-		{
-			$text .= '<tr>';
-			$text .= '<td>';
-			$text .= EB_MATCHR_L28.$i.':';
-			$text .= '</td>';
-			$text .= '<td><select class="tbox" name="rank'.$i.'" id="rank'.$i.'" onchange = "SwitchSelected('.$i.')">';
-			for($j=1;$j<=$nbr_teams;$j++)
-			{
-				$text .= '<option value="Team #'.$j.'"';
-				if (strtolower($_POST['rank'.$i]) == 'team #'.$j) $text .= ' selected="selected"';
-				$text .= '>'.EB_MATCHR_L29.$j.'</option>';
-			}
-			$text .= '</select></td>';
-			if ($allowDraw == TRUE)
-			{
-				$text .= '<td>';
-				if ($i>1)
-				{
-					$text .= '<input class="tbox" type="checkbox" name="draw'.$i.'" value="1"';
-					if (strtolower($_POST['draw'.$i]) != "") $text .= ' checked="checked"';
-					$text .= '/>';
-				}
-				$text .= '</td>';
-			}
-			if ($allowForfeit == TRUE)
-			{
-				$text .= '<td>';
-				if ($i>1)
-				{
-					$text .= '<input class="tbox" type="checkbox" name="forfeit'.$i.'" value="1"';
-					if (strtolower($_POST['forfeit'.$i]) != "") $text .= ' checked="checked"';
-					$text .= '/>';
-				}
-				$text .= '</td>';
-			}
-			$text .= '</tr>';
-		}
-		$text .= '</tbody></table>';
-	}
-
+	
 	// Map Selection
 	//----------------------------------
 	// List of all Maps

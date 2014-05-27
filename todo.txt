@@ -1,4 +1,16 @@
-5/122014
+5/21/2014
+- ffa match report form:
+. need to add forfeit/draw.
+. need to be able to edit ranks if match scheduled report.
+- Match info should display something about forfeit/draw
+- double check draw for glicko2. looks ok.
+- in match report forms, replace disabled nputs by text/hidden inputs.
+- replace add/remove team/player by textbox with number
+<input type="number" min="2" max="20" step="2" />
+- 	MyTeam (Not ranked)
+- not logged in, report match button appears.
+
+5/12/2014
 . if event is draft, popup to tell event manager to activate.
 . match report form. if match is scheduled, server needs to check that player list is correct.
  In general, do not trust user input, the can submit a modified form.
