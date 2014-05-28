@@ -63,7 +63,8 @@
 					{}, // omit this param object to issue a GET request instead a POST request, otherwise you may provide post parameters within the object
 					function (responseText, textStatus, XMLHttpRequest) {
 						initDatePicker();
-						
+						initMatchReportForm();
+					
 						// remove the loading class
 						popup_dialog.removeClass('loading');
 
@@ -80,6 +81,7 @@
 								else
 								{
 									initDatePicker();
+									initMatchReportForm();
 									$(opts.form).ajaxForm(ajaxForm_options); 
 								}
 							}    // post-submit callback 

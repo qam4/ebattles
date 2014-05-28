@@ -39,6 +39,27 @@ function initDatePicker() {
 	});
 }
 
+function initMatchReportForm() {
+	//$("#matchresult_nbrPlayersTeams").css('background-color', 'red');
+	/*
+	var friends = [{id:1, "label": "jon", value:24}]
+	var ac_config = {
+		source: friends,
+		focus: function(event, ui) {
+			$(this).val(ui.item.label);
+			return false;
+		},
+		select: function(event, ui) {
+			$(this).val(ui.item.label);
+			$(this).next(".playerId").val(ui.item.value);
+			return false;
+		},
+		minLength:1
+	};
+	$("#input_player_name").autocomplete(ac_config);
+	*/
+}
+
 function clearDate(frm)
 {
 	document.getElementById("f_date").value = ""
