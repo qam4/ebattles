@@ -217,8 +217,14 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 			
 				if($action=='matchscheduledreport')
 				{
-					// [todo] need to be able to edit ranks if match scheduled report.
-					$text .= '<td>'.EB_MATCHR_L28.$p.':&nbsp;</td>';
+					$text .= '<td><select class="tbox" name="rank'.$i.'" id="rank'.$i.'" onchange = "SwitchSelected('.$i.')">';
+					for($j=1;$j<=$nbr_teams;$j++)
+					{
+						$text .= '<option value="Team #'.$j.'"';
+						if (strtolower($_POST['rank'.$i]) == 'team #'.$j) $text .= ' selected="selected"';
+						$text .= '>'.EB_MATCHR_L28.$j.'</option>';
+					}
+					$text .= '</select></td>';
 				}
 				else
 				{
