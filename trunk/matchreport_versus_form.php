@@ -1,6 +1,6 @@
 <?php
 // function to output form and hold previously entered values.
-function user_form($action, $players_id, $players_name, $event_id, $match_id, $allowDraw, $allowForfeit, $allowScore, $userclass, $date_scheduled) {
+function user_form($action, $players_id, $players_name, $event_id, $match_id, $allowDraw, $allowForfeit, $allowScore, $userclass, $date_scheduled, $user_player) {
 	global $sql;
 	global $text;
 	global $tp;
@@ -140,18 +140,8 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 	/////////////////
 	/// MAIN FORM ///
 	/////////////////
-	// TODO: Forfeit????
 	$text .= '<form id="matchreportform" action="'.htmlspecialchars($_SERVER['PHP_SELF']).'?eventid='.$event_id.$match_str.$action_str.'" method="post">';
 	$text .= '<div>';
-	// TABLE - Players/Teams Selection
-	//----------------------------------
-	// List of all Factions
-	$q_Factions = "SELECT ".TBL_FACTIONS.".*"
-	." FROM ".TBL_FACTIONS
-	." WHERE (".TBL_FACTIONS.".Game = '".$event->getField('Game')."')";
-	$result_Factions = $sql->db_Query($q_Factions);
-	$numFactions = mysql_numrows($result_Factions);
-
 
 	// TABLE - Match result
 	if ($nbr_players > 2)
@@ -196,6 +186,17 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 		$text .= '</tbody></table>';
 	}
 
+	// TABLE - Players/Teams Selection
+	//----------------------------------
+	// List of all Factions
+	$q_Factions = "SELECT ".TBL_FACTIONS.".*"
+	." FROM ".TBL_FACTIONS
+	." WHERE (".TBL_FACTIONS.".Game = '".$event->getField('Game')."')";
+	$result_Factions = $sql->db_Query($q_Factions);
+	$numFactions = mysql_numrows($result_Factions);
+
+	$disable_input = (($action=='matchscheduledreport')) ? 1 : 0;
+
 	if($action!='matchschedulededit')
 	{
 		// TABLE - Teams
@@ -236,7 +237,17 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 				
 					$text .= '<td>'.EB_MATCHR_L23.$p.':&nbsp;</td>';
 		
-					if($action=='matchscheduledreport')
+					$match_winner = 0;
+					if(($event->getField('match_report_userclass') == eb_UC_MATCH_WINNER)
+					&& ($userclass == eb_UC_EVENT_PLAYER)
+					&& ($i == 1)
+					&& ($user_player != 0))
+					{
+						$match_winner = 1;
+						$_POST['player'.$i] = $user_player;
+					}
+
+					if(($disable_input==1)||($match_winner == 1))
 					{
 						for($j=1;$j <= $max_nbr_players+1;$j++)
 						{
@@ -364,7 +375,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 		<div><input class="tbox timepicker" type="text" name="date_scheduled" id="f_date"  value="'.$date_scheduled.'" readonly="readonly" /></div>
 		</td>
 		<td>
-		<div><input class="button" type="button" value="'.EB_MATCHR_L51.'" onclick="clearDate(this.form);"/></div>
+		<div><input class="eb_button" type="button" value="'.EB_MATCHR_L51.'" onclick="clearDate(this.form);"/></div>
 		</td>
 		</tr>
 		</table>
@@ -380,7 +391,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 	$text .= '<input type="hidden" name="userclass" value="'.$userclass.'"/>';
 	$text .= '<input type="hidden" name="reported_by" value="'.$reported_by.'"/>';
 	$text .= '<input type="hidden" name="time_reported" value="'.$time_reported.'"/>';
-	$text .= '<input class="button" type="submit" value="'.$matchreport_str.'" name="submit_match"/>';
+	$text .= '<input class="eb_button" type="submit" value="'.$matchreport_str.'" name="submit_match"/>';
 	$text .= '<span id="ajaxSpinnerContainer">
 	<img src="'.e_PLUGIN.'ebattles/images/ajax-loader.gif" title="working..." alt="working..."/>
 	'.EB_EVENTM_L157.'

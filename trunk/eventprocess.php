@@ -31,6 +31,22 @@ $event_id = intval($_GET['eventid']);
 $action = eb_sanitize($_GET['actionid']);
 $event = new Event($event_id);
 
+/* Nbr players */
+$q = "SELECT COUNT(*) as NbrPlayers"
+." FROM ".TBL_PLAYERS
+." WHERE (".TBL_PLAYERS.".Event = '".$event_id."')";
+$result = $sql->db_Query($q);
+$row = mysql_fetch_array($result);
+$nbrplayers = $row['NbrPlayers'];
+
+/* Nbr Teams */
+$q = "SELECT COUNT(*) as NbrTeams"
+." FROM ".TBL_TEAMS
+." WHERE (Event = '".$event_id."')";
+$result = $sql->db_Query($q);
+$row = mysql_fetch_array($result);
+$nbrteams = $row['NbrTeams'];
+
 $update_matchupsfile = 0;
 
 $can_manage = 0;
@@ -122,13 +138,7 @@ if(isset($_POST['eventsettingssave']))
 
 	/* Event Type */
 	// Can change only if no players are signed up
-	// TODO: should disable the select button.
-	$q2 = "SELECT ".TBL_PLAYERS.".*"
-	." FROM ".TBL_PLAYERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
-	$result2 = $sql->db_Query($q2);
-	$num_rows_2 = mysql_numrows($result2);
-	if ($num_rows_2==0)
+	if($nbrplayers+$nbrteams==0)
 	{
 		$new_eventtype = $_POST['eventtype'];
 
@@ -170,12 +180,7 @@ if(isset($_POST['eventsettingssave']))
 
 	/* Event MatchType */
 	// Can change only if no players are signed up
-	$q2 = "SELECT ".TBL_PLAYERS.".*"
-	." FROM ".TBL_PLAYERS
-	." WHERE (".TBL_PLAYERS.".Event = '$event_id')";
-	$result2 = $sql->db_Query($q2);
-	$num_rows_2 = mysql_numrows($result2);
-	if ($num_rows_2==0)
+	if($nbrplayers+$nbrteams==0)
 	{
 		$event->setField('MatchType', $_POST['eventmatchtype']);
 	}

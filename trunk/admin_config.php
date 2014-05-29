@@ -412,13 +412,13 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	$text .= '
 	<table><tr>
 	<td>
-	<input class="button" type="submit" name="gamesettingssave" value="'.EB_GAME_L7.'"/>
+	<input class="eb_button" type="submit" name="gamesettingssave" value="'.EB_GAME_L7.'"/>
 	</td>
 	<td>
-	<input class="button" type="submit" name="gamecreate" value="'.EB_GAME_L8.'"/>
+	<input class="eb_button" type="submit" name="gamecreate" value="'.EB_GAME_L8.'"/>
 	</td>
 	<td>
-	<input class="button" type="submit" name="gamedelete" value="'.EB_GAME_L9.'" onclick="return confirm(\''.EB_GAME_L10.'\');"/>
+	<input class="eb_button" type="submit" name="gamedelete" value="'.EB_GAME_L9.'" onclick="return confirm(\''.EB_GAME_L10.'\');"/>
 	</td>
 	</tr>
 	</table>
@@ -467,7 +467,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	$text .= '<td class="forumheader3"></td>';
 	$text .= '<td class="forumheader3"><input class="tbox" type="text" id="factionname" name="factionname" size="20" value="" maxlength="32"/></td>';
 	$text .= '<td class="forumheader3"><input class="tbox" type="text" id="factionicon" name="factionicon" size="40" value="" maxlength="64" title="'.EB_GAME_L18.'"/></td>';
-	$text .= '<td class="forumheader3"><input class="button" type="submit" name="addfaction" value="'.EB_GAME_L19.'"/></td>';
+	$text .= '<td class="forumheader3"><input class="eb_button" type="submit" name="addfaction" value="'.EB_GAME_L19.'"/></td>';
 	$text .= '</tr>';
 	$text .= '</form>';
 	$text .= '</tbody></table>';
@@ -543,7 +543,7 @@ if((isset($qs[0]) && ((preg_match("/eb_games/",$qs[0])||(isset($_GET['gameid']))
 	$text .= '<td class="forumheader3"><input class="tbox" type="text" id="mapname" name="mapname" size="20" value="" maxlength="64"/></td>';
 	$text .= '<td class="forumheader3"><input class="tbox" type="text" id="mapimage" name="mapimage" size="40" value="" maxlength="255" title="'.EB_GAME_L27.'"/></td>';
 	$text .= '<td class="forumheader3"><input class="tbox" type="text" name="mapdescription" size="40" value="" maxlength="63"/></td>';
-	$text .= '<td class="forumheader3"><input class="button" type="submit" name="addmap" value="'.EB_GAME_L28.'"/></td>';
+	$text .= '<td class="forumheader3"><input class="eb_button" type="submit" name="addmap" value="'.EB_GAME_L28.'"/></td>';
 	$text .= '</tr>';
 	$text .= '</form>';
 	$text .= '</tbody></table>';
@@ -996,19 +996,19 @@ function displayGames(){
 
 		$text .= '<table><tr>
 		<td>
-		<input class="button" type="submit" name="delete_selected_games" value="'.EB_GAMES_L14.'" onclick="return confirm(\''.EB_GAMES_L15.'\')"/>
+		<input class="eb_button" type="submit" name="delete_selected_games" value="'.EB_GAMES_L14.'" onclick="return confirm(\''.EB_GAMES_L15.'\')"/>
 		</td>
 		<td>
-		<input class="button" type="submit" name="delete_all_games" value="'.EB_GAMES_L16.'" onclick="return confirm(\''.EB_GAMES_L17.'\')"/>
+		<input class="eb_button" type="submit" name="delete_all_games" value="'.EB_GAMES_L16.'" onclick="return confirm(\''.EB_GAMES_L17.'\')"/>
 		</td>
 		<td>
-		<input class="button" type="submit" name="update_selected_games" value="'.EB_GAMES_L18.'"/>
+		<input class="eb_button" type="submit" name="update_selected_games" value="'.EB_GAMES_L18.'"/>
 		</td>
 		<td>
-		<input class="button" type="submit" name="update_all_games" value="'.EB_GAMES_L19.'"/>
+		<input class="eb_button" type="submit" name="update_all_games" value="'.EB_GAMES_L19.'"/>
 		</td>
 		<td>
-		<input class="button" type="submit" name="add_games" value="'.EB_GAMES_L20.'"/>
+		<input class="eb_button" type="submit" name="add_games" value="'.EB_GAMES_L20.'"/>
 		</td>
 		</tr>
 		</table>
