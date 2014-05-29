@@ -791,6 +791,7 @@ class Event extends DatabaseTable
 		</tr>
 		';
 		//<!-- Event Game -->
+		// Can change only if no players are signed up
 		$disabled_str = ($nbrplayers+$nbrteams==0) ? '' : 'disabled="disabled"';
 
 		$q = "SELECT ".TBL_GAMES.".*"
@@ -895,6 +896,7 @@ class Event extends DatabaseTable
 		<tr>
 		<td class="eb_td eb_tdc1 eb_w40">'.EB_EVENTM_L21.'</td>
 		<td class="eb_td"><select class="tbox" name="eventmatchreportuserclass">';
+		$text .= '<option value="'.eb_UC_MATCH_WINNER.'" '.($this->getField('match_report_userclass') == eb_UC_MATCH_WINNER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L211.'</option>';
 		$text .= '<option value="'.eb_UC_EVENT_PLAYER.'" '.($this->getField('match_report_userclass') == eb_UC_EVENT_PLAYER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L22.'</option>';
 		$text .= '<option value="'.eb_UC_EVENT_MODERATOR.'" '.($this->getField('match_report_userclass') == eb_UC_EVENT_MODERATOR ? 'selected="selected"' : '') .'>'.EB_EVENTM_L23.'</option>';
 		$text .= '<option value="'.eb_UC_EVENT_OWNER.'" '.($this->getField('match_report_userclass') == eb_UC_EVENT_OWNER ? 'selected="selected"' : '') .'>'.EB_EVENTM_L24.'</option>';
@@ -1174,7 +1176,7 @@ class Event extends DatabaseTable
 		<table class="table_left">
 		<tr>
 		<td>
-		<div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearStartDate(this.form);"/></div>
+		<div><input class="eb_button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearStartDate(this.form);"/></div>
 		</td>
 		<td>
 		<div><input class="tbox timepicker required" type="text" name="startdate" id="f_date_start" value="'.$date_start.'" readonly="readonly" /></div>
@@ -1202,7 +1204,7 @@ class Event extends DatabaseTable
 		<table class="table_left">
 		<tr>
 		<td>
-		<div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearEndDate(this.form);"/></div>
+		<div><input class="eb_button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearEndDate(this.form);"/></div>
 		</td>
 		<td>
 		<div><input class="tbox timepicker" type="text" name="enddate" id="f_date_end"  value="'.$date_end.'" readonly="readonly" /></div>
@@ -2826,6 +2828,7 @@ class Event extends DatabaseTable
 		$userclass = 0;
 		
 		$event_id = $this->fields['EventID'];
+		$eowner = $this->fields['Owner'];
 		
 		// Check if user can report
 		// Is the user admin?
@@ -2966,9 +2969,12 @@ class Event extends DatabaseTable
 		if ($this->getField('AllowScore')==TRUE)
 		$can_report_quickloss = 0;
 
+		$match_report_userclass = $this->getField('match_report_userclass');
+		if($match_report_userclass==eb_UC_MATCH_WINNER) $match_report_userclass = eb_UC_EVENT_PLAYER;
+		
 		if($this->getField('Type') == "Clan Ladder") $can_report_quickloss = 0;  // Disable quick loss report for clan wars for now
 		if($this->getField('quick_loss_report')==FALSE) $can_report_quickloss = 0;
-		if($userclass < $this->getField('match_report_userclass')) $can_report = 0;
+		if($userclass < $match_report_userclass) $can_report = 0;
 		if($userclass < $this->getField('match_replay_report_userclass')) $can_submit_replay = 0;
 
 		if($userclass < $this->getField('MatchesApproval')) $can_approve = 0;
@@ -2986,8 +2992,10 @@ class Event extends DatabaseTable
 		$permissions['can_submit_replay'] = $can_submit_replay;
 		$permissions['can_challenge'] = $can_challenge;
 		
-		//echo "event $event_id permissions:<br>";
-		//var_dump($permissions);
+		/*
+		echo "event $event_id permissions:<br>";
+		var_dump($permissions);
+		*/
 		
 		return $permissions;
 	}

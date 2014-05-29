@@ -81,6 +81,7 @@ define("G2_qinv", 173.7178); //400/log(10);
 define("eb_rating_period", 1);	// in days
 
 // Match report userclass
+define("eb_UC_MATCH_WINNER", 16);
 define("eb_UC_EB_MODERATOR", 8);
 define("eb_UC_EVENT_OWNER", 4);
 define("eb_UC_EVENT_MODERATOR", 2);

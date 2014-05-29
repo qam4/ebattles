@@ -453,6 +453,7 @@ define('EB_EVENTM_L207', 'sigma0 (volatilité)');
 define('EB_EVENTM_L208', 'tau (Contrainte de volatilité au fil du temps)');
 define('EB_EVENTM_L209', 'epsilon (précision)');
 define('EB_EVENTM_L210', 'Période d’évaluation (en jours)');
+define('EB_EVENTM_L211', 'Vainqueur du match');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');
@@ -749,12 +750,15 @@ define('EB_MATCHR_L66', 'Joueur 2 a gagné');
 define('EB_MATCHR_L67', 'Match nul');
 define('EB_MATCHR_L68', 'Joueur 1 forfait');
 define('EB_MATCHR_L69', 'Joueur 2 forfait');
+define('EB_MATCHR_L70', 'vs.');
+define('EB_MATCHR_L71', 'Sélectionnez le nombre de concurrents:');
+define('EB_MATCHR_L72', 'Le rapporteur du match doit être vainqueur');
 
 define('EB_MATCHQL_L1', 'Rapport rapide de défaite');
 define('EB_MATCHQL_L2', 'Vous n’êtes pas authorisé a soumettre un match.');
 define('EB_MATCHQL_L3', 'Retour vers');
 define('EB_MATCHQL_L4', 'Tournoi');
-define('EB_MATCHQL_L5', 'Selectonnez le joueur');
+define('EB_MATCHQL_L5', 'Sélectionnez le joueur');
 define('EB_MATCHQL_L6', 'Soumettre la Perte');
 
 define('EB_GAME_L1', 'Jeu Inconnu');

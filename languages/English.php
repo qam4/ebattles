@@ -455,6 +455,7 @@ define('EB_EVENTM_L207', 'sigma0 (volatility)');
 define('EB_EVENTM_L208', 'tau (volatility over time constraint)');
 define('EB_EVENTM_L209', 'epsilon (precision)');
 define('EB_EVENTM_L210', 'Rating period (in days)');
+define('EB_EVENTM_L211', 'Match winner');
 
 define('EB_EVENTP_L1', 'Past Events');
 define('EB_EVENTP_L2', 'Past Events');
@@ -753,6 +754,7 @@ define('EB_MATCHR_L68', 'Player 1 forfeit');
 define('EB_MATCHR_L69', 'Player 2 forfeit');
 define('EB_MATCHR_L70', 'vs.');
 define('EB_MATCHR_L71', 'Select the number of players:');
+define('EB_MATCHR_L72', 'The match reporter should be the winner');
 
 define('EB_MATCHQL_L1', 'Quick Loss Report');
 define('EB_MATCHQL_L2', 'You are not authorized to report a match.');

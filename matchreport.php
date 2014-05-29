@@ -61,6 +61,7 @@ case 'Players':
 		die('Invalid query: ' . mysql_error());
 	}
 	
+	$user_player = 0;
 	$players_id[0] = EB_MATCHR_L1;
 	$players_uid[0] = EB_MATCHR_L1;
 	$players_name[0] = EB_MATCHR_L1;
@@ -90,6 +91,11 @@ case 'Players':
 		$players_id[$i+1] = $pid;
 		$players_uid[$i+1] = $puid;
 		$players_name[$i+1] = $pclantag.$pname.$prank_txt;
+
+		if($puid == USERID)
+		{
+			$user_player = $pid;
+		}
 	}
 	break;
 case 'Teams':
@@ -291,6 +297,12 @@ if($match_id)
 		$pforfeit  = mysql_result($result,$score, TBL_SCORES.".Player_Forfeit");
 
 		if ($pMatchTeam > $nbr_teams) $nbr_teams = $pMatchTeam;
+		
+		if($puid == USERID)
+		{
+			$user_player = $pid;
+			$user_rank = $prank;
+		}
 
 		$i = $score + 1;
 		if (!isset($_POST['team'.$i]))    $_POST['team'.$i] = 'Team #'.$pMatchTeam;
@@ -371,9 +383,9 @@ if (isset($_POST['submit_match']))
 
 	$nbr_players = $_POST['nbr_players'];
 	$nbr_teams = $_POST['nbr_teams'];
-	$userIsPlaying = 0;
-	$userIsCaptain = 0;
-	$userIsTeamMember = 0;
+	$reporterIsPlaying = 0;
+	$reporterIsCaptain = 0;
+	$reporterIsTeamMember = 0;
 	// Map
 	// List of all Maps
 	$q_Maps = "SELECT ".TBL_MAPS.".*"
@@ -423,7 +435,17 @@ if (isset($_POST['submit_match']))
 			$puid = $row['user_id'];
 			$pTeam = $row['Team'];
 
-			if ($puid == $reported_by) $userIsPlaying = 1;
+			if ($puid == $reported_by) $reporterIsPlaying = 1;
+			
+			// If winner report, check if reporter's rank is 1
+			// Note: not if reporter is owner/mods/admins
+			if(($event->getField('match_report_userclass') == eb_UC_MATCH_WINNER)
+			&& ($userclass == eb_UC_EVENT_PLAYER)
+			&& ($puid == $reported_by))
+			{
+				if($_POST['rank1'] != $pMatchTeam)
+					$error_str .= '<li>'.EB_MATCHR_L72.'</li>'.$_POST['rank1']." ".$pMatchTeam;
+			}
 
 			// Check if 2 players are the same user
 			// Check if 2 players of same team are playing against each other
@@ -454,17 +476,6 @@ if (isset($_POST['submit_match']))
 			break;
 		case 'Teams':
 			// Check if user is the team captain
-			$q = "SELECT ".TBL_DIVISIONS.".*, "
-			.TBL_TEAMS.".*"
-			." FROM ".TBL_DIVISIONS.", "
-			.TBL_TEAMS
-			." WHERE (".TBL_DIVISIONS.".DivisionID = ".TBL_TEAMS.".Division)"
-			." AND (".TBL_TEAMS.".TeamID = '$pid')";
-			$result = $sql->db_Query($q);
-			$row = mysql_fetch_array($result);
-			$dcaptain = $row['Captain'];
-			if ($dcaptain == $reported_by) $userIsCaptain = 1;
-
 			// Check if user is a team's member
 			$q = "SELECT ".TBL_DIVISIONS.".*, "
 			.TBL_MEMBERS.".*, "
@@ -482,8 +493,8 @@ if (isset($_POST['submit_match']))
 				$muid  = mysql_result($result,$member, TBL_MEMBERS.".User");
 				$dcaptain  = mysql_result($result,$member, TBL_DIVISIONS.".Captain");
 
-				if ($dcaptain == $reported_by) $userIsCaptain = 1;
-				if ($muid == $reported_by) $userIsTeamMember = 1;
+				if ($dcaptain == $reported_by) $reporterIsCaptain = 1;
+				if ($muid == $reported_by) $reporterIsTeamMember = 1;
 			}
 
 			// Check if 2 teams are the same
@@ -517,18 +528,18 @@ if (isset($_POST['submit_match']))
 		{
 		case 'Players':
 			// Check if the reporter played in the match
-			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsPlaying == 0))
+			if (($userclass == eb_UC_EVENT_PLAYER) && ($reporterIsPlaying == 0))
 			$error_str .= '<li>'.EB_MATCHR_L9.'</li>';
 			break;
 		case 'Teams':
 			// Check if the reporter's team played in the match
-			if (($userclass == eb_UC_EVENT_PLAYER) && ($userIsCaptain == 0) && ($userIsTeamMember == 0))
+			if (($userclass == eb_UC_EVENT_PLAYER) && ($reporterIsCaptain == 0) && ($reporterIsTeamMember == 0))
 			$error_str .= '<li>'.EB_MATCHR_L37.'</li>';
 			break;
 		default:
 		}
 	}
-
+	
 	for($i=1;$i<=$nbr_teams;$i++)
 	{
 		if (!isset($_POST['rank'.$i])) $_POST['rank'.$i] = 'Team #'.$i;
@@ -557,7 +568,7 @@ if (isset($_POST['submit_match']))
 
 	if (!empty($error_str)) {
 		// show form again
-		user_form($action, $players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled);
+		user_form($action, $players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled, $user_player);
 		// errors have occured, halt execution and show form again.
 		$text .= '<div class="eb_errors">'.EB_MATCHR_L14;
 		$text .= '<ul>'.$error_str.'</ul></div>';
@@ -821,7 +832,7 @@ if (isset($_POST['submit_match']))
 			{
 				$userclass = $_POST['userclass'];
 				// the form has not been submitted, let's show it
-				user_form($action, $players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled);
+				user_form($action, $players_id, $players_name, $event_id, $match_id, $event->getField('AllowDraw'), $event->getField('AllowForfeit'), $event->getField('AllowScore'),$userclass, $date_scheduled, $user_player);
 			}
 			else
 			{

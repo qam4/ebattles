@@ -254,7 +254,7 @@ function PlayerChallengeForm($event_id, $challengerpuid, $challengedpid)
 		<div><input class="tbox timepicker" type="text" name="date'.$date.'" id="f_date'.$date.'" value="'.$_POST['date'.$date].'" readonly="readonly" /></div>
 		</td>
 		<td>
-		<div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
+		<div><input class="eb_button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
 		</td>
 		</tr>
 		</table>
@@ -468,7 +468,7 @@ function TeamChallengeForm($event_id, $challengerpuid, $challengedtid)
 		<div><input class="tbox timepicker" type="text" name="date'.$date.'" id="f_date'.$date.'" value="'.$_POST['date'.$date].'" readonly="readonly" /></div>
 		</td>
 		<td>
-		<div><input class="button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
+		<div><input class="eb_button" type="button" value="'.EB_EVENTM_L34.'" onclick="clearDate(this.form, '.$date.');"/></div>
 		</td>
 		</tr>
 		</table>
