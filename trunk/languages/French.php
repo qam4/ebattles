@@ -454,6 +454,8 @@ define('EB_EVENTM_L208', 'tau (Contrainte de volatilité au fil du temps)');
 define('EB_EVENTM_L209', 'epsilon (précision)');
 define('EB_EVENTM_L210', 'Période d’évaluation (en jours)');
 define('EB_EVENTM_L211', 'Vainqueur du match');
+define('EB_EVENTM_L212', 'Forfaits');
+define('EB_EVENTM_L213', 'Pourcentage de Forfaits Percent');
 
 define('EB_EVENTP_L1', 'Tournois passés');
 define('EB_EVENTP_L2', 'Tournois passés');
@@ -518,6 +520,10 @@ define('EB_STATS_L39', 'Équipe');
 define('EB_STATS_L40', 'Joueurs');
 define('EB_STATS_L41', 'Glicko 2 skill');
 define('EB_STATS_L42', 'G2 skill');
+define('EB_STATS_L43', 'Nombre de matchs forfaits');
+define('EB_STATS_L44', 'Forfaits');
+define('EB_STATS_L45', 'Pourcentage de forfaits');
+define('EB_STATS_L46', 'Forfait%');
 
 define('EB_CLANS_L1', 'Équipes');
 define('EB_CLANS_L2', 'Équipes');

@@ -106,6 +106,7 @@ class Event extends DatabaseTable
 				."     Score = 0,"
 				."     ScoreAgainst = 0,"
 				."     Points = 0,"
+				."     Forfeits = 0,"
 				."     Rank = 0,"
 				."     RankDelta = 0,"
 				."     OverallScore = 0,"
@@ -147,6 +148,7 @@ class Event extends DatabaseTable
 				."     Score = 0,"
 				."     ScoreAgainst = 0,"
 				."     Points = 0,"
+				."     Forfeits = 0,"
 				."     Streak = 0,"
 				."     Streak_Best = 0,"
 				."     Streak_Worst = 0"
@@ -1469,6 +1471,14 @@ class Event extends DatabaseTable
 		$q =
 		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
 		VALUES ('$last_id', 'Points')";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
+		VALUES ('$last_id', 'Forfeits')";
+		$result = $sql->db_Query($q);
+		$q =
+		"INSERT INTO ".TBL_STATSCATEGORIES."(Event, CategoryName)
+		VALUES ('$last_id', 'ForfeitsPercent')";
 		$result = $sql->db_Query($q);
 	}
 
