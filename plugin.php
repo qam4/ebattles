@@ -287,6 +287,7 @@ Streak_Worst int DEFAULT '0',
 Score int DEFAULT '0',
 ScoreAgainst int DEFAULT '0',
 Points int DEFAULT '0',
+Forfeits int DEFAULT '0',
 Joined  int(11) unsigned not null,
 CheckedIn tinyint(1) DEFAULT '0',
 Banned tinyint(1) DEFAULT '0',
@@ -344,6 +345,7 @@ Streak_Worst int DEFAULT '0',
 Score int DEFAULT '0',
 ScoreAgainst int DEFAULT '0',
 Points int DEFAULT '0',
+Forfeits int DEFAULT '0',
 Joined  int(11) unsigned not null,
 CheckedIn tinyint(1) DEFAULT '0',
 Banned tinyint(1) DEFAULT '0',
@@ -842,6 +844,15 @@ if (versionsCompare($eb_version_string, "0.9.13") < 0)
 	"ALTER TABLE ".TBL_SCORES." ADD Player_deltaG2_mu float DEFAULT '0'",
 	"ALTER TABLE ".TBL_SCORES." ADD Player_deltaG2_phi float DEFAULT '0'",
 	"ALTER TABLE ".TBL_SCORES." ADD Player_deltaG2_sigma float DEFAULT '0'"
+	);
+}
+
+if (versionsCompare($eb_version_string, "0.9.14") < 0)
+{
+	// To revision 0.9.14
+	array_push ($upgrade_alter_tables,
+	"ALTER TABLE ".TBL_PLAYERS." ADD Forfeits int DEFAULT '0'",
+	"ALTER TABLE ".TBL_TEAMS." ADD Forfeits int DEFAULT '0'"
 	);
 }
 

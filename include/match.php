@@ -581,6 +581,7 @@ class Match extends DatabaseTable
 		$tdeltaScore       = array();
 		$tdeltaOppScore    = array();
 		$tdeltaPoints      = array();
+		$tdeltaForfeits    = array();
 		$tnbrPlayers       = array();
 
 		$q = "SELECT DISTINCT ".TBL_PLAYERS.".Team"
@@ -611,6 +612,7 @@ class Match extends DatabaseTable
 			$tdeltaScore[$tid] = 0;
 			$tdeltaOppScore[$tid] = 0;
 			$tdeltaPoints[$tid] = 0;
+			$tdeltaForfeits[$tid] = 0;
 			$tnbrPlayers[$tid] = 0;
 		}
 
@@ -660,6 +662,7 @@ class Match extends DatabaseTable
 			$pScore        = mysql_result($result,$i, TBL_PLAYERS.".Score");
 			$pOppScore     = mysql_result($result,$i, TBL_PLAYERS.".ScoreAgainst");
 			$pPoints       = mysql_result($result,$i, TBL_PLAYERS.".Points");
+			$pForfeits     = mysql_result($result,$i, TBL_PLAYERS.".Forfeits");
 
 			$scoreid           = mysql_result($result,$i, TBL_SCORES.".ScoreID");
 			$pdeltaELO         = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
@@ -675,7 +678,8 @@ class Match extends DatabaseTable
 			$pdeltaScore       = mysql_result($result,$i, TBL_SCORES.".Player_Score");
 			$pdeltaOppScore    = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
 			$pdeltaPoints      = mysql_result($result,$i, TBL_SCORES.".Player_Points");
-
+			$pdeltaForfeits    = mysql_result($result,$i, TBL_SCORES.".Player_Forfeit");
+			
 			$pELO         += $pdeltaELO;
 			$pTS_mu       += $pdeltaTS_mu;
 			$pTS_sigma    *= $pdeltaTS_sigma;
@@ -691,6 +695,7 @@ class Match extends DatabaseTable
 			$pScore       += $pdeltaScore;
 			$pOppScore    += $pdeltaOppScore;
 			$pPoints      += $pdeltaPoints;
+			$pForfeits    += $pdeltaForfeits;
 
 			if ($pteam != 0)
 			{
@@ -707,6 +712,7 @@ class Match extends DatabaseTable
 				$tdeltaScore[$pteam]       += $pdeltaScore;
 				$tdeltaOppScore[$pteam]    += $pdeltaOppScore;
 				$tdeltaPoints[$pteam]      += $pdeltaPoints;
+				$tdeltaForfeits[$pteam]    += $pdeltaForfeits;
 				$tnbrPlayers[$pteam]       += 1;
 			}
 
@@ -770,6 +776,7 @@ class Match extends DatabaseTable
 			."     Score = $pScore,"
 			."     ScoreAgainst = $pOppScore,"
 			."     Points = $pPoints,"
+			."     Forfeits = $pForfeits,"
 			."     Streak = $pStreak,"
 			."     Streak_Best = $pStreak_Best,"
 			."     Streak_Worst = $pStreak_Worst,"
@@ -810,6 +817,7 @@ class Match extends DatabaseTable
 			$tid = mysql_result($result_Teams,$team, TBL_PLAYERS.".Team");
 
 			$tPoints      = mysql_result($result_Teams,$team, TBL_TEAMS.".Points");
+			$tForfeits    = mysql_result($result_Teams,$team, TBL_TEAMS.".Forfeits");
 			$tELO         = mysql_result($result_Teams,$team, TBL_TEAMS.".ELORanking");
 			$tTS_mu       = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_mu");
 			$tTS_sigma    = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_sigma");
@@ -838,6 +846,7 @@ class Match extends DatabaseTable
 			$tdeltaScore[$tid]       /= $tnbrPlayers[$tid];
 			$tdeltaOppScore[$tid]    /= $tnbrPlayers[$tid];
 			$tdeltaPoints[$tid]      /= $tnbrPlayers[$tid];
+			$tdeltaForfeits[$tid]    /= $tnbrPlayers[$tid];
 
 			$tELO         += $tdeltaELO[$tid];
 			$tTS_mu       += $tdeltaTS_mu[$tid];
@@ -854,6 +863,7 @@ class Match extends DatabaseTable
 			$tScore       += $tdeltaScore[$tid];
 			$tOppScore    += $tdeltaOppScore[$tid];
 			$tPoints      += $tdeltaPoints[$tid];
+			$tForfeits    += $tdeltaForfeits[$tid];
 
 			$output .= "Team: $tid<br />";
 			$output .= "delta ELO: $tdeltaELO[$tid]<br />";
@@ -879,6 +889,7 @@ class Match extends DatabaseTable
 			."     Score = $tScore,"
 			."     ScoreAgainst = $tOppScore,"
 			."     Points = $tPoints,"
+			."     Forfeits = $tForfeits,"
 			."     RankDelta = 0"
 			." WHERE (TeamID = '$tid')";
 			$result_update = $sql->db_Query($q_update);
@@ -943,6 +954,7 @@ class Match extends DatabaseTable
 			$tScore        = mysql_result($result,$i, TBL_TEAMS.".Score");
 			$tOppScore     = mysql_result($result,$i, TBL_TEAMS.".ScoreAgainst");
 			$tPoints       = mysql_result($result,$i, TBL_TEAMS.".Points");
+			$tForfeits     = mysql_result($result,$i, TBL_TEAMS.".Forfeits");
 			$tStreak       = mysql_result($result,$i, TBL_TEAMS.".Streak");
 			$tStreak_Best  = mysql_result($result,$i, TBL_TEAMS.".Streak_Best");
 			$tStreak_Worst = mysql_result($result,$i, TBL_TEAMS.".Streak_Worst");
@@ -958,6 +970,7 @@ class Match extends DatabaseTable
 			$tdeltaDraws       = mysql_result($result,$i, TBL_SCORES.".Player_Draw");
 			$tdeltaLosses      = mysql_result($result,$i, TBL_SCORES.".Player_Loss");
 			$tdeltaPoints      = mysql_result($result,$i, TBL_SCORES.".Player_Points");
+			$tdeltaForfeits    = mysql_result($result,$i, TBL_SCORES.".Player_Forfeit");
 			$tdeltaScore       = mysql_result($result,$i, TBL_SCORES.".Player_Score");
 			$tdeltaOppScore    = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
 
@@ -976,6 +989,7 @@ class Match extends DatabaseTable
 			$tScore       += $tdeltaScore;
 			$tOppScore    += $tdeltaOppScore;
 			$tPoints      += $tdeltaPoints;
+			$tForfeits    += $tdeltaForfeits;
 
 			$output .= "Team: $clan->getField('Name') - $tid, new ELO: $tELO<br />";
 			$output .= "Games played: $tGamesPlayed<br>";
@@ -1037,6 +1051,7 @@ class Match extends DatabaseTable
 			."     Score = $tScore,"
 			."     ScoreAgainst = $tOppScore,"
 			."     Points = $tPoints,"
+			."     Forfeits = $tForfeits,"
 			."     Streak = $tStreak,"
 			."     Streak_Best = $tStreak_Best,"
 			."     Streak_Worst = $tStreak_Worst,"
@@ -1118,6 +1133,7 @@ class Match extends DatabaseTable
 		$tdeltaScore       = array();
 		$tdeltaOppScore    = array();
 		$tdeltaPoints      = array();
+		$tdeltaForfeits    = array();
 		$tnbrPlayers       = array();
 
 		$q = "SELECT DISTINCT ".TBL_PLAYERS.".Team"
@@ -1148,6 +1164,7 @@ class Match extends DatabaseTable
 			$tdeltaScore[$tid]       = 0;
 			$tdeltaOppScore[$tid]    = 0;
 			$tdeltaPoints[$tid]      = 0;
+			$tdeltaForfeits[$tid]    = 0;
 			$tnbrPlayers[$tid]       = 0;
 		}
 
@@ -1196,6 +1213,7 @@ class Match extends DatabaseTable
 			$pScore        = mysql_result($result,$i, TBL_PLAYERS.".Score");
 			$pOppScore     = mysql_result($result,$i, TBL_PLAYERS.".ScoreAgainst");
 			$pPoints       = mysql_result($result,$i, TBL_PLAYERS.".Points");
+			$pForfeits     = mysql_result($result,$i, TBL_PLAYERS.".Forfeits");
 
 			$scoreid           = mysql_result($result,$i, TBL_SCORES.".ScoreID");
 			$pdeltaELO         = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
@@ -1211,6 +1229,7 @@ class Match extends DatabaseTable
 			$pdeltaScore       = mysql_result($result,$i, TBL_SCORES.".Player_Score");
 			$pdeltaOppScore    = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
 			$pdeltaPoints      = mysql_result($result,$i, TBL_SCORES.".Player_Points");
+			$pdeltaForfeits    = mysql_result($result,$i, TBL_SCORES.".Player_Forfeit");
 
 			$pELO         -= $pdeltaELO;
 			$pTS_mu       -= $pdeltaTS_mu;
@@ -1227,6 +1246,7 @@ class Match extends DatabaseTable
 			$pScore       -= $pdeltaScore;
 			$pOppScore    -= $pdeltaOppScore;
 			$pPoints      -= $pdeltaPoints;
+			$pForfeits    -= $pdeltaForfeits;
 
 			$output .= "<br>pid:$pid, pname $pname, pscore: $pdeltaScore, pelo: $pELO, pteam: $pteam<br />";
 
@@ -1245,6 +1265,7 @@ class Match extends DatabaseTable
 				$tdeltaScore[$pteam]       += $pdeltaScore;
 				$tdeltaOppScore[$pteam]    += $pdeltaOppScore;
 				$tdeltaPoints[$pteam]      += $pdeltaPoints;
+				$tdeltaForfeits[$pteam]    += $pdeltaForfeits;
 				$tnbrPlayers[$pteam]       += 1;
 			}
 
@@ -1263,7 +1284,8 @@ class Match extends DatabaseTable
 				."     Draw = $pDraws,"
 				."     Score = $pScore,"
 				."     ScoreAgainst = $pOppScore,"
-				."     Points = $pPoints"
+				."     Points = $pPoints,"
+				."     Forfeits = $pForfeits"
 				." WHERE (PlayerID = '$pid')";
 				$result2 = $sql->db_Query($q);
 				$output .= "$q<br>";
@@ -1296,6 +1318,7 @@ class Match extends DatabaseTable
 			$tid = mysql_result($result_Teams,$team, TBL_PLAYERS.".Team");
 
 			$tPoints      = mysql_result($result_Teams,$team, TBL_TEAMS.".Points");
+			$tForfeits    = mysql_result($result_Teams,$team, TBL_TEAMS.".Forfeits");
 			$tELO         = mysql_result($result_Teams,$team, TBL_TEAMS.".ELORanking");
 			$tTS_mu       = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_mu");
 			$tTS_sigma    = mysql_result($result_Teams,$team, TBL_TEAMS.".TS_sigma");
@@ -1324,8 +1347,10 @@ class Match extends DatabaseTable
 			$tdeltaScore[$tid]       /= $tnbrPlayers[$tid];
 			$tdeltaOppScore[$tid]    /= $tnbrPlayers[$tid];
 			$tdeltaPoints[$tid]      /= $tnbrPlayers[$tid];
+			$tdeltaForfeits[$tid]    /= $tnbrPlayers[$tid];
 
 			$tPoints      -= $tdeltaPoints[$tid];
+			$tForfeits    -= $tdeltaForfeits[$tid];
 			$tELO         -= $tdeltaELO[$tid];
 			$tTS_mu       -= $tdeltaTS_mu[$tid];
 			$tTS_sigma    /= $tdeltaTS_sigma[$tid];
@@ -1361,6 +1386,7 @@ class Match extends DatabaseTable
 				."     Score = $tScore,"
 				."     ScoreAgainst = $tOppScore,"
 				."     Points = $tPoints,"
+				."     Forfeits = $tForfeits,"
 				."     RankDelta = 0"
 				." WHERE (TeamID = '$tid')";
 				$result_update = $sql->db_Query($q_update);
@@ -1418,6 +1444,7 @@ class Match extends DatabaseTable
 			$tScore       = mysql_result($result,$i, TBL_TEAMS.".Score");
 			$tOppScore    = mysql_result($result,$i, TBL_TEAMS.".ScoreAgainst");
 			$tPoints      = mysql_result($result,$i, TBL_TEAMS.".Points");
+			$tForfeits    = mysql_result($result,$i, TBL_TEAMS.".Forfeits");
 
 			$scoreid           = mysql_result($result,$i, TBL_SCORES.".ScoreID");
 			$tdeltaELO         = mysql_result($result,$i, TBL_SCORES.".Player_deltaELO");
@@ -1433,6 +1460,7 @@ class Match extends DatabaseTable
 			$tdeltaScore       = mysql_result($result,$i, TBL_SCORES.".Player_Score");
 			$tdeltaOppScore    = mysql_result($result,$i, TBL_SCORES.".Player_ScoreAgainst");
 			$tdeltaPoints      = mysql_result($result,$i, TBL_SCORES.".Player_Points");
+			$tdeltaForfeits    = mysql_result($result,$i, TBL_SCORES.".Player_Forfeit");
 
 			$tELO           -= $tdeltaELO;
 			$tTS_mu         -= $tdeltaTS_mu;
@@ -1449,6 +1477,7 @@ class Match extends DatabaseTable
 			$tScore         -= $tdeltaScore;
 			$tOppScore      -= $tdeltaOppScore;
 			$tPoints        -= $tdeltaPoints;
+			$tForfeits      -= $tdeltaForfeits;
 
 			$output .= "<br>tid: $tid, tscore: $tsScore, telo: $tELO<br />";
 
@@ -1468,6 +1497,7 @@ class Match extends DatabaseTable
 				."     Score = $tScore,"
 				."     ScoreAgainst = $tOppScore,"
 				."     Points = $tPoints,"
+				."     Forfeits = $tForfeits,"
 				."     RankDelta = 0"
 				." WHERE (TeamID = '$tid')";
 				$result_update = $sql->db_Query($q_update);

@@ -456,6 +456,8 @@ define('EB_EVENTM_L208', 'tau (volatility over time constraint)');
 define('EB_EVENTM_L209', 'epsilon (precision)');
 define('EB_EVENTM_L210', 'Rating period (in days)');
 define('EB_EVENTM_L211', 'Match winner');
+define('EB_EVENTM_L212', 'Forfeits');
+define('EB_EVENTM_L213', 'Forfeits Percent');
 
 define('EB_EVENTP_L1', 'Tidligere Turneringer');
 define('EB_EVENTP_L2', 'Tidligere Turneringer');
@@ -520,6 +522,10 @@ define('EB_STATS_L39', 'Hold');
 define('EB_STATS_L40', 'Spillere');
 define('EB_STATS_L41', 'Glicko 2 skill');
 define('EB_STATS_L42', 'G2 skill');
+define('EB_STATS_L43', 'Number of Games Forfeited');
+define('EB_STATS_L44', 'Forfeits');
+define('EB_STATS_L45', 'Forfeits percentage');
+define('EB_STATS_L46', 'Forfeit%');
 
 define('EB_CLANS_L1', 'Hold');
 define('EB_CLANS_L2', 'Hold');

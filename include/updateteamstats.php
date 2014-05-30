@@ -41,6 +41,8 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 	$oppscore = array();
 	$scorediff = array();
 	$points = array();
+	$forfeits = array();
+	$forfeits_percent = array();
 	$banned = array();
 	$rating = array();
 
@@ -61,6 +63,8 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 	$oppscore_score = array();
 	$scorediff_score = array();
 	$points_score = array();
+	$forfeits_score = array();
+	$forfeits_percent_score = array();
 
 	/* Event Info */
 	$event = new Event($event_id);
@@ -111,6 +115,8 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		$tscore = mysql_result($result_Teams,$team, TBL_TEAMS.".Score");
 		$toppscore = mysql_result($result_Teams,$team, TBL_TEAMS.".ScoreAgainst");
 		$tpoints = mysql_result($result_Teams,$team, TBL_TEAMS.".Points");
+		$tforfeits = mysql_result($result_Teams,$team, TBL_TEAMS.".Forfeits");
+		$tforfeits_percent = ($tgames_played>0) ? ((100 * $tforfeits)/$tgames_played) : 0;
 		$tbanned  = mysql_result($result_Teams,$team, TBL_TEAMS.".Banned");
 
 		switch($event->getField('Type'))
@@ -325,6 +331,8 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		$oppscore[] = ($tgames_played>0) ? number_format($toppscore/$tgames_played,2) : 0;
 		$scorediff[] = ($tgames_played>0) ? number_format(($tscore - $toppscore)/$tgames_played,2) : 0;
 		$points[] = $tpoints;
+		$forfeits[] = $tforfeits;
+		$forfeits_percent[] = number_format($tforfeits_percent,2)."%";
 		$banned[] = $tbanned;
 
 		// Actual score (not for display)
@@ -345,6 +353,8 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 		$oppscore_score[] = ($tgames_played>0) ? -$toppscore/$tgames_played : 0;
 		$scorediff_score[] = ($tgames_played>0) ? ($tscore - $toppscore)/$tgames_played : 0;
 		$points_score[] = $tpoints;
+		$forfeits_score[] = -$tforfeits;
+		$forfeits_percent_score[] = -$tforfeits_percent;
 
 		if (($tgames_played >= $event->getField('nbr_team_games_to_rank'))&&($tbanned == 0))
 		{
@@ -503,6 +513,22 @@ function updateTeamStats($event_id, $time, $serialize = TRUE)
 				$max = max($points_score);
 				$stat_score[$cat_index] = $points_score;
 				$stat_display[$cat_index] = $points;
+				break;
+			case "Forfeits":
+				$cat_header_title = EB_STATS_L43;
+				$cat_header_text = EB_STATS_L44;
+				$min = min($forfeits_score);
+				$max = max($forfeits_score);
+				$stat_score[$cat_index] = $forfeits_score;
+				$stat_display[$cat_index] = $forfeits;
+				break;
+			case "ForfeitsPercent":
+				$cat_header_title = EB_STATS_L45;
+				$cat_header_text = EB_STATS_L46;
+				$min = min($forfeits_percent_score);
+				$max = max($forfeits_percent_score);
+				$stat_score[$cat_index] = $forfeits_percent_score;
+				$stat_display[$cat_index] = $forfeits_percent;
 				break;
 			default:
 				$display_cat = 0;

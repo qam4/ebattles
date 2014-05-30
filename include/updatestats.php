@@ -39,6 +39,8 @@ function updateStats($event_id, $time, $serialize = TRUE)
 	$oppscore = array();
 	$scorediff = array();
 	$points = array();
+	$forfeits = array();
+	$forfeits_percent = array();
 	$banned = array();
 	$rating = array();
 
@@ -59,6 +61,8 @@ function updateStats($event_id, $time, $serialize = TRUE)
 	$oppscore_score = array();
 	$scorediff_score = array();
 	$points_score = array();
+	$forfeits_score = array();
+	$forfeits_percent_score = array();
 
 	/* Event Info */
 	$event = new Event($event_id);
@@ -112,6 +116,8 @@ function updateStats($event_id, $time, $serialize = TRUE)
 		$pscore = mysql_result($result_Players,$player, TBL_PLAYERS.".Score");
 		$poppscore = mysql_result($result_Players,$player, TBL_PLAYERS.".ScoreAgainst");
 		$ppoints = mysql_result($result_Players,$player, TBL_PLAYERS.".Points");
+		$pforfeits = mysql_result($result_Players,$player, TBL_PLAYERS.".Forfeits");
+		$pforfeits_percent = ($pgames_played>0) ? ((100 * $pforfeits)/$pgames_played) : 0;
 		$pbanned  = mysql_result($result_Players,$player, TBL_PLAYERS.".Banned");
 
 		$popponentsELO = 0;
@@ -218,6 +224,8 @@ function updateStats($event_id, $time, $serialize = TRUE)
 		$oppscore[] = ($pgames_played>0) ? number_format($poppscore/$pgames_played,2) : 0;
 		$scorediff[] = ($pgames_played>0) ? number_format(($pscore - $poppscore)/$pgames_played,2) : 0;
 		$points[] = $ppoints;
+		$forfeits[] = $pforfeits;
+		$forfeits_percent[] = number_format($pforfeits_percent,2)."%";
 		$banned[] = $pbanned;
 		$rating[] = displayRating($prating, $prating_votes);
 
@@ -239,6 +247,8 @@ function updateStats($event_id, $time, $serialize = TRUE)
 		$oppscore_score[] = ($pgames_played>0) ? -$poppscore/$pgames_played : 0;
 		$scorediff_score[] = ($pgames_played>0) ? ($pscore - $poppscore)/$pgames_played : 0;
 		$points_score[] = $ppoints;
+		$forfeits_score[] = -$pforfeits;
+		$forfeits_percent_score[] = -$pforfeits_percent;
 
 		if (($pgames_played >= $event->getField('nbr_games_to_rank'))&&($pbanned == 0))
 		{
@@ -388,6 +398,22 @@ function updateStats($event_id, $time, $serialize = TRUE)
 				$max = max($points_score);
 				$stat_score[$cat_index] = $points_score;
 				$stat_display[$cat_index] = $points;
+				break;
+			case "Forfeits":
+				$cat_header_title = EB_STATS_L43;
+				$cat_header_text = EB_STATS_L44;
+				$min = min($forfeits_score);
+				$max = max($forfeits_score);
+				$stat_score[$cat_index] = $forfeits_score;
+				$stat_display[$cat_index] = $forfeits;
+				break;
+			case "ForfeitsPercent":
+				$cat_header_title = EB_STATS_L45;
+				$cat_header_text = EB_STATS_L46;
+				$min = min($forfeits_percent_score);
+				$max = max($forfeits_percent_score);
+				$stat_score[$cat_index] = $forfeits_percent_score;
+				$stat_display[$cat_index] = $forfeits_percent;
 				break;
 			default:
 				$display_cat = 0;

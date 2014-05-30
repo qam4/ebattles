@@ -1511,6 +1511,12 @@ case 'Ladder':
 		case "Points":
 			$cat_name_display = EB_EVENTM_L104;
 			break;
+		case "Forfeits":
+			$cat_name_display = EB_EVENTM_L212;
+			break;
+		case "ForfeitsPercent":
+			$cat_name_display = EB_EVENTM_L213;
+			break;
 		default:
 		}
 
