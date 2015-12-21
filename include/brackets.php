@@ -5,7 +5,7 @@ function html_bracket_team_cell($teams, $content, $score, $container_class='') {
 	global $pref;
 
 	//echo "html_bracket_team_cell: $teams, $content, $score, $container_class<br>";
-	$text = '<td><div class="container '.$container_class.'">';
+	$text = '<td><div class="eb_container '.$container_class.'">';
 	//$text .= '<div>'.$content.'</div>';
 	if ($container_class=='victor')
 	{

@@ -70,7 +70,7 @@ table.brackets td.grid {
 	width: 3px; !important;
 	min-width: 3px;
 }
-table.brackets td div.container {
+table.brackets td div.eb_container {
 	border: 1px solid #2f2f2f;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
@@ -107,7 +107,7 @@ table.brackets td div.loser div.player img {
 	opacity: .30;
 	filter: alpha(opacity=30);
 }
-table.brackets td div.container img {
+table.brackets td div.eb_container img {
 	margin-left: 0px;
 	margin-right: 2px;
 	vertical-align: -4px;
