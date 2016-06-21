@@ -22,6 +22,10 @@ $pages = new Paginator;
 $rater = new rater();
 
 $text .= '';
+$text .= '
+<script type="text/javascript" src="'.e_PLUGIN.'ebattles/js/matchreport.js"></script>
+<script type="text/javascript" src="'.e_PLUGIN.'ebattles/js/event.js"></script>
+';
 $text .= "
 <script type='text/javascript'>
 <!--//
