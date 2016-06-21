@@ -229,13 +229,17 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 		$text .= '<tr><td>'.EB_MATCHR_L23.$i.':&nbsp;</td>';
 		
 		$match_winner = 0;
-		if(($event->getField('match_report_userclass') == eb_UC_MATCH_WINNER) && ($i == 1) && ($user_player != 0))
+		if(($event->getField('match_report_userclass') == eb_UC_MATCH_WINNER)
+		&& ($userclass == eb_UC_EVENT_PLAYER)
+		&& ($i == 1)
+		&& ($user_player != 0)
+		&& ($disable_input == 0))
 		{
 			$match_winner = 1;
 			$_POST['player'.$i] = $user_player;
 		}
 
-		if(($disable_input==1)||($match_winner == 1))
+		if($disable_input == 1)
 		{
 			for($j=1;$j <= $max_nbr_players+1;$j++)
 			{
@@ -258,7 +262,7 @@ function user_form($action, $players_id, $players_name, $event_id, $match_id, $a
 			$text .= '</select></td>';
 		}
 
-		if($disable_input==1)
+		if($disable_input == 1)
 		{
 			for($j=1;$j<=$nbr_teams;$j++)
 			{
