@@ -120,7 +120,7 @@ if(isset($_POST['clanadddiv']))
 		$division->addMember($clan_owner, FALSE);
 	}
 	//echo "-- clanadddiv --<br />";
-	header("Location: clanmanage.php?clanid=$clan_id&amp;gameid=$divgame");
+	header("Location: clanmanage.php?clanid=$clan_id&gameid=$divgame");
 	exit();
 }
 
@@ -191,7 +191,7 @@ if(isset($_POST['clanchangedivcaptain']))
 	$result2 = $sql->db_Query($q2);
 
 	//echo "-- clanchangedivcaptain --<br />";
-	header("Location: clanmanage.php?clanid=$clan_id&amp;gameid=$game_id");
+	header("Location: clanmanage.php?clanid=$clan_id&gameid=$game_id");
 	exit();
 }
 
@@ -217,7 +217,7 @@ if (isset($_POST['kick']))
 		}
 	}
 	//echo "-- kick --<br />";
-	header("Location: clanmanage.php?clanid=$clan_id&amp;gameid=$game_id");
+	header("Location: clanmanage.php?clanid=$clan_id&gameid=$game_id");
 	exit();
 }
 
@@ -231,7 +231,7 @@ if(isset($_POST['claninviteuser']))
 	$division->addMember($user, TRUE);
 
 	//echo "-- claninviteuser --<br />";
-	header("Location: clanmanage.php?clanid=$clan_id&amp;gameid=$game_id");
+	header("Location: clanmanage.php?clanid=$clan_id&gameid=$game_id");
 	exit();
 }
 
